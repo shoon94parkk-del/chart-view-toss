@@ -14,5 +14,8 @@ export async function api(path, options = {}) {
 export const compareStocks = (tickers, period = '1mo') =>
   api(`/api/compare?tickers=${encodeURIComponent(tickers.join(','))}&period=${encodeURIComponent(period)}`);
 
+export const searchStocks = (query) =>
+  api(`/api/search?q=${encodeURIComponent(query)}`);
+
 export const marketNow = () => api('/api/market-now');
 export const homeSnapshot = () => api('/api/home-snapshot');
