@@ -22,3 +22,9 @@ export const homeSnapshot = () => api('/api/home-snapshot');
 export const valuationStocks = (tickers) =>
   api(`/api/valuation?tickers=${encodeURIComponent(tickers.join(','))}`);
 export const macroData = () => api('/api/macro');
+
+export const homeInsights = (tickers = []) =>
+  api(`/api/home-insights?tickers=${encodeURIComponent(tickers.join(','))}`);
+
+export const personalizedNews = (tickers = [], names = []) =>
+  api(`/api/personalized-news?tickers=${encodeURIComponent(tickers.join(','))}&names=${encodeURIComponent(names.join('|'))}`);
