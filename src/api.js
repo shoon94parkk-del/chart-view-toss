@@ -19,3 +19,6 @@ export const searchStocks = (query) =>
 
 export const marketNow = () => api('/api/market-now');
 export const homeSnapshot = () => api('/api/home-snapshot');
+export const valuationStocks = (tickers) =>
+  api(`/api/valuation?tickers=${encodeURIComponent(tickers.join(','))}`);
+export const macroData = () => api('/api/macro');
