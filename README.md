@@ -13,7 +13,7 @@ Chart View의 앱인토스 전용 클라이언트 프로젝트입니다.
 
 ## Current status
 
-v0.6 preview:
+v0.7 release candidate:
 - Toss-style mobile information hierarchy and bottom navigation
 - safe-area support
 - home / chart / watchlist / more screens
@@ -43,6 +43,10 @@ v0.6 preview:
 - chart comparison shows a selected-period leader/range summary
 - macro indicators use visual tiles and a market-environment hero card
 - watchlist cards include price and quick valuation context
+- P0 release hardening: API timeout/retry/offline handling
+- global data-use disclosure and in-app data/service guide
+- privacy, service-use, and data-methodology static pages
+- Node 22 / npm 10 runtime pinning for reproducible builds
 
 ## Architecture
 
@@ -59,9 +63,22 @@ npm run build:ait
 
 The 3.x configuration lives in `apps-in-toss.config.ts`. The current app key is `chartview`.
 
+## P0 release gates
+
+Completed in code:
+- API timeout/retry/offline handling
+- data-use disclosure and policy pages
+- Node/npm runtime pinning
+- AIT contract validation and bundle pipeline
+
+Operational gates still required before public release:
+- commit `package-lock.json` and switch CI/builds to `npm ci`
+- point the Render preview deployment branch to `main`
+- move the shared Chart View API off Render Free before public launch
+- run Android and iOS Sandbox/QR validation on real devices
+
 ## Next
 
-- generate and upload the first `.ait` candidate
-- Sandbox / QR validation on Android and iOS
-- verify native navigation/back behavior and external news opening on device
-- define Apps in Toss major features and release checklist
+- finish reproducible lockfile/CI setup
+- build a fresh `.ait` release candidate
+- run Sandbox / QR validation on Android and iOS
