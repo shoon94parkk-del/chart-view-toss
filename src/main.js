@@ -1,6 +1,7 @@
 import './styles.css';
 import { createChart, ColorType } from 'lightweight-charts';
 import { API_BASE, compareStocks, marketNow, homeSnapshot, searchStocks, valuationStocks, macroData, homeInsights, personalizedNews } from './api.js';
+import { applyRuntimeClass, haptic, openExternal, syncNativeBackHandler } from './tossBridge.js';
 
 const WATCHLIST_KEY='chartview-toss-watchlist-v1';
 const SELECTED_KEY='chartview-toss-selected-v1';
@@ -44,12 +45,20 @@ function sectionTitle(title,action=''){return `<div class="section-head"><h2>${t
 function stockRow(x){const name=displayName(x.symbol,x.name);return `<button class="stock-row" data-stock-detail="${x.symbol}"><span class="stock-logo">${esc(name.slice(0,1))}</span><span class="stock-copy"><strong>${esc(name)}</strong><small>${esc(x.symbol)}</small></span><span class="chevron">${iconSvg('arrow',18)}</span></button>`}
 function esc(v=''){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 
-function navigate(tab,detailSymbol=null,replace=false){state.tab=tab;if(detailSymbol)state.detailSymbol=detailSymbol;const hash=detailSymbol?`#${tab}/${encodeURIComponent(detailSymbol)}`:`#${tab}`;const payload={tab,detailSymbol:state.detailSymbol};if(replace)history.replaceState(payload,'',hash);else history.pushState(payload,'',hash);render()}
+function navigate(tab,detailSymbol=null){
+ state.tab=tab;
+ if(detailSymbol)state.detailSymbol=detailSymbol;
+ const hash=detailSymbol?`#${tab}/${encodeURIComponent(detailSymbol)}`:`#${tab}`;
+ history.pushState({tab,detailSymbol:state.detailSymbol},'',hash);
+ haptic('tickWeak');
+ render();
+}
 function bindNav(){
  document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>navigate(b.dataset.tab));
  document.querySelectorAll('[data-go-chart]').forEach(b=>b.onclick=()=>navigate('chart'));
  document.querySelectorAll('[data-stock-detail]').forEach(b=>b.onclick=()=>navigate('detail',b.dataset.stockDetail));
- document.querySelectorAll('[data-back]').forEach(b=>b.onclick=()=>{if(history.length>1)history.back();else navigate('more',null,true)});
+ document.querySelectorAll('[data-back]').forEach(b=>b.onclick=()=>{if(state.tab!=='home')history.back()});
+ document.querySelectorAll('[data-external-url]').forEach(b=>b.onclick=()=>{haptic('tickWeak');openExternal(b.dataset.externalUrl)});
 }
 function cleanupChart(){if(chartInstance){try{chartInstance.remove()}catch{}chartInstance=null}}
 
@@ -245,7 +254,7 @@ async function renderDetail(){
 
 function newsCard(row){
  const tags=(row.investmentTags||[]).slice(0,2);
- return `<a class="news-card" href="${esc(row.url||'#')}" target="_blank" rel="noopener noreferrer"><div class="news-meta"><span>${esc(displayName(row.symbol,row.name))}</span><small>${esc(row.source||'뉴스')} · ${esc(timeAgo(row.publishedAt))}</small></div><strong>${esc(row.title||'')}</strong>${tags.length?`<div class="news-tags">${tags.map(t=>`<span>${esc(t)}</span>`).join('')}</div>`:''}<span class="news-arrow">${iconSvg('arrow',18)}</span></a>`;
+ return `<button class="news-card" data-external-url="${esc(row.url||'')}"><div class="news-meta"><span>${esc(displayName(row.symbol,row.name))}</span><small>${esc(row.source||'뉴스')} · ${esc(timeAgo(row.publishedAt))}</small></div><strong>${esc(row.title||'')}</strong>${tags.length?`<div class="news-tags">${tags.map(t=>`<span>${esc(t)}</span>`).join('')}</div>`:''}<span class="news-arrow">${iconSvg('arrow',18)}</span></button>`;
 }
 
 async function renderDiscover(){
@@ -300,12 +309,18 @@ function renderMore(){
      <button class="feature-row" data-tab="news"><span class="feature-icon coral">${iconSvg('news',22)}</span><span><strong>맞춤 뉴스</strong><small>관심종목의 투자 중요 뉴스</small></span><b>${iconSvg('arrow',19)}</b></button>
      <button class="feature-row" data-tab="watch"><span class="feature-icon slate">${iconSvg('star',22)}</span><span><strong>관심종목</strong><small>내 종목을 한 곳에서 관리</small></span><b>${iconSvg('arrow',19)}</b></button>
    </div>
-   <div class="version-card"><span class="brand-mark">${iconSvg('spark',16)}</span><div><strong>Chart View for Toss</strong><small>Preview v0.4 · 기존 Chart View API 연동</small></div></div>
+   <div class="version-card"><span class="brand-mark">${iconSvg('spark',16)}</span><div><strong>Chart View for Toss</strong><small>Preview v0.5 · Apps in Toss SDK 3.x 연동</small></div></div>
  `,'전체');
  bindNav();
 }
 
 function render(){
+ syncNativeBackHandler({
+   isRoot: state.tab==='home',
+   onBack: () => {
+     if(state.tab!=='home') history.back();
+   },
+ });
  if(state.tab==='chart')return renderChart();
  if(state.tab==='watch')return renderWatch();
  if(state.tab==='valuation')return renderValuation();
@@ -318,13 +333,26 @@ function render(){
 }
 
 function syncFromLocation(){
- const raw=location.hash.replace(/^#/,'');
- const [tabRaw,symbolRaw]=raw.split('/');
  const allowed=new Set(['home','chart','watch','valuation','macro','discover','news','detail','more']);
- state.tab=allowed.has(tabRaw)?tabRaw:'home';
- if(state.tab==='detail'&&symbolRaw)state.detailSymbol=decodeURIComponent(symbolRaw);
+ const hashRaw=location.hash.replace(/^#/,'');
+ if(hashRaw){
+   const [tabRaw,symbolRaw]=hashRaw.split('/');
+   state.tab=allowed.has(tabRaw)?tabRaw:'home';
+   if(state.tab==='detail'&&symbolRaw)state.detailSymbol=decodeURIComponent(symbolRaw);
+   return;
+ }
+ const parts=location.pathname.split('/').filter(Boolean).map(decodeURIComponent);
+ const pathTab=parts[0]||'home';
+ if(pathTab==='stock'&&parts[1]){
+   state.tab='detail';
+   state.detailSymbol=parts[1].toUpperCase();
+   return;
+ }
+ const routeAliases={search:'chart',compare:'chart',valuation:'valuation',macro:'macro',discover:'discover',news:'news',watch:'watch'};
+ state.tab=allowed.has(pathTab)?pathTab:(routeAliases[pathTab]||'home');
 }
+
+applyRuntimeClass();
 window.addEventListener('popstate',()=>{syncFromLocation();render()});
 syncFromLocation();
-history.replaceState({tab:state.tab,detailSymbol:state.detailSymbol},'',location.hash||'#home');
 render();
