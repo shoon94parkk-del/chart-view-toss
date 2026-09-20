@@ -10,7 +10,7 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "test": "node tests/ait_contract.cjs",
-    "build": "npm test && vite build",
+    "build": "npm test && vite build && cp package-lock.json dist/package-lock.json",
     "build:ait": "npm test && vite build && ait build",
     "deploy:ait": "ait deploy",
     "preview": "vite preview --host 0.0.0.0"
