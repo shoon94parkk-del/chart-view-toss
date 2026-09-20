@@ -1,42 +1,90 @@
 import './styles.css';
-import { API_BASE, compareStocks, marketNow } from './api.js';
+import { createChart, ColorType } from 'lightweight-charts';
+import { API_BASE, compareStocks, marketNow, searchStocks } from './api.js';
 
 const WATCHLIST_KEY='chartview-toss-watchlist-v1';
+const SELECTED_KEY='chartview-toss-selected-v1';
 const DEFAULTS=[{symbol:'005930.KS',name:'삼성전자'},{symbol:'NVDA',name:'엔비디아'},{symbol:'AAPL',name:'애플'}];
-const state={tab:'home',watchlist:loadWatchlist(),selected:['005930.KS','NVDA','AAPL'],period:'1mo'};
-function loadWatchlist(){try{return JSON.parse(localStorage.getItem(WATCHLIST_KEY))||DEFAULTS}catch{return DEFAULTS}}
-function saveWatchlist(){localStorage.setItem(WATCHLIST_KEY,JSON.stringify(state.watchlist))}
-const icon={home:'⌂',chart:'⌁',watch:'☆',more:'•••'};
-function shell(content,title='차트뷰'){
- return `<main class="app-shell"><header class="topbar"><h1>${title}</h1><button class="icon-button" aria-label="알림">♡</button></header>
- <section class="content">${content}</section>
- <nav class="bottom-nav" aria-label="주요 메뉴">${[['home','홈'],['chart','차트'],['watch','관심'],['more','전체']].map(([id,label])=>`<button data-tab="${id}" class="${state.tab===id?'active':''}"><i>${icon[id]}</i><span>${label}</span></button>`).join('')}</nav></main>`}
+const COLORS=['#3182f6','#f04452','#00a86b','#8b5cf6','#f59f00','#00a8cc'];
+const state={tab:'home',watchlist:load(WATCHLIST_KEY,DEFAULTS),selected:load(SELECTED_KEY,DEFAULTS.map(x=>x.symbol)),period:'1mo'};
+let chartInstance=null;
+let searchSeq=0;
+
+function load(key,fallback){try{return JSON.parse(localStorage.getItem(key))||fallback}catch{return fallback}}
+function persist(){localStorage.setItem(WATCHLIST_KEY,JSON.stringify(state.watchlist));localStorage.setItem(SELECTED_KEY,JSON.stringify(state.selected))}
+const icons={home:'⌂',chart:'⌁',watch:'☆',more:'•••'};
+function shell(content,title='차트뷰'){return `<main class="app-shell"><header class="topbar"><h1>${title}</h1><button class="icon-button" aria-label="관심종목" data-tab="watch">♡</button></header><section class="content">${content}</section><nav class="bottom-nav" aria-label="주요 메뉴">${[['home','홈'],['chart','차트'],['watch','관심'],['more','전체']].map(([id,label])=>`<button data-tab="${id}" class="${state.tab===id?'active':''}"><i>${icons[id]}</i><span>${label}</span></button>`).join('')}</nav></main>`}
 function sectionTitle(title,action=''){return `<div class="section-head"><h2>${title}</h2>${action}</div>`}
-function stockRow(x){return `<button class="stock-row" data-symbol="${x.symbol}"><span class="stock-logo">${x.name.slice(0,1)}</span><span class="stock-copy"><strong>${x.name}</strong><small>${x.symbol}</small></span><span class="chevron">›</span></button>`}
+function stockRow(x){return `<button class="stock-row" data-select-stock="${x.symbol}"><span class="stock-logo">${esc((x.name||x.symbol).slice(0,1))}</span><span class="stock-copy"><strong>${esc(x.name||x.symbol)}</strong><small>${esc(x.symbol)}</small></span><span class="chevron">›</span></button>`}
+function esc(v=''){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+
+function bindNav(){document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{state.tab=b.dataset.tab;render()});document.querySelectorAll('[data-go-chart]').forEach(b=>b.onclick=()=>{state.tab='chart';render()});document.querySelectorAll('[data-select-stock]').forEach(b=>b.onclick=()=>{const s=b.dataset.selectStock;if(!state.selected.includes(s)){state.selected=[s,...state.selected].slice(0,6);persist()}state.tab='chart';render()})}
+function cleanupChart(){if(chartInstance){try{chartInstance.remove()}catch{}chartInstance=null}}
+
 async function renderHome(){
+ cleanupChart();
  document.querySelector('#app').innerHTML=shell(`
  <section class="hero"><p class="hero-kicker">내 투자 한눈에 보기</p><h2>오늘 시장,<br>빠르게 확인해요</h2><button class="search-box" data-go-chart>⌕ <span>종목명이나 티커를 검색해보세요</span></button></section>
  <section class="surface market-surface" id="market-card"><div class="skeleton market"></div></section>
- <section class="section">${sectionTitle('빠른 비교','<button class="text-button" data-go-chart>비교하기</button>')}<div class="ticker-strip">${state.selected.map(x=>`<button data-go-chart>${x}</button>`).join('')}</div></section>
+ <section class="section">${sectionTitle('빠른 비교','<button class="text-button" data-go-chart>비교하기</button>')}<div class="ticker-strip">${state.selected.map(x=>`<button data-go-chart>${esc(x)}</button>`).join('')}</div></section>
  <section class="section">${sectionTitle('내 관심종목','<button class="text-button" data-tab="watch">전체보기</button>')}<div class="list">${state.watchlist.slice(0,4).map(stockRow).join('')}</div></section>`);
- bind();
- try{const d=await marketNow();const m=d?.markets||d?.data||d;document.querySelector('#market-card').innerHTML=`<div class="market-title"><span>시장 현황</span><small>실시간 데이터</small></div><div class="market-summary"><strong>주요 시장 지표</strong><p>차트뷰 서버와 연결됐어요</p></div><details><summary>데이터 자세히</summary><pre>${esc(JSON.stringify(m,null,2).slice(0,1400))}</pre></details>`}
+ bindNav();
+ try{await marketNow();document.querySelector('#market-card').innerHTML=`<div class="market-title"><span>시장 현황</span><small>데이터 연결됨</small></div><div class="market-summary"><strong>오늘 시장도 차트뷰로</strong><p>관심종목과 주요 지표를 빠르게 확인할 수 있어요.</p></div><button class="inline-link" data-go-chart>종목 비교하러 가기 <b>›</b></button>`;bindNav()}
  catch(e){document.querySelector('#market-card').innerHTML=`<div class="empty"><strong>시장 정보를 불러오지 못했어요</strong><span>${esc(e.message)}</span></div>`}
 }
+
 async function renderChart(){
+ cleanupChart();
  document.querySelector('#app').innerHTML=shell(`
- <section class="page-intro"><h2>차트 비교</h2><p>관심 있는 종목의 흐름을 한 번에 비교해요</p></section>
- <button class="search-box">⌕ <span>비교할 종목 추가</span></button>
- <div class="selected-list">${state.selected.map(x=>`<span>${x}</span>`).join('')}</div>
- <div class="segmented">${[['1mo','1개월'],['3mo','3개월'],['6mo','6개월'],['ytd','올해'],['1y','1년']].map(([p,l])=>`<button data-period="${p}" class="${state.period===p?'active':''}">${l}</button>`).join('')}</div>
- <section class="surface chart-surface" id="chart-data"><div class="skeleton chart"></div></section>`,'차트');
- bind();document.querySelectorAll('[data-period]').forEach(b=>b.onclick=()=>{state.period=b.dataset.period;renderChart()});
- try{const d=await compareStocks(state.selected,state.period);document.querySelector('#chart-data').innerHTML=`<div class="market-title"><span>수익률 비교</span><small>${state.period.toUpperCase()}</small></div><div class="chart-placeholder"><strong>데이터 연결 완료</strong><span>다음 단계에서 실차트 렌더러가 연결돼요</span></div><details><summary>원본 데이터</summary><pre>${esc(JSON.stringify(d,null,2).slice(0,3000))}</pre></details>`}
- catch(e){document.querySelector('#chart-data').innerHTML=`<div class="empty"><strong>차트를 불러오지 못했어요</strong><span>${esc(e.message)}</span></div>`}
+ <section class="page-intro"><h2>차트 비교</h2><p>최대 6개 종목의 수익률 흐름을 비교해요</p></section>
+ <div class="search-wrap"><label class="search-box input-box">⌕ <input id="stock-search" placeholder="종목명 · 코드 · 티커 검색" autocomplete="off"></label><div id="search-results" class="search-results"></div></div>
+ <div class="selected-list">${state.selected.map((x,i)=>`<span><i style="background:${COLORS[i%COLORS.length]}"></i>${esc(x)}<button data-remove="${esc(x)}" aria-label="${esc(x)} 제거">×</button></span>`).join('')}</div>
+ <div class="segmented">${[['1mo','1개월'],['3mo','3개월'],['6mo','6개월'],['1y','1년']].map(([p,l])=>`<button data-period="${p}" class="${state.period===p?'active':''}">${l}</button>`).join('')}</div>
+ <section class="surface chart-surface"><div class="chart-heading"><div><strong>수익률 비교</strong><small>기간 시작 = 0%</small></div><span id="chart-status">불러오는 중</span></div><div id="chart-canvas" class="chart-canvas"></div><div id="chart-legend" class="chart-legend"></div></section>`,'차트');
+ bindNav();bindChartControls();await loadChart();
 }
-function renderWatch(){document.querySelector('#app').innerHTML=shell(`<section class="page-intro"><h2>관심종목</h2><p>자주 보는 종목을 모아두세요</p></section><div class="list surface">${state.watchlist.map(stockRow).join('')||'<div class="empty">아직 관심종목이 없어요</div>'}</div>`,'관심종목');bind()}
-function renderMore(){document.querySelector('#app').innerHTML=shell(`<section class="page-intro"><h2>전체</h2><p>차트뷰의 모든 기능</p></section><div class="menu surface"><button data-tab="chart"><span>차트 비교</span><b>›</b></button><button data-tab="watch"><span>관심종목</span><b>›</b></button><button><span>밸류에이션</span><em>준비 중</em></button><button><span>경제 지표</span><em>준비 중</em></button><button><span>종목 발굴</span><em>준비 중</em></button></div><p class="service-note">Chart View · API ${esc(API_BASE)}</p>`,'전체');bind()}
-function bind(){document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{state.tab=b.dataset.tab;render()});document.querySelectorAll('[data-go-chart]').forEach(b=>b.onclick=()=>{state.tab='chart';render()})}
-function esc(v=''){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+
+function bindChartControls(){
+ document.querySelectorAll('[data-period]').forEach(b=>b.onclick=()=>{state.period=b.dataset.period;renderChart()});
+ document.querySelectorAll('[data-remove]').forEach(b=>b.onclick=()=>{state.selected=state.selected.filter(x=>x!==b.dataset.remove);persist();renderChart()});
+ const input=document.querySelector('#stock-search'),results=document.querySelector('#search-results');
+ let timer;
+ input?.addEventListener('input',()=>{clearTimeout(timer);const q=input.value.trim();if(!q){results.innerHTML='';return}timer=setTimeout(()=>runSearch(q,results),220)});
+}
+
+async function runSearch(q,container){
+ const seq=++searchSeq;
+ try{const d=await searchStocks(q);if(seq!==searchSeq)return;const rows=(d?.results||[]).slice(0,6);container.innerHTML=rows.map(r=>`<button data-result="${esc(r.symbol)}" data-name="${esc(r.name||r.symbol)}"><span><strong>${esc(r.name||r.symbol)}</strong><small>${esc(r.symbol)}</small></span><b>추가</b></button>`).join('')||'<div class="search-empty">검색 결과가 없어요</div>';container.querySelectorAll('[data-result]').forEach(b=>b.onclick=()=>addSelected(b.dataset.result,b.dataset.name))}
+ catch{container.innerHTML='<div class="search-empty">검색을 완료하지 못했어요</div>'}
+}
+
+function addSelected(symbol,name){
+ if(state.selected.includes(symbol)){document.querySelector('#search-results').innerHTML='';document.querySelector('#stock-search').value='';return}
+ if(state.selected.length>=6){document.querySelector('#search-results').innerHTML='<div class="search-empty">최대 6개까지 비교할 수 있어요</div>';return}
+ state.selected.push(symbol);
+ if(!state.watchlist.some(x=>x.symbol===symbol))state.watchlist.unshift({symbol,name:name||symbol});
+ persist();renderChart();
+}
+
+async function loadChart(){
+ const canvas=document.querySelector('#chart-canvas'),status=document.querySelector('#chart-status'),legend=document.querySelector('#chart-legend');
+ if(!state.selected.length){status.textContent='종목을 추가해주세요';canvas.innerHTML='<div class="empty"><strong>비교할 종목이 없어요</strong><span>위 검색창에서 종목을 추가해보세요</span></div>';return}
+ try{
+   const data=await compareStocks(state.selected,state.period);
+   const stocks=Array.isArray(data?.stocks)?data.stocks.filter(s=>Array.isArray(s.data)&&s.data.length):[];
+   if(!stocks.length)throw new Error('표시할 시세 데이터가 없어요');
+   chartInstance=createChart(canvas,{width:canvas.clientWidth||320,height:278,layout:{background:{type:ColorType.Solid,color:'#ffffff'},textColor:'#8b95a1',fontFamily:'Pretendard, -apple-system, sans-serif'},grid:{vertLines:{color:'#f2f4f6'},horzLines:{color:'#f2f4f6'}},rightPriceScale:{borderVisible:false},timeScale:{borderVisible:false,timeVisible:false},crosshair:{vertLine:{color:'#d1d6db'},horzLine:{color:'#d1d6db'}}});
+   stocks.forEach((s,i)=>{const line=chartInstance.addLineSeries({color:COLORS[i%COLORS.length],lineWidth:2,priceLineVisible:false,lastValueVisible:false});line.setData(s.data)});
+   chartInstance.timeScale().fitContent();
+   const ro=new ResizeObserver(()=>{if(chartInstance&&canvas.clientWidth)chartInstance.applyOptions({width:canvas.clientWidth})});ro.observe(canvas);
+   legend.innerHTML=stocks.map((s,i)=>`<div><i style="background:${COLORS[i%COLORS.length]}"></i><span>${esc(s.name||s.ticker)}</span><strong class="${Number(s.return)>=0?'up':'down'}">${Number(s.return)>=0?'+':''}${esc(s.return)}%</strong></div>`).join('');
+   status.textContent=data?.timestamp?'최신 데이터':'조회 완료';
+ }catch(e){status.textContent='오류';canvas.innerHTML=`<div class="empty"><strong>차트를 불러오지 못했어요</strong><span>${esc(e.message)}</span><button class="retry" id="retry-chart">다시 시도</button></div>`;document.querySelector('#retry-chart')?.addEventListener('click',loadChart)}
+}
+
+function renderWatch(){
+ cleanupChart();document.querySelector('#app').innerHTML=shell(`<section class="page-intro"><h2>관심종목</h2><p>자주 보는 종목을 모아두세요</p></section><div class="list surface watch-list">${state.watchlist.map(x=>`<div class="watch-row">${stockRow(x)}<button class="heart active" data-unwatch="${esc(x.symbol)}">♥</button></div>`).join('')||'<div class="empty">아직 관심종목이 없어요</div>'}</div>`,'관심종목');bindNav();document.querySelectorAll('[data-unwatch]').forEach(b=>b.onclick=e=>{e.stopPropagation();state.watchlist=state.watchlist.filter(x=>x.symbol!==b.dataset.unwatch);persist();renderWatch()})
+}
+function renderMore(){cleanupChart();document.querySelector('#app').innerHTML=shell(`<section class="page-intro"><h2>전체</h2><p>차트뷰의 모든 기능</p></section><div class="menu surface"><button data-tab="chart"><span>차트 비교</span><b>›</b></button><button data-tab="watch"><span>관심종목</span><b>›</b></button><button><span>밸류에이션</span><em>다음 업데이트</em></button><button><span>경제 지표</span><em>다음 업데이트</em></button><button><span>종목 발굴</span><em>다음 업데이트</em></button></div><p class="service-note">Chart View for Toss · v0.2</p>`,'전체');bindNav()}
 function render(){if(state.tab==='chart')return renderChart();if(state.tab==='watch')return renderWatch();if(state.tab==='more')return renderMore();return renderHome()}
 render();
