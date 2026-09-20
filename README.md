@@ -13,7 +13,7 @@ Chart View의 앱인토스 전용 클라이언트 프로젝트입니다.
 
 ## Current status
 
-v0.3 preview:
+v0.4 preview:
 - Toss-style mobile information hierarchy and bottom navigation
 - safe-area support
 - home / chart / watchlist / more screens
@@ -26,6 +26,10 @@ v0.3 preview:
 - live market cards with Korean-friendly labels
 - valuation comparison screen (FWD PER, PER, PBR, ROE, margin, dividend yield)
 - macro indicators screen with market-environment summary
+- stock detail screen with 3-month chart, valuation metrics, watchlist actions, and related news
+- discovery screen using screener score / volume / trend signals
+- personalized watchlist-news screen
+- in-app hash/history navigation with back behavior
 
 ## Architecture
 
@@ -33,7 +37,5 @@ The Toss client is deployed as a Render Static Site and reuses the existing Char
 
 ## Next
 
-- stock screener
-- personalized news
-- Apps in Toss bridge / back-button behavior
+- Apps in Toss bridge integration beyond browser-history fallback
 - sandbox / QR validation and release checklist
