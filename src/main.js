@@ -117,11 +117,17 @@ async function renderHome(){
 async function renderChart(){
  cleanupChart();
  document.querySelector('#app').innerHTML=shell(`
- <section class="page-intro"><h2>차트 비교</h2><p>최대 6개 종목의 수익률 흐름을 비교해요</p></section>
- <div class="search-wrap"><label class="search-box input-box">⌕ <input id="stock-search" placeholder="종목명 · 코드 · 티커 검색" autocomplete="off"></label><div id="search-results" class="search-results"></div></div>
- <div class="selected-list">${state.selected.map((x,i)=>`<span><i style="background:${COLORS[i%COLORS.length]}"></i>${esc(x)}<button data-remove="${esc(x)}" aria-label="${esc(x)} 제거">×</button></span>`).join('')}</div>
- <div class="segmented">${[['1mo','1개월'],['3mo','3개월'],['6mo','6개월'],['1y','1년']].map(([p,l])=>`<button data-period="${p}" class="${state.period===p?'active':''}">${l}</button>`).join('')}</div>
- <section class="surface chart-surface"><div class="chart-heading"><div><strong>수익률 비교</strong><small>기간 시작 = 0%</small></div><span id="chart-status">불러오는 중</span></div><div id="chart-canvas" class="chart-canvas"></div><div id="chart-legend" class="chart-legend"></div></section>`,'차트');
+ <section class="page-intro rich-intro subpage-hero chart-hero">
+   <span class="page-kicker">COMPARE</span><h2>종목 흐름을<br><em>한 화면에서</em> 비교해요</h2><p>기간을 바꿔가며 최대 6개 종목의 상대 수익률을 살펴보세요.</p>
+ </section>
+ <section class="subpage-tool-card">
+   <div class="tool-card-head"><span class="mini-icon blue">${iconSvg('search',19)}</span><div><strong>비교할 종목</strong><small>종목명 · 코드 · 티커로 검색</small></div></div>
+   <div class="search-wrap"><label class="search-box input-box">${iconSvg('search',19)} <input id="stock-search" placeholder="예: 삼성전자, NVDA" autocomplete="off"></label><div id="search-results" class="search-results"></div></div>
+   <div class="selected-list rich-selected">${state.selected.map((x,i)=>`<span><i style="background:${COLORS[i%COLORS.length]}"></i><b>${esc(displayName(x))}</b><small>${esc(x)}</small><button data-remove="${esc(x)}" aria-label="${esc(x)} 제거">×</button></span>`).join('')}</div>
+ </section>
+ <section id="chart-insight" class="compare-insight skeleton insight"></section>
+ <div class="segmented period-tabs">${[['1mo','1개월'],['3mo','3개월'],['6mo','6개월'],['1y','1년']].map(([p,l])=>`<button data-period="${p}" class="${state.period===p?'active':''}">${l}</button>`).join('')}</div>
+ <section class="surface chart-surface elevated-panel"><div class="chart-heading"><div><span class="eyebrow">PERFORMANCE</span><strong>수익률 비교</strong><small>선택 기간의 시작값을 0%로 맞췄어요</small></div><span id="chart-status">불러오는 중</span></div><div id="chart-canvas" class="chart-canvas"></div><div id="chart-legend" class="chart-legend"></div></section>`,'차트');
  bindNav();bindChartControls();await loadChart();
 }
 
@@ -158,37 +164,94 @@ async function loadChart(){
    stocks.forEach((s,i)=>{const line=chartInstance.addLineSeries({color:COLORS[i%COLORS.length],lineWidth:2,priceLineVisible:false,lastValueVisible:false});line.setData(s.data)});
    chartInstance.timeScale().fitContent();
    const ro=new ResizeObserver(()=>{if(chartInstance&&canvas.clientWidth)chartInstance.applyOptions({width:canvas.clientWidth})});ro.observe(canvas);
-   legend.innerHTML=stocks.map((s,i)=>`<div><i style="background:${COLORS[i%COLORS.length]}"></i><span>${esc(s.name||s.ticker)}</span><strong class="${Number(s.return)>=0?'up':'down'}">${Number(s.return)>=0?'+':''}${esc(s.return)}%</strong></div>`).join('');
+   legend.innerHTML=stocks.map((s,i)=>`<div><i style="background:${COLORS[i%COLORS.length]}"></i><span>${esc(displayName(s.ticker,s.name||s.ticker))}</span><strong class="${Number(s.return)>=0?'up':'down'}">${Number(s.return)>=0?'+':''}${esc(s.return)}%</strong></div>`).join('');
+   const sorted=[...stocks].filter(s=>Number.isFinite(Number(s.return))).sort((a,b)=>Number(b.return)-Number(a.return));
+   const lead=sorted[0],lag=sorted.at(-1);
+   const insight=document.querySelector('#chart-insight');
+   if(insight){insight.classList.remove('skeleton','insight');insight.innerHTML=`<div class="compare-insight-main"><span class="mini-icon blue">${iconSvg('chart',20)}</span><div><span>선택 기간 요약</span><strong>${lead?`${esc(displayName(lead.ticker,lead.name))} ${Number(lead.return)>=0?'+':''}${esc(lead.return)}%`:'데이터 확인 중'}</strong><small>현재 선택 종목 중 수익률이 가장 높아요</small></div></div><div class="compare-insight-side"><span>범위</span><strong>${lead&&lag?esc((Number(lead.return)-Number(lag.return)).toFixed(1)+'%p'):'-'}</strong><small>최고 ↔ 최저</small></div>`;}
    status.textContent=data?.timestamp?'최신 데이터':'조회 완료';
  }catch(e){status.textContent='오류';canvas.innerHTML=`<div class="empty"><strong>차트를 불러오지 못했어요</strong><span>${esc(e.message)}</span><button class="retry" id="retry-chart">다시 시도</button></div>`;document.querySelector('#retry-chart')?.addEventListener('click',loadChart)}
 }
 
-function renderWatch(){
- cleanupChart();document.querySelector('#app').innerHTML=shell(`<section class="page-intro"><h2>관심종목</h2><p>자주 보는 종목을 모아두세요</p></section><div class="list surface watch-list">${state.watchlist.map(x=>`<div class="watch-row">${stockRow(x)}<button class="heart active" data-unwatch="${esc(x.symbol)}">♥</button></div>`).join('')||'<div class="empty">아직 관심종목이 없어요</div>'}</div>`,'관심종목');bindNav();document.querySelectorAll('[data-unwatch]').forEach(b=>b.onclick=e=>{e.stopPropagation();state.watchlist=state.watchlist.filter(x=>x.symbol!==b.dataset.unwatch);persist();renderWatch()})
+async function renderWatch(){
+ cleanupChart();
+ document.querySelector('#app').innerHTML=shell(`
+ <section class="page-intro rich-intro subpage-hero watch-hero"><span class="page-kicker">MY WATCHLIST</span><h2>내가 보는 종목을<br><em>빠르게</em> 확인해요</h2><p>가격과 주요 밸류에이션을 한 번에 보고 상세 화면으로 이동할 수 있어요.</p></section>
+ <div class="watch-summary-row"><div class="summary-chip blue"><span>관심종목</span><strong>${state.watchlist.length}</strong><small>개</small></div><div class="summary-chip purple"><span>비교 선택</span><strong>${state.selected.length}</strong><small>/ 6</small></div></div>
+ <div id="watch-rich-list" class="watch-rich-list">${state.watchlist.length?'<div class="skeleton watch-large"></div><div class="skeleton watch-large"></div>':'<div class="empty"><strong>아직 관심종목이 없어요</strong><span>차트 검색에서 종목을 추가해보세요</span></div>'}</div>`,'관심종목');
+ bindNav();
+ if(!state.watchlist.length)return;
+ try{
+   const tickers=state.watchlist.slice(0,20).map(x=>x.symbol);
+   const d=await valuationStocks(tickers);
+   const rows=Array.isArray(d?.stocks)?d.stocks:[];
+   document.querySelector('#watch-rich-list').innerHTML=state.watchlist.map((x,i)=>{
+     const s=rows.find(r=>r.ticker===x.symbol)||{};
+     const name=displayName(x.symbol,x.name);
+     return `<article class="watch-detail-card"><button class="watch-main" data-stock-detail="${esc(x.symbol)}"><span class="stock-logo tone-${i%4}">${esc(name.slice(0,1))}</span><span class="watch-main-copy"><strong>${esc(name)}</strong><small>${esc(x.symbol)} · ${esc(s.sector||'')}</small><span class="watch-metrics"><b>FWD PER ${s.forwardPE==null?'-':esc(Number(s.forwardPE).toFixed(1))}</b><b>ROE ${s.roe==null?'-':esc(Number(s.roe).toFixed(1)+'%')}</b></span></span><span class="watch-card-price"><strong>${s.price==null?'-':esc(fmtPrice(s.price))}</strong><small>${esc(s.currency||'')}</small><i>${iconSvg('arrow',18)}</i></span></button><button class="watch-remove" data-unwatch="${esc(x.symbol)}" aria-label="${esc(name)} 관심 해제">${iconSvg('heart',18)}</button></article>`;
+   }).join('');
+   bindNav();
+   document.querySelectorAll('[data-unwatch]').forEach(b=>b.onclick=e=>{e.stopPropagation();state.watchlist=state.watchlist.filter(x=>x.symbol!==b.dataset.unwatch);persist();haptic('tickWeak');renderWatch()});
+ }catch(e){
+   document.querySelector('#watch-rich-list').innerHTML=state.watchlist.map((x,i)=>`<article class="watch-detail-card"><button class="watch-main" data-stock-detail="${esc(x.symbol)}"><span class="stock-logo tone-${i%4}">${esc(displayName(x.symbol,x.name).slice(0,1))}</span><span class="watch-main-copy"><strong>${esc(displayName(x.symbol,x.name))}</strong><small>${esc(x.symbol)}</small></span><span class="watch-card-price"><small>상세 보기</small><i>${iconSvg('arrow',18)}</i></span></button><button class="watch-remove" data-unwatch="${esc(x.symbol)}">${iconSvg('heart',18)}</button></article>`).join('');
+   bindNav();document.querySelectorAll('[data-unwatch]').forEach(b=>b.onclick=e=>{e.stopPropagation();state.watchlist=state.watchlist.filter(x=>x.symbol!==b.dataset.unwatch);persist();renderWatch()});
+ }
 }
 async function renderValuation(){
  cleanupChart();
- document.querySelector('#app').innerHTML=shell(`<section class="page-intro"><h2>밸류에이션</h2><p>선택한 종목의 핵심 지표를 비교해요</p></section><div class="selected-list">${state.selected.map(x=>`<span>${esc(displayName(x))}<small>${esc(x)}</small></span>`).join('')}</div><div id="valuation-list" class="valuation-list"><div class="skeleton valuation"></div><div class="skeleton valuation"></div></div>`,'밸류에이션');
+ document.querySelector('#app').innerHTML=shell(`
+ <section class="page-intro rich-intro subpage-hero valuation-hero"><span class="page-kicker">VALUATION</span><h2>가격보다 중요한 건<br><em>가치의 맥락</em>이에요</h2><p>선택한 종목의 가치·수익성 지표를 같은 기준으로 비교해요.</p></section>
+ <section class="subpage-tool-card compact-tool"><div class="tool-card-head"><span class="mini-icon purple">${iconSvg('value',19)}</span><div><strong>비교 중인 종목</strong><small>차트에서 선택한 종목이 자동으로 연결돼요</small></div><button class="text-button" data-tab="chart">종목 변경</button></div><div class="selected-list valuation-selected">${state.selected.map((x,i)=>`<span><span class="mini-orb tone-${i%4}">${esc(displayName(x).slice(0,1))}</span><b>${esc(displayName(x))}</b><small>${esc(x)}</small></span>`).join('')}</div></section>
+ <section id="valuation-overview" class="valuation-overview"><div class="skeleton insight"></div></section>
+ <div class="section-head valuation-section-head"><div><span class="eyebrow">COMPANY METRICS</span><h2>종목별 핵심 지표</h2></div><small>같은 지표끼리 비교해보세요</small></div>
+ <div id="valuation-list" class="valuation-list"><div class="skeleton valuation"></div><div class="skeleton valuation"></div></div>`,'밸류에이션');
  bindNav();
  try{
    const d=await valuationStocks(state.selected);
    const rows=Array.isArray(d?.stocks)?d.stocks:[];
-   document.querySelector('#valuation-list').innerHTML=rows.map(s=>`<section class="valuation-card"><div class="valuation-title"><div><strong>${esc(displayName(s.ticker,s.name))}</strong><small>${esc(s.ticker)} · ${esc(s.sector||'섹터 정보 없음')}</small></div><div><b>${esc(fmtPrice(s.price))}</b><small>${esc(s.currency||'')}</small></div></div><div class="metric-grid">${[['FWD PER',s.forwardPE,'배'],['PER',s.trailingPE,'배'],['PBR',s.pbr,'배'],['ROE',s.roe,'%'],['영업이익률',s.operatingMargin,'%'],['배당수익률',s.dividendYield,'%']].map(([label,v,suffix])=>`<div><span>${label}</span><strong>${v===null||v===undefined?'-':esc(Number(v).toLocaleString('ko-KR',{maximumFractionDigits:2})+suffix)}</strong></div>`).join('')}</div></section>`).join('')||'<div class="empty"><strong>밸류에이션 데이터가 없어요</strong><span>차트에서 종목을 추가해보세요</span></div>';
- }catch(e){document.querySelector('#valuation-list').innerHTML=`<div class="empty"><strong>밸류에이션을 불러오지 못했어요</strong><span>${esc(e.message)}</span><button class="retry" id="retry-valuation">다시 시도</button></div>`;document.querySelector('#retry-valuation')?.addEventListener('click',renderValuation)}
+   if(!rows.length)throw new Error('표시할 밸류에이션 데이터가 없어요');
+
+   const finite=(key)=>rows.filter(r=>Number.isFinite(Number(r[key])));
+   const minFwd=finite('forwardPE').sort((a,b)=>Number(a.forwardPE)-Number(b.forwardPE))[0];
+   const maxRoe=finite('roe').sort((a,b)=>Number(b.roe)-Number(a.roe))[0];
+   const maxDiv=finite('dividendYield').sort((a,b)=>Number(b.dividendYield)-Number(a.dividendYield))[0];
+   document.querySelector('#valuation-overview').innerHTML=`
+     <div class="overview-card primary"><span class="overview-icon">${iconSvg('value',21)}</span><div><span>선택 종목 요약</span><strong>${rows.length}개 종목을 같은 기준으로 비교 중</strong><small>낮거나 높은 수치는 투자 추천이 아니라 단순 지표 비교예요.</small></div></div>
+     <div class="overview-mini-grid">
+       <div class="overview-mini blue"><span>FWD PER 낮음</span><strong>${minFwd?esc(displayName(minFwd.ticker,minFwd.name)):'-'}</strong><small>${minFwd?esc(Number(minFwd.forwardPE).toFixed(1)+'배'):'데이터 없음'}</small></div>
+       <div class="overview-mini green"><span>ROE 높음</span><strong>${maxRoe?esc(displayName(maxRoe.ticker,maxRoe.name)):'-'}</strong><small>${maxRoe?esc(Number(maxRoe.roe).toFixed(1)+'%'):'데이터 없음'}</small></div>
+       <div class="overview-mini yellow"><span>배당률 높음</span><strong>${maxDiv?esc(displayName(maxDiv.ticker,maxDiv.name)):'-'}</strong><small>${maxDiv?esc(Number(maxDiv.dividendYield).toFixed(2)+'%'):'데이터 없음'}</small></div>
+     </div>`;
+
+   document.querySelector('#valuation-list').innerHTML=rows.map((s,i)=>`<section class="valuation-card rich-valuation-card">
+     <button class="valuation-top" data-stock-detail="${esc(s.ticker)}"><span class="stock-logo tone-${i%4}">${esc(displayName(s.ticker,s.name).slice(0,1))}</span><span class="valuation-title-copy"><strong>${esc(displayName(s.ticker,s.name))}</strong><small>${esc(s.ticker)} · ${esc(s.sector||'섹터 정보 없음')}</small></span><span class="valuation-price"><strong>${esc(fmtPrice(s.price))}</strong><small>${esc(s.currency||'')}</small><i>${iconSvg('arrow',18)}</i></span></button>
+     <div class="metric-grid rich-metrics">
+       ${[['FWD PER',s.forwardPE,'배','가격 기대'],['PER',s.trailingPE,'배','현재 이익'],['PBR',s.pbr,'배','순자산 대비'],['ROE',s.roe,'%','자본 효율'],['영업이익률',s.operatingMargin,'%','본업 수익성'],['배당수익률',s.dividendYield,'%','현금 환원']].map(([label,v,suffix,hint],j)=>`<div class="metric-cell tone-bg-${j%3}"><span>${label}</span><strong>${v===null||v===undefined?'-':esc(Number(v).toLocaleString('ko-KR',{maximumFractionDigits:2})+suffix)}</strong><small>${hint}</small></div>`).join('')}
+     </div></section>`).join('');
+   bindNav();
+ }catch(e){document.querySelector('#valuation-overview').innerHTML='';document.querySelector('#valuation-list').innerHTML=`<div class="empty"><strong>밸류에이션을 불러오지 못했어요</strong><span>${esc(e.message)}</span><button class="retry" id="retry-valuation">다시 시도</button></div>`;document.querySelector('#retry-valuation')?.addEventListener('click',renderValuation)}
 }
 
 async function renderMacro(){
  cleanupChart();
- document.querySelector('#app').innerHTML=shell(`<section class="page-intro"><h2>경제 지표</h2><p>시장 환경을 움직이는 핵심 지표를 확인해요</p></section><div id="macro-summary" class="macro-summary skeleton"></div><div id="macro-list" class="macro-list"><div class="skeleton macro"></div><div class="skeleton macro"></div><div class="skeleton macro"></div></div>`,'경제 지표');
+ document.querySelector('#app').innerHTML=shell(`
+ <section class="page-intro rich-intro subpage-hero macro-hero"><span class="page-kicker">MACRO</span><h2>시장의 온도를<br><em>숫자로</em> 확인해요</h2><p>금리·유동성·위험 지표의 최신 흐름을 한 번에 살펴보세요.</p></section>
+ <div id="macro-summary" class="macro-summary rich-macro-summary skeleton"></div>
+ <div class="section-head macro-section-head"><div><span class="eyebrow">MARKET PULSE</span><h2>핵심 경제 지표</h2></div><small id="macro-basis">업데이트 중</small></div>
+ <div id="macro-list" class="macro-grid"><div class="skeleton macro-tile"></div><div class="skeleton macro-tile"></div><div class="skeleton macro-tile"></div><div class="skeleton macro-tile"></div></div>`,'경제 지표');
  bindNav();
  try{
    const d=await macroData();
    const s=d?.summary||{};
-   document.querySelector('#macro-summary').classList.remove('skeleton');
-   document.querySelector('#macro-summary').innerHTML=`<span class="signal ${esc(s.level||'yellow')}"></span><div><strong>시장 환경 요약</strong><p>${esc(s.text||'최신 경제 지표를 확인했어요.')}</p><small>${esc(s.latestBasisDate||d?.basis?.latest||'')} 기준</small></div>`;
+   const level=s.level||'yellow';
+   const label=level==='green'?'우호적':level==='red'?'주의':'혼조';
+   const summary=document.querySelector('#macro-summary');
+   summary.classList.remove('skeleton');
+   summary.innerHTML=`<div class="macro-signal-orb ${esc(level)}"><span></span></div><div class="macro-summary-copy"><span>현재 시장 환경 <b class="status-badge ${esc(level)}">${label}</b></span><strong>${esc(s.text||'최신 경제 지표를 확인했어요.')}</strong><small>${esc(s.latestBasisDate||d?.basis?.latest||'')} 기준 · 지표의 방향과 절대 수준을 함께 보세요</small></div>`;
+   const basis=document.querySelector('#macro-basis');if(basis)basis.textContent=`${esc(s.latestBasisDate||d?.basis?.latest||'최신')} 기준`;
    const rows=(d?.results||[]).slice(0,8);
-   document.querySelector('#macro-list').innerHTML=rows.map(r=>`<article class="macro-card"><div><strong>${esc(r.name||r.symbol)}</strong><small>${esc(r.asOf||'')}</small></div><div><b>${esc(fmtPrice(r.value))}</b><em class="${Number(r.change)>0?'up':Number(r.change)<0?'down':'flat'}">${esc(fmtChange(r.change))}</em></div></article>`).join('');
- }catch(e){document.querySelector('#macro-list').innerHTML=`<div class="empty"><strong>경제 지표를 불러오지 못했어요</strong><span>${esc(e.message)}</span><button class="retry" id="retry-macro">다시 시도</button></div>`;document.querySelector('#retry-macro')?.addEventListener('click',renderMacro)}
+   document.querySelector('#macro-list').innerHTML=rows.map((r,i)=>{const ch=Number(r.change);return `<article class="macro-tile tone-macro-${i%4}"><div class="macro-tile-top"><span class="macro-index">${String(i+1).padStart(2,'0')}</span><small>${esc(r.asOf||'')}</small></div><strong>${esc(r.name||r.symbol)}</strong><div class="macro-value"><b>${esc(fmtPrice(r.value))}</b><em class="${ch>0?'up':ch<0?'down':'flat'}">${esc(fmtChange(r.change))}</em></div><div class="macro-motion"><span></span></div></article>`}).join('')||'<div class="empty"><strong>표시할 경제 지표가 없어요</strong></div>';
+ }catch(e){document.querySelector('#macro-summary').classList.remove('skeleton');document.querySelector('#macro-summary').innerHTML=`<div class="macro-summary-copy"><span>데이터 확인 필요</span><strong>경제 지표 연결을 확인하고 있어요</strong><small>잠시 후 다시 시도해주세요.</small></div>`;document.querySelector('#macro-list').innerHTML=`<div class="empty"><strong>경제 지표를 불러오지 못했어요</strong><span>${esc(e.message)}</span><button class="retry" id="retry-macro">다시 시도</button></div>`;document.querySelector('#retry-macro')?.addEventListener('click',renderMacro)}
 }
 
 function timeAgo(value){
