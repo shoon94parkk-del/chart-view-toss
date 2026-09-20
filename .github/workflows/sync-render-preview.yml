@@ -1,0 +1,23 @@
+name: Sync Render preview branch
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Keep Render branch identical to main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git push origin HEAD:refs/heads/feat/apps-in-toss-mvp --force-with-lease
