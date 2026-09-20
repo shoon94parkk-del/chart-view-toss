@@ -1,6 +1,6 @@
 import './styles.css';
 import { createChart, ColorType } from 'lightweight-charts';
-import { API_BASE, compareStocks, marketNow, homeSnapshot, searchStocks, valuationStocks, macroData } from './api.js';
+import { API_BASE, compareStocks, marketNow, homeSnapshot, searchStocks, valuationStocks, macroData, homeInsights, personalizedNews } from './api.js';
 
 const WATCHLIST_KEY='chartview-toss-watchlist-v1';
 const SELECTED_KEY='chartview-toss-selected-v1';
@@ -10,7 +10,7 @@ const DISPLAY_NAMES={'005930.KS':'삼성전자','000660.KS':'SK하이닉스','NV
 const displayName=(symbol,fallback='')=>DISPLAY_NAMES[symbol]||fallback||symbol;
 const fmtPrice=(value)=>{const n=Number(value);if(!Number.isFinite(n))return '-';if(Math.abs(n)>=1000)return n.toLocaleString('ko-KR',{maximumFractionDigits:2});if(Math.abs(n)>=100)return n.toLocaleString('ko-KR',{maximumFractionDigits:2});return n.toLocaleString('ko-KR',{maximumFractionDigits:3})};
 const fmtChange=(value)=>{const n=Number(value);if(!Number.isFinite(n))return '-';return `${n>0?'+':''}${n.toFixed(2)}%`};
-const state={tab:'home',watchlist:load(WATCHLIST_KEY,DEFAULTS),selected:load(SELECTED_KEY,DEFAULTS.map(x=>x.symbol)),period:'1mo'};
+const state={tab:'home',watchlist:load(WATCHLIST_KEY,DEFAULTS),selected:load(SELECTED_KEY,DEFAULTS.map(x=>x.symbol)),period:'1mo',detailSymbol:null};
 let chartInstance=null;
 let searchSeq=0;
 
@@ -28,17 +28,29 @@ function iconSvg(name,size=24){
   value:'<circle cx="12" cy="12" r="9"/><path d="M8 9.5h8M8 14.5h8M10 7v10M14 7v10"/>',
   macro:'<path d="M4 19h16"/><path d="M6 16V9m6 7V5m6 11v-4"/>',
   star:'<path d="m12 3 2.75 5.57 6.15.9-4.45 4.33 1.05 6.12L12 17.03l-5.5 2.89 1.05-6.12L3.1 9.47l6.15-.9L12 3Z"/>',
-  arrow:'<path d="m9 6 6 6-6 6"/>'
+  arrow:'<path d="m9 6 6 6-6 6"/>',
+  back:'<path d="m15 18-6-6 6-6"/>',
+  news:'<path d="M5 4h14v16H5z"/><path d="M8 8h8M8 12h8M8 16h5"/>',
+  discover:'<path d="M4 18 9 12l4 3 7-9"/><path d="M16 6h4v4"/>'
  };
  return `<svg viewBox="0 0 24 24" width="${size}" height="${size}" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${paths[name]||paths.more}</svg>`;
 }
 function shell(content,title='차트뷰'){
- return `<main class="app-shell"><header class="topbar"><div class="brand-lockup"><span class="brand-mark">${iconSvg('spark',18)}</span><h1>${title}</h1></div><button class="icon-button" aria-label="관심종목" data-tab="watch">${iconSvg('heart',22)}</button></header><section class="content">${content}</section><nav class="bottom-nav" aria-label="주요 메뉴">${[['home','홈'],['chart','차트'],['watch','관심'],['more','전체']].map(([id,label])=>`<button data-tab="${id}" class="${state.tab===id?'active':''}"><i>${iconSvg(id,22)}</i><span>${label}</span></button>`).join('')}</nav></main>`}
+ const secondary=['valuation','macro','discover','news','detail'].includes(state.tab);
+ const navTab=secondary?'more':state.tab;
+ const leading=secondary?`<button class="icon-button back-button" aria-label="뒤로가기" data-back>${iconSvg('back',22)}</button>`:`<span class="brand-mark">${iconSvg('spark',18)}</span>`;
+ return `<main class="app-shell"><header class="topbar"><div class="brand-lockup">${leading}<h1>${title}</h1></div><button class="icon-button" aria-label="관심종목" data-tab="watch">${iconSvg('heart',22)}</button></header><section class="content">${content}</section><nav class="bottom-nav" aria-label="주요 메뉴">${[['home','홈'],['chart','차트'],['watch','관심'],['more','전체']].map(([id,label])=>`<button data-tab="${id}" class="${navTab===id?'active':''}"><i>${iconSvg(id,22)}</i><span>${label}</span></button>`).join('')}</nav></main>`}
 function sectionTitle(title,action=''){return `<div class="section-head"><h2>${title}</h2>${action}</div>`}
-function stockRow(x){const name=displayName(x.symbol,x.name);return `<button class="stock-row" data-select-stock="${x.symbol}"><span class="stock-logo">${esc(name.slice(0,1))}</span><span class="stock-copy"><strong>${esc(name)}</strong><small>${esc(x.symbol)}</small></span><span class="chevron">›</span></button>`}
+function stockRow(x){const name=displayName(x.symbol,x.name);return `<button class="stock-row" data-stock-detail="${x.symbol}"><span class="stock-logo">${esc(name.slice(0,1))}</span><span class="stock-copy"><strong>${esc(name)}</strong><small>${esc(x.symbol)}</small></span><span class="chevron">${iconSvg('arrow',18)}</span></button>`}
 function esc(v=''){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 
-function bindNav(){document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{state.tab=b.dataset.tab;render()});document.querySelectorAll('[data-go-chart]').forEach(b=>b.onclick=()=>{state.tab='chart';render()});document.querySelectorAll('[data-select-stock]').forEach(b=>b.onclick=()=>{const s=b.dataset.selectStock;if(!state.selected.includes(s)){state.selected=[s,...state.selected].slice(0,6);persist()}state.tab='chart';render()})}
+function navigate(tab,detailSymbol=null,replace=false){state.tab=tab;if(detailSymbol)state.detailSymbol=detailSymbol;const hash=detailSymbol?`#${tab}/${encodeURIComponent(detailSymbol)}`:`#${tab}`;const payload={tab,detailSymbol:state.detailSymbol};if(replace)history.replaceState(payload,'',hash);else history.pushState(payload,'',hash);render()}
+function bindNav(){
+ document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>navigate(b.dataset.tab));
+ document.querySelectorAll('[data-go-chart]').forEach(b=>b.onclick=()=>navigate('chart'));
+ document.querySelectorAll('[data-stock-detail]').forEach(b=>b.onclick=()=>navigate('detail',b.dataset.stockDetail));
+ document.querySelectorAll('[data-back]').forEach(b=>b.onclick=()=>{if(history.length>1)history.back();else navigate('more',null,true)});
+}
 function cleanupChart(){if(chartInstance){try{chartInstance.remove()}catch{}chartInstance=null}}
 
 async function renderHome(){
@@ -82,7 +94,7 @@ async function renderHome(){
 
    const quotes=home?.heatmap?.results||[];
    const watch=state.watchlist.slice(0,4);
-   document.querySelector('#home-watchlist').innerHTML=watch.map((x,i)=>{const q=quotes.find(r=>r.ticker===x.symbol);const ch=Number(q?.change);const name=displayName(x.symbol,x.name);return `<button class="watch-rich-row" data-select-stock="${esc(x.symbol)}"><span class="stock-logo tone-${i%4}">${esc(name.slice(0,1))}</span><span class="stock-copy"><strong>${esc(name)}</strong><small>${esc(x.symbol)}</small></span><span class="watch-price">${q?.price!=null?`<strong>${esc(fmtPrice(q.price))}</strong><em class="${ch>0?'up':ch<0?'down':'flat'}">${esc(fmtChange(q.change))}</em>`:'<small>차트 보기</small>'}</span><span class="chevron">${iconSvg('arrow',18)}</span></button>`}).join('');
+   document.querySelector('#home-watchlist').innerHTML=watch.map((x,i)=>{const q=quotes.find(r=>r.ticker===x.symbol);const ch=Number(q?.change);const name=displayName(x.symbol,x.name);return `<button class="watch-rich-row" data-stock-detail="${esc(x.symbol)}"><span class="stock-logo tone-${i%4}">${esc(name.slice(0,1))}</span><span class="stock-copy"><strong>${esc(name)}</strong><small>${esc(x.symbol)}</small></span><span class="watch-price">${q?.price!=null?`<strong>${esc(fmtPrice(q.price))}</strong><em class="${ch>0?'up':ch<0?'down':'flat'}">${esc(fmtChange(q.change))}</em>`:'<small>차트 보기</small>'}</span><span class="chevron">${iconSvg('arrow',18)}</span></button>`}).join('');
    bindNav();
  }catch(e){
    const time=document.querySelector('#market-time');if(time)time.textContent='연결 확인 필요';
