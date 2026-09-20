@@ -171,3 +171,9 @@ svg{display:block}
 .version-card{display:flex;align-items:center;gap:10px;margin:20px 0 4px;padding:14px;border-radius:17px;background:#f7f8fa}.version-card strong,.version-card small{display:block}.version-card strong{font-size:12px}.version-card small{font-size:10px;color:#8b95a1;margin-top:3px}
 .empty.compact{min-height:110px}
 .skeleton.metric{height:74px}
+
+/* Apps in Toss native shell owns the top navigation bar. Keep the custom top bar only for web preview. */
+html[data-ait-runtime="true"] .topbar{display:none}
+html[data-ait-runtime="true"] .app-shell{padding-top:4px}
+html[data-ait-runtime="true"] .content{min-height:calc(100vh - 90px)}
+.news-card{width:100%;font:inherit;text-align:left}
