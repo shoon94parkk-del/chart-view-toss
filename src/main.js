@@ -36,11 +36,16 @@ function iconSvg(name,size=24){
  };
  return `<svg viewBox="0 0 24 24" width="${size}" height="${size}" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${paths[name]||paths.more}</svg>`;
 }
+function dataDisclosure(){
+ return `<aside class="data-disclosure"><div><strong>데이터 이용 안내</strong><span>시세·재무·뉴스 데이터는 제공처 상황에 따라 지연·누락·오류가 있을 수 있으며 투자 권유가 아니에요.</span></div><button data-tab="info">자세히</button></aside>`;
+}
 function shell(content,title='차트뷰'){
- const secondary=['valuation','macro','discover','news','detail'].includes(state.tab);
+ const secondary=['valuation','macro','discover','news','detail','info'].includes(state.tab);
  const navTab=secondary?'more':state.tab;
  const leading=secondary?`<button class="icon-button back-button" aria-label="뒤로가기" data-back>${iconSvg('back',22)}</button>`:`<span class="brand-mark">${iconSvg('spark',18)}</span>`;
- return `<main class="app-shell"><header class="topbar"><div class="brand-lockup">${leading}<h1>${title}</h1></div><button class="icon-button" aria-label="관심종목" data-tab="watch">${iconSvg('heart',22)}</button></header><section class="content">${content}</section><nav class="bottom-nav" aria-label="주요 메뉴">${[['home','홈'],['chart','차트'],['watch','관심'],['more','전체']].map(([id,label])=>`<button data-tab="${id}" class="${navTab===id?'active':''}"><i>${iconSvg(id,22)}</i><span>${label}</span></button>`).join('')}</nav></main>`}
+ const offline=typeof navigator!=='undefined'&&navigator.onLine===false;
+ return `<main class="app-shell">${offline?'<div class="network-banner" role="status">인터넷 연결이 끊어졌어요. 연결되면 다시 시도해주세요.</div>':''}<header class="topbar"><div class="brand-lockup">${leading}<h1>${title}</h1></div><button class="icon-button" aria-label="관심종목" data-tab="watch">${iconSvg('heart',22)}</button></header><section class="content">${content}${state.tab==='info'?'':dataDisclosure()}</section><nav class="bottom-nav" aria-label="주요 메뉴">${[['home','홈'],['chart','차트'],['watch','관심'],['more','전체']].map(([id,label])=>`<button data-tab="${id}" class="${navTab===id?'active':''}"><i>${iconSvg(id,22)}</i><span>${label}</span></button>`).join('')}</nav></main>`;
+}
 function sectionTitle(title,action=''){return `<div class="section-head"><h2>${title}</h2>${action}</div>`}
 function stockRow(x){const name=displayName(x.symbol,x.name);return `<button class="stock-row" data-stock-detail="${x.symbol}"><span class="stock-logo">${esc(name.slice(0,1))}</span><span class="stock-copy"><strong>${esc(name)}</strong><small>${esc(x.symbol)}</small></span><span class="chevron">${iconSvg('arrow',18)}</span></button>`}
 function esc(v=''){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
@@ -360,6 +365,23 @@ async function renderNews(){
  }catch(e){document.querySelector('#news-list').innerHTML=`<div class="empty"><strong>뉴스를 불러오지 못했어요</strong><span>${esc(e.message)}</span><button class="retry" id="retry-news">다시 시도</button></div>`;document.querySelector('#retry-news')?.addEventListener('click',renderNews)}
 }
 
+function renderInfo(){
+ cleanupChart();
+ const origin=location.origin;
+ document.querySelector('#app').innerHTML=shell(`
+   <section class="page-intro rich-intro subpage-hero info-hero"><span class="page-kicker">DATA & SERVICE</span><h2>숫자를 보기 전에<br><em>기준부터</em> 확인하세요</h2><p>Chart View가 데이터를 보여주는 방식과 이용 시 알아둘 내용을 정리했어요.</p></section>
+   <section class="info-stack">
+     <article class="info-card"><span class="info-icon blue">${iconSvg('chart',21)}</span><div><strong>시세·차트 데이터</strong><p>시장 데이터는 외부 데이터 제공처와 Chart View 백엔드를 통해 표시돼요. 거래소 실시간 체결값과 차이가 있거나 갱신이 지연될 수 있어요.</p></div></article>
+     <article class="info-card"><span class="info-icon purple">${iconSvg('value',21)}</span><div><strong>재무·밸류에이션</strong><p>PER, PBR, ROE, 배당수익률 등은 제공처의 최신 가용 재무 데이터를 사용하며 보고 시점·회계 기준에 따라 값이 달라질 수 있어요.</p></div></article>
+     <article class="info-card"><span class="info-icon green">${iconSvg('macro',21)}</span><div><strong>경제 지표</strong><p>각 지표의 발표 주기가 달라 동일 시점 데이터가 아닐 수 있어요. 화면에 표시된 기준일을 함께 확인해주세요.</p></div></article>
+     <article class="info-card"><span class="info-icon coral">${iconSvg('news',21)}</span><div><strong>뉴스</strong><p>뉴스는 외부 매체의 기사 제목·링크를 모아 보여주며 기사 내용과 정확성에 대한 책임은 해당 제공처에 있어요.</p></div></article>
+   </section>
+   <section class="release-notice"><strong>투자 판단 안내</strong><p>Chart View의 모든 정보와 탐색 점수는 정보 제공 목적이며 특정 종목의 매수·매도 또는 투자 성과를 보장하거나 권유하지 않아요. 최종 투자 판단은 이용자가 직접 해야 해요.</p></section>
+   <div class="policy-links"><button data-external-url="${esc(origin+'/privacy.html')}"><span>개인정보 처리 안내</span>${iconSvg('arrow',18)}</button><button data-external-url="${esc(origin+'/terms.html')}"><span>서비스 이용 안내</span>${iconSvg('arrow',18)}</button><button data-external-url="${esc(origin+'/data-guide.html')}"><span>데이터 기준 전체 보기</span>${iconSvg('arrow',18)}</button></div>
+ `,'데이터 안내');
+ bindNav();
+}
+
 function renderMore(){
  cleanupChart();
  document.querySelector('#app').innerHTML=shell(`
@@ -369,10 +391,11 @@ function renderMore(){
      <button class="feature-row" data-tab="valuation"><span class="feature-icon purple">${iconSvg('value',22)}</span><span><strong>밸류에이션</strong><small>PER · PBR · ROE 비교</small></span><b>${iconSvg('arrow',19)}</b></button>
      <button class="feature-row" data-tab="macro"><span class="feature-icon green">${iconSvg('macro',22)}</span><span><strong>경제 지표</strong><small>금리 · 유동성 · 위험 신호</small></span><b>${iconSvg('arrow',19)}</b></button>
      <button class="feature-row" data-tab="discover"><span class="feature-icon yellow">${iconSvg('discover',22)}</span><span><strong>종목 발굴</strong><small>거래량·추세 신호로 탐색</small></span><b>${iconSvg('arrow',19)}</b></button>
-     <button class="feature-row" data-tab="news"><span class="feature-icon coral">${iconSvg('news',22)}</span><span><strong>맞춤 뉴스</strong><small>관심종목의 투자 중요 뉴스</small></span><b>${iconSvg('arrow',19)}</b></button>
+     <button class="feature-row" data-tab="news"><span class="feature-icon coral">${iconSvg('news',22)}</span><span><strong>맞춤 뉴스</strong><small>관심종목의 주요 뉴스</small></span><b>${iconSvg('arrow',19)}</b></button>
      <button class="feature-row" data-tab="watch"><span class="feature-icon slate">${iconSvg('star',22)}</span><span><strong>관심종목</strong><small>내 종목을 한 곳에서 관리</small></span><b>${iconSvg('arrow',19)}</b></button>
+     <button class="feature-row" data-tab="info"><span class="feature-icon blue">${iconSvg('spark',22)}</span><span><strong>데이터 및 이용 안내</strong><small>데이터 기준·지연·투자 판단 안내</small></span><b>${iconSvg('arrow',19)}</b></button>
    </div>
-   <div class="version-card"><span class="brand-mark">${iconSvg('spark',16)}</span><div><strong>Chart View for Toss</strong><small>Preview v0.5 · Apps in Toss SDK 3.x 연동</small></div></div>
+   <div class="version-card"><span class="brand-mark">${iconSvg('spark',16)}</span><div><strong>Chart View for Toss</strong><small>Release candidate v0.7 · P0 hardening</small></div></div>
  `,'전체');
  bindNav();
 }
@@ -391,12 +414,13 @@ function render(){
  if(state.tab==='discover')return renderDiscover();
  if(state.tab==='news')return renderNews();
  if(state.tab==='detail')return renderDetail();
+ if(state.tab==='info')return renderInfo();
  if(state.tab==='more')return renderMore();
  return renderHome();
 }
 
 function syncFromLocation(){
- const allowed=new Set(['home','chart','watch','valuation','macro','discover','news','detail','more']);
+ const allowed=new Set(['home','chart','watch','valuation','macro','discover','news','detail','info','more']);
  const hashRaw=location.hash.replace(/^#/,'');
  if(hashRaw){
    const [tabRaw,symbolRaw]=hashRaw.split('/');
@@ -411,11 +435,13 @@ function syncFromLocation(){
    state.detailSymbol=parts[1].toUpperCase();
    return;
  }
- const routeAliases={search:'chart',compare:'chart',valuation:'valuation',macro:'macro',discover:'discover',news:'news',watch:'watch'};
+ const routeAliases={search:'chart',compare:'chart',valuation:'valuation',macro:'macro',discover:'discover',news:'news',watch:'watch',info:'info'};
  state.tab=allowed.has(pathTab)?pathTab:(routeAliases[pathTab]||'home');
 }
 
 applyRuntimeClass();
 window.addEventListener('popstate',()=>{syncFromLocation();render()});
+window.addEventListener('online',()=>render());
+window.addEventListener('offline',()=>render());
 syncFromLocation();
 render();
