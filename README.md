@@ -72,13 +72,12 @@ Completed in code:
 - AIT contract validation and bundle pipeline
 
 Operational gates still required before public release:
-- commit `package-lock.json` and switch CI/builds to `npm ci`
+- package-lock.json committed and Apps in Toss CI uses `npm ci`
 - keep the Render preview branch synchronized with `main`
 - move the shared Chart View API off Render Free before public launch
 - run Android and iOS Sandbox/QR validation on real devices
 
 ## Next
 
-- finish reproducible lockfile/CI setup
 - build a fresh `.ait` release candidate
 - run Sandbox / QR validation on Android and iOS
