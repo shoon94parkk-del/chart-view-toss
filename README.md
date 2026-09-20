@@ -13,7 +13,7 @@ Chart View의 앱인토스 전용 클라이언트 프로젝트입니다.
 
 ## Current status
 
-v0.4 preview:
+v0.5 preview:
 - Toss-style mobile information hierarchy and bottom navigation
 - safe-area support
 - home / chart / watchlist / more screens
@@ -30,12 +30,33 @@ v0.4 preview:
 - discovery screen using screener score / volume / trend signals
 - personalized watchlist-news screen
 - in-app hash/history navigation with back behavior
+- Apps in Toss WebView SDK 3.4.1 pinned
+- `apps-in-toss.config.ts` for `chartview` with native navigation bar enabled
+- native back-event bridge on sub-pages while preserving the platform root-exit behavior
+- native `Device.openURL` for news links with browser fallback
+- best-effort native haptic feedback with browser-safe fallback
+- Apps in Toss runtime hides the duplicate custom top bar and defers to the native navigation bar
+- `/chart`, `/valuation`, `/macro`, `/discover`, `/news`, `/watch`, `/stock/:symbol` entry-route support for future major-feature deep links
+- AIT contract checks run before every Render web build
 
 ## Architecture
 
 The Toss client is deployed as a Render Static Site and reuses the existing Chart View FastAPI backend. The production web repository is kept isolated from Toss-specific UI changes.
 
+## Apps in Toss build
+
+The Render preview still uses `npm run build`. For the actual mini-app bundle:
+
+```bash
+npm install
+npm run build:ait
+```
+
+The 3.x configuration lives in `apps-in-toss.config.ts`. The current app key is `chartview`.
+
 ## Next
 
-- Apps in Toss bridge integration beyond browser-history fallback
-- sandbox / QR validation and release checklist
+- generate and upload the first `.ait` candidate
+- Sandbox / QR validation on Android and iOS
+- verify native navigation/back behavior and external news opening on device
+- define Apps in Toss major features and release checklist
