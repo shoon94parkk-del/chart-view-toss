@@ -66,6 +66,7 @@ The 3.x configuration lives in `apps-in-toss.config.ts`. The current app key is 
 ## P0 release gates
 
 Completed in code:
+- Render preview alias is automatically synchronized to `main`
 - API timeout/retry/offline handling
 - data-use disclosure and policy pages
 - Node 24 runtime pinning
@@ -73,7 +74,6 @@ Completed in code:
 
 Operational gates still required before public release:
 - package-lock.json committed and Apps in Toss CI uses `npm ci`
-- keep the Render preview branch synchronized with `main`
 - move the shared Chart View API off Render Free before public launch
 - run Android and iOS Sandbox/QR validation on real devices
 
