@@ -1,15 +1,17 @@
 {
   "name": "chart-view-toss",
   "private": true,
-  "version": "0.2.0",
+  "version": "0.5.0",
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
+    "build:ait": "vite build && ait build",
+    "deploy:ait": "ait deploy",
     "preview": "vite preview --host 0.0.0.0"
   },
   "dependencies": {
-    "@apps-in-toss/web-framework": "latest",
+    "@apps-in-toss/web-framework": "3.4.1",
     "lightweight-charts": "^4.1.0"
   },
   "devDependencies": {
