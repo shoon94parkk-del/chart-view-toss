@@ -35,3 +35,7 @@ These routes are already recognized by the client so the Apps in Toss console ca
 8. Re-check loading, empty, offline, and provider-error states on a real device.
 
 Render remains the browser preview only. The actual Apps in Toss release artifact is the `.ait` bundle.
+
+## CI verification
+
+This document update intentionally triggers the Apps in Toss bundle workflow after the workflow itself landed on `main`.
