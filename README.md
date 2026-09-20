@@ -13,7 +13,7 @@ Chart View의 앱인토스 전용 클라이언트 프로젝트입니다.
 
 ## Current status
 
-v0.5 preview:
+v0.6 preview:
 - Toss-style mobile information hierarchy and bottom navigation
 - safe-area support
 - home / chart / watchlist / more screens
@@ -38,6 +38,11 @@ v0.5 preview:
 - Apps in Toss runtime hides the duplicate custom top bar and defers to the native navigation bar
 - `/chart`, `/valuation`, `/macro`, `/discover`, `/news`, `/watch`, `/stock/:symbol` entry-route support for future major-feature deep links
 - AIT contract checks run before every Render web build
+- secondary-screen visual refresh: chart comparison, valuation, macro, and watchlist now share the richer home visual language
+- valuation overview cards summarize selected-stock FWD PER / ROE / dividend-yield comparisons
+- chart comparison shows a selected-period leader/range summary
+- macro indicators use visual tiles and a market-environment hero card
+- watchlist cards include price and quick valuation context
 
 ## Architecture
 
