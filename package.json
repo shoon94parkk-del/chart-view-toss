@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
-    "build": "vite build",
-    "build:ait": "vite build && ait build",
+    "test": "node tests/ait_contract.cjs",
+    "build": "npm test && vite build",
+    "build:ait": "npm test && vite build && ait build",
     "deploy:ait": "ait deploy",
     "preview": "vite preview --host 0.0.0.0"
   },
