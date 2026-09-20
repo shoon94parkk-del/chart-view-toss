@@ -72,7 +72,7 @@ Completed in code:
 - AIT contract validation and bundle pipeline
 
 Operational gates still required before public release:
-- commit `package-lock.json` and switch CI/builds to `npm ci`
+- commit `package-lock.json` and switch CI/builds to `npm ci` (lockfile CI enabled)
 - point the Render preview deployment branch to `main`
 - move the shared Chart View API off Render Free before public launch
 - run Android and iOS Sandbox/QR validation on real devices
