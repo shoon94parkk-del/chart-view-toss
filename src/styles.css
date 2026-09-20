@@ -228,3 +228,13 @@ html[data-ait-runtime="true"] .content{min-height:calc(100vh - 90px)}
  .macro-grid{grid-template-columns:1fr 1fr}
  .watch-main{padding-right:44px}
 }
+
+/* v0.7 release hardening */
+.network-banner{margin:0 -20px 8px;padding:10px 20px;background:#fff2cc;color:#8b5f00;font-size:12px;font-weight:700;text-align:center;border-bottom:1px solid #ffe39a}
+.data-disclosure{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin:30px 0 10px;padding:15px 16px;border-radius:16px;background:#f7f8fa;color:#6b7684}
+.data-disclosure strong,.data-disclosure span{display:block}.data-disclosure strong{font-size:11px;color:#4e5968}.data-disclosure span{font-size:11px;line-height:1.55;margin-top:4px}
+.data-disclosure button{border:0;background:transparent;color:#3182f6;font-size:11px;font-weight:800;white-space:nowrap;padding:2px 0}
+.info-hero{background:linear-gradient(150deg,#f4f8ff 0%,#eef5ff 55%,#f8f6ff 100%)}.info-hero:after{background:rgba(49,130,246,.08)}.info-hero h2 em{color:#3182f6}
+.info-stack{display:grid;gap:10px;margin:18px 0}.info-card{display:flex;gap:12px;align-items:flex-start;border:1px solid #edf0f2;border-radius:18px;padding:16px;background:#fff}.info-icon{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;flex:0 0 auto}.info-icon.blue{background:#e8f3ff;color:#3182f6}.info-icon.purple{background:#eee9ff;color:#6b5ce7}.info-icon.green{background:#e2f8ef;color:#009d66}.info-icon.coral{background:#ffecee;color:#e54855}.info-card strong{font-size:14px}.info-card p{font-size:12px;line-height:1.65;color:#6b7684;margin:5px 0 0}
+.release-notice{border-radius:19px;padding:17px;background:linear-gradient(135deg,#192b47,#2d466d);color:#fff;margin:16px 0}.release-notice strong{font-size:13px}.release-notice p{font-size:11px;line-height:1.65;color:rgba(255,255,255,.72);margin:7px 0 0}
+.policy-links{border:1px solid #edf0f2;border-radius:18px;padding:2px 14px;margin-bottom:12px}.policy-links button{width:100%;height:54px;border:0;border-bottom:1px solid #f2f4f6;background:#fff;display:flex;align-items:center;justify-content:space-between;color:#333d4b;font-size:13px;font-weight:700}.policy-links button:last-child{border-bottom:0}.policy-links svg{color:#b0b8c1}
