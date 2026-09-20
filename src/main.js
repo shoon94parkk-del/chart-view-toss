@@ -1,6 +1,6 @@
 import './styles.css';
 import { createChart, ColorType } from 'lightweight-charts';
-import { API_BASE, compareStocks, marketNow, searchStocks, valuationStocks, macroData } from './api.js';
+import { API_BASE, compareStocks, marketNow, homeSnapshot, searchStocks, valuationStocks, macroData } from './api.js';
 
 const WATCHLIST_KEY='chartview-toss-watchlist-v1';
 const SELECTED_KEY='chartview-toss-selected-v1';
@@ -16,8 +16,24 @@ let searchSeq=0;
 
 function load(key,fallback){try{return JSON.parse(localStorage.getItem(key))||fallback}catch{return fallback}}
 function persist(){localStorage.setItem(WATCHLIST_KEY,JSON.stringify(state.watchlist));localStorage.setItem(SELECTED_KEY,JSON.stringify(state.selected))}
-const icons={home:'⌂',chart:'⌁',watch:'☆',more:'•••'};
-function shell(content,title='차트뷰'){return `<main class="app-shell"><header class="topbar"><h1>${title}</h1><button class="icon-button" aria-label="관심종목" data-tab="watch">♡</button></header><section class="content">${content}</section><nav class="bottom-nav" aria-label="주요 메뉴">${[['home','홈'],['chart','차트'],['watch','관심'],['more','전체']].map(([id,label])=>`<button data-tab="${id}" class="${state.tab===id?'active':''}"><i>${icons[id]}</i><span>${label}</span></button>`).join('')}</nav></main>`}
+function iconSvg(name,size=24){
+ const paths={
+  home:'<path d="M3.5 10.7 12 3.7l8.5 7v9.1a1.7 1.7 0 0 1-1.7 1.7H5.2a1.7 1.7 0 0 1-1.7-1.7v-9.1Z"/><path d="M9.2 21.5v-7h5.6v7"/>',
+  chart:'<path d="M4 19V9"/><path d="M10 19V5"/><path d="M16 19v-7"/><path d="M22 19V3"/>',
+  watch:'<path d="m12 3 2.75 5.57 6.15.9-4.45 4.33 1.05 6.12L12 17.03l-5.5 2.89 1.05-6.12L3.1 9.47l6.15-.9L12 3Z"/>',
+  more:'<circle cx="5" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.6" fill="currentColor" stroke="none"/>',
+  heart:'<path d="M20.8 4.9a5.4 5.4 0 0 0-7.6 0L12 6.1l-1.2-1.2a5.4 5.4 0 0 0-7.6 7.6L12 21l8.8-8.5a5.4 5.4 0 0 0 0-7.6Z"/>',
+  search:'<circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.2 4.2"/>',
+  spark:'<path d="M3 17 8.5 11l4 3.5L21 5"/><path d="M16 5h5v5"/>',
+  value:'<circle cx="12" cy="12" r="9"/><path d="M8 9.5h8M8 14.5h8M10 7v10M14 7v10"/>',
+  macro:'<path d="M4 19h16"/><path d="M6 16V9m6 7V5m6 11v-4"/>',
+  star:'<path d="m12 3 2.75 5.57 6.15.9-4.45 4.33 1.05 6.12L12 17.03l-5.5 2.89 1.05-6.12L3.1 9.47l6.15-.9L12 3Z"/>',
+  arrow:'<path d="m9 6 6 6-6 6"/>'
+ };
+ return `<svg viewBox="0 0 24 24" width="${size}" height="${size}" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${paths[name]||paths.more}</svg>`;
+}
+function shell(content,title='차트뷰'){
+ return `<main class="app-shell"><header class="topbar"><div class="brand-lockup"><span class="brand-mark">${iconSvg('spark',18)}</span><h1>${title}</h1></div><button class="icon-button" aria-label="관심종목" data-tab="watch">${iconSvg('heart',22)}</button></header><section class="content">${content}</section><nav class="bottom-nav" aria-label="주요 메뉴">${[['home','홈'],['chart','차트'],['watch','관심'],['more','전체']].map(([id,label])=>`<button data-tab="${id}" class="${state.tab===id?'active':''}"><i>${iconSvg(id,22)}</i><span>${label}</span></button>`).join('')}</nav></main>`}
 function sectionTitle(title,action=''){return `<div class="section-head"><h2>${title}</h2>${action}</div>`}
 function stockRow(x){const name=displayName(x.symbol,x.name);return `<button class="stock-row" data-select-stock="${x.symbol}"><span class="stock-logo">${esc(name.slice(0,1))}</span><span class="stock-copy"><strong>${esc(name)}</strong><small>${esc(x.symbol)}</small></span><span class="chevron">›</span></button>`}
 function esc(v=''){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
@@ -28,27 +44,52 @@ function cleanupChart(){if(chartInstance){try{chartInstance.remove()}catch{}char
 async function renderHome(){
  cleanupChart();
  document.querySelector('#app').innerHTML=shell(`
- <section class="hero"><p class="hero-kicker">내 투자 한눈에 보기</p><h2>오늘 시장을<br>빠르게 확인해요</h2><button class="search-box" data-go-chart>⌕ <span>종목명이나 티커를 검색해보세요</span></button></section>
- <section class="market-section"><div class="section-head market-head"><h2>시장</h2><span id="market-time">업데이트 중</span></div><div id="market-card"><div class="market-grid"><div class="skeleton quote"></div><div class="skeleton quote"></div><div class="skeleton quote"></div><div class="skeleton quote"></div></div></div></section>
- <section class="section">${sectionTitle('빠른 비교','<button class="text-button" data-go-chart>비교하기</button>')}<div class="ticker-strip">${state.selected.map(x=>`<button data-go-chart><strong>${esc(displayName(x))}</strong><small>${esc(x)}</small></button>`).join('')}</div></section>
- <section class="section">${sectionTitle('내 관심종목','<button class="text-button" data-tab="watch">전체보기</button>')}<div class="list">${state.watchlist.slice(0,4).map(stockRow).join('')}</div></section>`);
+ <section class="hero">
+   <div class="hero-copy"><span class="hero-badge"><i></i>오늘의 투자 브리핑</span><h2>복잡한 시장도<br><em>한눈에</em> 보면 쉬워져요</h2><p>국내·미국 시장과 내 관심종목을 빠르게 확인해요.</p></div>
+   <button class="search-box elevated" data-go-chart>${iconSvg('search',20)} <span>종목명이나 티커를 검색해보세요</span><b>${iconSvg('arrow',18)}</b></button>
+ </section>
+ <section id="brief-card" class="brief-card skeleton brief"></section>
+ <section class="tool-section">
+   ${sectionTitle('바로가기','<span class="section-caption">자주 쓰는 분석</span>')}
+   <div class="tool-grid">
+     <button class="tool-card blue" data-tab="chart"><span class="tool-icon">${iconSvg('chart',22)}</span><strong>차트 비교</strong><small>수익률 한눈에</small></button>
+     <button class="tool-card purple" data-tab="valuation"><span class="tool-icon">${iconSvg('value',22)}</span><strong>밸류에이션</strong><small>PER · PBR · ROE</small></button>
+     <button class="tool-card green" data-tab="macro"><span class="tool-icon">${iconSvg('macro',22)}</span><strong>경제 지표</strong><small>금리 · 유동성</small></button>
+     <button class="tool-card yellow" data-tab="watch"><span class="tool-icon">${iconSvg('star',22)}</span><strong>관심종목</strong><small>내 종목 모아보기</small></button>
+   </div>
+ </section>
+ <section class="market-section"><div class="section-head market-head"><h2>주요 시장</h2><span id="market-time">업데이트 중</span></div><div id="market-card"><div class="market-grid"><div class="skeleton quote"></div><div class="skeleton quote"></div><div class="skeleton quote"></div><div class="skeleton quote"></div></div></div></section>
+ <section class="section quick-section">${sectionTitle('빠른 비교','<button class="text-button" data-go-chart>직접 비교</button>')}<div class="ticker-strip">${state.selected.map((x,i)=>`<button data-go-chart><span class="ticker-orb tone-${i%4}">${esc(displayName(x).slice(0,1))}</span><span><strong>${esc(displayName(x))}</strong><small>${esc(x)}</small></span><b>${iconSvg('arrow',16)}</b></button>`).join('')}</div></section>
+ <section class="section watch-section">${sectionTitle('내 관심종목','<button class="text-button" data-tab="watch">전체보기</button>')}<div id="home-watchlist" class="watch-card"><div class="skeleton watch"></div><div class="skeleton watch"></div><div class="skeleton watch"></div></div></section>`);
  bindNav();
  try{
-   const data=await marketNow();
-   const rows=Array.isArray(data?.results)?data.results:[];
+   const [market,home]=await Promise.all([marketNow(),homeSnapshot()]);
+   const rows=Array.isArray(market?.results)?market.results:[];
    const preferred=['^KS11','^KQ11','^GSPC','^IXIC'];
    const primary=preferred.map(t=>rows.find(r=>r.ticker===t)).filter(Boolean);
    const shown=(primary.length?primary:rows).slice(0,4);
-   const card=document.querySelector('#market-card');
    const time=document.querySelector('#market-time');
-   if(time)time.textContent=data?.timestamp?`${String(data.timestamp).slice(11,16)} 기준`:'조회 완료';
+   if(time)time.textContent=market?.timestamp?`${String(market.timestamp).slice(11,16)} 기준`:'조회 완료';
    if(!shown.length)throw new Error('표시할 시장 데이터가 없어요');
-   card.innerHTML=`<div class="market-grid">${shown.map(row=>{const ch=Number(row.change);return `<button class="quote-card" data-go-chart><span>${esc(displayName(row.ticker,row.name))}</span><strong>${esc(fmtPrice(row.price))}</strong><em class="${ch>0?'up':ch<0?'down':'flat'}">${esc(fmtChange(row.change))}</em></button>`}).join('')}</div>`;
+   document.querySelector('#market-card').innerHTML=`<div class="market-grid">${shown.map((row,i)=>{const ch=Number(row.change);const region=i<2?'KR':'US';return `<button class="quote-card market-${i}" data-go-chart><div class="quote-top"><span class="market-pill">${region}</span><small>${esc(displayName(row.ticker,row.name))}</small></div><strong>${esc(fmtPrice(row.price))}</strong><em class="${ch>0?'up':ch<0?'down':'flat'}">${esc(fmtChange(row.change))}</em><span class="quote-wave"></span></button>`}).join('')}</div>`;
+
+   const macro=home?.macro?.summary||{};
+   const level=macro.level||'yellow';
+   const levelText=level==='green'?'우호적':level==='red'?'주의':'혼조';
+   const brief=document.querySelector('#brief-card');
+   brief.classList.remove('skeleton','brief');
+   brief.innerHTML=`<div class="brief-icon ${esc(level)}">${iconSvg('spark',24)}</div><div class="brief-copy"><span>오늘의 시장 분위기 <b class="status-badge ${esc(level)}">${levelText}</b></span><strong>${esc((macro.text||'시장 주요 지표를 확인하고 있어요.').split('→')[0].trim().slice(0,72))}</strong><small>${esc(macro.latestBasisDate||home?.generatedAt?.slice?.(0,10)||'')} 기준 · 자세한 내용은 경제 지표에서 확인</small></div><button data-tab="macro" aria-label="경제 지표 보기">${iconSvg('arrow',20)}</button>`;
+
+   const quotes=home?.heatmap?.results||[];
+   const watch=state.watchlist.slice(0,4);
+   document.querySelector('#home-watchlist').innerHTML=watch.map((x,i)=>{const q=quotes.find(r=>r.ticker===x.symbol);const ch=Number(q?.change);const name=displayName(x.symbol,x.name);return `<button class="watch-rich-row" data-select-stock="${esc(x.symbol)}"><span class="stock-logo tone-${i%4}">${esc(name.slice(0,1))}</span><span class="stock-copy"><strong>${esc(name)}</strong><small>${esc(x.symbol)}</small></span><span class="watch-price">${q?.price!=null?`<strong>${esc(fmtPrice(q.price))}</strong><em class="${ch>0?'up':ch<0?'down':'flat'}">${esc(fmtChange(q.change))}</em>`:'<small>차트 보기</small>'}</span><span class="chevron">${iconSvg('arrow',18)}</span></button>`}).join('');
    bindNav();
  }catch(e){
    const time=document.querySelector('#market-time');if(time)time.textContent='연결 확인 필요';
    document.querySelector('#market-card').innerHTML=`<div class="market-error"><div><strong>시장 정보를 불러오지 못했어요</strong><span>${esc(e.message)}</span></div><button id="retry-market">다시 시도</button></div>`;
-   document.querySelector('#retry-market')?.addEventListener('click',renderHome);
+   const brief=document.querySelector('#brief-card');if(brief){brief.classList.remove('skeleton','brief');brief.innerHTML=`<div class="brief-icon yellow">${iconSvg('spark',24)}</div><div class="brief-copy"><span>데이터 연결 확인 중</span><strong>잠시 후 다시 확인해주세요</strong><small>차트와 관심종목 기능은 계속 사용할 수 있어요.</small></div>`;}
+   document.querySelector('#home-watchlist').innerHTML=state.watchlist.slice(0,4).map(stockRow).join('');
+   bindNav();document.querySelector('#retry-market')?.addEventListener('click',renderHome);
  }
 }
 
