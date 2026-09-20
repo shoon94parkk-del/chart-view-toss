@@ -1,6 +1,6 @@
 import './styles.css';
 import { createChart, ColorType } from 'lightweight-charts';
-import { API_BASE, compareStocks, marketNow, searchStocks } from './api.js';
+import { API_BASE, compareStocks, marketNow, searchStocks, valuationStocks, macroData } from './api.js';
 
 const WATCHLIST_KEY='chartview-toss-watchlist-v1';
 const SELECTED_KEY='chartview-toss-selected-v1';
@@ -104,6 +104,31 @@ async function loadChart(){
 function renderWatch(){
  cleanupChart();document.querySelector('#app').innerHTML=shell(`<section class="page-intro"><h2>관심종목</h2><p>자주 보는 종목을 모아두세요</p></section><div class="list surface watch-list">${state.watchlist.map(x=>`<div class="watch-row">${stockRow(x)}<button class="heart active" data-unwatch="${esc(x.symbol)}">♥</button></div>`).join('')||'<div class="empty">아직 관심종목이 없어요</div>'}</div>`,'관심종목');bindNav();document.querySelectorAll('[data-unwatch]').forEach(b=>b.onclick=e=>{e.stopPropagation();state.watchlist=state.watchlist.filter(x=>x.symbol!==b.dataset.unwatch);persist();renderWatch()})
 }
-function renderMore(){cleanupChart();document.querySelector('#app').innerHTML=shell(`<section class="page-intro"><h2>전체</h2><p>차트뷰의 모든 기능</p></section><div class="menu surface"><button data-tab="chart"><span>차트 비교</span><b>›</b></button><button data-tab="watch"><span>관심종목</span><b>›</b></button><button><span>밸류에이션</span><em>다음 업데이트</em></button><button><span>경제 지표</span><em>다음 업데이트</em></button><button><span>종목 발굴</span><em>다음 업데이트</em></button></div><p class="service-note">Chart View for Toss · v0.2</p>`,'전체');bindNav()}
-function render(){if(state.tab==='chart')return renderChart();if(state.tab==='watch')return renderWatch();if(state.tab==='more')return renderMore();return renderHome()}
+async function renderValuation(){
+ cleanupChart();
+ document.querySelector('#app').innerHTML=shell(`<section class="page-intro"><h2>밸류에이션</h2><p>선택한 종목의 핵심 지표를 비교해요</p></section><div class="selected-list">${state.selected.map(x=>`<span>${esc(displayName(x))}<small>${esc(x)}</small></span>`).join('')}</div><div id="valuation-list" class="valuation-list"><div class="skeleton valuation"></div><div class="skeleton valuation"></div></div>`,'밸류에이션');
+ bindNav();
+ try{
+   const d=await valuationStocks(state.selected);
+   const rows=Array.isArray(d?.stocks)?d.stocks:[];
+   document.querySelector('#valuation-list').innerHTML=rows.map(s=>`<section class="valuation-card"><div class="valuation-title"><div><strong>${esc(displayName(s.ticker,s.name))}</strong><small>${esc(s.ticker)} · ${esc(s.sector||'섹터 정보 없음')}</small></div><div><b>${esc(fmtPrice(s.price))}</b><small>${esc(s.currency||'')}</small></div></div><div class="metric-grid">${[['FWD PER',s.forwardPE,'배'],['PER',s.trailingPE,'배'],['PBR',s.pbr,'배'],['ROE',s.roe,'%'],['영업이익률',s.operatingMargin,'%'],['배당수익률',s.dividendYield,'%']].map(([label,v,suffix])=>`<div><span>${label}</span><strong>${v===null||v===undefined?'-':esc(Number(v).toLocaleString('ko-KR',{maximumFractionDigits:2})+suffix)}</strong></div>`).join('')}</div></section>`).join('')||'<div class="empty"><strong>밸류에이션 데이터가 없어요</strong><span>차트에서 종목을 추가해보세요</span></div>';
+ }catch(e){document.querySelector('#valuation-list').innerHTML=`<div class="empty"><strong>밸류에이션을 불러오지 못했어요</strong><span>${esc(e.message)}</span><button class="retry" id="retry-valuation">다시 시도</button></div>`;document.querySelector('#retry-valuation')?.addEventListener('click',renderValuation)}
+}
+
+async function renderMacro(){
+ cleanupChart();
+ document.querySelector('#app').innerHTML=shell(`<section class="page-intro"><h2>경제 지표</h2><p>시장 환경을 움직이는 핵심 지표를 확인해요</p></section><div id="macro-summary" class="macro-summary skeleton"></div><div id="macro-list" class="macro-list"><div class="skeleton macro"></div><div class="skeleton macro"></div><div class="skeleton macro"></div></div>`,'경제 지표');
+ bindNav();
+ try{
+   const d=await macroData();
+   const s=d?.summary||{};
+   document.querySelector('#macro-summary').classList.remove('skeleton');
+   document.querySelector('#macro-summary').innerHTML=`<span class="signal ${esc(s.level||'yellow')}"></span><div><strong>시장 환경 요약</strong><p>${esc(s.text||'최신 경제 지표를 확인했어요.')}</p><small>${esc(s.latestBasisDate||d?.basis?.latest||'')} 기준</small></div>`;
+   const rows=(d?.results||[]).slice(0,8);
+   document.querySelector('#macro-list').innerHTML=rows.map(r=>`<article class="macro-card"><div><strong>${esc(r.name||r.symbol)}</strong><small>${esc(r.asOf||'')}</small></div><div><b>${esc(fmtPrice(r.value))}</b><em class="${Number(r.change)>0?'up':Number(r.change)<0?'down':'flat'}">${esc(fmtChange(r.change))}</em></div></article>`).join('');
+ }catch(e){document.querySelector('#macro-list').innerHTML=`<div class="empty"><strong>경제 지표를 불러오지 못했어요</strong><span>${esc(e.message)}</span><button class="retry" id="retry-macro">다시 시도</button></div>`;document.querySelector('#retry-macro')?.addEventListener('click',renderMacro)}
+}
+
+function renderMore(){cleanupChart();document.querySelector('#app').innerHTML=shell(`<section class="page-intro"><h2>전체</h2><p>차트뷰의 모든 기능</p></section><div class="menu surface"><button data-tab="chart"><span>차트 비교</span><b>›</b></button><button data-tab="watch"><span>관심종목</span><b>›</b></button><button data-tab="valuation"><span>밸류에이션</span><b>›</b></button><button data-tab="macro"><span>경제 지표</span><b>›</b></button><button><span>종목 발굴</span><em>준비 중</em></button><button><span>맞춤 뉴스</span><em>준비 중</em></button></div><p class="service-note">Chart View for Toss · v0.3</p>`,'전체');bindNav()}
+function render(){if(state.tab==='chart')return renderChart();if(state.tab==='watch')return renderWatch();if(state.tab==='valuation')return renderValuation();if(state.tab==='macro')return renderMacro();if(state.tab==='more')return renderMore();return renderHome()}
 render();
