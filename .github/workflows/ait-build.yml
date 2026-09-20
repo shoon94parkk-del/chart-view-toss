@@ -1,0 +1,44 @@
+name: Apps in Toss bundle
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-ait:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build web preview
+        run: npm run build
+
+      - name: Build Apps in Toss bundle
+        run: npm run build:ait
+
+      - name: Verify AIT artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          count="$(find . -type f -name '*.ait' | wc -l)"
+          echo "AIT artifacts: $count"
+          test "$count" -ge 1
+          find . -type f -name '*.ait' -print
+
+      - name: Upload AIT artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: chart-view-toss-ait
+          path: '**/*.ait'
+          if-no-files-found: error
+          retention-days: 14
