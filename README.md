@@ -2,7 +2,7 @@
 
 Chart View의 앱인토스 전용 클라이언트 프로젝트입니다.
 
-- 원본 웹 서비스: `shoon94parkk-del/chart_View` (변경하지 않음)
+- 기존 웹 UI: `shoon94parkk-del/chart_View` (웹 UI 유지, Toss에 필요한 공용 API 계약은 additive 방식으로 확장)
 - 이 저장소: 토스 미니앱 UI/앱 셸 및 연동 전용
 - 원칙: 기존 Chart View API 계약을 재사용하고 앱인토스 전용 변경은 이 저장소에서 격리
 
@@ -13,7 +13,7 @@ Chart View의 앱인토스 전용 클라이언트 프로젝트입니다.
 
 ## Current status
 
-v0.7 release candidate:
+v0.8 release-plan implementation:
 - Toss-style mobile information hierarchy and bottom navigation
 - safe-area support
 - home / chart / watchlist / more screens
@@ -47,6 +47,14 @@ v0.7 release candidate:
 - global data-use disclosure and in-app data/service guide
 - privacy, service-use, and data-methodology static pages
 - Node 24 runtime pinning for Apps in Toss compatibility
+- common stock selector sheet shared by chart / valuation / watchlist
+- data-first Home order: market → watchlist → summary → tools/news
+- chart result table and explicit local-currency / adjusted-close / no-interpolation calculation basis
+- watchlist add/edit/sort and undo delete
+- valuation metric-first cross-company comparison
+- macro unit / observation / change-basis / source presentation
+- news direct-vs-industry relation, reason, language, and major/latest sorting
+- stock detail separates day change from selectable-period return
 
 ## Architecture
 
