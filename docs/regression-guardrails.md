@@ -1,0 +1,35 @@
+# Chart View Toss regression guardrails
+
+Last updated: 2026-09-22
+
+## Repository boundaries
+- Toss UI/SDK changes stay in this repo.
+- Web Chart View UI is not silently ported/replaced from here.
+- Shared backend changes must be additive/compatible unless explicitly coordinated.
+
+## Navigation/runtime
+- Native navigation bar must not be duplicated inside Apps in Toss.
+- Back from a subpage returns within the mini-app; root back preserves platform exit behavior.
+- Deep links for major features remain functional.
+- Scroll restoration must not create stale-page navigation races.
+- Safe-area support remains on mobile devices.
+
+## Data/loading
+- API timeout/retry/offline states remain visible and recoverable.
+- Late/stale responses cannot overwrite a newer route/selection.
+- Partial failures do not blank unrelated valid sections.
+- Chart comparison basis remains explicit: local currency, adjusted-close where applicable, no interpolation.
+- Macro source/unit/observation/change basis remain visible.
+- News direct vs industry/indirect relation remains distinguishable.
+
+## Storage
+- Watchlist and selected tickers remain device-local unless an intentional sync feature is added.
+- Toss storage keys remain isolated from the normal Web app.
+- Reset/delete flows must not leave hidden stale state.
+
+## Release
+- Node 24 / SDK 3.5.0 compatibility is preserved until intentionally upgraded.
+- `npm test` and AIT contract checks must pass.
+- Web preview success is not public-release approval.
+- Android and iOS real-device Sandbox/QR checks remain mandatory release gates.
+- Backend production contract points to `https://chart-view-pkv8.onrender.com` unless deliberately migrated.
