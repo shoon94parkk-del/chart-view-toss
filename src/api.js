@@ -1,5 +1,5 @@
 const DEFAULT_API_BASE = 'https://chart-view-pkv8.onrender.com';
-const DEFAULT_TIMEOUT_MS = 12000;
+const DEFAULT_TIMEOUT_MS = Number(import.meta.env.VITE_CHARTVIEW_API_TIMEOUT_MS || 12000);
 const DEFAULT_RETRIES = 1;
 
 export const API_BASE = (import.meta.env.VITE_CHARTVIEW_API_BASE || DEFAULT_API_BASE).replace(/\/$/, '');

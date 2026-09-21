@@ -1,0 +1,45 @@
+name: Mobile release QA
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  chromium-mobile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.21.0'
+          cache: npm
+      - name: Install app dependencies
+        run: npm ci
+      - name: Install QA browser without changing lockfile
+        run: |
+          npm install --no-save --package-lock=false playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Build preview with short QA timeout
+        env:
+          VITE_CHARTVIEW_API_TIMEOUT_MS: '300'
+        run: npm run build
+      - name: Start preview
+        run: |
+          npm run preview -- --host 127.0.0.1 --port 4173 > /tmp/chart-view-toss-vite.log 2>&1 &
+          for i in {1..30}; do
+            if curl -fsS http://127.0.0.1:4173/ >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/chart-view-toss-vite.log
+          exit 1
+      - name: Run mobile release QA
+        run: node tests/mobile_release_qa.mjs
+      - name: Upload mobile QA screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobile-release-qa-screenshots
+          path: artifacts/mobile-qa
+          if-no-files-found: warn
