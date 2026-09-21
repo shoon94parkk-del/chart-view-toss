@@ -46,7 +46,8 @@
 - [x] 삭제 실행 취소 제공
 - [x] 밸류에이션을 같은 지표별 비교 방식으로 변경
 - [x] 밸류에이션 화면 이탈 없이 종목 변경
-- [ ] 320/360/390/430px 실화면 스크린샷 QA
+- [x] 320/360/390/430px Chromium 자동 스크린샷·가로 오버플로 QA
+- [ ] Android/iOS 실기기 스크린샷 QA
 
 ## 단계 4 — 상세·경제·뉴스·지원
 
@@ -71,7 +72,8 @@
 - [ ] iOS Toss Sandbox/QR
 - [ ] native back / root exit / deep link / external link 복귀
 - [ ] safe area / keyboard / background-resume
-- [ ] slow network / offline / 5xx 주입
+- [x] Chromium 자동 QA에서 timeout / offline / 5xx 주입 검증
+- [ ] 실기기 slow network / offline / 5xx 확인
 - [x] 주요 조작 44px 이상 터치 목표·키보드 focus-visible·reduced-motion 코드 대응
 - [ ] 큰 글꼴·접근성·대비 실측
 
