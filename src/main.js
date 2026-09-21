@@ -1,5 +1,5 @@
 import './styles.css';
-import { createChart, ColorType } from 'lightweight-charts';
+import { createChart, ColorType, LineStyle } from 'lightweight-charts';
 import { API_BASE, quoteSnapshots, compareStocks, marketNow, homeSnapshot, searchStocks, valuationStocks, macroData, homeInsights, personalizedNews } from './api.js';
 import { applyRuntimeClass, haptic, openExternal, syncNativeBackHandler } from './tossBridge.js';
 import { openStockSelector, closeStockSelector } from './stockSelector.js';
@@ -18,6 +18,7 @@ let chartInstance=null;
 let searchSeq=0;
 let chartLoadSeq=0;
 let toastTimer=null;
+const scrollPositions=new Map();
 
 function load(key,fallback){try{return JSON.parse(localStorage.getItem(key))||fallback}catch{return fallback}}
 function persist(){
@@ -97,6 +98,7 @@ function stockRow(x){const name=displayName(x.symbol,x.name);return `<button cla
 function esc(v=''){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 
 function navigate(tab,detailSymbol=null){
+ scrollPositions.set(location.hash||'#home',window.scrollY);
  closeStockSelector();
  state.tab=tab;
  if(detailSymbol)state.detailSymbol=detailSymbol;
@@ -197,7 +199,7 @@ async function renderChart(){
    <section class="task-head"><div><h2>수익률 비교</h2><p>선택한 종목의 기간 수익률을 같은 화면에서 확인해요.</p></div><button class="primary-subtle" id="open-compare-selector">종목 변경</button></section>
    <div class="selected-summary">${state.selected.length?`${state.selected.length}개 종목 · ${state.selected.map(x=>esc(displayName(x))).join(' · ')}`:'비교할 종목을 선택해주세요.'}</div>
    <div class="segmented period-tabs">${[['1mo','1개월'],['3mo','3개월'],['6mo','6개월'],['1y','1년']].map(([p,l])=>`<button data-period="${p}" aria-pressed="${state.period===p}" class="${state.period===p?'active':''}">${l}</button>`).join('')}</div>
-   <section class="surface chart-surface elevated-panel"><div class="chart-heading"><div><strong>기간 수익률</strong><small>각 종목의 첫 가용 관측값을 0%로 표시해요</small></div><span id="chart-status">불러오는 중</span></div><div id="chart-canvas" class="chart-canvas"></div><div id="chart-legend" class="chart-legend"></div></section>
+   <section class="surface chart-surface elevated-panel"><div class="chart-heading"><div><strong>기간 수익률</strong><small>각 종목의 첫 가용 관측값을 0%로 표시해요</small></div><span id="chart-status">불러오는 중</span></div><div class="chart-plot-wrap"><div id="chart-canvas" class="chart-canvas"></div><div id="chart-tooltip" class="chart-tooltip" hidden></div></div><div id="chart-legend" class="chart-legend interactive-legend"></div></section>
    <section id="chart-table-wrap" class="chart-table-wrap"></section>
    <details class="calculation-guide" id="calculation-guide"><summary>계산 기준</summary><div id="calculation-guide-body"><p>계산 기준을 불러오는 중이에요.</p></div></details>
  `,'차트');
@@ -242,10 +244,46 @@ async function loadChart(){
    const stocks=Array.isArray(data?.stocks)?data.stocks.filter(s=>Array.isArray(s.data)&&s.data.length):[];
    if(!stocks.length)throw new Error('표시할 시세 데이터가 없어요');
    chartInstance=createChart(canvas,{width:canvas.clientWidth||320,height:278,layout:{background:{type:ColorType.Solid,color:'#ffffff'},textColor:'#8b95a1',fontFamily:'Pretendard, -apple-system, sans-serif'},grid:{vertLines:{color:'#f2f4f6'},horzLines:{color:'#f2f4f6'}},rightPriceScale:{borderVisible:false},timeScale:{borderVisible:false,timeVisible:false},crosshair:{vertLine:{color:'#d1d6db'},horzLine:{color:'#d1d6db'}}});
-   stocks.forEach((s,i)=>{const line=chartInstance.addLineSeries({color:COLORS[i%COLORS.length],lineWidth:i<3?2:1,priceLineVisible:false,lastValueVisible:false});line.setData(s.data)});
+   const lineStyles=[LineStyle.Solid,LineStyle.Solid,LineStyle.Solid,LineStyle.Dashed,LineStyle.Dotted,LineStyle.LargeDashed];
+   const seriesRows=stocks.map((s,i)=>{
+     const line=chartInstance.addLineSeries({color:COLORS[i%COLORS.length],lineWidth:i<3?2:2,lineStyle:lineStyles[i%lineStyles.length],priceLineVisible:false,lastValueVisible:false});
+     line.setData(s.data);
+     return {stock:s,series:line,index:i,visible:true};
+   });
    chartInstance.timeScale().fitContent();
    const ro=new ResizeObserver(()=>{if(chartInstance&&canvas.clientWidth)chartInstance.applyOptions({width:canvas.clientWidth})});ro.observe(canvas);
-   legend.innerHTML=stocks.map((s,i)=>`<div><i style="background:${COLORS[i%COLORS.length]}"></i><span>${esc(displayName(s.ticker,s.name||s.ticker))}</span><strong class="${Number(s.return)>=0?'up':'down'}">${Number(s.return)>=0?'+':''}${esc(s.return)}%</strong></div>`).join('');
+   const styleName=(i)=>i<3?'실선':i===3?'파선':i===4?'점선':'긴 파선';
+   legend.innerHTML=seriesRows.map(({stock:s,index:i})=>`<button type="button" data-legend-index="${i}" aria-pressed="true"><i class="legend-line legend-line-${i}" style="--legend-color:${COLORS[i%COLORS.length]}"></i><span>${esc(displayName(s.ticker,s.name||s.ticker))}<small>${styleName(i)}</small></span><strong class="${Number(s.return)>=0?'up':'down'}">${Number(s.return)>=0?'+':''}${esc(s.return)}%</strong></button>`).join('');
+   legend.querySelectorAll('[data-legend-index]').forEach((button)=>{
+     button.onclick=()=>{
+       const row=seriesRows[Number(button.dataset.legendIndex)];
+       row.visible=!row.visible;
+       row.series.applyOptions({visible:row.visible});
+       button.classList.toggle('muted',!row.visible);
+       button.setAttribute('aria-pressed',String(row.visible));
+       haptic('tickWeak');
+     };
+   });
+   const tooltip=document.querySelector('#chart-tooltip');
+   chartInstance.subscribeCrosshairMove((param)=>{
+     if(!tooltip)return;
+     if(!param.time||!param.point||param.point.x<0||param.point.y<0||param.point.x>(canvas.clientWidth||0)||param.point.y>278){
+       tooltip.hidden=true;return;
+     }
+     const values=seriesRows.filter(row=>row.visible).map((row)=>{
+       const item=param.seriesData.get(row.series);
+       const value=item&&typeof item==='object'&&'value' in item?Number(item.value):Number(item);
+       if(!Number.isFinite(value))return '';
+       return `<span><i style="background:${COLORS[row.index%COLORS.length]}"></i>${esc(displayName(row.stock.ticker,row.stock.name))}<b>${value>=0?'+':''}${value.toFixed(2)}%</b></span>`;
+     }).filter(Boolean).join('');
+     if(!values){tooltip.hidden=true;return}
+     tooltip.innerHTML=`<strong>${esc(String(param.time))}</strong>${values}`;
+     tooltip.hidden=false;
+     const desiredX=Math.min(Math.max(param.point.x+12,8),(canvas.clientWidth||320)-158);
+     const desiredY=Math.max(param.point.y-16,8);
+     tooltip.style.left=`${desiredX}px`;
+     tooltip.style.top=`${desiredY}px`;
+   });
    table.innerHTML=`<div class="section-head"><h2>종목별 결과</h2><small>${esc(formatKst(data.fetchedAt))} 조회</small></div><div class="return-table">${stocks.map((s,i)=>`<button data-stock-detail="${esc(s.ticker)}"><span><i style="background:${COLORS[i%COLORS.length]}"></i><strong>${esc(displayName(s.ticker,s.name))}</strong><small>${esc(s.startDate||'-')} → ${esc(s.endDate||'-')} · ${esc(currencyLabel(s.currency))}</small></span><b class="${Number(s.return)>=0?'up':'down'}">${Number(s.return)>=0?'+':''}${esc(s.return)}%</b></button>`).join('')}</div>`;
    const basis=data?.comparisonBasis||{};
    const currencies=[...new Set(stocks.map(s=>s.currency).filter(Boolean))];
@@ -617,7 +655,7 @@ function syncFromLocation(){
 }
 
 applyRuntimeClass();
-window.addEventListener('popstate',()=>{syncFromLocation();render()});
+window.addEventListener('popstate',()=>{closeStockSelector();syncFromLocation();render();requestAnimationFrame(()=>window.scrollTo(0,scrollPositions.get(location.hash||'#home')||0))});
 window.addEventListener('online',()=>render());
 window.addEventListener('offline',()=>render());
 syncFromLocation();
