@@ -1,4 +1,5 @@
-const RATE_SYMBOLS = new Set(['T10Y2Y','T10Y3M','BAMLH0A0HYM2','DFII10','T10YIE','PCEPI','PCETRIM12M159SFRBDAL','UNRATE','FEDFUNDS']);
+const SPREAD_SYMBOLS = new Set(['T10Y2Y','T10Y3M','BAMLH0A0HYM2']);
+const RATE_SYMBOLS = new Set(['DFII10','T10YIE','PCEPI','PCETRIM12M159SFRBDAL','UNRATE','FEDFUNDS']);
 
 export function formatKst(value, { dateOnly = false } = {}) {
   if (!value) return '-';
@@ -31,6 +32,7 @@ export function formatMacroValue(row) {
   const n = Number(row?.value);
   if (!Number.isFinite(n)) return '-';
   const symbol = row.original_symbol || row.symbol;
+  if (SPREAD_SYMBOLS.has(symbol)) return `${n.toLocaleString('ko-KR',{maximumFractionDigits:2})}%p`;
   if (RATE_SYMBOLS.has(symbol)) return `${n.toLocaleString('ko-KR',{maximumFractionDigits:2})}%`;
   if (symbol === '^VIX') return n.toLocaleString('ko-KR',{maximumFractionDigits:2});
   if (symbol === 'RRPONTSYD') return `$${n.toLocaleString('ko-KR',{maximumFractionDigits:2})}B`;
@@ -50,7 +52,7 @@ export function formatMacroChange(row) {
   }
   const delta = Number(row.delta);
   const change = Number(row.change);
-  if (RATE_SYMBOLS.has(symbol) && Number.isFinite(delta)) return `${delta>0?'+':''}${(delta*100).toFixed(1)}bp`;
+  if ((SPREAD_SYMBOLS.has(symbol) || RATE_SYMBOLS.has(symbol)) && Number.isFinite(delta)) return `${delta>0?'+':''}${(delta*100).toFixed(1)}bp`;
   if (symbol === '^VIX' && Number.isFinite(delta)) return `${delta>0?'+':''}${delta.toFixed(2)}pt`;
   if (Number.isFinite(change)) return `${change>0?'+':''}${change.toFixed(2)}%`;
   return '비교값 없음';
@@ -95,4 +97,18 @@ export function titleLanguage(title) {
   const korean = (text.match(/[가-힣]/g) || []).length;
   const latin = (text.match(/[A-Za-z]/g) || []).length;
   return latin > korean * 2 ? '영문 원문' : '한국어';
+}
+
+export function macroPublicationLabel(row) {
+  const symbol = row?.original_symbol || row?.symbol;
+  if (symbol === 'PCEPI' || symbol === 'PCETRIM12M159SFRBDAL') {
+    return row?.publishedAt ? `발표 ${formatKst(row.publishedAt,{dateOnly:true})}` : '발표일 메타데이터 미제공';
+  }
+  return row?.publishedAt ? `발표 ${formatKst(row.publishedAt,{dateOnly:true})}` : '';
+}
+
+export function macroSourceUrl(row) {
+  const symbol = String(row?.original_symbol || row?.symbol || '');
+  if (!symbol || symbol.startsWith('^')) return '';
+  return `https://fred.stlouisfed.org/series/${encodeURIComponent(symbol)}`;
 }

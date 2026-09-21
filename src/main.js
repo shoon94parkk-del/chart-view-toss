@@ -3,7 +3,7 @@ import { createChart, ColorType, LineStyle } from 'lightweight-charts';
 import { API_BASE, quoteSnapshots, compareStocks, marketNow, homeSnapshot, searchStocks, valuationStocks, macroData, homeInsights, personalizedNews } from './api.js';
 import { applyRuntimeClass, haptic, openExternal, syncNativeBackHandler } from './tossBridge.js';
 import { openStockSelector, closeStockSelector } from './stockSelector.js';
-import { formatKst, formatCurrencyPrice, formatMacroValue, formatMacroChange, observationLabel, macroCategory, newsRelation, translatedTag, titleLanguage } from './dataPresentation.js';
+import { formatKst, formatCurrencyPrice, formatMacroValue, formatMacroChange, observationLabel, macroCategory, macroPublicationLabel, macroSourceUrl, newsRelation, translatedTag, titleLanguage } from './dataPresentation.js';
 
 const WATCHLIST_KEY='chartview-toss-watchlist-v1';
 const SELECTED_KEY='chartview-toss-selected-v1';
@@ -439,7 +439,7 @@ async function renderMacro(){
    const groups=new Map();
    (d?.results||[]).forEach(row=>{const category=macroCategory(row);if(!groups.has(category))groups.set(category,[]);groups.get(category).push(row)});
    const order=['금리','물가','유동성','위험','고용','경기','기타'];
-   document.querySelector('#macro-groups').innerHTML=order.filter(k=>groups.has(k)).map(category=>`<section class="macro-group"><div class="section-head"><h2>${category}</h2><small>${groups.get(category).length}개 지표</small></div><div class="macro-grid">${groups.get(category).map((r,i)=>{const change=formatMacroChange(r);return `<article class="macro-tile neutral-macro"><div class="macro-tile-top"><span class="macro-symbol">${esc(r.symbol||r.original_symbol||'')}</span><small class="${r.stale?'stale-text':''}">${r.stale?'직전값 유지':'정상'}</small></div><strong>${esc(r.name||r.symbol)}</strong><div class="macro-value"><b>${esc(formatMacroValue(r))}</b><em>${esc(change)}</em></div><p>${esc(r.desc||'')}</p><div class="macro-meta-line"><span>${esc(observationLabel(r))}</span><span>${esc(r.changeBasis||'이전 관측 대비')}</span></div><small class="source-line">${esc(r.source||'출처 미제공')}</small></article>`}).join('')}</div></section>`).join('');
+   document.querySelector('#macro-groups').innerHTML=order.filter(k=>groups.has(k)).map(category=>`<section class="macro-group"><div class="section-head"><h2>${category}</h2><small>${groups.get(category).length}개 지표</small></div><div class="macro-grid">${groups.get(category).map((r,i)=>{const change=formatMacroChange(r);return `<article class="macro-tile neutral-macro"><div class="macro-tile-top"><span class="macro-symbol">${esc(r.symbol||r.original_symbol||'')}</span><small class="${r.stale?'stale-text':''}">${r.stale?'직전값 유지':'정상'}</small></div><strong>${esc(r.name||r.symbol)}</strong><div class="macro-value"><b>${esc(formatMacroValue(r))}</b><em>${esc(change)}</em></div><p>${esc(r.desc||'')}</p><div class="macro-meta-line"><span>${esc(observationLabel(r))}</span><span>${esc(r.changeBasis||'이전 관측 대비')}</span>${macroPublicationLabel(r)?`<span>${esc(macroPublicationLabel(r))}</span>`:''}</div><div class="source-row"><small class="source-line">${esc(r.source||'출처 미제공')}</small>${macroSourceUrl(r)?`<button type="button" data-external-url="${esc(macroSourceUrl(r))}">원본 시리즈</button>`:''}</div></article>`}).join('')}</div></section>`).join('');
    bindNav();
  }catch(e){
    document.querySelector('#macro-freshness').classList.remove('skeleton');document.querySelector('#macro-freshness').innerHTML='<div><strong>갱신 정보를 확인하지 못했어요</strong><span>개별 데이터 로딩 상태를 확인해주세요.</span></div>';
