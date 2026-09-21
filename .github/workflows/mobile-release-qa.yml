@@ -36,6 +36,12 @@ jobs:
           exit 1
       - name: Run mobile release QA
         run: node tests/mobile_release_qa.mjs
+      - name: Verify data views and custom date range
+        run: node tests/analysis_qa.mjs
+      - name: Build with production request timeout
+        run: npm run build
+      - name: Verify progressive rendering and navigation races
+        run: node tests/progressive_qa.mjs
       - name: Upload mobile QA screenshots
         if: always()
         uses: actions/upload-artifact@v4

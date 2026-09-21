@@ -1,4 +1,6 @@
 import './styles.css';
+import { ANALYSIS_ROUTES, renderAnalysis } from './analysisViews.js';
+import { finiteNumber } from './analysisData.js';
 import { createChart, ColorType, LineStyle } from 'lightweight-charts';
 import { API_BASE, quoteSnapshots, compareStocks, marketNow, homeSnapshot, searchStocks, valuationStocks, macroData, homeInsights, personalizedNews } from './api.js';
 import { applyRuntimeClass, haptic, openExternal, syncNativeBackHandler, closeMiniApp, isAppsInTossRuntime } from './tossBridge.js';
@@ -12,10 +14,13 @@ const DEFAULTS=[{symbol:'005930.KS',name:'삼성전자'},{symbol:'NVDA',name:'�
 const COLORS=['#3182f6','#f04452','#00a86b','#8b5cf6','#f59f00','#00a8cc'];
 const DISPLAY_NAMES={'005930.KS':'삼성전자','000660.KS':'SK하이닉스','NVDA':'엔비디아','AAPL':'애플','MSFT':'마이크로소프트','META':'메타','TSLA':'테슬라','GOOGL':'알파벳','^KS11':'코스피','^KQ11':'코스닥','^GSPC':'S&P 500','^IXIC':'나스닥','^TNX':'미국 10년물','^VIX':'VIX','CL=F':'WTI','KRW=X':'원/달러'};
 const displayName=(symbol,fallback='')=>DISPLAY_NAMES[symbol]||fallback||symbol;
-const fmtPrice=(value)=>{const n=Number(value);if(!Number.isFinite(n))return '-';if(Math.abs(n)>=1000)return n.toLocaleString('ko-KR',{maximumFractionDigits:2});if(Math.abs(n)>=100)return n.toLocaleString('ko-KR',{maximumFractionDigits:2});return n.toLocaleString('ko-KR',{maximumFractionDigits:3})};
-const fmtChange=(value)=>{const n=Number(value);if(!Number.isFinite(n))return '-';return `${n>0?'+':''}${n.toFixed(2)}%`};
-const state={tab:'home',watchlist:load(WATCHLIST_KEY,[]),selected:load(SELECTED_KEY,DEFAULTS.map(x=>x.symbol)),period:'1mo',detailSymbol:null,valuationMetric:'forwardPE',watchSort:'manual',newsSort:'major',detailPeriod:'3mo'};
+const fmtPrice=(value)=>{const n=finiteNumber(value);if(n===null)return '-';if(Math.abs(n)>=1000)return n.toLocaleString('ko-KR',{maximumFractionDigits:2});if(Math.abs(n)>=100)return n.toLocaleString('ko-KR',{maximumFractionDigits:2});return n.toLocaleString('ko-KR',{maximumFractionDigits:3})};
+const fmtChange=(value)=>{const n=finiteNumber(value);if(n===null)return '-';return `${n>0?'+':''}${n.toFixed(2)}%`};
+const state={tab:'home',watchlist:load(WATCHLIST_KEY,[]),selected:load(SELECTED_KEY,DEFAULTS.map(x=>x.symbol)),period:'1mo',customRange:null,detailSymbol:null,valuationMetric:'forwardPE',watchSort:'manual',newsSort:'major',detailPeriod:'3mo'};
 let chartInstance=null;
+let chartResizeObserver=null;
+let viewEpoch=0;
+let analysisCleanup=null;
 let searchSeq=0;
 let chartLoadSeq=0;
 let toastTimer=null;
@@ -100,7 +105,7 @@ function dataDisclosure(){
  return `<aside class="data-disclosure"><div><strong>데이터 이용 안내</strong><span>시세·재무·뉴스 데이터는 제공처 상황에 따라 지연·누락·오류가 있을 수 있으며 투자 권유가 아니에요.</span></div><button data-tab="info">자세히</button></aside>`;
 }
 function shell(content,title='차트뷰'){
- const secondary=['valuation','macro','discover','news','detail','info'].includes(state.tab);
+ const secondary=ANALYSIS_ROUTES.has(state.tab)||['valuation','macro','discover','news','detail','info'].includes(state.tab);
  const navTab=secondary?'more':state.tab;
  const leading=secondary?`<button class="icon-button back-button" aria-label="뒤로가기" data-back>${iconSvg('back',22)}</button>`:`<span class="brand-mark">${iconSvg('spark',18)}</span>`;
  const offline=typeof navigator!=='undefined'&&navigator.onLine===false;
@@ -111,6 +116,7 @@ function stockRow(x){const name=displayName(x.symbol,x.name);return `<button cla
 function esc(v=''){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 
 function navigate(tab,detailSymbol=null){
+ if(tab===state.tab&&(!detailSymbol||detailSymbol===state.detailSymbol)){window.scrollTo(0,0);return;}
  scrollPositions.set(location.hash||'#home',window.scrollY);
  closeStockSelector();
  state.tab=tab;
@@ -120,18 +126,21 @@ function navigate(tab,detailSymbol=null){
  navigationDepth+=1;
  haptic('tickWeak');
  render();
+ window.scrollTo(0,0);
 }
 function bindNav(){
  document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>navigate(b.dataset.tab));
  document.querySelectorAll('[data-go-chart]').forEach(b=>b.onclick=()=>navigate('chart'));
  document.querySelectorAll('[data-stock-detail]').forEach(b=>b.onclick=()=>navigate('detail',b.dataset.stockDetail));
+ document.querySelectorAll('[data-retry-detail]').forEach(b=>b.onclick=renderDetail);
  document.querySelectorAll('[data-back]').forEach(b=>b.onclick=goBack);
  document.querySelectorAll('[data-external-url]').forEach(b=>b.onclick=()=>{haptic('tickWeak');openExternal(b.dataset.externalUrl)});
 }
-function cleanupChart(){if(chartInstance){try{chartInstance.remove()}catch{}chartInstance=null}}
+function cleanupChart(){analysisCleanup?.();analysisCleanup=null;viewEpoch++;chartLoadSeq++;chartResizeObserver?.disconnect();chartResizeObserver=null;if(chartInstance){try{chartInstance.remove()}catch{}chartInstance=null}}
 
 async function renderHome(){
  cleanupChart();
+ const epoch=viewEpoch;
  const hasWatch=state.watchlist.length>0;
  document.querySelector('#app').innerHTML=shell(`
    <section class="home-compact-head">
@@ -154,11 +163,9 @@ async function renderHome(){
 
  const watchSymbols=state.watchlist.slice(0,4).map(x=>x.symbol);
  const watchNames=state.watchlist.slice(0,4).map(x=>displayName(x.symbol,x.name));
- const [marketRes,homeRes,watchRes]=await Promise.allSettled([
-   marketNow(),
-   homeSnapshot(),
-   watchSymbols.length?quoteSnapshots(watchSymbols):Promise.resolve({results:[]}),
- ]);
+ const settle=(task,paint)=>task.then(value=>({status:'fulfilled',value}),reason=>({status:'rejected',reason})).then(result=>{if(epoch===viewEpoch){paint(result);bindNav();}});
+ const jobs=[];
+ jobs.push(settle(marketNow(),marketRes=>{
 
  const market=marketRes.status==='fulfilled'?marketRes.value:null;
  const rows=Array.isArray(market?.results)?market.results:[];
@@ -174,14 +181,18 @@ async function renderHome(){
    document.querySelector('#retry-market')?.addEventListener('click',renderHome);
  }
 
+ }));
+ jobs.push(settle(watchSymbols.length?quoteSnapshots(watchSymbols):Promise.resolve({results:[]}),watchRes=>{
  const quotes=watchRes.status==='fulfilled'?(watchRes.value?.results||[]):[];
  if(hasWatch){
    document.querySelector('#home-watchlist').innerHTML=state.watchlist.slice(0,4).map((x,i)=>{
-     const q=quotes.find(r=>r.ticker===x.symbol);const ch=Number(q?.change);const name=displayName(x.symbol,x.name);
+     const q=quotes.find(r=>r.ticker===x.symbol);const ch=finiteNumber(q?.change);const name=displayName(x.symbol,x.name);
      return `<button class="watch-rich-row" data-stock-detail="${esc(x.symbol)}"><span class="stock-logo tone-${i%4}">${esc(name.slice(0,1))}</span><span class="stock-copy"><strong>${esc(name)}</strong><small>${esc(x.symbol)}${q?.asOf?' · '+esc(formatKst(q.asOf)):''}</small></span><span class="watch-price">${q?.price!=null?`<strong>${esc(formatCurrencyPrice(q.price,q.currency))}</strong><em class="${ch>0?'up':ch<0?'down':'flat'}">${esc(fmtChange(q.change))}</em>`:'<small>가격 확인 필요</small>'}</span><span class="chevron">${iconSvg('arrow',18)}</span></button>`;
    }).join('');
  }
 
+ }));
+ jobs.push(settle(homeSnapshot(),homeRes=>{
  const home=homeRes.status==='fulfilled'?homeRes.value:null;
  const macro=home?.macro?.summary||{};
  const brief=document.querySelector('#brief-card');
@@ -194,37 +205,38 @@ async function renderHome(){
    brief.innerHTML=`<div class="brief-icon yellow">${iconSvg('spark',22)}</div><div class="brief-copy"><span>시장 지표 요약</span><strong>요약 데이터를 확인하고 있어요.</strong><small>경제지표 화면에서 개별 관측일을 확인할 수 있어요.</small></div>`;
  }
 
- const newsBox=document.querySelector('#home-news');
+ }));
  if(watchSymbols.length){
-   try{
-     const news=await personalizedNews(watchSymbols,watchNames);
-     const items=(news?.items||[]).slice(0,3);
-     newsBox.innerHTML=items.length?items.map(newsCard).join(''):'<div class="empty compact"><strong>새 주요 뉴스가 없어요</strong><span>관심종목 기준으로 확인했어요.</span></div>';
-   }catch(error){newsBox.innerHTML='<div class="empty compact"><strong>뉴스를 불러오지 못했어요</strong><span>전체 뉴스 화면에서 다시 시도할 수 있어요.</span></div>'}
- }else{
-   document.querySelector('#home-news-section').hidden=true;
- }
- bindNav();
+  jobs.push(settle(personalizedNews(watchSymbols,watchNames),result=>{
+   const newsBox=document.querySelector('#home-news');
+   const items=result.status==='fulfilled'?(result.value?.items||[]).slice(0,3):[];
+   newsBox.innerHTML=items.length?items.map(newsCard).join(''):`<div class="empty compact"><strong>${result.status==='fulfilled'?'새 주요 뉴스가 없어요':'뉴스를 불러오지 못했어요'}</strong><span>전체 뉴스 화면에서 다시 확인할 수 있어요.</span></div>`;
+  }));
+ }else document.querySelector('#home-news-section').hidden=true;
+ await Promise.all(jobs);
 }
 
 async function renderChart(){
  cleanupChart();
+ const epoch=viewEpoch;
  document.querySelector('#app').innerHTML=shell(`
    <section class="task-head"><div><h2>수익률 비교</h2><p>선택한 종목의 기간 수익률을 같은 화면에서 확인해요.</p></div><button class="primary-subtle" id="open-compare-selector">종목 변경</button></section>
    <div class="selected-summary">${state.selected.length?`${state.selected.length}개 종목 · ${state.selected.map(x=>esc(displayName(x))).join(' · ')}`:'비교할 종목을 선택해주세요.'}</div>
-   <div class="segmented period-tabs">${[['1mo','1개월'],['3mo','3개월'],['6mo','6개월'],['1y','1년']].map(([p,l])=>`<button data-period="${p}" aria-pressed="${state.period===p}" class="${state.period===p?'active':''}">${l}</button>`).join('')}</div>
+   <div class="segmented period-tabs">${[['1mo','1개월'],['3mo','3개월'],['6mo','6개월'],['1y','1년'],['5y','5년'],['max','전체']].map(([p,l])=>`<button data-period="${p}" aria-pressed="${state.period===p}" class="${state.period===p?'active':''}">${l}</button>`).join('')}</div>
+   <details class="calculation-guide"><summary>기간 직접 지정${state.customRange?' · 적용 중':''}</summary><form id="custom-range" class="analysis-filters"><label>시작일<input type="date" name="start" required value="${esc(state.customRange?.start||'')}"></label><label>종료일<input type="date" name="end" required value="${esc(state.customRange?.end||'')}" max="${new Date().toISOString().slice(0,10)}"></label><button class="primary-subtle" type="submit">기간 적용</button><span id="range-error" role="alert"></span></form></details>
    <section class="surface chart-surface elevated-panel"><div class="chart-heading"><div><strong>기간 수익률</strong><small>각 종목의 첫 가용 관측값을 0%로 표시해요</small></div><span id="chart-status">불러오는 중</span></div><div class="chart-plot-wrap"><div id="chart-canvas" class="chart-canvas"></div><div id="chart-tooltip" class="chart-tooltip" hidden></div></div><div id="chart-legend" class="chart-legend interactive-legend"></div></section>
    <section id="chart-table-wrap" class="chart-table-wrap"></section>
    <details class="calculation-guide" id="calculation-guide"><summary>계산 기준</summary><div id="calculation-guide-body"><p>계산 기준을 불러오는 중이에요.</p></div></details>
  `,'차트');
  bindNav();
  document.querySelector('#open-compare-selector')?.addEventListener('click',()=>openCompareSheet(()=>renderChart()));
- document.querySelectorAll('[data-period]').forEach(b=>b.onclick=()=>{state.period=b.dataset.period;haptic('tickWeak');renderChart()});
+ document.querySelectorAll('[data-period]').forEach(b=>b.onclick=()=>{state.period=b.dataset.period;state.customRange=null;haptic('tickWeak');renderChart()});
+ document.querySelector('#custom-range').onsubmit=e=>{e.preventDefault();const values=Object.fromEntries(new FormData(e.currentTarget));if(!values.start||!values.end||values.start>values.end){document.querySelector('#range-error').textContent='시작일이 종료일보다 늦지 않게 선택해주세요.';return;}state.customRange=values;renderChart();};
  await loadChart();
 }
 
 function bindChartControls(){
- document.querySelectorAll('[data-period]').forEach(b=>b.onclick=()=>{state.period=b.dataset.period;renderChart()});
+ document.querySelectorAll('[data-period]').forEach(b=>b.onclick=()=>{state.period=b.dataset.period;state.customRange=null;renderChart()});
  document.querySelectorAll('[data-remove]').forEach(b=>b.onclick=()=>{state.selected=state.selected.filter(x=>x!==b.dataset.remove);persist();renderChart()});
  const input=document.querySelector('#stock-search'),results=document.querySelector('#search-results');
  let timer;
@@ -249,12 +261,13 @@ async function loadChart(){
  const seq=++chartLoadSeq;
  const requested=[...state.selected];
  const requestedPeriod=state.period;
+ const requestedRange=state.customRange;
  const canvas=document.querySelector('#chart-canvas'),status=document.querySelector('#chart-status'),legend=document.querySelector('#chart-legend');
  const table=document.querySelector('#chart-table-wrap'),guide=document.querySelector('#calculation-guide-body');
  if(!requested.length){status.textContent='종목 선택 필요';canvas.innerHTML='<div class="empty"><strong>비교할 종목이 없어요</strong><span>종목 변경에서 최대 6개까지 선택할 수 있어요.</span></div>';table.innerHTML='';return}
  try{
-   const data=await compareStocks(requested,requestedPeriod);
-   if(seq!==chartLoadSeq||requestedPeriod!==state.period||requested.join('|')!==state.selected.join('|'))return;
+   const data=await compareStocks(requested,requestedPeriod,requestedRange||{});
+   if(!canvas.isConnected||seq!==chartLoadSeq||requestedPeriod!==state.period||requested.join('|')!==state.selected.join('|'))return;
    const stocks=Array.isArray(data?.stocks)?data.stocks.filter(s=>Array.isArray(s.data)&&s.data.length):[];
    if(!stocks.length)throw new Error('표시할 시세 데이터가 없어요');
    chartInstance=createChart(canvas,{handleScale:{pinch:false},width:canvas.clientWidth||320,height:278,layout:{background:{type:ColorType.Solid,color:'#ffffff'},textColor:'#8b95a1',fontFamily:'Pretendard, -apple-system, sans-serif'},grid:{vertLines:{color:'#f2f4f6'},horzLines:{color:'#f2f4f6'}},rightPriceScale:{borderVisible:false},timeScale:{borderVisible:false,timeVisible:false},crosshair:{vertLine:{color:'#d1d6db'},horzLine:{color:'#d1d6db'}}});
@@ -265,7 +278,7 @@ async function loadChart(){
      return {stock:s,series:line,index:i,visible:true};
    });
    chartInstance.timeScale().fitContent();
-   const ro=new ResizeObserver(()=>{if(chartInstance&&canvas.clientWidth)chartInstance.applyOptions({width:canvas.clientWidth})});ro.observe(canvas);
+   chartResizeObserver=new ResizeObserver(()=>{if(chartInstance&&canvas.clientWidth)chartInstance.applyOptions({width:canvas.clientWidth})});chartResizeObserver.observe(canvas);
    const styleName=(i)=>i<3?'실선':i===3?'파선':i===4?'점선':'긴 파선';
    legend.innerHTML=seriesRows.map(({stock:s,index:i})=>`<button type="button" data-legend-index="${i}" aria-pressed="true"><i class="legend-line legend-line-${i}" style="--legend-color:${COLORS[i%COLORS.length]}"></i><span>${esc(displayName(s.ticker,s.name||s.ticker))}<small>${styleName(i)}</small></span><strong class="${Number(s.return)>=0?'up':'down'}">${Number(s.return)>=0?'+':''}${esc(s.return)}%</strong></button>`).join('');
    legend.querySelectorAll('[data-legend-index]').forEach((button)=>{
@@ -316,6 +329,7 @@ async function loadChart(){
 
 async function renderWatch(){
  cleanupChart();
+ const epoch=viewEpoch;
  document.querySelector('#app').innerHTML=shell(`
    <section class="task-head watch-task-head"><div><h2>관심종목 <span>${state.watchlist.length}</span></h2><p>이 목록은 현재 기기에 저장돼요.</p></div><div class="task-actions"><button class="primary-subtle" id="watch-add">종목 추가</button><button class="neutral-action" id="watch-edit">편집</button></div></section>
    <div class="watch-sort" role="group" aria-label="관심종목 정렬">${[['manual','직접'],['name','이름'],['change','등락률']].map(([k,l])=>`<button data-watch-sort="${k}" class="${state.watchSort===k?'active':''}" aria-pressed="${state.watchSort===k}">${l}</button>`).join('')}</div>
@@ -340,16 +354,18 @@ async function renderWatch(){
 
  try{
    const tickers=state.watchlist.slice(0,20).map(x=>x.symbol);
-   const [quotesRes,valRes]=await Promise.allSettled([quoteSnapshots(tickers),valuationStocks(tickers)]);
-   const quotes=quotesRes.status==='fulfilled'?(quotesRes.value?.results||[]):[];
-   const vals=valRes.status==='fulfilled'?(valRes.value?.stocks||[]):[];
+   const [quotesRes]=await Promise.allSettled([quoteSnapshots(tickers)]);
+   if(epoch!==viewEpoch)return;
+   if(quotesRes.status==='rejected')throw quotesRes.reason;
+   const quotes=quotesRes.value?.results||[];
+   const vals=[];
    let items=state.watchlist.map((x,index)=>({x,index,q:quotes.find(r=>r.ticker===x.symbol)||{},v:vals.find(r=>r.ticker===x.symbol)||{}}));
    if(state.watchSort==='name')items.sort((a,b)=>displayName(a.x.symbol,a.x.name).localeCompare(displayName(b.x.symbol,b.x.name),'ko'));
-   if(state.watchSort==='change')items.sort((a,b)=>(Number(b.q.change)||-Infinity)-(Number(a.q.change)||-Infinity));
+   if(state.watchSort==='change')items.sort((a,b)=>(finiteNumber(b.q.change)??-Infinity)-(finiteNumber(a.q.change)??-Infinity));
 
    document.querySelector('#watch-rich-list').innerHTML=items.map(({x,index,q,v},i)=>{
-     const name=displayName(x.symbol,x.name);const ch=Number(q.change);
-     return `<article class="watch-detail-card"><button class="watch-main" data-stock-detail="${esc(x.symbol)}"><span class="stock-logo tone-${i%4}">${esc(name.slice(0,1))}</span><span class="watch-main-copy"><strong>${esc(name)}</strong><small>${esc(x.symbol)} · ${q.asOf?esc(formatKst(q.asOf)):'기준시각 미제공'}</small><span class="watch-metrics"><b>${v.forwardPE==null?'예상 PER -':`예상 PER ${esc(Number(v.forwardPE).toFixed(1))}배`}</b></span></span><span class="watch-card-price"><strong>${q.price==null?'-':esc(formatCurrencyPrice(q.price,q.currency))}</strong><em class="${ch>0?'up':ch<0?'down':'flat'}">${Number.isFinite(ch)?esc(fmtChange(ch)):'등락률 -'}</em><i>${iconSvg('arrow',18)}</i></span></button><button class="watch-remove" data-unwatch="${esc(x.symbol)}" aria-label="${esc(name)} 관심 해제">${iconSvg('heart',18)}</button></article>`;
+     const name=displayName(x.symbol,x.name);const ch=finiteNumber(q.change);
+     return `<article class="watch-detail-card"><button class="watch-main" data-stock-detail="${esc(x.symbol)}"><span class="stock-logo tone-${i%4}">${esc(name.slice(0,1))}</span><span class="watch-main-copy"><strong>${esc(name)}</strong><small>${esc(x.symbol)} · ${q.asOf?esc(formatKst(q.asOf)):'기준시각 미제공'}</small></span><span class="watch-card-price"><strong>${q.price==null?'-':esc(formatCurrencyPrice(q.price,q.currency))}</strong><em class="${ch>0?'up':ch<0?'down':'flat'}">${Number.isFinite(ch)?esc(fmtChange(ch)):'등락률 -'}</em><i>${iconSvg('arrow',18)}</i></span></button><button class="watch-remove" data-unwatch="${esc(x.symbol)}" aria-label="${esc(name)} 관심 해제">${iconSvg('heart',18)}</button></article>`;
    }).join('');
    bindNav();
    document.querySelectorAll('[data-unwatch]').forEach(b=>b.onclick=e=>{
@@ -365,6 +381,7 @@ async function renderWatch(){
      }
    });
  }catch(e){
+   if(epoch!==viewEpoch)return;
    document.querySelector('#watch-rich-list').innerHTML=`<div class="empty"><strong>관심종목 데이터를 불러오지 못했어요</strong><span>${esc(e.message)}</span><button class="retry" id="retry-watch">다시 시도</button></div>`;
    document.querySelector('#retry-watch')?.addEventListener('click',renderWatch);
  }
@@ -372,6 +389,7 @@ async function renderWatch(){
 
 async function renderValuation(){
  cleanupChart();
+ const epoch=viewEpoch;
  const metricDefs={
    forwardPE:{label:'예상 PER',suffix:'배',desc:'제공처의 향후 이익 추정 기간 기준',key:'forwardPE'},
    trailingPE:{label:'실적 PER',suffix:'배',desc:'최근 12개월(TTM) 이익 기준',key:'trailingPE'},
@@ -399,6 +417,7 @@ async function renderValuation(){
  }
  try{
    const d=await valuationStocks(state.selected);
+   if(epoch!==viewEpoch)return;
    const rows=Array.isArray(d?.stocks)?d.stocks:[];
    if(!rows.length)throw new Error('표시할 밸류에이션 데이터가 없어요');
 
@@ -420,6 +439,7 @@ async function renderValuation(){
    document.querySelector('#all-metrics-list').innerHTML=rows.map((s,i)=>`<section class="valuation-card rich-valuation-card"><button class="valuation-top" data-stock-detail="${esc(s.ticker)}"><span class="stock-logo tone-${i%4}">${esc(displayName(s.ticker,s.name).slice(0,1))}</span><span class="valuation-title-copy"><strong>${esc(displayName(s.ticker,s.name))}</strong><small>${esc(s.ticker)}${s.sector?' · '+esc(s.sector):''}</small></span><span class="valuation-price"><strong>${esc(formatCurrencyPrice(s.price,s.currency))}</strong><i>${iconSvg('arrow',18)}</i></span></button><div class="metric-grid rich-metrics">${Object.values(metricDefs).map((m,j)=>`<div class="metric-cell tone-bg-${j%3}"><span>${m.label}</span><strong>${s[m.key]==null?'-':esc(Number(s[m.key]).toLocaleString('ko-KR',{maximumFractionDigits:2})+m.suffix)}</strong><small>${esc(s.fieldMeta?.[m.key]?.period||m.desc)}</small></div>`).join('')}</div></section>`).join('');
    bindNav();
  }catch(e){
+   if(epoch!==viewEpoch)return;
    document.querySelector('#valuation-list').innerHTML=`<div class="empty"><strong>밸류에이션을 불러오지 못했어요</strong><span>${esc(e.message)}</span><button class="retry" id="retry-valuation">다시 시도</button></div>`;
    document.querySelector('#retry-valuation')?.addEventListener('click',renderValuation);
  }
@@ -427,6 +447,7 @@ async function renderValuation(){
 
 async function renderMacro(){
  cleanupChart();
+ const epoch=viewEpoch;
  document.querySelector('#app').innerHTML=shell(`
    <section class="task-head"><div><h2>경제 지표</h2><p>지표마다 단위와 관측 시점이 달라요. 같은 ‘최신일’로 묶지 않고 각각 표시해요.</p></div></section>
    <div id="macro-freshness" class="freshness-card skeleton"></div>
@@ -436,6 +457,7 @@ async function renderMacro(){
  bindNav();
  try{
    const d=await macroData();
+   if(epoch!==viewEpoch)return;
    const s=d?.summary||{};
    const freshness=document.querySelector('#macro-freshness');
    freshness.classList.remove('skeleton');
@@ -451,6 +473,7 @@ async function renderMacro(){
    document.querySelector('#macro-groups').innerHTML=order.filter(k=>groups.has(k)).map(category=>`<section class="macro-group"><div class="section-head"><h2>${category}</h2><small>${groups.get(category).length}개 지표</small></div><div class="macro-grid">${groups.get(category).map((r,i)=>{const change=formatMacroChange(r);return `<article class="macro-tile neutral-macro"><div class="macro-tile-top"><span class="macro-symbol">${esc(r.symbol||r.original_symbol||'')}</span><small class="${r.stale?'stale-text':''}">${r.stale?'직전값 유지':'정상'}</small></div><strong>${esc(r.name||r.symbol)}</strong><div class="macro-value"><b>${esc(formatMacroValue(r))}</b><em>${esc(change)}</em></div><p>${esc(r.desc||'')}</p><div class="macro-meta-line"><span>${esc(observationLabel(r))}</span><span>${esc(changeBasisLabel(r.changeBasis))}</span>${macroPublicationLabel(r)?`<span>${esc(macroPublicationLabel(r))}</span>`:''}</div><div class="source-row"><small class="source-line">${esc(r.source||'출처 미제공')}</small>${macroSourceUrl(r)?`<button type="button" data-external-url="${esc(macroSourceUrl(r))}">원본 시리즈</button>`:''}</div></article>`}).join('')}</div></section>`).join('');
    bindNav();
  }catch(e){
+   if(epoch!==viewEpoch)return;
    document.querySelector('#macro-freshness').classList.remove('skeleton');document.querySelector('#macro-freshness').innerHTML='<div><strong>갱신 정보를 확인하지 못했어요</strong><span>개별 데이터 로딩 상태를 확인해주세요.</span></div>';
    document.querySelector('#macro-summary').classList.remove('skeleton');document.querySelector('#macro-summary').innerHTML='<div class="macro-summary-copy"><strong>경제 지표 연결을 확인하고 있어요.</strong><small>잠시 후 다시 시도해주세요.</small></div>';
    document.querySelector('#macro-groups').innerHTML=`<div class="empty"><strong>경제 지표를 불러오지 못했어요</strong><span>${esc(e.message)}</span><button class="retry" id="retry-macro">다시 시도</button></div>`;
@@ -467,6 +490,7 @@ function timeAgo(value){
 
 async function renderDetail(){
  cleanupChart();
+ const epoch=viewEpoch;
  const symbol=state.detailSymbol||state.selected[0]||'005930.KS';
  const saved=state.watchlist.find(x=>x.symbol===symbol);
  const knownName=displayName(symbol,saved?.name||symbol);
@@ -499,43 +523,46 @@ async function renderDetail(){
  });
  document.querySelectorAll('[data-detail-period]').forEach(b=>b.onclick=()=>{state.detailPeriod=b.dataset.detailPeriod;haptic('tickWeak');renderDetail()});
 
- const [quoteRes,compareRes,valRes,newsRes]=await Promise.allSettled([
-   quoteSnapshots([symbol]),
-   compareStocks([symbol],state.detailPeriod),
-   valuationStocks([symbol]),
-   personalizedNews([symbol],[knownName])
- ]);
+ const settle=(task,paint)=>task.then(value=>({status:'fulfilled',value}),reason=>({status:'rejected',reason})).then(result=>{if(epoch===viewEpoch){paint(result);bindNav();}});
+ const jobs=[];
+ jobs.push(settle(quoteSnapshots([symbol]),quoteRes=>{
  const quote=quoteRes.status==='fulfilled'?quoteRes.value?.results?.[0]:null;
- const compare=compareRes.status==='fulfilled'?compareRes.value:null;
- const stock=compare?.stocks?.[0];
- const valuation=valRes.status==='fulfilled'?valRes.value?.stocks?.[0]:null;
- const dayChange=Number(quote?.change);
- const periodReturn=Number(stock?.return);
-
+ const dayChange=finiteNumber(quote?.change);
  const priceBox=document.querySelector('#detail-price');
  priceBox.classList.remove('skeleton','detail-price-skeleton');
- priceBox.innerHTML=`<div><span>현재가${quote?.asOf?' · '+esc(formatKst(quote.asOf)):''}</span><strong>${quote?.price!=null?esc(formatCurrencyPrice(quote.price,quote.currency)):'-'}</strong><small>${esc(currencyLabel(quote?.currency))}</small></div><div class="detail-return ${dayChange>0?'up':dayChange<0?'down':'flat'}"><span>전 거래일 대비</span><strong>${Number.isFinite(dayChange)?esc(fmtChange(dayChange)):'-'}</strong><small>${quote?.source?esc(quote.source):'시세 출처 확인 필요'}</small></div>`;
+ priceBox.innerHTML=`<div><span>현재가${quote?.asOf?' · '+esc(formatKst(quote.asOf)):''}</span><strong>${quote?.price!=null?esc(formatCurrencyPrice(quote.price,quote.currency)):'-'}</strong><small>${esc(currencyLabel(quote?.currency))}</small></div><div class="detail-return ${dayChange>0?'up':dayChange<0?'down':'flat'}"><span>전 거래일 대비</span><strong>${Number.isFinite(dayChange)?esc(fmtChange(dayChange)):'-'}</strong><small>${quote?.source?esc(quote.source):'시세 출처 확인 필요'}</small></div>${quoteRes.status==='rejected'?'<button class="retry" data-retry-detail>시세 다시 시도</button>':''}`;
 
+ }));
+ jobs.push(settle(compareStocks([symbol],state.detailPeriod),compareRes=>{
+ const stock=compareRes.status==='fulfilled'?compareRes.value?.stocks?.[0]:null;
+ const periodReturn=finiteNumber(stock?.return);
+ if(!stock?.data?.length&&compareRes.status==='rejected'){document.querySelector('#detail-chart').innerHTML='<div class="empty compact"><strong>차트 연결을 확인해주세요</strong><button class="retry" data-retry-detail>다시 시도</button></div>';return;}
  const canvas=document.querySelector('#detail-chart'),status=document.querySelector('#detail-chart-status');
  document.querySelector('#detail-period-label').textContent={ '1mo':'1개월','3mo':'3개월','6mo':'6개월','1y':'1년' }[state.detailPeriod]+' 수익률';
  if(stock?.data?.length){
    chartInstance=createChart(canvas,{handleScale:{pinch:false},width:canvas.clientWidth||320,height:220,layout:{background:{type:ColorType.Solid,color:'#ffffff'},textColor:'#8b95a1',fontFamily:'Pretendard, -apple-system, sans-serif'},grid:{vertLines:{color:'#f7f8fa'},horzLines:{color:'#f2f4f6'}},rightPriceScale:{borderVisible:false},timeScale:{borderVisible:false},crosshair:{vertLine:{color:'#d1d6db'},horzLine:{color:'#d1d6db'}}});
    const line=chartInstance.addAreaSeries({lineColor:'#3182f6',topColor:'rgba(49,130,246,.18)',bottomColor:'rgba(49,130,246,.01)',lineWidth:2,priceLineVisible:false,lastValueVisible:false});
    line.setData(stock.data);chartInstance.timeScale().fitContent();
-   new ResizeObserver(()=>{if(chartInstance&&canvas.clientWidth)chartInstance.applyOptions({width:canvas.clientWidth})}).observe(canvas);
+   chartResizeObserver=new ResizeObserver(()=>{if(chartInstance&&canvas.clientWidth)chartInstance.applyOptions({width:canvas.clientWidth})});chartResizeObserver.observe(canvas);
    status.textContent=Number.isFinite(periodReturn)?`${periodReturn>=0?'+':''}${periodReturn.toFixed(2)}%`:'조회 완료';
    document.querySelector('#detail-return-note').innerHTML=`<span>${esc(stock.startDate||'-')} → ${esc(stock.endDate||'-')}</span><span>${esc(currencyLabel(stock.currency))} 기준 · ${stock.priceBasis==='adjusted_close'?'조정종가 우선':'종가 기준'}</span>`;
  }else{
    canvas.innerHTML='<div class="empty compact"><strong>차트 데이터가 없어요</strong><span>잠시 후 다시 확인해주세요.</span></div>';status.textContent='데이터 없음';document.querySelector('#detail-return-note').textContent='';
  }
 
+ }));
+ jobs.push(settle(valuationStocks([symbol]),valRes=>{
+ const valuation=valRes.status==='fulfilled'?valRes.value?.stocks?.[0]:null;
  const metricDefs=[['예상 PER','forwardPE','배'],['실적 PER','trailingPE','배'],['PBR','pbr','배'],['ROE','roe','%'],['영업이익률','operatingMargin','%'],['배당수익률','dividendYield','%']];
  document.querySelector('#detail-metrics').innerHTML=metricDefs.map(([label,key,suffix],i)=>{const v=valuation?.[key];return `<div class="detail-metric tone-bg-${i%3}"><span>${label}</span><strong>${v==null?'-':esc(Number(v).toLocaleString('ko-KR',{maximumFractionDigits:2})+suffix)}</strong><small>${esc(valuation?.fieldMeta?.[key]?.period||'기준기간 미제공')}</small></div>`}).join('');
- document.querySelector('#detail-metric-meta').innerHTML=valuation?`재무 데이터 조회 ${esc(formatKst(valuation.generatedAt))} · 지표별 출처는 밸류에이션 비교에서 확인할 수 있어요.`:'재무 데이터를 불러오지 못했어요.';
+ document.querySelector('#detail-metric-meta').innerHTML=valuation?`재무 데이터 조회 ${esc(formatKst(valuation.generatedAt))} · 지표별 출처는 밸류에이션 비교에서 확인할 수 있어요.`:'재무 데이터를 불러오지 못했어요. <button class="retry" data-retry-detail>다시 시도</button>';
 
+ }));
+ jobs.push(settle(personalizedNews([symbol],[knownName]),newsRes=>{
  const news=newsRes.status==='fulfilled'?(newsRes.value?.items||[]).slice(0,4):[];
  document.querySelector('#detail-news').innerHTML=news.length?news.map(row=>newsCard(row)).join(''):'<div class="empty compact"><strong>표시할 관련 뉴스가 없어요</strong><span>직접 또는 업종 관련 근거가 확인된 기사를 표시해요.</span></div>';
- bindNav();
+ }));
+ await Promise.all(jobs);
 }
 
 function newsCard(row){
@@ -545,30 +572,9 @@ function newsCard(row){
  return `<button class="news-card" data-external-url="${esc(row.url||'')}"><div class="news-meta"><span class="relation-badge ${relation.className}">${relation.label}</span><span>${esc(displayName(row.symbol,row.name))}</span><small>${esc(row.source||'뉴스')} · ${esc(timeAgo(row.publishedAt))}</small></div><strong>${esc(row.title||'')}</strong><div class="news-context"><span>${esc(language)}</span>${row.relationBasis?`<span>${esc(row.relationBasis)}</span>`:''}</div>${tags.length?`<div class="news-tags">${tags.map(t=>`<span>${esc(t)}</span>`).join('')}</div>`:''}<span class="news-arrow">${iconSvg('arrow',18)}</span></button>`;
 }
 
-async function renderDiscover(){
- cleanupChart();
- document.querySelector('#app').innerHTML=shell(`
-   <section class="page-intro rich-intro"><span class="page-kicker">DISCOVER</span><h2>조건으로 살펴보는 종목</h2><p>거래량·추세·기술 신호를 조건별로 확인해요.</p></section>
-   <div class="discover-notice"><span class="discover-icon">${iconSvg('discover',21)}</span><div><strong>데이터 기반 탐색</strong><p>점수는 매수 추천이 아니라 여러 기술 신호를 묶은 탐색 지표예요.</p></div></div>
-   <div id="discover-list" class="discover-list"><div class="skeleton discover"></div><div class="skeleton discover"></div><div class="skeleton discover"></div></div>
- `,'종목 발굴');
- bindNav();
- try{
-   const d=await homeInsights(state.selected);
-   const tradeDate=d?.screener?.tradeDate||'';
-   let rows=Array.isArray(d?.screener?.stocks)?d.screener.stocks:[];
-   rows=rows.filter(r=>Number.isFinite(Number(r.score))).sort((a,b)=>Number(b.score)-Number(a.score)).slice(0,12);
-   document.querySelector('#discover-list').innerHTML=rows.map((r,i)=>{
-     const signals=[];if(r.aligned)signals.push('정배열');if(r.cross20)signals.push('20일선 돌파');if(Number(r.volumeRatio)>=1.2)signals.push(`거래량 ${Number(r.volumeRatio).toFixed(1)}x`);if(Number(r.rsi14)<=35)signals.push('RSI 낮음');
-     return `<button class="discover-card" data-stock-detail="${esc(r.symbol)}"><div class="rank-badge">${i+1}</div><span class="stock-logo tone-${i%4}">${esc((r.name||r.symbol||'?').slice(0,1))}</span><div class="discover-copy"><strong>${esc(r.name||r.symbol)}</strong><small>${esc(r.symbol||'')} · ${esc(r.market||'')}</small><div class="signal-tags">${signals.slice(0,3).map(x=>`<span>${esc(x)}</span>`).join('')}</div></div><div class="discover-score"><span>신호 점수</span><strong>${esc(Math.round(Number(r.score)))}</strong></div></button>`;
-   }).join('')||'<div class="empty"><strong>현재 표시할 종목이 없어요</strong><span>스크리너 데이터가 갱신되면 다시 확인해주세요</span></div>';
-   const intro=document.querySelector('.rich-intro p');if(intro&&tradeDate)intro.textContent=`${tradeDate} 거래 기준 · 거래량·추세·기술 신호로 탐색해요.`;
-   bindNav();
- }catch(e){document.querySelector('#discover-list').innerHTML=`<div class="empty"><strong>종목 발굴 데이터를 불러오지 못했어요</strong><span>${esc(e.message)}</span><button class="retry" id="retry-discover">다시 시도</button></div>`;document.querySelector('#retry-discover')?.addEventListener('click',renderDiscover)}
-}
-
 async function renderNews(){
  cleanupChart();
+ const epoch=viewEpoch;
  const tickers=state.watchlist.slice(0,20).map(x=>x.symbol);
  const names=state.watchlist.slice(0,20).map(x=>displayName(x.symbol,x.name));
  document.querySelector('#app').innerHTML=shell(`
@@ -582,17 +588,19 @@ async function renderNews(){
  if(!tickers.length){document.querySelector('#news-list').innerHTML='<div class="empty"><strong>관심종목을 먼저 추가해주세요</strong><span>관심종목 관리에서 종목을 저장하면 여기에 관련 뉴스가 표시돼요.</span><button class="retry" data-tab="watch">관심종목 추가</button></div>';bindNav();return}
  try{
    const d=await personalizedNews(tickers,names);
+   if(epoch!==viewEpoch)return;
    let rows=[...(d?.items||[])];
    if(state.newsSort==='latest')rows.sort((a,b)=>Number(b.publishedTs||0)-Number(a.publishedTs||0));
    else rows.sort((a,b)=>Number(b.score||0)-Number(a.score||0));
    rows=rows.slice(0,12);
    document.querySelector('#news-list').innerHTML=rows.length?rows.map(newsCard).join(''):`<div class="empty"><strong>현재 표시할 관련 뉴스가 없어요</strong><span>직접 관련 또는 업종 관련 근거가 확인된 기사만 표시해요.</span></div>`;
    bindNav();
- }catch(e){document.querySelector('#news-list').innerHTML=`<div class="empty"><strong>뉴스를 불러오지 못했어요</strong><span>${esc(e.message)}</span><button class="retry" id="retry-news">다시 시도</button></div>`;document.querySelector('#retry-news')?.addEventListener('click',renderNews)}
+ }catch(e){if(epoch!==viewEpoch)return;document.querySelector('#news-list').innerHTML=`<div class="empty"><strong>뉴스를 불러오지 못했어요</strong><span>${esc(e.message)}</span><button class="retry" id="retry-news">다시 시도</button></div>`;document.querySelector('#retry-news')?.addEventListener('click',renderNews)}
 }
 
 function renderInfo(){
  cleanupChart();
+ const epoch=viewEpoch;
  const origin=location.origin;
  document.querySelector('#app').innerHTML=shell(`
    <section class="page-intro rich-intro subpage-hero info-hero"><span class="page-kicker">DATA & SERVICE</span><h2>숫자를 보기 전에<br><em>기준부터</em> 확인하세요</h2><p>Chart View가 데이터를 보여주는 방식과 이용 시 알아둘 내용을 정리했어요.</p></section>
@@ -602,8 +610,8 @@ function renderInfo(){
      <article class="info-card"><span class="info-icon green">${iconSvg('macro',21)}</span><div><strong>경제 지표</strong><p>각 지표의 발표 주기가 달라 동일 시점 데이터가 아닐 수 있어요. 화면에 표시된 기준일을 함께 확인해주세요.</p></div></article>
      <article class="info-card"><span class="info-icon coral">${iconSvg('news',21)}</span><div><strong>뉴스</strong><p>뉴스는 외부 매체의 기사 제목·링크를 모아 보여주며 기사 내용과 정확성에 대한 책임은 해당 제공처에 있어요.</p></div></article>
    </section>
-   <section class="release-notice"><strong>투자 판단 안내</strong><p>Chart View의 모든 정보와 탐색 점수는 정보 제공 목적이며 특정 종목의 매수·매도 또는 투자 성과를 보장하거나 권유하지 않아요. 최종 투자 판단은 이용자가 직접 해야 해요.</p></section>
-   <div class="policy-links"><button data-external-url="${esc(origin+'/privacy.html')}"><span>개인정보 처리 안내</span>${iconSvg('arrow',18)}</button><button data-external-url="${esc(origin+'/terms.html')}"><span>서비스 이용 안내</span>${iconSvg('arrow',18)}</button><button data-external-url="${esc(origin+'/data-guide.html')}"><span>데이터 기준 전체 보기</span>${iconSvg('arrow',18)}</button><button data-external-url="https://github.com/shoon94parkk-del/chart-view-toss/issues"><span>오류·데이터 문의</span>${iconSvg('arrow',18)}</button></div>
+   <section class="release-notice"><strong>투자 판단 안내</strong><p>Chart View의 모든 정보는 정보 제공 목적이며 특정 종목의 매수·매도 또는 투자 성과를 보장하거나 권유하지 않아요. 최종 투자 판단은 이용자가 직접 해야 해요.</p></section>
+   <div class="policy-links"><button data-external-url="${esc(origin+'/privacy.html')}"><span>개인정보 처리 안내</span>${iconSvg('arrow',18)}</button><button data-external-url="${esc(origin+'/terms.html')}"><span>서비스 이용 안내</span>${iconSvg('arrow',18)}</button><button data-external-url="${esc(origin+'/data-guide.html')}"><span>데이터 기준 전체 보기</span>${iconSvg('arrow',18)}</button><div class="analysis-card"><strong>고객문의 · 박상훈</strong><p>kimtang89@naver.com</p></div></div>
    <section class="local-data-card"><div><strong>기기 저장 데이터</strong><p>관심종목과 비교 종목은 현재 이 기기에 저장돼요. 초기화하면 이 기기의 저장 목록만 삭제됩니다.</p></div><button id="clear-local-data" type="button">기기 데이터 초기화</button></section>
  `,'데이터 안내');
  bindNav();
@@ -633,21 +641,22 @@ function renderInfo(){
 
 function renderMore(){
  cleanupChart();
+ const epoch=viewEpoch;
  document.querySelector('#app').innerHTML=shell(`
    <section class="page-intro"><h2>전체</h2><p>분석 도구와 이용 안내를 모았어요.</p></section>
    <section class="menu-group"><h3>분석 도구</h3><div class="feature-menu">
      <button class="feature-row" data-tab="chart"><span class="feature-icon blue">${iconSvg('chart',22)}</span><span><strong>차트 비교</strong><small>최대 6개 종목 기간 수익률 비교</small></span><b>${iconSvg('arrow',19)}</b></button>
      <button class="feature-row" data-tab="valuation"><span class="feature-icon purple">${iconSvg('value',22)}</span><span><strong>밸류에이션</strong><small>같은 재무지표를 종목별 비교</small></span><b>${iconSvg('arrow',19)}</b></button>
      <button class="feature-row" data-tab="macro"><span class="feature-icon green">${iconSvg('macro',22)}</span><span><strong>경제 지표</strong><small>단위·관측일·변화 기준 확인</small></span><b>${iconSvg('arrow',19)}</b></button>
-     <button class="feature-row" data-tab="discover"><span class="feature-icon yellow">${iconSvg('discover',22)}</span><span><strong>종목 탐색</strong><small>기술 신호를 조건 탐색용으로 확인</small></span><b>${iconSvg('arrow',19)}</b></button>
-   </div></section>
+     <button class="feature-row" data-tab="discover"><span class="feature-icon yellow">${iconSvg('discover',22)}</span><span><strong>시장 스크리너</strong><small>전체 종목 검색·조건 필터·정렬</small></span><b>${iconSvg('arrow',19)}</b></button>
+<button class="feature-row" data-tab="heatmap"><span class="feature-icon blue">${iconSvg('chart',22)}</span><span><strong>시장 히트맵</strong><small>업종별 등락 한눈에 조회</small></span><b>${iconSvg('arrow',19)}</b></button><button class="feature-row" data-tab="consensus"><span class="feature-icon blue">${iconSvg('chart',22)}</span><span><strong>실적 전망 조회</strong><small>EPS·매출 추정치 및 변경 내역</small></span><b>${iconSvg('arrow',19)}</b></button><button class="feature-row" data-tab="bands"><span class="feature-icon blue">${iconSvg('chart',22)}</span><span><strong>역사적 밸류에이션</strong><small>과거 PER·PBR 분포와 추이</small></span><b>${iconSvg('arrow',19)}</b></button><button class="feature-row" data-tab="tools"><span class="feature-icon blue">${iconSvg('chart',22)}</span><span><strong>자료 출처</strong><small>공시·거래소·경제지표 원자료</small></span><b>${iconSvg('arrow',19)}</b></button>   </div></section>
    <section class="menu-group"><h3>뉴스</h3><div class="feature-menu"><button class="feature-row" data-tab="news"><span class="feature-icon coral">${iconSvg('news',22)}</span><span><strong>관심종목 뉴스</strong><small>직접 관련·업종 관련을 구분해 표시</small></span><b>${iconSvg('arrow',19)}</b></button></div></section>
    <section class="menu-group"><h3>이용 및 지원</h3><div class="feature-menu">
      <button class="feature-row" data-tab="watch"><span class="feature-icon slate">${iconSvg('star',22)}</span><span><strong>관심종목 관리</strong><small>현재 기기에 저장된 종목 관리</small></span><b>${iconSvg('arrow',19)}</b></button>
      <button class="feature-row" data-tab="info"><span class="feature-icon blue">${iconSvg('spark',22)}</span><span><strong>데이터 및 이용 안내</strong><small>기준·지연·개인정보·지원 안내</small></span><b>${iconSvg('arrow',19)}</b></button>
-     <button class="feature-row" data-external-url="https://github.com/shoon94parkk-del/chart-view-toss/issues"><span class="feature-icon slate">${iconSvg('more',22)}</span><span><strong>오류 신고</strong><small>개발 지원 채널에서 문제를 남겨주세요</small></span><b>${iconSvg('arrow',19)}</b></button>
+     <div class="feature-row"><span><strong>고객문의</strong><small>박상훈 · kimtang89@naver.com</small></span></div>
    </div></section>
-   <div class="version-card"><span class="brand-mark">${iconSvg('spark',16)}</span><div><strong>Chart View</strong><small>버전 0.8.1</small></div></div>
+   <div class="version-card"><span class="brand-mark">${iconSvg('spark',16)}</span><div><strong>Chart View</strong><small>버전 0.9.0</small></div></div>
  `,'전체');
  bindNav();
 }
@@ -663,7 +672,7 @@ function render(){
  if(state.tab==='watch')return renderWatch();
  if(state.tab==='valuation')return renderValuation();
  if(state.tab==='macro')return renderMacro();
- if(state.tab==='discover')return renderDiscover();
+ if(ANALYSIS_ROUTES.has(state.tab)){cleanupChart();analysisCleanup=renderAnalysis({tab:state.tab,state,shell,bindNav,displayName,openCompareSheet});return;}
  if(state.tab==='news')return renderNews();
  if(state.tab==='detail')return renderDetail();
  if(state.tab==='info')return renderInfo();
@@ -672,7 +681,7 @@ function render(){
 }
 
 function syncFromLocation(){
- const allowed=new Set(['home','chart','watch','valuation','macro','discover','news','detail','info','more']);
+ const allowed=new Set(['home','chart','watch','valuation','macro','discover','news','detail','info','more',...ANALYSIS_ROUTES]);
  const hashRaw=location.hash.replace(/^#/,'');
  if(hashRaw){
    const [tabRaw,symbolRaw]=hashRaw.split('/');

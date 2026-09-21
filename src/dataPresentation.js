@@ -1,3 +1,4 @@
+import { finiteNumber } from './analysisData.js';
 const SPREAD_SYMBOLS = new Set(['T10Y2Y','T10Y3M','BAMLH0A0HYM2']);
 const RATE_SYMBOLS = new Set(['DFII10','T10YIE','PCEPI','PCETRIM12M159SFRBDAL','UNRATE','FEDFUNDS']);
 
@@ -21,7 +22,7 @@ export function formatKst(value, { dateOnly = false } = {}) {
 }
 
 export function formatCurrencyPrice(value, currency) {
-  const n = Number(value);
+  const n = finiteNumber(value);
   if (!Number.isFinite(n)) return '-';
   if (currency === 'KRW') return `${Math.round(n).toLocaleString('ko-KR')}원`;
   if (currency === 'USD') return `$${n.toLocaleString('ko-KR',{maximumFractionDigits:2})}`;
@@ -29,7 +30,7 @@ export function formatCurrencyPrice(value, currency) {
 }
 
 export function formatMacroValue(row) {
-  const n = Number(row?.value);
+  const n = finiteNumber(row?.value);
   if (!Number.isFinite(n)) return '-';
   const symbol = row.original_symbol || row.symbol;
   if (SPREAD_SYMBOLS.has(symbol)) return `${n.toLocaleString('ko-KR',{maximumFractionDigits:2})}%p`;
@@ -44,14 +45,14 @@ export function formatMacroValue(row) {
 
 export function formatMacroChange(row) {
   const symbol = row.original_symbol || row.symbol;
-  const display = Number(row.displayChange);
+  const display = finiteNumber(row.displayChange);
   if (Number.isFinite(display) && row.changeUnit) {
     if (row.changeUnit === 'bp') return `${display > 0 ? '+' : ''}${display.toFixed(Math.abs(display)<1?1:0)}bp`;
     if (row.changeUnit === 'pt') return `${display > 0 ? '+' : ''}${display.toFixed(2)}pt`;
     return `${display > 0 ? '+' : ''}${display.toFixed(2)}%`;
   }
-  const delta = Number(row.delta);
-  const change = Number(row.change);
+  const delta = finiteNumber(row.delta);
+  const change = finiteNumber(row.change);
   if ((SPREAD_SYMBOLS.has(symbol) || RATE_SYMBOLS.has(symbol)) && Number.isFinite(delta)) return `${delta>0?'+':''}${(delta*100).toFixed(1)}bp`;
   if (symbol === '^VIX' && Number.isFinite(delta)) return `${delta>0?'+':''}${delta.toFixed(2)}pt`;
   if (Number.isFinite(change)) return `${change>0?'+':''}${change.toFixed(2)}%`;
