@@ -1,8 +1,9 @@
 import './styles.css';
 import { createChart, ColorType, LineStyle } from 'lightweight-charts';
 import { API_BASE, quoteSnapshots, compareStocks, marketNow, homeSnapshot, searchStocks, valuationStocks, macroData, homeInsights, personalizedNews } from './api.js';
-import { applyRuntimeClass, haptic, openExternal, syncNativeBackHandler } from './tossBridge.js';
+import { applyRuntimeClass, haptic, openExternal, syncNativeBackHandler, closeMiniApp, isAppsInTossRuntime } from './tossBridge.js';
 import { openStockSelector, closeStockSelector } from './stockSelector.js';
+import { initializeStorage, readStored, writeStored, clearStored } from './storage.js';
 import { formatKst, formatCurrencyPrice, formatMacroValue, formatMacroChange, observationLabel, macroCategory, macroPublicationLabel, macroSourceUrl, changeBasisLabel, newsRelation, translatedTag, titleLanguage } from './dataPresentation.js';
 
 const WATCHLIST_KEY='chartview-toss-watchlist-v1';
@@ -19,17 +20,24 @@ let searchSeq=0;
 let chartLoadSeq=0;
 let toastTimer=null;
 const scrollPositions=new Map();
+// A feature deep link has no app-owned history entry to return to.
+let navigationDepth=0;
+function goBack(){
+ if(navigationDepth>0) history.back();
+ else if(isAppsInTossRuntime()) closeMiniApp();
+ else navigate('home');
+}
 
 function load(key,fallback){
  try{
-   const value=JSON.parse(localStorage.getItem(key));
+   const value=JSON.parse(readStored(key));
    return Array.isArray(value)?value:fallback;
  }catch{return fallback}
 }
 function persist(){
  try{
-   localStorage.setItem(WATCHLIST_KEY,JSON.stringify(state.watchlist));
-   localStorage.setItem(SELECTED_KEY,JSON.stringify(state.selected));
+   writeStored(WATCHLIST_KEY,JSON.stringify(state.watchlist));
+   writeStored(SELECTED_KEY,JSON.stringify(state.selected));
    return true;
  }catch{
    showToast('기기 저장공간에 저장하지 못했어요. 브라우저·앱 저장 권한을 확인해주세요.');
@@ -47,7 +55,7 @@ function showToast(message,actionLabel='',action=null){
  toastTimer=setTimeout(()=>toast.remove(),4200);
 }
 function restoreNativeBack(){
- syncNativeBackHandler({isRoot:state.tab==='home',onBack:()=>{if(state.tab!=='home')history.back()}});
+ syncNativeBackHandler({isRoot:state.tab==='home',onBack:goBack});
 }
 function openCompareSheet(onApplied){
  openStockSelector({
@@ -109,6 +117,7 @@ function navigate(tab,detailSymbol=null){
  if(detailSymbol)state.detailSymbol=detailSymbol;
  const hash=detailSymbol?`#${tab}/${encodeURIComponent(detailSymbol)}`:`#${tab}`;
  history.pushState({tab,detailSymbol:state.detailSymbol},'',hash);
+ navigationDepth+=1;
  haptic('tickWeak');
  render();
 }
@@ -116,7 +125,7 @@ function bindNav(){
  document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>navigate(b.dataset.tab));
  document.querySelectorAll('[data-go-chart]').forEach(b=>b.onclick=()=>navigate('chart'));
  document.querySelectorAll('[data-stock-detail]').forEach(b=>b.onclick=()=>navigate('detail',b.dataset.stockDetail));
- document.querySelectorAll('[data-back]').forEach(b=>b.onclick=()=>{if(state.tab!=='home')history.back()});
+ document.querySelectorAll('[data-back]').forEach(b=>b.onclick=goBack);
  document.querySelectorAll('[data-external-url]').forEach(b=>b.onclick=()=>{haptic('tickWeak');openExternal(b.dataset.externalUrl)});
 }
 function cleanupChart(){if(chartInstance){try{chartInstance.remove()}catch{}chartInstance=null}}
@@ -248,7 +257,7 @@ async function loadChart(){
    if(seq!==chartLoadSeq||requestedPeriod!==state.period||requested.join('|')!==state.selected.join('|'))return;
    const stocks=Array.isArray(data?.stocks)?data.stocks.filter(s=>Array.isArray(s.data)&&s.data.length):[];
    if(!stocks.length)throw new Error('표시할 시세 데이터가 없어요');
-   chartInstance=createChart(canvas,{width:canvas.clientWidth||320,height:278,layout:{background:{type:ColorType.Solid,color:'#ffffff'},textColor:'#8b95a1',fontFamily:'Pretendard, -apple-system, sans-serif'},grid:{vertLines:{color:'#f2f4f6'},horzLines:{color:'#f2f4f6'}},rightPriceScale:{borderVisible:false},timeScale:{borderVisible:false,timeVisible:false},crosshair:{vertLine:{color:'#d1d6db'},horzLine:{color:'#d1d6db'}}});
+   chartInstance=createChart(canvas,{handleScale:{pinch:false},width:canvas.clientWidth||320,height:278,layout:{background:{type:ColorType.Solid,color:'#ffffff'},textColor:'#8b95a1',fontFamily:'Pretendard, -apple-system, sans-serif'},grid:{vertLines:{color:'#f2f4f6'},horzLines:{color:'#f2f4f6'}},rightPriceScale:{borderVisible:false},timeScale:{borderVisible:false,timeVisible:false},crosshair:{vertLine:{color:'#d1d6db'},horzLine:{color:'#d1d6db'}}});
    const lineStyles=[LineStyle.Solid,LineStyle.Solid,LineStyle.Solid,LineStyle.Dashed,LineStyle.Dotted,LineStyle.LargeDashed];
    const seriesRows=stocks.map((s,i)=>{
      const line=chartInstance.addLineSeries({color:COLORS[i%COLORS.length],lineWidth:i<3?2:2,lineStyle:lineStyles[i%lineStyles.length],priceLineVisible:false,lastValueVisible:false});
@@ -510,7 +519,7 @@ async function renderDetail(){
  const canvas=document.querySelector('#detail-chart'),status=document.querySelector('#detail-chart-status');
  document.querySelector('#detail-period-label').textContent={ '1mo':'1개월','3mo':'3개월','6mo':'6개월','1y':'1년' }[state.detailPeriod]+' 수익률';
  if(stock?.data?.length){
-   chartInstance=createChart(canvas,{width:canvas.clientWidth||320,height:220,layout:{background:{type:ColorType.Solid,color:'#ffffff'},textColor:'#8b95a1',fontFamily:'Pretendard, -apple-system, sans-serif'},grid:{vertLines:{color:'#f7f8fa'},horzLines:{color:'#f2f4f6'}},rightPriceScale:{borderVisible:false},timeScale:{borderVisible:false},crosshair:{vertLine:{color:'#d1d6db'},horzLine:{color:'#d1d6db'}}});
+   chartInstance=createChart(canvas,{handleScale:{pinch:false},width:canvas.clientWidth||320,height:220,layout:{background:{type:ColorType.Solid,color:'#ffffff'},textColor:'#8b95a1',fontFamily:'Pretendard, -apple-system, sans-serif'},grid:{vertLines:{color:'#f7f8fa'},horzLines:{color:'#f2f4f6'}},rightPriceScale:{borderVisible:false},timeScale:{borderVisible:false},crosshair:{vertLine:{color:'#d1d6db'},horzLine:{color:'#d1d6db'}}});
    const line=chartInstance.addAreaSeries({lineColor:'#3182f6',topColor:'rgba(49,130,246,.18)',bottomColor:'rgba(49,130,246,.01)',lineWidth:2,priceLineVisible:false,lastValueVisible:false});
    line.setData(stock.data);chartInstance.timeScale().fitContent();
    new ResizeObserver(()=>{if(chartInstance&&canvas.clientWidth)chartInstance.applyOptions({width:canvas.clientWidth})}).observe(canvas);
@@ -599,7 +608,7 @@ function renderInfo(){
  `,'데이터 안내');
  bindNav();
  const clearButton=document.querySelector('#clear-local-data');
- clearButton?.addEventListener('click',()=>{
+ clearButton?.addEventListener('click',async()=>{
    if(clearButton.dataset.confirmed!=='true'){
      clearButton.dataset.confirmed='true';
      clearButton.textContent='한 번 더 누르면 초기화';
@@ -608,8 +617,7 @@ function renderInfo(){
      return;
    }
    try{
-     localStorage.removeItem(WATCHLIST_KEY);
-     localStorage.removeItem(SELECTED_KEY);
+     await clearStored();
      state.watchlist=[];
      state.selected=DEFAULTS.map(x=>x.symbol);
      clearButton.dataset.confirmed='false';
@@ -639,7 +647,7 @@ function renderMore(){
      <button class="feature-row" data-tab="info"><span class="feature-icon blue">${iconSvg('spark',22)}</span><span><strong>데이터 및 이용 안내</strong><small>기준·지연·개인정보·지원 안내</small></span><b>${iconSvg('arrow',19)}</b></button>
      <button class="feature-row" data-external-url="https://github.com/shoon94parkk-del/chart-view-toss/issues"><span class="feature-icon slate">${iconSvg('more',22)}</span><span><strong>오류 신고</strong><small>개발 지원 채널에서 문제를 남겨주세요</small></span><b>${iconSvg('arrow',19)}</b></button>
    </div></section>
-   <div class="version-card"><span class="brand-mark">${iconSvg('spark',16)}</span><div><strong>Chart View</strong><small>버전 0.8</small></div></div>
+   <div class="version-card"><span class="brand-mark">${iconSvg('spark',16)}</span><div><strong>Chart View</strong><small>버전 0.8.1</small></div></div>
  `,'전체');
  bindNav();
 }
@@ -648,7 +656,7 @@ function render(){
  syncNativeBackHandler({
    isRoot: state.tab==='home',
    onBack: () => {
-     if(state.tab!=='home') history.back();
+     goBack();
    },
  });
  if(state.tab==='chart')return renderChart();
@@ -679,13 +687,26 @@ function syncFromLocation(){
    state.detailSymbol=parts[1].toUpperCase();
    return;
  }
- const routeAliases={search:'chart',compare:'chart',valuation:'valuation',macro:'macro',discover:'discover',news:'news',watch:'watch',info:'info'};
+ const routeAliases={chartviewHome:'chart',search:'chart',compare:'chart',valuation:'valuation',macro:'macro',discover:'discover',news:'news',watch:'watch',info:'info'};
  state.tab=allowed.has(pathTab)?pathTab:(routeAliases[pathTab]||'home');
 }
 
 applyRuntimeClass();
-window.addEventListener('popstate',()=>{closeStockSelector();syncFromLocation();render();requestAnimationFrame(()=>window.scrollTo(0,scrollPositions.get(location.hash||'#home')||0))});
+window.addEventListener('popstate',()=>{navigationDepth=Math.max(0,navigationDepth-1);closeStockSelector();syncFromLocation();render();requestAnimationFrame(()=>window.scrollTo(0,scrollPositions.get(location.hash||'#home')||0))});
 window.addEventListener('online',()=>render());
 window.addEventListener('offline',()=>render());
-syncFromLocation();
-render();
+document.addEventListener('chartview:storage-error',()=>showToast('목록을 기기에 저장하지 못했어요. 다시 시도해주세요.'));
+async function startApp(){
+ document.querySelector('#app').innerHTML='<div class="empty" role="status">저장된 목록을 불러오고 있어요.</div>';
+ try {
+   await initializeStorage();
+   state.watchlist=load(WATCHLIST_KEY,[]);
+   state.selected=load(SELECTED_KEY,DEFAULTS.map(x=>x.symbol));
+   syncFromLocation();
+   render();
+ } catch {
+   document.querySelector('#app').innerHTML='<div class="empty"><strong>저장된 목록을 불러오지 못했어요</strong><span>기존 목록을 보호하기 위해 시작을 잠시 멈췄어요.</span><button id="retry-start" class="retry">다시 시도</button></div>';
+   document.querySelector('#retry-start').onclick=startApp;
+ }
+}
+startApp();

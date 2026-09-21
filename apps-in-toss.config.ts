@@ -6,13 +6,17 @@ export default defineConfig({
     primaryColor: '#3182F6',
   },
   navigationBar: {
+    withTitle: true,
+    theme: 'light',
+    transparentBackground: false,
     withBackButton: true,
     withHomeButton: false,
   },
   webView: {
     bounces: false,
     pullToRefreshEnabled: false,
-    allowsBackForwardNavigationGestures: true,
+    allowsBackForwardNavigationGestures: false,
+    overScrollMode: 'never',
   },
   permissions: [],
   webBundleDir: 'dist',
