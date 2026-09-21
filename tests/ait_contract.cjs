@@ -10,7 +10,7 @@ const bridge = fs.readFileSync('src/tossBridge.js', 'utf8');
 const selector = fs.readFileSync('src/stockSelector.js', 'utf8');
 const presentation = fs.readFileSync('src/dataPresentation.js', 'utf8');
 
-assert.equal(pkg.version, '0.9.0');
+assert.equal(pkg.version, '0.9.1');
 assert.equal(pkg.dependencies['@apps-in-toss/web-framework'], '3.5.0');
 assert.equal(pkg.engines.node, '24.x');
 assert.match(pkg.engines.npm, />=10 <12/);

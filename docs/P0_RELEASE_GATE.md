@@ -24,14 +24,18 @@ Updated: 2026-09-21
 
 ## Blocking before public launch
 
-- [ ] obtain an official Apps in Toss scope answer for the actual Chart View feature set; policy packet is prepared but not sent
+- [ ] obtain an official Apps in Toss scope answer; inquiry sent with user-authorized consent, response pending (2026-09-21)
 - [ ] confirm commercial-use / redistribution conditions for every data provider in `DATA_PROVIDER_INVENTORY.md`
-- [ ] replace the placeholder operator disclosure with the actual service operator and legal support/contact information
-- [ ] move the shared Chart View API from Render Free to a non-sleeping paid production instance
+- [x] actual operator 박상훈 and support kimtang89@naver.com disclosed
+- [ ] eliminate user-visible cold-start dependency through a validated free static/serverless path or an explicitly authorized non-sleeping API; paid compute is not itself a Toss policy requirement
 - [ ] Android Apps in Toss Sandbox / QR smoke test
 - [ ] iOS Apps in Toss Sandbox / QR smoke test
 - [ ] verify native back button, root exit, external news open, haptic, safe area, keyboard/search and background-resume on device
 - [ ] verify slow network, offline, server 5xx and retry UX on device
+- [ ] confirm new anonymous-key storage and account separation on Android and iOS
+- [ ] correct console feature scheme to intoss://chartview/chartviewHome and obtain review
+
+See `FREE_HOSTING_AND_RELEASE.md` for current rights findings, free-hosting preparation and remaining external dependencies. Automatic tests and a test-bundle upload do not constitute public launch approval.
 
 ## Release rule
 

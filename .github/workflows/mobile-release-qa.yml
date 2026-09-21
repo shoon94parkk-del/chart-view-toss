@@ -42,6 +42,8 @@ jobs:
         run: npm run build
       - name: Verify progressive rendering and navigation races
         run: node tests/progressive_qa.mjs
+      - name: Verify deep links, large text and local performance diagnostics
+        run: node tests/release_gates_qa.mjs
       - name: Upload mobile QA screenshots
         if: always()
         uses: actions/upload-artifact@v4

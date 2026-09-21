@@ -1,3 +1,5 @@
+import { resolveRoute } from './routes.js';
+import { recordMetric, diagnosticSummary, clearDiagnostics } from './diagnostics.js';
 import './styles.css';
 import { ANALYSIS_ROUTES, renderAnalysis } from './analysisViews.js';
 import { finiteNumber } from './analysisData.js';
@@ -258,6 +260,7 @@ function addSelected(symbol,name){
 }
 
 async function loadChart(){
+ const started=performance.now();
  const seq=++chartLoadSeq;
  const requested=[...state.selected];
  const requestedPeriod=state.period;
@@ -278,6 +281,7 @@ async function loadChart(){
      return {stock:s,series:line,index:i,visible:true};
    });
    chartInstance.timeScale().fitContent();
+   requestAnimationFrame(()=>{if(canvas.isConnected&&seq===chartLoadSeq)recordMetric('chart.ready',started);});
    chartResizeObserver=new ResizeObserver(()=>{if(chartInstance&&canvas.clientWidth)chartInstance.applyOptions({width:canvas.clientWidth})});chartResizeObserver.observe(canvas);
    const styleName=(i)=>i<3?'실선':i===3?'파선':i===4?'점선':'긴 파선';
    legend.innerHTML=seriesRows.map(({stock:s,index:i})=>`<button type="button" data-legend-index="${i}" aria-pressed="true"><i class="legend-line legend-line-${i}" style="--legend-color:${COLORS[i%COLORS.length]}"></i><span>${esc(displayName(s.ticker,s.name||s.ticker))}<small>${styleName(i)}</small></span><strong class="${Number(s.return)>=0?'up':'down'}">${Number(s.return)>=0?'+':''}${esc(s.return)}%</strong></button>`).join('');
@@ -612,7 +616,7 @@ function renderInfo(){
    </section>
    <section class="release-notice"><strong>투자 판단 안내</strong><p>Chart View의 모든 정보는 정보 제공 목적이며 특정 종목의 매수·매도 또는 투자 성과를 보장하거나 권유하지 않아요. 최종 투자 판단은 이용자가 직접 해야 해요.</p></section>
    <div class="policy-links"><button data-external-url="${esc(origin+'/privacy.html')}"><span>개인정보 처리 안내</span>${iconSvg('arrow',18)}</button><button data-external-url="${esc(origin+'/terms.html')}"><span>서비스 이용 안내</span>${iconSvg('arrow',18)}</button><button data-external-url="${esc(origin+'/data-guide.html')}"><span>데이터 기준 전체 보기</span>${iconSvg('arrow',18)}</button><div class="analysis-card"><strong>고객문의 · 박상훈</strong><p>kimtang89@naver.com</p></div></div>
-   <section class="local-data-card"><div><strong>기기 저장 데이터</strong><p>관심종목과 비교 종목은 현재 이 기기에 저장돼요. 초기화하면 이 기기의 저장 목록만 삭제됩니다.</p></div><button id="clear-local-data" type="button">기기 데이터 초기화</button></section>
+   <section class="local-data-card"><div><strong>기기 저장 데이터</strong><p>관심종목과 비교 종목은 현재 이 기기에 저장돼요. 토스 익명 식별키로 사용자별 목록을 구분하며, 초기화하면 현재 사용자의 목록과 이용 기록을 삭제합니다.</p></div><button id="clear-local-data" type="button">기기 데이터 초기화</button></section>
  `,'데이터 안내');
  bindNav();
  const clearButton=document.querySelector('#clear-local-data');
@@ -626,6 +630,7 @@ function renderInfo(){
    }
    try{
      await clearStored();
+     clearDiagnostics();
      state.watchlist=[];
      state.selected=DEFAULTS.map(x=>x.symbol);
      clearButton.dataset.confirmed='false';
@@ -656,12 +661,15 @@ function renderMore(){
      <button class="feature-row" data-tab="info"><span class="feature-icon blue">${iconSvg('spark',22)}</span><span><strong>데이터 및 이용 안내</strong><small>기준·지연·개인정보·지원 안내</small></span><b>${iconSvg('arrow',19)}</b></button>
      <div class="feature-row"><span><strong>고객문의</strong><small>박상훈 · kimtang89@naver.com</small></span></div>
    </div></section>
-   <div class="version-card"><span class="brand-mark">${iconSvg('spark',16)}</span><div><strong>Chart View</strong><small>버전 0.9.0</small></div></div>
+   <div class="version-card"><span class="brand-mark">${iconSvg('spark',16)}</span><div><strong>Chart View</strong><small>버전 0.9.1</small></div></div>
  `,'전체');
  bindNav();
 }
 
 function render(){
+ const started=performance.now();
+ const route=state.tab;
+ requestAnimationFrame(()=>{if(state.tab===route)recordMetric(`view.${route}`,started);});
  syncNativeBackHandler({
    isRoot: state.tab==='home',
    onBack: () => {
@@ -680,25 +688,7 @@ function render(){
  return renderHome();
 }
 
-function syncFromLocation(){
- const allowed=new Set(['home','chart','watch','valuation','macro','discover','news','detail','info','more',...ANALYSIS_ROUTES]);
- const hashRaw=location.hash.replace(/^#/,'');
- if(hashRaw){
-   const [tabRaw,symbolRaw]=hashRaw.split('/');
-   state.tab=allowed.has(tabRaw)?tabRaw:'home';
-   if(state.tab==='detail'&&symbolRaw)state.detailSymbol=decodeURIComponent(symbolRaw);
-   return;
- }
- const parts=location.pathname.split('/').filter(Boolean).map(decodeURIComponent);
- const pathTab=parts[0]||'home';
- if(pathTab==='stock'&&parts[1]){
-   state.tab='detail';
-   state.detailSymbol=parts[1].toUpperCase();
-   return;
- }
- const routeAliases={chartviewHome:'chart',search:'chart',compare:'chart',valuation:'valuation',macro:'macro',discover:'discover',news:'news',watch:'watch',info:'info'};
- state.tab=allowed.has(pathTab)?pathTab:(routeAliases[pathTab]||'home');
-}
+function syncFromLocation(){ Object.assign(state,resolveRoute(location)); }
 
 applyRuntimeClass();
 window.addEventListener('popstate',()=>{navigationDepth=Math.max(0,navigationDepth-1);closeStockSelector();syncFromLocation();render();requestAnimationFrame(()=>window.scrollTo(0,scrollPositions.get(location.hash||'#home')||0))});
@@ -706,6 +696,7 @@ window.addEventListener('online',()=>render());
 window.addEventListener('offline',()=>render());
 document.addEventListener('chartview:storage-error',()=>showToast('목록을 기기에 저장하지 못했어요. 다시 시도해주세요.'));
 async function startApp(){
+ const started=performance.now();
  document.querySelector('#app').innerHTML='<div class="empty" role="status">저장된 목록을 불러오고 있어요.</div>';
  try {
    await initializeStorage();
@@ -713,9 +704,14 @@ async function startApp(){
    state.selected=load(SELECTED_KEY,DEFAULTS.map(x=>x.symbol));
    syncFromLocation();
    render();
+   recordMetric('startup',started);
  } catch {
-   document.querySelector('#app').innerHTML='<div class="empty"><strong>저장된 목록을 불러오지 못했어요</strong><span>기존 목록을 보호하기 위해 시작을 잠시 멈췄어요.</span><button id="retry-start" class="retry">다시 시도</button></div>';
+   document.querySelector('#app').innerHTML='<div class="empty"><strong>사용자 정보와 저장 목록을 확인하지 못했어요</strong><span>토스 앱을 최신 버전으로 업데이트하고 다시 시도해주세요. 기존 목록은 그대로 보관돼요.</span><button id="retry-start" class="retry">다시 시도</button></div>';
    document.querySelector('#retry-start').onclick=startApp;
  }
 }
 startApp();
+// Opt-in support diagnostics: aggregate timings only, local to this app session.
+if(new URLSearchParams(location.search).get('diagnostics')==='1') {
+ Object.defineProperty(window,'chartviewDiagnostics',{value:()=>({version:'0.9.1',metrics:diagnosticSummary()}),configurable:true});
+}
