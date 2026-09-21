@@ -7,6 +7,8 @@ try{
  for(const width of [320,390,430]){
   const page=await browser.newPage({viewport:{width,height:844}}),errors=[];
   page.on('pageerror',e=>errors.push(e.message));
+  // Linux/WebView language identifiers must not break chart date formatting.
+  await page.addInitScript(()=>Object.defineProperty(navigator,'language',{get:()=> 'en-US@posix'}));
   await page.route('https://chart-view-pkv8.onrender.com/**',async route=>{
    const url=new URL(route.request().url()),path=url.pathname;
    let body={};
