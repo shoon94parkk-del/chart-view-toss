@@ -1,0 +1,20 @@
+name: Live backend contract smoke
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  api-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.21.0'
+      - name: Verify production shared API contract
+        env:
+          VITE_CHARTVIEW_API_BASE: https://chart-view-pkv8.onrender.com
+        run: node tests/live_api_contract.mjs
