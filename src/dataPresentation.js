@@ -96,3 +96,17 @@ export function titleLanguage(title) {
   const latin = (text.match(/[A-Za-z]/g) || []).length;
   return latin > korean * 2 ? '영문 원문' : '한국어';
 }
+
+export function macroPublicationLabel(row) {
+  const symbol = row?.original_symbol || row?.symbol;
+  if (symbol === 'PCEPI' || symbol === 'PCETRIM12M159SFRBDAL') {
+    return row?.publishedAt ? `발표 ${formatKst(row.publishedAt,{dateOnly:true})}` : '발표일 메타데이터 미제공';
+  }
+  return row?.publishedAt ? `발표 ${formatKst(row.publishedAt,{dateOnly:true})}` : '';
+}
+
+export function macroSourceUrl(row) {
+  const symbol = String(row?.original_symbol || row?.symbol || '');
+  if (!symbol || symbol.startsWith('^')) return '';
+  return `https://fred.stlouisfed.org/series/${encodeURIComponent(symbol)}`;
+}
