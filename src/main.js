@@ -13,7 +13,7 @@ const DISPLAY_NAMES={'005930.KS':'삼성전자','000660.KS':'SK하이닉스','NV
 const displayName=(symbol,fallback='')=>DISPLAY_NAMES[symbol]||fallback||symbol;
 const fmtPrice=(value)=>{const n=Number(value);if(!Number.isFinite(n))return '-';if(Math.abs(n)>=1000)return n.toLocaleString('ko-KR',{maximumFractionDigits:2});if(Math.abs(n)>=100)return n.toLocaleString('ko-KR',{maximumFractionDigits:2});return n.toLocaleString('ko-KR',{maximumFractionDigits:3})};
 const fmtChange=(value)=>{const n=Number(value);if(!Number.isFinite(n))return '-';return `${n>0?'+':''}${n.toFixed(2)}%`};
-const state={tab:'home',watchlist:load(WATCHLIST_KEY,[]),selected:load(SELECTED_KEY,DEFAULTS.map(x=>x.symbol)),period:'1mo',detailSymbol:null,valuationMetric:'forwardPE',watchSort:'manual',newsSort:'major'};
+const state={tab:'home',watchlist:load(WATCHLIST_KEY,[]),selected:load(SELECTED_KEY,DEFAULTS.map(x=>x.symbol)),period:'1mo',detailSymbol:null,valuationMetric:'forwardPE',watchSort:'manual',newsSort:'major',detailPeriod:'3mo'};
 let chartInstance=null;
 let searchSeq=0;
 let chartLoadSeq=0;
@@ -419,52 +419,71 @@ async function renderDetail(){
  const saved=state.watchlist.find(x=>x.symbol===symbol);
  const knownName=displayName(symbol,saved?.name||symbol);
  document.querySelector('#app').innerHTML=shell(`
-   <section class="detail-hero">
+   <section class="detail-compact-head">
      <div class="detail-brand"><span class="detail-logo">${esc(knownName.slice(0,1))}</span><div><span>${esc(symbol)}</span><h2>${esc(knownName)}</h2></div></div>
-     <div class="detail-actions"><button id="detail-watch">${iconSvg('heart',18)} <span>${saved?'관심 해제':'관심 추가'}</span></button><button id="detail-compare">${iconSvg('chart',18)} <span>비교하기</span></button></div>
+     <div class="detail-actions"><button id="detail-watch">${iconSvg('heart',18)} <span>${saved?'관심 해제':'관심 추가'}</span></button><button id="detail-compare">${iconSvg('chart',18)} <span>비교에 추가</span></button></div>
    </section>
    <section class="detail-price skeleton detail-price-skeleton" id="detail-price"></section>
-   <section class="detail-chart-card"><div class="detail-section-head"><div><span>3개월 흐름</span><strong>수익률 추이</strong></div><small id="detail-chart-status">불러오는 중</small></div><div id="detail-chart" class="detail-chart"></div></section>
-   <section class="detail-block"><div class="section-head"><h2>핵심 지표</h2><button class="text-button" data-tab="valuation">비교 보기</button></div><div id="detail-metrics" class="detail-metrics"><div class="skeleton metric"></div><div class="skeleton metric"></div><div class="skeleton metric"></div><div class="skeleton metric"></div></div></section>
+   <div class="segmented detail-period-tabs">${[['1mo','1개월'],['3mo','3개월'],['6mo','6개월'],['1y','1년']].map(([p,l])=>`<button data-detail-period="${p}" aria-pressed="${state.detailPeriod===p}" class="${state.detailPeriod===p?'active':''}">${l}</button>`).join('')}</div>
+   <section class="detail-chart-card"><div class="detail-section-head"><div><span>기간 수익률</span><strong id="detail-period-label">선택 기간 흐름</strong></div><small id="detail-chart-status">불러오는 중</small></div><div id="detail-chart" class="detail-chart"></div><div id="detail-return-note" class="detail-return-note"></div></section>
+   <section class="detail-block"><div class="section-head"><h2>핵심 지표</h2><button class="text-button" data-tab="valuation">같은 지표 비교</button></div><div id="detail-metrics" class="detail-metrics"><div class="skeleton metric"></div><div class="skeleton metric"></div><div class="skeleton metric"></div><div class="skeleton metric"></div></div><div id="detail-metric-meta" class="detail-metric-meta"></div></section>
    <section class="detail-block"><div class="section-head"><h2>관련 뉴스</h2><button class="text-button" data-tab="news">전체 뉴스</button></div><div id="detail-news" class="detail-news"><div class="skeleton news"></div><div class="skeleton news"></div></div></section>
  `,knownName);
  bindNav();
  document.querySelector('#detail-watch')?.addEventListener('click',()=>{
    const idx=state.watchlist.findIndex(x=>x.symbol===symbol);
-   if(idx>=0)state.watchlist.splice(idx,1);else state.watchlist.unshift({symbol,name:knownName});
-   persist();renderDetail();
+   if(idx>=0){
+     const removed=state.watchlist[idx];state.watchlist.splice(idx,1);
+     if(persist()){showToast(`${knownName} 관심종목에서 삭제했어요.`,'실행 취소',()=>{state.watchlist.splice(idx,0,removed);persist();renderDetail()});renderDetail()}
+   }else{
+     state.watchlist.unshift({symbol,name:knownName});
+     if(persist()){haptic('tickWeak');showToast(`${knownName} 관심종목에 저장했어요.`);renderDetail()}
+   }
  });
  document.querySelector('#detail-compare')?.addEventListener('click',()=>{
-   if(!state.selected.includes(symbol))state.selected=[symbol,...state.selected].slice(0,6);
-   persist();navigate('chart');
+   if(state.selected.includes(symbol)){showToast('이미 비교 종목에 포함돼 있어요.');navigate('chart');return}
+   if(state.selected.length>=6){showToast('비교는 최대 6개까지 가능해요. 차트에서 종목을 변경해주세요.','차트 열기',()=>navigate('chart'));return}
+   state.selected=[...state.selected,symbol];persist();showToast(`${knownName}을 비교에 추가했어요.`);navigate('chart');
  });
- const [compareRes,valRes,newsRes]=await Promise.allSettled([
-   compareStocks([symbol],'3mo'),valuationStocks([symbol]),personalizedNews([symbol],[knownName])
+ document.querySelectorAll('[data-detail-period]').forEach(b=>b.onclick=()=>{state.detailPeriod=b.dataset.detailPeriod;haptic('tickWeak');renderDetail()});
+
+ const [quoteRes,compareRes,valRes,newsRes]=await Promise.allSettled([
+   quoteSnapshots([symbol]),
+   compareStocks([symbol],state.detailPeriod),
+   valuationStocks([symbol]),
+   personalizedNews([symbol],[knownName])
  ]);
+ const quote=quoteRes.status==='fulfilled'?quoteRes.value?.results?.[0]:null;
  const compare=compareRes.status==='fulfilled'?compareRes.value:null;
  const stock=compare?.stocks?.[0];
  const valuation=valRes.status==='fulfilled'?valRes.value?.stocks?.[0]:null;
- const latest=stock?.data?.at?.(-1)?.value;
- const ret=Number(stock?.return);
- const price=valuation?.price;
+ const dayChange=Number(quote?.change);
+ const periodReturn=Number(stock?.return);
+
  const priceBox=document.querySelector('#detail-price');
  priceBox.classList.remove('skeleton','detail-price-skeleton');
- priceBox.innerHTML=`<div><span>현재가</span><strong>${price!=null?esc(fmtPrice(price)):'-'}</strong><small>${esc(valuation?.currency||'')}</small></div><div class="detail-return ${ret>0?'up':ret<0?'down':'flat'}"><span>3개월</span><strong>${Number.isFinite(ret)?esc(fmtChange(ret)):'-'}</strong></div>`;
+ priceBox.innerHTML=`<div><span>현재가${quote?.asOf?' · '+esc(formatKst(quote.asOf)):''}</span><strong>${quote?.price!=null?esc(formatCurrencyPrice(quote.price,quote.currency)):'-'}</strong><small>${esc(currencyLabel(quote?.currency))}</small></div><div class="detail-return ${dayChange>0?'up':dayChange<0?'down':'flat'}"><span>전 거래일 대비</span><strong>${Number.isFinite(dayChange)?esc(fmtChange(dayChange)):'-'}</strong><small>${quote?.source?esc(quote.source):'시세 출처 확인 필요'}</small></div>`;
 
  const canvas=document.querySelector('#detail-chart'),status=document.querySelector('#detail-chart-status');
+ document.querySelector('#detail-period-label').textContent={ '1mo':'1개월','3mo':'3개월','6mo':'6개월','1y':'1년' }[state.detailPeriod]+' 수익률';
  if(stock?.data?.length){
    chartInstance=createChart(canvas,{width:canvas.clientWidth||320,height:220,layout:{background:{type:ColorType.Solid,color:'#ffffff'},textColor:'#8b95a1',fontFamily:'Pretendard, -apple-system, sans-serif'},grid:{vertLines:{color:'#f7f8fa'},horzLines:{color:'#f2f4f6'}},rightPriceScale:{borderVisible:false},timeScale:{borderVisible:false},crosshair:{vertLine:{color:'#d1d6db'},horzLine:{color:'#d1d6db'}}});
    const line=chartInstance.addAreaSeries({lineColor:'#3182f6',topColor:'rgba(49,130,246,.18)',bottomColor:'rgba(49,130,246,.01)',lineWidth:2,priceLineVisible:false,lastValueVisible:false});
    line.setData(stock.data);chartInstance.timeScale().fitContent();
    new ResizeObserver(()=>{if(chartInstance&&canvas.clientWidth)chartInstance.applyOptions({width:canvas.clientWidth})}).observe(canvas);
-   status.textContent=compare?.timestamp?String(compare.timestamp).slice(5,16):'조회 완료';
- }else{canvas.innerHTML='<div class="empty compact"><strong>차트 데이터가 없어요</strong><span>잠시 후 다시 확인해주세요</span></div>';status.textContent='데이터 없음'}
+   status.textContent=Number.isFinite(periodReturn)?`${periodReturn>=0?'+':''}${periodReturn.toFixed(2)}%`:'조회 완료';
+   document.querySelector('#detail-return-note').innerHTML=`<span>${esc(stock.startDate||'-')} → ${esc(stock.endDate||'-')}</span><span>${esc(currencyLabel(stock.currency))} 기준 · ${stock.priceBasis==='adjusted_close'?'조정종가 우선':'종가 기준'}</span>`;
+ }else{
+   canvas.innerHTML='<div class="empty compact"><strong>차트 데이터가 없어요</strong><span>잠시 후 다시 확인해주세요.</span></div>';status.textContent='데이터 없음';document.querySelector('#detail-return-note').textContent='';
+ }
 
- const metrics=[['FWD PER',valuation?.forwardPE,'배'],['PER',valuation?.trailingPE,'배'],['PBR',valuation?.pbr,'배'],['ROE',valuation?.roe,'%'],['영업이익률',valuation?.operatingMargin,'%'],['배당수익률',valuation?.dividendYield,'%']];
- document.querySelector('#detail-metrics').innerHTML=metrics.map(([label,v,suffix],i)=>`<div class="detail-metric tone-bg-${i%3}"><span>${label}</span><strong>${v==null?'-':esc(Number(v).toLocaleString('ko-KR',{maximumFractionDigits:2})+suffix)}</strong></div>`).join('');
+ const metricDefs=[['예상 PER','forwardPE','배'],['실적 PER','trailingPE','배'],['PBR','pbr','배'],['ROE','roe','%'],['영업이익률','operatingMargin','%'],['배당수익률','dividendYield','%']];
+ document.querySelector('#detail-metrics').innerHTML=metricDefs.map(([label,key,suffix],i)=>{const v=valuation?.[key];return `<div class="detail-metric tone-bg-${i%3}"><span>${label}</span><strong>${v==null?'-':esc(Number(v).toLocaleString('ko-KR',{maximumFractionDigits:2})+suffix)}</strong><small>${esc(valuation?.fieldMeta?.[key]?.period||'기준기간 미제공')}</small></div>`}).join('');
+ document.querySelector('#detail-metric-meta').innerHTML=valuation?`재무 데이터 조회 ${esc(formatKst(valuation.generatedAt))} · 지표별 출처는 밸류에이션 비교에서 확인할 수 있어요.`:'재무 데이터를 불러오지 못했어요.';
 
  const news=newsRes.status==='fulfilled'?(newsRes.value?.items||[]).slice(0,4):[];
- document.querySelector('#detail-news').innerHTML=news.length?news.map(row=>newsCard(row)).join(''):'<div class="empty compact"><strong>표시할 주요 뉴스가 없어요</strong><span>새 소식이 들어오면 여기에 보여드려요</span></div>';
+ document.querySelector('#detail-news').innerHTML=news.length?news.map(row=>newsCard(row)).join(''):'<div class="empty compact"><strong>표시할 관련 뉴스가 없어요</strong><span>직접 또는 업종 관련 근거가 확인된 기사를 표시해요.</span></div>';
+ bindNav();
 }
 
 function newsCard(row){
