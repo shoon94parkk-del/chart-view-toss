@@ -146,8 +146,7 @@ try{
   const offlinePage=await offlineContext.newPage();await seed(offlinePage);await installMocks(offlinePage);
   await offlinePage.goto(`${BASE}/#home`,{waitUntil:'networkidle'});
   await offlineContext.setOffline(true);
-  await offlinePage.reload({waitUntil:'domcontentloaded'});
-  await offlinePage.waitForSelector('.network-banner');
+  await offlinePage.waitForSelector('.network-banner',{timeout:3000});
   if(!(await offlinePage.locator('.network-banner').innerText()).includes('인터넷 연결이 끊어졌어요')) throw new Error('offline banner missing');
   await offlineContext.close();
 
