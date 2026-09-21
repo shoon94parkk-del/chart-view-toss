@@ -1,7 +1,7 @@
 {
   "name": "chart-view-toss",
   "private": true,
-  "version": "0.8.0",
+  "version": "0.8.1",
   "type": "module",
   "engines": {
     "node": "24.x",
@@ -9,14 +9,14 @@
   },
   "scripts": {
     "dev": "vite --host 0.0.0.0",
-    "test": "node tests/ait_contract.cjs",
+    "test": "node tests/ait_contract.cjs && node --test tests/*.test.mjs",
     "build": "npm test && vite build",
     "build:ait": "npm test && vite build && ait build",
     "deploy:ait": "ait deploy",
     "preview": "vite preview --host 0.0.0.0"
   },
   "dependencies": {
-    "@apps-in-toss/web-framework": "3.4.1",
+    "@apps-in-toss/web-framework": "3.5.0",
     "lightweight-charts": "^4.1.0"
   },
   "devDependencies": {

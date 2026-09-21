@@ -3,7 +3,7 @@
 ## Current foundation
 
 - App key: `chartview`
-- SDK: `@apps-in-toss/web-framework@3.4.1`
+- SDK: `@apps-in-toss/web-framework@3.5.0`
 - Web preview: `https://chart-view-toss.onrender.com`
 - Backend: current shared Chart View API
 - Mini-app config: `apps-in-toss.config.ts`

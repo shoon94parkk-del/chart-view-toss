@@ -30,7 +30,7 @@ v0.8 release-plan implementation:
 - discovery screen using screener score / volume / trend signals
 - personalized watchlist-news screen
 - in-app hash/history navigation with back behavior
-- Apps in Toss WebView SDK 3.4.1 pinned
+- Apps in Toss WebView SDK 3.5.0 pinned
 - `apps-in-toss.config.ts` for `chartview` with native navigation bar enabled
 - native back-event bridge on sub-pages while preserving the platform root-exit behavior
 - native `Device.openURL` for news links with browser fallback
@@ -89,3 +89,7 @@ Operational gates still required before public release:
 
 - build a fresh `.ait` release candidate
 - run Sandbox / QR validation on Android and iOS
+
+## 2026-09-21 앱인토스 재등록
+
+반려 대응, 검증 결과, 남은 기기·정책 확인은 docs/REVIEW_FIXES_20260921.md를 참고하세요.

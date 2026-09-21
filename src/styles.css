@@ -336,3 +336,19 @@ button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{o
  .home-kicker{display:block;margin-bottom:7px}
  .home-compact-head h2{font-size:23px;line-height:1.28;word-break:keep-all}
 }
+
+/* Apps in Toss review: light theme, readable iOS input text, no page pinch zoom. */
+:root { color-scheme: light only; }
+html { touch-action: pan-x pan-y; }
+input,textarea,select {
+  color:#191f28!important;
+  -webkit-text-fill-color:#191f28!important;
+  caret-color:#3182f6;
+  font-size:16px!important;
+  color-scheme:light;
+}
+input::placeholder,textarea::placeholder {
+  color:#6b7684!important;
+  -webkit-text-fill-color:#6b7684!important;
+  opacity:1;
+}
