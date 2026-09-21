@@ -6,6 +6,10 @@ Chart View의 앱인토스 전용 클라이언트 프로젝트입니다.
 - 이 저장소: 토스 미니앱 UI/앱 셸 및 연동 전용
 - 원칙: 기존 Chart View API 계약을 재사용하고 앱인토스 전용 변경은 이 저장소에서 격리
 
+## 개발 전 필수 문서
+
+반복 개선 내용을 잃지 않도록 코드 변경 전 `AGENTS.md`, `docs/project-memory.md`, `docs/regression-guardrails.md`, `docs/decision-log.md`를 먼저 확인합니다. 행동 변경은 회귀 테스트와 결정 로그를 함께 갱신합니다.
+
 ## Live preview
 
 - Render: https://chart-view-toss.onrender.com
