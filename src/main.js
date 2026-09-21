@@ -20,7 +20,12 @@ let chartLoadSeq=0;
 let toastTimer=null;
 const scrollPositions=new Map();
 
-function load(key,fallback){try{return JSON.parse(localStorage.getItem(key))||fallback}catch{return fallback}}
+function load(key,fallback){
+ try{
+   const value=JSON.parse(localStorage.getItem(key));
+   return Array.isArray(value)?value:fallback;
+ }catch{return fallback}
+}
 function persist(){
  try{
    localStorage.setItem(WATCHLIST_KEY,JSON.stringify(state.watchlist));
@@ -589,9 +594,33 @@ function renderInfo(){
      <article class="info-card"><span class="info-icon coral">${iconSvg('news',21)}</span><div><strong>뉴스</strong><p>뉴스는 외부 매체의 기사 제목·링크를 모아 보여주며 기사 내용과 정확성에 대한 책임은 해당 제공처에 있어요.</p></div></article>
    </section>
    <section class="release-notice"><strong>투자 판단 안내</strong><p>Chart View의 모든 정보와 탐색 점수는 정보 제공 목적이며 특정 종목의 매수·매도 또는 투자 성과를 보장하거나 권유하지 않아요. 최종 투자 판단은 이용자가 직접 해야 해요.</p></section>
-   <div class="policy-links"><button data-external-url="${esc(origin+'/privacy.html')}"><span>개인정보 처리 안내</span>${iconSvg('arrow',18)}</button><button data-external-url="${esc(origin+'/terms.html')}"><span>서비스 이용 안내</span>${iconSvg('arrow',18)}</button><button data-external-url="${esc(origin+'/data-guide.html')}"><span>데이터 기준 전체 보기</span>${iconSvg('arrow',18)}</button></div>
+   <div class="policy-links"><button data-external-url="${esc(origin+'/privacy.html')}"><span>개인정보 처리 안내</span>${iconSvg('arrow',18)}</button><button data-external-url="${esc(origin+'/terms.html')}"><span>서비스 이용 안내</span>${iconSvg('arrow',18)}</button><button data-external-url="${esc(origin+'/data-guide.html')}"><span>데이터 기준 전체 보기</span>${iconSvg('arrow',18)}</button><button data-external-url="https://github.com/shoon94parkk-del/chart-view-toss/issues"><span>오류·데이터 문의</span>${iconSvg('arrow',18)}</button></div>
+   <section class="local-data-card"><div><strong>기기 저장 데이터</strong><p>관심종목과 비교 종목은 현재 이 기기에 저장돼요. 초기화하면 이 기기의 저장 목록만 삭제됩니다.</p></div><button id="clear-local-data" type="button">기기 데이터 초기화</button></section>
  `,'데이터 안내');
  bindNav();
+ const clearButton=document.querySelector('#clear-local-data');
+ clearButton?.addEventListener('click',()=>{
+   if(clearButton.dataset.confirmed!=='true'){
+     clearButton.dataset.confirmed='true';
+     clearButton.textContent='한 번 더 누르면 초기화';
+     clearButton.classList.add('danger');
+     setTimeout(()=>{if(clearButton?.isConnected){clearButton.dataset.confirmed='false';clearButton.textContent='기기 데이터 초기화';clearButton.classList.remove('danger')}},4500);
+     return;
+   }
+   try{
+     localStorage.removeItem(WATCHLIST_KEY);
+     localStorage.removeItem(SELECTED_KEY);
+     state.watchlist=[];
+     state.selected=DEFAULTS.map(x=>x.symbol);
+     clearButton.dataset.confirmed='false';
+     clearButton.textContent='초기화 완료';
+     clearButton.classList.remove('danger');
+     haptic('tickWeak');
+     showToast('이 기기의 관심종목·비교종목 저장값을 초기화했어요.');
+   }catch{
+     showToast('기기 저장 데이터를 초기화하지 못했어요.');
+   }
+ });
 }
 
 function renderMore(){
