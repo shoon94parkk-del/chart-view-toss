@@ -116,6 +116,9 @@ export async function api(path, options = {}) {
   throw new ApiError('데이터를 불러오지 못했어요.', { code: 'unknown' });
 }
 
+export const quoteSnapshots = (tickers) =>
+  api(`/api/quotes?tickers=${encodeURIComponent(tickers.join(','))}`);
+
 export const compareStocks = (tickers, period = '1mo') =>
   api(`/api/compare?tickers=${encodeURIComponent(tickers.join(','))}&period=${encodeURIComponent(period)}`);
 
