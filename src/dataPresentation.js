@@ -112,3 +112,12 @@ export function macroSourceUrl(row) {
   if (!symbol || symbol.startsWith('^')) return '';
   return `https://fred.stlouisfed.org/series/${encodeURIComponent(symbol)}`;
 }
+
+export function changeBasisLabel(value) {
+  const map = {
+    'previous observation': '이전 관측 대비',
+    'previous monthly observation': '이전 월 관측 대비',
+    'previous trading close': '전 거래일 종가 대비',
+  };
+  return map[String(value || '').toLowerCase()] || value || '이전 관측 대비';
+}
