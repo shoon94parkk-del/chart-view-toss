@@ -22,6 +22,8 @@ Toss-specific navigation, safe-area, storage, SDK bridge, and release logic belo
 - Home surfaces the latest screener-selected TOP3 and a market-cap-weighted daily-change heatmap using the shared Chart View backend.
 - Heatmap medium/large cells use a small set of inline bundled SVG company marks (with text fallbacks), so logo recognition adds no separate image requests.
 - Heatmap labels are geometry-aware: curated short company names are preferred over provider legal names, logos are suppressed in cramped cells, and tiny cells fall back to compact labels to prevent clipping.
+- Heatmap cards use tighter padding, stronger contrast, thinner cell seams, and corner-pinned logos so recognition does not consume label space.
+- Home discovery restores the Web Chart View recommendation-performance summary from the same home-bootstrap payload: average evaluated return, positive-return ratio, and evaluated/total recommendation count.
 - Shared stock selector sheet and up to 6 selected tickers.
 - Device-local watchlist/selection.
 - In-app hash/history navigation and scroll restoration.
