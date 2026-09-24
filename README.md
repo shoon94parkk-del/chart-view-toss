@@ -52,7 +52,7 @@ v0.8 release-plan implementation:
 - privacy, service-use, and data-methodology static pages
 - Node 24 runtime pinning for Apps in Toss compatibility
 - common stock selector sheet shared by chart / valuation / watchlist
-- data-first Home order: market → watchlist → summary → tools/news
+- data-first Home order: market → daily TOP3 → daily heatmap → watchlist → summary → tools/news
 - chart result table and explicit local-currency / adjusted-close / no-interpolation calculation basis
 - watchlist add/edit/sort and undo delete
 - valuation metric-first cross-company comparison
