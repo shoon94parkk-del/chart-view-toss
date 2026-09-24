@@ -59,7 +59,11 @@ async function installMocks(page, mode='ok') {
     const path=url.pathname;
     if(path==='/api/market-now') return json(route,{results:marketRows,timestamp:'2026-09-21 12:00:00'});
     if(path==='/api/home-snapshot') return json(route,{generatedAt:'2026-09-21T03:02:00Z',macro:{summary:{level:'yellow',text:'금리·물가·위험 신호가 함께 나타납니다.',latestBasisDate:'2026-09-20',notice:'시장 환경 설명용 요약입니다.'}},heatmap:{results:[{ticker:'005930.KS',name:'삼성전자',marketCap:520000000000000,price:84200,change:1.14},{ticker:'000660.KS',name:'SK하이닉스',marketCap:210000000000000,price:295000,change:-0.82},{ticker:'NVDA',name:'엔비디아',marketCap:4200000000000,price:188.3,change:0.84},{ticker:'AAPL',name:'애플',marketCap:3700000000000,price:241.7,change:-0.31}]}});
-    if(path==='/api/home-bootstrap') return json(route,{day:{tradeDate:'2026-09-21',top3:[{symbol:'005930.KS',name:'삼성전자'},{symbol:'000660.KS',name:'SK하이닉스'},{symbol:'NVDA',name:'엔비디아'}]},recommendations:[{symbol:'005930.KS',returnPct:8,lastUpdatedTradeDate:'2026-09-20'},{symbol:'000660.KS',returnPct:-2,lastUpdatedTradeDate:'2026-09-20'},{symbol:'NVDA',returnPct:6,lastUpdatedTradeDate:'2026-09-20'}]});
+    if(path==='/api/home-bootstrap') return json(route,{day:{tradeDate:'2026-09-21',top3:[{symbol:'005930.KS',name:'삼성전자'},{symbol:'000660.KS',name:'SK하이닉스'},{symbol:'NVDA',name:'엔비디아'}]},recommendations:[
+      {rank:1,symbol:'005930.KS',name:'삼성전자',recommendedDate:'2026-09-18',recommendedPrice:81000,currentPrice:87480,returnPct:8,bestReturnPct:11.2,score:88,grade:'A',statusLabel:'성과 추적 중',reason:'거래량과 추세 조건이 함께 개선되었습니다.',lastUpdatedTradeDate:'2026-09-20'},
+      {rank:2,symbol:'000660.KS',name:'SK하이닉스',recommendedDate:'2026-09-18',recommendedPrice:300000,currentPrice:294000,returnPct:-2,bestReturnPct:3.4,score:81,grade:'B+',statusLabel:'성과 추적 중',reason:'중기 모멘텀 조건을 충족했습니다.',lastUpdatedTradeDate:'2026-09-20'},
+      {rank:3,symbol:'NVDA',name:'엔비디아',recommendedDate:'2026-09-17',recommendedPrice:180,currentPrice:190.8,returnPct:6,bestReturnPct:9.1,score:79,grade:'B+',statusLabel:'성과 추적 중',reason:'가격 추세와 거래량이 개선되었습니다.',lastUpdatedTradeDate:'2026-09-20'}
+    ]});
     if(path==='/api/heatmap') return json(route,{generatedAt:'2026-09-21T03:02:00Z',results:[]});
     if(path==='/api/quotes') return json(route,{results:[
       {ticker:'005930.KS',name:'삼성전자',price:84200,change:1.14,currency:'KRW',asOf:'2026-09-21T03:00:00Z',source:'Yahoo Chart 5m'},
@@ -123,9 +127,16 @@ try{
 
   const context=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:1});
   const page=await context.newPage();await seed(page);await installMocks(page);
-  for(const tab of ['valuation','macro','watch','news','detail/005930.KS','more','info']){
+  for(const tab of ['valuation','macro','watch','news','picks','detail/005930.KS','more','info']){
     await page.goto(`${BASE}/#${tab}`,{waitUntil:'networkidle'});
     await page.waitForTimeout(120);
+    if(tab==='picks'){
+      await page.waitForSelector('.pick-ledger-item');
+      const body=await page.locator('body').innerText();
+      if(!body.includes('추천 기록')||!body.includes('추천 81,000원')||!body.includes('현재 87,480원')||!body.includes('+8.00%')) throw new Error('recommendation ledger detail missing');
+      await page.locator('.pick-ledger-row').first().click();
+      if(await page.locator('.pick-ledger-detail').first().isHidden()) throw new Error('recommendation ledger detail did not expand');
+    }
     await assertNoHorizontalOverflow(page,`390px ${tab}`);
     await page.screenshot({path:`${OUT}/390-${tab.replaceAll('/','-')}.png`,fullPage:true});
   }
