@@ -157,15 +157,14 @@ function heatmapMarketMarkup(payload, market) {
     const compact = veryTight || rect.width < 0.21 || rect.height < 0.24 || area < 0.058;
     const label = veryTight ? rect.row.fallback : compact ? rect.row.short : rect.row.name;
     const logoSvg = rect.row.logo ? HOME_LOGOS[rect.row.logo] : '';
-    const showLogo = Boolean(logoSvg) && area >= 0.05 && rect.width >= 0.16 && rect.height >= 0.18;
-    const showFallbackMark = !logoSvg && !compact && area >= 0.09 && rect.width >= 0.22 && rect.height >= 0.27;
-    const mark = showLogo || showFallbackMark
-      ? '<i class="home-heatmap-logo" aria-hidden="true">' + (logoSvg || '<b>' + esc(rect.row.fallback) + '</b>') + '</i>'
+    const showLogo = Boolean(logoSvg) && !veryTight && area >= 0.05 && rect.width >= 0.17 && rect.height >= 0.18;
+    const mark = showLogo
+      ? '<i class="home-heatmap-logo" aria-hidden="true">' + logoSvg + '</i>'
       : '';
     return '<div class="home-heatmap-cell ' + toneClass(rect.row.change) + ' ' + sizeClass + '"' +
       ' style="left:' + (rect.x * 100).toFixed(3) + '%;top:' + (rect.y * 100).toFixed(3) + '%;width:' + (rect.width * 100).toFixed(3) + '%;height:' + (rect.height * 100).toFixed(3) + '%"' +
       ' role="img" aria-label="' + esc(rect.row.name + ' ' + signedPct(rect.row.change)) + '">' +
-      mark + '<strong>' + esc(label) + '</strong><span>' + esc(signedPct(rect.row.change)) + '</span></div>';
+      '<span class="home-heatmap-name">' + mark + '<strong>' + esc(label) + '</strong></span><span class="home-heatmap-change">' + esc(signedPct(rect.row.change)) + '</span></div>';
   }).join('');
 }
 
@@ -174,7 +173,7 @@ function createSections(marketSection) {
   picks.className = 'section home-extra-section home-pick-section home-primary';
   picks.id = 'home-top-picks-section';
   picks.innerHTML =
-    '<div class="section-head"><h2>오늘의 종목발굴</h2><button type="button" class="text-button" data-home-extra-route="discover">스크리너</button></div>' +
+    '<div class="section-head"><h2>오늘의 종목발굴</h2><button type="button" class="text-button" data-home-extra-route="picks">추천 기록</button></div>' +
     '<div id="home-top-picks" class="home-pick-list"><div class="skeleton home-extra-skeleton"></div></div>';
 
   const heatmap = document.createElement('section');
