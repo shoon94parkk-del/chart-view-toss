@@ -1,24 +1,25 @@
 import { homeBootstrap, homeSnapshot, homeHeatmap } from './api.js';
+import { HOME_LOGOS } from './homeLogos.js';
 
 const STOCK_META = {
-  '005930.KS': { name: '삼성전자', market: 'KR' },
-  '000660.KS': { name: 'SK하이닉스', market: 'KR' },
-  '207940.KS': { name: '삼성바이오로직스', market: 'KR' },
-  '005380.KS': { name: '현대차', market: 'KR' },
-  '000270.KS': { name: '기아', market: 'KR' },
-  '373220.KS': { name: 'LG에너지솔루션', market: 'KR' },
-  '035420.KS': { name: 'NAVER', market: 'KR' },
-  '068270.KS': { name: '셀트리온', market: 'KR' },
-  'NVDA': { name: '엔비디아', market: 'US' },
-  'AAPL': { name: '애플', market: 'US' },
-  'MSFT': { name: '마이크로소프트', market: 'US' },
-  'GOOGL': { name: '알파벳', market: 'US' },
-  'AMZN': { name: '아마존', market: 'US' },
-  'TSM': { name: 'TSMC', market: 'US' },
-  'META': { name: '메타', market: 'US' },
-  'AVGO': { name: '브로드컴', market: 'US' },
-  'TSLA': { name: '테슬라', market: 'US' },
-  'AMD': { name: 'AMD', market: 'US' }
+  '005930.KS': { name: '삼성전자', market: 'KR', logo: 'samsung', fallback: '삼성' },
+  '000660.KS': { name: 'SK하이닉스', market: 'KR', fallback: 'SK' },
+  '207940.KS': { name: '삼성바이오로직스', market: 'KR', fallback: '삼바' },
+  '005380.KS': { name: '현대차', market: 'KR', fallback: '현대' },
+  '000270.KS': { name: '기아', market: 'KR', fallback: '기아' },
+  '373220.KS': { name: 'LG에너지솔루션', market: 'KR', fallback: 'LG' },
+  '035420.KS': { name: 'NAVER', market: 'KR', fallback: 'N' },
+  '068270.KS': { name: '셀트리온', market: 'KR', fallback: '셀트' },
+  'NVDA': { name: '엔비디아', market: 'US', logo: 'nvidia', fallback: 'NV' },
+  'AAPL': { name: '애플', market: 'US', logo: 'apple', fallback: 'A' },
+  'MSFT': { name: '마이크로소프트', market: 'US', logo: 'microsoft', fallback: 'MS' },
+  'GOOGL': { name: '알파벳', market: 'US', logo: 'google', fallback: 'G' },
+  'AMZN': { name: '아마존', market: 'US', fallback: 'AM' },
+  'TSM': { name: 'TSMC', market: 'US', fallback: 'TSM' },
+  'META': { name: '메타', market: 'US', logo: 'meta', fallback: 'M' },
+  'AVGO': { name: '브로드컴', market: 'US', fallback: 'AV' },
+  'TSLA': { name: '테슬라', market: 'US', logo: 'tesla', fallback: 'T' },
+  'AMD': { name: 'AMD', market: 'US', fallback: 'AMD' }
 };
 
 const esc = (value) => String(value == null ? '' : value).replace(/[&<>"']/g, (char) => ({
@@ -119,6 +120,8 @@ function marketRows(payload, market) {
         ticker,
         name: raw && raw.name || meta.name || ticker,
         market: meta.market || inferredMarket,
+        logo: meta.logo || '',
+        fallback: meta.fallback || ticker.replace(/\.(KS|KQ)$/, '').slice(0, 3),
         marketCap: finite(raw && raw.marketCap),
         change: finite(raw && (raw.change != null ? raw.change : raw.dayChange))
       };
@@ -144,10 +147,15 @@ function heatmapMarketMarkup(payload, market) {
     const area = rect.width * rect.height;
     const sizeClass = area >= 0.12 ? 'is-large' : area >= 0.055 ? 'is-medium' : 'is-small';
     const label = area < 0.045 ? rect.row.ticker.replace(/\.(KS|KQ)$/, '') : rect.row.name;
+    const showMark = area >= 0.055 && rect.width >= 0.18 && rect.height >= 0.18;
+    const logoSvg = showMark && rect.row.logo ? HOME_LOGOS[rect.row.logo] : '';
+    const mark = showMark
+      ? '<i class="home-heatmap-logo" aria-hidden="true">' + (logoSvg || '<b>' + esc(rect.row.fallback) + '</b>') + '</i>'
+      : '';
     return '<div class="home-heatmap-cell ' + toneClass(rect.row.change) + ' ' + sizeClass + '"' +
       ' style="left:' + (rect.x * 100).toFixed(3) + '%;top:' + (rect.y * 100).toFixed(3) + '%;width:' + (rect.width * 100).toFixed(3) + '%;height:' + (rect.height * 100).toFixed(3) + '%"' +
       ' role="img" aria-label="' + esc(rect.row.name + ' ' + signedPct(rect.row.change)) + '">' +
-      '<strong>' + esc(label) + '</strong><span>' + esc(signedPct(rect.row.change)) + '</span></div>';
+      mark + '<strong>' + esc(label) + '</strong><span>' + esc(signedPct(rect.row.change)) + '</span></div>';
   }).join('');
 }
 
