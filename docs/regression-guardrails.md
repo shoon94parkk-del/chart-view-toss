@@ -18,6 +18,7 @@ Last updated: 2026-09-22
 - API timeout/retry/offline states remain visible and recoverable.
 - Late/stale responses cannot overwrite a newer route/selection.
 - Partial failures do not blank unrelated valid sections.
+- Home TOP3 and daily heatmap fail independently and must not delay or blank the existing market/watchlist sections.
 - Chart comparison basis remains explicit: local currency, adjusted-close where applicable, no interpolation.
 - Macro source/unit/observation/change basis remain visible.
 - News direct vs industry/indirect relation remains distinguishable.

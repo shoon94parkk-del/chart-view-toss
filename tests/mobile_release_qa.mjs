@@ -58,7 +58,9 @@ async function installMocks(page, mode='ok') {
     }
     const path=url.pathname;
     if(path==='/api/market-now') return json(route,{results:marketRows,timestamp:'2026-09-21 12:00:00'});
-    if(path==='/api/home-snapshot') return json(route,{generatedAt:'2026-09-21T03:02:00Z',macro:{summary:{level:'yellow',text:'금리·물가·위험 신호가 함께 나타납니다.',latestBasisDate:'2026-09-20',notice:'시장 환경 설명용 요약입니다.'}}});
+    if(path==='/api/home-snapshot') return json(route,{generatedAt:'2026-09-21T03:02:00Z',macro:{summary:{level:'yellow',text:'금리·물가·위험 신호가 함께 나타납니다.',latestBasisDate:'2026-09-20',notice:'시장 환경 설명용 요약입니다.'}},heatmap:{results:[{ticker:'005930.KS',name:'삼성전자',marketCap:520000000000000,price:84200,change:1.14},{ticker:'000660.KS',name:'SK하이닉스',marketCap:210000000000000,price:295000,change:-0.82},{ticker:'NVDA',name:'엔비디아',marketCap:4200000000000,price:188.3,change:0.84},{ticker:'AAPL',name:'애플',marketCap:3700000000000,price:241.7,change:-0.31}]}});
+    if(path==='/api/home-bootstrap') return json(route,{day:{tradeDate:'2026-09-21',top3:[{symbol:'005930.KS',name:'삼성전자'},{symbol:'000660.KS',name:'SK하이닉스'},{symbol:'NVDA',name:'엔비디아'}]},recommendations:[]});
+    if(path==='/api/heatmap') return json(route,{generatedAt:'2026-09-21T03:02:00Z',results:[]});
     if(path==='/api/quotes') return json(route,{results:[
       {ticker:'005930.KS',name:'삼성전자',price:84200,change:1.14,currency:'KRW',asOf:'2026-09-21T03:00:00Z',source:'Yahoo Chart 5m'},
       {ticker:'NVDA',name:'엔비디아',price:188.3,change:0.84,currency:'USD',asOf:'2026-09-21T03:00:00Z',source:'Yahoo Chart 5m'},
@@ -97,6 +99,12 @@ try{
     for(const tab of ['home','chart']){
       await page.goto(`${BASE}/#${tab}`,{waitUntil:'networkidle'});
       await page.waitForTimeout(120);
+      if(tab==='home'){
+        await page.waitForSelector('#home-top-picks .home-pick-row');
+        if(await page.locator('#home-top-picks .home-pick-row').count()!==3) throw new Error(`${width}px home TOP3 missing`);
+        await page.waitForSelector('#home-daily-heatmap .home-heatmap-cell');
+        if(await page.locator('#home-daily-heatmap .home-heatmap-cell').count()<4) throw new Error(`${width}px home heatmap missing`);
+      }
       await assertNoHorizontalOverflow(page,`${width}px ${tab}`);
       await page.screenshot({path:`${OUT}/${width}-${tab}.png`,fullPage:true});
     }

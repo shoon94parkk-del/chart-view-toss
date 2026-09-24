@@ -1,6 +1,8 @@
 import { resolveRoute } from './routes.js';
 import { recordMetric, diagnosticSummary, clearDiagnostics } from './diagnostics.js';
 import './styles.css';
+import './homeExtras.css';
+import './homeExtras.js';
 import { ANALYSIS_ROUTES, renderAnalysis } from './analysisViews.js';
 import { finiteNumber } from './analysisData.js';
 import { createChart, ColorType, LineStyle } from 'lightweight-charts';
@@ -130,6 +132,7 @@ function navigate(tab,detailSymbol=null){
  render();
  window.scrollTo(0,0);
 }
+window.__chartviewNavigate=(tab,detailSymbol=null)=>navigate(tab,detailSymbol);
 function bindNav(){
  document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>navigate(b.dataset.tab));
  document.querySelectorAll('[data-go-chart]').forEach(b=>b.onclick=()=>navigate('chart'));
