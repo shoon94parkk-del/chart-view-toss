@@ -36,6 +36,8 @@ assert.match(main, /homeExtras\.js/);
 assert.match(homeExtras, /오늘의 종목발굴/);
 assert.doesNotMatch(homeExtras, /오늘의 종목발굴 TOP3/);
 assert.match(homeExtras, /오늘 등락 히트맵/);
+assert.match(homeExtras, /추천 평균 수익률/);
+assert.match(homeExtras, /플러스 비율/);
 assert.match(selector, /최대 .*개까지 선택할 수 있어요/);
 assert.match(selector, /syncNativeBackHandler/);
 assert.match(presentation, /formatMacroChange/);

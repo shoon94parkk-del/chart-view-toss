@@ -41,6 +41,12 @@ const signedPct = (value) => {
   return (number > 0 ? '+' : '') + number.toFixed(2) + '%';
 };
 
+const returnTone = (value) => {
+  const number = finite(value);
+  if (number === null || number === 0) return 'flat';
+  return number > 0 ? 'up' : 'down';
+};
+
 function kstDateKey(date = new Date()) {
   const fmt = new Intl.DateTimeFormat('en-US', {
     timeZone: 'Asia/Seoul',
@@ -147,12 +153,13 @@ function heatmapMarketMarkup(payload, market) {
   return rects.map((rect) => {
     const area = rect.width * rect.height;
     const sizeClass = area >= 0.12 ? 'is-large' : area >= 0.055 ? 'is-medium' : 'is-small';
-    const veryTight = rect.width < 0.16 || rect.height < 0.22 || area < 0.035;
-    const compact = veryTight || rect.width < 0.24 || rect.height < 0.30 || area < 0.075;
+    const veryTight = rect.width < 0.145 || rect.height < 0.18 || area < 0.028;
+    const compact = veryTight || rect.width < 0.21 || rect.height < 0.24 || area < 0.058;
     const label = veryTight ? rect.row.fallback : compact ? rect.row.short : rect.row.name;
-    const showMark = !compact && area >= 0.085 && rect.width >= 0.20 && rect.height >= 0.31;
-    const logoSvg = showMark && rect.row.logo ? HOME_LOGOS[rect.row.logo] : '';
-    const mark = showMark
+    const logoSvg = rect.row.logo ? HOME_LOGOS[rect.row.logo] : '';
+    const showLogo = Boolean(logoSvg) && area >= 0.05 && rect.width >= 0.16 && rect.height >= 0.18;
+    const showFallbackMark = !logoSvg && !compact && area >= 0.09 && rect.width >= 0.22 && rect.height >= 0.27;
+    const mark = showLogo || showFallbackMark
       ? '<i class="home-heatmap-logo" aria-hidden="true">' + (logoSvg || '<b>' + esc(rect.row.fallback) + '</b>') + '</i>'
       : '';
     return '<div class="home-heatmap-cell ' + toneClass(rect.row.change) + ' ' + sizeClass + '"' +
@@ -187,8 +194,37 @@ function paintPicks(host, payload) {
   if (!host || !host.isConnected) return;
   const day = payload && payload.day;
   const rows = Array.isArray(day && day.top3) ? day.top3.slice(0, 3) : [];
+  const recommendations = Array.isArray(payload && payload.recommendations) ? payload.recommendations : [];
+  const tracked = recommendations
+    .map((row) => ({ row, value: finite(row && row.returnPct) }))
+    .filter((item) => item.value !== null);
+  const avgReturn = tracked.length
+    ? tracked.reduce((sum, item) => sum + item.value, 0) / tracked.length
+    : null;
+  const wins = tracked.filter((item) => item.value > 0).length;
+  const winRate = tracked.length ? Math.round(wins / tracked.length * 100) : null;
+  const latestClose = tracked.reduce((latest, item) => {
+    const value = String(item.row && item.row.lastUpdatedTradeDate || '');
+    return value > latest ? value : latest;
+  }, '');
+
+  const performance =
+    '<div class="home-pick-performance">' +
+      '<div class="home-pick-performance-main">' +
+        '<span>추천 평균 수익률</span>' +
+        '<strong class="' + returnTone(avgReturn) + '">' + esc(signedPct(avgReturn)) + '</strong>' +
+        '<small>' + esc((latestClose || day && day.tradeDate || '기준일 확인 중') + ' 종가 기준 · 미평가 제외') + '</small>' +
+      '</div>' +
+      '<div class="home-pick-performance-kpis">' +
+        '<div><span>플러스 비율</span><b>' + esc(winRate === null ? '-' : winRate + '%') + '</b></div>' +
+        '<div><span>평가</span><b>' + tracked.length.toLocaleString('ko-KR') + '/' + recommendations.length.toLocaleString('ko-KR') + '건</b></div>' +
+      '</div>' +
+    '</div>';
+
   if (!rows.length) {
-    host.innerHTML = '<div class="home-extra-empty"><strong>선정 종목을 준비 중이에요.</strong><span>최근 스크리닝이 완료되면 선정 종목이 표시돼요.</span></div>';
+    host.innerHTML =
+      '<div class="home-extra-empty"><strong>선정 종목을 준비 중이에요.</strong><span>최근 스크리닝이 완료되면 선정 종목이 표시돼요.</span></div>' +
+      performance;
     return;
   }
 
@@ -205,7 +241,8 @@ function paintPicks(host, payload) {
         '<span class="home-pick-rank">' + (index + 1) + '</span>' +
         '<span class="home-pick-copy"><strong>' + esc(name) + '</strong><small>' + esc(symbol || '종목코드 미제공') + '</small></span>' +
         '<span class="home-pick-arrow" aria-hidden="true">›</span></button>';
-    }).join('');
+    }).join('') +
+    performance;
 }
 
 function paintHeatmap(host, payload) {
@@ -245,7 +282,7 @@ async function mount() {
     .catch(() => {
       if (token !== generation || !sections.picks.isConnected) return;
       sections.picks.querySelector('#home-top-picks').innerHTML =
-        '<div class="home-extra-empty"><strong>TOP3를 불러오지 못했어요.</strong><span>스크리너 화면은 계속 사용할 수 있어요.</span></div>';
+        '<div class="home-extra-empty"><strong>종목발굴을 불러오지 못했어요.</strong><span>스크리너 화면은 계속 사용할 수 있어요.</span></div>';
     });
 
   const heatmapTask = homeSnapshot()
