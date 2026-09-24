@@ -22,3 +22,6 @@ Render/Vite preview and automated Chromium tests are validation surfaces only. P
 
 ## 2026-09-24 — Reuse Chart View discovery assets on Toss Home
 The Toss Home now reuses the shared backend's latest screener-selected TOP3 and the same major-stock daily-change heatmap data used by Web Chart View. They are isolated in a home-only module, load progressively, and fail independently so existing Home content remains usable.
+
+## 2026-09-24 — Inline heatmap marks without image requests
+Recognizable medium/large heatmap cells use a curated set of compact SVG marks bundled into the Toss JavaScript, while unsupported companies use short text badges and small cells remain text-only. This deliberately avoids external logo APIs and separate image fetches on Home.
