@@ -19,6 +19,7 @@ Toss-specific navigation, safe-area, storage, SDK bridge, and release logic belo
 - Toss-style mobile information hierarchy and bottom navigation.
 - Safe-area handling.
 - Home/chart/watchlist/more plus valuation, macro, discover, news, and stock-detail surfaces.
+- Home surfaces the latest screener-selected TOP3 and a market-cap-weighted daily-change heatmap using the shared Chart View backend.
 - Shared stock selector sheet and up to 6 selected tickers.
 - Device-local watchlist/selection.
 - In-app hash/history navigation and scroll restoration.
