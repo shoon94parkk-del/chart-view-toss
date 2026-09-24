@@ -20,6 +20,7 @@ Toss-specific navigation, safe-area, storage, SDK bridge, and release logic belo
 - Safe-area handling.
 - Home/chart/watchlist/more plus valuation, macro, discover, news, and stock-detail surfaces.
 - Home surfaces the latest screener-selected TOP3 and a market-cap-weighted daily-change heatmap using the shared Chart View backend.
+- Heatmap medium/large cells use a small set of inline bundled SVG company marks (with text fallbacks), so logo recognition adds no separate image requests.
 - Shared stock selector sheet and up to 6 selected tickers.
 - Device-local watchlist/selection.
 - In-app hash/history navigation and scroll restoration.
