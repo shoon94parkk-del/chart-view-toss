@@ -32,14 +32,15 @@
 .home-heatmap-market-head span{font-size:9px;color:#8b95a1}
 .home-heatmap-treemap{position:relative;height:160px;border-radius:10px;overflow:hidden;background:#f2f4f6}
 .home-heatmap-cell{position:absolute;border:1px solid rgba(255,255,255,.96);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2px;color:#fff;overflow:hidden;text-shadow:0 1px 2px rgba(25,31,40,.18)}
-.home-heatmap-logo{position:absolute;left:4px;top:4px;width:18px;height:18px;border-radius:6px;background:rgba(255,255,255,.95);display:grid;place-items:center;margin:0;box-shadow:0 1px 2px rgba(25,31,40,.14);overflow:hidden;text-shadow:none}
-.home-heatmap-logo svg{width:13px;height:13px;display:block}.home-heatmap-logo b{font-style:normal;font-size:7px;line-height:1;font-weight:900;color:#333d4b;letter-spacing:-.2px}
-.home-heatmap-cell.is-large .home-heatmap-logo{width:22px;height:22px;left:5px;top:5px}.home-heatmap-cell.is-large .home-heatmap-logo svg{width:16px;height:16px}
-.home-heatmap-cell strong{display:block;max-width:calc(100% - 5px);font-size:10px;font-weight:850;line-height:1.08;white-space:nowrap;overflow:hidden;text-overflow:clip}
-.home-heatmap-cell span{display:block;max-width:calc(100% - 4px);font-size:10px;font-weight:900;line-height:1.05;margin-top:2px;white-space:nowrap}
-.home-heatmap-cell.is-large strong{font-size:12px}.home-heatmap-cell.is-large span{font-size:12px}
-.home-heatmap-cell.is-medium strong{font-size:10px}.home-heatmap-cell.is-medium span{font-size:10px}
-.home-heatmap-cell.is-small{padding:1px}.home-heatmap-cell.is-small strong{font-size:8px;line-height:1}.home-heatmap-cell.is-small span{font-size:8px;line-height:1;margin-top:1px}
+.home-heatmap-name{display:flex;align-items:center;justify-content:center;gap:4px;max-width:calc(100% - 6px);min-width:0;white-space:nowrap}
+.home-heatmap-logo{width:16px;height:16px;border-radius:5px;background:rgba(255,255,255,.96);display:grid;place-items:center;box-shadow:0 1px 2px rgba(25,31,40,.12);overflow:hidden;flex:0 0 auto;text-shadow:none}
+.home-heatmap-logo svg{width:12px;height:12px;display:block}
+.home-heatmap-name strong{display:block;min-width:0;max-width:100%;font-size:10px;font-weight:850;line-height:1.05;white-space:nowrap;overflow:hidden;text-overflow:clip}
+.home-heatmap-change{display:block;max-width:calc(100% - 4px);font-size:10px;font-weight:900;line-height:1.05;margin-top:3px;white-space:nowrap}
+.home-heatmap-cell.is-large .home-heatmap-logo{width:18px;height:18px}.home-heatmap-cell.is-large .home-heatmap-logo svg{width:14px;height:14px}
+.home-heatmap-cell.is-large .home-heatmap-name strong{font-size:12px}.home-heatmap-cell.is-large .home-heatmap-change{font-size:12px}
+.home-heatmap-cell.is-medium .home-heatmap-name strong{font-size:10px}.home-heatmap-cell.is-medium .home-heatmap-change{font-size:10px}
+.home-heatmap-cell.is-small{padding:1px}.home-heatmap-cell.is-small .home-heatmap-name{gap:2px}.home-heatmap-cell.is-small .home-heatmap-logo{width:12px;height:12px;border-radius:4px}.home-heatmap-cell.is-small .home-heatmap-logo svg{width:9px;height:9px}.home-heatmap-cell.is-small .home-heatmap-name strong{font-size:8px;line-height:1}.home-heatmap-cell.is-small .home-heatmap-change{font-size:8px;line-height:1;margin-top:2px}
 .home-hm-up-3{background:#e43d50}.home-hm-up-2{background:#ed6170}.home-hm-up-1{background:#f08f99}
 .home-hm-down-3{background:#2f7df4}.home-hm-down-2{background:#5b9af2}.home-hm-down-1{background:#8ab7ee}
 .home-hm-flat{background:#77818d}
@@ -52,6 +53,6 @@
   .home-pick-performance{grid-template-columns:1fr}
   .home-pick-performance-kpis{grid-template-columns:1fr 1fr}
   .home-heatmap-treemap{height:154px}
-  .home-heatmap-cell strong,.home-heatmap-cell span{font-size:9px}
-  .home-heatmap-cell.is-small strong,.home-heatmap-cell.is-small span{font-size:7px}
+  .home-heatmap-name strong,.home-heatmap-change{font-size:9px}
+  .home-heatmap-cell.is-small .home-heatmap-name strong,.home-heatmap-cell.is-small .home-heatmap-change{font-size:7px}
 }

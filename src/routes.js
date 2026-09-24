@@ -1,4 +1,4 @@
-const routes = new Set(['home','chart','watch','valuation','macro','discover','news','detail','info','more','heatmap','consensus','bands','tools']);
+const routes = new Set(['home','chart','watch','valuation','macro','discover','picks','news','detail','info','more','heatmap','consensus','bands','tools']);
 const aliases = {chartviewHome:'chart',search:'chart',compare:'chart',stock:'detail'};
 export function resolveRoute({pathname='/',hash=''}) {
   const raw = hash ? hash.replace(/^#/,'') : pathname.replace(/^\//,'');

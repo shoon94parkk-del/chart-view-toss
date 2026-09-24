@@ -33,3 +33,10 @@ Provider legal names are no longer allowed to overflow Toss Home heatmap cells. 
 
 ## 2026-09-24 — Dense heatmap and recommendation performance parity
 Toss Home reuses recommendation performance already returned by `/api/home-bootstrap` instead of discarding it. The discovery card shows average evaluated return, positive-return ratio, and evaluation coverage. Heatmap marks move to compact top-left overlays and the surrounding chrome is tightened so logo recognition improves without reducing text space or adding network requests.
+
+
+## 2026-09-24 — Separate recommendation history from the market screener
+The Home discovery action now opens a dedicated `#picks` recommendation ledger rather than the neutral market screener. The ledger mirrors the useful fields from Web Chart View (recommendation date/price, current price/return, best return, score, reason) while staying mobile-first. The market screener remains independently reachable from All.
+
+## 2026-09-24 — Heatmap logos must participate in layout
+Heatmap logos are no longer absolutely overlaid on company names. Supported logos render inline beside the company label only when geometry permits; cramped cells remain text-only. This prevents identity marks from obscuring the data they are meant to clarify.
