@@ -29,10 +29,11 @@
 .home-heatmap-logo{width:22px;height:22px;border-radius:7px;background:rgba(255,255,255,.94);display:grid;place-items:center;margin-bottom:3px;box-shadow:0 1px 3px rgba(25,31,40,.12);overflow:hidden;flex:0 0 auto}
 .home-heatmap-logo svg{width:16px;height:16px;display:block}.home-heatmap-logo b{font-style:normal;font-size:8px;line-height:1;font-weight:900;color:#333d4b;letter-spacing:-.2px}
 .home-heatmap-cell.is-large .home-heatmap-logo{width:26px;height:26px}.home-heatmap-cell.is-large .home-heatmap-logo svg{width:19px;height:19px}
-.home-heatmap-cell strong{max-width:100%;font-size:10px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.home-heatmap-cell span{font-size:10px;font-weight:900;line-height:1.15;margin-top:2px}
+.home-heatmap-cell strong{display:block;max-width:calc(100% - 6px);font-size:10px;line-height:1.12;white-space:nowrap;overflow:hidden;text-overflow:clip}
+.home-heatmap-cell span{display:block;max-width:calc(100% - 4px);font-size:10px;font-weight:900;line-height:1.1;margin-top:2px;white-space:nowrap}
 .home-heatmap-cell.is-large strong{font-size:12px}.home-heatmap-cell.is-large span{font-size:12px}
-.home-heatmap-cell.is-small strong{font-size:8px}.home-heatmap-cell.is-small span{font-size:8px}
+.home-heatmap-cell.is-medium strong{font-size:10px}.home-heatmap-cell.is-medium span{font-size:10px}
+.home-heatmap-cell.is-small{padding:2px}.home-heatmap-cell.is-small strong{font-size:8px;line-height:1}.home-heatmap-cell.is-small span{font-size:8px;line-height:1;margin-top:1px}
 .home-hm-up-3{background:#e54855}.home-hm-up-2{background:#ef6b75}.home-hm-up-1{background:#f3a0a7}
 .home-hm-down-3{background:#3182f6}.home-hm-down-2{background:#6aa8ff}.home-hm-down-1{background:#9dc7ff}
 .home-hm-flat{background:#8b95a1}
