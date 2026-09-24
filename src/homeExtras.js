@@ -2,24 +2,24 @@ import { homeBootstrap, homeSnapshot, homeHeatmap } from './api.js';
 import { HOME_LOGOS } from './homeLogos.js';
 
 const STOCK_META = {
-  '005930.KS': { name: '삼성전자', market: 'KR', logo: 'samsung', fallback: '삼성' },
-  '000660.KS': { name: 'SK하이닉스', market: 'KR', fallback: 'SK' },
-  '207940.KS': { name: '삼성바이오로직스', market: 'KR', fallback: '삼바' },
-  '005380.KS': { name: '현대차', market: 'KR', fallback: '현대' },
-  '000270.KS': { name: '기아', market: 'KR', fallback: '기아' },
-  '373220.KS': { name: 'LG에너지솔루션', market: 'KR', fallback: 'LG' },
-  '035420.KS': { name: 'NAVER', market: 'KR', fallback: 'N' },
-  '068270.KS': { name: '셀트리온', market: 'KR', fallback: '셀트' },
-  'NVDA': { name: '엔비디아', market: 'US', logo: 'nvidia', fallback: 'NV' },
-  'AAPL': { name: '애플', market: 'US', logo: 'apple', fallback: 'A' },
-  'MSFT': { name: '마이크로소프트', market: 'US', logo: 'microsoft', fallback: 'MS' },
-  'GOOGL': { name: '알파벳', market: 'US', logo: 'google', fallback: 'G' },
-  'AMZN': { name: '아마존', market: 'US', fallback: 'AM' },
-  'TSM': { name: 'TSMC', market: 'US', fallback: 'TSM' },
-  'META': { name: '메타', market: 'US', logo: 'meta', fallback: 'M' },
-  'AVGO': { name: '브로드컴', market: 'US', fallback: 'AV' },
-  'TSLA': { name: '테슬라', market: 'US', logo: 'tesla', fallback: 'T' },
-  'AMD': { name: 'AMD', market: 'US', fallback: 'AMD' }
+  '005930.KS': { name: '삼성전자', short: '삼성전자', market: 'KR', logo: 'samsung', fallback: '삼성' },
+  '000660.KS': { name: 'SK하이닉스', short: 'SK하이닉스', market: 'KR', fallback: 'SK' },
+  '207940.KS': { name: '삼성바이오로직스', short: '삼성바이오', market: 'KR', fallback: '삼바' },
+  '005380.KS': { name: '현대차', short: '현대차', market: 'KR', fallback: '현대' },
+  '000270.KS': { name: '기아', short: '기아', market: 'KR', fallback: '기아' },
+  '373220.KS': { name: 'LG에너지솔루션', short: 'LG에너지', market: 'KR', fallback: 'LG' },
+  '035420.KS': { name: 'NAVER', short: 'NAVER', market: 'KR', fallback: 'N' },
+  '068270.KS': { name: '셀트리온', short: '셀트리온', market: 'KR', fallback: '셀트' },
+  'NVDA': { name: '엔비디아', short: '엔비디아', market: 'US', logo: 'nvidia', fallback: 'NV' },
+  'AAPL': { name: '애플', short: '애플', market: 'US', logo: 'apple', fallback: 'A' },
+  'MSFT': { name: '마이크로소프트', short: 'MS', market: 'US', logo: 'microsoft', fallback: 'MS' },
+  'GOOGL': { name: '알파벳', short: '알파벳', market: 'US', logo: 'google', fallback: 'G' },
+  'AMZN': { name: '아마존', short: '아마존', market: 'US', fallback: 'AM' },
+  'TSM': { name: 'TSMC', short: 'TSMC', market: 'US', fallback: 'TSM' },
+  'META': { name: '메타', short: '메타', market: 'US', logo: 'meta', fallback: 'M' },
+  'AVGO': { name: '브로드컴', short: '브로드컴', market: 'US', fallback: 'AV' },
+  'TSLA': { name: '테슬라', short: '테슬라', market: 'US', logo: 'tesla', fallback: 'T' },
+  'AMD': { name: 'AMD', short: 'AMD', market: 'US', fallback: 'AMD' }
 };
 
 const esc = (value) => String(value == null ? '' : value).replace(/[&<>"']/g, (char) => ({
@@ -118,7 +118,8 @@ function marketRows(payload, market) {
       const inferredMarket = /\.(KS|KQ)$/.test(ticker) ? 'KR' : 'US';
       return {
         ticker,
-        name: raw && raw.name || meta.name || ticker,
+        name: meta.name || raw && raw.name || ticker,
+        short: meta.short || meta.name || raw && raw.name || ticker,
         market: meta.market || inferredMarket,
         logo: meta.logo || '',
         fallback: meta.fallback || ticker.replace(/\.(KS|KQ)$/, '').slice(0, 3),
@@ -146,8 +147,10 @@ function heatmapMarketMarkup(payload, market) {
   return rects.map((rect) => {
     const area = rect.width * rect.height;
     const sizeClass = area >= 0.12 ? 'is-large' : area >= 0.055 ? 'is-medium' : 'is-small';
-    const label = area < 0.045 ? rect.row.ticker.replace(/\.(KS|KQ)$/, '') : rect.row.name;
-    const showMark = area >= 0.055 && rect.width >= 0.18 && rect.height >= 0.18;
+    const veryTight = rect.width < 0.16 || rect.height < 0.22 || area < 0.035;
+    const compact = veryTight || rect.width < 0.24 || rect.height < 0.30 || area < 0.075;
+    const label = veryTight ? rect.row.fallback : compact ? rect.row.short : rect.row.name;
+    const showMark = !compact && area >= 0.085 && rect.width >= 0.20 && rect.height >= 0.31;
     const logoSvg = showMark && rect.row.logo ? HOME_LOGOS[rect.row.logo] : '';
     const mark = showMark
       ? '<i class="home-heatmap-logo" aria-hidden="true">' + (logoSvg || '<b>' + esc(rect.row.fallback) + '</b>') + '</i>'
@@ -164,7 +167,7 @@ function createSections(marketSection) {
   picks.className = 'section home-extra-section home-pick-section home-primary';
   picks.id = 'home-top-picks-section';
   picks.innerHTML =
-    '<div class="section-head"><h2>오늘의 종목발굴 TOP3</h2><button type="button" class="text-button" data-home-extra-route="discover">스크리너</button></div>' +
+    '<div class="section-head"><h2>오늘의 종목발굴</h2><button type="button" class="text-button" data-home-extra-route="discover">스크리너</button></div>' +
     '<div id="home-top-picks" class="home-pick-list"><div class="skeleton home-extra-skeleton"></div></div>';
 
   const heatmap = document.createElement('section');
@@ -185,7 +188,7 @@ function paintPicks(host, payload) {
   const day = payload && payload.day;
   const rows = Array.isArray(day && day.top3) ? day.top3.slice(0, 3) : [];
   if (!rows.length) {
-    host.innerHTML = '<div class="home-extra-empty"><strong>선정 종목을 준비 중이에요.</strong><span>최근 스크리닝이 완료되면 TOP3가 표시돼요.</span></div>';
+    host.innerHTML = '<div class="home-extra-empty"><strong>선정 종목을 준비 중이에요.</strong><span>최근 스크리닝이 완료되면 선정 종목이 표시돼요.</span></div>';
     return;
   }
 

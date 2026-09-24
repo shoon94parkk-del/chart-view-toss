@@ -106,6 +106,11 @@ try{
         if(await page.locator('#home-daily-heatmap .home-heatmap-cell').count()<4) throw new Error(`${width}px home heatmap missing`);
         if(await page.locator('#home-daily-heatmap .home-heatmap-logo').count()<2) throw new Error(`${width}px heatmap logos missing`);
         if(await page.locator('#home-daily-heatmap img').count()!==0) throw new Error(`${width}px heatmap must not fetch external image assets`);
+        const clipped=await page.locator('#home-daily-heatmap .home-heatmap-cell').evaluateAll(cells=>cells.filter(cell=>{
+          const strong=cell.querySelector('strong'),change=cell.querySelector('span');
+          return [strong,change].filter(Boolean).some(node=>node.scrollWidth>node.clientWidth+1||node.scrollHeight>node.clientHeight+1);
+        }).map(cell=>cell.getAttribute('aria-label')));
+        if(clipped.length) throw new Error(`${width}px heatmap text clipped: ${clipped.join(", ")}`);
       }
       await assertNoHorizontalOverflow(page,`${width}px ${tab}`);
       await page.screenshot({path:`${OUT}/${width}-${tab}.png`,fullPage:true});
