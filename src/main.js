@@ -3,6 +3,8 @@ import { recordMetric, diagnosticSummary, clearDiagnostics } from './diagnostics
 import './styles.css';
 import './homeExtras.css';
 import './homeExtras.js';
+import './pickLedger.css';
+import { renderPickLedger } from './pickLedger.js';
 import { ANALYSIS_ROUTES, renderAnalysis } from './analysisViews.js';
 import { finiteNumber } from './analysisData.js';
 import { createChart, ColorType, LineStyle } from 'lightweight-charts';
@@ -109,7 +111,7 @@ function dataDisclosure(){
  return `<aside class="data-disclosure"><div><strong>데이터 이용 안내</strong><span>시세·재무·뉴스 데이터는 제공처 상황에 따라 지연·누락·오류가 있을 수 있으며 투자 권유가 아니에요.</span></div><button data-tab="info">자세히</button></aside>`;
 }
 function shell(content,title='차트뷰'){
- const secondary=ANALYSIS_ROUTES.has(state.tab)||['valuation','macro','discover','news','detail','info'].includes(state.tab);
+ const secondary=ANALYSIS_ROUTES.has(state.tab)||['valuation','macro','discover','picks','news','detail','info'].includes(state.tab);
  const navTab=secondary?'more':state.tab;
  const leading=secondary?`<button class="icon-button back-button" aria-label="뒤로가기" data-back>${iconSvg('back',22)}</button>`:`<span class="brand-mark">${iconSvg('spark',18)}</span>`;
  const offline=typeof navigator!=='undefined'&&navigator.onLine===false;
@@ -657,6 +659,7 @@ function renderMore(){
      <button class="feature-row" data-tab="valuation"><span class="feature-icon purple">${iconSvg('value',22)}</span><span><strong>밸류에이션</strong><small>같은 재무지표를 종목별 비교</small></span><b>${iconSvg('arrow',19)}</b></button>
      <button class="feature-row" data-tab="macro"><span class="feature-icon green">${iconSvg('macro',22)}</span><span><strong>경제 지표</strong><small>단위·관측일·변화 기준 확인</small></span><b>${iconSvg('arrow',19)}</b></button>
      <button class="feature-row" data-tab="discover"><span class="feature-icon yellow">${iconSvg('discover',22)}</span><span><strong>시장 스크리너</strong><small>전체 종목 검색·조건 필터·정렬</small></span><b>${iconSvg('arrow',19)}</b></button>
+     <button class="feature-row" data-tab="picks"><span class="feature-icon blue">${iconSvg('spark',22)}</span><span><strong>추천 기록</strong><small>추천가·현재가·수익률·추천 사유 확인</small></span><b>${iconSvg('arrow',19)}</b></button>
 <button class="feature-row" data-tab="heatmap"><span class="feature-icon blue">${iconSvg('chart',22)}</span><span><strong>시장 히트맵</strong><small>업종별 등락 한눈에 조회</small></span><b>${iconSvg('arrow',19)}</b></button><button class="feature-row" data-tab="consensus"><span class="feature-icon blue">${iconSvg('chart',22)}</span><span><strong>실적 전망 조회</strong><small>EPS·매출 추정치 및 변경 내역</small></span><b>${iconSvg('arrow',19)}</b></button><button class="feature-row" data-tab="bands"><span class="feature-icon blue">${iconSvg('chart',22)}</span><span><strong>역사적 밸류에이션</strong><small>과거 PER·PBR 분포와 추이</small></span><b>${iconSvg('arrow',19)}</b></button><button class="feature-row" data-tab="tools"><span class="feature-icon blue">${iconSvg('chart',22)}</span><span><strong>자료 출처</strong><small>공시·거래소·경제지표 원자료</small></span><b>${iconSvg('arrow',19)}</b></button>   </div></section>
    <section class="menu-group"><h3>뉴스</h3><div class="feature-menu"><button class="feature-row" data-tab="news"><span class="feature-icon coral">${iconSvg('news',22)}</span><span><strong>관심종목 뉴스</strong><small>직접 관련·업종 관련을 구분해 표시</small></span><b>${iconSvg('arrow',19)}</b></button></div></section>
    <section class="menu-group"><h3>이용 및 지원</h3><div class="feature-menu">
@@ -683,6 +686,7 @@ function render(){
  if(state.tab==='watch')return renderWatch();
  if(state.tab==='valuation')return renderValuation();
  if(state.tab==='macro')return renderMacro();
+ if(state.tab==='picks'){cleanupChart();return renderPickLedger({shell,bindNav,displayName});}
  if(ANALYSIS_ROUTES.has(state.tab)){cleanupChart();analysisCleanup=renderAnalysis({tab:state.tab,state,shell,bindNav,displayName,openCompareSheet});return;}
  if(state.tab==='news')return renderNews();
  if(state.tab==='detail')return renderDetail();
