@@ -25,3 +25,7 @@ The Toss Home now reuses the shared backend's latest screener-selected TOP3 and 
 
 ## 2026-09-24 — Inline heatmap marks without image requests
 Recognizable medium/large heatmap cells use a curated set of compact SVG marks bundled into the Toss JavaScript, while unsupported companies use short text badges and small cells remain text-only. This deliberately avoids external logo APIs and separate image fetches on Home.
+
+
+## 2026-09-24 — Heatmap content adapts to cell geometry
+Provider legal names are no longer allowed to overflow Toss Home heatmap cells. Known symbols prefer curated display names; cramped cells suppress logos and use compact labels, while larger cells retain the bundled company mark. The Home discovery heading is "오늘의 종목발굴" while still showing the latest three selections.
