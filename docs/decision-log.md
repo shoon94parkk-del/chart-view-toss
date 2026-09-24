@@ -29,3 +29,7 @@ Recognizable medium/large heatmap cells use a curated set of compact SVG marks b
 
 ## 2026-09-24 — Heatmap content adapts to cell geometry
 Provider legal names are no longer allowed to overflow Toss Home heatmap cells. Known symbols prefer curated display names; cramped cells suppress logos and use compact labels, while larger cells retain the bundled company mark. The Home discovery heading is "오늘의 종목발굴" while still showing the latest three selections.
+
+
+## 2026-09-24 — Dense heatmap and recommendation performance parity
+Toss Home reuses recommendation performance already returned by `/api/home-bootstrap` instead of discarding it. The discovery card shows average evaluated return, positive-return ratio, and evaluation coverage. Heatmap marks move to compact top-left overlays and the surrounding chrome is tightened so logo recognition improves without reducing text space or adding network requests.
