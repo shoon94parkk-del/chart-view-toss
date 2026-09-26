@@ -83,7 +83,7 @@ test('full heatmap scope accepts the expanded market set while Home stays curate
   const expanded = {
     ...payload,
     results: [
-      ...payload.results,
+      ...payload.results.filter((row) => row.ticker !== 'UNKNOWN'),
       { ticker: 'NFLX', name: 'Netflix', market: 'US', marketCap: 0.39e12, change: -1.23 },
       { ticker: '055550.KS', name: '신한지주', market: 'KR', marketCap: 34e12, change: 0.74 },
     ],
