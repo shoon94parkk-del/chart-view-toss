@@ -1,6 +1,7 @@
-import { screenerData, heatmapData, consensusData, valuationBandData } from './api.js';
+import { screenerData, homeSnapshot, consensusData, valuationBandData } from './api.js';
 import { filterScreener, finiteNumber, estimateRevision } from './analysisData.js';
 import { formatKst } from './dataPresentation.js';
+import { renderSharedHeatmap } from './heatmapView.js';
 import { createChart, ColorType } from 'lightweight-charts';
 
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -40,10 +41,11 @@ export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareS
     }
     form.onsubmit=e=>e.preventDefault();form.oninput=()=>{count=30;paint();};form.onchange=()=>{count=30;paint();};form.onreset=e=>{e.preventDefault();for(const input of form.querySelectorAll('input,select'))input.value=input.name==='sort'?'name':'';count=30;paint();};paint();
    }else if(tab==='heatmap'){
-    const data=await heatmapData();if(!current())return;
-    const sectors=Array.isArray(data.sectors)?data.sectors:[];
-    host.innerHTML=`<p class="analysis-meta">수집 기준 ${esc(formatKst(data.updated))} · 색상은 등락 방향, 칸 크기는 동일해요.</p>${sectors.map(sector=>`<section><h3>${esc(sector.name)}</h3><div class="heatmap-grid">${(sector.stocks||[]).map(row=>`<button class="heatmap-cell ${Number(row.change)>0?'heat-up':Number(row.change)<0?'heat-down':'heat-flat'}" data-stock-detail="${esc(row.ticker)}"><strong>${esc(row.ticker)}</strong><span>${pct(row.change)}</span><small>${number(row.price)}</small></button>`).join('')}</div></section>`).join('')||empty('표시할 시장 데이터가 없어요.')}`;bindNav();
-   }else if(tab==='consensus'){
+    const snapshot=await homeSnapshot();if(!current())return;
+    const payload={results:Array.isArray(snapshot?.heatmap?.results)?snapshot.heatmap.results:[],generatedAt:snapshot?.generatedAt||''};
+    host.innerHTML=`<div class="shared-heatmap-analysis">${renderSharedHeatmap(payload)}</div>`;
+    bindNav();
+   }else if(tab==='consensus'{
     const symbols=[...state.selected];
     if(!symbols.length){host.innerHTML=empty('종목 변경에서 조회할 종목을 선택해주세요.');return;}
     controls.innerHTML='<label class="analysis-period">추정 기간<select id="consensus-period"><option value="0y">올해</option><option value="+1y">내년</option><option value="0q">이번 분기</option><option value="+1q">다음 분기</option></select></label>';
