@@ -37,6 +37,7 @@
 .home-heatmap-logo svg{width:12px;height:12px;display:block}
 .home-heatmap-logo-fallback b{font-size:7px;line-height:1;font-weight:900;color:#333d4b;letter-spacing:-.2px;text-shadow:none}
 .home-heatmap-name strong{display:block;min-width:0;max-width:100%;font-size:10px;font-weight:850;line-height:1.05;white-space:nowrap;overflow:hidden;text-overflow:clip}
+.home-heatmap-ticker{display:block;max-width:calc(100% - 4px);font-size:8px;font-weight:850;line-height:1;white-space:nowrap;overflow:hidden;text-overflow:clip}
 .home-heatmap-change{display:block;max-width:calc(100% - 4px);font-size:10px;font-weight:900;line-height:1.05;margin-top:3px;white-space:nowrap}
 .home-heatmap-cell.is-large .home-heatmap-logo{width:18px;height:18px}.home-heatmap-cell.is-large .home-heatmap-logo svg{width:14px;height:14px}
 .home-heatmap-cell.is-large .home-heatmap-name strong{font-size:12px}.home-heatmap-cell.is-large .home-heatmap-change{font-size:12px}
@@ -69,3 +70,10 @@
   .shared-heatmap-analysis .full-heatmap-board .market-kr .home-heatmap-treemap{height:250px}
   .shared-heatmap-analysis .full-heatmap-board .market-us .home-heatmap-treemap{height:330px}
 }
+
+.shared-heatmap-analysis .full-heatmap-board .home-heatmap-cell.is-ticker-only{padding:1px}
+.shared-heatmap-analysis .full-heatmap-board .home-heatmap-cell.is-ticker-only .home-heatmap-ticker{font-size:6.5px;font-weight:800;letter-spacing:-.02em}
+.shared-heatmap-analysis .full-heatmap-board .home-heatmap-cell.is-micro{padding:0}
+.shared-heatmap-analysis .full-heatmap-board .home-heatmap-cell.is-micro .home-heatmap-ticker{font-size:5.5px;font-weight:750;letter-spacing:-.04em}
+.shared-heatmap-analysis .full-heatmap-board .home-heatmap-cell.is-label-hidden{padding:0}
+.shared-heatmap-analysis .full-heatmap-board .home-heatmap-cell.is-label-hidden>*{display:none!important}
