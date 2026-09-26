@@ -69,3 +69,5 @@ Toss-specific navigation, safe-area, storage, SDK bridge, and release logic belo
 
 
 - 홈 히트맵과 전체 히트맵은 반드시 같은 `homeSnapshot` 데이터와 공용 렌더러를 사용한다. `static/data/heatmap.json`은 레거시 섹터 데이터이므로 전체 화면의 운영 데이터 소스로 재사용하지 않는다.
+
+- 2026-09-26 히트맵 회귀 원인: 공용 렌더러 전환 중 2D treemap이 가로 폭 분할로 바뀌고 색상 클래스가 CSS 계약과 어긋나 빈 하단 영역과 투명 셀이 발생했다. 공용 렌더러는 반드시 left/top/width/height 4개 좌표와 home-hm-up/down 단계 클래스를 유지한다.

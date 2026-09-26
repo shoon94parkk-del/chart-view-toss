@@ -12,6 +12,27 @@ const marketRows = [
   ['^IXIC','나스닥',22814.6,0.55,'USD'],
 ].map(([ticker,name,price,change,currency])=>({ticker,name,price,change,currency,asOf:'2026-09-21T03:00:00Z'}));
 
+const heatmapRows = [
+  ['005930.KS','삼성전자',520e12,84200,3.62],
+  ['000660.KS','SK하이닉스',210e12,295000,1.25],
+  ['207940.KS','삼성바이오로직스',78e12,1120000,-1.29],
+  ['005380.KS','현대차',63e12,298000,-0.97],
+  ['000270.KS','기아',52e12,131000,-1.94],
+  ['373220.KS','LG에너지솔루션',47e12,423000,0.43],
+  ['035420.KS','NAVER',39e12,236000,-2.49],
+  ['068270.KS','셀트리온',36e12,187000,-0.22],
+  ['NVDA','엔비디아',4.5e12,188.3,0.22],
+  ['AAPL','애플',3.8e12,241.7,1.53],
+  ['MSFT','마이크로소프트',3.7e12,522.4,3.66],
+  ['GOOGL','알파벳',3.0e12,212.1,0.46],
+  ['AMZN','아마존',2.6e12,228.2,0.12],
+  ['TSM','TSMC',1.7e12,312.8,-0.12],
+  ['META','메타',1.6e12,738.1,-3.33],
+  ['AVGO','브로드컴',1.5e12,354.0,0.71],
+  ['TSLA','테슬라',1.4e12,438.0,-1.50],
+  ['AMD','AMD',0.45e12,209.0,1.08],
+].map(([ticker,name,marketCap,price,change])=>({ticker,name,marketCap,price,change,asOf:'2026-09-21T03:02:00Z'}));
+
 const compareStocks = [
   ['005930.KS','삼성전자','KRW',4.25],
   ['NVDA','엔비디아','USD',7.18],
@@ -58,7 +79,7 @@ async function installMocks(page, mode='ok') {
     }
     const path=url.pathname;
     if(path==='/api/market-now') return json(route,{results:marketRows,timestamp:'2026-09-21 12:00:00'});
-    if(path==='/api/home-snapshot') return json(route,{generatedAt:'2026-09-21T03:02:00Z',macro:{summary:{level:'yellow',text:'금리·물가·위험 신호가 함께 나타납니다.',latestBasisDate:'2026-09-20',notice:'시장 환경 설명용 요약입니다.'}},heatmap:{results:[{ticker:'005930.KS',name:'삼성전자',marketCap:520000000000000,price:84200,change:1.14},{ticker:'000660.KS',name:'SK하이닉스',marketCap:210000000000000,price:295000,change:-0.82},{ticker:'NVDA',name:'엔비디아',marketCap:4200000000000,price:188.3,change:0.84},{ticker:'AAPL',name:'애플',marketCap:3700000000000,price:241.7,change:-0.31}]}});
+    if(path==='/api/home-snapshot') return json(route,{generatedAt:'2026-09-21T03:02:00Z',macro:{summary:{level:'yellow',text:'금리·물가·위험 신호가 함께 나타납니다.',latestBasisDate:'2026-09-20',notice:'시장 환경 설명용 요약입니다.'}},heatmap:{results:heatmapRows}});
     if(path==='/api/home-bootstrap') return json(route,{day:{tradeDate:'2026-09-21',top3:[{symbol:'005930.KS',name:'삼성전자'},{symbol:'000660.KS',name:'SK하이닉스'},{symbol:'NVDA',name:'엔비디아'}]},recommendations:[
       {rank:1,symbol:'005930.KS',name:'삼성전자',recommendedDate:'2026-09-18',recommendedPrice:81000,currentPrice:87480,returnPct:8,bestReturnPct:11.2,score:88,grade:'A',statusLabel:'성과 추적 중',reason:'거래량과 추세 조건이 함께 개선되었습니다.',lastUpdatedTradeDate:'2026-09-20'},
       {rank:2,symbol:'000660.KS',name:'SK하이닉스',recommendedDate:'2026-09-18',recommendedPrice:300000,currentPrice:294000,returnPct:-2,bestReturnPct:3.4,score:81,grade:'B+',statusLabel:'성과 추적 중',reason:'중기 모멘텀 조건을 충족했습니다.',lastUpdatedTradeDate:'2026-09-20'},
@@ -110,12 +131,29 @@ try{
         const performanceText=await page.locator('#home-top-picks .home-pick-performance').innerText();
         if(!performanceText.includes('추천 평균 수익률')||!performanceText.includes('+4.00%')||!performanceText.includes('67%')||!performanceText.includes('3/3건')) throw new Error(`${width}px recommendation performance missing: ${performanceText}`);
         await page.waitForSelector('#home-daily-heatmap .home-heatmap-cell');
-        if(await page.locator('#home-daily-heatmap .home-heatmap-cell').count()<4) throw new Error(`${width}px home heatmap missing`);
-        if(await page.locator('#home-daily-heatmap .home-heatmap-logo').count()<2) throw new Error(`${width}px heatmap logos missing`);
+        if(await page.locator('#home-daily-heatmap .home-heatmap-cell').count()!==18) throw new Error(`${width}px home heatmap representative set mismatch`);
+        if(await page.locator('#home-daily-heatmap .home-heatmap-logo').count()<3) throw new Error(`${width}px heatmap logos missing`);
         if(await page.locator('#home-daily-heatmap img').count()!==0) throw new Error(`${width}px heatmap must not fetch external image assets`);
+        const geometry=await page.locator('#home-daily-heatmap .home-heatmap-treemap').evaluateAll(boards=>boards.map(board=>{
+          const cells=[...board.querySelectorAll('.home-heatmap-cell')];
+          const box=board.getBoundingClientRect();
+          const rects=cells.map(cell=>cell.getBoundingClientRect());
+          return {
+            count:cells.length,
+            topBands:new Set(cells.map(cell=>Math.round(cell.offsetTop))).size,
+            bottomGap:Math.abs(box.bottom-Math.max(...rects.map(rect=>rect.bottom))),
+            rightGap:Math.abs(box.right-Math.max(...rects.map(rect=>rect.right))),
+            transparent:cells.filter(cell=>{
+              const color=getComputedStyle(cell).backgroundColor;
+              return color==='rgba(0, 0, 0, 0)'||color==='transparent';
+            }).length,
+          };
+        }));
+        if(geometry.some(board=>board.count<8||board.topBands<2||board.bottomGap>2||board.rightGap>2||board.transparent>0)) throw new Error(`${width}px heatmap geometry regression: ${JSON.stringify(geometry)}`);
         const clipped=await page.locator('#home-daily-heatmap .home-heatmap-cell').evaluateAll(cells=>cells.filter(cell=>{
-          const strong=cell.querySelector('strong'),change=cell.querySelector('span');
-          return [strong,change].filter(Boolean).some(node=>node.scrollWidth>node.clientWidth+1||node.scrollHeight>node.clientHeight+1);
+          const name=cell.querySelector('.home-heatmap-name strong,.home-heatmap-ticker');
+          const change=cell.querySelector('.home-heatmap-change');
+          return [name,change].filter(Boolean).some(node=>node.scrollWidth>node.clientWidth+1||node.scrollHeight>node.clientHeight+1);
         }).map(cell=>cell.getAttribute('aria-label')));
         if(clipped.length) throw new Error(`${width}px heatmap text clipped: ${clipped.join(", ")}`);
       }
@@ -127,7 +165,7 @@ try{
 
   const context=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:1});
   const page=await context.newPage();await seed(page);await installMocks(page);
-  for(const tab of ['valuation','macro','watch','news','picks','detail/005930.KS','more','info']){
+  for(const tab of ['valuation','macro','watch','news','picks','heatmap','detail/005930.KS','more','info']){
     await page.goto(`${BASE}/#${tab}`,{waitUntil:'networkidle'});
     await page.waitForTimeout(120);
     if(tab==='picks'){
@@ -136,6 +174,21 @@ try{
       if(!body.includes('추천 기록')||!body.includes('추천 81,000원')||!body.includes('현재 87,480원')||!body.includes('+8.00%')) throw new Error('recommendation ledger detail missing');
       await page.locator('.pick-ledger-row').first().click();
       if(await page.locator('.pick-ledger-detail').first().isHidden()) throw new Error('recommendation ledger detail did not expand');
+    }
+    if(tab==='heatmap'){
+      await page.waitForSelector('#analysis-body .home-heatmap-cell');
+      if(await page.locator('#analysis-body .home-heatmap-cell').count()!==18) throw new Error('full heatmap must reuse representative home set');
+      const fullGeometry=await page.locator('#analysis-body .home-heatmap-treemap').evaluateAll(boards=>boards.map(board=>{
+        const cells=[...board.querySelectorAll('.home-heatmap-cell')];
+        const box=board.getBoundingClientRect();
+        const rects=cells.map(cell=>cell.getBoundingClientRect());
+        return {
+          topBands:new Set(cells.map(cell=>Math.round(cell.offsetTop))).size,
+          bottomGap:Math.abs(box.bottom-Math.max(...rects.map(rect=>rect.bottom))),
+          rightGap:Math.abs(box.right-Math.max(...rects.map(rect=>rect.right))),
+        };
+      }));
+      if(fullGeometry.some(board=>board.topBands<2||board.bottomGap>2||board.rightGap>2)) throw new Error(`full heatmap geometry regression: ${JSON.stringify(fullGeometry)}`);
     }
     await assertNoHorizontalOverflow(page,`390px ${tab}`);
     await page.screenshot({path:`${OUT}/390-${tab.replaceAll('/','-')}.png`,fullPage:true});

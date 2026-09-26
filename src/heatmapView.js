@@ -1,24 +1,24 @@
 import { HOME_LOGOS } from './homeLogos.js';
 
 export const HOME_STOCK_META = {
-  '005930.KS': { name: '삼성전자', short: '삼성전자', market: 'KR', logo: 'samsung' },
-  '000660.KS': { name: 'SK하이닉스', short: 'SK하이닉스', market: 'KR', logo: 'skhynix' },
-  '207940.KS': { name: '삼성바이오로직스', short: '삼성바이오', market: 'KR', logo: 'samsungbio' },
-  '005380.KS': { name: '현대차', short: '현대차', market: 'KR', logo: 'hyundai' },
-  '000270.KS': { name: '기아', short: '기아', market: 'KR', logo: 'kia' },
-  '373220.KS': { name: 'LG에너지솔루션', short: 'LG엔솔', market: 'KR', logo: 'lgenergy' },
-  '035420.KS': { name: 'NAVER', short: 'NAVER', market: 'KR', logo: 'naver' },
-  '068270.KS': { name: '셀트리온', short: '셀트리온', market: 'KR', logo: 'celltrion' },
-  NVDA: { name: '엔비디아', short: '엔비디아', market: 'US', logo: 'nvidia' },
-  AAPL: { name: '애플', short: '애플', market: 'US', logo: 'apple' },
-  MSFT: { name: '마이크로소프트', short: '마이크로소프트', market: 'US', logo: 'microsoft' },
-  GOOGL: { name: '알파벳', short: '알파벳', market: 'US', logo: 'google' },
-  AMZN: { name: '아마존', short: '아마존', market: 'US', logo: 'amazon' },
-  TSM: { name: 'TSMC', short: 'TSMC', market: 'US', logo: 'tsmc' },
-  META: { name: '메타', short: '메타', market: 'US', logo: 'meta' },
-  AVGO: { name: '브로드컴', short: '브로드컴', market: 'US', logo: 'broadcom' },
-  TSLA: { name: '테슬라', short: '테슬라', market: 'US', logo: 'tesla' },
-  AMD: { name: 'AMD', short: 'AMD', market: 'US', logo: 'amd' },
+  '005930.KS': { name: '삼성전자', short: '삼성전자', market: 'KR', logo: 'samsung', fallback: '삼성' },
+  '000660.KS': { name: 'SK하이닉스', short: 'SK하이닉스', market: 'KR', logo: 'skhynix', fallback: 'SK' },
+  '207940.KS': { name: '삼성바이오로직스', short: '삼성바이오', market: 'KR', logo: 'samsungbio', fallback: '삼바' },
+  '005380.KS': { name: '현대차', short: '현대차', market: 'KR', logo: 'hyundai', fallback: '현대' },
+  '000270.KS': { name: '기아', short: '기아', market: 'KR', logo: 'kia', fallback: '기아' },
+  '373220.KS': { name: 'LG에너지솔루션', short: 'LG엔솔', market: 'KR', logo: 'lgenergy', fallback: 'LG' },
+  '035420.KS': { name: 'NAVER', short: 'NAVER', market: 'KR', logo: 'naver', fallback: 'N' },
+  '068270.KS': { name: '셀트리온', short: '셀트리온', market: 'KR', logo: 'celltrion', fallback: '셀트' },
+  NVDA: { name: '엔비디아', short: '엔비디아', market: 'US', logo: 'nvidia', fallback: 'NV' },
+  AAPL: { name: '애플', short: '애플', market: 'US', logo: 'apple', fallback: 'A' },
+  MSFT: { name: '마이크로소프트', short: 'MS', market: 'US', logo: 'microsoft', fallback: 'MS' },
+  GOOGL: { name: '알파벳', short: '알파벳', market: 'US', logo: 'google', fallback: 'G' },
+  AMZN: { name: '아마존', short: '아마존', market: 'US', logo: 'amazon', fallback: 'AM' },
+  TSM: { name: 'TSMC', short: 'TSMC', market: 'US', logo: 'tsmc', fallback: 'TSM' },
+  META: { name: '메타', short: '메타', market: 'US', logo: 'meta', fallback: 'M' },
+  AVGO: { name: '브로드컴', short: '브로드컴', market: 'US', logo: 'broadcom', fallback: 'AV' },
+  TSLA: { name: '테슬라', short: '테슬라', market: 'US', logo: 'tesla', fallback: 'T' },
+  AMD: { name: 'AMD', short: 'AMD', market: 'US', logo: 'amd', fallback: 'AMD' },
 };
 
 const esc = (value) => String(value ?? '').replace(/[&<>"]/g, (char) => ({
@@ -99,20 +99,22 @@ const marketRows = (payload, market) => {
   const rows = Array.isArray(payload?.results) ? payload.results : [];
   return rows
     .map((row) => {
-      const ticker = String(row?.ticker || row?.symbol || '').trim();
+      const ticker = String(row?.ticker || row?.symbol || '').trim().toUpperCase();
       const meta = HOME_STOCK_META[ticker];
+      if (!meta) return null;
       return {
         ...row,
         ticker,
-        market: meta?.market || row?.market,
-        name: meta?.name || row?.name || ticker,
-        short: meta?.short || row?.name || ticker,
-        logo: meta?.logo || '',
+        market: meta.market,
+        name: meta.name,
+        short: meta.short,
+        logo: meta.logo || '',
+        fallback: meta.fallback || ticker.replace(/\.(KS|KQ)$/, '').slice(0, 3),
         marketCap: finite(row?.marketCap ?? row?.market_cap),
         change: finite(row?.change ?? row?.changePercent ?? row?.change_pct),
       };
     })
-    .filter((row) => row.market === market && row.marketCap > 0)
+    .filter((row) => row && row.market === market && row.marketCap > 0)
     .sort((left, right) => right.marketCap - left.marketCap);
 };
 
@@ -130,12 +132,16 @@ const heatmapMarketMarkup = (payload, market) => {
     const veryTight = width < 0.145 || height < 0.18 || area < 0.028;
     const compact = veryTight || width < 0.21 || height < 0.24 || area < 0.058;
     const label = veryTight ? item.ticker.replace('.KS', '') : compact ? item.short : item.name;
-    const logo = item.logo && HOME_LOGOS[item.logo]
-      ? `<span class="home-heatmap-logo" aria-hidden="true">${HOME_LOGOS[item.logo]}</span>`
-      : '';
-    const showLogo = Boolean(logo) && !veryTight && area >= 0.05 && width >= 0.17 && height >= 0.18;
-    const labelMarkup = showLogo || !veryTight
-      ? `<span class="home-heatmap-name">${showLogo ? logo : ''}<strong>${esc(label)}</strong></span>`
+    const logoSvg = item.logo && HOME_LOGOS[item.logo] ? HOME_LOGOS[item.logo] : '';
+    const showLogo = Boolean(logoSvg) && !veryTight && area >= 0.05 && width >= 0.17 && height >= 0.18;
+    const showFallback = !logoSvg && !compact && area >= 0.09 && width >= 0.22 && height >= 0.25;
+    const mark = showLogo
+      ? `<span class="home-heatmap-logo" aria-hidden="true">${logoSvg}</span>`
+      : showFallback
+        ? `<span class="home-heatmap-logo home-heatmap-logo-fallback" aria-hidden="true"><b>${esc(item.fallback)}</b></span>`
+        : '';
+    const labelMarkup = !veryTight
+      ? `<span class="home-heatmap-name">${mark}<strong>${esc(label)}</strong></span>`
       : `<strong class="home-heatmap-ticker">${esc(label)}</strong>`;
     const change = signedPct(item.change);
     return `<div class="home-heatmap-cell ${toneClass(item.change)} ${size}" style="left:${(x * 100).toFixed(3)}%;top:${(y * 100).toFixed(3)}%;width:${(width * 100).toFixed(3)}%;height:${(height * 100).toFixed(3)}%" role="button" tabindex="0" data-stock-detail="${esc(item.ticker)}" aria-label="${esc(item.name)} ${esc(change)}">${labelMarkup}<span class="home-heatmap-change">${esc(change)}</span></div>`;
