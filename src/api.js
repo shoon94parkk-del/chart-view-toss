@@ -3,7 +3,7 @@ import { recordMetric } from './diagnostics.js';
 import { staticData } from './staticData.js';
 import { earlyHome } from './homeFastCache.js';
 export { ApiError } from './requestClient.js';
-export const API_BASE=(import.meta.env.VITE_CHARTVIEW_API_BASE||'https://chart-view-pkv8.onrender.com').replace(/\/$/,'');
+export const API_BASE=(import.meta.env?.VITE_CHARTVIEW_API_BASE||'https://chart-view-pkv8.onrender.com').replace(/\/$/,'');
 const DEFAULT_TIMEOUT_MS=Number(import.meta.env.VITE_CHARTVIEW_API_TIMEOUT_MS||12000);
 const DEFAULT_RETRIES=1;
 const request=createRequestClient({base:API_BASE});
