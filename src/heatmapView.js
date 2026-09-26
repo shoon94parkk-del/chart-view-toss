@@ -51,22 +51,48 @@ const formatKst = (value) => {
 
 const toneClass = (value) => {
   const numeric = finite(value);
-  if (numeric > 0.05) return 'up';
-  if (numeric < -0.05) return 'down';
-  return 'flat';
+  const magnitude = Math.abs(numeric);
+  const level = magnitude >= 3 ? 3 : magnitude >= 1 ? 2 : magnitude >= 0.25 ? 1 : 0;
+  if (!level) return 'home-hm-flat';
+  return (numeric > 0 ? 'home-hm-up-' : 'home-hm-down-') + level;
 };
 
-const layoutTreemap = (items, weightPower = 1) => {
-  const weights = items.map((item) => Math.max(1, Math.pow(finite(item.marketCap, 1), weightPower)));
-  const total = weights.reduce((sum, value) => sum + value, 0) || 1;
-  const cells = [];
-  let cursor = 0;
-  items.forEach((item, index) => {
-    const width = index === items.length - 1 ? 100 - cursor : (weights[index] / total) * 100;
-    cells.push({ item, left: cursor, width });
-    cursor += width;
-  });
-  return cells;
+const layoutTreemap = (items, x = 0, y = 0, width = 1, height = 1, output = []) => {
+  if (!items.length) return output;
+  if (items.length === 1) {
+    output.push({ item: items[0].item, x, y, width, height });
+    return output;
+  }
+
+  const total = items.reduce((sum, item) => sum + item.weight, 0);
+  let partial = 0;
+  let split = 1;
+  let best = Infinity;
+
+  for (let index = 1; index < items.length; index += 1) {
+    partial += items[index - 1].weight;
+    const diff = Math.abs(total / 2 - partial);
+    if (diff < best) {
+      best = diff;
+      split = index;
+    }
+  }
+
+  const first = items.slice(0, split);
+  const second = items.slice(split);
+  const firstWeight = first.reduce((sum, item) => sum + item.weight, 0);
+  const ratio = total > 0 ? firstWeight / total : 0.5;
+
+  if (width >= height) {
+    const firstWidth = width * ratio;
+    layoutTreemap(first, x, y, firstWidth, height, output);
+    layoutTreemap(second, x + firstWidth, y, width - firstWidth, height, output);
+  } else {
+    const firstHeight = height * ratio;
+    layoutTreemap(first, x, y, width, firstHeight, output);
+    layoutTreemap(second, x, y + firstHeight, width, height - firstHeight, output);
+  }
+  return output;
 };
 
 const marketRows = (payload, market) => {
@@ -92,18 +118,27 @@ const marketRows = (payload, market) => {
 
 const heatmapMarketMarkup = (payload, market) => {
   const rows = marketRows(payload, market);
-  const cells = layoutTreemap(rows, market === 'KR' ? 0.58 : 1);
-  return cells.map(({ item, left, width }, index) => {
-    const size = width >= 25 ? 'is-large' : width >= 12 ? 'is-medium' : 'is-small';
+  const items = rows.map((item) => ({
+    item,
+    weight: market === 'KR' ? Math.pow(Math.max(1, item.marketCap), 0.58) : Math.max(1, item.marketCap),
+  }));
+  const rects = layoutTreemap(items);
+
+  return rects.map(({ item, x, y, width, height }) => {
+    const area = width * height;
+    const size = area >= 0.12 ? 'is-large' : area >= 0.055 ? 'is-medium' : 'is-small';
+    const veryTight = width < 0.145 || height < 0.18 || area < 0.028;
+    const compact = veryTight || width < 0.21 || height < 0.24 || area < 0.058;
+    const label = veryTight ? item.ticker.replace('.KS', '') : compact ? item.short : item.name;
     const logo = item.logo && HOME_LOGOS[item.logo]
       ? `<span class="home-heatmap-logo" aria-hidden="true">${HOME_LOGOS[item.logo]}</span>`
       : '';
-    const label = width >= 12 ? item.short : item.ticker.replace('.KS', '');
+    const showLogo = Boolean(logo) && !veryTight && area >= 0.05 && width >= 0.17 && height >= 0.18;
+    const labelMarkup = showLogo || !veryTight
+      ? `<span class="home-heatmap-name">${showLogo ? logo : ''}<strong>${esc(label)}</strong></span>`
+      : `<strong class="home-heatmap-ticker">${esc(label)}</strong>`;
     const change = signedPct(item.change);
-    const labelMarkup = width >= 10
-      ? `<span class="home-heatmap-name">${logo}<strong>${esc(label)}</strong></span>`
-      : `<strong class="home-heatmap-ticker">${esc(item.ticker.replace('.KS', ''))}</strong>`;
-    return `<div class="home-heatmap-cell home-hm-${toneClass(item.change)} ${size}" style="left:${left}%;width:${width}%" role="button" tabindex="0" data-stock-detail="${esc(item.ticker)}" aria-label="${esc(item.name)} ${esc(change)}">${labelMarkup}<span class="home-heatmap-change">${esc(change)}</span></div>`;
+    return `<div class="home-heatmap-cell ${toneClass(item.change)} ${size}" style="left:${(x * 100).toFixed(3)}%;top:${(y * 100).toFixed(3)}%;width:${(width * 100).toFixed(3)}%;height:${(height * 100).toFixed(3)}%" role="button" tabindex="0" data-stock-detail="${esc(item.ticker)}" aria-label="${esc(item.name)} ${esc(change)}">${labelMarkup}<span class="home-heatmap-change">${esc(change)}</span></div>`;
   }).join('');
 };
 
