@@ -109,7 +109,13 @@ async function installMocks(page, mode='ok') {
       {rank:2,symbol:'000660.KS',name:'SK하이닉스',recommendedDate:'2026-09-18',recommendedPrice:300000,currentPrice:294000,returnPct:-2,bestReturnPct:3.4,score:81,grade:'B+',statusLabel:'성과 추적 중',reason:'중기 모멘텀 조건을 충족했습니다.',lastUpdatedTradeDate:'2026-09-20'},
       {rank:3,symbol:'NVDA',name:'엔비디아',recommendedDate:'2026-09-17',recommendedPrice:180,currentPrice:190.8,returnPct:6,bestReturnPct:9.1,score:79,grade:'B+',statusLabel:'성과 추적 중',reason:'가격 추세와 거래량이 개선되었습니다.',lastUpdatedTradeDate:'2026-09-20'}
     ]});
-    if(path==='/api/heatmap/full') return json(route,{generatedAt:'2026-09-21T03:02:00Z',results:fullHeatmapRows,counts:{KR:20,US:40}});
+    if(path==='/api/heatmap/full') return json(route,{
+      generatedAt:'2026-09-21T03:02:00Z',
+      results:fullHeatmapRows.map(row=>row.ticker==='NVDA'?{...row,change:99.99}:row.ticker==='005930.KS'?{...row,change:-88.88}:row),
+      counts:{KR:20,US:40},
+      complete:true,
+      refreshing:false,
+    });
     if(path==='/api/heatmap') return json(route,{generatedAt:'2026-09-21T03:02:00Z',results:[]});
     if(path==='/api/quotes') return json(route,{results:[
       {ticker:'005930.KS',name:'삼성전자',price:84200,change:1.14,currency:'KRW',asOf:'2026-09-21T03:00:00Z',source:'Yahoo Chart 5m'},
@@ -205,6 +211,8 @@ try{
       if(await page.locator('#analysis-body .home-heatmap-cell').count()!==60) throw new Error('full heatmap must show expanded 60-stock set');
       const fullText=await page.locator('#analysis-body').innerText();
       if(!fullText.includes('한국 주요 20종목')||!fullText.includes('미국 시총 상위 40종목')) throw new Error('full heatmap market counts missing');
+      if(fullText.includes('+99.99%')||fullText.includes('-88.88%')) throw new Error('full heatmap leaked stale server values instead of Home parity values');
+      if(!fullText.includes('엔비디아')||!fullText.includes('+0.22%')||!fullText.includes('삼성전자')||!fullText.includes('+3.62%')) throw new Error('full heatmap did not align overlapping symbols to Home snapshot');
       const fullGeometry=await page.locator('#analysis-body .home-heatmap-treemap').evaluateAll(boards=>boards.map(board=>{
         const cells=[...board.querySelectorAll('.home-heatmap-cell')];
         const box=board.getBoundingClientRect();
