@@ -80,3 +80,6 @@ Toss-specific navigation, safe-area, storage, SDK bridge, and release logic belo
 - 2026-09-27 전체 히트맵 라벨은 시장별 우선순위를 다르게 적용한다. 한국은 숫자 종목코드보다 기업명/축약명을 우선하고, 미국은 티커와 함께 등락률 수치를 가능한 많은 셀에서 유지한다.
 
 - 2026-09-27 히트맵 정합성: 전체보기는 5분 클라이언트 캐시를 사용하지 않는다. 진입 시 서버 캐시를 다시 확인하고, Home과 겹치는 종목은 브라우저가 사용한 homeSnapshot 값을 최종 오버레이한다. 서버 응답이 incomplete/refreshing이면 약 1.8초 후 한 번 재확인한다.
+
+- 2026-09-27 장중 실시간 구조: Toss 클라이언트는 활성/가시 상태에서만 `/api/activity` heartbeat를 보내고, Home에서만 약 9~12초(기본 10초, 방문자별 deterministic jitter) 간격으로 `/api/home-live` 공용 메모리 캐시를 읽는다. 숨김/백그라운드에서는 polling을 중지하고 복귀 시 즉시 재동기화한다. 클라이언트가 외부 시세 공급자를 직접 갱신하지 않는다.
+- `/api/home-live` 이벤트는 홈 대표 히트맵과 해당되는 관심종목 시세만 부분 갱신하며 전체 Home 재렌더를 유발하지 않는다.
