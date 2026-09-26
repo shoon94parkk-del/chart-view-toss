@@ -240,6 +240,8 @@ function paintHeatmap(host, payload) {
     });
   });
 }
+let generation = 0;
+
 async function mount() {
   const marketSection = document.querySelector('.market-section.home-primary');
   if (!marketSection || marketSection.dataset.homeExtrasMounted === '1') return;
