@@ -45,3 +45,6 @@ Heatmap logos are no longer absolutely overlaid on company names. Supported logo
 ## 2026-09-26 — 전체 히트맵은 홈 히트맵을 단일 기준으로 사용
 
 전체 히트맵 라우트는 더 이상 오래된 `static/data/heatmap.json` 섹터 데이터를 읽지 않는다. 홈과 동일한 `/api/home-snapshot` 응답과 공용 `home-heatmap` 렌더러를 사용해 한국·미국 대표 종목, 업데이트 시각, 로고, 등락 값, 레이아웃이 두 화면에서 갈라지지 않도록 한다.
+
+## 2026-09-26 — 공용 히트맵은 2차원 면적 충전과 색상 계약을 테스트로 고정
+홈과 전체 히트맵은 동일한 2차원 treemap 렌더러를 사용한다. 각 셀은 left/top/width/height를 모두 가져야 하고, 두 시장 보드는 아래·오른쪽 빈 영역 없이 채워져야 한다. 등락 색상은 기존 home-hm-up-1~3 / down-1~3 / flat CSS 계약을 유지하며, 모바일 QA에서 실제 geometry와 computed background를 검증한다.
