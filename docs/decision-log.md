@@ -40,3 +40,8 @@ The Home discovery action now opens a dedicated `#picks` recommendation ledger r
 
 ## 2026-09-24 — Heatmap logos must participate in layout
 Heatmap logos are no longer absolutely overlaid on company names. Supported logos render inline beside the company label only when geometry permits; cramped cells remain text-only. This prevents identity marks from obscuring the data they are meant to clarify.
+
+
+## 2026-09-26 — 전체 히트맵은 홈 히트맵을 단일 기준으로 사용
+
+전체 히트맵 라우트는 더 이상 오래된 `static/data/heatmap.json` 섹터 데이터를 읽지 않는다. 홈과 동일한 `/api/home-snapshot` 응답과 공용 `home-heatmap` 렌더러를 사용해 한국·미국 대표 종목, 업데이트 시각, 로고, 등락 값, 레이아웃이 두 화면에서 갈라지지 않도록 한다.
