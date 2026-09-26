@@ -66,3 +66,6 @@ Toss-specific navigation, safe-area, storage, SDK bridge, and release logic belo
 - `tests/progressive_qa.mjs`
 - `tests/release_gates_qa.mjs`
 - live backend contract smoke
+
+
+- 홈 히트맵과 전체 히트맵은 반드시 같은 `homeSnapshot` 데이터와 공용 렌더러를 사용한다. `static/data/heatmap.json`은 레거시 섹터 데이터이므로 전체 화면의 운영 데이터 소스로 재사용하지 않는다.
