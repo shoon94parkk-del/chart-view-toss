@@ -9,6 +9,18 @@ export const HOME_STOCK_META = {
   '373220.KS': { name: 'LG에너지솔루션', short: 'LG엔솔', market: 'KR', logo: 'lgenergy', fallback: 'LG' },
   '035420.KS': { name: 'NAVER', short: 'NAVER', market: 'KR', logo: 'naver', fallback: 'N' },
   '068270.KS': { name: '셀트리온', short: '셀트리온', market: 'KR', logo: 'celltrion', fallback: '셀트' },
+  '051910.KS': { name: 'LG화학', short: 'LG화학', market: 'KR', fallback: 'LG' },
+  '006400.KS': { name: '삼성SDI', short: '삼성SDI', market: 'KR', fallback: 'SDI' },
+  '055550.KS': { name: '신한지주', short: '신한지주', market: 'KR', fallback: '신한' },
+  '105560.KS': { name: 'KB금융', short: 'KB금융', market: 'KR', fallback: 'KB' },
+  '035720.KS': { name: '카카오', short: '카카오', market: 'KR', fallback: '카카오' },
+  '086790.KS': { name: '하나금융지주', short: '하나금융', market: 'KR', fallback: '하나' },
+  '066570.KS': { name: 'LG전자', short: 'LG전자', market: 'KR', fallback: 'LG' },
+  '003550.KS': { name: 'LG', short: 'LG', market: 'KR', fallback: 'LG' },
+  '003670.KS': { name: '포스코퓨처엠', short: '포스코퓨처엠', market: 'KR', fallback: '포스코' },
+  '009150.KS': { name: '삼성전기', short: '삼성전기', market: 'KR', fallback: '삼전기' },
+  '018260.KS': { name: '삼성SDS', short: '삼성SDS', market: 'KR', fallback: 'SDS' },
+  '028260.KS': { name: '삼성물산', short: '삼성물산', market: 'KR', fallback: '물산' },
   NVDA: { name: '엔비디아', short: '엔비디아', market: 'US', logo: 'nvidia', fallback: 'NV' },
   AAPL: { name: '애플', short: '애플', market: 'US', logo: 'apple', fallback: 'A' },
   MSFT: { name: '마이크로소프트', short: 'MS', market: 'US', logo: 'microsoft', fallback: 'MS' },
@@ -145,7 +157,8 @@ const heatmapMarketMarkup = (payload, market, scope = 'home') => {
     const veryTight = !full && (width < 0.145 || height < 0.18 || area < 0.028);
     const compact = tickerOnly || veryTight || width < 0.21 || height < 0.24 || area < 0.058;
     const tickerLabel = item.ticker.replace(/\.(KS|KQ)$/, '');
-    const label = tickerOnly || veryTight ? tickerLabel : compact ? item.short : item.name;
+    const tinyLabel = market === 'KR' ? item.short : tickerLabel;
+    const label = tickerOnly || veryTight ? tinyLabel : compact ? item.short : item.name;
     const logoSvg = item.logo && HOME_LOGOS[item.logo] ? HOME_LOGOS[item.logo] : '';
     const showLogo = Boolean(logoSvg) && !tickerOnly && !veryTight && area >= 0.05 && width >= 0.17 && height >= 0.18;
     const showFallback = !logoSvg && !compact && area >= 0.09 && width >= 0.22 && height >= 0.25;
@@ -160,8 +173,12 @@ const heatmapMarketMarkup = (payload, market, scope = 'home') => {
         ? `<strong class="home-heatmap-ticker">${esc(label)}</strong>`
         : `<span class="home-heatmap-name">${mark}<strong>${esc(label)}</strong></span>`;
     const change = signedPct(item.change);
-    const showChange = !hideLabel && !micro && (!tickerOnly || height >= 0.14);
-    const classes = [toneClass(item.change), size, hideLabel ? 'is-label-hidden' : '', micro ? 'is-micro' : '', tickerOnly ? 'is-ticker-only' : ''].filter(Boolean).join(' ');
+    const showChange = !hideLabel && (
+      full && market === 'US'
+        ? width >= 0.045 && height >= 0.075
+        : !micro && (!tickerOnly || height >= 0.14)
+    );
+    const classes = [toneClass(item.change), size, market === 'KR' ? 'market-kr-cell' : 'market-us-cell', hideLabel ? 'is-label-hidden' : '', micro ? 'is-micro' : '', tickerOnly ? 'is-ticker-only' : ''].filter(Boolean).join(' ');
     return `<div class="home-heatmap-cell ${classes}" style="left:${(x * 100).toFixed(3)}%;top:${(y * 100).toFixed(3)}%;width:${(width * 100).toFixed(3)}%;height:${(height * 100).toFixed(3)}%" role="button" tabindex="0" data-stock-detail="${esc(item.ticker)}" aria-label="${esc(item.name)} ${esc(change)}">${labelMarkup}${showChange ? `<span class="home-heatmap-change">${esc(change)}</span>` : ''}</div>`;
   }).join('');
 };

@@ -77,3 +77,21 @@
 .shared-heatmap-analysis .full-heatmap-board .home-heatmap-cell.is-micro .home-heatmap-ticker{font-size:5.5px;font-weight:750;letter-spacing:-.04em}
 .shared-heatmap-analysis .full-heatmap-board .home-heatmap-cell.is-label-hidden{padding:0}
 .shared-heatmap-analysis .full-heatmap-board .home-heatmap-cell.is-label-hidden>*{display:none!important}
+
+/* Full heatmap: market-specific label priority.
+   KR uses readable company names; US keeps ticker + return visible as long as space allows. */
+.shared-heatmap-analysis .full-heatmap-board .market-kr .home-heatmap-cell.is-ticker-only .home-heatmap-ticker{
+  font-size:7px;font-weight:850;letter-spacing:-.04em;max-width:calc(100% - 2px)
+}
+.shared-heatmap-analysis .full-heatmap-board .market-kr .home-heatmap-cell.is-micro .home-heatmap-ticker{
+  font-size:6px;font-weight:800;letter-spacing:-.05em
+}
+.shared-heatmap-analysis .full-heatmap-board .market-us .home-heatmap-change{
+  font-size:8px;font-weight:950;line-height:1;margin-top:2px;text-shadow:0 1px 2px rgba(25,31,40,.28)
+}
+.shared-heatmap-analysis .full-heatmap-board .market-us .home-heatmap-cell.is-ticker-only .home-heatmap-change{
+  font-size:7px;margin-top:1px
+}
+.shared-heatmap-analysis .full-heatmap-board .market-us .home-heatmap-cell.is-micro .home-heatmap-change{
+  font-size:6px;margin-top:1px
+}

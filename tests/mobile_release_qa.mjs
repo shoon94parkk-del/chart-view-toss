@@ -35,10 +35,12 @@ const heatmapRows = [
 
 const fullHeatmapRows = [
   ...heatmapRows.map(row=>({...row,market:/\.(KS|KQ)$/.test(row.ticker)?'KR':'US'})),
-  ...Array.from({length:12},(_,i)=>({
-    ticker:`1${String(i).padStart(5,'0')}.KS`,
-    name:`한국추가${i+1}`,
-    market:'KR',
+  ...[
+    ['051910.KS','LG화학'],['006400.KS','삼성SDI'],['055550.KS','신한지주'],['105560.KS','KB금융'],
+    ['035720.KS','카카오'],['086790.KS','하나금융지주'],['066570.KS','LG전자'],['003550.KS','LG'],
+    ['003670.KS','포스코퓨처엠'],['009150.KS','삼성전기'],['018260.KS','삼성SDS'],['028260.KS','삼성물산'],
+  ].map(([ticker,name],i)=>({
+    ticker,name,market:'KR',
     marketCap:30e12-i*1.1e12,
     price:50000+i*1000,
     change:(i%2?1:-1)*(0.2+i*0.11),
@@ -228,6 +230,10 @@ try{
       });
       if(denseLabels.tiny&&!denseLabels.reduced) throw new Error(`full heatmap tiny labels were not reduced: ${JSON.stringify(denseLabels)}`);
       if(denseLabels.oversized.length) throw new Error(`full heatmap tiny labels oversized: ${JSON.stringify(denseLabels.oversized)}`);
+      const krVisible=await page.locator('#analysis-body .market-kr').innerText();
+      if(/\b\d{6}\b/.test(krVisible)) throw new Error(`Korean heatmap must show company names instead of numeric ticker labels: ${krVisible}`);
+      const usReturns=await page.locator('#analysis-body .market-us .home-heatmap-change').count();
+      if(usReturns<24) throw new Error(`US heatmap should keep return percentages visible on most readable cells; found ${usReturns}`);
     }
     await assertNoHorizontalOverflow(page,`390px ${tab}`);
     await page.screenshot({path:`${OUT}/390-${tab.replaceAll('/','-')}.png`,fullPage:true});
