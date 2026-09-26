@@ -12,7 +12,7 @@ export const ANALYSIS_ROUTES=new Set(['discover','heatmap','consensus','bands','
 export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareSheet}){
  let disposed=false,chart,observer;
  const titles={discover:'시장 스크리너',heatmap:'시장 히트맵',consensus:'실적 전망 조회',bands:'역사적 밸류에이션',tools:'자료 출처'};
- const descriptions={discover:'전체 수집 종목을 직접 검색·필터링해요. 장마감 데이터이며 추천 순위가 아니에요.',heatmap:'업종별 종목의 등락을 함께 확인해요. 가격 기준일을 확인해주세요.',consensus:'선택한 종목의 애널리스트 추정치와 변경 내역을 확인해요.',bands:'과거 가격과 재무자료로 재구성한 PER·PBR을 확인해요.',tools:'자료 확인에 필요한 외부 공식 사이트예요.'};
+ const descriptions={discover:'전체 수집 종목을 직접 검색·필터링해요. 장마감 데이터이며 추천 순위가 아니에요.',heatmap:'홈과 같은 대표 종목의 당일 등락을 한눈에 비교해요.',consensus:'선택한 종목의 애널리스트 추정치와 변경 내역을 확인해요.',bands:'과거 가격과 재무자료로 재구성한 PER·PBR을 확인해요.',tools:'자료 확인에 필요한 외부 공식 사이트예요.'};
  const selection=['consensus','bands'].includes(tab);
  document.querySelector('#app').innerHTML=shell(`<section class="task-head"><div><h2>${titles[tab]}</h2><p>${descriptions[tab]}</p></div>${selection?'<button id="analysis-select" class="primary-subtle">종목 변경</button>':''}</section><div id="analysis-controls"></div><div id="analysis-body" class="analysis-body"><div class="skeleton quote"></div></div>`,titles[tab]);
  const host=document.querySelector('#analysis-body'),controls=document.querySelector('#analysis-controls');
@@ -45,7 +45,7 @@ export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareS
     const payload={results:Array.isArray(snapshot?.heatmap?.results)?snapshot.heatmap.results:[],generatedAt:snapshot?.generatedAt||''};
     host.innerHTML=`<div class="shared-heatmap-analysis">${renderSharedHeatmap(payload)}</div>`;
     bindNav();
-   }else if(tab==='consensus'{
+   }else if(tab==='consensus'){
     const symbols=[...state.selected];
     if(!symbols.length){host.innerHTML=empty('종목 변경에서 조회할 종목을 선택해주세요.');return;}
     controls.innerHTML='<label class="analysis-period">추정 기간<select id="consensus-period"><option value="0y">올해</option><option value="+1y">내년</option><option value="0q">이번 분기</option><option value="+1q">다음 분기</option></select></label>';
