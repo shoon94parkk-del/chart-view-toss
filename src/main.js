@@ -735,7 +735,10 @@ window.addEventListener('offline',()=>render());
 document.addEventListener('chartview:storage-error',()=>showToast('목록을 기기에 저장하지 못했어요. 다시 시도해주세요.'));
 async function startApp(){
  const started=performance.now();
- document.querySelector('#app').innerHTML='<div class="empty" role="status">저장된 목록을 불러오고 있어요.</div>';
+ syncFromLocation();
+ const fastHome=state.tab==='home';
+ if(fastHome)render();
+ else document.querySelector('#app').innerHTML='<div class="empty" role="status">저장된 목록을 불러오고 있어요.</div>';
  try {
    await initializeStorage();
    state.watchlist=load(WATCHLIST_KEY,[]);
