@@ -165,7 +165,7 @@ try{
 
   const context=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:1});
   const page=await context.newPage();await seed(page);await installMocks(page);
-  for(const tab of ['valuation','macro','watch','news','picks','detail/005930.KS','more','info']){
+  for(const tab of ['valuation','macro','watch','news','picks','heatmap','detail/005930.KS','more','info']){
     await page.goto(`${BASE}/#${tab}`,{waitUntil:'networkidle'});
     await page.waitForTimeout(120);
     if(tab==='picks'){
@@ -174,6 +174,21 @@ try{
       if(!body.includes('추천 기록')||!body.includes('추천 81,000원')||!body.includes('현재 87,480원')||!body.includes('+8.00%')) throw new Error('recommendation ledger detail missing');
       await page.locator('.pick-ledger-row').first().click();
       if(await page.locator('.pick-ledger-detail').first().isHidden()) throw new Error('recommendation ledger detail did not expand');
+    }
+    if(tab==='heatmap'){
+      await page.waitForSelector('#analysis-body .home-heatmap-cell');
+      if(await page.locator('#analysis-body .home-heatmap-cell').count()!==18) throw new Error('full heatmap must reuse representative home set');
+      const fullGeometry=await page.locator('#analysis-body .home-heatmap-treemap').evaluateAll(boards=>boards.map(board=>{
+        const cells=[...board.querySelectorAll('.home-heatmap-cell')];
+        const box=board.getBoundingClientRect();
+        const rects=cells.map(cell=>cell.getBoundingClientRect());
+        return {
+          topBands:new Set(cells.map(cell=>Math.round(cell.offsetTop))).size,
+          bottomGap:Math.abs(box.bottom-Math.max(...rects.map(rect=>rect.bottom))),
+          rightGap:Math.abs(box.right-Math.max(...rects.map(rect=>rect.right))),
+        };
+      }));
+      if(fullGeometry.some(board=>board.topBands<2||board.bottomGap>2||board.rightGap>2)) throw new Error(`full heatmap geometry regression: ${JSON.stringify(fullGeometry)}`);
     }
     await assertNoHorizontalOverflow(page,`390px ${tab}`);
     await page.screenshot({path:`${OUT}/390-${tab.replaceAll('/','-')}.png`,fullPage:true});
