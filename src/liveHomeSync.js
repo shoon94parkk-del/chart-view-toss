@@ -41,6 +41,7 @@ let visitorId='';
 let surface='other';
 let started=false;
 let heartbeatMs=DEFAULT_HEARTBEAT_MS;
+let livePollMs=HOME_LIVE_POLL_MS;
 let heartbeatTimer=null;
 let liveTimer=null;
 let heartbeatBusy=false;
@@ -61,7 +62,13 @@ function scheduleHeartbeat(delay=heartbeatMs){
   heartbeatTimer=setTimeout(()=>{heartbeatTimer=null;void sendHeartbeat();},delay);
 }
 
-function scheduleLive(delay=HOME_LIVE_POLL_MS){
+export function pollDelayForVisitor(id=''){
+  let hash=0;
+  for(const ch of String(id))hash=(hash*31+ch.charCodeAt(0))>>>0;
+  return 9_000+(hash%3_001);
+}
+
+function scheduleLive(delay=livePollMs){
   if(!canRun()||surface!=='home')return;
   if(liveTimer)clearTimeout(liveTimer);
   liveTimer=setTimeout(()=>{liveTimer=null;void pullHomeLive();},delay);
@@ -113,6 +120,7 @@ export function setLiveSurface(tab){
 export function startHomeLiveSync(id){
   visitorId=String(id||'').trim();
   if(!visitorId)return false;
+  livePollMs=pollDelayForVisitor(visitorId);
   if(!started){
     started=true;
     document.addEventListener('visibilitychange',handleLifecycle);
