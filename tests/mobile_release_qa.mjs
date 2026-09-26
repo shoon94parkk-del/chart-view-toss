@@ -214,6 +214,20 @@ try{
         };
       }));
       if(fullGeometry.some(board=>board.topBands<2||board.bottomGap>2||board.rightGap>2)) throw new Error(`full heatmap geometry regression: ${JSON.stringify(fullGeometry)}`);
+      const denseLabels=await page.locator('#analysis-body .home-heatmap-cell').evaluateAll(cells=>{
+        const tiny=cells.filter(cell=>cell.clientWidth<52||cell.clientHeight<34);
+        const oversized=tiny.filter(cell=>{
+          const label=cell.querySelector('.home-heatmap-ticker,.home-heatmap-name strong');
+          return label&&parseFloat(getComputedStyle(label).fontSize)>8;
+        }).map(cell=>({label:cell.getAttribute('aria-label'),width:cell.clientWidth,height:cell.clientHeight,font:parseFloat(getComputedStyle(cell.querySelector('.home-heatmap-ticker,.home-heatmap-name strong')).fontSize)}));
+        return {
+          tiny:tiny.length,
+          reduced:tiny.filter(cell=>cell.classList.contains('is-micro')||cell.classList.contains('is-label-hidden')||cell.classList.contains('is-ticker-only')).length,
+          oversized,
+        };
+      });
+      if(denseLabels.tiny&&!denseLabels.reduced) throw new Error(`full heatmap tiny labels were not reduced: ${JSON.stringify(denseLabels)}`);
+      if(denseLabels.oversized.length) throw new Error(`full heatmap tiny labels oversized: ${JSON.stringify(denseLabels.oversized)}`);
     }
     await assertNoHorizontalOverflow(page,`390px ${tab}`);
     await page.screenshot({path:`${OUT}/390-${tab.replaceAll('/','-')}.png`,fullPage:true});
