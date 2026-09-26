@@ -1,26 +1,8 @@
 import { homeBootstrap, homeSnapshot, homeHeatmap } from './api.js';
 import { HOME_LOGOS } from './homeLogos.js';
+import { HOME_STOCK_META, renderSharedHeatmap } from './heatmapView.js';
 
-const STOCK_META = {
-  '005930.KS': { name: '삼성전자', short: '삼성전자', market: 'KR', logo: 'samsung', fallback: '삼성' },
-  '000660.KS': { name: 'SK하이닉스', short: 'SK하이닉스', market: 'KR', fallback: 'SK' },
-  '207940.KS': { name: '삼성바이오로직스', short: '삼성바이오', market: 'KR', fallback: '삼바' },
-  '005380.KS': { name: '현대차', short: '현대차', market: 'KR', fallback: '현대' },
-  '000270.KS': { name: '기아', short: '기아', market: 'KR', fallback: '기아' },
-  '373220.KS': { name: 'LG에너지솔루션', short: 'LG에너지', market: 'KR', fallback: 'LG' },
-  '035420.KS': { name: 'NAVER', short: 'NAVER', market: 'KR', fallback: 'N' },
-  '068270.KS': { name: '셀트리온', short: '셀트리온', market: 'KR', fallback: '셀트' },
-  'NVDA': { name: '엔비디아', short: '엔비디아', market: 'US', logo: 'nvidia', fallback: 'NV' },
-  'AAPL': { name: '애플', short: '애플', market: 'US', logo: 'apple', fallback: 'A' },
-  'MSFT': { name: '마이크로소프트', short: 'MS', market: 'US', logo: 'microsoft', fallback: 'MS' },
-  'GOOGL': { name: '알파벳', short: '알파벳', market: 'US', logo: 'google', fallback: 'G' },
-  'AMZN': { name: '아마존', short: '아마존', market: 'US', fallback: 'AM' },
-  'TSM': { name: 'TSMC', short: 'TSMC', market: 'US', fallback: 'TSM' },
-  'META': { name: '메타', short: '메타', market: 'US', logo: 'meta', fallback: 'M' },
-  'AVGO': { name: '브로드컴', short: '브로드컴', market: 'US', fallback: 'AV' },
-  'TSLA': { name: '테슬라', short: '테슬라', market: 'US', logo: 'tesla', fallback: 'T' },
-  'AMD': { name: 'AMD', short: 'AMD', market: 'US', fallback: 'AMD' }
-};
+const STOCK_META = HOME_STOCK_META;
 
 const esc = (value) => String(value == null ? '' : value).replace(/[&<>"']/g, (char) => ({
   '&': '&amp;',
@@ -246,64 +228,18 @@ function paintPicks(host, payload) {
 
 function paintHeatmap(host, payload) {
   if (!host || !host.isConnected) return;
-  const kr = marketRows(payload, 'KR');
-  const us = marketRows(payload, 'US');
-  if (!kr.length && !us.length) {
-    host.innerHTML = '<div class="home-extra-empty"><strong>히트맵 데이터를 준비 중이에요.</strong><span>시장 데이터가 갱신되면 자동으로 표시돼요.</span></div>';
-    return;
-  }
-
-  const stamp = formatKst(payload && (payload.generatedAt || payload.updatedAt));
-  host.innerHTML =
-    '<div class="home-heatmap-meta">' + esc(stamp ? '업데이트 ' + stamp : '최신 가용 시세 기준') + '</div>' +
-    '<div class="home-heatmap-board">' +
-      '<div class="home-heatmap-market"><div class="home-heatmap-market-head"><strong>한국 대표</strong><span>시총 영향 완화</span></div><div class="home-heatmap-treemap">' + heatmapMarketMarkup(payload, 'KR') + '</div></div>' +
-      '<div class="home-heatmap-market"><div class="home-heatmap-market-head"><strong>미국 대표</strong><span>시총 비중</span></div><div class="home-heatmap-treemap">' + heatmapMarketMarkup(payload, 'US') + '</div></div>' +
-    '</div>' +
-    '<div class="home-heatmap-legend"><span><i class="up"></i>상승</span><span><i class="flat"></i>보합</span><span><i class="down"></i>하락</span></div>';
-}
-
-let generation = 0;
-
-async function mount() {
-  const marketSection = document.querySelector('.market-section.home-primary');
-  if (!marketSection || marketSection.dataset.homeExtrasMounted === '1') return;
-  marketSection.dataset.homeExtrasMounted = '1';
-
-  const token = ++generation;
-  const sections = createSections(marketSection);
-
-  const picksTask = homeBootstrap()
-    .then((payload) => {
-      if (token !== generation || !sections.picks.isConnected) return;
-      paintPicks(sections.picks.querySelector('#home-top-picks'), payload);
-    })
-    .catch(() => {
-      if (token !== generation || !sections.picks.isConnected) return;
-      sections.picks.querySelector('#home-top-picks').innerHTML =
-        '<div class="home-extra-empty"><strong>종목발굴을 불러오지 못했어요.</strong><span>스크리너 화면은 계속 사용할 수 있어요.</span></div>';
-    });
-
-  const heatmapTask = homeSnapshot()
-    .then((snapshot) => {
-      if (snapshot && snapshot.heatmap && Array.isArray(snapshot.heatmap.results) && snapshot.heatmap.results.length) {
-        return { results: snapshot.heatmap.results, generatedAt: snapshot.generatedAt || snapshot.heatmap.generatedAt || '' };
+  host.innerHTML = renderSharedHeatmap(payload);
+  host.querySelectorAll('[data-stock-detail]').forEach((cell) => {
+    const openDetail = () => navigate('detail', cell.dataset.stockDetail);
+    cell.addEventListener('click', openDetail);
+    cell.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        openDetail();
       }
-      return homeHeatmap();
-    })
-    .then((payload) => {
-      if (token !== generation || !sections.heatmap.isConnected) return;
-      paintHeatmap(sections.heatmap.querySelector('#home-daily-heatmap'), payload);
-    })
-    .catch(() => {
-      if (token !== generation || !sections.heatmap.isConnected) return;
-      sections.heatmap.querySelector('#home-daily-heatmap').innerHTML =
-        '<div class="home-extra-empty"><strong>히트맵을 불러오지 못했어요.</strong><span>시장 화면에서 다시 확인할 수 있어요.</span></div>';
     });
-
-  await Promise.allSettled([picksTask, heatmapTask]);
+  });
 }
-
 function navigate(tab, symbol) {
   if (typeof window.__chartviewNavigate === 'function') {
     window.__chartviewNavigate(tab, symbol || null);
