@@ -93,7 +93,7 @@ async function pullHomeLive(){
   liveBusy=true;
   try{
     const payload=await homeLive();
-    if(Array.isArray(payload?.results)&&payload.results.length){
+    if(canRun()&&surface==='home'&&Array.isArray(payload?.results)&&payload.results.length){
       document.dispatchEvent(new CustomEvent('chartview:home-live',{detail:payload}));
     }
   }catch{}
