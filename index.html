@@ -5,12 +5,30 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
   <meta name="color-scheme" content="light" />
   <meta name="theme-color" content="#ffffff" />
+  <link rel="preconnect" href="https://chart-view-pkv8.onrender.com" crossorigin />
+  <link rel="dns-prefetch" href="//chart-view-pkv8.onrender.com" />
   <title>차트뷰</title>
   <meta name="description" content="한국·미국 주식을 차트와 밸류에이션으로 비교하는 차트뷰" />
   <link rel="stylesheet" href="/src/styles.css" />
 </head>
 <body>
   <div id="app"></div>
+  <script>
+    (() => {
+      const hash = location.hash || '#home';
+      if (hash !== '#home' && !hash.startsWith('#home?')) return;
+      const base = 'https://chart-view-pkv8.onrender.com';
+      const startedAt = Date.now();
+      const get = (path) => fetch(base + path, { headers: { Accept: 'application/json' } })
+        .then((response) => response.ok ? response.json() : null)
+        .catch(() => null);
+      window.__chartviewHomeWarm = {
+        market: { startedAt, promise: get('/api/market-now') },
+        snapshot: { startedAt, promise: get('/api/home-snapshot') },
+        bootstrap: { startedAt, promise: get('/api/home-bootstrap') },
+      };
+    })();
+  </script>
   <script type="module" src="/src/main.js"></script>
 </body>
 </html>

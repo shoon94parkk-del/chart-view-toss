@@ -135,25 +135,34 @@ const heatmapMarketMarkup = (payload, market, scope = 'home') => {
   }));
   const rects = layoutTreemap(items);
 
+  const full = scope === 'full';
   return rects.map(({ item, x, y, width, height }) => {
     const area = width * height;
     const size = area >= 0.12 ? 'is-large' : area >= 0.055 ? 'is-medium' : 'is-small';
-    const veryTight = width < 0.145 || height < 0.18 || area < 0.028;
-    const compact = veryTight || width < 0.21 || height < 0.24 || area < 0.058;
-    const label = veryTight ? item.ticker.replace('.KS', '') : compact ? item.short : item.name;
+    const hideLabel = full && (area < 0.006 || width < 0.048 || height < 0.075);
+    const micro = full && !hideLabel && (area < 0.014 || width < 0.082 || height < 0.115);
+    const tickerOnly = full && !hideLabel && (micro || area < 0.024 || width < 0.125 || height < 0.16);
+    const veryTight = !full && (width < 0.145 || height < 0.18 || area < 0.028);
+    const compact = tickerOnly || veryTight || width < 0.21 || height < 0.24 || area < 0.058;
+    const tickerLabel = item.ticker.replace(/\.(KS|KQ)$/, '');
+    const label = tickerOnly || veryTight ? tickerLabel : compact ? item.short : item.name;
     const logoSvg = item.logo && HOME_LOGOS[item.logo] ? HOME_LOGOS[item.logo] : '';
-    const showLogo = Boolean(logoSvg) && !veryTight && area >= 0.05 && width >= 0.17 && height >= 0.18;
+    const showLogo = Boolean(logoSvg) && !tickerOnly && !veryTight && area >= 0.05 && width >= 0.17 && height >= 0.18;
     const showFallback = !logoSvg && !compact && area >= 0.09 && width >= 0.22 && height >= 0.25;
     const mark = showLogo
       ? `<span class="home-heatmap-logo" aria-hidden="true">${logoSvg}</span>`
       : showFallback
         ? `<span class="home-heatmap-logo home-heatmap-logo-fallback" aria-hidden="true"><b>${esc(item.fallback)}</b></span>`
         : '';
-    const labelMarkup = !veryTight
-      ? `<span class="home-heatmap-name">${mark}<strong>${esc(label)}</strong></span>`
-      : `<strong class="home-heatmap-ticker">${esc(label)}</strong>`;
+    const labelMarkup = hideLabel
+      ? ''
+      : tickerOnly || veryTight
+        ? `<strong class="home-heatmap-ticker">${esc(label)}</strong>`
+        : `<span class="home-heatmap-name">${mark}<strong>${esc(label)}</strong></span>`;
     const change = signedPct(item.change);
-    return `<div class="home-heatmap-cell ${toneClass(item.change)} ${size}" style="left:${(x * 100).toFixed(3)}%;top:${(y * 100).toFixed(3)}%;width:${(width * 100).toFixed(3)}%;height:${(height * 100).toFixed(3)}%" role="button" tabindex="0" data-stock-detail="${esc(item.ticker)}" aria-label="${esc(item.name)} ${esc(change)}">${labelMarkup}<span class="home-heatmap-change">${esc(change)}</span></div>`;
+    const showChange = !hideLabel && !micro && (!tickerOnly || height >= 0.14);
+    const classes = [toneClass(item.change), size, hideLabel ? 'is-label-hidden' : '', micro ? 'is-micro' : '', tickerOnly ? 'is-ticker-only' : ''].filter(Boolean).join(' ');
+    return `<div class="home-heatmap-cell ${classes}" style="left:${(x * 100).toFixed(3)}%;top:${(y * 100).toFixed(3)}%;width:${(width * 100).toFixed(3)}%;height:${(height * 100).toFixed(3)}%" role="button" tabindex="0" data-stock-detail="${esc(item.ticker)}" aria-label="${esc(item.name)} ${esc(change)}">${labelMarkup}${showChange ? `<span class="home-heatmap-change">${esc(change)}</span>` : ''}</div>`;
   }).join('');
 };
 

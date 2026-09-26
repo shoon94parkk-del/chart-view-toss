@@ -1,6 +1,7 @@
 import { homeBootstrap, homeSnapshot, homeHeatmap } from './api.js';
 import { HOME_LOGOS } from './homeLogos.js';
 import { HOME_STOCK_META, renderSharedHeatmap } from './heatmapView.js';
+import { readHomeFast, writeHomeFast } from './homeFastCache.js';
 
 const STOCK_META = HOME_STOCK_META;
 
@@ -250,9 +251,20 @@ async function mount() {
   const token = ++generation;
   const sections = createSections(marketSection);
 
+  const cachedPicks = readHomeFast('bootstrap', 36 * 60 * 60 * 1000);
+  if (cachedPicks) paintPicks(sections.picks.querySelector('#home-top-picks'), cachedPicks);
+  const cachedSnapshot = readHomeFast('snapshot', 6 * 60 * 60 * 1000);
+  if (cachedSnapshot?.heatmap?.results?.length) {
+    paintHeatmap(sections.heatmap.querySelector('#home-daily-heatmap'), {
+      results: cachedSnapshot.heatmap.results,
+      generatedAt: cachedSnapshot.generatedAt || cachedSnapshot.heatmap.generatedAt || ''
+    });
+  }
+
   const picksTask = homeBootstrap()
     .then((payload) => {
       if (token !== generation || !sections.picks.isConnected) return;
+      writeHomeFast('bootstrap', payload);
       paintPicks(sections.picks.querySelector('#home-top-picks'), payload);
     })
     .catch(() => {
@@ -263,6 +275,7 @@ async function mount() {
 
   const heatmapTask = homeSnapshot()
     .then((snapshot) => {
+      if (snapshot) writeHomeFast('snapshot', snapshot);
       if (snapshot && snapshot.heatmap && Array.isArray(snapshot.heatmap.results) && snapshot.heatmap.results.length) {
         return { results: snapshot.heatmap.results, generatedAt: snapshot.generatedAt || snapshot.heatmap.generatedAt || '' };
       }

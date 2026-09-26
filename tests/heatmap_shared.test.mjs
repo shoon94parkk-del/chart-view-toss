@@ -99,3 +99,25 @@ test('full heatmap scope accepts the expanded market set while Home stays curate
   assert.match(fullHtml, /미국 시총 상위 11종목/);
   assert.ok(geometry(fullHtml).length > geometry(homeHtml).length);
 });
+
+
+test('dense full heatmap de-emphasizes tiny cells instead of oversized ticker text', () => {
+  const dense = {
+    generatedAt: payload.generatedAt,
+    results: [
+      ...payload.results.filter((row) => row.ticker !== 'UNKNOWN'),
+      ...Array.from({ length: 52 }, (_, i) => ({
+        ticker: i < 20 ? `1${String(i).padStart(5, '0')}.KS` : `US${String(i - 19).padStart(2, '0')}`,
+        name: `Dense ${i + 1}`,
+        market: i < 20 ? 'KR' : 'US',
+        marketCap: (i < 20 ? 34e12 : 1.2e12) * (1 - i * 0.008),
+        change: (i % 2 ? 1 : -1) * (0.3 + i * 0.04),
+      })),
+    ],
+  };
+  const html = renderSharedHeatmap(dense, { scope: 'full' });
+
+  assert.match(html, /is-ticker-only/);
+  assert.match(html, /is-micro|is-label-hidden/);
+  assert.match(html, /home-heatmap-ticker/);
+});

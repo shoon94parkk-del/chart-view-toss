@@ -12,6 +12,7 @@ import { API_BASE, quoteSnapshots, compareStocks, marketNow, homeSnapshot, searc
 import { applyRuntimeClass, haptic, openExternal, syncNativeBackHandler, closeMiniApp, isAppsInTossRuntime } from './tossBridge.js';
 import { openStockSelector, closeStockSelector } from './stockSelector.js';
 import { initializeStorage, readStored, writeStored, clearStored } from './storage.js';
+import { readHomeFast, writeHomeFast } from './homeFastCache.js';
 import { formatKst, formatCurrencyPrice, formatMacroValue, formatMacroChange, observationLabel, macroCategory, macroPublicationLabel, macroSourceUrl, changeBasisLabel, newsRelation, translatedTag, titleLanguage } from './dataPresentation.js';
 
 const WATCHLIST_KEY='chartview-toss-watchlist-v1';
@@ -145,6 +146,50 @@ function bindNav(){
 }
 function cleanupChart(){analysisCleanup?.();analysisCleanup=null;viewEpoch++;chartLoadSeq++;chartResizeObserver?.disconnect();chartResizeObserver=null;if(chartInstance){try{chartInstance.remove()}catch{}chartInstance=null}}
 
+function paintHomeMarket(market,{allowError=true}={}){
+ const host=document.querySelector('#market-card');
+ if(!host)return false;
+ const rows=Array.isArray(market?.results)?market.results:[];
+ const preferred=['^KS11','^KQ11','^GSPC','^IXIC'];
+ const shown=preferred.map(t=>rows.find(r=>r.ticker===t)).filter(Boolean).slice(0,4);
+ const time=document.querySelector('#market-time');
+ if(shown.length){
+   if(time)time.textContent='각 지수의 실제 기준 시각';
+   host.innerHTML=`<div class="market-grid">${shown.map((row,i)=>{const ch=Number(row.change);const region=i<2?'KR':'US';return `<button class="quote-card market-${i}" data-go-chart><div class="quote-top"><span class="market-pill">${region}</span><small>${esc(displayName(row.ticker,row.name))}</small></div><strong>${esc(fmtPrice(row.price))}</strong><em class="${ch>0?'up':ch<0?'down':'flat'}">${esc(fmtChange(row.change))}</em><span class="quote-asof">${esc(formatKst(row.asOf))}</span></button>`}).join('')}</div>`;
+   return true;
+ }
+ if(!allowError)return false;
+ if(time)time.textContent='연결 확인 필요';
+ host.innerHTML='<div class="market-error"><div><strong>시장 정보를 불러오지 못했어요</strong><span>다른 기능은 계속 사용할 수 있어요.</span></div><button id="retry-market">다시 시도</button></div>';
+ document.querySelector('#retry-market')?.addEventListener('click',renderHome);
+ return false;
+}
+
+function paintHomeWatch(quotes,hasWatch){
+ if(!hasWatch)return;
+ const host=document.querySelector('#home-watchlist');
+ if(!host)return;
+ host.innerHTML=state.watchlist.slice(0,4).map((x,i)=>{
+   const q=(quotes||[]).find(r=>r.ticker===x.symbol);const ch=finiteNumber(q?.change);const name=displayName(x.symbol,x.name);
+   return `<button class="watch-rich-row" data-stock-detail="${esc(x.symbol)}"><span class="stock-logo tone-${i%4}">${esc(name.slice(0,1))}</span><span class="stock-copy"><strong>${esc(name)}</strong><small>${esc(x.symbol)}${q?.asOf?' · '+esc(formatKst(q.asOf)):''}</small></span><span class="watch-price">${q?.price!=null?`<strong>${esc(formatCurrencyPrice(q.price,q.currency))}</strong><em class="${ch>0?'up':ch<0?'down':'flat'}">${esc(fmtChange(q.change))}</em>`:'<small>가격 확인 필요</small>'}</span><span class="chevron">${iconSvg('arrow',18)}</span></button>`;
+ }).join('');
+}
+
+function paintHomeBrief(home){
+ const macro=home?.macro?.summary||{};
+ const brief=document.querySelector('#brief-card');
+ if(!brief)return false;
+ brief.classList.remove('skeleton','brief');
+ if(macro.text){
+   const level=macro.level||'yellow';
+   const label=level==='red'?'위험 신호 많음':level==='green'?'안정 신호 많음':'신호 혼재';
+   brief.innerHTML=`<div class="brief-icon ${esc(level)}">${iconSvg('spark',22)}</div><div class="brief-copy"><span>시장 지표 요약 <b class="status-badge ${esc(level)}">${label}</b></span><strong>${esc(String(macro.text).slice(0,105))}</strong><small>최근 원자료 ${esc(macro.latestBasisDate||'-')} · 투자 행동을 권유하는 신호가 아니에요.</small></div><button data-tab="macro" aria-label="경제 지표 보기">${iconSvg('arrow',20)}</button>`;
+   return true;
+ }
+ brief.innerHTML=`<div class="brief-icon yellow">${iconSvg('spark',22)}</div><div class="brief-copy"><span>시장 지표 요약</span><strong>요약 데이터를 확인하고 있어요.</strong><small>경제지표 화면에서 개별 관측일을 확인할 수 있어요.</small></div>`;
+ return false;
+}
+
 async function renderHome(){
  cleanupChart();
  const epoch=viewEpoch;
@@ -170,48 +215,34 @@ async function renderHome(){
 
  const watchSymbols=state.watchlist.slice(0,4).map(x=>x.symbol);
  const watchNames=state.watchlist.slice(0,4).map(x=>displayName(x.symbol,x.name));
+ const cachedMarket=readHomeFast('market',6*60*60*1000);
+ if(cachedMarket)paintHomeMarket(cachedMarket,{allowError:false});
+ const cachedSnapshot=readHomeFast('snapshot',6*60*60*1000);
+ if(cachedSnapshot)paintHomeBrief(cachedSnapshot);
+ const watchCacheKey=watchSymbols.length?'quotes:'+watchSymbols.join('|'):'';
+ const cachedWatch=watchCacheKey?readHomeFast(watchCacheKey,30*60*1000):null;
+ if(cachedWatch?.results)paintHomeWatch(cachedWatch.results,hasWatch);
  const settle=(task,paint)=>task.then(value=>({status:'fulfilled',value}),reason=>({status:'rejected',reason})).then(result=>{if(epoch===viewEpoch){paint(result);bindNav();}});
  const jobs=[];
  jobs.push(settle(marketNow(),marketRes=>{
-
  const market=marketRes.status==='fulfilled'?marketRes.value:null;
- const rows=Array.isArray(market?.results)?market.results:[];
- const preferred=['^KS11','^KQ11','^GSPC','^IXIC'];
- const shown=preferred.map(t=>rows.find(r=>r.ticker===t)).filter(Boolean).slice(0,4);
- const time=document.querySelector('#market-time');
- if(shown.length){
-   if(time)time.textContent='각 지수의 실제 기준 시각';
-   document.querySelector('#market-card').innerHTML=`<div class="market-grid">${shown.map((row,i)=>{const ch=Number(row.change);const region=i<2?'KR':'US';return `<button class="quote-card market-${i}" data-go-chart><div class="quote-top"><span class="market-pill">${region}</span><small>${esc(displayName(row.ticker,row.name))}</small></div><strong>${esc(fmtPrice(row.price))}</strong><em class="${ch>0?'up':ch<0?'down':'flat'}">${esc(fmtChange(row.change))}</em><span class="quote-asof">${esc(formatKst(row.asOf))}</span></button>`}).join('')}</div>`;
- }else{
-   if(time)time.textContent='연결 확인 필요';
-   document.querySelector('#market-card').innerHTML='<div class="market-error"><div><strong>시장 정보를 불러오지 못했어요</strong><span>다른 기능은 계속 사용할 수 있어요.</span></div><button id="retry-market">다시 시도</button></div>';
-   document.querySelector('#retry-market')?.addEventListener('click',renderHome);
- }
-
+ if(market){
+   writeHomeFast('market',market);
+   paintHomeMarket(market,{allowError:true});
+ }else if(!cachedMarket)paintHomeMarket(null,{allowError:true});
  }));
  jobs.push(settle(watchSymbols.length?quoteSnapshots(watchSymbols):Promise.resolve({results:[]}),watchRes=>{
- const quotes=watchRes.status==='fulfilled'?(watchRes.value?.results||[]):[];
- if(hasWatch){
-   document.querySelector('#home-watchlist').innerHTML=state.watchlist.slice(0,4).map((x,i)=>{
-     const q=quotes.find(r=>r.ticker===x.symbol);const ch=finiteNumber(q?.change);const name=displayName(x.symbol,x.name);
-     return `<button class="watch-rich-row" data-stock-detail="${esc(x.symbol)}"><span class="stock-logo tone-${i%4}">${esc(name.slice(0,1))}</span><span class="stock-copy"><strong>${esc(name)}</strong><small>${esc(x.symbol)}${q?.asOf?' · '+esc(formatKst(q.asOf)):''}</small></span><span class="watch-price">${q?.price!=null?`<strong>${esc(formatCurrencyPrice(q.price,q.currency))}</strong><em class="${ch>0?'up':ch<0?'down':'flat'}">${esc(fmtChange(q.change))}</em>`:'<small>가격 확인 필요</small>'}</span><span class="chevron">${iconSvg('arrow',18)}</span></button>`;
-   }).join('');
- }
-
+ const payload=watchRes.status==='fulfilled'?watchRes.value:null;
+ const quotes=payload?.results||[];
+ if(payload&&watchCacheKey)writeHomeFast(watchCacheKey,payload);
+ if(payload||!cachedWatch)paintHomeWatch(quotes,hasWatch);
  }));
  jobs.push(settle(homeSnapshot(),homeRes=>{
  const home=homeRes.status==='fulfilled'?homeRes.value:null;
- const macro=home?.macro?.summary||{};
- const brief=document.querySelector('#brief-card');
- brief.classList.remove('skeleton','brief');
- if(macro.text){
-   const level=macro.level||'yellow';
-   const label=level==='red'?'위험 신호 많음':level==='green'?'안정 신호 많음':'신호 혼재';
-   brief.innerHTML=`<div class="brief-icon ${esc(level)}">${iconSvg('spark',22)}</div><div class="brief-copy"><span>시장 지표 요약 <b class="status-badge ${esc(level)}">${label}</b></span><strong>${esc(String(macro.text).slice(0,105))}</strong><small>최근 원자료 ${esc(macro.latestBasisDate||'-')} · 투자 행동을 권유하는 신호가 아니에요.</small></div><button data-tab="macro" aria-label="경제 지표 보기">${iconSvg('arrow',20)}</button>`;
- }else{
-   brief.innerHTML=`<div class="brief-icon yellow">${iconSvg('spark',22)}</div><div class="brief-copy"><span>시장 지표 요약</span><strong>요약 데이터를 확인하고 있어요.</strong><small>경제지표 화면에서 개별 관측일을 확인할 수 있어요.</small></div>`;
- }
-
+ if(home){
+   writeHomeFast('snapshot',home);
+   paintHomeBrief(home);
+ }else if(!cachedSnapshot)paintHomeBrief(null);
  }));
  if(watchSymbols.length){
   jobs.push(settle(personalizedNews(watchSymbols,watchNames),result=>{
@@ -704,7 +735,10 @@ window.addEventListener('offline',()=>render());
 document.addEventListener('chartview:storage-error',()=>showToast('목록을 기기에 저장하지 못했어요. 다시 시도해주세요.'));
 async function startApp(){
  const started=performance.now();
- document.querySelector('#app').innerHTML='<div class="empty" role="status">저장된 목록을 불러오고 있어요.</div>';
+ syncFromLocation();
+ const fastHome=state.tab==='home';
+ if(fastHome)render();
+ else document.querySelector('#app').innerHTML='<div class="empty" role="status">저장된 목록을 불러오고 있어요.</div>';
  try {
    await initializeStorage();
    state.watchlist=load(WATCHLIST_KEY,[]);
