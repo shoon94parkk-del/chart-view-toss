@@ -33,6 +33,28 @@ const heatmapRows = [
   ['AMD','AMD',0.45e12,209.0,1.08],
 ].map(([ticker,name,marketCap,price,change])=>({ticker,name,marketCap,price,change,asOf:'2026-09-21T03:02:00Z'}));
 
+const fullHeatmapRows = [
+  ...heatmapRows.map(row=>({...row,market:/\.(KS|KQ)$/.test(row.ticker)?'KR':'US'})),
+  ...Array.from({length:12},(_,i)=>({
+    ticker:`1${String(i).padStart(5,'0')}.KS`,
+    name:`한국추가${i+1}`,
+    market:'KR',
+    marketCap:30e12-i*1.1e12,
+    price:50000+i*1000,
+    change:(i%2?1:-1)*(0.2+i*0.11),
+    asOf:'2026-09-21T03:02:00Z',
+  })),
+  ...Array.from({length:30},(_,i)=>({
+    ticker:`US${String(i+1).padStart(2,'0')}`,
+    name:`US Extra ${i+1}`,
+    market:'US',
+    marketCap:1.3e12-i*0.035e12,
+    price:100+i,
+    change:(i%2?1:-1)*(0.15+i*0.07),
+    asOf:'2026-09-21T03:02:00Z',
+  })),
+];
+
 const compareStocks = [
   ['005930.KS','삼성전자','KRW',4.25],
   ['NVDA','엔비디아','USD',7.18],
@@ -85,6 +107,7 @@ async function installMocks(page, mode='ok') {
       {rank:2,symbol:'000660.KS',name:'SK하이닉스',recommendedDate:'2026-09-18',recommendedPrice:300000,currentPrice:294000,returnPct:-2,bestReturnPct:3.4,score:81,grade:'B+',statusLabel:'성과 추적 중',reason:'중기 모멘텀 조건을 충족했습니다.',lastUpdatedTradeDate:'2026-09-20'},
       {rank:3,symbol:'NVDA',name:'엔비디아',recommendedDate:'2026-09-17',recommendedPrice:180,currentPrice:190.8,returnPct:6,bestReturnPct:9.1,score:79,grade:'B+',statusLabel:'성과 추적 중',reason:'가격 추세와 거래량이 개선되었습니다.',lastUpdatedTradeDate:'2026-09-20'}
     ]});
+    if(path==='/api/heatmap/full') return json(route,{generatedAt:'2026-09-21T03:02:00Z',results:fullHeatmapRows,counts:{KR:20,US:40}});
     if(path==='/api/heatmap') return json(route,{generatedAt:'2026-09-21T03:02:00Z',results:[]});
     if(path==='/api/quotes') return json(route,{results:[
       {ticker:'005930.KS',name:'삼성전자',price:84200,change:1.14,currency:'KRW',asOf:'2026-09-21T03:00:00Z',source:'Yahoo Chart 5m'},
@@ -177,7 +200,9 @@ try{
     }
     if(tab==='heatmap'){
       await page.waitForSelector('#analysis-body .home-heatmap-cell');
-      if(await page.locator('#analysis-body .home-heatmap-cell').count()!==18) throw new Error('full heatmap must reuse representative home set');
+      if(await page.locator('#analysis-body .home-heatmap-cell').count()!==60) throw new Error('full heatmap must show expanded 60-stock set');
+      const fullText=await page.locator('#analysis-body').innerText();
+      if(!fullText.includes('한국 주요 20종목')||!fullText.includes('미국 시총 상위 40종목')) throw new Error('full heatmap market counts missing');
       const fullGeometry=await page.locator('#analysis-body .home-heatmap-treemap').evaluateAll(boards=>boards.map(board=>{
         const cells=[...board.querySelectorAll('.home-heatmap-cell')];
         const box=board.getBoundingClientRect();
