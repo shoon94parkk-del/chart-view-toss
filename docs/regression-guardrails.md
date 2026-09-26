@@ -52,3 +52,7 @@ Last updated: 2026-09-22
 
 - Home과 전체 히트맵의 중복 종목이 서로 다른 등락률을 표시하면 배포 차단 회귀다. 전체보기의 오래된 API 응답을 장시간 클라이언트 캐시하지 않는다.
 - 전체보기 렌더 전 Home snapshot 오버레이를 유지한다. backend full payload가 의도적으로 틀린 값을 반환하는 QA에서도 Home 값이 화면에 보여야 한다.
+
+- 장중 Home 갱신은 사용자별 외부 provider 조회로 되돌리지 않는다. 클라이언트는 `/api/home-live` 공유 캐시만 읽어야 한다.
+- Home live polling은 document가 hidden일 때 중지되고 visible 복귀 시 즉시 재개되어야 한다. `setInterval` 기반의 백그라운드 무한 polling은 금지한다.
+- Home live 주기는 약 10초이며 방문자별 9~12초 jitter를 사용해 동시 요청 스파이크를 완화한다. heartbeat는 서버가 반환한 `heartbeatSec`(기본 20초)을 따른다.
