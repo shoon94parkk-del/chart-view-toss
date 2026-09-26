@@ -48,3 +48,6 @@ Heatmap logos are no longer absolutely overlaid on company names. Supported logo
 
 ## 2026-09-26 — 공용 히트맵은 2차원 면적 충전과 색상 계약을 테스트로 고정
 홈과 전체 히트맵은 동일한 2차원 treemap 렌더러를 사용한다. 각 셀은 left/top/width/height를 모두 가져야 하고, 두 시장 보드는 아래·오른쪽 빈 영역 없이 채워져야 한다. 등락 색상은 기존 home-hm-up-1~3 / down-1~3 / flat CSS 계약을 유지하며, 모바일 QA에서 실제 geometry와 computed background를 검증한다.
+
+## 2026-09-26 — 홈 요약과 전체 히트맵의 역할을 분리
+홈 히트맵은 초기 속도와 가독성을 위해 18개 대표 종목을 유지한다. 전체보기는 별도 캐시 API를 사용해 한국 주요 20종목과 미국 시총 상위 40종목을 표시한다. 전체보기는 홈보다 종목 수가 반드시 많아야 하며, 홈 API 호출 수를 증가시키지 않는다.

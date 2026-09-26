@@ -1,4 +1,4 @@
-import { screenerData, homeSnapshot, consensusData, valuationBandData } from './api.js';
+import { screenerData, fullHeatmap, consensusData, valuationBandData } from './api.js';
 import { filterScreener, finiteNumber, estimateRevision } from './analysisData.js';
 import { formatKst } from './dataPresentation.js';
 import { renderSharedHeatmap } from './heatmapView.js';
@@ -12,7 +12,7 @@ export const ANALYSIS_ROUTES=new Set(['discover','heatmap','consensus','bands','
 export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareSheet}){
  let disposed=false,chart,observer;
  const titles={discover:'시장 스크리너',heatmap:'시장 히트맵',consensus:'실적 전망 조회',bands:'역사적 밸류에이션',tools:'자료 출처'};
- const descriptions={discover:'전체 수집 종목을 직접 검색·필터링해요. 장마감 데이터이며 추천 순위가 아니에요.',heatmap:'홈과 같은 대표 종목의 당일 등락을 한눈에 비교해요.',consensus:'선택한 종목의 애널리스트 추정치와 변경 내역을 확인해요.',bands:'과거 가격과 재무자료로 재구성한 PER·PBR을 확인해요.',tools:'자료 확인에 필요한 외부 공식 사이트예요.'};
+ const descriptions={discover:'전체 수집 종목을 직접 검색·필터링해요. 장마감 데이터이며 추천 순위가 아니에요.',heatmap:'홈보다 넓은 한국·미국 주요 종목의 당일 등락을 시가총액 비중으로 비교해요.',consensus:'선택한 종목의 애널리스트 추정치와 변경 내역을 확인해요.',bands:'과거 가격과 재무자료로 재구성한 PER·PBR을 확인해요.',tools:'자료 확인에 필요한 외부 공식 사이트예요.'};
  const selection=['consensus','bands'].includes(tab);
  document.querySelector('#app').innerHTML=shell(`<section class="task-head"><div><h2>${titles[tab]}</h2><p>${descriptions[tab]}</p></div>${selection?'<button id="analysis-select" class="primary-subtle">종목 변경</button>':''}</section><div id="analysis-controls"></div><div id="analysis-body" class="analysis-body"><div class="skeleton quote"></div></div>`,titles[tab]);
  const host=document.querySelector('#analysis-body'),controls=document.querySelector('#analysis-controls');
@@ -41,9 +41,8 @@ export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareS
     }
     form.onsubmit=e=>e.preventDefault();form.oninput=()=>{count=30;paint();};form.onchange=()=>{count=30;paint();};form.onreset=e=>{e.preventDefault();for(const input of form.querySelectorAll('input,select'))input.value=input.name==='sort'?'name':'';count=30;paint();};paint();
    }else if(tab==='heatmap'){
-    const snapshot=await homeSnapshot();if(!current())return;
-    const payload={results:Array.isArray(snapshot?.heatmap?.results)?snapshot.heatmap.results:[],generatedAt:snapshot?.generatedAt||''};
-    host.innerHTML=`<div class="shared-heatmap-analysis">${renderSharedHeatmap(payload)}</div>`;
+    const payload=await fullHeatmap();if(!current())return;
+    host.innerHTML=`<div class="shared-heatmap-analysis">${renderSharedHeatmap(payload,{scope:'full'})}</div>`;
     bindNav();
    }else if(tab==='consensus'){
     const symbols=[...state.selected];

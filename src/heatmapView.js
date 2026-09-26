@@ -95,21 +95,30 @@ const layoutTreemap = (items, x = 0, y = 0, width = 1, height = 1, output = []) 
   return output;
 };
 
-const marketRows = (payload, market) => {
+const inferMarket = (ticker) => /\.(KS|KQ)$/.test(ticker) ? 'KR' : 'US';
+const compactLabel = (ticker, name) => {
+  const clean = String(name || '').replace(/\s+(Corporation|Corp\.?|Inc\.?|Co\.?|Ltd\.?|Holdings?)$/i, '').trim();
+  if (!clean || clean.length > 10) return ticker.replace(/\.(KS|KQ)$/, '');
+  return clean;
+};
+
+const marketRows = (payload, market, scope = 'home') => {
   const rows = Array.isArray(payload?.results) ? payload.results : [];
   return rows
     .map((row) => {
       const ticker = String(row?.ticker || row?.symbol || '').trim().toUpperCase();
       const meta = HOME_STOCK_META[ticker];
-      if (!meta) return null;
+      if (scope === 'home' && !meta) return null;
+      const resolvedMarket = meta?.market || row?.market || inferMarket(ticker);
+      const resolvedName = meta?.name || row?.name || ticker;
       return {
         ...row,
         ticker,
-        market: meta.market,
-        name: meta.name,
-        short: meta.short,
-        logo: meta.logo || '',
-        fallback: meta.fallback || ticker.replace(/\.(KS|KQ)$/, '').slice(0, 3),
+        market: resolvedMarket,
+        name: resolvedName,
+        short: meta?.short || compactLabel(ticker, resolvedName),
+        logo: meta?.logo || '',
+        fallback: meta?.fallback || ticker.replace(/\.(KS|KQ)$/, '').slice(0, 3),
         marketCap: finite(row?.marketCap ?? row?.market_cap),
         change: finite(row?.change ?? row?.changePercent ?? row?.change_pct),
       };
@@ -118,8 +127,8 @@ const marketRows = (payload, market) => {
     .sort((left, right) => right.marketCap - left.marketCap);
 };
 
-const heatmapMarketMarkup = (payload, market) => {
-  const rows = marketRows(payload, market);
+const heatmapMarketMarkup = (payload, market, scope = 'home') => {
+  const rows = marketRows(payload, market, scope);
   const items = rows.map((item) => ({
     item,
     weight: market === 'KR' ? Math.pow(Math.max(1, item.marketCap), 0.58) : Math.max(1, item.marketCap),
@@ -148,23 +157,24 @@ const heatmapMarketMarkup = (payload, market) => {
   }).join('');
 };
 
-export function renderSharedHeatmap(payload = {}) {
-  const kr = marketRows(payload, 'KR');
-  const us = marketRows(payload, 'US');
+export function renderSharedHeatmap(payload = {}, { scope = 'home' } = {}) {
+  const kr = marketRows(payload, 'KR', scope);
+  const us = marketRows(payload, 'US', scope);
   if (!kr.length && !us.length) {
     return '<div class="home-extra-empty">히트맵 데이터를 준비 중이에요.</div>';
   }
 
   const stamp = formatKst(payload.generatedAt || payload.updatedAt);
+  const full = scope === 'full';
   return `<div class="home-heatmap-meta">업데이트 ${esc(stamp)} KST</div>
-    <div class="home-heatmap-board">
-      <div class="home-heatmap-market">
-        <div class="home-heatmap-market-head"><strong>한국 대표</strong><span>시총 영향 완화</span></div>
-        <div class="home-heatmap-treemap">${heatmapMarketMarkup(payload, 'KR')}</div>
+    <div class="home-heatmap-board ${full ? 'full-heatmap-board' : ''}">
+      <div class="home-heatmap-market market-kr">
+        <div class="home-heatmap-market-head"><strong>${full ? `한국 주요 ${kr.length}종목` : '한국 대표'}</strong><span>시총 영향 완화</span></div>
+        <div class="home-heatmap-treemap">${heatmapMarketMarkup(payload, 'KR', scope)}</div>
       </div>
-      <div class="home-heatmap-market">
-        <div class="home-heatmap-market-head"><strong>미국 대표</strong><span>시총 비중</span></div>
-        <div class="home-heatmap-treemap">${heatmapMarketMarkup(payload, 'US')}</div>
+      <div class="home-heatmap-market market-us">
+        <div class="home-heatmap-market-head"><strong>${full ? `미국 시총 상위 ${us.length}종목` : '미국 대표'}</strong><span>시총 비중</span></div>
+        <div class="home-heatmap-treemap">${heatmapMarketMarkup(payload, 'US', scope)}</div>
       </div>
     </div>
     <div class="home-heatmap-legend"><span><i class="home-legend-dot up"></i>상승</span><span><i class="home-legend-dot flat"></i>보합</span><span><i class="home-legend-dot down"></i>하락</span></div>`;

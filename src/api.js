@@ -21,6 +21,7 @@ export const marketNow=()=>api('/api/market-now',{ttlMs:15000});
 export const homeSnapshot=()=>api('/api/home-snapshot',{ttlMs:60000});
 export const homeBootstrap=()=>api('/api/home-bootstrap',{ttlMs:60000});
 export const homeHeatmap=()=>api('/api/heatmap',{ttlMs:60000});
+export const fullHeatmap=()=>api('/api/heatmap/full',{ttlMs:300000});
 export const valuationStocks=tickers=>api(`/api/valuation?tickers=${list(tickers)}`,{ttlMs:300000});
 export const macroData=()=>api('/api/macro',{ttlMs:300000});
 export const homeInsights=(tickers=[])=>api(`/api/home-insights?tickers=${list(tickers)}`,{ttlMs:60000});
