@@ -33,6 +33,11 @@ export const HOME_STOCK_META = {
   AMD: { name: 'AMD', short: 'AMD', market: 'US', logo: 'amd', fallback: 'AMD' },
 };
 
+const HOME_SUMMARY_TICKERS = new Set([
+  '005930.KS','000660.KS','207940.KS','005380.KS','000270.KS','373220.KS','035420.KS','068270.KS',
+  'NVDA','AAPL','MSFT','GOOGL','AMZN','TSM','META','AVGO','TSLA','AMD',
+]);
+
 const esc = (value) => String(value ?? '').replace(/[&<>"]/g, (char) => ({
   '&': '&amp;',
   '<': '&lt;',
@@ -120,7 +125,7 @@ const marketRows = (payload, market, scope = 'home') => {
     .map((row) => {
       const ticker = String(row?.ticker || row?.symbol || '').trim().toUpperCase();
       const meta = HOME_STOCK_META[ticker];
-      if (scope === 'home' && !meta) return null;
+      if (scope === 'home' && !HOME_SUMMARY_TICKERS.has(ticker)) return null;
       const resolvedMarket = meta?.market || row?.market || inferMarket(ticker);
       const resolvedName = meta?.name || row?.name || ticker;
       return {
