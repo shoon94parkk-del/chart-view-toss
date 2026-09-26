@@ -34,3 +34,6 @@ Last updated: 2026-09-22
 - Web preview success is not public-release approval.
 - Android and iOS real-device Sandbox/QR checks remain mandatory release gates.
 - Backend production contract points to `https://chart-view-pkv8.onrender.com` unless deliberately migrated.
+
+
+- 홈/전체 히트맵은 동일한 `/api/home-snapshot` payload와 공용 렌더러를 사용해야 한다. 레거시 정적 섹터 payload로 되돌아가 한국 종목·로고·업데이트 시각이 사라지면 회귀로 본다.
