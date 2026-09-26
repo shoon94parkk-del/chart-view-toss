@@ -77,3 +77,25 @@ test('shared heatmap does not fall back to the legacy sector/static payload', ()
   assert.match(html, /히트맵 데이터를 준비 중/);
   assert.doesNotMatch(html, /Technology/);
 });
+
+
+test('full heatmap scope accepts the expanded market set while Home stays curated', () => {
+  const expanded = {
+    ...payload,
+    results: [
+      ...payload.results,
+      { ticker: 'NFLX', name: 'Netflix', market: 'US', marketCap: 0.39e12, change: -1.23 },
+      { ticker: '055550.KS', name: '신한지주', market: 'KR', marketCap: 34e12, change: 0.74 },
+    ],
+  };
+  const homeHtml = renderSharedHeatmap(expanded);
+  const fullHtml = renderSharedHeatmap(expanded, { scope: 'full' });
+
+  assert.doesNotMatch(homeHtml, /data-stock-detail="NFLX"/);
+  assert.doesNotMatch(homeHtml, /data-stock-detail="055550\.KS"/);
+  assert.match(fullHtml, /data-stock-detail="NFLX"/);
+  assert.match(fullHtml, /data-stock-detail="055550\.KS"/);
+  assert.match(fullHtml, /한국 주요 9종목/);
+  assert.match(fullHtml, /미국 시총 상위 11종목/);
+  assert.ok(geometry(fullHtml).length > geometry(homeHtml).length);
+});
