@@ -240,6 +240,45 @@ function paintHeatmap(host, payload) {
     });
   });
 }
+async function mount() {
+  const marketSection = document.querySelector('.market-section.home-primary');
+  if (!marketSection || marketSection.dataset.homeExtrasMounted === '1') return;
+  marketSection.dataset.homeExtrasMounted = '1';
+
+  const token = ++generation;
+  const sections = createSections(marketSection);
+
+  const picksTask = homeBootstrap()
+    .then((payload) => {
+      if (token !== generation || !sections.picks.isConnected) return;
+      paintPicks(sections.picks.querySelector('#home-top-picks'), payload);
+    })
+    .catch(() => {
+      if (token !== generation || !sections.picks.isConnected) return;
+      sections.picks.querySelector('#home-top-picks').innerHTML =
+        '<div class="home-extra-empty"><strong>종목발굴을 불러오지 못했어요.</strong><span>스크리너 화면은 계속 사용할 수 있어요.</span></div>';
+    });
+
+  const heatmapTask = homeSnapshot()
+    .then((snapshot) => {
+      if (snapshot && snapshot.heatmap && Array.isArray(snapshot.heatmap.results) && snapshot.heatmap.results.length) {
+        return { results: snapshot.heatmap.results, generatedAt: snapshot.generatedAt || snapshot.heatmap.generatedAt || '' };
+      }
+      return homeHeatmap();
+    })
+    .then((payload) => {
+      if (token !== generation || !sections.heatmap.isConnected) return;
+      paintHeatmap(sections.heatmap.querySelector('#home-daily-heatmap'), payload);
+    })
+    .catch(() => {
+      if (token !== generation || !sections.heatmap.isConnected) return;
+      sections.heatmap.querySelector('#home-daily-heatmap').innerHTML =
+        '<div class="home-extra-empty"><strong>히트맵을 불러오지 못했어요.</strong><span>시장 화면에서 다시 확인할 수 있어요.</span></div>';
+    });
+
+  await Promise.allSettled([picksTask, heatmapTask]);
+}
+
 function navigate(tab, symbol) {
   if (typeof window.__chartviewNavigate === 'function') {
     window.__chartviewNavigate(tab, symbol || null);
