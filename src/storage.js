@@ -6,6 +6,7 @@ export const SELECTED_KEY = 'chartview-toss-selected-v1';
 const keys = [WATCHLIST_KEY, SELECTED_KEY];
 const IDENTITY_KEY = 'chartview-toss-identity-v1';
 const USAGE_KEY = 'chartview-toss-usage-v1';
+const WEB_VISITOR_KEY = 'chartview-toss-visitor-v1';
 const cache = new Map();
 let queue = Promise.resolve();
 let nativeReady = false;
@@ -55,6 +56,19 @@ export async function initializeStorage() {
   nativeReady = true;
 }
 
+export function getActivityVisitorId() {
+  if (isAppsInTossRuntime()) return namespace ? `toss:${namespace}` : null;
+  try {
+    let value = localStorage.getItem(WEB_VISITOR_KEY);
+    if (!value) {
+      const random = globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+      value = `web:${random}`;
+      localStorage.setItem(WEB_VISITOR_KEY, value);
+    }
+    return value;
+  } catch { return null; }
+}
+
 export function readStored(key) {
   return isAppsInTossRuntime() ? cache.get(key) ?? null : localStorage.getItem(key);
 }
@@ -69,7 +83,7 @@ export function writeStored(key, value) {
 }
 
 export async function clearStored() {
-  if (!isAppsInTossRuntime()) { keys.forEach(key => localStorage.removeItem(key)); return; }
+  if (!isAppsInTossRuntime()) { [...keys, WEB_VISITOR_KEY].forEach(key => localStorage.removeItem(key)); return; }
   if (!nativeReady) throw new Error('Storage not ready');
   queue = queue.catch(() => {}).then(async () => {
     await bridgeCall(() => Promise.all([...keys, USAGE_KEY].map(key => Storage.removeItem(scoped(key)))));
