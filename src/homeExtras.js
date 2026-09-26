@@ -2,6 +2,7 @@ import { homeBootstrap, homeSnapshot, homeHeatmap } from './api.js';
 import { HOME_LOGOS } from './homeLogos.js';
 import { HOME_STOCK_META, renderSharedHeatmap } from './heatmapView.js';
 import { readHomeFast, writeHomeFast } from './homeFastCache.js';
+import { mergeLiveRows } from './liveHomeSync.js';
 
 const STOCK_META = HOME_STOCK_META;
 
@@ -293,6 +294,24 @@ async function mount() {
 
   await Promise.allSettled([picksTask, heatmapTask]);
 }
+
+document.addEventListener('chartview:home-live', (event) => {
+  const host = document.querySelector('#home-daily-heatmap');
+  const liveRows = Array.isArray(event.detail?.results) ? event.detail.results : [];
+  if (!host || !liveRows.length) return;
+  const cached = readHomeFast('snapshot', 6 * 60 * 60 * 1000);
+  const baseRows = cached?.heatmap?.results;
+  if (!Array.isArray(baseRows) || !baseRows.length) return;
+  const rows = mergeLiveRows(baseRows, liveRows);
+  const generatedAt = event.detail?.updatedAt || cached.generatedAt || cached.heatmap?.generatedAt || '';
+  const next = {
+    ...cached,
+    generatedAt,
+    heatmap: { ...(cached.heatmap || {}), results: rows, generatedAt }
+  };
+  writeHomeFast('snapshot', next);
+  paintHeatmap(host, { results: rows, generatedAt });
+});
 
 function navigate(tab, symbol) {
   if (typeof window.__chartviewNavigate === 'function') {

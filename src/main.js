@@ -11,7 +11,8 @@ import { createChart, ColorType, LineStyle } from 'lightweight-charts';
 import { API_BASE, quoteSnapshots, compareStocks, marketNow, homeSnapshot, searchStocks, valuationStocks, macroData, homeInsights, personalizedNews } from './api.js';
 import { applyRuntimeClass, haptic, openExternal, syncNativeBackHandler, closeMiniApp, isAppsInTossRuntime } from './tossBridge.js';
 import { openStockSelector, closeStockSelector } from './stockSelector.js';
-import { initializeStorage, readStored, writeStored, clearStored } from './storage.js';
+import { initializeStorage, readStored, writeStored, clearStored, getActivityVisitorId } from './storage.js';
+import { startHomeLiveSync, setLiveSurface } from './liveHomeSync.js';
 import { readHomeFast, writeHomeFast } from './homeFastCache.js';
 import { formatKst, formatCurrencyPrice, formatMacroValue, formatMacroChange, observationLabel, macroCategory, macroPublicationLabel, macroSourceUrl, changeBasisLabel, newsRelation, translatedTag, titleLanguage } from './dataPresentation.js';
 
@@ -163,6 +164,20 @@ function paintHomeMarket(market,{allowError=true}={}){
  host.innerHTML='<div class="market-error"><div><strong>시장 정보를 불러오지 못했어요</strong><span>다른 기능은 계속 사용할 수 있어요.</span></div><button id="retry-market">다시 시도</button></div>';
  document.querySelector('#retry-market')?.addEventListener('click',renderHome);
  return false;
+}
+
+function patchHomeWatchLive(quotes){
+ if(state.tab!=='home'||!Array.isArray(quotes)||!quotes.length)return;
+ const byTicker=new Map(quotes.filter(row=>row?.ticker).map(row=>[String(row.ticker).toUpperCase(),row]));
+ document.querySelectorAll('#home-watchlist .watch-rich-row[data-stock-detail]').forEach(row=>{
+   const quote=byTicker.get(String(row.dataset.stockDetail||'').toUpperCase());
+   if(!quote)return;
+   const price=row.querySelector('.watch-price');
+   const meta=row.querySelector('.stock-copy small');
+   const ch=finiteNumber(quote.change);
+   if(price&&quote.price!=null)price.innerHTML=`<strong>${esc(formatCurrencyPrice(quote.price,quote.currency))}</strong><em class="${ch>0?'up':ch<0?'down':'flat'}">${esc(fmtChange(quote.change))}</em>`;
+   if(meta)meta.textContent=`${row.dataset.stockDetail}${quote.asOf?' · '+formatKst(quote.asOf):''}`;
+ });
 }
 
 function paintHomeWatch(quotes,hasWatch){
@@ -704,6 +719,7 @@ function renderMore(){
 }
 
 function render(){
+ setLiveSurface(state.tab);
  const started=performance.now();
  const route=state.tab;
  requestAnimationFrame(()=>{if(state.tab===route)recordMetric(`view.${route}`,started);});
@@ -733,6 +749,11 @@ window.addEventListener('popstate',()=>{navigationDepth=Math.max(0,navigationDep
 window.addEventListener('online',()=>render());
 window.addEventListener('offline',()=>render());
 document.addEventListener('chartview:storage-error',()=>showToast('목록을 기기에 저장하지 못했어요. 다시 시도해주세요.'));
+document.addEventListener('chartview:home-live',(event)=>{
+ if(state.tab!=='home')return;
+ const rows=Array.isArray(event.detail?.results)?event.detail.results:[];
+ patchHomeWatchLive(rows);
+});
 async function startApp(){
  const started=performance.now();
  syncFromLocation();
@@ -743,6 +764,8 @@ async function startApp(){
    await initializeStorage();
    state.watchlist=load(WATCHLIST_KEY,[]);
    state.selected=load(SELECTED_KEY,DEFAULTS.map(x=>x.symbol));
+   const activityId=getActivityVisitorId();
+   if(activityId)startHomeLiveSync(activityId);
    syncFromLocation();
    render();
    recordMetric('startup',started);

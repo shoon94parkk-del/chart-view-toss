@@ -102,6 +102,8 @@ async function installMocks(page, mode='ok') {
       return json(route,{results:[]});
     }
     const path=url.pathname;
+    if(path==='/api/activity') return json(route,{ok:true,heartbeatSec:20});
+    if(path==='/api/home-live') return json(route,{updatedAt:'2026-09-21T03:05:00Z',cacheAgeSec:1.2,refreshing:false,results:heatmapRows.map(row=>row.ticker==='005930.KS'?{...row,change:4.44}:row.ticker==='NVDA'?{...row,change:2.22}:row)});
     if(path==='/api/market-now') return json(route,{results:marketRows,timestamp:'2026-09-21 12:00:00'});
     if(path==='/api/home-snapshot') return json(route,{generatedAt:'2026-09-21T03:02:00Z',macro:{summary:{level:'yellow',text:'금리·물가·위험 신호가 함께 나타납니다.',latestBasisDate:'2026-09-20',notice:'시장 환경 설명용 요약입니다.'}},heatmap:{results:heatmapRows}});
     if(path==='/api/home-bootstrap') return json(route,{day:{tradeDate:'2026-09-21',top3:[{symbol:'005930.KS',name:'삼성전자'},{symbol:'000660.KS',name:'SK하이닉스'},{symbol:'NVDA',name:'엔비디아'}]},recommendations:[
@@ -187,6 +189,11 @@ try{
           return [name,change].filter(Boolean).some(node=>node.scrollWidth>node.clientWidth+1||node.scrollHeight>node.clientHeight+1);
         }).map(cell=>cell.getAttribute('aria-label')));
         if(clipped.length) throw new Error(`${width}px heatmap text clipped: ${clipped.join(", ")}`);
+        if(width===390){
+          await page.waitForTimeout(700);
+          const liveText=await page.locator('#home-daily-heatmap').innerText();
+          if(!liveText.includes('+4.44%')||!liveText.includes('+2.22%')) throw new Error(`Home live shared-cache update missing: ${liveText}`);
+        }
       }
       await assertNoHorizontalOverflow(page,`${width}px ${tab}`);
       await page.screenshot({path:`${OUT}/${width}-${tab}.png`,fullPage:true});

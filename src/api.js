@@ -21,6 +21,14 @@ export const searchStocks=query=>api(`/api/search?q=${encodeURIComponent(query)}
 export const marketNow=()=>earlyHome('market',()=>api('/api/market-now',{ttlMs:15000}));
 export const homeSnapshot=()=>earlyHome('snapshot',()=>api('/api/home-snapshot',{ttlMs:60000}));
 export const homeBootstrap=()=>earlyHome('bootstrap',()=>api('/api/home-bootstrap',{ttlMs:60000}));
+export const visitorActivity=(visitorId,surface='other')=>api('/api/activity',{
+ method:'POST',
+ headers:{'Content-Type':'application/json'},
+ body:JSON.stringify({visitorId,surface}),
+ timeoutMs:4000,
+ retries:0,
+});
+export const homeLive=()=>api('/api/home-live',{ttlMs:0,force:true,timeoutMs:5000,retries:0});
 export const homeHeatmap=()=>api('/api/heatmap',{ttlMs:60000});
 export const fullHeatmap=({force=false}={})=>api('/api/heatmap/full',{ttlMs:15000,force});
 export const valuationStocks=tickers=>api(`/api/valuation?tickers=${list(tickers)}`,{ttlMs:300000});

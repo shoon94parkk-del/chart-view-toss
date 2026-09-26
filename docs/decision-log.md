@@ -57,3 +57,6 @@ Heatmap logos are no longer absolutely overlaid on company names. Supported logo
 
 ## 2026-09-27 — 한국은 기업명, 미국은 티커+등락률 우선
 전체 히트맵의 작은 셀에서 한국 6자리 종목코드는 식별성이 낮으므로 표시하지 않는다. 한국은 기업명 또는 짧은 기업명을 사용한다. 미국은 익숙한 티커를 유지하되 작은 셀에서도 공간이 허용되는 한 등락률을 함께 표시하고 등락률 시인성을 티커보다 낮게 두지 않는다.
+
+## 2026-09-27 — 사용자 polling과 provider polling을 분리
+Apps in Toss 클라이언트는 시세 공급자를 직접 갱신하지 않는다. visible Home 사용자는 privacy-light activity heartbeat로 서버의 공용 5초 quote worker를 깨우고, 약 10초마다 `/api/home-live` 메모리 스냅샷만 읽는다. hidden/background에서는 두 주기를 멈추며 resume 시 즉시 동기화한다. 방문자별 deterministic jitter로 thundering-herd를 완화한다.
