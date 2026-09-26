@@ -22,7 +22,8 @@ test('shared heatmap renders the Home Korean/US board and stock navigation hooks
   assert.match(html, /data-stock-detail="NVDA"/);
   assert.match(html, /삼성전자/);
   assert.match(html, /엔비디아/);
-  assert.match(html, /home-heatmap-legend/);
+  assert.match(html, /home-heatmap-legend/);\n  assert.match(html, /style="[^"]*top:[^"]+;[^"]*height:[^"]+%/);
+  assert.match(html, /style="[^"]*top:0(?:\\.0+)?%;[^"]*height:[^"]+%/);
 });
 
 test('shared heatmap does not fall back to the legacy sector/static payload', () => {
