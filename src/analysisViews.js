@@ -1,4 +1,4 @@
-import { screenerData, fullHeatmap, consensusData, valuationBandData } from './api.js';
+import { screenerData, fullHeatmap, homeSnapshot, consensusData, valuationBandData } from './api.js';
 import { filterScreener, finiteNumber, estimateRevision } from './analysisData.js';
 import { formatKst } from './dataPresentation.js';
 import { renderSharedHeatmap } from './heatmapView.js';
@@ -8,6 +8,33 @@ const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const number=(v,suffix='')=>finiteNumber(v)===null?'—':Number(v).toLocaleString('ko-KR',{maximumFractionDigits:2})+suffix;
 const pct=v=>finiteNumber(v)===null?'—':`${Number(v)>0?'+':''}${number(v,'%')}`;
 const empty=text=>`<div class="empty"><strong>${esc(text)}</strong></div>`;
+const alignFullHeatmapWithHome=(full,home)=>{
+ const homeRows=new Map(
+  ((home?.heatmap?.results)||[])
+   .filter(row=>row?.ticker)
+   .map(row=>[String(row.ticker).toUpperCase(),row])
+ );
+ if(!homeRows.size)return full;
+ return {
+  ...full,
+  results:((full?.results)||[]).map(row=>{
+   const ticker=String(row?.ticker||'').toUpperCase();
+   const visible=homeRows.get(ticker);
+   if(!visible)return row;
+   return {
+    ...row,
+    name:visible.name??row.name,
+    price:visible.price??row.price,
+    change:visible.change??row.change,
+    asOf:visible.asOf??row.asOf,
+    sessionDate:visible.sessionDate??row.sessionDate,
+    previousSessionDate:visible.previousSessionDate??row.previousSessionDate,
+    source:visible.source??row.source,
+    quoteBasis:'client-home-parity',
+   };
+  }),
+ };
+};
 export const ANALYSIS_ROUTES=new Set(['discover','heatmap','consensus','bands','tools']);
 export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareSheet}){
  let disposed=false,chart,observer;
@@ -41,9 +68,29 @@ export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareS
     }
     form.onsubmit=e=>e.preventDefault();form.oninput=()=>{count=30;paint();};form.onchange=()=>{count=30;paint();};form.onreset=e=>{e.preventDefault();for(const input of form.querySelectorAll('input,select'))input.value=input.name==='sort'?'name':'';count=30;paint();};paint();
    }else if(tab==='heatmap'){
-    const payload=await fullHeatmap();if(!current())return;
+    const [full,home]=await Promise.all([
+      fullHeatmap({force:true}),
+      homeSnapshot().catch(()=>null),
+    ]);
+    if(!current())return;
+    const payload=alignFullHeatmapWithHome(full,home);
     host.innerHTML=`<div class="shared-heatmap-analysis">${renderSharedHeatmap(payload,{scope:'full'})}</div>`;
     bindNav();
+    if(full?.complete===false||full?.refreshing){
+      setTimeout(async()=>{
+        if(!current())return;
+        try{
+          const [nextFull,nextHome]=await Promise.all([
+            fullHeatmap({force:true}),
+            homeSnapshot().catch(()=>home),
+          ]);
+          if(!current())return;
+          const next=alignFullHeatmapWithHome(nextFull,nextHome);
+          host.innerHTML=`<div class="shared-heatmap-analysis">${renderSharedHeatmap(next,{scope:'full'})}</div>`;
+          bindNav();
+        }catch{}
+      },1800);
+    }
    }else if(tab==='consensus'){
     const symbols=[...state.selected];
     if(!symbols.length){host.innerHTML=empty('종목 변경에서 조회할 종목을 선택해주세요.');return;}
