@@ -108,7 +108,7 @@ test('dense full heatmap de-emphasizes tiny cells instead of oversized ticker te
       ...payload.results.filter((row) => row.ticker !== 'UNKNOWN'),
       ...Array.from({ length: 52 }, (_, i) => ({
         ticker: i < 20 ? `1${String(i).padStart(5, '0')}.KS` : `US${String(i - 19).padStart(2, '0')}`,
-        name: `Dense ${i + 1}`,
+        name: i < 20 ? `한국기업${i + 1}` : `Dense ${i + 1}`,
         market: i < 20 ? 'KR' : 'US',
         marketCap: (i < 20 ? 34e12 : 1.2e12) * (1 - i * 0.008),
         change: (i % 2 ? 1 : -1) * (0.3 + i * 0.04),
@@ -120,4 +120,8 @@ test('dense full heatmap de-emphasizes tiny cells instead of oversized ticker te
   assert.match(html, /is-ticker-only/);
   assert.match(html, /is-micro|is-label-hidden/);
   assert.match(html, /home-heatmap-ticker/);
+  assert.doesNotMatch(html, /home-heatmap-ticker">1\d{5}/, 'Korean tiny cells must not fall back to numeric ticker codes');
+  assert.match(html, /home-heatmap-ticker">한국기업/, 'Korean tiny cells should keep a readable company label');
+  const usChanges = (html.match(/market-us-cell[^>]*>[\s\S]*?home-heatmap-change/g) || []).length;
+  assert.ok(usChanges >= 20, `US dense view should preserve many visible return labels; found ${usChanges}`);
 });
