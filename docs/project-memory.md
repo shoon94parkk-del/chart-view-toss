@@ -31,7 +31,7 @@ Toss-specific navigation, safe-area, storage, SDK bridge, and release logic belo
 - Deep-link support for chart, valuation, macro, discover, news, watchlist, and stock detail.
 - Apps in Toss runtime defers to native navigation bar instead of duplicating the custom top bar.
 - Native back event closes subpages first while preserving root exit.
-- News uses native `Device.openURL` when available with browser fallback.
+- External/news/policy links use the Apps in Toss top-level SDK `openURL(url)` with browser fallback; `Device.openURL` is prohibited because it caused review-time no-op failures.
 - Haptics are best-effort and browser-safe.
 
 ## Data/reliability contracts
@@ -83,3 +83,5 @@ Toss-specific navigation, safe-area, storage, SDK bridge, and release logic belo
 
 - 2026-09-27 장중 실시간 구조: Toss 클라이언트는 활성/가시 상태에서만 `/api/activity` heartbeat를 보내고, Home에서만 약 9~12초(기본 10초, 방문자별 deterministic jitter) 간격으로 `/api/home-live` 공용 메모리 캐시를 읽는다. 숨김/백그라운드에서는 polling을 중지하고 복귀 시 즉시 재동기화한다. 클라이언트가 외부 시세 공급자를 직접 갱신하지 않는다.
 - `/api/home-live` 이벤트는 홈 대표 히트맵과 해당되는 관심종목 시세만 부분 갱신하며 전체 Home 재렌더를 유발하지 않는다.
+
+- 2026-09-27 심사 반려: `20260921-5`가 외부 링크 미동작으로 반려됐다. Toss runtime 외부 링크는 반드시 `@apps-in-toss/web-framework`의 top-level `openURL(url)`을 사용하고, 정책 페이지는 `.ait`의 `location.origin`이 아니라 공개 고정 HTTPS URL을 사용한다.
