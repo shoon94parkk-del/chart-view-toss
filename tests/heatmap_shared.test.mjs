@@ -137,3 +137,16 @@ test('Home compact US cells prefer ticker labels over longer display names', () 
   const html = renderSharedHeatmap(narrow, { scope: 'home' });
   assert.match(html, />TSLA<\/strong>/);
 });
+
+
+test('Home ultra-narrow US cells can omit labels entirely', () => {
+  const html = renderSharedHeatmap(payload, { scope: 'home' });
+  const amdCell = html.match(/<div class="home-heatmap-cell[^"]*is-label-hidden[^"]*"[^>]*data-stock-detail="AMD"[^>]*>/);
+  assert.ok(amdCell, 'AMD should be label-hidden when its normalized cell width is too narrow');
+});
+
+test('Home compact cells are explicitly marked for narrow-screen secondary text suppression', () => {
+  const html = renderSharedHeatmap(payload, { scope: 'home' });
+  const teslaCell = html.match(/<div class="home-heatmap-cell[^"]*is-compact[^"]*"[^>]*data-stock-detail="TSLA"[^>]*>/);
+  assert.ok(teslaCell, 'TSLA should be marked compact so narrow screens can omit the return line');
+});
