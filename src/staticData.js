@@ -1,6 +1,6 @@
 import {createRequestClient} from './requestClient.js';
 // Configure only after deploying the data-only CDN and verifying its CORS/freshness.
-export const STATIC_DATA_BASE=(import.meta.env.VITE_CHARTVIEW_STATIC_DATA_BASE||'').replace(/\/$/,'');
+export const STATIC_DATA_BASE=(import.meta.env?.VITE_CHARTVIEW_STATIC_DATA_BASE||'').replace(/\/$/,'');
 const request=createRequestClient({base:STATIC_DATA_BASE});
 export async function staticData(filename,fallback){
  if(!STATIC_DATA_BASE)return fallback();

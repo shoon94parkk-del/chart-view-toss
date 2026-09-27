@@ -12,8 +12,9 @@ const presentation = fs.readFileSync('src/dataPresentation.js', 'utf8');
 const homeExtras = fs.readFileSync('src/homeExtras.js', 'utf8');
 const pickLedger = fs.readFileSync('src/pickLedger.js', 'utf8');
 const routes = fs.readFileSync('src/routes.js', 'utf8');
+const liveSync = fs.readFileSync('src/liveHomeSync.js', 'utf8');
 
-assert.equal(pkg.version, '0.9.1');
+assert.equal(pkg.version, '0.9.2');
 assert.equal(pkg.dependencies['@apps-in-toss/web-framework'], '3.5.0');
 assert.equal(pkg.engines.node, '24.x');
 assert.match(pkg.engines.npm, />=10 <12/);
@@ -34,6 +35,12 @@ assert.match(main, /직접 관련/);
 assert.match(api, /quoteSnapshots/);
 assert.match(api, /homeBootstrap/);
 assert.match(api, /homeHeatmap/);
+assert.match(api, /visitorActivity/);
+assert.match(api, /homeLive/);
+assert.match(liveSync, /HOME_LIVE_POLL_MS = 10_000/);
+assert.match(liveSync, /visibilitychange/);
+assert.match(liveSync, /chartview:home-live/);
+assert.match(liveSync, /pollDelayForVisitor/);
 assert.match(main, /homeExtras\.js/);
 assert.match(homeExtras, /오늘의 종목발굴/);
 assert.doesNotMatch(homeExtras, /오늘의 종목발굴 TOP3/);
@@ -57,7 +64,11 @@ assert.match(api, /DEFAULT_RETRIES/);
 assert.match(client, /navigator\.onLine/);
 assert.match(client, /AbortController/);
 assert.match(bridge, /graniteEvent\.addEventListener\('backEvent'/);
-assert.match(bridge, /Device\.openURL/);
+assert.match(bridge, /openURL as tossOpenURL/);
+assert.match(bridge, /await tossOpenURL\(target\.href\)/);
+assert.doesNotMatch(bridge, /Device\.openURL/);
+assert.match(main, /https:\/\/chart-view-toss\.onrender\.com/);
+assert.doesNotMatch(main, /origin\+'\/privacy\.html'/);
 assert.match(bridge, /Device\.triggerHaptic/);
 
 for (const path of ['public/privacy.html', 'public/terms.html', 'public/data-guide.html']) {

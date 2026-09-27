@@ -11,12 +11,15 @@ import { createChart, ColorType, LineStyle } from 'lightweight-charts';
 import { API_BASE, quoteSnapshots, compareStocks, marketNow, homeSnapshot, searchStocks, valuationStocks, macroData, homeInsights, personalizedNews } from './api.js';
 import { applyRuntimeClass, haptic, openExternal, syncNativeBackHandler, closeMiniApp, isAppsInTossRuntime } from './tossBridge.js';
 import { openStockSelector, closeStockSelector } from './stockSelector.js';
-import { initializeStorage, readStored, writeStored, clearStored } from './storage.js';
+import { initializeStorage, readStored, writeStored, clearStored, getActivityVisitorId } from './storage.js';
+import { startHomeLiveSync, setLiveSurface } from './liveHomeSync.js';
+import { readHomeFast, writeHomeFast } from './homeFastCache.js';
 import { formatKst, formatCurrencyPrice, formatMacroValue, formatMacroChange, observationLabel, macroCategory, macroPublicationLabel, macroSourceUrl, changeBasisLabel, newsRelation, translatedTag, titleLanguage } from './dataPresentation.js';
 
 const WATCHLIST_KEY='chartview-toss-watchlist-v1';
 const SELECTED_KEY='chartview-toss-selected-v1';
 const DEFAULTS=[{symbol:'005930.KS',name:'삼성전자'},{symbol:'NVDA',name:'엔비디아'},{symbol:'AAPL',name:'애플'}];
+const PUBLIC_SITE_BASE='https://chart-view-toss.onrender.com';
 const COLORS=['#3182f6','#f04452','#00a86b','#8b5cf6','#f59f00','#00a8cc'];
 const DISPLAY_NAMES={'005930.KS':'삼성전자','000660.KS':'SK하이닉스','NVDA':'엔비디아','AAPL':'애플','MSFT':'마이크로소프트','META':'메타','TSLA':'테슬라','GOOGL':'알파벳','^KS11':'코스피','^KQ11':'코스닥','^GSPC':'S&P 500','^IXIC':'나스닥','^TNX':'미국 10년물','^VIX':'VIX','CL=F':'WTI','KRW=X':'원/달러'};
 const displayName=(symbol,fallback='')=>DISPLAY_NAMES[symbol]||fallback||symbol;
@@ -141,9 +144,71 @@ function bindNav(){
  document.querySelectorAll('[data-stock-detail]').forEach(b=>b.onclick=()=>navigate('detail',b.dataset.stockDetail));
  document.querySelectorAll('[data-retry-detail]').forEach(b=>b.onclick=renderDetail);
  document.querySelectorAll('[data-back]').forEach(b=>b.onclick=goBack);
- document.querySelectorAll('[data-external-url]').forEach(b=>b.onclick=()=>{haptic('tickWeak');openExternal(b.dataset.externalUrl)});
+ document.querySelectorAll('[data-external-url]').forEach(b=>b.onclick=async()=>{
+   haptic('tickWeak');
+   const opened=await openExternal(b.dataset.externalUrl);
+   if(!opened)showToast('외부 링크를 열지 못했어요. 잠시 후 다시 시도해주세요.');
+ });
 }
 function cleanupChart(){analysisCleanup?.();analysisCleanup=null;viewEpoch++;chartLoadSeq++;chartResizeObserver?.disconnect();chartResizeObserver=null;if(chartInstance){try{chartInstance.remove()}catch{}chartInstance=null}}
+
+function paintHomeMarket(market,{allowError=true}={}){
+ const host=document.querySelector('#market-card');
+ if(!host)return false;
+ const rows=Array.isArray(market?.results)?market.results:[];
+ const preferred=['^KS11','^KQ11','^GSPC','^IXIC'];
+ const shown=preferred.map(t=>rows.find(r=>r.ticker===t)).filter(Boolean).slice(0,4);
+ const time=document.querySelector('#market-time');
+ if(shown.length){
+   if(time)time.textContent='각 지수의 실제 기준 시각';
+   host.innerHTML=`<div class="market-grid">${shown.map((row,i)=>{const ch=Number(row.change);const region=i<2?'KR':'US';return `<button class="quote-card market-${i}" data-go-chart><div class="quote-top"><span class="market-pill">${region}</span><small>${esc(displayName(row.ticker,row.name))}</small></div><strong>${esc(fmtPrice(row.price))}</strong><em class="${ch>0?'up':ch<0?'down':'flat'}">${esc(fmtChange(row.change))}</em><span class="quote-asof">${esc(formatKst(row.asOf))}</span></button>`}).join('')}</div>`;
+   return true;
+ }
+ if(!allowError)return false;
+ if(time)time.textContent='연결 확인 필요';
+ host.innerHTML='<div class="market-error"><div><strong>시장 정보를 불러오지 못했어요</strong><span>다른 기능은 계속 사용할 수 있어요.</span></div><button id="retry-market">다시 시도</button></div>';
+ document.querySelector('#retry-market')?.addEventListener('click',renderHome);
+ return false;
+}
+
+function patchHomeWatchLive(quotes){
+ if(state.tab!=='home'||!Array.isArray(quotes)||!quotes.length)return;
+ const byTicker=new Map(quotes.filter(row=>row?.ticker).map(row=>[String(row.ticker).toUpperCase(),row]));
+ document.querySelectorAll('#home-watchlist .watch-rich-row[data-stock-detail]').forEach(row=>{
+   const quote=byTicker.get(String(row.dataset.stockDetail||'').toUpperCase());
+   if(!quote)return;
+   const price=row.querySelector('.watch-price');
+   const meta=row.querySelector('.stock-copy small');
+   const ch=finiteNumber(quote.change);
+   if(price&&quote.price!=null)price.innerHTML=`<strong>${esc(formatCurrencyPrice(quote.price,quote.currency))}</strong><em class="${ch>0?'up':ch<0?'down':'flat'}">${esc(fmtChange(quote.change))}</em>`;
+   if(meta)meta.textContent=`${row.dataset.stockDetail}${quote.asOf?' · '+formatKst(quote.asOf):''}`;
+ });
+}
+
+function paintHomeWatch(quotes,hasWatch){
+ if(!hasWatch)return;
+ const host=document.querySelector('#home-watchlist');
+ if(!host)return;
+ host.innerHTML=state.watchlist.slice(0,4).map((x,i)=>{
+   const q=(quotes||[]).find(r=>r.ticker===x.symbol);const ch=finiteNumber(q?.change);const name=displayName(x.symbol,x.name);
+   return `<button class="watch-rich-row" data-stock-detail="${esc(x.symbol)}"><span class="stock-logo tone-${i%4}">${esc(name.slice(0,1))}</span><span class="stock-copy"><strong>${esc(name)}</strong><small>${esc(x.symbol)}${q?.asOf?' · '+esc(formatKst(q.asOf)):''}</small></span><span class="watch-price">${q?.price!=null?`<strong>${esc(formatCurrencyPrice(q.price,q.currency))}</strong><em class="${ch>0?'up':ch<0?'down':'flat'}">${esc(fmtChange(q.change))}</em>`:'<small>가격 확인 필요</small>'}</span><span class="chevron">${iconSvg('arrow',18)}</span></button>`;
+ }).join('');
+}
+
+function paintHomeBrief(home){
+ const macro=home?.macro?.summary||{};
+ const brief=document.querySelector('#brief-card');
+ if(!brief)return false;
+ brief.classList.remove('skeleton','brief');
+ if(macro.text){
+   const level=macro.level||'yellow';
+   const label=level==='red'?'위험 신호 많음':level==='green'?'안정 신호 많음':'신호 혼재';
+   brief.innerHTML=`<div class="brief-icon ${esc(level)}">${iconSvg('spark',22)}</div><div class="brief-copy"><span>시장 지표 요약 <b class="status-badge ${esc(level)}">${label}</b></span><strong>${esc(String(macro.text).slice(0,105))}</strong><small>최근 원자료 ${esc(macro.latestBasisDate||'-')} · 투자 행동을 권유하는 신호가 아니에요.</small></div><button data-tab="macro" aria-label="경제 지표 보기">${iconSvg('arrow',20)}</button>`;
+   return true;
+ }
+ brief.innerHTML=`<div class="brief-icon yellow">${iconSvg('spark',22)}</div><div class="brief-copy"><span>시장 지표 요약</span><strong>요약 데이터를 확인하고 있어요.</strong><small>경제지표 화면에서 개별 관측일을 확인할 수 있어요.</small></div>`;
+ return false;
+}
 
 async function renderHome(){
  cleanupChart();
@@ -170,48 +235,34 @@ async function renderHome(){
 
  const watchSymbols=state.watchlist.slice(0,4).map(x=>x.symbol);
  const watchNames=state.watchlist.slice(0,4).map(x=>displayName(x.symbol,x.name));
+ const cachedMarket=readHomeFast('market',6*60*60*1000);
+ if(cachedMarket)paintHomeMarket(cachedMarket,{allowError:false});
+ const cachedSnapshot=readHomeFast('snapshot',6*60*60*1000);
+ if(cachedSnapshot)paintHomeBrief(cachedSnapshot);
+ const watchCacheKey=watchSymbols.length?'quotes:'+watchSymbols.join('|'):'';
+ const cachedWatch=watchCacheKey?readHomeFast(watchCacheKey,30*60*1000):null;
+ if(cachedWatch?.results)paintHomeWatch(cachedWatch.results,hasWatch);
  const settle=(task,paint)=>task.then(value=>({status:'fulfilled',value}),reason=>({status:'rejected',reason})).then(result=>{if(epoch===viewEpoch){paint(result);bindNav();}});
  const jobs=[];
  jobs.push(settle(marketNow(),marketRes=>{
-
  const market=marketRes.status==='fulfilled'?marketRes.value:null;
- const rows=Array.isArray(market?.results)?market.results:[];
- const preferred=['^KS11','^KQ11','^GSPC','^IXIC'];
- const shown=preferred.map(t=>rows.find(r=>r.ticker===t)).filter(Boolean).slice(0,4);
- const time=document.querySelector('#market-time');
- if(shown.length){
-   if(time)time.textContent='각 지수의 실제 기준 시각';
-   document.querySelector('#market-card').innerHTML=`<div class="market-grid">${shown.map((row,i)=>{const ch=Number(row.change);const region=i<2?'KR':'US';return `<button class="quote-card market-${i}" data-go-chart><div class="quote-top"><span class="market-pill">${region}</span><small>${esc(displayName(row.ticker,row.name))}</small></div><strong>${esc(fmtPrice(row.price))}</strong><em class="${ch>0?'up':ch<0?'down':'flat'}">${esc(fmtChange(row.change))}</em><span class="quote-asof">${esc(formatKst(row.asOf))}</span></button>`}).join('')}</div>`;
- }else{
-   if(time)time.textContent='연결 확인 필요';
-   document.querySelector('#market-card').innerHTML='<div class="market-error"><div><strong>시장 정보를 불러오지 못했어요</strong><span>다른 기능은 계속 사용할 수 있어요.</span></div><button id="retry-market">다시 시도</button></div>';
-   document.querySelector('#retry-market')?.addEventListener('click',renderHome);
- }
-
+ if(market){
+   writeHomeFast('market',market);
+   paintHomeMarket(market,{allowError:true});
+ }else if(!cachedMarket)paintHomeMarket(null,{allowError:true});
  }));
  jobs.push(settle(watchSymbols.length?quoteSnapshots(watchSymbols):Promise.resolve({results:[]}),watchRes=>{
- const quotes=watchRes.status==='fulfilled'?(watchRes.value?.results||[]):[];
- if(hasWatch){
-   document.querySelector('#home-watchlist').innerHTML=state.watchlist.slice(0,4).map((x,i)=>{
-     const q=quotes.find(r=>r.ticker===x.symbol);const ch=finiteNumber(q?.change);const name=displayName(x.symbol,x.name);
-     return `<button class="watch-rich-row" data-stock-detail="${esc(x.symbol)}"><span class="stock-logo tone-${i%4}">${esc(name.slice(0,1))}</span><span class="stock-copy"><strong>${esc(name)}</strong><small>${esc(x.symbol)}${q?.asOf?' · '+esc(formatKst(q.asOf)):''}</small></span><span class="watch-price">${q?.price!=null?`<strong>${esc(formatCurrencyPrice(q.price,q.currency))}</strong><em class="${ch>0?'up':ch<0?'down':'flat'}">${esc(fmtChange(q.change))}</em>`:'<small>가격 확인 필요</small>'}</span><span class="chevron">${iconSvg('arrow',18)}</span></button>`;
-   }).join('');
- }
-
+ const payload=watchRes.status==='fulfilled'?watchRes.value:null;
+ const quotes=payload?.results||[];
+ if(payload&&watchCacheKey)writeHomeFast(watchCacheKey,payload);
+ if(payload||!cachedWatch)paintHomeWatch(quotes,hasWatch);
  }));
  jobs.push(settle(homeSnapshot(),homeRes=>{
  const home=homeRes.status==='fulfilled'?homeRes.value:null;
- const macro=home?.macro?.summary||{};
- const brief=document.querySelector('#brief-card');
- brief.classList.remove('skeleton','brief');
- if(macro.text){
-   const level=macro.level||'yellow';
-   const label=level==='red'?'위험 신호 많음':level==='green'?'안정 신호 많음':'신호 혼재';
-   brief.innerHTML=`<div class="brief-icon ${esc(level)}">${iconSvg('spark',22)}</div><div class="brief-copy"><span>시장 지표 요약 <b class="status-badge ${esc(level)}">${label}</b></span><strong>${esc(String(macro.text).slice(0,105))}</strong><small>최근 원자료 ${esc(macro.latestBasisDate||'-')} · 투자 행동을 권유하는 신호가 아니에요.</small></div><button data-tab="macro" aria-label="경제 지표 보기">${iconSvg('arrow',20)}</button>`;
- }else{
-   brief.innerHTML=`<div class="brief-icon yellow">${iconSvg('spark',22)}</div><div class="brief-copy"><span>시장 지표 요약</span><strong>요약 데이터를 확인하고 있어요.</strong><small>경제지표 화면에서 개별 관측일을 확인할 수 있어요.</small></div>`;
- }
-
+ if(home){
+   writeHomeFast('snapshot',home);
+   paintHomeBrief(home);
+ }else if(!cachedSnapshot)paintHomeBrief(null);
  }));
  if(watchSymbols.length){
   jobs.push(settle(personalizedNews(watchSymbols,watchNames),result=>{
@@ -610,7 +661,6 @@ async function renderNews(){
 function renderInfo(){
  cleanupChart();
  const epoch=viewEpoch;
- const origin=location.origin;
  document.querySelector('#app').innerHTML=shell(`
    <section class="page-intro rich-intro subpage-hero info-hero"><span class="page-kicker">DATA & SERVICE</span><h2>숫자를 보기 전에<br><em>기준부터</em> 확인하세요</h2><p>Chart View가 데이터를 보여주는 방식과 이용 시 알아둘 내용을 정리했어요.</p></section>
    <section class="info-stack">
@@ -620,7 +670,7 @@ function renderInfo(){
      <article class="info-card"><span class="info-icon coral">${iconSvg('news',21)}</span><div><strong>뉴스</strong><p>뉴스는 외부 매체의 기사 제목·링크를 모아 보여주며 기사 내용과 정확성에 대한 책임은 해당 제공처에 있어요.</p></div></article>
    </section>
    <section class="release-notice"><strong>투자 판단 안내</strong><p>Chart View의 모든 정보는 정보 제공 목적이며 특정 종목의 매수·매도 또는 투자 성과를 보장하거나 권유하지 않아요. 최종 투자 판단은 이용자가 직접 해야 해요.</p></section>
-   <div class="policy-links"><button data-external-url="${esc(origin+'/privacy.html')}"><span>개인정보 처리 안내</span>${iconSvg('arrow',18)}</button><button data-external-url="${esc(origin+'/terms.html')}"><span>서비스 이용 안내</span>${iconSvg('arrow',18)}</button><button data-external-url="${esc(origin+'/data-guide.html')}"><span>데이터 기준 전체 보기</span>${iconSvg('arrow',18)}</button><div class="analysis-card"><strong>고객문의 · 박상훈</strong><p>kimtang89@naver.com</p></div></div>
+   <div class="policy-links"><button data-external-url="${esc(PUBLIC_SITE_BASE+'/privacy.html')}"><span>개인정보 처리 안내</span>${iconSvg('arrow',18)}</button><button data-external-url="${esc(PUBLIC_SITE_BASE+'/terms.html')}"><span>서비스 이용 안내</span>${iconSvg('arrow',18)}</button><button data-external-url="${esc(PUBLIC_SITE_BASE+'/data-guide.html')}"><span>데이터 기준 전체 보기</span>${iconSvg('arrow',18)}</button><div class="analysis-card"><strong>고객문의 · 박상훈</strong><p>kimtang89@naver.com</p></div></div>
    <section class="local-data-card"><div><strong>기기 저장 데이터</strong><p>관심종목과 비교 종목은 현재 이 기기에 저장돼요. 토스 익명 식별키로 사용자별 목록을 구분하며, 초기화하면 현재 사용자의 목록과 이용 기록을 삭제합니다.</p></div><button id="clear-local-data" type="button">기기 데이터 초기화</button></section>
  `,'데이터 안내');
  bindNav();
@@ -667,12 +717,13 @@ function renderMore(){
      <button class="feature-row" data-tab="info"><span class="feature-icon blue">${iconSvg('spark',22)}</span><span><strong>데이터 및 이용 안내</strong><small>기준·지연·개인정보·지원 안내</small></span><b>${iconSvg('arrow',19)}</b></button>
      <div class="feature-row"><span><strong>고객문의</strong><small>박상훈 · kimtang89@naver.com</small></span></div>
    </div></section>
-   <div class="version-card"><span class="brand-mark">${iconSvg('spark',16)}</span><div><strong>Chart View</strong><small>버전 0.9.1</small></div></div>
+   <div class="version-card"><span class="brand-mark">${iconSvg('spark',16)}</span><div><strong>Chart View</strong><small>버전 0.9.2</small></div></div>
  `,'전체');
  bindNav();
 }
 
 function render(){
+ setLiveSurface(state.tab);
  const started=performance.now();
  const route=state.tab;
  requestAnimationFrame(()=>{if(state.tab===route)recordMetric(`view.${route}`,started);});
@@ -702,13 +753,23 @@ window.addEventListener('popstate',()=>{navigationDepth=Math.max(0,navigationDep
 window.addEventListener('online',()=>render());
 window.addEventListener('offline',()=>render());
 document.addEventListener('chartview:storage-error',()=>showToast('목록을 기기에 저장하지 못했어요. 다시 시도해주세요.'));
+document.addEventListener('chartview:home-live',(event)=>{
+ if(state.tab!=='home')return;
+ const rows=Array.isArray(event.detail?.results)?event.detail.results:[];
+ patchHomeWatchLive(rows);
+});
 async function startApp(){
  const started=performance.now();
- document.querySelector('#app').innerHTML='<div class="empty" role="status">저장된 목록을 불러오고 있어요.</div>';
+ syncFromLocation();
+ const fastHome=state.tab==='home';
+ if(fastHome)render();
+ else document.querySelector('#app').innerHTML='<div class="empty" role="status">저장된 목록을 불러오고 있어요.</div>';
  try {
    await initializeStorage();
    state.watchlist=load(WATCHLIST_KEY,[]);
    state.selected=load(SELECTED_KEY,DEFAULTS.map(x=>x.symbol));
+   const activityId=getActivityVisitorId();
+   if(activityId)startHomeLiveSync(activityId);
    syncFromLocation();
    render();
    recordMetric('startup',started);
@@ -720,5 +781,5 @@ async function startApp(){
 startApp();
 // Opt-in support diagnostics: aggregate timings only, local to this app session.
 if(new URLSearchParams(location.search).get('diagnostics')==='1') {
- Object.defineProperty(window,'chartviewDiagnostics',{value:()=>({version:'0.9.1',metrics:diagnosticSummary()}),configurable:true});
+ Object.defineProperty(window,'chartviewDiagnostics',{value:()=>({version:'0.9.2',metrics:diagnosticSummary()}),configurable:true});
 }

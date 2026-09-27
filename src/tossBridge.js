@@ -1,4 +1,4 @@
-import { Device, Environment, Screen, graniteEvent } from '@apps-in-toss/web-framework';
+import { Device, Environment, Screen, graniteEvent, openURL as tossOpenURL } from '@apps-in-toss/web-framework';
 
 let backCleanup = null;
 
@@ -39,15 +39,14 @@ export async function openExternal(url) {
   if (target.protocol !== 'https:') return false;
   if (isAppsInTossRuntime()) {
     try {
-      if (Device?.openURL?.isSupported && !Device.openURL.isSupported()) throw new Error('unsupported');
-      await Device.openURL({ url: target.href });
+      await tossOpenURL(target.href);
       return true;
     } catch {
       return false;
     }
   }
-  window.open(target.href, '_blank', 'noopener,noreferrer');
-  return false;
+  const opened = window.open(target.href, '_blank', 'noopener,noreferrer');
+  return Boolean(opened);
 }
 
 export function syncNativeBackHandler({ isRoot, onBack }) {

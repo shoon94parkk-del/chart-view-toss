@@ -40,3 +40,26 @@ The Home discovery action now opens a dedicated `#picks` recommendation ledger r
 
 ## 2026-09-24 — Heatmap logos must participate in layout
 Heatmap logos are no longer absolutely overlaid on company names. Supported logos render inline beside the company label only when geometry permits; cramped cells remain text-only. This prevents identity marks from obscuring the data they are meant to clarify.
+
+
+## 2026-09-26 — 전체 히트맵은 홈 히트맵을 단일 기준으로 사용
+
+전체 히트맵 라우트는 더 이상 오래된 `static/data/heatmap.json` 섹터 데이터를 읽지 않는다. 홈과 동일한 `/api/home-snapshot` 응답과 공용 `home-heatmap` 렌더러를 사용해 한국·미국 대표 종목, 업데이트 시각, 로고, 등락 값, 레이아웃이 두 화면에서 갈라지지 않도록 한다.
+
+## 2026-09-26 — 공용 히트맵은 2차원 면적 충전과 색상 계약을 테스트로 고정
+홈과 전체 히트맵은 동일한 2차원 treemap 렌더러를 사용한다. 각 셀은 left/top/width/height를 모두 가져야 하고, 두 시장 보드는 아래·오른쪽 빈 영역 없이 채워져야 한다. 등락 색상은 기존 home-hm-up-1~3 / down-1~3 / flat CSS 계약을 유지하며, 모바일 QA에서 실제 geometry와 computed background를 검증한다.
+
+## 2026-09-26 — 홈 요약과 전체 히트맵의 역할을 분리
+홈 히트맵은 초기 속도와 가독성을 위해 18개 대표 종목을 유지한다. 전체보기는 별도 캐시 API를 사용해 한국 주요 20종목과 미국 시총 상위 40종목을 표시한다. 전체보기는 홈보다 종목 수가 반드시 많아야 하며, 홈 API 호출 수를 증가시키지 않는다.
+
+## 2026-09-27 — 전체 히트맵 라벨 밀도와 홈 초기 표시를 분리 최적화
+전체 히트맵의 텍스트 밀도는 셀 면적과 최소 폭/높이에 따라 단계적으로 줄이며, 극소 셀은 색상만 보여도 된다. 홈은 정확한 최신 데이터 요청을 유지하되 이전 성공 데이터로 첫 페인트를 즉시 수행하고 최신값은 뒤에서 교체한다. 최초 방문은 API 연결을 JS 모듈 로딩과 병렬화하며, Apps in Toss에서는 native storage 초기화가 홈 shell 표시를 막지 않게 한다.
+
+## 2026-09-27 — 한국은 기업명, 미국은 티커+등락률 우선
+전체 히트맵의 작은 셀에서 한국 6자리 종목코드는 식별성이 낮으므로 표시하지 않는다. 한국은 기업명 또는 짧은 기업명을 사용한다. 미국은 익숙한 티커를 유지하되 작은 셀에서도 공간이 허용되는 한 등락률을 함께 표시하고 등락률 시인성을 티커보다 낮게 두지 않는다.
+
+## 2026-09-27 — 사용자 polling과 provider polling을 분리
+Apps in Toss 클라이언트는 시세 공급자를 직접 갱신하지 않는다. visible Home 사용자는 privacy-light activity heartbeat로 서버의 공용 5초 quote worker를 깨우고, 약 10초마다 `/api/home-live` 메모리 스냅샷만 읽는다. hidden/background에서는 두 주기를 멈추며 resume 시 즉시 동기화한다. 방문자별 deterministic jitter로 thundering-herd를 완화한다.
+
+## 2026-09-27 — 외부 링크는 top-level Apps in Toss openURL 계약을 사용
+`20260921-5` 심사에서 서비스 이용 외부 링크 미동작으로 반려됐다. Toss runtime에서 `Device.openURL`을 사용하지 않고 SDK의 top-level `openURL(url)`을 단일 외부 링크 경로로 사용한다. 정책 링크는 `.ait` origin과 분리된 공개 HTTPS URL로 고정하고, 실패를 조용히 무시하지 않는다.

@@ -1,17 +1,45 @@
-import { screenerData, heatmapData, consensusData, valuationBandData } from './api.js';
+import { screenerData, fullHeatmap, homeSnapshot, consensusData, valuationBandData } from './api.js';
 import { filterScreener, finiteNumber, estimateRevision } from './analysisData.js';
 import { formatKst } from './dataPresentation.js';
+import { renderSharedHeatmap } from './heatmapView.js';
 import { createChart, ColorType } from 'lightweight-charts';
 
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const number=(v,suffix='')=>finiteNumber(v)===null?'—':Number(v).toLocaleString('ko-KR',{maximumFractionDigits:2})+suffix;
 const pct=v=>finiteNumber(v)===null?'—':`${Number(v)>0?'+':''}${number(v,'%')}`;
 const empty=text=>`<div class="empty"><strong>${esc(text)}</strong></div>`;
+const alignFullHeatmapWithHome=(full,home)=>{
+ const homeRows=new Map(
+  ((home?.heatmap?.results)||[])
+   .filter(row=>row?.ticker)
+   .map(row=>[String(row.ticker).toUpperCase(),row])
+ );
+ if(!homeRows.size)return full;
+ return {
+  ...full,
+  results:((full?.results)||[]).map(row=>{
+   const ticker=String(row?.ticker||'').toUpperCase();
+   const visible=homeRows.get(ticker);
+   if(!visible)return row;
+   return {
+    ...row,
+    name:visible.name??row.name,
+    price:visible.price??row.price,
+    change:visible.change??row.change,
+    asOf:visible.asOf??row.asOf,
+    sessionDate:visible.sessionDate??row.sessionDate,
+    previousSessionDate:visible.previousSessionDate??row.previousSessionDate,
+    source:visible.source??row.source,
+    quoteBasis:'client-home-parity',
+   };
+  }),
+ };
+};
 export const ANALYSIS_ROUTES=new Set(['discover','heatmap','consensus','bands','tools']);
 export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareSheet}){
  let disposed=false,chart,observer;
  const titles={discover:'시장 스크리너',heatmap:'시장 히트맵',consensus:'실적 전망 조회',bands:'역사적 밸류에이션',tools:'자료 출처'};
- const descriptions={discover:'전체 수집 종목을 직접 검색·필터링해요. 장마감 데이터이며 추천 순위가 아니에요.',heatmap:'업종별 종목의 등락을 함께 확인해요. 가격 기준일을 확인해주세요.',consensus:'선택한 종목의 애널리스트 추정치와 변경 내역을 확인해요.',bands:'과거 가격과 재무자료로 재구성한 PER·PBR을 확인해요.',tools:'자료 확인에 필요한 외부 공식 사이트예요.'};
+ const descriptions={discover:'전체 수집 종목을 직접 검색·필터링해요. 장마감 데이터이며 추천 순위가 아니에요.',heatmap:'홈보다 넓은 한국·미국 주요 종목의 당일 등락을 시가총액 비중으로 비교해요.',consensus:'선택한 종목의 애널리스트 추정치와 변경 내역을 확인해요.',bands:'과거 가격과 재무자료로 재구성한 PER·PBR을 확인해요.',tools:'자료 확인에 필요한 외부 공식 사이트예요.'};
  const selection=['consensus','bands'].includes(tab);
  document.querySelector('#app').innerHTML=shell(`<section class="task-head"><div><h2>${titles[tab]}</h2><p>${descriptions[tab]}</p></div>${selection?'<button id="analysis-select" class="primary-subtle">종목 변경</button>':''}</section><div id="analysis-controls"></div><div id="analysis-body" class="analysis-body"><div class="skeleton quote"></div></div>`,titles[tab]);
  const host=document.querySelector('#analysis-body'),controls=document.querySelector('#analysis-controls');
@@ -40,9 +68,29 @@ export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareS
     }
     form.onsubmit=e=>e.preventDefault();form.oninput=()=>{count=30;paint();};form.onchange=()=>{count=30;paint();};form.onreset=e=>{e.preventDefault();for(const input of form.querySelectorAll('input,select'))input.value=input.name==='sort'?'name':'';count=30;paint();};paint();
    }else if(tab==='heatmap'){
-    const data=await heatmapData();if(!current())return;
-    const sectors=Array.isArray(data.sectors)?data.sectors:[];
-    host.innerHTML=`<p class="analysis-meta">수집 기준 ${esc(formatKst(data.updated))} · 색상은 등락 방향, 칸 크기는 동일해요.</p>${sectors.map(sector=>`<section><h3>${esc(sector.name)}</h3><div class="heatmap-grid">${(sector.stocks||[]).map(row=>`<button class="heatmap-cell ${Number(row.change)>0?'heat-up':Number(row.change)<0?'heat-down':'heat-flat'}" data-stock-detail="${esc(row.ticker)}"><strong>${esc(row.ticker)}</strong><span>${pct(row.change)}</span><small>${number(row.price)}</small></button>`).join('')}</div></section>`).join('')||empty('표시할 시장 데이터가 없어요.')}`;bindNav();
+    const [full,home]=await Promise.all([
+      fullHeatmap({force:true}),
+      homeSnapshot().catch(()=>null),
+    ]);
+    if(!current())return;
+    const payload=alignFullHeatmapWithHome(full,home);
+    host.innerHTML=`<div class="shared-heatmap-analysis">${renderSharedHeatmap(payload,{scope:'full'})}</div>`;
+    bindNav();
+    if(full?.complete===false||full?.refreshing){
+      setTimeout(async()=>{
+        if(!current())return;
+        try{
+          const [nextFull,nextHome]=await Promise.all([
+            fullHeatmap({force:true}),
+            homeSnapshot().catch(()=>home),
+          ]);
+          if(!current())return;
+          const next=alignFullHeatmapWithHome(nextFull,nextHome);
+          host.innerHTML=`<div class="shared-heatmap-analysis">${renderSharedHeatmap(next,{scope:'full'})}</div>`;
+          bindNav();
+        }catch{}
+      },1800);
+    }
    }else if(tab==='consensus'){
     const symbols=[...state.selected];
     if(!symbols.length){host.innerHTML=empty('종목 변경에서 조회할 종목을 선택해주세요.');return;}

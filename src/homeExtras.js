@@ -1,26 +1,10 @@
 import { homeBootstrap, homeSnapshot, homeHeatmap } from './api.js';
 import { HOME_LOGOS } from './homeLogos.js';
+import { HOME_STOCK_META, renderSharedHeatmap } from './heatmapView.js';
+import { readHomeFast, writeHomeFast } from './homeFastCache.js';
+import { mergeLiveRows } from './liveHomeSync.js';
 
-const STOCK_META = {
-  '005930.KS': { name: '삼성전자', short: '삼성전자', market: 'KR', logo: 'samsung', fallback: '삼성' },
-  '000660.KS': { name: 'SK하이닉스', short: 'SK하이닉스', market: 'KR', fallback: 'SK' },
-  '207940.KS': { name: '삼성바이오로직스', short: '삼성바이오', market: 'KR', fallback: '삼바' },
-  '005380.KS': { name: '현대차', short: '현대차', market: 'KR', fallback: '현대' },
-  '000270.KS': { name: '기아', short: '기아', market: 'KR', fallback: '기아' },
-  '373220.KS': { name: 'LG에너지솔루션', short: 'LG에너지', market: 'KR', fallback: 'LG' },
-  '035420.KS': { name: 'NAVER', short: 'NAVER', market: 'KR', fallback: 'N' },
-  '068270.KS': { name: '셀트리온', short: '셀트리온', market: 'KR', fallback: '셀트' },
-  'NVDA': { name: '엔비디아', short: '엔비디아', market: 'US', logo: 'nvidia', fallback: 'NV' },
-  'AAPL': { name: '애플', short: '애플', market: 'US', logo: 'apple', fallback: 'A' },
-  'MSFT': { name: '마이크로소프트', short: 'MS', market: 'US', logo: 'microsoft', fallback: 'MS' },
-  'GOOGL': { name: '알파벳', short: '알파벳', market: 'US', logo: 'google', fallback: 'G' },
-  'AMZN': { name: '아마존', short: '아마존', market: 'US', fallback: 'AM' },
-  'TSM': { name: 'TSMC', short: 'TSMC', market: 'US', fallback: 'TSM' },
-  'META': { name: '메타', short: '메타', market: 'US', logo: 'meta', fallback: 'M' },
-  'AVGO': { name: '브로드컴', short: '브로드컴', market: 'US', fallback: 'AV' },
-  'TSLA': { name: '테슬라', short: '테슬라', market: 'US', logo: 'tesla', fallback: 'T' },
-  'AMD': { name: 'AMD', short: 'AMD', market: 'US', fallback: 'AMD' }
-};
+const STOCK_META = HOME_STOCK_META;
 
 const esc = (value) => String(value == null ? '' : value).replace(/[&<>"']/g, (char) => ({
   '&': '&amp;',
@@ -246,23 +230,18 @@ function paintPicks(host, payload) {
 
 function paintHeatmap(host, payload) {
   if (!host || !host.isConnected) return;
-  const kr = marketRows(payload, 'KR');
-  const us = marketRows(payload, 'US');
-  if (!kr.length && !us.length) {
-    host.innerHTML = '<div class="home-extra-empty"><strong>히트맵 데이터를 준비 중이에요.</strong><span>시장 데이터가 갱신되면 자동으로 표시돼요.</span></div>';
-    return;
-  }
-
-  const stamp = formatKst(payload && (payload.generatedAt || payload.updatedAt));
-  host.innerHTML =
-    '<div class="home-heatmap-meta">' + esc(stamp ? '업데이트 ' + stamp : '최신 가용 시세 기준') + '</div>' +
-    '<div class="home-heatmap-board">' +
-      '<div class="home-heatmap-market"><div class="home-heatmap-market-head"><strong>한국 대표</strong><span>시총 영향 완화</span></div><div class="home-heatmap-treemap">' + heatmapMarketMarkup(payload, 'KR') + '</div></div>' +
-      '<div class="home-heatmap-market"><div class="home-heatmap-market-head"><strong>미국 대표</strong><span>시총 비중</span></div><div class="home-heatmap-treemap">' + heatmapMarketMarkup(payload, 'US') + '</div></div>' +
-    '</div>' +
-    '<div class="home-heatmap-legend"><span><i class="up"></i>상승</span><span><i class="flat"></i>보합</span><span><i class="down"></i>하락</span></div>';
+  host.innerHTML = renderSharedHeatmap(payload);
+  host.querySelectorAll('[data-stock-detail]').forEach((cell) => {
+    const openDetail = () => navigate('detail', cell.dataset.stockDetail);
+    cell.addEventListener('click', openDetail);
+    cell.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        openDetail();
+      }
+    });
+  });
 }
-
 let generation = 0;
 
 async function mount() {
@@ -273,9 +252,20 @@ async function mount() {
   const token = ++generation;
   const sections = createSections(marketSection);
 
+  const cachedPicks = readHomeFast('bootstrap', 36 * 60 * 60 * 1000);
+  if (cachedPicks) paintPicks(sections.picks.querySelector('#home-top-picks'), cachedPicks);
+  const cachedSnapshot = readHomeFast('snapshot', 6 * 60 * 60 * 1000);
+  if (cachedSnapshot?.heatmap?.results?.length) {
+    paintHeatmap(sections.heatmap.querySelector('#home-daily-heatmap'), {
+      results: cachedSnapshot.heatmap.results,
+      generatedAt: cachedSnapshot.generatedAt || cachedSnapshot.heatmap.generatedAt || ''
+    });
+  }
+
   const picksTask = homeBootstrap()
     .then((payload) => {
       if (token !== generation || !sections.picks.isConnected) return;
+      writeHomeFast('bootstrap', payload);
       paintPicks(sections.picks.querySelector('#home-top-picks'), payload);
     })
     .catch(() => {
@@ -286,6 +276,7 @@ async function mount() {
 
   const heatmapTask = homeSnapshot()
     .then((snapshot) => {
+      if (snapshot) writeHomeFast('snapshot', snapshot);
       if (snapshot && snapshot.heatmap && Array.isArray(snapshot.heatmap.results) && snapshot.heatmap.results.length) {
         return { results: snapshot.heatmap.results, generatedAt: snapshot.generatedAt || snapshot.heatmap.generatedAt || '' };
       }
@@ -303,6 +294,24 @@ async function mount() {
 
   await Promise.allSettled([picksTask, heatmapTask]);
 }
+
+document.addEventListener('chartview:home-live', (event) => {
+  const host = document.querySelector('#home-daily-heatmap');
+  const liveRows = Array.isArray(event.detail?.results) ? event.detail.results : [];
+  if (!host || !liveRows.length) return;
+  const cached = readHomeFast('snapshot', 6 * 60 * 60 * 1000);
+  const baseRows = cached?.heatmap?.results;
+  if (!Array.isArray(baseRows) || !baseRows.length) return;
+  const rows = mergeLiveRows(baseRows, liveRows);
+  const generatedAt = event.detail?.updatedAt || cached.generatedAt || cached.heatmap?.generatedAt || '';
+  const next = {
+    ...cached,
+    generatedAt,
+    heatmap: { ...(cached.heatmap || {}), results: rows, generatedAt }
+  };
+  writeHomeFast('snapshot', next);
+  paintHeatmap(host, { results: rows, generatedAt });
+});
 
 function navigate(tab, symbol) {
   if (typeof window.__chartviewNavigate === 'function') {
