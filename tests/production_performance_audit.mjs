@@ -80,7 +80,7 @@ async function measureRun(browser,run){
   mark=api.mark(); t=performance.now();
   await page.locator('.app-bottom-btn[data-app-mode="watchlist"]').click();
   await page.waitForFunction(()=>document.getElementById('watchlist-tab')?.classList.contains('active'),{timeout:TIMEOUT});
-  await page.waitForFunction(()=>Boolean(document.querySelector('#watchlist-tab [data-watch-list],#watchlist-tab .watchlist-list,#watchlist-tab .watchlist-empty,#watchlist-tab .empty-state')),{timeout:TIMEOUT}).catch(()=>{});
+  await page.waitForFunction(()=>Boolean(document.querySelector('#watchlist-v30-grid > *')));
   out.watchlist={ms:round(performance.now()-t),api:api.rows.slice(mark)};
 
   await context.close();
