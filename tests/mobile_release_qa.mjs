@@ -186,9 +186,20 @@ try{
         const clipped=await page.locator('#home-daily-heatmap .home-heatmap-cell').evaluateAll(cells=>cells.filter(cell=>{
           const name=cell.querySelector('.home-heatmap-name strong,.home-heatmap-ticker');
           const change=cell.querySelector('.home-heatmap-change');
-          return [name,change].filter(Boolean).some(node=>node.scrollWidth>node.clientWidth+1||node.scrollHeight>node.clientHeight+1);
+          return [name,change].filter(Boolean).some(node=>{
+            const style=getComputedStyle(node);
+            if(style.display==='none'||style.visibility==='hidden') return false;
+            return node.scrollWidth>node.clientWidth+1||node.scrollHeight>node.clientHeight+1;
+          });
         }).map(cell=>cell.getAttribute('aria-label')));
         if(clipped.length) throw new Error(`${width}px heatmap text clipped: ${clipped.join(", ")}`);
+        if(width<=360){
+          const visibleSmallChanges=await page.locator('#home-daily-heatmap .home-heatmap-cell.is-small .home-heatmap-change').evaluateAll(nodes=>nodes.filter(node=>{
+            const style=getComputedStyle(node);
+            return style.display!=='none'&&style.visibility!=='hidden';
+          }).length);
+          if(visibleSmallChanges) throw new Error(`${width}px small Home heatmap changes must be hidden; visible=${visibleSmallChanges}`);
+        }
         if(width===390){
           await page.waitForTimeout(700);
           const liveText=await page.locator('#home-daily-heatmap').innerText();
