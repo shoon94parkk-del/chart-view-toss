@@ -1,5 +1,7 @@
 import { chromium } from 'playwright';
 
+// audit-run: p0-valuation-swr-live-20260928
+
 // audit-run: default-analysis-prewarm-20260928
 const BASE=process.env.PERF_BASE_URL||'https://chart-view-toss.onrender.com';
 const TIMEOUT=Number(process.env.PERF_TIMEOUT_MS||20000);
@@ -28,21 +30,30 @@ const round=n=>Math.round(Number(n)||0);
 function apiCollector(page){
   const starts=new WeakMap();
   const rows=[];
+  let generation=0;
   const onRequest=req=>{
-    if(req.url().includes('chart-view-pkv8.onrender.com/api/'))starts.set(req,performance.now());
+    if(req.url().includes('chart-view-pkv8.onrender.com/api/'))starts.set(req,{started:performance.now(),generation});
   };
   const onResponse=async res=>{
     const req=res.request();
-    const start=starts.get(req);
-    if(start==null)return;
+    const marker=starts.get(req);
+    if(!marker||marker.generation!==generation)return;
+    const start=marker.started;
     const url=new URL(req.url());
-    rows.push({path:url.pathname,ms:round(performance.now()-start),status:res.status()});
+    let meta=null;
+    if(url.pathname==='/api/compare'||url.pathname==='/api/valuation'){
+      try{
+        const body=await res.json();
+        meta={cacheHits:Number(body?.cacheHits??-1),providerFetches:Number(body?.providerFetches??-1)};
+      }catch{}
+    }
+    rows.push({path:url.pathname,ms:round(performance.now()-start),status:res.status(),meta});
   };
   page.on('request',onRequest);
   page.on('response',onResponse);
   return {
     rows,
-    reset(){rows.length=0;},
+    reset(){generation++;rows.length=0;},
     stop(){page.off('request',onRequest);page.off('response',onResponse);}
   };
 }
@@ -79,7 +90,8 @@ function apiSummary(rows){
     path,
     calls:list.length,
     ms:Math.max(...list.map(x=>x.ms)),
-    status:list.map(x=>x.status).join(',')
+    status:list.map(x=>x.status).join(','),
+    meta:list.find(x=>x.meta)?.meta||null
   })).sort((a,b)=>b.ms-a.ms);
 }
 
@@ -140,12 +152,18 @@ try{
   await browser.close();
 }
 
+const apiCell=api=>{
+  if(!api)return '없음';
+  const meta=api?.meta?` · cache ${api.meta.cacheHits}/fetch ${api.meta.providerFetches}`:'';
+  return `${api.path} ${api.ms}ms${meta}`;
+};
 const table=[
-  '| 화면 | Cold 데이터 표시 | SPA 이동 | 앱 Shell | Navigation TTFB | 가장 느린 API |',
-  '|---|---:|---:|---:|---:|---|',
+  '| 화면 | Cold 데이터 표시 | SPA 이동 | 앱 Shell | Navigation TTFB | Cold 최장 API | SPA 최장 API |',
+  '|---|---:|---:|---:|---:|---|---|',
   ...results.map(r=>{
-    const api=[...(r.apiCold||[]),...(r.apiSpa||[])].sort((a,b)=>b.ms-a.ms)[0];
-    return `| ${r.label} | ${r.coldMs}ms | ${r.spaMs}ms | ${r.coldShellMs}ms | ${r.navTtfbMs}ms | ${api?`${api.path} ${api.ms}ms`:'없음'} |`;
+    const coldApi=(r.apiCold||[])[0];
+    const spaApi=(r.apiSpa||[])[0];
+    return `| ${r.label} | ${r.coldMs}ms | ${r.spaMs}ms | ${r.coldShellMs}ms | ${r.navTtfbMs}ms | ${apiCell(coldApi)} | ${apiCell(spaApi)} |`;
   })
 ].join('\n');
 console.log('\nPERF_TABLE\n'+table);
