@@ -717,7 +717,7 @@ function renderMore(){
      <button class="feature-row" data-tab="info"><span class="feature-icon blue">${iconSvg('spark',22)}</span><span><strong>데이터 및 이용 안내</strong><small>기준·지연·개인정보·지원 안내</small></span><b>${iconSvg('arrow',19)}</b></button>
      <div class="feature-row"><span><strong>고객문의</strong><small>박상훈 · kimtang89@naver.com</small></span></div>
    </div></section>
-   <div class="version-card"><span class="brand-mark">${iconSvg('spark',16)}</span><div><strong>Chart View</strong><small>버전 0.9.1</small></div></div>
+   <div class="version-card"><span class="brand-mark">${iconSvg('spark',16)}</span><div><strong>Chart View</strong><small>버전 0.9.2</small></div></div>
  `,'전체');
  bindNav();
 }
@@ -781,5 +781,5 @@ async function startApp(){
 startApp();
 // Opt-in support diagnostics: aggregate timings only, local to this app session.
 if(new URLSearchParams(location.search).get('diagnostics')==='1') {
- Object.defineProperty(window,'chartviewDiagnostics',{value:()=>({version:'0.9.1',metrics:diagnosticSummary()}),configurable:true});
+ Object.defineProperty(window,'chartviewDiagnostics',{value:()=>({version:'0.9.2',metrics:diagnosticSummary()}),configurable:true});
 }
