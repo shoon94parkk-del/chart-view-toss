@@ -1,6 +1,6 @@
 import { chromium } from 'playwright';
 
-// audit-run: p0-startup-priority-20260928
+// audit-run: p0-provider-herd-removed-20260928
 
 // audit-run: default-analysis-prewarm-20260928
 const BASE=process.env.PERF_BASE_URL||'https://chart-view-toss.onrender.com';
