@@ -163,7 +163,8 @@ const heatmapMarketMarkup = (payload, market, scope = 'home') => {
     const compact = tickerOnly || veryTight || width < 0.21 || height < 0.24 || area < 0.058;
     const tickerLabel = item.ticker.replace(/\.(KS|KQ)$/, '');
     const tinyLabel = market === 'KR' ? item.short : tickerLabel;
-    const label = tickerOnly || veryTight ? tinyLabel : compact ? item.short : item.name;
+    const compactLabel = !full && market === 'US' ? tickerLabel : item.short;
+    const label = tickerOnly || veryTight ? tinyLabel : compact ? compactLabel : item.name;
     const logoSvg = item.logo && HOME_LOGOS[item.logo] ? HOME_LOGOS[item.logo] : '';
     const showLogo = Boolean(logoSvg) && !tickerOnly && !veryTight && area >= 0.05 && width >= 0.17 && height >= 0.18;
     const showFallback = !logoSvg && !compact && area >= 0.09 && width >= 0.22 && height >= 0.25;
