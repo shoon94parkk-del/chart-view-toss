@@ -58,6 +58,9 @@
   .home-heatmap-name strong,.home-heatmap-change{font-size:9px}
   .home-heatmap-cell.is-small .home-heatmap-name strong,.home-heatmap-cell.is-small .home-heatmap-change{font-size:7px}
   #home-daily-heatmap .home-heatmap-cell.is-compact .home-heatmap-change{display:none}
+  #home-daily-heatmap .home-heatmap-cell.is-compact .home-heatmap-logo{display:none}
+  #home-daily-heatmap .home-heatmap-cell.is-compact .home-heatmap-name{gap:0;max-width:calc(100% - 2px)}
+  #home-daily-heatmap .home-heatmap-cell.is-compact .home-heatmap-name strong{font-size:7px;letter-spacing:-.02em}
   #home-daily-heatmap .home-heatmap-cell.is-label-hidden>*{display:none!important}
 }
 
