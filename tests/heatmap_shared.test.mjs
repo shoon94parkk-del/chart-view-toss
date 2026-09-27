@@ -128,14 +128,9 @@ test('dense full heatmap de-emphasizes tiny cells instead of oversized ticker te
 
 
 test('Home compact US cells prefer ticker labels over longer display names', () => {
-  const narrow = {
-    generatedAt: payload.generatedAt,
-    results: payload.results.map((row) => row.ticker === 'TSLA'
-      ? { ...row, marketCap: 0.25e12, name: '테슬라' }
-      : row),
-  };
-  const html = renderSharedHeatmap(narrow, { scope: 'home' });
-  assert.match(html, />TSLA<\/strong>/);
+  const html = renderSharedHeatmap(payload, { scope: 'home' });
+  const teslaCell = html.match(/<div class="home-heatmap-cell[^"]*is-compact[^"]*"[^>]*data-stock-detail="TSLA"[^>]*>[\s\S]*?<strong>TSLA<\/strong>/);
+  assert.ok(teslaCell, 'TSLA should remain readable as a compact ticker in the real Home fixture');
 });
 
 
