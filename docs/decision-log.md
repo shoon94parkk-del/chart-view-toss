@@ -60,3 +60,6 @@ Heatmap logos are no longer absolutely overlaid on company names. Supported logo
 
 ## 2026-09-27 — 사용자 polling과 provider polling을 분리
 Apps in Toss 클라이언트는 시세 공급자를 직접 갱신하지 않는다. visible Home 사용자는 privacy-light activity heartbeat로 서버의 공용 5초 quote worker를 깨우고, 약 10초마다 `/api/home-live` 메모리 스냅샷만 읽는다. hidden/background에서는 두 주기를 멈추며 resume 시 즉시 동기화한다. 방문자별 deterministic jitter로 thundering-herd를 완화한다.
+
+## 2026-09-27 — 외부 링크는 top-level Apps in Toss openURL 계약을 사용
+`20260921-5` 심사에서 서비스 이용 외부 링크 미동작으로 반려됐다. Toss runtime에서 `Device.openURL`을 사용하지 않고 SDK의 top-level `openURL(url)`을 단일 외부 링크 경로로 사용한다. 정책 링크는 `.ait` origin과 분리된 공개 HTTPS URL로 고정하고, 실패를 조용히 무시하지 않는다.

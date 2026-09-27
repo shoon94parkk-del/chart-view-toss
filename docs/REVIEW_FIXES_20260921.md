@@ -44,3 +44,12 @@
 - [앱 정보·로고·스크린샷 규격](https://developers-apps-in-toss.toss.im/guide/operation/console-workspace)
 - [서비스 오픈 정책](https://developers-apps-in-toss.toss.im/intro/guide)
 - [미니앱 테스트](https://developers-apps-in-toss.toss.im/guide/operation/toss)
+
+## 2026-09-27 추가 반려 대응 — 외부 링크
+
+- 반려: `서비스 이용을 위한 외부 링크가 정상적으로 열리지 않아요` (`20260921-5`).
+- 원인: Toss runtime에서 `Device.openURL({ url })`을 호출하고 실패를 조용히 무시하는 구현이 남아 있었다. SDK 예제의 top-level `openURL(url)` 계약과 불일치했다.
+- 수정: `@apps-in-toss/web-framework`의 `openURL`을 직접 import해 모든 `data-external-url` 링크에 공통 적용한다.
+- 개인정보/서비스 이용/데이터 안내는 `.ait` origin 대신 `https://chart-view-toss.onrender.com/{privacy,terms,data-guide}.html` 고정 HTTPS URL을 사용한다.
+- 계약 테스트는 `Device.openURL` 재도입을 금지하고 top-level `openURL(url)` 사용을 필수로 검사한다.
+- 재제출 전 Sandbox 실기기에서 개인정보 안내, 이용 안내, 데이터 안내, 뉴스 원문, DART/KRX/FRED/Yahoo/Naver 링크를 각각 탭해 실제 외부 브라우저 전환을 확인한다.

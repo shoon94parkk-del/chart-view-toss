@@ -19,6 +19,7 @@ import { formatKst, formatCurrencyPrice, formatMacroValue, formatMacroChange, ob
 const WATCHLIST_KEY='chartview-toss-watchlist-v1';
 const SELECTED_KEY='chartview-toss-selected-v1';
 const DEFAULTS=[{symbol:'005930.KS',name:'삼성전자'},{symbol:'NVDA',name:'엔비디아'},{symbol:'AAPL',name:'애플'}];
+const PUBLIC_SITE_BASE='https://chart-view-toss.onrender.com';
 const COLORS=['#3182f6','#f04452','#00a86b','#8b5cf6','#f59f00','#00a8cc'];
 const DISPLAY_NAMES={'005930.KS':'삼성전자','000660.KS':'SK하이닉스','NVDA':'엔비디아','AAPL':'애플','MSFT':'마이크로소프트','META':'메타','TSLA':'테슬라','GOOGL':'알파벳','^KS11':'코스피','^KQ11':'코스닥','^GSPC':'S&P 500','^IXIC':'나스닥','^TNX':'미국 10년물','^VIX':'VIX','CL=F':'WTI','KRW=X':'원/달러'};
 const displayName=(symbol,fallback='')=>DISPLAY_NAMES[symbol]||fallback||symbol;
@@ -143,7 +144,11 @@ function bindNav(){
  document.querySelectorAll('[data-stock-detail]').forEach(b=>b.onclick=()=>navigate('detail',b.dataset.stockDetail));
  document.querySelectorAll('[data-retry-detail]').forEach(b=>b.onclick=renderDetail);
  document.querySelectorAll('[data-back]').forEach(b=>b.onclick=goBack);
- document.querySelectorAll('[data-external-url]').forEach(b=>b.onclick=()=>{haptic('tickWeak');openExternal(b.dataset.externalUrl)});
+ document.querySelectorAll('[data-external-url]').forEach(b=>b.onclick=async()=>{
+   haptic('tickWeak');
+   const opened=await openExternal(b.dataset.externalUrl);
+   if(!opened)showToast('외부 링크를 열지 못했어요. 잠시 후 다시 시도해주세요.');
+ });
 }
 function cleanupChart(){analysisCleanup?.();analysisCleanup=null;viewEpoch++;chartLoadSeq++;chartResizeObserver?.disconnect();chartResizeObserver=null;if(chartInstance){try{chartInstance.remove()}catch{}chartInstance=null}}
 
@@ -656,7 +661,6 @@ async function renderNews(){
 function renderInfo(){
  cleanupChart();
  const epoch=viewEpoch;
- const origin=location.origin;
  document.querySelector('#app').innerHTML=shell(`
    <section class="page-intro rich-intro subpage-hero info-hero"><span class="page-kicker">DATA & SERVICE</span><h2>숫자를 보기 전에<br><em>기준부터</em> 확인하세요</h2><p>Chart View가 데이터를 보여주는 방식과 이용 시 알아둘 내용을 정리했어요.</p></section>
    <section class="info-stack">
@@ -666,7 +670,7 @@ function renderInfo(){
      <article class="info-card"><span class="info-icon coral">${iconSvg('news',21)}</span><div><strong>뉴스</strong><p>뉴스는 외부 매체의 기사 제목·링크를 모아 보여주며 기사 내용과 정확성에 대한 책임은 해당 제공처에 있어요.</p></div></article>
    </section>
    <section class="release-notice"><strong>투자 판단 안내</strong><p>Chart View의 모든 정보는 정보 제공 목적이며 특정 종목의 매수·매도 또는 투자 성과를 보장하거나 권유하지 않아요. 최종 투자 판단은 이용자가 직접 해야 해요.</p></section>
-   <div class="policy-links"><button data-external-url="${esc(origin+'/privacy.html')}"><span>개인정보 처리 안내</span>${iconSvg('arrow',18)}</button><button data-external-url="${esc(origin+'/terms.html')}"><span>서비스 이용 안내</span>${iconSvg('arrow',18)}</button><button data-external-url="${esc(origin+'/data-guide.html')}"><span>데이터 기준 전체 보기</span>${iconSvg('arrow',18)}</button><div class="analysis-card"><strong>고객문의 · 박상훈</strong><p>kimtang89@naver.com</p></div></div>
+   <div class="policy-links"><button data-external-url="${esc(PUBLIC_SITE_BASE+'/privacy.html')}"><span>개인정보 처리 안내</span>${iconSvg('arrow',18)}</button><button data-external-url="${esc(PUBLIC_SITE_BASE+'/terms.html')}"><span>서비스 이용 안내</span>${iconSvg('arrow',18)}</button><button data-external-url="${esc(PUBLIC_SITE_BASE+'/data-guide.html')}"><span>데이터 기준 전체 보기</span>${iconSvg('arrow',18)}</button><div class="analysis-card"><strong>고객문의 · 박상훈</strong><p>kimtang89@naver.com</p></div></div>
    <section class="local-data-card"><div><strong>기기 저장 데이터</strong><p>관심종목과 비교 종목은 현재 이 기기에 저장돼요. 토스 익명 식별키로 사용자별 목록을 구분하며, 초기화하면 현재 사용자의 목록과 이용 기록을 삭제합니다.</p></div><button id="clear-local-data" type="button">기기 데이터 초기화</button></section>
  `,'데이터 안내');
  bindNav();
@@ -713,7 +717,7 @@ function renderMore(){
      <button class="feature-row" data-tab="info"><span class="feature-icon blue">${iconSvg('spark',22)}</span><span><strong>데이터 및 이용 안내</strong><small>기준·지연·개인정보·지원 안내</small></span><b>${iconSvg('arrow',19)}</b></button>
      <div class="feature-row"><span><strong>고객문의</strong><small>박상훈 · kimtang89@naver.com</small></span></div>
    </div></section>
-   <div class="version-card"><span class="brand-mark">${iconSvg('spark',16)}</span><div><strong>Chart View</strong><small>버전 0.9.1</small></div></div>
+   <div class="version-card"><span class="brand-mark">${iconSvg('spark',16)}</span><div><strong>Chart View</strong><small>버전 0.9.2</small></div></div>
  `,'전체');
  bindNav();
 }
@@ -777,5 +781,5 @@ async function startApp(){
 startApp();
 // Opt-in support diagnostics: aggregate timings only, local to this app session.
 if(new URLSearchParams(location.search).get('diagnostics')==='1') {
- Object.defineProperty(window,'chartviewDiagnostics',{value:()=>({version:'0.9.1',metrics:diagnosticSummary()}),configurable:true});
+ Object.defineProperty(window,'chartviewDiagnostics',{value:()=>({version:'0.9.2',metrics:diagnosticSummary()}),configurable:true});
 }
