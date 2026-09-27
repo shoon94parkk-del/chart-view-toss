@@ -85,3 +85,5 @@ Toss-specific navigation, safe-area, storage, SDK bridge, and release logic belo
 - `/api/home-live` 이벤트는 홈 대표 히트맵과 해당되는 관심종목 시세만 부분 갱신하며 전체 Home 재렌더를 유발하지 않는다.
 
 - 2026-09-27 심사 반려: `20260921-5`가 외부 링크 미동작으로 반려됐다. Toss runtime 외부 링크는 반드시 `@apps-in-toss/web-framework`의 top-level `openURL(url)`을 사용하고, 정책 페이지는 `.ait`의 `location.origin`이 아니라 공개 고정 HTTPS URL을 사용한다.
+
+- 2026-09-27 재심사 QA: 320px Home 히트맵에서 Tesla/AMD small cell이 라벨+등락률 2줄 때문에 잘리는 회귀가 검출됐다. Home의 very-tight 셀은 식별 라벨을 남기고 등락률을 우선 생략한다.
