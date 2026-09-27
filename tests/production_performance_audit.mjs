@@ -1,6 +1,6 @@
 import { chromium } from 'playwright';
 
-// audit-run: p0-compare-swr-20260928
+// audit-run: p0-compare-fastpath-20260928
 
 // audit-run: default-analysis-prewarm-20260928
 const BASE=process.env.PERF_BASE_URL||'https://chart-view-toss.onrender.com';
@@ -38,7 +38,14 @@ function apiCollector(page){
     const start=starts.get(req);
     if(start==null)return;
     const url=new URL(req.url());
-    rows.push({path:url.pathname,ms:round(performance.now()-start),status:res.status()});
+    let meta=null;
+    if(url.pathname==='/api/compare'){
+      try{
+        const body=await res.json();
+        meta={cacheHits:Number(body?.cacheHits??-1),providerFetches:Number(body?.providerFetches??-1)};
+      }catch{}
+    }
+    rows.push({path:url.pathname,ms:round(performance.now()-start),status:res.status(),meta});
   };
   page.on('request',onRequest);
   page.on('response',onResponse);
@@ -81,7 +88,8 @@ function apiSummary(rows){
     path,
     calls:list.length,
     ms:Math.max(...list.map(x=>x.ms)),
-    status:list.map(x=>x.status).join(',')
+    status:list.map(x=>x.status).join(','),
+    meta:list.find(x=>x.meta)?.meta||null
   })).sort((a,b)=>b.ms-a.ms);
 }
 
@@ -147,7 +155,8 @@ const table=[
   '|---|---:|---:|---:|---:|---|',
   ...results.map(r=>{
     const api=[...(r.apiCold||[]),...(r.apiSpa||[])].sort((a,b)=>b.ms-a.ms)[0];
-    return `| ${r.label} | ${r.coldMs}ms | ${r.spaMs}ms | ${r.coldShellMs}ms | ${r.navTtfbMs}ms | ${api?`${api.path} ${api.ms}ms`:'없음'} |`;
+    const meta=api?.meta?` · cache ${api.meta.cacheHits}/fetch ${api.meta.providerFetches}`:'';
+    return `| ${r.label} | ${r.coldMs}ms | ${r.spaMs}ms | ${r.coldShellMs}ms | ${r.navTtfbMs}ms | ${api?`${api.path} ${api.ms}ms${meta}`:'없음'} |`;
   })
 ].join('\n');
 console.log('\nPERF_TABLE\n'+table);
