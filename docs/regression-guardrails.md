@@ -60,3 +60,5 @@ Last updated: 2026-09-22
 - Apps in Toss 외부 링크에 `Device.openURL`을 사용하지 않는다. top-level SDK `openURL(url)`만 사용하며 AIT contract가 이를 강제한다.
 - 개인정보/이용약관/데이터 안내 링크는 `.ait`의 `location.origin`에 의존하지 않는다. 검토자가 누르는 필수 링크는 공개 HTTPS 절대주소여야 한다.
 - 외부 링크 실패를 silent no-op으로 처리하지 않는다. 사용자에게 실패/재시도 피드백을 제공한다.
+
+- 320px Home 히트맵의 very-tight 셀은 티커/축약명 자체보다 등락률을 먼저 생략한다. 작은 셀에서 두 줄을 억지로 유지해 텍스트가 잘리는 상태는 배포 차단 회귀다.
