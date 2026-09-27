@@ -125,3 +125,15 @@ test('dense full heatmap de-emphasizes tiny cells instead of oversized ticker te
   const usChanges = (html.match(/market-us-cell[^>]*>[\s\S]*?home-heatmap-change/g) || []).length;
   assert.ok(usChanges >= 20, `US dense view should preserve many visible return labels; found ${usChanges}`);
 });
+
+
+test('Home compact US cells prefer ticker labels over longer display names', () => {
+  const narrow = {
+    generatedAt: payload.generatedAt,
+    results: payload.results.map((row) => row.ticker === 'TSLA'
+      ? { ...row, marketCap: 0.25e12, name: '테슬라' }
+      : row),
+  };
+  const html = renderSharedHeatmap(narrow, { scope: 'home' });
+  assert.match(html, />TSLA<\/strong>/);
+});
