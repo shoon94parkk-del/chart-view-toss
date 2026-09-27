@@ -56,3 +56,7 @@ Last updated: 2026-09-22
 - 장중 Home 갱신은 사용자별 외부 provider 조회로 되돌리지 않는다. 클라이언트는 `/api/home-live` 공유 캐시만 읽어야 한다.
 - Home live polling은 document가 hidden일 때 중지되고 visible 복귀 시 즉시 재개되어야 한다. `setInterval` 기반의 백그라운드 무한 polling은 금지한다.
 - Home live 주기는 약 10초이며 방문자별 9~12초 jitter를 사용해 동시 요청 스파이크를 완화한다. heartbeat는 서버가 반환한 `heartbeatSec`(기본 20초)을 따른다.
+
+- Apps in Toss 외부 링크에 `Device.openURL`을 사용하지 않는다. top-level SDK `openURL(url)`만 사용하며 AIT contract가 이를 강제한다.
+- 개인정보/이용약관/데이터 안내 링크는 `.ait`의 `location.origin`에 의존하지 않는다. 검토자가 누르는 필수 링크는 공개 HTTPS 절대주소여야 한다.
+- 외부 링크 실패를 silent no-op으로 처리하지 않는다. 사용자에게 실패/재시도 피드백을 제공한다.
