@@ -37,7 +37,7 @@ v0.8 release-plan implementation:
 - Apps in Toss WebView SDK 3.5.0 pinned
 - `apps-in-toss.config.ts` for `chartview` with native navigation bar enabled
 - native back-event bridge on sub-pages while preserving the platform root-exit behavior
-- native `Device.openURL` for news links with browser fallback
+- native SDK `openURL(url)` for external/news/policy links with browser fallback
 - best-effort native haptic feedback with browser-safe fallback
 - Apps in Toss runtime hides the duplicate custom top bar and defers to the native navigation bar
 - `/chart`, `/valuation`, `/macro`, `/discover`, `/news`, `/watch`, `/stock/:symbol` entry-route support for future major-feature deep links
@@ -97,3 +97,9 @@ Operational gates still required before public release:
 ## 2026-09-21 앱인토스 재등록
 
 반려 대응, 검증 결과, 남은 기기·정책 확인은 docs/REVIEW_FIXES_20260921.md를 참고하세요.
+
+## 2026-09-27 외부 링크 반려 대응
+
+- Apps in Toss 외부 링크는 `Device.openURL`이 아니라 SDK top-level `openURL(url)`을 사용한다.
+- 개인정보/서비스 이용/데이터 기준 안내는 `.ait` 런타임 origin에 의존하지 않고 `https://chart-view-toss.onrender.com`의 고정 HTTPS 페이지를 연다.
+- 외부 링크 열기 실패는 조용히 무시하지 않고 사용자에게 재시도 안내를 표시한다.
