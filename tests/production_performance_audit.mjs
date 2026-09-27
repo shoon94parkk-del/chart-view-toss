@@ -1,6 +1,6 @@
 import { chromium } from 'playwright';
 
-// audit-run: p0-measurement-generation-fix-20260928
+// audit-run: p0-valuation-swr-live-20260928
 
 // audit-run: default-analysis-prewarm-20260928
 const BASE=process.env.PERF_BASE_URL||'https://chart-view-toss.onrender.com';
@@ -41,7 +41,7 @@ function apiCollector(page){
     const start=marker.started;
     const url=new URL(req.url());
     let meta=null;
-    if(url.pathname==='/api/compare'){
+    if(url.pathname==='/api/compare'||url.pathname==='/api/valuation'){
       try{
         const body=await res.json();
         meta={cacheHits:Number(body?.cacheHits??-1),providerFetches:Number(body?.providerFetches??-1)};
