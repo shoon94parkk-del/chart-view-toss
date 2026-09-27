@@ -156,7 +156,9 @@ const heatmapMarketMarkup = (payload, market, scope = 'home') => {
   return rects.map(({ item, x, y, width, height }) => {
     const area = width * height;
     const size = area >= 0.12 ? 'is-large' : area >= 0.055 ? 'is-medium' : 'is-small';
-    const hideLabel = full && (area < 0.006 || width < 0.048 || height < 0.075);
+    const hideLabel = full
+      ? (area < 0.006 || width < 0.048 || height < 0.075)
+      : (market === 'US' && (width < 0.08 || height < 0.10 || area < 0.012));
     const micro = full && !hideLabel && (area < 0.014 || width < 0.082 || height < 0.115);
     const tickerOnly = full && !hideLabel && (micro || area < 0.024 || width < 0.125 || height < 0.16);
     const veryTight = !full && (width < 0.145 || height < 0.18 || area < 0.028);
@@ -186,7 +188,7 @@ const heatmapMarketMarkup = (payload, market, scope = 'home') => {
           ? !micro && (!tickerOnly || height >= 0.14)
           : !veryTight || (width >= 0.12 && height >= 0.20 && area >= 0.025)
     );
-    const classes = [toneClass(item.change), size, market === 'KR' ? 'market-kr-cell' : 'market-us-cell', hideLabel ? 'is-label-hidden' : '', micro ? 'is-micro' : '', tickerOnly ? 'is-ticker-only' : ''].filter(Boolean).join(' ');
+    const classes = [toneClass(item.change), size, market === 'KR' ? 'market-kr-cell' : 'market-us-cell', compact ? 'is-compact' : '', hideLabel ? 'is-label-hidden' : '', micro ? 'is-micro' : '', tickerOnly ? 'is-ticker-only' : ''].filter(Boolean).join(' ');
     return `<div class="home-heatmap-cell ${classes}" style="left:${(x * 100).toFixed(3)}%;top:${(y * 100).toFixed(3)}%;width:${(width * 100).toFixed(3)}%;height:${(height * 100).toFixed(3)}%" role="button" tabindex="0" data-stock-detail="${esc(item.ticker)}" aria-label="${esc(item.name)} ${esc(change)}">${labelMarkup}${showChange ? `<span class="home-heatmap-change">${esc(change)}</span>` : ''}</div>`;
   }).join('');
 };

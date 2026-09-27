@@ -57,7 +57,8 @@
   .home-heatmap-treemap{height:154px}
   .home-heatmap-name strong,.home-heatmap-change{font-size:9px}
   .home-heatmap-cell.is-small .home-heatmap-name strong,.home-heatmap-cell.is-small .home-heatmap-change{font-size:7px}
-  #home-daily-heatmap .home-heatmap-cell.is-small .home-heatmap-change{display:none}
+  #home-daily-heatmap .home-heatmap-cell.is-compact .home-heatmap-change{display:none}
+  #home-daily-heatmap .home-heatmap-cell.is-label-hidden>*{display:none!important}
 }
 
 .shared-heatmap-analysis .full-heatmap-board{gap:12px}
