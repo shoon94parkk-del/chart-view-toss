@@ -38,7 +38,7 @@ const HOME_MARKET_EXTRA=[
 const displayName=(symbol,fallback='')=>DISPLAY_NAMES[symbol]||fallback||symbol;
 const fmtPrice=(value)=>{const n=finiteNumber(value);if(n===null)return '-';if(Math.abs(n)>=1000)return n.toLocaleString('ko-KR',{maximumFractionDigits:2});if(Math.abs(n)>=100)return n.toLocaleString('ko-KR',{maximumFractionDigits:2});return n.toLocaleString('ko-KR',{maximumFractionDigits:3})};
 const fmtChange=(value)=>{const n=finiteNumber(value);if(n===null)return '-';return `${n>0?'+':''}${n.toFixed(2)}%`};
-const state={tab:'home',watchlist:load(WATCHLIST_KEY,[]),selected:load(SELECTED_KEY,DEFAULTS.map(x=>x.symbol)),period:'1mo',customRange:null,detailSymbol:null,valuationMetric:'forwardPE',watchSort:'manual',newsSort:'major',detailPeriod:'3mo'};
+const state={tab:'home',watchlist:load(WATCHLIST_KEY,[]),selected:load(SELECTED_KEY,DEFAULTS.map(x=>x.symbol)),period:'1mo',customRange:null,detailSymbol:null,detailName:'',valuationMetric:'forwardPE',watchSort:'manual',newsSort:'major',detailPeriod:'3mo'};
 let chartInstance=null;
 let chartResizeObserver=null;
 let detailLiveTimer=null;
@@ -141,24 +141,28 @@ function sectionTitle(title,action=''){return `<div class="section-head"><h2>${t
 function stockRow(x){const name=displayName(x.symbol,x.name);return `<button class="stock-row" data-stock-detail="${x.symbol}"><span class="stock-logo">${esc(name.slice(0,1))}</span><span class="stock-copy"><strong>${esc(name)}</strong><small>${esc(x.symbol)}</small></span><span class="chevron">${iconSvg('arrow',18)}</span></button>`}
 function esc(v=''){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 
-function navigate(tab,detailSymbol=null){
- if(tab===state.tab&&(!detailSymbol||detailSymbol===state.detailSymbol)){window.scrollTo(0,0);return;}
+function navigate(tab,detailSymbol=null,detailName=''){
+ if(tab===state.tab&&(!detailSymbol||detailSymbol===state.detailSymbol)){
+   if(detailSymbol&&detailName)state.detailName=detailName;
+   window.scrollTo(0,0);
+   return;
+ }
  scrollPositions.set(location.hash||'#home',window.scrollY);
  closeStockSelector();
  state.tab=tab;
- if(detailSymbol)state.detailSymbol=detailSymbol;
+ if(detailSymbol){state.detailSymbol=detailSymbol;state.detailName=detailName||'';}
  const hash=detailSymbol?`#${tab}/${encodeURIComponent(detailSymbol)}`:`#${tab}`;
- history.pushState({tab,detailSymbol:state.detailSymbol},'',hash);
+ history.pushState({tab,detailSymbol:state.detailSymbol,detailName:state.detailName},'',hash);
  navigationDepth+=1;
  haptic('tickWeak');
  render();
  window.scrollTo(0,0);
 }
-window.__chartviewNavigate=(tab,detailSymbol=null)=>navigate(tab,detailSymbol);
+window.__chartviewNavigate=(tab,detailSymbol=null,detailName='')=>navigate(tab,detailSymbol,detailName);
 function bindNav(){
  document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>navigate(b.dataset.tab));
  document.querySelectorAll('[data-go-chart]').forEach(b=>b.onclick=()=>navigate('chart'));
- document.querySelectorAll('[data-stock-detail]').forEach(b=>b.onclick=()=>navigate('detail',b.dataset.stockDetail));
+ document.querySelectorAll('[data-stock-detail]').forEach(b=>b.onclick=()=>navigate('detail',b.dataset.stockDetail,b.dataset.stockName||''));
  document.querySelectorAll('[data-retry-detail]').forEach(b=>b.onclick=renderDetail);
  document.querySelectorAll('[data-back]').forEach(b=>b.onclick=goBack);
  document.querySelectorAll('[data-external-url]').forEach(b=>b.onclick=async()=>{
@@ -704,7 +708,7 @@ async function renderDetail(){
  const epoch=viewEpoch;
  const symbol=state.detailSymbol||state.selected[0]||'005930.KS';
  const saved=state.watchlist.find(x=>x.symbol===symbol);
- const knownName=displayName(symbol,saved?.name||symbol);
+ const knownName=displayName(symbol,saved?.name||state.detailName||symbol);
  document.querySelector('#app').innerHTML=shell(`
    <section class="detail-compact-head">
      <div class="detail-brand"><span class="detail-logo">${esc(knownName.slice(0,1))}</span><div><span>${esc(symbol)}</span><h2>${esc(knownName)}</h2></div></div>
@@ -923,7 +927,11 @@ function render(){
  return renderHome();
 }
 
-function syncFromLocation(){ Object.assign(state,resolveRoute(location)); }
+function syncFromLocation(){
+ const route=resolveRoute(location);
+ Object.assign(state,route);
+ state.detailName=route.tab==='detail'?(history.state?.detailName||''):'';
+}
 
 applyRuntimeClass();
 window.addEventListener('popstate',()=>{navigationDepth=Math.max(0,navigationDepth-1);closeStockSelector();syncFromLocation();render();requestAnimationFrame(()=>window.scrollTo(0,scrollPositions.get(location.hash||'#home')||0))});
