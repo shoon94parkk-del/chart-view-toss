@@ -1,6 +1,6 @@
 import { chromium } from 'playwright';
 
-// audit-run: p0-valuation-swr-live-20260928
+// audit-run: p0-live-freshness-production-20260928
 
 // audit-run: default-analysis-prewarm-20260928
 const BASE=process.env.PERF_BASE_URL||'https://chart-view-toss.onrender.com';
@@ -171,3 +171,36 @@ if(process.env.GITHUB_STEP_SUMMARY){
   const fs=await import('node:fs');
   fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY,'## Chart View Toss route performance\n\n'+table+'\n');
 }
+
+
+async function observeLiveCadence(){
+  const browser=await chromium.launch({headless:true});
+  const context=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:1});
+  await seed(context);
+  const page=await context.newPage();
+  await page.goto(`${BASE}/#home`,{waitUntil:'domcontentloaded',timeout:30000});
+  await waitReady(page,routes[0]);
+  const started=performance.now();
+  const calls=[];
+  const onRequest=req=>{
+    try{
+      const url=new URL(req.url());
+      if(url.hostname==='chart-view-pkv8.onrender.com'&&(url.pathname==='/api/home-live'||url.pathname==='/api/market-now')){
+        calls.push({path:url.pathname,atMs:round(performance.now()-started)});
+      }
+    }catch{}
+  };
+  page.on('request',onRequest);
+  await sleep(18_500);
+  page.off('request',onRequest);
+  const grouped={};
+  for(const call of calls)(grouped[call.path]??=[]).push(call.atMs);
+  console.log('LIVE_CADENCE '+JSON.stringify(grouped));
+  if(process.env.GITHUB_STEP_SUMMARY){
+    const fs=await import('node:fs');
+    fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY,'\n## Live Home cadence\n\n```json\n'+JSON.stringify(grouped,null,2)+'\n```\n');
+  }
+  await context.close();
+  await browser.close();
+}
+await observeLiveCadence();
