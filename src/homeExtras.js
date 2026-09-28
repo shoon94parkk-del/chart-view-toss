@@ -3,6 +3,7 @@ import { HOME_LOGOS } from './homeLogos.js';
 import { HOME_STOCK_META, renderSharedHeatmap } from './heatmapView.js';
 import { readHomeFast, writeHomeFast } from './homeFastCache.js';
 import { mergeLiveRows } from './liveHomeSync.js';
+import { rememberLiveQuotes, getLiveQuote } from './liveQuoteStore.js';
 
 const STOCK_META = HOME_STOCK_META;
 
@@ -299,10 +300,12 @@ document.addEventListener('chartview:home-live', (event) => {
   const host = document.querySelector('#home-daily-heatmap');
   const liveRows = Array.isArray(event.detail?.results) ? event.detail.results : [];
   if (!host || !liveRows.length) return;
+  rememberLiveQuotes(liveRows);
+  const canonicalRows = liveRows.map((row) => getLiveQuote(row?.ticker) || row);
   const cached = readHomeFast('snapshot', 6 * 60 * 60 * 1000);
   const baseRows = cached?.heatmap?.results;
   if (!Array.isArray(baseRows) || !baseRows.length) return;
-  const rows = mergeLiveRows(baseRows, liveRows);
+  const rows = mergeLiveRows(baseRows, canonicalRows);
   const generatedAt = event.detail?.updatedAt || cached.generatedAt || cached.heatmap?.generatedAt || '';
   const next = {
     ...cached,
