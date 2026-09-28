@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {formatCurrencyPrice,formatMacroValue,formatMacroChange,formatChartDate,formatMetricPeriod,macroFreshness,relationBasisLabel} from '../src/dataPresentation.js';
+import {formatCurrencyPrice,formatMacroValue,formatMacroChange,formatChartDate,formatMetricPeriod,macroFreshness,relationBasisLabel,translatedTag} from '../src/dataPresentation.js';
 test('missing market values are never shown as zero prices or changes',()=>{
  assert.equal(formatCurrencyPrice(null,'KRW'),'-');
  assert.equal(formatMacroValue({symbol:'PCEPI',value:null}),'-');
@@ -18,7 +18,8 @@ test('chart dates render as Korean calendar dates for all Lightweight Charts tim
 test('valuation periods use readable labels and explicit missing state',()=>{
  assert.equal(formatMetricPeriod('TTM'),'최근 12개월 실적');
  assert.equal(formatMetricPeriod('FY+1'),'다음 회계연도 예상');
- assert.equal(formatMetricPeriod('FY 2026'),'FY 2026');
+ assert.equal(formatMetricPeriod('FY 2026'),'2026 회계연도');
+ assert.equal(formatMetricPeriod('provider forward period'),'공급자 기간 기준 확인 필요');
  assert.equal(formatMetricPeriod(undefined),'기준기간 미제공');
 });
 
@@ -32,5 +33,9 @@ test('macro freshness is derived from observation date and frequency',()=>{
 
 test('news relation basis translates known backend English labels',()=>{
  assert.equal(relationBasisLabel('title entity match'),'제목에서 기업명 확인');
- assert.equal(relationBasisLabel('관련 업종 키워드 확인: hbm'),'관련 업종 키워드 확인: hbm');
+ assert.equal(relationBasisLabel('관련 업종 키워드 확인: hbm'),'관련 업종 키워드 확인: HBM');
+ assert.equal(relationBasisLabel('internal relation score'),'관련 키워드 확인');
+ assert.equal(translatedTag('strategy'),'전략');
+ assert.equal(translatedTag('analyst'),'애널리스트 분석');
+ assert.equal(translatedTag('unmapped internal tag'),'기타 분류');
 });

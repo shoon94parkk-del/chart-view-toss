@@ -38,12 +38,14 @@ export function formatMetricPeriod(value) {
   if (!period) return '기준기간 미제공';
   if (/^FY\+1(?:\s|$)/i.test(period)) return '다음 회계연도 예상';
   if (/^TTM(?:\s|$)/i.test(period)) return '최근 12개월 실적';
+  const fiscalYear = period.match(/^FY\s*(\d{4})$/i);
+  if (fiscalYear) return `${fiscalYear[1]} 회계연도`;
   const labels = {
     TTM: '최근 12개월 실적', 'FY+1': '다음 회계연도 예상', FY: '회계연도',
     'FY+2': '2년 후 회계연도 예상', 'LTM': '최근 12개월 실적',
     'MRQ': '최근 분기', 'Last Quarter': '최근 분기', 'Next Year': '다음 회계연도 예상',
   };
-  return labels[period] || period;
+  return labels[period] || (/[A-Za-z]/.test(period) ? '공급자 기간 기준 확인 필요' : period);
 }
 
 const MONTHLY_MACRO = new Set(['PCEPI','PCETRIM12M159SFRBDAL','UNRATE']);
@@ -61,6 +63,7 @@ export function macroFreshness(row, now = Date.now()) {
 
 export function relationBasisLabel(value) {
   const basis = String(value || '').trim();
+  if (basis.startsWith('관련 업종 키워드 확인')) return basis.replace(/[a-z]+/gi,word=>word.toUpperCase());
   const translations = {
     'title entity match': '제목에서 기업명 확인',
     'company name in title': '제목에서 기업명 확인',
@@ -68,7 +71,7 @@ export function relationBasisLabel(value) {
     'industry keyword match': '관련 업종 키워드 확인',
     'ticker match': '종목 코드 확인',
   };
-  return translations[basis.toLowerCase()] || basis;
+  return translations[basis.toLowerCase()] || (/[A-Za-z]/.test(basis) ? '관련 키워드 확인' : basis);
 }
 
 export function formatCurrencyPrice(value, currency) {
@@ -139,8 +142,10 @@ export function translatedTag(tag) {
     earnings:'실적', orders:'수주', guidance:'전망', dividend:'배당', buyback:'자사주',
     lawsuit:'소송', regulation:'규제', merger:'인수합병', acquisition:'인수',
     product:'제품', ai:'AI', semiconductor:'반도체', macro:'거시경제',
+    strategy:'전략', technology:'기술', capital:'자본', analyst:'애널리스트 분석',
   };
-  return map[String(tag || '').toLowerCase()] || String(tag || '');
+  const value=String(tag || '');
+  return map[value.toLowerCase()] || (/[A-Za-z]/.test(value) ? '기타 분류' : value);
 }
 
 export function titleLanguage(title) {
