@@ -84,3 +84,7 @@ Last updated: 2026-09-22
 ### Heatmap/detail round-trip guardrail
 - A heatmap click must preserve the visible company identity in the detail header; raw ticker-only detail is a regression when the heatmap already knows the company name.
 - Returning from detail must not remove the viewed heatmap stock. Null/undefined fields from a live quote must never overwrite valid structural fields such as `marketCap`, `name`, or market identity used by the treemap filter/layout.
+
+### Watchlist quote rollback guardrail
+- Opening Watchlist must not replace a newer in-session quote with an older API/browser-cache row for the same ticker.
+- Home watch cards, dedicated Watchlist cards, Heatmap, and Detail should converge through `liveQuoteStore`; raw response order is never a freshness guarantee.
