@@ -11,7 +11,7 @@ const scope=readFileSync(new URL('../src/releaseScope.js',import.meta.url),'utf8
 test('PICK management combines recommendation performance and monitoring',()=>{
   assert.match(api,/pick_monitor\.json/);
   assert.match(ledger,/homeBootstrap, pickMonitor/);
-  for(const token of ['PICK 관리','누적 추천일','누적 추천','플러스 비율','평균 수익률','유지','경계','매도검토','검토 대기','추천 당시 이유','투자논리 기준선','최근 점검','검증 근거']){
+  for(const token of ['최근 주목받는 종목','누적 추천일','누적 추천','플러스 비율','평균 수익률','유지','경계','매도검토','검토 대기','추천 당시 이유','투자논리 기준선','최근 점검','검증 근거']){
     assert.ok(ledger.includes(token),`missing unified PICK token: ${token}`);
   }
 });
@@ -21,11 +21,14 @@ test('PICK management keeps review-only sell semantics',()=>{
   assert.ok(ledger.includes('사용자 확인 필요'));
 });
 
-test('PICK source is preserved but Toss release scope hides its navigation',()=>{
-  assert.match(scope,/TOSS_RECOMMENDATIONS_ALLOWED = false/);
-  assert.ok(main.includes('TOSS_RECOMMENDATIONS_ALLOWED?`<button class="feature-row" data-tab="picks"'));
-  assert.ok(home.includes('if (TOSS_RECOMMENDATIONS_ALLOWED) {'));
-  assert.ok(home.includes('data-home-extra-route="picks">PICK 관리</button>'));
+test('recent spotlight restores existing selection and PICK navigation',()=>{
+  assert.match(scope,/SHOW_SPOTLIGHT = true/);
+  assert.ok(main.includes('SHOW_SPOTLIGHT?`<button class="feature-row" data-tab="picks"'));
+  assert.ok(home.includes('if (SHOW_SPOTLIGHT) {'));
+  assert.ok(home.includes('최근 주목받는 종목'));
+  assert.ok(main.includes('<strong>최근 주목받는 종목</strong>'));
+  assert.ok(ledger.includes('<h2>최근 주목받는 종목</h2>'));
+  assert.ok(home.includes('data-home-extra-route="picks">전체보기</button>'));
 });
 
 test('PICK monitoring failure does not blank recommendation performance',()=>{

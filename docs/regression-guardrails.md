@@ -18,7 +18,7 @@ Last updated: 2026-09-22
 - API timeout/retry/offline states remain visible and recoverable.
 - Late/stale responses cannot overwrite a newer route/selection.
 - Partial failures do not blank unrelated valid sections.
-- The Toss Home daily heatmap must not delay or blank market/watchlist sections. TOP3 is preserved only as dormant source pending separate policy approval.
+- The Toss Home daily heatmap and selected-stock section fail independently and must not delay or blank market/watchlist sections.
 - Chart comparison basis remains explicit: local currency, adjusted-close where applicable, no interpolation.
 - Macro source/unit/observation/change basis remain visible.
 - News direct vs industry/indirect relation remains distinguishable.
@@ -45,7 +45,7 @@ Last updated: 2026-09-22
 
 - 전체 히트맵의 작은 셀은 8px를 넘는 라벨을 사용하지 않는다. 극소 셀은 라벨을 숨길 수 있으며, 큰 티커가 셀 경계를 덮는 상태는 배포 차단 회귀다.
 - 홈 루트는 Apps in Toss 저장소 초기화를 기다린 뒤 처음 그리는 구조로 되돌리지 않는다. 홈의 비개인화 영역은 먼저 렌더되어야 한다.
-- 홈 시장/스냅샷 캐시는 첫 페인트용 stale 데이터일 뿐이며, 네트워크 최신값 요청은 계속 수행해 화면을 갱신한다. 토스 배포본은 종목발굴 캐시와 API를 요청하지 않는다.
+- 홈 시장/스냅샷/선정 종목 캐시는 첫 페인트용 stale 데이터일 뿐이며, 네트워크 최신값 요청은 계속 수행해 화면을 갱신한다.
 
 - 전체 히트맵 한국 보드의 가시 텍스트에 6자리 숫자 종목코드를 사용하지 않는다. 작은 셀도 기업명/축약명을 우선한다.
 - 전체 히트맵 미국 보드는 읽을 수 있는 셀 대부분에 등락률을 유지한다. 작은 셀 최적화 때문에 티커만 남고 등락률이 대거 사라지면 회귀다.
@@ -67,7 +67,7 @@ Last updated: 2026-09-22
 
 - Home compact geometry: 320~360px에서 `is-compact` 셀은 보조 등락률 텍스트를 숨기고, 미국 셀의 정규화 폭이 8% 미만인 극소 셀은 라벨 전체를 숨길 수 있다. 색상과 접근성 aria-label은 유지한다.
 
-- Toss `#picks`와 `/picks`는 Home으로 귀결되어야 한다. PICK 구현 파일은 보존하지만 토스 번들·메뉴·Home에는 추천 성과, 선정 TOP3, 사후점검 데이터가 없어야 한다. 별도 허용 답변 없이 참조용 문구만 바꿔 재노출하면 회귀다.
+- `#picks`와 `/picks`는 복원된 `최근 주목받는 종목` 기록 화면으로 진입해야 한다. 홈과 전체 메뉴에서도 같은 명칭을 쓴다. 데이터 산식과 선정 결과는 기존 PICK과 동일하게 유지한다. 이 화면은 추가 정책 확인 전까지 공개 Toss 출시 차단 항목이다.
 - PICK 상태의 `매도검토`는 사용자 확인 전 자동 매도/종료로 해석하거나 처리하지 않는다. 가격·차트 변화만으로 매도검토를 확정하지 않는다.
 
 - 경제지표 카드의 미니 차트는 `/api/macro`의 기존 `chart_data`를 사용해야 하며, 별도 네트워크 요청이나 heavyweight 차트 인스턴스를 추가하지 않는다. 320px 모바일에서 가로 오버플로가 없어야 한다.

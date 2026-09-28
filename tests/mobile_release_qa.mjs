@@ -179,7 +179,9 @@ try{
         await marketButton.click();
         if(await page.locator('#market-card .market-extra-card').count()) throw new Error(`${width}px Home market did not collapse`);
 
-        if(await page.locator('#home-top-picks-section,[data-tab="picks"]').count()) throw new Error(`${width}px recommendation entry leaked into Toss Home`);
+        await page.waitForSelector('#home-top-picks .home-pick-row');
+        if(await page.locator('#home-top-picks .home-pick-row').count()!==3) throw new Error(`${width}px spotlight selection missing`);
+        if(!(await page.locator('#home-top-picks-section').innerText()).includes('최근 주목받는 종목')) throw new Error(`${width}px spotlight title missing`);
         await page.waitForSelector('#home-daily-heatmap .home-heatmap-cell');
         if(await page.locator('#home-daily-heatmap .home-heatmap-cell').count()!==18) throw new Error(`${width}px home heatmap representative set mismatch`);
         if(await page.locator('#home-daily-heatmap .home-heatmap-logo').count()<3) throw new Error(`${width}px heatmap logos missing`);
@@ -234,7 +236,7 @@ try{
 
   const context=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:1});
   const page=await context.newPage();await seed(page);await installMocks(page);
-  for(const tab of ['valuation','macro','watch','news','heatmap','detail/005930.KS','more','info']){
+  for(const tab of ['valuation','macro','watch','news','picks','heatmap','detail/005930.KS','more','info']){
     await page.goto(`${BASE}/#${tab}`,{waitUntil:'networkidle'});
     await page.waitForTimeout(120);
     if(tab==='macro'){
@@ -262,7 +264,14 @@ try{
       const relationText=await page.locator('.news-context').first().innerText();
       if(relationText.includes('title entity match')) throw new Error(`news relation basis leaked English metadata: ${relationText}`);
     }
-    if(tab==='more'&&await page.locator('[data-tab="picks"]').count()) throw new Error('PICK entry leaked into Toss menu');
+    if(tab==='more'&&!(await page.locator('[data-tab="picks"]').innerText()).includes('최근 주목받는 종목')) throw new Error('Spotlight entry missing from menu');
+    if(tab==='picks'){
+      await page.waitForSelector('.pick-ledger-item');
+      const body=await page.locator('body').innerText();
+      if(!body.includes('최근 주목받는 종목')||!body.includes('추천 81,000원')||!body.includes('점검가 87,480원')||!body.includes('+8.00%')) throw new Error('Restored spotlight history missing');
+      await page.locator('.pick-ledger-row').first().click();
+      if(await page.locator('.pick-ledger-detail').first().isHidden()) throw new Error('Spotlight detail did not expand');
+    }
     if(tab==='heatmap'){
       await page.waitForSelector('#analysis-body .home-heatmap-cell');
       if(await page.locator('#analysis-body .home-heatmap-cell').count()!==60) throw new Error('full heatmap must show expanded 60-stock set');
@@ -317,17 +326,12 @@ try{
   const shortFooter=await page.locator('.selector-footer').boundingBox();
   if(!shortFooter||shortFooter.y+shortFooter.height>560) throw new Error('selector footer is outside reduced viewport');
   await page.screenshot({path:`${OUT}/360-selector-short-viewport.png`});
-  const recommendationCalls=[];
-  page.on('request',request=>{
-    if(/\/api\/home-bootstrap|\/static\/data\/pick_monitor\.json/.test(request.url())) recommendationCalls.push(request.url());
-  });
   await page.goto(`${BASE}/#picks`,{waitUntil:'networkidle'});
-  if(!await page.locator('#market-card').count()) throw new Error('PICK deep link must resolve to lookup-only Home');
-  if(await page.locator('#pick-ledger-list,#home-top-picks-section,[data-tab="picks"]').count()) throw new Error('PICK content leaked through deep link');
-  if(recommendationCalls.length) throw new Error(`Toss requested recommendation data: ${recommendationCalls.join(', ')}`);
+  await page.waitForSelector('.pick-ledger-item');
+  if(!(await page.locator('h2').first().innerText()).includes('최근 주목받는 종목')) throw new Error('PICK hash entry did not restore spotlight');
   await page.goto(`${BASE}/picks`,{waitUntil:'networkidle'});
-  if(!await page.locator('#market-card').count()) throw new Error('Legacy /picks path must resolve to lookup-only Home');
-  if(recommendationCalls.length) throw new Error(`Legacy path requested recommendation data: ${recommendationCalls.join(', ')}`);
+  await page.waitForSelector('.pick-ledger-item');
+  if(!(await page.locator('h2').first().innerText()).includes('최근 주목받는 종목')) throw new Error('PICK path entry did not restore spotlight');
   await context.close();
 
   const errorContext=await browser.newContext({viewport:{width:390,height:844}});

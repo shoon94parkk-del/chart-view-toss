@@ -4,7 +4,7 @@ import { HOME_STOCK_META, renderSharedHeatmap } from './heatmapView.js';
 import { readHomeFast, writeHomeFast } from './homeFastCache.js';
 import { mergeLiveRows } from './liveHomeSync.js';
 import { rememberLiveQuotes, getLiveQuote, mergeRowsWithLive } from './liveQuoteStore.js';
-import { TOSS_RECOMMENDATIONS_ALLOWED } from './releaseScope.js';
+import { SHOW_SPOTLIGHT } from './releaseScope.js';
 
 const STOCK_META = HOME_STOCK_META;
 
@@ -156,12 +156,12 @@ function heatmapMarketMarkup(payload, market) {
 
 function createSections(marketSection) {
   let picks = null;
-  if (TOSS_RECOMMENDATIONS_ALLOWED) {
+  if (SHOW_SPOTLIGHT) {
     picks = document.createElement('section');
     picks.className = 'section home-extra-section home-pick-section home-primary';
     picks.id = 'home-top-picks-section';
     picks.innerHTML =
-      '<div class="section-head"><h2>오늘 주목받는 종목</h2><button type="button" class="text-button" data-home-extra-route="picks">PICK 관리</button></div>' +
+      '<div class="section-head"><h2>최근 주목받는 종목</h2><button type="button" class="text-button" data-home-extra-route="picks">전체보기</button></div>' +
       '<div id="home-top-picks" class="home-pick-list"><div class="skeleton home-extra-skeleton"></div></div>';
   }
 
@@ -262,7 +262,7 @@ async function mount() {
   const token = ++generation;
   const sections = createSections(marketSection);
 
-  if (TOSS_RECOMMENDATIONS_ALLOWED) {
+  if (SHOW_SPOTLIGHT) {
     const cachedPicks = readHomeFast('bootstrap', 36 * 60 * 60 * 1000);
     if (cachedPicks) paintPicks(sections.picks.querySelector('#home-top-picks'), cachedPicks);
   }
@@ -274,7 +274,7 @@ async function mount() {
     });
   }
 
-  const picksTask = TOSS_RECOMMENDATIONS_ALLOWED ? homeBootstrap()
+  const picksTask = SHOW_SPOTLIGHT ? homeBootstrap()
     .then((payload) => {
       if (token !== generation || !sections.picks.isConnected) return;
       writeHomeFast('bootstrap', payload);

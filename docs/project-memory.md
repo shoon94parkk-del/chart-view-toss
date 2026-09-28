@@ -19,11 +19,11 @@ Toss-specific navigation, safe-area, storage, SDK bridge, and release logic belo
 - Toss-style mobile information hierarchy and bottom navigation.
 - Safe-area handling.
 - Home/chart/watchlist/more plus valuation, macro, discover, news, and stock-detail surfaces.
-- Home surfaces a market-cap-weighted daily-change heatmap using the shared Chart View backend. The earlier TOP3 implementation is retained in source but is outside the Toss release scope.
+- Home surfaces a market-cap-weighted daily-change heatmap and the restored user-selected stock list from the shared Chart View backend.
 - Heatmap medium/large cells use a small set of inline bundled SVG company marks (with text fallbacks), so logo recognition adds no separate image requests.
 - Heatmap labels are geometry-aware: curated short company names are preferred over provider legal names, logos are suppressed in cramped cells, and tiny cells fall back to compact labels to prevent clipping.
 - Heatmap cards use tighter padding, stronger contrast, and thinner cell seams. Logos sit inline with company names only when the cell can fit them; absolute overlays are prohibited because they can cover labels.
-- Historical Home discovery and PICK performance implementations remain in source for a separately approved scope; the Toss `0.9.3` bundle does not expose or request them. The user-operated market screener remains available.
+- In `0.9.4`, the operator requested Home selection and PICK history be restored under `최근 주목받는 종목`. This uses the existing data and requires separate Toss scope review before public submission; the user-operated market screener remains available.
 - Shared stock selector sheet and up to 6 selected tickers.
 - Device-local watchlist/selection.
 - In-app hash/history navigation and scroll restoration.

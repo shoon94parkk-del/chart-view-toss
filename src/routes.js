@@ -1,7 +1,7 @@
-import { TOSS_RECOMMENDATIONS_ALLOWED } from './releaseScope.js';
+import { SHOW_SPOTLIGHT } from './releaseScope.js';
 
 const routes = new Set(['home','chart','watch','valuation','macro','discover','news','detail','info','more','heatmap','consensus','bands','tools']);
-if (TOSS_RECOMMENDATIONS_ALLOWED) routes.add('picks');
+if (SHOW_SPOTLIGHT) routes.add('picks');
 const aliases = {chartviewHome:'chart',search:'chart',compare:'chart',stock:'detail'};
 export function resolveRoute({pathname='/',hash=''}) {
   const raw = hash ? hash.replace(/^#/,'') : pathname.replace(/^\//,'');
