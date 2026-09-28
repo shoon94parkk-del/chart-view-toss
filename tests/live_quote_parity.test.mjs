@@ -38,3 +38,14 @@ test('detail uses Home quote immediately and fresh-polls one symbol',async()=>{
   assert.ok(main.includes("detailLiveTimer=setTimeout(pullDetailLive,5_000)"));
   assert.ok(main.includes("persistLiveQuoteToHomeSnapshot(quote)"));
 });
+
+test('older Home live events cannot overwrite a newer detail quote',async()=>{
+  const fs=await import('node:fs/promises');
+  const [main,extras]=await Promise.all([
+    fs.readFile(new URL('../src/main.js',import.meta.url),'utf8'),
+    fs.readFile(new URL('../src/homeExtras.js',import.meta.url),'utf8'),
+  ]);
+  assert.ok(main.includes("const canonical=rows.map(row=>getLiveQuote(row?.ticker)||row)"));
+  assert.ok(extras.includes("const canonicalRows = liveRows.map((row) => getLiveQuote(row?.ticker) || row)"));
+  assert.ok(extras.includes("mergeLiveRows(baseRows, canonicalRows)"));
+});
