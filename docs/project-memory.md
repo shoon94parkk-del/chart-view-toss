@@ -111,3 +111,10 @@ Toss-specific navigation, safe-area, storage, SDK bridge, and release logic belo
 - Watchlist and Home-watch rows always pass fetched/browser-cached quote rows through the in-session `liveQuoteStore` before painting.
 - A late/stale `/api/quotes` response may populate missing symbols but may not repaint a symbol backward over a newer Home/detail quote.
 - Canonical rows, not the older raw response, are written back to the Home fast watch cache.
+
+
+### 2026-09-29 — Screener popular filters
+- Market Screener has one-tap popular presets: 거래량 급증, RSI 과매도, 강한 모멘텀, 골든크로스, 상승추세, 52주 신고가 근접, 눌림목 후보, MACD 강세.
+- A preset writes values into the same manual filter controls; users can refine them afterward.
+- Each matching result shows reason chips such as RSI, volume multiple, trend, MACD, or 52-week-high proximity.
+- Do not describe these end-of-day technical filters as buy/sell recommendations.

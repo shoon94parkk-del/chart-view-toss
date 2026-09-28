@@ -99,3 +99,7 @@ The operator wants the existing selected stocks under the title `오늘 주목�
 
 ## 2026-09-28 — Restore selected stocks as `최근 주목받는 종목`
 At the operator's explicit follow-up, `0.9.4` restores the previous Home selection and PICK history navigation while retaining the same backend data, metrics, and review detail. Home, menu, and history titles use `최근 주목받는 종목`; `#picks` and `/picks` work again. This reverses the `0.9.3` visibility gate but does not expand Apps in Toss's lookup-only policy answer. Public submission requires an additional answer covering the actual restored feature, including recommendation history and reasoning.
+
+
+## 2026-09-29 — Screener popular one-tap presets
+The market screener exposes horizontal mobile-friendly popular presets that fill the existing filter form rather than creating a second filtering engine. Presets cover volume surge, RSI oversold, strong momentum, 20/60 golden cross, price>20MA>60MA uptrend, 52-week-high proximity, pullback candidate, and MACD bullish. Result rows show the concrete conditions that matched. Manual edits clear the active-preset badge but keep the edited values. All results remain end-of-day technical filters, not recommendations.

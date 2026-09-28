@@ -12,7 +12,7 @@ try{
   await page.route('https://chart-view-pkv8.onrender.com/**',async route=>{
    const url=new URL(route.request().url()),path=url.pathname;
    let body={};
-   if(path==='/static/data/screener.json')body={tradeDate:'2026-09-21',stocks:Array.from({length:85},(_,i)=>({name:`검증 종목 ${i}`,symbol:`${String(i).padStart(6,'0')}.KS`,market:i%2?'KOSDAQ':'KOSPI',date:'2026-09-21',price:10000+i,change1d:i%3===0?null:i,volumeRatio:1.5,rsi14:45,ret20:2}))};
+   if(path==='/static/data/screener.json')body={tradeDate:'2026-09-21',stocks:Array.from({length:85},(_,i)=>({name:`검증 종목 ${i}`,symbol:`${String(i).padStart(6,'0')}.KS`,market:i%2?'KOSDAQ':'KOSPI',date:'2026-09-21',price:10000+i,change1d:i%3===0?null:i,volumeRatio:i%4===0?2.5:1.5,rsi14:i%5===0?28:i%3===0?62:48,ret20:2+i/10,ma20:9900,ma60:9500,macd:i%3===0?2:1,macdSignal:1.5,goldenCross2060:i%7===0,near52High:i%6===0,distance52HighPct:i%6===0?-1.5:-8,trend2060:true}))};
    if(path==='/static/data/heatmap.json')body={updated:'2026-09-21',sectors:[{name:'Technology',stocks:[{ticker:'AAPL',change:0,price:200},{ticker:'MSFT',change:-1,price:400}]}]};
    if(path==='/api/consensus')body={ticker:url.searchParams.get('ticker'),currency:'USD',asOf:'2026-09-21',source:'Test provider',periods:{'0y':{endDate:'2026-12-31',earnings:{avg:4,low:3,high:5,analysts:10},epsTrend:{current:4,'30daysAgo':3},revisions:{up30:1,down30:0},revenue:{avg:1000000}}}};
    if(path==='/api/valuation-band')body={source:'Test provider',generatedAt:'2026-09-21',method:'재무자료 시차 적용',per:{points:[{time:'2025-01-01',value:10},{time:'2026-01-01',value:20}],stats:{current:20,median:15,p20:12,p80:18,observations:2,start:'2025-01-01',end:'2026-01-01'}},pbr:{points:[],stats:null}};
@@ -28,6 +28,18 @@ try{
     await page.click('#screener-more');assert.equal(await page.locator('.analysis-stock').count(),60);
     await page.locator('[name=market]').selectOption('KOSDAQ');assert.match(await page.locator('.analysis-meta').innerText(),/42개/);
     await page.locator('[name=query]').fill('없는 종목');assert.equal(await page.locator('.analysis-stock').count(),0);
+    await page.getByRole('button',{name:'초기화',exact:true}).click();assert.equal(await page.locator('.analysis-stock').count(),30);
+    assert.ok(await page.locator('[data-screener-preset]').count()>=8,'popular presets missing');
+    await page.locator('[data-screener-preset="volume-surge"]').click();
+    assert.equal(await page.locator('[name=volumeMin]').inputValue(),'2');
+    assert.match(await page.locator('.screener-active-preset').innerText(),/거래량 급증/);
+    assert.ok((await page.locator('.analysis-stock').count())>0);
+    assert.match(await page.locator('.analysis-match-reasons').first().innerText(),/거래량/);
+    await page.locator('[data-screener-preset="rsi-oversold"]').click();
+    assert.equal(await page.locator('[name=rsiMax]').inputValue(),'30');
+    assert.match(await page.locator('.screener-active-preset').innerText(),/RSI 과매도/);
+    await page.locator('[data-screener-preset="golden-cross"]').click();
+    assert.equal(await page.locator('[name=signal]').inputValue(),'goldenCross2060');
     await page.getByRole('button',{name:'초기화',exact:true}).click();assert.equal(await page.locator('.analysis-stock').count(),30);
    }
    if(tab==='consensus'){await page.waitForSelector('.analysis-metrics');await page.selectOption('#consensus-period','+1y');assert.match(await page.locator('#analysis-body').innerText(),/제공되지/);}
