@@ -3,7 +3,7 @@ import { HOME_LOGOS } from './homeLogos.js';
 import { HOME_STOCK_META, renderSharedHeatmap } from './heatmapView.js';
 import { readHomeFast, writeHomeFast } from './homeFastCache.js';
 import { mergeLiveRows } from './liveHomeSync.js';
-import { rememberLiveQuotes, getLiveQuote } from './liveQuoteStore.js';
+import { rememberLiveQuotes, getLiveQuote, mergeRowsWithLive } from './liveQuoteStore.js';
 
 const STOCK_META = HOME_STOCK_META;
 
@@ -231,7 +231,8 @@ function paintPicks(host, payload) {
 
 function paintHeatmap(host, payload) {
   if (!host || !host.isConnected) return;
-  host.innerHTML = renderSharedHeatmap(payload);
+  rememberLiveQuotes(payload?.results || [], { priority: 20 });
+  host.innerHTML = renderSharedHeatmap({ ...payload, results: mergeRowsWithLive(payload?.results || []) });
   host.querySelectorAll('[data-stock-detail]').forEach((cell) => {
     const openDetail = () => navigate('detail', cell.dataset.stockDetail, cell.dataset.stockName || '');
     cell.addEventListener('click', openDetail);
@@ -277,7 +278,10 @@ async function mount() {
 
   const heatmapTask = homeSnapshot()
     .then((snapshot) => {
-      if (snapshot) writeHomeFast('snapshot', snapshot);
+      if (snapshot?.heatmap?.results?.length) {
+        rememberLiveQuotes(snapshot.heatmap.results, { priority: 20 });
+        writeHomeFast('snapshot', { ...snapshot, heatmap: { ...snapshot.heatmap, results: mergeRowsWithLive(snapshot.heatmap.results) } });
+      }
       if (snapshot && snapshot.heatmap && Array.isArray(snapshot.heatmap.results) && snapshot.heatmap.results.length) {
         return { results: snapshot.heatmap.results, generatedAt: snapshot.generatedAt || snapshot.heatmap.generatedAt || '' };
       }
@@ -300,7 +304,7 @@ document.addEventListener('chartview:home-live', (event) => {
   const host = document.querySelector('#home-daily-heatmap');
   const liveRows = Array.isArray(event.detail?.results) ? event.detail.results : [];
   if (!host || !liveRows.length) return;
-  rememberLiveQuotes(liveRows);
+  rememberLiveQuotes(liveRows, { priority: 30 });
   const canonicalRows = liveRows.map((row) => getLiveQuote(row?.ticker) || row);
   const cached = readHomeFast('snapshot', 6 * 60 * 60 * 1000);
   const baseRows = cached?.heatmap?.results;

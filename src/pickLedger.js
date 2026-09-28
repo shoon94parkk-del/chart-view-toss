@@ -58,7 +58,7 @@ function rowMarkup(row,index,displayName){
       <span class="pick-ledger-stock"><strong>${esc(name)}</strong><small>${esc(symbol||row?.code||'')} · ${esc(row?.recommendedDate||'추천일 미제공')}</small></span>
       <span class="pick-ledger-status ${meta.cls}">${meta.icon} ${meta.label}</span>
       <span class="pick-ledger-return ${tone(row?.returnPct)}">${pct(row?.returnPct)}</span>
-      <span class="pick-ledger-prices"><small>추천 ${esc(price(row?.recommendedPrice,row))}</small><b>→</b><small>현재 ${esc(price(row?.currentPrice,row))}</small></span>
+      <span class="pick-ledger-prices"><small>추천 ${esc(price(row?.recommendedPrice,row))}</small><b>→</b><small>점검가 ${esc(price(row?.currentPrice,row))}</small></span>
       <span class="pick-ledger-secondary"><em class="${tone(row?.bestReturnPct)}">최고 ${pct(row?.bestReturnPct)}</em><em>점수 ${finite(row?.score)===null?'—':Math.round(Number(row.score))+'점'}</em></span>
       <span class="pick-ledger-chevron">⌄</span>
     </button>

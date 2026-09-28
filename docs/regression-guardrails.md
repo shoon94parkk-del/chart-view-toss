@@ -88,6 +88,10 @@ Last updated: 2026-09-22
 ### Watchlist quote rollback guardrail
 - Opening Watchlist must not replace a newer in-session quote with an older API/browser-cache row for the same ticker.
 - Home watch cards, dedicated Watchlist cards, Heatmap, and Detail should converge through `liveQuoteStore`; raw response order is never a freshness guarantee.
+- Cached Watchlist cards must paint before a delayed batch quote response; the batch request still revalidates in the background and failed refresh retains the dated cached value with a retry action.
+- At the same `asOf`, full heatmap rows may not overwrite Home live or direct quote rows. Structural heatmap fields remain separate from quote overlays.
+- Valuation's visible price card uses the canonical current quote when one exists, while PICK performance and screener closing prices keep their dated historical bases and explicit labels.
+- Home and Watchlist initial routes must not download `lightweight-charts`; chart routes load the shared chart runtime on demand.
 
 ### Toss release UI data clarity
 - Macro freshness must derive from each row's `asOf` date and expected observation cadence; backend `freshCount`/`staleCount` can lag and must not override row-level age.

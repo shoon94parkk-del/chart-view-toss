@@ -2,39 +2,21 @@ import { screenerData, fullHeatmap, homeSnapshot, consensusData, valuationBandDa
 import { filterScreener, finiteNumber, estimateRevision } from './analysisData.js';
 import { formatKst } from './dataPresentation.js';
 import { renderSharedHeatmap } from './heatmapView.js';
-import { createChart, ColorType } from 'lightweight-charts';
+import { loadChartRuntime } from './chartRuntime.js';
 import { rememberLiveQuotes, mergeRowsWithLive } from './liveQuoteStore.js';
+import { readHomeFast, writeHomeFast } from './homeFastCache.js';
+import { seedWatchQuoteCache } from './watchQuoteCache.js';
 
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const number=(v,suffix='')=>finiteNumber(v)===null?'—':Number(v).toLocaleString('ko-KR',{maximumFractionDigits:2})+suffix;
 const pct=v=>finiteNumber(v)===null?'—':`${Number(v)>0?'+':''}${number(v,'%')}`;
 const empty=text=>`<div class="empty"><strong>${esc(text)}</strong></div>`;
 const alignFullHeatmapWithHome=(full,home)=>{
- rememberLiveQuotes(home?.heatmap?.results||[]);
- const homeRows=new Map(
-  ((home?.heatmap?.results)||[])
-   .filter(row=>row?.ticker)
-   .map(row=>[String(row.ticker).toUpperCase(),row])
- );
- if(!homeRows.size)return full;
+ rememberLiveQuotes(full?.results||[],{priority:10});
+ rememberLiveQuotes(home?.heatmap?.results||[],{priority:20});
  return {
   ...full,
-  results:mergeRowsWithLive(((full?.results)||[]).map(row=>{
-   const ticker=String(row?.ticker||'').toUpperCase();
-   const visible=homeRows.get(ticker);
-   if(!visible)return row;
-   return {
-    ...row,
-    name:visible.name??row.name,
-    price:visible.price??row.price,
-    change:visible.change??row.change,
-    asOf:visible.asOf??row.asOf,
-    sessionDate:visible.sessionDate??row.sessionDate,
-    previousSessionDate:visible.previousSessionDate??row.previousSessionDate,
-    source:visible.source??row.source,
-    quoteBasis:'client-home-parity',
-   };
-  })),
+  results:mergeRowsWithLive(full?.results||[]),
  };
 };
 export const ANALYSIS_ROUTES=new Set(['discover','heatmap','consensus','bands','tools']);
@@ -70,26 +52,35 @@ export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareS
     }
     form.onsubmit=e=>e.preventDefault();form.oninput=()=>{count=30;paint();};form.onchange=()=>{count=30;paint();};form.onreset=e=>{e.preventDefault();for(const input of form.querySelectorAll('input,select'))input.value=input.name==='sort'?'name':'';count=30;paint();};paint();
    }else if(tab==='heatmap'){
-    const [full,home]=await Promise.all([
-      fullHeatmap({force:true}),
-      homeSnapshot().catch(()=>null),
-    ]);
+    seedWatchQuoteCache(state.watchlist.map(x=>x.symbol));
+    let latestHome=readHomeFast('snapshot',6*60*60*1000);
+    let shownFull=readHomeFast('full-heatmap',6*60*60*1000);
+    const paintFull=(full,{save=false}={})=>{
+      if(!current()||!full?.results?.length)return;
+      shownFull=full;
+      const payload=alignFullHeatmapWithHome(full,latestHome);
+      host.innerHTML=`<div class="shared-heatmap-analysis">${renderSharedHeatmap(payload,{scope:'full'})}</div>`;
+      if(save)writeHomeFast('full-heatmap',payload);
+      bindNav();
+    };
+    if(shownFull)paintFull(shownFull);
+    void homeSnapshot().then(home=>{
+      if(!current()||!home)return;
+      latestHome=home;
+      if(shownFull)paintFull(shownFull,{save:true});
+    }).catch(()=>{});
+    let full;
+    try{full=await fullHeatmap({force:true});}
+    catch(error){if(!shownFull)throw error;host.insertAdjacentHTML('beforeend','<p class="muted-copy">새 히트맵을 확인하지 못했어요. 표시된 업데이트 시각을 확인해주세요.</p>');return;}
     if(!current())return;
-    const payload=alignFullHeatmapWithHome(full,home);
-    host.innerHTML=`<div class="shared-heatmap-analysis">${renderSharedHeatmap(payload,{scope:'full'})}</div>`;
-    bindNav();
+    if(!full?.results?.length){if(!shownFull)host.innerHTML=empty('전체 히트맵 데이터가 아직 준비되지 않았어요.');return;}
+    paintFull(full,{save:true});
     if(full?.complete===false||full?.refreshing){
       setTimeout(async()=>{
         if(!current())return;
         try{
-          const [nextFull,nextHome]=await Promise.all([
-            fullHeatmap({force:true}),
-            homeSnapshot().catch(()=>home),
-          ]);
-          if(!current())return;
-          const next=alignFullHeatmapWithHome(nextFull,nextHome);
-          host.innerHTML=`<div class="shared-heatmap-analysis">${renderSharedHeatmap(next,{scope:'full'})}</div>`;
-          bindNav();
+          const nextFull=await fullHeatmap({force:true});
+          if(current())paintFull(nextFull,{save:true});
         }catch{}
       },1800);
     }
@@ -112,17 +103,17 @@ export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareS
    }else if(tab==='bands'){
     const symbols=[...state.selected];if(!symbols.length){host.innerHTML=empty('종목 변경에서 조회할 종목을 선택해주세요.');return;}
     controls.innerHTML=`<div class="analysis-filters"><label>종목<select id="band-symbol">${symbols.map(x=>`<option value="${esc(x)}">${esc(displayName(x))}</option>`).join('')}</select></label><label>기간<select id="band-years"><option value="3">3년</option><option value="5">5년</option><option value="10">10년</option></select></label><label>지표<select id="band-metric"><option value="per">PER</option><option value="pbr">PBR</option></select></label></div>`;
-    let bandSeq=0,data=null;
+    let bandSeq=0,data=null,chartRuntime=null;
     function paint(){
      if(!current())return;chart?.remove();chart=null;observer?.disconnect();
      const metric=controls.querySelector('#band-metric').value,series=data?.[metric],stats=series?.stats;
      host.innerHTML=`<p class="analysis-meta">${esc(data?.source||'')} · 조회 ${esc(formatKst(data?.generatedAt))}</p><p class="muted-copy">${esc(data?.method||'')}</p><p class="muted-copy">과거 공시일을 완전히 복원한 지표가 아니며 재무자료에 보수적 시차를 적용한 재구성이에요.</p><div id="band-chart" class="detail-chart"></div>${stats?`<dl class="analysis-metrics"><div><dt>최근값</dt><dd>${number(stats.current,'배')}</dd></div><div><dt>중앙값</dt><dd>${number(stats.median,'배')}</dd></div><div><dt>하위 20% 경계</dt><dd>${number(stats.p20,'배')}</dd></div><div><dt>상위 20% 경계</dt><dd>${number(stats.p80,'배')}</dd></div></dl><p class="analysis-meta">${esc(stats.start)} ~ ${esc(stats.end)} · ${number(stats.observations)}개 관측</p>`:empty('이 종목의 해당 지표 이력이 제공되지 않아요.')}`;
      const canvas=host.querySelector('#band-chart');if(!series?.points?.length)return;
-     chart=createChart(canvas,{localization:{locale:'ko-KR'},width:canvas.clientWidth,height:230,handleScale:{pinch:false},layout:{background:{type:ColorType.Solid,color:'#fff'},textColor:'#6b7684'},timeScale:{borderVisible:false},rightPriceScale:{borderVisible:false}});
+     chart=chartRuntime.createChart(canvas,{localization:{locale:'ko-KR'},width:canvas.clientWidth,height:230,handleScale:{pinch:false},layout:{background:{type:chartRuntime.ColorType.Solid,color:'#fff'},textColor:'#6b7684'},timeScale:{borderVisible:false},rightPriceScale:{borderVisible:false}});
      const line=chart.addLineSeries({color:'#3182f6',lineWidth:2,priceLineVisible:false});line.setData(series.points);if(stats)for(const value of [stats.p20,stats.median,stats.p80])if(finiteNumber(value)!==null)line.createPriceLine({price:Number(value),color:'#9ca3af',lineWidth:1,lineStyle:2,axisLabelVisible:true});chart.timeScale().fitContent();
      observer=new ResizeObserver(()=>{if(chart&&canvas.isConnected)chart.applyOptions({width:canvas.clientWidth});});observer.observe(canvas);
     }
-    async function fetchBand(){const seq=++bandSeq;data=null;chart?.remove();chart=null;observer?.disconnect();host.innerHTML='<p role="status">과거 가격·재무자료를 조회하고 있어요…</p>';try{const next=await valuationBandData(controls.querySelector('#band-symbol').value,Number(controls.querySelector('#band-years').value));if(seq!==bandSeq||!current())return;data=next;paint();}catch(error){if(seq===bandSeq&&current())fail(error,fetchBand);}}
+    async function fetchBand(){const seq=++bandSeq;data=null;chart?.remove();chart=null;observer?.disconnect();host.innerHTML='<p role="status">과거 가격·재무자료를 조회하고 있어요…</p>';try{const [next,runtime]=await Promise.all([valuationBandData(controls.querySelector('#band-symbol').value,Number(controls.querySelector('#band-years').value)),loadChartRuntime()]);if(seq!==bandSeq||!current())return;data=next;chartRuntime=runtime;paint();}catch(error){if(seq===bandSeq&&current())fail(error,fetchBand);}}
     controls.querySelector('#band-symbol').onchange=fetchBand;controls.querySelector('#band-years').onchange=fetchBand;controls.querySelector('#band-metric').onchange=()=>{if(data)paint();};await fetchBand();
    }else{
     const sources=[['DART','기업 공시','https://dart.fss.or.kr/'],['KRX','한국거래소 데이터','https://data.krx.co.kr/'],['FRED','경제지표 원자료','https://fred.stlouisfed.org/'],['Yahoo Finance','해외 시세·재무 원자료','https://finance.yahoo.com/'],['네이버 금융','국내 시세·뉴스 원자료','https://finance.naver.com/']];

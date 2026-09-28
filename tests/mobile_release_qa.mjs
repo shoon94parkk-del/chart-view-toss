@@ -269,7 +269,7 @@ try{
     if(tab==='picks'){
       await page.waitForSelector('.pick-ledger-item');
       const body=await page.locator('body').innerText();
-      if(!body.includes('PICK 관리')||!body.includes('추천 81,000원')||!body.includes('현재 87,480원')||!body.includes('+8.00%')||!body.includes('검토 대기')) throw new Error('PICK management summary missing');
+      if(!body.includes('PICK 관리')||!body.includes('추천 81,000원')||!body.includes('점검가 87,480원')||!body.includes('+8.00%')||!body.includes('검토 대기')) throw new Error('PICK management summary missing');
       await page.locator('.pick-ledger-row').first().click();
       if(await page.locator('.pick-ledger-detail').first().isHidden()) throw new Error('PICK management detail did not expand');
       const detailText=await page.locator('.pick-ledger-detail').first().innerText();

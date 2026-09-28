@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { clearLiveQuotes, getLiveQuote, rememberLiveQuotes, mergeRowsWithLive } from '../src/liveQuoteStore.js';
+import { watchQuoteCacheKey, saveWatchQuoteCache, seedWatchQuoteCache } from '../src/watchQuoteCache.js';
 
 test('canonical live quote store keeps the newest provider timestamp',()=>{
   clearLiveQuotes();
@@ -11,6 +12,28 @@ test('canonical live quote store keeps the newest provider timestamp',()=>{
   assert.equal(row.price,81000);
   assert.equal(row.change,2.3);
   assert.equal(row.source,'new');
+});
+
+test('an undated or source-free snapshot cannot replace a timed direct quote',()=>{
+  clearLiveQuotes();
+  rememberLiveQuotes([{ticker:'000660.KS',price:1761000,change:-5.42,asOf:'2026-09-28T11:20:23Z',source:'Naver Finance'}]);
+  rememberLiveQuotes([{ticker:'000660.KS',price:1750000,change:-6,source:'snapshot without time'}]);
+  rememberLiveQuotes([{ticker:'000660.KS',price:1755000,change:-5.7,asOf:'2026-09-28T11:20:23Z',source:null}]);
+  const quote=getLiveQuote('000660.KS');
+  assert.equal(quote.price,1761000);
+  assert.equal(quote.change,-5.42);
+});
+
+test('equal-time full heatmap cannot roll back Home live or direct quote',()=>{
+  clearLiveQuotes();
+  const row=(price,change)=>({ticker:'000660.KS',price,change,asOf:'2026-09-28T11:20:23Z'});
+  rememberLiveQuotes([row(1750000,-6)],{priority:20});
+  rememberLiveQuotes([row(1761000,-5.42)],{priority:30});
+  rememberLiveQuotes([row(1700000,-7)],{priority:10});
+  assert.equal(getLiveQuote('000660.KS').price,1761000);
+  rememberLiveQuotes([row(1762000,-5.37)],{priority:50});
+  rememberLiveQuotes([row(1761000,-5.42)],{priority:30});
+  assert.equal(getLiveQuote('000660.KS').price,1762000);
 });
 
 test('full heatmap rows are overlaid with the same session live quote',()=>{
@@ -24,6 +47,16 @@ test('full heatmap rows are overlaid with the same session live quote',()=>{
   assert.equal(rows[0].change,2.55);
   assert.equal(rows[0].marketCap,500);
   assert.equal(rows[1].price,180);
+});
+
+test('live price parity keeps the full heatmap structural data',()=>{
+  clearLiveQuotes();
+  rememberLiveQuotes([{ticker:'000660.KS',name:'예전 이름',marketCap:100,price:1761000,change:-5.42,asOf:'2026-09-28T11:20:23Z'}]);
+  const [row]=mergeRowsWithLive([{ticker:'000660.KS',name:'SK하이닉스',marketCap:200,price:1750000,change:-6}]);
+  assert.equal(row.name,'SK하이닉스');
+  assert.equal(row.marketCap,200);
+  assert.equal(row.price,1761000);
+  assert.equal(row.change,-5.42);
 });
 
 test('detail uses Home quote immediately and fresh-polls one symbol',async()=>{
@@ -86,10 +119,23 @@ test('heatmap navigation forwards the visible company name to detail',async()=>{
 });
 
 
-test('watchlist and Home watch rows paint the newest canonical quote',async()=>{
-  const fs=await import('node:fs/promises');
-  const main=await fs.readFile(new URL('../src/main.js',import.meta.url),'utf8');
-  assert.ok(main.includes("const quotes=tickers.map(symbol=>getLiveQuote(symbol)||fetchedByTicker.get(String(symbol).toUpperCase())).filter(Boolean)"));
-  assert.ok(main.includes("const canonicalCached=watchSymbols.map(symbol=>getLiveQuote(symbol)||cachedByTicker.get(String(symbol).toUpperCase())).filter(Boolean)"));
-  assert.ok(main.includes("writeHomeFast(watchCacheKey,{...payload,results:quotes})"));
+test('watch quote cache restores the same symbols across list ordering without rolling back newer quotes',()=>{
+  const previous=globalThis.localStorage;
+  const values=new Map();
+  globalThis.localStorage={getItem:key=>values.get(key)??null,setItem:(key,value)=>values.set(key,value)};
+  try{
+    clearLiveQuotes();
+    const symbols=['000660.KS','NVDA'];
+    rememberLiveQuotes([{ticker:'000660.KS',price:1761000,change:-5.42,asOf:'2026-09-28T11:20:23Z'}]);
+    saveWatchQuoteCache(symbols);
+    assert.equal(watchQuoteCacheKey(symbols),watchQuoteCacheKey([...symbols].reverse()));
+    clearLiveQuotes();
+    assert.equal(seedWatchQuoteCache([...symbols].reverse())[0].price,1761000);
+    rememberLiveQuotes([{ticker:'000660.KS',price:1762000,change:-5.37,asOf:'2026-09-28T11:21:23Z'}]);
+    seedWatchQuoteCache(symbols);
+    assert.equal(getLiveQuote('000660.KS').price,1762000);
+  }finally{
+    clearLiveQuotes();
+    if(previous===undefined)delete globalThis.localStorage;else globalThis.localStorage=previous;
+  }
 });

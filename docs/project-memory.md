@@ -62,6 +62,7 @@ Toss-specific navigation, safe-area, storage, SDK bridge, and release logic belo
 ## Regression assets
 - `npm test`
 - `tests/mobile_release_qa.mjs`
+- `tests/watch_quote_parity_qa.mjs` (slow API, cached-first price, Home/Watchlist/valuation/heatmap/detail parity)
 - `tests/analysis_qa.mjs`
 - `tests/progressive_qa.mjs`
 - `tests/release_gates_qa.mjs`
