@@ -87,3 +87,5 @@ Toss-specific navigation, safe-area, storage, SDK bridge, and release logic belo
 - 2026-09-27 심사 반려: `20260921-5`가 외부 링크 미동작으로 반려됐다. Toss runtime 외부 링크는 반드시 `@apps-in-toss/web-framework`의 top-level `openURL(url)`을 사용하고, 정책 페이지는 `.ait`의 `location.origin`이 아니라 공개 고정 HTTPS URL을 사용한다.
 
 - 2026-09-27 재심사 QA: 320px Home 히트맵에서 Tesla/AMD small cell이 라벨+등락률 2줄 때문에 잘리는 회귀가 검출됐다. Home의 320~360px `is-small` 셀은 식별 라벨을 남기고 등락률을 우선 생략한다.
+
+- 2026-09-28 PICK 관리 통합: 기존 `#picks` 추천 기록 화면을 유지한 채 누적 추천 성과와 Web Chart View의 `/static/data/pick_monitor.json` 사후점검 상태를 한 화면에 합쳤다. 홈/전체 메뉴는 `PICK 관리`로 진입하며, 점검 데이터 실패 시에도 추천 성과는 독립적으로 표시한다.

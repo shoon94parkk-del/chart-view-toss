@@ -220,9 +220,11 @@ try{
     if(tab==='picks'){
       await page.waitForSelector('.pick-ledger-item');
       const body=await page.locator('body').innerText();
-      if(!body.includes('추천 기록')||!body.includes('추천 81,000원')||!body.includes('현재 87,480원')||!body.includes('+8.00%')) throw new Error('recommendation ledger detail missing');
+      if(!body.includes('PICK 관리')||!body.includes('추천 81,000원')||!body.includes('현재 87,480원')||!body.includes('+8.00%')||!body.includes('검토 대기')) throw new Error('PICK management summary missing');
       await page.locator('.pick-ledger-row').first().click();
-      if(await page.locator('.pick-ledger-detail').first().isHidden()) throw new Error('recommendation ledger detail did not expand');
+      if(await page.locator('.pick-ledger-detail').first().isHidden()) throw new Error('PICK management detail did not expand');
+      const detailText=await page.locator('.pick-ledger-detail').first().innerText();
+      if(!detailText.includes('추천 당시 이유')||!detailText.includes('투자논리 기준선')||!detailText.includes('최근 점검')||!detailText.includes('검증 근거')) throw new Error(`PICK management review sections missing: ${detailText}`);
     }
     if(tab==='heatmap'){
       await page.waitForSelector('#analysis-body .home-heatmap-cell');
