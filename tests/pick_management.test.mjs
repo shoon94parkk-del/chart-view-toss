@@ -30,3 +30,8 @@ test('PICK monitoring failure does not blank recommendation performance',()=>{
   assert.match(ledger,/pickMonitor\(\)\.then\(\(value\)=>\(\{ok:true,value\}\)\)\.catch/);
   assert.ok(ledger.includes('사후점검 데이터를 불러오지 못해 성과 기록만 표시 중이에요.'));
 });
+
+
+test('PICK management does not expose screener rank badges',()=>{
+  assert.ok(!ledger.includes('pick-ledger-rank'));
+});
