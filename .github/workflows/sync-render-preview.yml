@@ -8,6 +8,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: sync-render-preview-branch
+  cancel-in-progress: true
+
 jobs:
   sync:
     runs-on: ubuntu-latest
@@ -20,4 +24,5 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          git push origin HEAD:refs/heads/feat/apps-in-toss-mvp --force-with-lease
+          git fetch origin main
+          git push origin refs/remotes/origin/main:refs/heads/feat/apps-in-toss-mvp --force
