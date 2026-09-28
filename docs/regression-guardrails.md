@@ -92,6 +92,7 @@ Last updated: 2026-09-22
 - At the same `asOf`, full heatmap rows may not overwrite Home live or direct quote rows. Structural heatmap fields remain separate from quote overlays.
 - Valuation's visible price card uses the canonical current quote when one exists, while PICK performance and screener closing prices keep their dated historical bases and explicit labels.
 - Home and Watchlist initial routes must not download `lightweight-charts`; chart routes load the shared chart runtime on demand.
+- The Render static preview must serve the app HTML at fixed direct-entry paths such as `/chartviewHome`, `/chart`, and `/watch`; the local Vite SPA fallback alone does not prove the deployed paths work.
 
 ### Toss release UI data clarity
 - Macro freshness must derive from each row's `asOf` date and expected observation cadence; backend `freshCount`/`staleCount` can lag and must not override row-level age.
