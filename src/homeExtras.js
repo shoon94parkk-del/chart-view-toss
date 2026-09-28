@@ -233,7 +233,7 @@ function paintHeatmap(host, payload) {
   if (!host || !host.isConnected) return;
   host.innerHTML = renderSharedHeatmap(payload);
   host.querySelectorAll('[data-stock-detail]').forEach((cell) => {
-    const openDetail = () => navigate('detail', cell.dataset.stockDetail);
+    const openDetail = () => navigate('detail', cell.dataset.stockDetail, cell.dataset.stockName || '');
     cell.addEventListener('click', openDetail);
     cell.addEventListener('keydown', (event) => {
       if (event.key === 'Enter' || event.key === ' ') {
@@ -316,9 +316,9 @@ document.addEventListener('chartview:home-live', (event) => {
   paintHeatmap(host, { results: rows, generatedAt });
 });
 
-function navigate(tab, symbol) {
+function navigate(tab, symbol, name = '') {
   if (typeof window.__chartviewNavigate === 'function') {
-    window.__chartviewNavigate(tab, symbol || null);
+    window.__chartviewNavigate(tab, symbol || null, name);
     return;
   }
   const hash = symbol ? '#' + tab + '/' + encodeURIComponent(symbol) : '#' + tab;
