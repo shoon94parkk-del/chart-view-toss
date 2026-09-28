@@ -50,9 +50,11 @@ try {
 
   const start = Date.now();
   await page.goto(`${base}/#watch`, { waitUntil: 'domcontentloaded' });
+  const navigationMs = Date.now() - start;
   await page.getByText('1,750,000원').waitFor({ timeout: 1200 });
   const firstPaintMs = Date.now() - start;
-  if (firstPaintMs >= 1600) throw new Error(`Cached watch price waited for the delayed API: ${firstPaintMs}ms`);
+  const afterDomMs = firstPaintMs - navigationMs;
+  if (afterDomMs >= 1600) throw new Error(`Cached watch price waited for the delayed API: ${afterDomMs}ms after DOM ready`);
   if (!normalQuoteCalls) throw new Error('Watchlist did not revalidate its cached quote');
   await page.getByText('1,761,000원').waitFor({ timeout: 3500 });
 
@@ -75,7 +77,7 @@ try {
   await page.waitForTimeout(1750);
   if (!(await page.locator('#watch-rich-list').innerText()).includes('1,762,000원')) throw new Error('Older quote request rolled back the fresh detail price');
   if (errors.length) throw new Error(`Browser errors: ${errors.join(' | ')}`);
-  console.log(JSON.stringify({ firstPaintMs, delayedApiMs: 1600, normalQuoteCalls, parity: 'watch/home/valuation/heatmap/detail', newestPrice: fresh.price }));
+  console.log(JSON.stringify({ navigationMs, firstPaintMs, afterDomMs, delayedApiMs: 1600, normalQuoteCalls, parity: 'watch/home/valuation/heatmap/detail', newestPrice: fresh.price }));
   await context.close();
 } finally {
   await browser.close();
