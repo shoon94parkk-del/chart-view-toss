@@ -58,7 +58,7 @@ function rowMarkup(row,index,displayName){
       <span class="pick-ledger-stock"><strong>${esc(name)}</strong><small>${esc(symbol||row?.code||'')} · ${esc(row?.recommendedDate||'추천일 미제공')}</small></span>
       <span class="pick-ledger-status ${meta.cls}">${meta.icon} ${meta.label}</span>
       <span class="pick-ledger-return ${tone(row?.returnPct)}">${pct(row?.returnPct)}</span>
-      <span class="pick-ledger-prices"><small>추천 ${esc(price(row?.recommendedPrice,row))}</small><b>→</b><small>현재 ${esc(price(row?.currentPrice,row))}</small></span>
+      <span class="pick-ledger-prices"><small>추천 ${esc(price(row?.recommendedPrice,row))}</small><b>→</b><small>점검가 ${esc(price(row?.currentPrice,row))}</small></span>
       <span class="pick-ledger-secondary"><em class="${tone(row?.bestReturnPct)}">최고 ${pct(row?.bestReturnPct)}</em><em>점수 ${finite(row?.score)===null?'—':Math.round(Number(row.score))+'점'}</em></span>
       <span class="pick-ledger-chevron">⌄</span>
     </button>
@@ -77,7 +77,7 @@ function rowMarkup(row,index,displayName){
 
 export async function renderPickLedger({shell,bindNav,displayName}){
   document.querySelector('#app').innerHTML=shell(`
-    <section class="task-head pick-ledger-head"><div><span class="page-kicker">CHARTVIEW PICK</span><h2>PICK 관리</h2><p>누적 추천 성과와 추천 이후 투자논리 점검을 한 화면에서 관리해요.</p></div></section>
+    <section class="task-head pick-ledger-head"><div><span class="page-kicker">CHARTVIEW</span><h2>최근 주목받는 종목</h2><p>선정 종목의 기록과 이후 성과·점검 내용을 확인해요.</p></div></section>
     <section class="pick-ledger-summary" id="pick-ledger-summary"><div class="skeleton quote"></div></section>
     <section class="pick-ledger-status-strip" id="pick-ledger-status-strip"><div class="skeleton quote"></div></section>
     <p class="pick-ledger-policy" id="pick-ledger-policy">매도검토는 자동 매도 확정이 아니며 가격·차트만으로 판정하지 않아요.</p>
@@ -92,7 +92,7 @@ export async function renderPickLedger({shell,bindNav,displayName}){
     </section>
     <p class="pick-ledger-count" id="pick-ledger-count"></p>
     <section class="pick-ledger-list" id="pick-ledger-list"><div class="skeleton watch"></div><div class="skeleton watch"></div></section>
-  `,'PICK 관리');
+  `,'최근 주목받는 종목');
   bindNav();
 
   const summary=document.querySelector('#pick-ledger-summary');

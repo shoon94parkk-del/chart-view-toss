@@ -3,19 +3,19 @@ import { recordMetric, diagnosticSummary, clearDiagnostics } from './diagnostics
 import './styles.css';
 import './homeExtras.css';
 import './homeExtras.js';
-import './pickLedger.css';
-import { renderPickLedger } from './pickLedger.js';
+import { SHOW_SPOTLIGHT } from './releaseScope.js';
 import { ANALYSIS_ROUTES, renderAnalysis } from './analysisViews.js';
 import { finiteNumber } from './analysisData.js';
-import { createChart, ColorType, LineStyle } from 'lightweight-charts';
+import { loadChartRuntime } from './chartRuntime.js';
 import { API_BASE, quoteSnapshots, quoteSnapshotsLive, compareStocks, marketNow, homeSnapshot, searchStocks, valuationStocks, macroData, homeInsights, personalizedNews } from './api.js';
 import { applyRuntimeClass, haptic, openExternal, syncNativeBackHandler, closeMiniApp, isAppsInTossRuntime } from './tossBridge.js';
 import { openStockSelector, closeStockSelector } from './stockSelector.js';
 import { initializeStorage, readStored, writeStored, clearStored, getActivityVisitorId } from './storage.js';
 import { startHomeLiveSync, setLiveSurface } from './liveHomeSync.js';
 import { readHomeFast, writeHomeFast } from './homeFastCache.js';
-import { rememberLiveQuotes, getLiveQuote } from './liveQuoteStore.js';
-import { formatKst, formatCurrencyPrice, formatMacroValue, formatMacroChange, observationLabel, macroCategory, macroPublicationLabel, macroSourceUrl, changeBasisLabel, newsRelation, translatedTag, titleLanguage } from './dataPresentation.js';
+import { rememberLiveQuotes, getLiveQuote, mergeRowsWithLive } from './liveQuoteStore.js';
+import { seedWatchQuoteCache, saveWatchQuoteCache } from './watchQuoteCache.js';
+import { formatKst, formatChartDate, formatMetricPeriod, formatCurrencyPrice, formatMacroValue, formatMacroChange, macroFreshness, observationLabel, macroCategory, macroPublicationLabel, macroSourceUrl, changeBasisLabel, relationBasisLabel, newsRelation, translatedTag, titleLanguage } from './dataPresentation.js';
 
 const WATCHLIST_KEY='chartview-toss-watchlist-v1';
 const SELECTED_KEY='chartview-toss-selected-v1';
@@ -142,6 +142,7 @@ function stockRow(x){const name=displayName(x.symbol,x.name);return `<button cla
 function esc(v=''){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 
 function navigate(tab,detailSymbol=null,detailName=''){
+ if(tab==='picks'&&!SHOW_SPOTLIGHT)tab='home';
  if(tab===state.tab&&(!detailSymbol||detailSymbol===state.detailSymbol)){
    if(detailSymbol&&detailName)state.detailName=detailName;
    window.scrollTo(0,0);
@@ -295,25 +296,27 @@ function patchHomeWatchLive(quotes){
  });
 }
 
-function paintHomeWatch(quotes,hasWatch){
+function paintHomeWatch(quotes,hasWatch,{pending=false,failed=false}={}){
  if(!hasWatch)return;
  const host=document.querySelector('#home-watchlist');
  if(!host)return;
  host.innerHTML=state.watchlist.slice(0,4).map((x,i)=>{
-   const q=(quotes||[]).find(r=>r.ticker===x.symbol);const ch=finiteNumber(q?.change);const name=displayName(x.symbol,x.name);
-   return `<button class="watch-rich-row" data-stock-detail="${esc(x.symbol)}"><span class="stock-logo tone-${i%4}">${esc(name.slice(0,1))}</span><span class="stock-copy"><strong>${esc(name)}</strong><small>${esc(x.symbol)}${q?.asOf?' · '+esc(formatKst(q.asOf)):''}</small></span><span class="watch-price">${q?.price!=null?`<strong>${esc(formatCurrencyPrice(q.price,q.currency))}</strong><em class="${ch>0?'up':ch<0?'down':'flat'}">${esc(fmtChange(q.change))}</em>`:'<small>가격 확인 필요</small>'}</span><span class="chevron">${iconSvg('arrow',18)}</span></button>`;
+   const q=(quotes||[]).find(r=>String(r.ticker).toUpperCase()===String(x.symbol).toUpperCase());const ch=finiteNumber(q?.change);const name=displayName(x.symbol,x.name);
+   const status=pending?' · 새 시세 확인 중':failed?' · 갱신 실패':'';
+   return `<button class="watch-rich-row" data-stock-detail="${esc(x.symbol)}"><span class="stock-logo tone-${i%4}">${esc(name.slice(0,1))}</span><span class="stock-copy"><strong>${esc(name)}</strong><small>${esc(x.symbol)}${q?.asOf?' · '+esc(formatKst(q.asOf)):''}${status}</small></span><span class="watch-price">${q?.price!=null?`<strong>${esc(formatCurrencyPrice(q.price,q.currency))}</strong><em class="${ch>0?'up':ch<0?'down':'flat'}">${esc(fmtChange(q.change))}</em>`:`<small>${pending?'가격 확인 중':'가격 확인 필요'}</small>`}</span><span class="chevron">${iconSvg('arrow',18)}</span></button>`;
  }).join('');
 }
 
 function paintHomeBrief(home){
  const macro=home?.macro?.summary||{};
+ const staleVix=(home?.macro?.results||[]).find(row=>(row.original_symbol||row.symbol)==='^VIX'&&macroFreshness(row).stale);
  const brief=document.querySelector('#brief-card');
  if(!brief)return false;
  brief.classList.remove('skeleton','brief');
  if(macro.text){
    const level=macro.level||'yellow';
    const label=level==='red'?'위험 신호 많음':level==='green'?'안정 신호 많음':'신호 혼재';
-   brief.innerHTML=`<div class="brief-icon ${esc(level)}">${iconSvg('spark',22)}</div><div class="brief-copy"><span>시장 지표 요약 <b class="status-badge ${esc(level)}">${label}</b></span><strong>${esc(String(macro.text).slice(0,105))}</strong><small>최근 원자료 ${esc(macro.latestBasisDate||'-')} · 투자 행동을 권유하는 신호가 아니에요.</small></div><button data-tab="macro" aria-label="경제 지표 보기">${iconSvg('arrow',20)}</button>`;
+   brief.innerHTML=`<div class="brief-icon ${esc(level)}">${iconSvg('spark',22)}</div><div class="brief-copy"><span>시장 지표 요약 <b class="status-badge ${esc(level)}">${label}</b></span><strong>${esc(String(macro.text).slice(0,105))}</strong><small>${staleVix?'VIX 관측일이 오래되어 시장 요약 해석에 주의가 필요해요. ':''}최근 원자료 ${esc(macro.latestBasisDate||'-')} · 투자 행동을 권유하는 신호가 아니에요.</small></div><button data-tab="macro" aria-label="경제 지표 보기">${iconSvg('arrow',20)}</button>`;
    return true;
  }
  brief.innerHTML=`<div class="brief-icon yellow">${iconSvg('spark',22)}</div><div class="brief-copy"><span>시장 지표 요약</span><strong>요약 데이터를 확인하고 있어요.</strong><small>경제지표 화면에서 개별 관측일을 확인할 수 있어요.</small></div>`;
@@ -350,17 +353,17 @@ async function renderHome(){
  if(cachedMarket)paintHomeMarket(cachedMarket,{allowError:false});
  const cachedSnapshot=readHomeFast('snapshot',6*60*60*1000);
  if(cachedSnapshot){
-   rememberLiveQuotes(cachedSnapshot?.heatmap?.results||[]);
+   rememberLiveQuotes(cachedSnapshot?.heatmap?.results||[],{priority:20});
    paintHomeBrief(cachedSnapshot);
  }
+ seedWatchQuoteCache(state.watchlist.map(x=>x.symbol));
  const watchCacheKey=watchSymbols.length?'quotes:'+watchSymbols.join('|'):'';
  const cachedWatch=watchCacheKey?readHomeFast(watchCacheKey,30*60*1000):null;
  if(cachedWatch?.results){
-   rememberLiveQuotes(cachedWatch.results);
-   const cachedByTicker=new Map(cachedWatch.results.filter(row=>row?.ticker).map(row=>[String(row.ticker).toUpperCase(),row]));
-   const canonicalCached=watchSymbols.map(symbol=>getLiveQuote(symbol)||cachedByTicker.get(String(symbol).toUpperCase())).filter(Boolean);
-   paintHomeWatch(canonicalCached,hasWatch);
+   rememberLiveQuotes(cachedWatch.results,{priority:40});
  }
+ let watchLoaded=false;
+ paintHomeWatch(watchSymbols.map(symbol=>getLiveQuote(symbol)).filter(Boolean),hasWatch,{pending:true});
  const settle=(task,paint)=>task.then(value=>({status:'fulfilled',value}),reason=>({status:'rejected',reason})).then(result=>{if(epoch===viewEpoch){paint(result);bindNav();bindHomeMarketToggle();}});
  const jobs=[];
  jobs.push(settle(marketNow(),marketRes=>{
@@ -373,18 +376,21 @@ async function renderHome(){
  jobs.push(settle(watchSymbols.length?quoteSnapshots(watchSymbols):Promise.resolve({results:[]}),watchRes=>{
  const payload=watchRes.status==='fulfilled'?watchRes.value:null;
  const fetchedQuotes=payload?.results||[];
- rememberLiveQuotes(fetchedQuotes);
+ rememberLiveQuotes(fetchedQuotes,{priority:40});
  const fetchedByTicker=new Map(fetchedQuotes.filter(row=>row?.ticker).map(row=>[String(row.ticker).toUpperCase(),row]));
  const quotes=watchSymbols.map(symbol=>getLiveQuote(symbol)||fetchedByTicker.get(String(symbol).toUpperCase())).filter(Boolean);
  if(payload&&watchCacheKey)writeHomeFast(watchCacheKey,{...payload,results:quotes});
- if(payload||!cachedWatch)paintHomeWatch(quotes,hasWatch);
+ if(payload)saveWatchQuoteCache(state.watchlist.map(x=>x.symbol));
+ watchLoaded=true;
+ paintHomeWatch(quotes,hasWatch,{failed:!payload});
  }));
  jobs.push(settle(homeSnapshot(),homeRes=>{
  const home=homeRes.status==='fulfilled'?homeRes.value:null;
  if(home){
-   rememberLiveQuotes(home?.heatmap?.results||[]);
-   writeHomeFast('snapshot',home);
+   rememberLiveQuotes(home?.heatmap?.results||[],{priority:20});
+   writeHomeFast('snapshot',{...home,heatmap:{...(home.heatmap||{}),results:mergeRowsWithLive(home?.heatmap?.results||[])}});
    paintHomeBrief(home);
+   paintHomeWatch(watchSymbols.map(symbol=>getLiveQuote(symbol)).filter(Boolean),hasWatch,{pending:!watchLoaded});
  }else if(!cachedSnapshot)paintHomeBrief(null);
  }));
  if(watchSymbols.length){
@@ -448,7 +454,7 @@ async function loadChart(){
  const table=document.querySelector('#chart-table-wrap'),guide=document.querySelector('#calculation-guide-body');
  if(!requested.length){status.textContent='종목 선택 필요';canvas.innerHTML='<div class="empty"><strong>비교할 종목이 없어요</strong><span>종목 변경에서 최대 6개까지 선택할 수 있어요.</span></div>';table.innerHTML='';return}
  try{
-   const data=await compareStocks(requested,requestedPeriod,requestedRange||{});
+   const [data,{createChart,ColorType,LineStyle}]=await Promise.all([compareStocks(requested,requestedPeriod,requestedRange||{}),loadChartRuntime()]);
    if(!canvas.isConnected||seq!==chartLoadSeq||requestedPeriod!==state.period||requested.join('|')!==state.selected.join('|'))return;
    const stocks=Array.isArray(data?.stocks)?data.stocks.filter(s=>Array.isArray(s.data)&&s.data.length):[];
    if(!stocks.length)throw new Error('표시할 시세 데이터가 없어요');
@@ -487,7 +493,7 @@ async function loadChart(){
        return `<span><i style="background:${COLORS[row.index%COLORS.length]}"></i>${esc(displayName(row.stock.ticker,row.stock.name))}<b>${value>=0?'+':''}${value.toFixed(2)}%</b></span>`;
      }).filter(Boolean).join('');
      if(!values){tooltip.hidden=true;return}
-     tooltip.innerHTML=`<strong>${esc(String(param.time))}</strong>${values}`;
+     tooltip.innerHTML=`<strong>${esc(formatChartDate(param.time))}</strong>${values}`;
      tooltip.hidden=false;
      const desiredX=Math.min(Math.max(param.point.x+12,8),(canvas.clientWidth||320)-158);
      const desiredY=Math.max(param.point.y-16,8);
@@ -534,26 +540,22 @@ async function renderWatch(){
  document.querySelector('#watch-empty-add')?.addEventListener('click',openEditor);
  document.querySelectorAll('[data-watch-sort]').forEach(b=>b.onclick=()=>{state.watchSort=b.dataset.watchSort;renderWatch()});
  if(!state.watchlist.length)return;
-
- try{
-   const tickers=state.watchlist.slice(0,20).map(x=>x.symbol);
-   const [quotesRes]=await Promise.allSettled([quoteSnapshots(tickers)]);
+ const tickers=state.watchlist.slice(0,20).map(x=>x.symbol);
+ rememberLiveQuotes(readHomeFast('snapshot',6*60*60*1000)?.heatmap?.results||[],{priority:20});
+ seedWatchQuoteCache(tickers);
+ const paint=({pending=false,failed=false}={})=>{
    if(epoch!==viewEpoch)return;
-   if(quotesRes.status==='rejected')throw quotesRes.reason;
-   const fetchedQuotes=quotesRes.value?.results||[];
-   rememberLiveQuotes(fetchedQuotes);
-   const fetchedByTicker=new Map(fetchedQuotes.filter(row=>row?.ticker).map(row=>[String(row.ticker).toUpperCase(),row]));
-   const quotes=tickers.map(symbol=>getLiveQuote(symbol)||fetchedByTicker.get(String(symbol).toUpperCase())).filter(Boolean);
-   const vals=[];
-   let items=state.watchlist.map((x,index)=>({x,index,q:quotes.find(r=>r.ticker===x.symbol)||getLiveQuote(x.symbol)||{},v:vals.find(r=>r.ticker===x.symbol)||{}}));
+   const quotes=tickers.map(symbol=>getLiveQuote(symbol)).filter(Boolean);
+   let items=state.watchlist.map((x,index)=>({x,index,q:quotes.find(r=>r.ticker===String(x.symbol).toUpperCase())||{}}));
    if(state.watchSort==='name')items.sort((a,b)=>displayName(a.x.symbol,a.x.name).localeCompare(displayName(b.x.symbol,b.x.name),'ko'));
    if(state.watchSort==='change')items.sort((a,b)=>(finiteNumber(b.q.change)??-Infinity)-(finiteNumber(a.q.change)??-Infinity));
-
-   document.querySelector('#watch-rich-list').innerHTML=items.map(({x,index,q,v},i)=>{
+   const notice=failed?'<div class="watch-refresh-note" role="status">새 시세를 확인하지 못했어요. 표시된 기준시각을 확인해주세요. <button class="retry" id="retry-watch">다시 시도</button></div>':'';
+   document.querySelector('#watch-rich-list').innerHTML=notice+items.map(({x,q},i)=>{
      const name=displayName(x.symbol,x.name);const ch=finiteNumber(q.change);
-     return `<article class="watch-detail-card"><button class="watch-main" data-stock-detail="${esc(x.symbol)}"><span class="stock-logo tone-${i%4}">${esc(name.slice(0,1))}</span><span class="watch-main-copy"><strong>${esc(name)}</strong><small>${esc(x.symbol)} · ${q.asOf?esc(formatKst(q.asOf)):'기준시각 미제공'}</small></span><span class="watch-card-price"><strong>${q.price==null?'-':esc(formatCurrencyPrice(q.price,q.currency))}</strong><em class="${ch>0?'up':ch<0?'down':'flat'}">${Number.isFinite(ch)?esc(fmtChange(ch)):'등락률 -'}</em><i>${iconSvg('arrow',18)}</i></span></button><button class="watch-remove" data-unwatch="${esc(x.symbol)}" aria-label="${esc(name)} 관심 해제">${iconSvg('heart',18)}</button></article>`;
+     return `<article class="watch-detail-card"><button class="watch-main" data-stock-detail="${esc(x.symbol)}"><span class="stock-logo tone-${i%4}">${esc(name.slice(0,1))}</span><span class="watch-main-copy"><strong>${esc(name)}</strong><small>${esc(x.symbol)} · ${q.asOf?esc(formatKst(q.asOf)):pending?'기준시각 확인 중':'기준시각 미제공'}${pending?' · 새 시세 확인 중':''}</small></span><span class="watch-card-price"><strong>${q.price==null?(pending?'확인 중':'-'):esc(formatCurrencyPrice(q.price,q.currency))}</strong><em class="${ch>0?'up':ch<0?'down':'flat'}">${Number.isFinite(ch)?esc(fmtChange(ch)):'등락률 -'}</em><i>${iconSvg('arrow',18)}</i></span></button><button class="watch-remove" data-unwatch="${esc(x.symbol)}" aria-label="${esc(name)} 관심 해제">${iconSvg('heart',18)}</button></article>`;
    }).join('');
    bindNav();
+   document.querySelector('#retry-watch')?.addEventListener('click',renderWatch);
    document.querySelectorAll('[data-unwatch]').forEach(b=>b.onclick=e=>{
      e.stopPropagation();
      const symbol=b.dataset.unwatch;
@@ -566,10 +568,17 @@ async function renderWatch(){
        showToast(`${displayName(removed.symbol,removed.name)} 관심종목에서 삭제했어요.`,'실행 취소',()=>{state.watchlist.splice(index,0,removed);persist();renderWatch()});
      }
    });
+ };
+ paint({pending:true});
+ try{
+   const payload=await quoteSnapshots(tickers);
+   if(epoch!==viewEpoch)return;
+   rememberLiveQuotes(payload?.results||[],{priority:40});
+   saveWatchQuoteCache(tickers);
+   paint();
  }catch(e){
    if(epoch!==viewEpoch)return;
-   document.querySelector('#watch-rich-list').innerHTML=`<div class="empty"><strong>관심종목 데이터를 불러오지 못했어요</strong><span>${esc(e.message)}</span><button class="retry" id="retry-watch">다시 시도</button></div>`;
-   document.querySelector('#retry-watch')?.addEventListener('click',renderWatch);
+   paint({failed:true});
  }
 }
 
@@ -601,6 +610,18 @@ async function renderValuation(){
    document.querySelector('#valuation-list').innerHTML='<div class="empty"><strong>비교할 종목이 없어요</strong><span>종목 변경에서 선택해주세요.</span></div>';
    return;
  }
+ rememberLiveQuotes(readHomeFast('snapshot',6*60*60*1000)?.heatmap?.results||[],{priority:20});
+ seedWatchQuoteCache(state.watchlist.map(x=>x.symbol));
+ void quoteSnapshots(state.selected).then(payload=>{
+   if(epoch!==viewEpoch)return;
+   rememberLiveQuotes(payload?.results||[],{priority:40});
+   document.querySelectorAll('[data-valuation-price]').forEach(node=>{
+     const quote=getLiveQuote(node.dataset.valuationPrice);
+     if(!quote?.price)return;
+     node.querySelector('strong').textContent=formatCurrencyPrice(quote.price,quote.currency);
+     node.querySelector('small').textContent=quote.asOf?`시세 ${formatKst(quote.asOf)}`:'시세 기준시각 미제공';
+   });
+ }).catch(()=>{});
  try{
    const d=await valuationStocks(state.selected);
    if(epoch!==viewEpoch)return;
@@ -622,7 +643,7 @@ async function renderValuation(){
    document.querySelectorAll('[data-valuation-metric]').forEach(b=>b.onclick=()=>{state.valuationMetric=b.dataset.valuationMetric;haptic('tickWeak');paint()});
    paint();
 
-   document.querySelector('#all-metrics-list').innerHTML=rows.map((s,i)=>`<section class="valuation-card rich-valuation-card"><button class="valuation-top" data-stock-detail="${esc(s.ticker)}"><span class="stock-logo tone-${i%4}">${esc(displayName(s.ticker,s.name).slice(0,1))}</span><span class="valuation-title-copy"><strong>${esc(displayName(s.ticker,s.name))}</strong><small>${esc(s.ticker)}${s.sector?' · '+esc(s.sector):''}</small></span><span class="valuation-price"><strong>${esc(formatCurrencyPrice(s.price,s.currency))}</strong><i>${iconSvg('arrow',18)}</i></span></button><div class="metric-grid rich-metrics">${Object.values(metricDefs).map((m,j)=>`<div class="metric-cell tone-bg-${j%3}"><span>${m.label}</span><strong>${s[m.key]==null?'-':esc(Number(s[m.key]).toLocaleString('ko-KR',{maximumFractionDigits:2})+m.suffix)}</strong><small>${esc(s.fieldMeta?.[m.key]?.period||m.desc)}</small></div>`).join('')}</div></section>`).join('');
+   document.querySelector('#all-metrics-list').innerHTML=rows.map((s,i)=>{const quote=getLiveQuote(s.ticker);return `<section class="valuation-card rich-valuation-card"><button class="valuation-top" data-stock-detail="${esc(s.ticker)}"><span class="stock-logo tone-${i%4}">${esc(displayName(s.ticker,s.name).slice(0,1))}</span><span class="valuation-title-copy"><strong>${esc(displayName(s.ticker,s.name))}</strong><small>${esc(s.ticker)}${s.sector?' · '+esc(s.sector):''}</small></span><span class="valuation-price" data-valuation-price="${esc(s.ticker)}"><strong>${esc(formatCurrencyPrice(quote?.price??s.price,quote?.currency??s.currency))}</strong><small>${quote?.asOf?`시세 ${esc(formatKst(quote.asOf))}`:'지표 조회 시점 가격'}</small><i>${iconSvg('arrow',18)}</i></span></button><div class="metric-grid rich-metrics">${Object.values(metricDefs).map((m,j)=>`<div class="metric-cell tone-bg-${j%3}"><span>${m.label}</span><strong>${s[m.key]==null?'-':esc(Number(s[m.key]).toLocaleString('ko-KR',{maximumFractionDigits:2})+m.suffix)}</strong><small>${esc(formatMetricPeriod(s.fieldMeta?.[m.key]?.period||m.desc))}</small></div>`).join('')}</div></section>`}).join('');
    bindNav();
  }catch(e){
    if(epoch!==viewEpoch)return;
@@ -664,16 +685,17 @@ async function renderMacro(){
    const s=d?.summary||{};
    const freshness=document.querySelector('#macro-freshness');
    freshness.classList.remove('skeleton');
-   freshness.innerHTML=`<div><strong>${Number(d?.staleCount||0)?'일부 지표는 직전값이에요':'경제지표 캐시가 갱신됐어요'}</strong><span>수집 ${esc(formatKst(d?.generatedAt))} · 정상 ${esc(d?.freshCount??'-')} · 과거값 ${esc(d?.staleCount??0)}</span></div><button data-tab="info">데이터 기준</button>`;
+   const rows=d?.results||[];const freshnessRows=rows.map(row=>({row,status:macroFreshness(row)}));const staleCount=freshnessRows.filter(item=>item.status.stale).length;const freshCount=rows.length-staleCount;
+   freshness.innerHTML=`<div><strong>${staleCount?'관측일이 오래된 지표가 있어요':'지표 관측일을 확인했어요'}</strong><span>수집 ${esc(formatKst(d?.generatedAt))} · 최신 기준 ${freshCount}개 · 확인 필요 ${staleCount}개</span></div><button data-tab="info">데이터 기준</button>`;
 
    const summary=document.querySelector('#macro-summary');summary.classList.remove('skeleton');
    const level=s.level||'yellow';const label=level==='red'?'위험 신호 많음':level==='green'?'안정 신호 많음':'신호 혼재';
-   summary.innerHTML=`<div class="macro-signal-orb ${esc(level)}"><span></span></div><div class="macro-summary-copy"><span>규칙 기반 지표 요약 <b class="status-badge ${esc(level)}">${label}</b></span><strong>${esc(s.text||'개별 지표를 확인해주세요.')}</strong><small>${esc(s.notice||'시장 환경 설명용 요약이며 투자 행동을 권유하지 않아요.')}</small></div>`;
+   summary.innerHTML=`<div class="macro-signal-orb ${esc(level)}"><span></span></div><div class="macro-summary-copy"><span>규칙 기반 지표 요약 <b class="status-badge ${esc(level)}">${label}</b></span><strong>${esc(s.text||'개별 지표를 확인해주세요.')}</strong><small>${staleCount?'일부 값은 최근 관측이 아닐 수 있어요. 관측일과 출처를 함께 확인해주세요. ':''}${esc(s.notice||'시장 환경 설명용 요약이며 투자 행동을 권유하지 않아요.')}</small></div>`;
 
    const groups=new Map();
    (d?.results||[]).forEach(row=>{const category=macroCategory(row);if(!groups.has(category))groups.set(category,[]);groups.get(category).push(row)});
    const order=['금리','물가','유동성','위험','고용','경기','기타'];
-   document.querySelector('#macro-groups').innerHTML=order.filter(k=>groups.has(k)).map(category=>`<section class="macro-group"><div class="section-head"><h2>${category}</h2><small>${groups.get(category).length}개 지표</small></div><div class="macro-grid">${groups.get(category).map((r,i)=>{const change=formatMacroChange(r);const chart=Array.isArray(r.chart_data)?r.chart_data:[];const isUp=Number(r.delta??r.change)>=0;const spark=macroSparklineSvg(chart,isUp);return `<article class="macro-tile neutral-macro"><div class="macro-tile-top"><span class="macro-symbol">${esc(r.symbol||r.original_symbol||'')}</span><small class="${r.stale?'stale-text':''}">${r.stale?'직전값 유지':'정상'}</small></div><strong>${esc(r.name||r.symbol)}</strong><div class="macro-value"><b>${esc(formatMacroValue(r))}</b><em>${esc(change)}</em></div><div class="macro-mini-chart" aria-label="${esc(r.name||r.symbol)} 추세">${spark||'<span>시계열 없음</span>'}</div>${spark?`<div class="macro-mini-dates"><span>${esc(chart[0]?.time||'')}</span><span>${esc(chart.at(-1)?.time||r.asOf||'')}</span></div>`:''}<p>${esc(r.desc||'')}</p><div class="macro-meta-line"><span>${esc(observationLabel(r))}</span><span>${esc(changeBasisLabel(r.changeBasis))}</span>${macroPublicationLabel(r)?`<span>${esc(macroPublicationLabel(r))}</span>`:''}</div><div class="source-row"><small class="source-line">${esc(r.source||'출처 미제공')}</small>${macroSourceUrl(r)?`<button type="button" data-external-url="${esc(macroSourceUrl(r))}">원본 시리즈</button>`:''}</div></article>`}).join('')}</div></section>`).join('');
+   document.querySelector('#macro-groups').innerHTML=order.filter(k=>groups.has(k)).map(category=>`<section class="macro-group"><div class="section-head"><h2>${category}</h2><small>${groups.get(category).length}개 지표</small></div><div class="macro-grid">${groups.get(category).map((r)=>{const change=formatMacroChange(r);const chart=Array.isArray(r.chart_data)?r.chart_data:[];const isUp=Number(r.delta??r.change)>=0;const spark=macroSparklineSvg(chart,isUp);const status=macroFreshness(r);return `<article class="macro-tile neutral-macro"><div class="macro-tile-top"><span class="macro-symbol">${esc(r.symbol||r.original_symbol||'')}</span><small class="${status.stale?'stale-text':''}">${status.stale?'관측일 확인 필요':'최근 관측'}</small></div><strong>${esc(r.name||r.symbol)}</strong><div class="macro-value"><b>${esc(formatMacroValue(r))}</b><em>${esc(change)}</em></div><div class="macro-mini-chart" aria-label="${esc(r.name||r.symbol)} 추세">${spark||'<span>시계열 없음</span>'}</div>${spark?`<div class="macro-mini-dates"><span>${esc(formatChartDate(chart[0]?.time||''))}</span><span>${esc(formatChartDate(chart.at(-1)?.time||r.asOf||''))}</span></div>`:''}<p>${esc(r.desc||'')}</p><div class="macro-meta-line"><span>${esc(observationLabel(r))}</span><span>${esc(changeBasisLabel(r.changeBasis))}</span>${macroPublicationLabel(r)?`<span>${esc(macroPublicationLabel(r))}</span>`:''}</div><div class="source-row"><small class="source-line">${esc(r.source||'출처 미제공')}</small>${macroSourceUrl(r)?`<button type="button" data-external-url="${esc(macroSourceUrl(r))}">원본 시리즈</button>`:''}</div></article>`}).join('')}</div></section>`).join('');
    bindNav();
  }catch(e){
    if(epoch!==viewEpoch)return;
@@ -700,6 +722,7 @@ function homeCachedQuote(symbol){
 
 function persistLiveQuoteToHomeSnapshot(quote){
  if(!quote?.ticker)return;
+ const canonical=getLiveQuote(quote.ticker)||quote;
  const cached=readHomeFast('snapshot',6*60*60*1000);
  const rows=cached?.heatmap?.results;
  if(!cached||!Array.isArray(rows))return;
@@ -708,9 +731,9 @@ function persistLiveQuoteToHomeSnapshot(quote){
  const nextRows=rows.map(row=>{
    if(String(row?.ticker||'').toUpperCase()!==ticker)return row;
    changed=true;
-   return {...row,...quote};
+   return mergeRowsWithLive([row])[0];
  });
- if(changed)writeHomeFast('snapshot',{...cached,heatmap:{...(cached.heatmap||{}),results:nextRows,generatedAt:quote.asOf||cached?.heatmap?.generatedAt}});
+ if(changed)writeHomeFast('snapshot',{...cached,heatmap:{...(cached.heatmap||{}),results:nextRows,generatedAt:canonical.asOf||cached?.heatmap?.generatedAt}});
 }
 
 async function renderDetail(){
@@ -752,17 +775,18 @@ async function renderDetail(){
  const jobs=[];
  const paintDetailQuote=(quote,{failed=false}={})=>{
    if(epoch!==viewEpoch||state.tab!=='detail'||state.detailSymbol!==symbol)return;
-   if(quote)rememberLiveQuotes([quote]);
-   const current=quote||getLiveQuote(symbol);
+   if(quote)rememberLiveQuotes([quote],{priority:50});
+   const current=getLiveQuote(symbol)||quote;
    const dayChange=finiteNumber(current?.change);
    const priceBox=document.querySelector('#detail-price');
    if(!priceBox)return;
    priceBox.classList.remove('skeleton','detail-price-skeleton');
-   priceBox.innerHTML=`<div><span>현재가${current?.asOf?' · '+esc(formatKst(current.asOf)):''}</span><strong>${current?.price!=null?esc(formatCurrencyPrice(current.price,current.currency)):'-'}</strong><small>${esc(currencyLabel(current?.currency))}</small></div><div class="detail-return ${dayChange>0?'up':dayChange<0?'down':'flat'}"><span>전 거래일 대비</span><strong>${Number.isFinite(dayChange)?esc(fmtChange(dayChange)):'-'}</strong><small>${current?.source?esc(current.source):'시세 출처 확인 필요'}</small></div>${failed?'<button class="retry" data-retry-detail>시세 다시 시도</button>':''}`;
+   priceBox.innerHTML=`<div><span>현재가${current?.asOf?' · '+esc(formatKst(current.asOf)):''}</span><strong>${current?.price!=null?esc(formatCurrencyPrice(current.price,current.currency)):'-'}</strong>${current?.currency&&current.currency!=='KRW'?`<small>${esc(currencyLabel(current.currency))}</small>`:''}</div><div class="detail-return ${dayChange>0?'up':dayChange<0?'down':'flat'}"><span>전 거래일 대비</span><strong>${Number.isFinite(dayChange)?esc(fmtChange(dayChange)):'-'}</strong><small>${current?.source?esc(current.source):'시세 출처 확인 필요'}</small></div>${failed?'<button class="retry" data-retry-detail>시세 다시 시도</button>':''}`;
  };
+ if(saved)seedWatchQuoteCache(state.watchlist.map(x=>x.symbol));
  const cachedQuote=getLiveQuote(symbol)||homeCachedQuote(symbol);
  if(cachedQuote){
-   rememberLiveQuotes([cachedQuote]);
+   rememberLiveQuotes([cachedQuote],{priority:40});
    paintDetailQuote(cachedQuote);
  }
  const pullDetailLive=async()=>{
@@ -771,9 +795,10 @@ async function renderDetail(){
      const payload=await quoteSnapshotsLive([symbol]);
      const quote=payload?.results?.[0];
      if(quote){
-       rememberLiveQuotes([quote]);
-       persistLiveQuoteToHomeSnapshot(quote);
-       paintDetailQuote(quote);
+       rememberLiveQuotes([quote],{priority:50});
+       const canonical=getLiveQuote(symbol)||quote;
+       persistLiveQuoteToHomeSnapshot(canonical);
+       paintDetailQuote(canonical);
      }
    }catch{
      if(!getLiveQuote(symbol))paintDetailQuote(null,{failed:true});
@@ -784,8 +809,9 @@ async function renderDetail(){
    }
  };
  jobs.push(pullDetailLive());
- jobs.push(settle(compareStocks([symbol],state.detailPeriod),compareRes=>{
- const stock=compareRes.status==='fulfilled'?compareRes.value?.stocks?.[0]:null;
+ jobs.push(settle(Promise.all([compareStocks([symbol],state.detailPeriod),loadChartRuntime()]),compareRes=>{
+ const stock=compareRes.status==='fulfilled'?compareRes.value?.[0]?.stocks?.[0]:null;
+ const {createChart,ColorType}=compareRes.status==='fulfilled'?compareRes.value[1]:{};
  const periodReturn=finiteNumber(stock?.return);
  if(!stock?.data?.length&&compareRes.status==='rejected'){document.querySelector('#detail-chart').innerHTML='<div class="empty compact"><strong>차트 연결을 확인해주세요</strong><button class="retry" data-retry-detail>다시 시도</button></div>';return;}
  const canvas=document.querySelector('#detail-chart'),status=document.querySelector('#detail-chart-status');
@@ -805,7 +831,7 @@ async function renderDetail(){
  jobs.push(settle(valuationStocks([symbol]),valRes=>{
  const valuation=valRes.status==='fulfilled'?valRes.value?.stocks?.[0]:null;
  const metricDefs=[['예상 PER','forwardPE','배'],['실적 PER','trailingPE','배'],['PBR','pbr','배'],['ROE','roe','%'],['영업이익률','operatingMargin','%'],['배당수익률','dividendYield','%']];
- document.querySelector('#detail-metrics').innerHTML=metricDefs.map(([label,key,suffix],i)=>{const v=valuation?.[key];return `<div class="detail-metric tone-bg-${i%3}"><span>${label}</span><strong>${v==null?'-':esc(Number(v).toLocaleString('ko-KR',{maximumFractionDigits:2})+suffix)}</strong><small>${esc(valuation?.fieldMeta?.[key]?.period||'기준기간 미제공')}</small></div>`}).join('');
+   document.querySelector('#detail-metrics').innerHTML=metricDefs.map(([label,key,suffix],i)=>{const v=valuation?.[key];return `<div class="detail-metric tone-bg-${i%3}"><span>${label}</span><strong>${v==null?'-':esc(Number(v).toLocaleString('ko-KR',{maximumFractionDigits:2})+suffix)}</strong><small>${esc(formatMetricPeriod(valuation?.fieldMeta?.[key]?.period))}</small></div>`}).join('');
  document.querySelector('#detail-metric-meta').innerHTML=valuation?`재무 데이터 조회 ${esc(formatKst(valuation.generatedAt))} · 지표별 출처는 밸류에이션 비교에서 확인할 수 있어요.`:'재무 데이터를 불러오지 못했어요. <button class="retry" data-retry-detail>다시 시도</button>';
 
  }));
@@ -820,7 +846,7 @@ function newsCard(row){
  const relation=newsRelation(row);
  const tags=(row.investmentTags||[]).slice(0,2).map(translatedTag);
  const language=titleLanguage(row.title);
- return `<button class="news-card" data-external-url="${esc(row.url||'')}"><div class="news-meta"><span class="relation-badge ${relation.className}">${relation.label}</span><span>${esc(displayName(row.symbol,row.name))}</span><small>${esc(row.source||'뉴스')} · ${esc(timeAgo(row.publishedAt))}</small></div><strong>${esc(row.title||'')}</strong><div class="news-context"><span>${esc(language)}</span>${row.relationBasis?`<span>${esc(row.relationBasis)}</span>`:''}</div>${tags.length?`<div class="news-tags">${tags.map(t=>`<span>${esc(t)}</span>`).join('')}</div>`:''}<span class="news-arrow">${iconSvg('arrow',18)}</span></button>`;
+ return `<button class="news-card" data-external-url="${esc(row.url||'')}"><div class="news-meta"><span class="relation-badge ${relation.className}">${relation.label}</span><span>${esc(displayName(row.symbol,row.name))}</span><small>${esc(row.source||'뉴스')} · ${esc(timeAgo(row.publishedAt))}</small></div><strong>${esc(row.title||'')}</strong><div class="news-context"><span>${esc(language)}</span>${row.relationBasis?`<span>${esc(relationBasisLabel(row.relationBasis))}</span>`:''}</div>${tags.length?`<div class="news-tags">${tags.map(t=>`<span>${esc(t)}</span>`).join('')}</div>`:''}<span class="news-arrow">${iconSvg('arrow',18)}</span></button>`;
 }
 
 async function renderNews(){
@@ -900,7 +926,7 @@ function renderMore(){
      <button class="feature-row" data-tab="valuation"><span class="feature-icon purple">${iconSvg('value',22)}</span><span><strong>밸류에이션</strong><small>같은 재무지표를 종목별 비교</small></span><b>${iconSvg('arrow',19)}</b></button>
      <button class="feature-row" data-tab="macro"><span class="feature-icon green">${iconSvg('macro',22)}</span><span><strong>경제 지표</strong><small>단위·관측일·변화 기준 확인</small></span><b>${iconSvg('arrow',19)}</b></button>
      <button class="feature-row" data-tab="discover"><span class="feature-icon yellow">${iconSvg('discover',22)}</span><span><strong>시장 스크리너</strong><small>전체 종목 검색·조건 필터·정렬</small></span><b>${iconSvg('arrow',19)}</b></button>
-     <button class="feature-row" data-tab="picks"><span class="feature-icon blue">${iconSvg('spark',22)}</span><span><strong>PICK 관리</strong><small>추천 성과·유지/경계·투자논리·점검 근거</small></span><b>${iconSvg('arrow',19)}</b></button>
+     ${SHOW_SPOTLIGHT?`<button class="feature-row" data-tab="picks"><span class="feature-icon blue">${iconSvg('spark',22)}</span><span><strong>최근 주목받는 종목</strong><small>선정 종목과 이후 성과·점검 기록</small></span><b>${iconSvg('arrow',19)}</b></button>`:''}
 <button class="feature-row" data-tab="heatmap"><span class="feature-icon blue">${iconSvg('chart',22)}</span><span><strong>시장 히트맵</strong><small>업종별 등락 한눈에 조회</small></span><b>${iconSvg('arrow',19)}</b></button><button class="feature-row" data-tab="consensus"><span class="feature-icon blue">${iconSvg('chart',22)}</span><span><strong>실적 전망 조회</strong><small>EPS·매출 추정치 및 변경 내역</small></span><b>${iconSvg('arrow',19)}</b></button><button class="feature-row" data-tab="bands"><span class="feature-icon blue">${iconSvg('chart',22)}</span><span><strong>역사적 밸류에이션</strong><small>과거 PER·PBR 분포와 추이</small></span><b>${iconSvg('arrow',19)}</b></button><button class="feature-row" data-tab="tools"><span class="feature-icon blue">${iconSvg('chart',22)}</span><span><strong>자료 출처</strong><small>공시·거래소·경제지표 원자료</small></span><b>${iconSvg('arrow',19)}</b></button>   </div></section>
    <section class="menu-group"><h3>뉴스</h3><div class="feature-menu"><button class="feature-row" data-tab="news"><span class="feature-icon coral">${iconSvg('news',22)}</span><span><strong>관심종목 뉴스</strong><small>직접 관련·업종 관련을 구분해 표시</small></span><b>${iconSvg('arrow',19)}</b></button></div></section>
    <section class="menu-group"><h3>이용 및 지원</h3><div class="feature-menu">
@@ -908,7 +934,7 @@ function renderMore(){
      <button class="feature-row" data-tab="info"><span class="feature-icon blue">${iconSvg('spark',22)}</span><span><strong>데이터 및 이용 안내</strong><small>기준·지연·개인정보·지원 안내</small></span><b>${iconSvg('arrow',19)}</b></button>
      <div class="feature-row"><span><strong>고객문의</strong><small>박상훈 · kimtang89@naver.com</small></span></div>
    </div></section>
-   <div class="version-card"><span class="brand-mark">${iconSvg('spark',16)}</span><div><strong>Chart View</strong><small>버전 0.9.2</small></div></div>
+   <div class="version-card"><span class="brand-mark">${iconSvg('spark',16)}</span><div><strong>Chart View</strong><small>버전 0.9.4</small></div></div>
  `,'전체');
  bindNav();
 }
@@ -928,7 +954,13 @@ function render(){
  if(state.tab==='watch')return renderWatch();
  if(state.tab==='valuation')return renderValuation();
  if(state.tab==='macro')return renderMacro();
- if(state.tab==='picks'){cleanupChart();return renderPickLedger({shell,bindNav,displayName});}
+ if(state.tab==='picks'&&SHOW_SPOTLIGHT){
+   cleanupChart();
+   void Promise.all([import('./pickLedger.js'),import('./pickLedger.css')]).then(([ledger])=>{
+     if(state.tab==='picks')ledger.renderPickLedger({shell,bindNav,displayName});
+   });
+   return;
+ }
  if(ANALYSIS_ROUTES.has(state.tab)){cleanupChart();analysisCleanup=renderAnalysis({tab:state.tab,state,shell,bindNav,displayName,openCompareSheet});return;}
  if(state.tab==='news')return renderNews();
  if(state.tab==='detail')return renderDetail();
@@ -950,7 +982,7 @@ window.addEventListener('offline',()=>render());
 document.addEventListener('chartview:storage-error',()=>showToast('목록을 기기에 저장하지 못했어요. 다시 시도해주세요.'));
 document.addEventListener('chartview:home-live',(event)=>{
  const rows=Array.isArray(event.detail?.results)?event.detail.results:[];
- rememberLiveQuotes(rows);
+ rememberLiveQuotes(rows,{priority:30});
  if(state.tab!=='home')return;
  const canonical=rows.map(row=>getLiveQuote(row?.ticker)||row);
  patchHomeWatchLive(canonical);

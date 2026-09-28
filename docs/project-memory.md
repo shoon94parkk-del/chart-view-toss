@@ -19,12 +19,11 @@ Toss-specific navigation, safe-area, storage, SDK bridge, and release logic belo
 - Toss-style mobile information hierarchy and bottom navigation.
 - Safe-area handling.
 - Home/chart/watchlist/more plus valuation, macro, discover, news, and stock-detail surfaces.
-- Home surfaces the latest screener-selected TOP3 and a market-cap-weighted daily-change heatmap using the shared Chart View backend.
+- Home surfaces a market-cap-weighted daily-change heatmap and the restored user-selected stock list from the shared Chart View backend.
 - Heatmap medium/large cells use a small set of inline bundled SVG company marks (with text fallbacks), so logo recognition adds no separate image requests.
 - Heatmap labels are geometry-aware: curated short company names are preferred over provider legal names, logos are suppressed in cramped cells, and tiny cells fall back to compact labels to prevent clipping.
 - Heatmap cards use tighter padding, stronger contrast, and thinner cell seams. Logos sit inline with company names only when the cell can fit them; absolute overlays are prohibited because they can cover labels.
-- Home discovery restores the Web Chart View recommendation-performance summary from the same home-bootstrap payload: average evaluated return, positive-return ratio, and evaluated/total recommendation count.
-- Home "추천 기록" opens a dedicated mobile recommendation ledger showing recommendation date, recommendation price, current price, current return, best return, score, status, and reason. The market screener remains a separate analysis tool.
+- In `0.9.4`, the operator requested Home selection and PICK history be restored under `최근 주목받는 종목`. This uses the existing data and requires separate Toss scope review before public submission; the user-operated market screener remains available.
 - Shared stock selector sheet and up to 6 selected tickers.
 - Device-local watchlist/selection.
 - In-app hash/history navigation and scroll restoration.
@@ -53,7 +52,7 @@ Toss-specific navigation, safe-area, storage, SDK bridge, and release logic belo
 - Real Android and iOS Sandbox/QR testing is mandatory before public release.
 
 ## External release gates
-- Confirm official Apps in Toss scope/review requirements.
+- Official Apps in Toss answer provided by the operator: lookup-only service is permitted; recommendations/investment prompts are not. Recheck if scope changes.
 - Confirm commercial-use/redistribution conditions for every data provider.
 - Eliminate unacceptable user-visible backend cold-start dependency.
 - Verify native back/root exit, external links, haptics, safe area, keyboard, background/resume, offline/5xx/retry, and anonymous-key storage on real devices.
@@ -62,6 +61,9 @@ Toss-specific navigation, safe-area, storage, SDK bridge, and release logic belo
 ## Regression assets
 - `npm test`
 - `tests/mobile_release_qa.mjs`
+- `tests/watch_quote_parity_qa.mjs` (slow API, cached-first price, Home/Watchlist/valuation/heatmap/detail parity)
+- `tests/live_user_journey.mjs` (real deployed API search and SK하이닉스 Home/Watchlist/heatmap/detail journey)
+- `.gstack/qa-reports/qa-report-chart-view-toss-onrender-com-2026-09-28.md` (release QA findings and remaining gates)
 - `tests/analysis_qa.mjs`
 - `tests/progressive_qa.mjs`
 - `tests/release_gates_qa.mjs`

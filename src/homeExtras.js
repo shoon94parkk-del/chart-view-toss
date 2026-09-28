@@ -3,7 +3,8 @@ import { HOME_LOGOS } from './homeLogos.js';
 import { HOME_STOCK_META, renderSharedHeatmap } from './heatmapView.js';
 import { readHomeFast, writeHomeFast } from './homeFastCache.js';
 import { mergeLiveRows } from './liveHomeSync.js';
-import { rememberLiveQuotes, getLiveQuote } from './liveQuoteStore.js';
+import { rememberLiveQuotes, getLiveQuote, mergeRowsWithLive } from './liveQuoteStore.js';
+import { SHOW_SPOTLIGHT } from './releaseScope.js';
 
 const STOCK_META = HOME_STOCK_META;
 
@@ -154,12 +155,15 @@ function heatmapMarketMarkup(payload, market) {
 }
 
 function createSections(marketSection) {
-  const picks = document.createElement('section');
-  picks.className = 'section home-extra-section home-pick-section home-primary';
-  picks.id = 'home-top-picks-section';
-  picks.innerHTML =
-    '<div class="section-head"><h2>오늘의 종목발굴</h2><button type="button" class="text-button" data-home-extra-route="picks">PICK 관리</button></div>' +
-    '<div id="home-top-picks" class="home-pick-list"><div class="skeleton home-extra-skeleton"></div></div>';
+  let picks = null;
+  if (SHOW_SPOTLIGHT) {
+    picks = document.createElement('section');
+    picks.className = 'section home-extra-section home-pick-section home-primary';
+    picks.id = 'home-top-picks-section';
+    picks.innerHTML =
+      '<div class="section-head"><h2>최근 주목받는 종목</h2><button type="button" class="text-button" data-home-extra-route="picks">전체보기</button></div>' +
+      '<div id="home-top-picks" class="home-pick-list"><div class="skeleton home-extra-skeleton"></div></div>';
+  }
 
   const heatmap = document.createElement('section');
   heatmap.className = 'section home-extra-section home-heatmap-section home-primary';
@@ -169,8 +173,12 @@ function createSections(marketSection) {
     '<p class="home-extra-caption">대표 종목의 당일 등락률을 시가총액 비중으로 보여줘요.</p>' +
     '<div id="home-daily-heatmap"><div class="skeleton home-heatmap-skeleton"></div></div>';
 
-  marketSection.insertAdjacentElement('afterend', picks);
-  picks.insertAdjacentElement('afterend', heatmap);
+  if (picks) {
+    marketSection.insertAdjacentElement('afterend', picks);
+    picks.insertAdjacentElement('afterend', heatmap);
+  } else {
+    marketSection.insertAdjacentElement('afterend', heatmap);
+  }
   return { picks, heatmap };
 }
 
@@ -231,7 +239,8 @@ function paintPicks(host, payload) {
 
 function paintHeatmap(host, payload) {
   if (!host || !host.isConnected) return;
-  host.innerHTML = renderSharedHeatmap(payload);
+  rememberLiveQuotes(payload?.results || [], { priority: 20 });
+  host.innerHTML = renderSharedHeatmap({ ...payload, results: mergeRowsWithLive(payload?.results || []) });
   host.querySelectorAll('[data-stock-detail]').forEach((cell) => {
     const openDetail = () => navigate('detail', cell.dataset.stockDetail, cell.dataset.stockName || '');
     cell.addEventListener('click', openDetail);
@@ -253,8 +262,10 @@ async function mount() {
   const token = ++generation;
   const sections = createSections(marketSection);
 
-  const cachedPicks = readHomeFast('bootstrap', 36 * 60 * 60 * 1000);
-  if (cachedPicks) paintPicks(sections.picks.querySelector('#home-top-picks'), cachedPicks);
+  if (SHOW_SPOTLIGHT) {
+    const cachedPicks = readHomeFast('bootstrap', 36 * 60 * 60 * 1000);
+    if (cachedPicks) paintPicks(sections.picks.querySelector('#home-top-picks'), cachedPicks);
+  }
   const cachedSnapshot = readHomeFast('snapshot', 6 * 60 * 60 * 1000);
   if (cachedSnapshot?.heatmap?.results?.length) {
     paintHeatmap(sections.heatmap.querySelector('#home-daily-heatmap'), {
@@ -263,7 +274,7 @@ async function mount() {
     });
   }
 
-  const picksTask = homeBootstrap()
+  const picksTask = SHOW_SPOTLIGHT ? homeBootstrap()
     .then((payload) => {
       if (token !== generation || !sections.picks.isConnected) return;
       writeHomeFast('bootstrap', payload);
@@ -273,11 +284,14 @@ async function mount() {
       if (token !== generation || !sections.picks.isConnected) return;
       sections.picks.querySelector('#home-top-picks').innerHTML =
         '<div class="home-extra-empty"><strong>종목발굴을 불러오지 못했어요.</strong><span>스크리너 화면은 계속 사용할 수 있어요.</span></div>';
-    });
+    }) : Promise.resolve();
 
   const heatmapTask = homeSnapshot()
     .then((snapshot) => {
-      if (snapshot) writeHomeFast('snapshot', snapshot);
+      if (snapshot?.heatmap?.results?.length) {
+        rememberLiveQuotes(snapshot.heatmap.results, { priority: 20 });
+        writeHomeFast('snapshot', { ...snapshot, heatmap: { ...snapshot.heatmap, results: mergeRowsWithLive(snapshot.heatmap.results) } });
+      }
       if (snapshot && snapshot.heatmap && Array.isArray(snapshot.heatmap.results) && snapshot.heatmap.results.length) {
         return { results: snapshot.heatmap.results, generatedAt: snapshot.generatedAt || snapshot.heatmap.generatedAt || '' };
       }
@@ -300,7 +314,7 @@ document.addEventListener('chartview:home-live', (event) => {
   const host = document.querySelector('#home-daily-heatmap');
   const liveRows = Array.isArray(event.detail?.results) ? event.detail.results : [];
   if (!host || !liveRows.length) return;
-  rememberLiveQuotes(liveRows);
+  rememberLiveQuotes(liveRows, { priority: 30 });
   const canonicalRows = liveRows.map((row) => getLiveQuote(row?.ticker) || row);
   const cached = readHomeFast('snapshot', 6 * 60 * 60 * 1000);
   const baseRows = cached?.heatmap?.results;

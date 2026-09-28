@@ -1,7 +1,7 @@
 {
   "name": "chart-view-toss",
   "private": true,
-  "version": "0.9.2",
+  "version": "0.9.4",
   "type": "module",
   "engines": {
     "node": "24.x",
@@ -10,8 +10,8 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "test": "node tests/ait_contract.cjs && node --test tests/*.test.mjs",
-    "build": "npm test && vite build",
-    "build:ait": "npm test && vite build && ait build",
+    "build": "npm test && vite build && node scripts/export-preview-routes.mjs && node tests/verify_preview_routes.mjs",
+    "build:ait": "npm run build && ait build",
     "deploy:ait": "ait deploy",
     "preview": "vite preview --host 0.0.0.0"
   },

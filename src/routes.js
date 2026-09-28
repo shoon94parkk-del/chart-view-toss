@@ -1,4 +1,7 @@
-const routes = new Set(['home','chart','watch','valuation','macro','discover','picks','news','detail','info','more','heatmap','consensus','bands','tools']);
+import { SHOW_SPOTLIGHT } from './releaseScope.js';
+
+const routes = new Set(['home','chart','watch','valuation','macro','discover','news','detail','info','more','heatmap','consensus','bands','tools']);
+if (SHOW_SPOTLIGHT) routes.add('picks');
 const aliases = {chartviewHome:'chart',search:'chart',compare:'chart',stock:'detail'};
 export function resolveRoute({pathname='/',hash=''}) {
   const raw = hash ? hash.replace(/^#/,'') : pathname.replace(/^\//,'');

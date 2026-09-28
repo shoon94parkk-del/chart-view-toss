@@ -18,7 +18,8 @@ These routes are already recognized by the client so the Apps in Toss console ca
 | 차트 비교 | `/chart` |
 | 밸류에이션 | `/valuation` |
 | 경제 지표 | `/macro` |
-| 종목 발굴 | `/discover` |
+| 사용자 조건 검색 | `/discover` |
+| 최근 주목받는 종목 기록 (추가 정책 확인 필요) | `/picks` |
 | 맞춤 뉴스 | `/news` |
 | 관심종목 | `/watch` |
 | 종목 상세 | `/stock/{symbol}` |
@@ -30,7 +31,7 @@ These routes are already recognized by the client so the Apps in Toss console ca
 3. Confirm native top navigation is visible and the duplicate web top bar is hidden.
 4. Confirm sub-page back goes to the prior screen and root back keeps the platform exit behavior.
 5. Confirm news links open via the Apps in Toss external URL bridge and return to the mini-app correctly.
-6. Confirm Home, Chart, Valuation, Macro, Discovery, News, Watchlist, and Stock Detail all load the shared API.
+6. Confirm Home, Chart, Valuation, Macro, user-driven Screener, News, Watchlist, Stock Detail, and the restored `최근 주목받는 종목` view load the shared API. Confirm policy approval for the restored view before public submission.
 7. Confirm deep entry routes open their intended screen.
 8. Re-check loading, empty, offline, and provider-error states on a real device.
 

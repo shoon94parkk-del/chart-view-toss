@@ -6,11 +6,12 @@ const ledger=readFileSync(new URL('../src/pickLedger.js',import.meta.url),'utf8'
 const api=readFileSync(new URL('../src/api.js',import.meta.url),'utf8');
 const main=readFileSync(new URL('../src/main.js',import.meta.url),'utf8');
 const home=readFileSync(new URL('../src/homeExtras.js',import.meta.url),'utf8');
+const scope=readFileSync(new URL('../src/releaseScope.js',import.meta.url),'utf8');
 
 test('PICK management combines recommendation performance and monitoring',()=>{
   assert.match(api,/pick_monitor\.json/);
   assert.match(ledger,/homeBootstrap, pickMonitor/);
-  for(const token of ['PICK 관리','누적 추천일','누적 추천','플러스 비율','평균 수익률','유지','경계','매도검토','검토 대기','추천 당시 이유','투자논리 기준선','최근 점검','검증 근거']){
+  for(const token of ['최근 주목받는 종목','누적 추천일','누적 추천','플러스 비율','평균 수익률','유지','경계','매도검토','검토 대기','추천 당시 이유','투자논리 기준선','최근 점검','검증 근거']){
     assert.ok(ledger.includes(token),`missing unified PICK token: ${token}`);
   }
 });
@@ -20,10 +21,14 @@ test('PICK management keeps review-only sell semantics',()=>{
   assert.ok(ledger.includes('사용자 확인 필요'));
 });
 
-test('Toss navigation reuses the existing picks route',()=>{
-  assert.ok(main.includes('data-tab="picks"'));
-  assert.ok(main.includes('<strong>PICK 관리</strong>'));
-  assert.ok(home.includes('data-home-extra-route="picks">PICK 관리</button>'));
+test('recent spotlight restores existing selection and PICK navigation',()=>{
+  assert.match(scope,/SHOW_SPOTLIGHT = true/);
+  assert.ok(main.includes('SHOW_SPOTLIGHT?`<button class="feature-row" data-tab="picks"'));
+  assert.ok(home.includes('if (SHOW_SPOTLIGHT) {'));
+  assert.ok(home.includes('최근 주목받는 종목'));
+  assert.ok(main.includes('<strong>최근 주목받는 종목</strong>'));
+  assert.ok(ledger.includes('<h2>최근 주목받는 종목</h2>'));
+  assert.ok(home.includes('data-home-extra-route="picks">전체보기</button>'));
 });
 
 test('PICK monitoring failure does not blank recommendation performance',()=>{

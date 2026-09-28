@@ -2,7 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {resolveRoute} from '../src/routes.js';
 test('feature paths and hash re-entry resolve to the same page',()=>{
-  for(const tab of ['home','chart','watch','valuation','macro','discover','news','info','more','heatmap','consensus','bands','tools']) {
+  for(const tab of ['home','chart','watch','valuation','macro','discover','picks','news','info','more','heatmap','consensus','bands','tools']) {
     for(const location of [{pathname:`/${tab}`},{pathname:`/chartview/${tab}`},{hash:`#${tab}`}]) assert.equal(resolveRoute(location).tab,tab);
   }
   assert.equal(resolveRoute({pathname:'/chartviewHome'}).tab,'chart');
