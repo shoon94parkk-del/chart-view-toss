@@ -1,3 +1,4 @@
+// Regression guard for cross-route current-price monotonicity.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { clearLiveQuotes, getLiveQuote, rememberLiveQuotes, mergeRowsWithLive } from '../src/liveQuoteStore.js';
