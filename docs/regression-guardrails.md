@@ -80,3 +80,7 @@ Last updated: 2026-09-22
 - Home/detail/full-heatmap should overlay the newest in-session quote by ticker.
 - Detail live refresh must use `fresh=true` and remain one-symbol-only at 5s cadence.
 - Returning to Home after viewing detail must preserve the newer detail quote in the Home fast snapshot until the next Home live event supersedes it.
+
+### Heatmap/detail round-trip guardrail
+- A heatmap click must preserve the visible company identity in the detail header; raw ticker-only detail is a regression when the heatmap already knows the company name.
+- Returning from detail must not remove the viewed heatmap stock. Null/undefined fields from a live quote must never overwrite valid structural fields such as `marketCap`, `name`, or market identity used by the treemap filter/layout.
