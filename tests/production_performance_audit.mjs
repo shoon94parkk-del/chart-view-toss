@@ -1,173 +1,133 @@
 import { chromium } from 'playwright';
 
-// audit-run: p0-valuation-swr-live-20260928
-
-// audit-run: default-analysis-prewarm-20260928
-const BASE=process.env.PERF_BASE_URL||'https://chart-view-toss.onrender.com';
+const BASE=process.env.PERF_BASE_URL||'https://chart-view-pkv8.onrender.com';
+// audit-run: original-boot-css-live-20260928-final
 const TIMEOUT=Number(process.env.PERF_TIMEOUT_MS||20000);
-
-const routes=[
-  {route:'home',label:'홈',ready:()=>Boolean(document.querySelector('#market-card .quote-card'))&&document.querySelectorAll('#home-top-picks .skeleton,#home-daily-heatmap .skeleton').length===0},
-  {route:'chart',label:'차트',ready:()=>{const s=document.querySelector('#chart-status');return Boolean(s)&&!String(s.textContent||'').includes('불러오는 중')&&Boolean(document.querySelector('#chart-table-wrap .return-table,#chart-table-wrap .empty'))}},
-  {route:'watch',label:'관심종목',ready:()=>Boolean(document.querySelector('#watch-rich-list'))&&document.querySelectorAll('#watch-rich-list .skeleton').length===0},
-  {route:'valuation',label:'밸류에이션',ready:()=>Boolean(document.querySelector('#valuation-list'))&&document.querySelectorAll('#valuation-list .skeleton').length===0},
-  {route:'macro',label:'경제지표',ready:()=>Boolean(document.querySelector('#macro-groups'))&&document.querySelectorAll('#macro-groups .skeleton').length===0&&Boolean(document.querySelector('#macro-groups .macro-group,#macro-groups .empty'))},
-  {route:'discover',label:'시장 스크리너',ready:()=>Boolean(document.querySelector('#analysis-body'))&&document.querySelectorAll('#analysis-body .skeleton').length===0&&Boolean(document.querySelector('#analysis-body .analysis-list,#analysis-body .empty'))},
-  {route:'picks',label:'추천 기록',ready:()=>Boolean(document.querySelector('#pick-ledger-list'))&&document.querySelectorAll('#pick-ledger-list .skeleton').length===0},
-  {route:'news',label:'관심종목 뉴스',ready:()=>Boolean(document.querySelector('#news-list'))&&document.querySelectorAll('#news-list .skeleton').length===0},
-  {route:'heatmap',label:'시장 히트맵',ready:()=>document.querySelectorAll('#analysis-body .home-heatmap-cell').length>=18||Boolean(document.querySelector('#analysis-body .empty'))},
-  {route:'consensus',label:'실적 전망',ready:()=>Boolean(document.querySelector('#analysis-body'))&&document.querySelectorAll('#analysis-body [role="status"]').length===0&&document.querySelectorAll('#analysis-body .skeleton').length===0},
-  {route:'bands',label:'역사적 밸류에이션',ready:()=>Boolean(document.querySelector('#analysis-body .analysis-metrics,#analysis-body .empty'))},
-  {route:'detail/005930.KS',label:'종목 상세',ready:()=>Boolean(document.querySelector('#detail-price'))&&!document.querySelector('#detail-price')?.classList.contains('skeleton')},
-  {route:'tools',label:'자료 출처',ready:()=>Boolean(document.querySelector('#analysis-body .feature-row,#analysis-body .empty'))},
-  {route:'info',label:'데이터·이용 안내',ready:()=>Boolean(document.querySelector('.info-stack'))},
-  {route:'more',label:'전체 메뉴',ready:()=>Boolean(document.querySelector('.menu-group'))},
-];
-
+const RUNS=3;
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const round=n=>Math.round(Number(n)||0);
 
 function apiCollector(page){
   const starts=new WeakMap();
   const rows=[];
-  let generation=0;
-  const onRequest=req=>{
-    if(req.url().includes('chart-view-pkv8.onrender.com/api/'))starts.set(req,{started:performance.now(),generation});
-  };
-  const onResponse=async res=>{
+  page.on('request',req=>{
+    try{
+      const u=new URL(req.url());
+      if(u.origin===new URL(BASE).origin && u.pathname.startsWith('/api/')) starts.set(req,performance.now());
+    }catch{}
+  });
+  page.on('response',async res=>{
     const req=res.request();
-    const marker=starts.get(req);
-    if(!marker||marker.generation!==generation)return;
-    const start=marker.started;
-    const url=new URL(req.url());
-    let meta=null;
-    if(url.pathname==='/api/compare'||url.pathname==='/api/valuation'){
-      try{
-        const body=await res.json();
-        meta={cacheHits:Number(body?.cacheHits??-1),providerFetches:Number(body?.providerFetches??-1)};
-      }catch{}
-    }
-    rows.push({path:url.pathname,ms:round(performance.now()-start),status:res.status(),meta});
-  };
-  page.on('request',onRequest);
-  page.on('response',onResponse);
-  return {
-    rows,
-    reset(){generation++;rows.length=0;},
-    stop(){page.off('request',onRequest);page.off('response',onResponse);}
-  };
-}
-
-async function seed(context){
-  await context.addInitScript(()=>{
-    localStorage.setItem('chartview-toss-watchlist-v1',JSON.stringify([
-      {symbol:'005930.KS',name:'삼성전자'},
-      {symbol:'NVDA',name:'엔비디아'},
-      {symbol:'AAPL',name:'애플'}
-    ]));
-    localStorage.setItem('chartview-toss-selected-v1',JSON.stringify(['005930.KS','NVDA','AAPL']));
+    const start=starts.get(req);
+    if(start==null)return;
+    const u=new URL(req.url());
+    rows.push({path:u.pathname,ms:round(performance.now()-start),status:res.status()});
   });
+  return {rows,mark(){return rows.length;}};
 }
 
-async function waitReady(page,cfg){
-  const started=performance.now();
-  let state='ready';
-  try{
-    await page.waitForFunction(cfg.ready,{timeout:TIMEOUT,polling:50});
-  }catch{
-    state='timeout';
-  }
-  return {ms:round(performance.now()-started),state};
+async function waitFor(page,fn){
+  const t=performance.now();
+  await page.waitForFunction(fn,{timeout:TIMEOUT,polling:50});
+  return round(performance.now()-t);
 }
 
-function apiSummary(rows){
-  const by=new Map();
-  for(const row of rows){
-    if(!by.has(row.path))by.set(row.path,[]);
-    by.get(row.path).push(row);
-  }
-  return [...by.entries()].map(([path,list])=>({
-    path,
-    calls:list.length,
-    ms:Math.max(...list.map(x=>x.ms)),
-    status:list.map(x=>x.status).join(','),
-    meta:list.find(x=>x.meta)?.meta||null
-  })).sort((a,b)=>b.ms-a.ms);
-}
-
-async function coldMeasure(browser,cfg){
+async function measureRun(browser,run){
   const context=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:1});
-  await seed(context);
   const page=await context.newPage();
   const api=apiCollector(page);
-  const start=performance.now();
-  await page.goto(`${BASE}/#${cfg.route}`,{waitUntil:'domcontentloaded',timeout:30000});
-  const domMs=round(performance.now()-start);
-  let shellMs=domMs;
-  try{
-    await page.waitForSelector('.app-shell',{timeout:TIMEOUT});
-    shellMs=round(performance.now()-start);
-  }catch{}
-  const ready=await waitReady(page,cfg);
-  const totalMs=round(performance.now()-start);
-  const nav=await page.evaluate(()=>{
-    const n=performance.getEntriesByType('navigation')[0];
-    return n?{ttfb:n.responseStart,dom:n.domContentLoadedEventEnd,load:n.loadEventEnd}:null;
+  const out={run};
+
+  let mark=api.mark();
+  let t=performance.now();
+  await page.goto(BASE,{waitUntil:'domcontentloaded',timeout:30000});
+  const dom=round(performance.now()-t);
+  await page.waitForSelector('.app-bottom-nav',{timeout:TIMEOUT});
+  await waitFor(page,()=>document.querySelectorAll('#home-market-v9-grid .home-market-v9-item:not(.is-loading)').length>=4);
+  const perf=await page.evaluate(()=>{
+    const nav=performance.getEntriesByType('navigation')[0];
+    const resources=performance.getEntriesByType('resource')
+      .map(r=>({name:new URL(r.name).pathname,duration:Math.round(r.duration),transferSize:r.transferSize||0,decodedBodySize:r.decodedBodySize||0,initiatorType:r.initiatorType}))
+      .filter(r=>r.name.startsWith('/static/'))
+      .sort((a,b)=>b.duration-a.duration)
+      .slice(0,12);
+    return {
+      nav:nav?{ttfb:Math.round(nav.responseStart-nav.requestStart),response:Math.round(nav.responseEnd-nav.responseStart),dcl:Math.round(nav.domContentLoadedEventEnd-nav.startTime)}:null,
+      resources
+    };
   });
-  const result={coldMs:totalMs,coldShellMs:shellMs,coldReadyState:ready.state,navTtfbMs:round(nav?.ttfb),apiCold:apiSummary(api.rows)};
-  api.stop();await context.close();
-  return result;
+  out.home={ms:round(performance.now()-t),domMs:dom,api:api.rows.slice(mark),perf};
+
+  mark=api.mark(); t=performance.now();
+  await page.locator('.app-bottom-btn[data-app-mode="analysis"]').click();
+  await page.waitForFunction(()=>document.getElementById('chart-tab')?.classList.contains('active'),{timeout:TIMEOUT});
+  await page.waitForFunction(()=>{
+    const c=document.getElementById('chart-container');
+    const loading=document.getElementById('loading');
+    return c && c.children.length>0 && (!loading || loading.classList.contains('hidden'));
+  },{timeout:TIMEOUT});
+  out.chart={ms:round(performance.now()-t),api:api.rows.slice(mark)};
+
+  mark=api.mark(); t=performance.now();
+  await page.locator('.app-context-btn[data-app-tab="fwdper"]').click();
+  await page.waitForFunction(()=>document.getElementById('fwdper-tab')?.classList.contains('active'),{timeout:TIMEOUT});
+  await page.waitForFunction(()=>{
+    const l=document.getElementById('per-loading');
+    const box=document.getElementById('per-table-container');
+    return box && (!l || l.classList.contains('hidden')) && box.textContent.trim().length>0;
+  },{timeout:TIMEOUT});
+  out.valuation={ms:round(performance.now()-t),api:api.rows.slice(mark)};
+
+  mark=api.mark(); t=performance.now();
+  await page.locator('.app-bottom-btn[data-app-mode="market"]').click();
+  await page.waitForFunction(()=>document.getElementById('macro-tab')?.classList.contains('active'),{timeout:TIMEOUT});
+  await page.waitForFunction(()=>document.querySelectorAll('#macro-grid > *').length>0,{timeout:TIMEOUT});
+  out.macro={ms:round(performance.now()-t),api:api.rows.slice(mark)};
+
+  mark=api.mark(); t=performance.now();
+  await page.locator('.app-bottom-btn[data-app-mode="discover"]').click();
+  await page.waitForFunction(()=>document.getElementById('screener-tab')?.classList.contains('active'),{timeout:TIMEOUT});
+  await page.waitForFunction(()=>Boolean(document.querySelector('#screener-tab .screener-table-wrap,#screener-tab .empty-state,#screener-tab .screener-empty')),{timeout:TIMEOUT});
+  out.screener={ms:round(performance.now()-t),api:api.rows.slice(mark)};
+
+  mark=api.mark(); t=performance.now();
+  await page.locator('.app-bottom-btn[data-app-mode="watchlist"]').click();
+  await page.waitForFunction(()=>document.getElementById('watchlist-tab')?.classList.contains('active'),{timeout:TIMEOUT});
+  await page.waitForFunction(()=>Boolean(document.querySelector('#watchlist-v30-grid > *')));
+  out.watchlist={ms:round(performance.now()-t),api:api.rows.slice(mark)};
+
+  await context.close();
+  return out;
 }
 
-async function spaMeasure(browser,cfg){
-  if(cfg.route==='home')return {spaMs:0,spaReadyState:'root',apiSpa:[]};
-  const context=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:1});
-  await seed(context);
-  const page=await context.newPage();
-  const api=apiCollector(page);
-  await page.goto(`${BASE}/#home`,{waitUntil:'domcontentloaded',timeout:30000});
-  await waitReady(page,routes[0]);
-  await sleep(100);
-  api.reset();
-  const start=performance.now();
-  await page.evaluate(route=>{location.hash='#'+route},cfg.route);
-  const ready=await waitReady(page,cfg);
-  const totalMs=round(performance.now()-start);
-  const result={spaMs:totalMs,spaReadyState:ready.state,apiSpa:apiSummary(api.rows)};
-  api.stop();await context.close();
-  return result;
-}
+const metric=(rows,key)=>{
+  const a=rows.map(r=>r[key].ms).sort((x,y)=>x-y);
+  return {median:a[Math.floor(a.length/2)],min:a[0],max:a[a.length-1]};
+};
+const slowApi=(entry)=>{
+  const a=(entry.api||[]).slice().sort((x,y)=>y.ms-x.ms)[0];
+  return a?{path:a.path,ms:a.ms}:null;
+};
 
 const browser=await chromium.launch({headless:true});
-const results=[];
+const runs=[];
 try{
-  for(const cfg of routes){
-    const cold=await coldMeasure(browser,cfg);
-    const spa=await spaMeasure(browser,cfg);
-    const merged={route:cfg.route,label:cfg.label,...cold,...spa};
-    results.push(merged);
-    console.log('PERF_RESULT '+JSON.stringify(merged));
+  for(let i=1;i<=RUNS;i++){
+    const r=await measureRun(browser,i);
+    runs.push(r);
+    console.log('ORIGINAL_PERF_RESULT '+JSON.stringify(r));
+    await sleep(300);
   }
-} finally {
-  await browser.close();
-}
+}finally{await browser.close();}
 
-const apiCell=api=>{
-  if(!api)return '없음';
-  const meta=api?.meta?` · cache ${api.meta.cacheHits}/fetch ${api.meta.providerFetches}`:'';
-  return `${api.path} ${api.ms}ms${meta}`;
-};
+const keys=[['home','홈'],['chart','차트 비교'],['valuation','밸류에이션'],['macro','경제지표'],['screener','종목발굴'],['watchlist','관심종목']];
 const table=[
-  '| 화면 | Cold 데이터 표시 | SPA 이동 | 앱 Shell | Navigation TTFB | Cold 최장 API | SPA 최장 API |',
-  '|---|---:|---:|---:|---:|---|---|',
-  ...results.map(r=>{
-    const coldApi=(r.apiCold||[])[0];
-    const spaApi=(r.apiSpa||[])[0];
-    return `| ${r.label} | ${r.coldMs}ms | ${r.spaMs}ms | ${r.coldShellMs}ms | ${r.navTtfbMs}ms | ${apiCell(coldApi)} | ${apiCell(spaApi)} |`;
+  '| 화면 | 실제 표시 중앙값 | 최소 | 최대 | 대표 느린 API |',
+  '|---|---:|---:|---:|---|',
+  ...keys.map(([key,label])=>{
+    const m=metric(runs,key);
+    const sample=runs.map(r=>slowApi(r[key])).filter(Boolean).sort((a,b)=>b.ms-a.ms)[0];
+    return `| ${label} | ${m.median}ms | ${m.min}ms | ${m.max}ms | ${sample?`${sample.path} ${sample.ms}ms`:'없음'} |`;
   })
 ].join('\n');
-console.log('\nPERF_TABLE\n'+table);
-if(process.env.GITHUB_STEP_SUMMARY){
-  const fs=await import('node:fs');
-  fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY,'## Chart View Toss route performance\n\n'+table+'\n');
-}
+console.log('\nORIGINAL_PERF_TABLE\n'+table);

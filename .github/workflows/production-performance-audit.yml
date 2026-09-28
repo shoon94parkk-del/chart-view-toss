@@ -26,6 +26,6 @@ jobs:
           npx playwright install --with-deps chromium
       - name: Audit live route loading
         env:
-          PERF_BASE_URL: https://chart-view-toss.onrender.com
+          PERF_BASE_URL: https://chart-view-pkv8.onrender.com
           PERF_TIMEOUT_MS: '20000'
         run: node tests/production_performance_audit.mjs
