@@ -91,3 +91,5 @@ Toss-specific navigation, safe-area, storage, SDK bridge, and release logic belo
 - 2026-09-28 PICK 관리 통합: 기존 `#picks` 추천 기록 화면을 유지한 채 누적 추천 성과와 Web Chart View의 `/static/data/pick_monitor.json` 사후점검 상태를 한 화면에 합쳤다. 홈/전체 메뉴는 `PICK 관리`로 진입하며, 점검 데이터 실패 시에도 추천 성과는 독립적으로 표시한다.
 
 - 2026-09-28 경제지표 미니 차트: Toss `#macro` 카드에 백엔드 `chart_data`를 그대로 사용한 경량 SVG 스파크라인을 추가했다. 별도 API 호출·차트 인스턴스 없이 렌더링하며 시계열이 없으면 `시계열 없음`을 표시한다.
+
+- 2026-09-28 홈 주요시장 확장: 기본 4개(KOSPI/KOSDAQ/S&P 500/NASDAQ)는 기존처럼 즉시 표시하고, `더 보기`에서 미 10년물·VIX·WTI 유가·원/달러를 추가 표시한다. 보조 4개는 사용자가 펼칠 때만 `/api/quotes`로 조회해 홈 초기 로딩 부하를 늘리지 않는다.

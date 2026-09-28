@@ -16,7 +16,7 @@ try{
   return json({stocks:[]});
  });
  await page.goto(process.env.QA_BASE_URL||'http://127.0.0.1:4173');
- await page.locator('.quote-card').waitFor({timeout:1200});
+ await page.locator('.quote-card:not(.market-card-loading)').first().waitFor({timeout:1200});
  await page.locator('[data-stock-detail="AAPL"]').first().waitFor({timeout:4000});
  await page.locator('[data-stock-detail="AAPL"]').first().click();
  // Return immediately while four requests are still pending.

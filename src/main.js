@@ -22,6 +22,18 @@ const DEFAULTS=[{symbol:'005930.KS',name:'삼성전자'},{symbol:'NVDA',name:'�
 const PUBLIC_SITE_BASE='https://chart-view-toss.onrender.com';
 const COLORS=['#3182f6','#f04452','#00a86b','#8b5cf6','#f59f00','#00a8cc'];
 const DISPLAY_NAMES={'005930.KS':'삼성전자','000660.KS':'SK하이닉스','NVDA':'엔비디아','AAPL':'애플','MSFT':'마이크로소프트','META':'메타','TSLA':'테슬라','GOOGL':'알파벳','^KS11':'코스피','^KQ11':'코스닥','^GSPC':'S&P 500','^IXIC':'나스닥','^TNX':'미국 10년물','^VIX':'VIX','CL=F':'WTI','KRW=X':'원/달러'};
+const HOME_MARKET_PRIMARY=[
+ {symbol:'^KS11',label:'KOSPI',pill:'KR',kind:'index'},
+ {symbol:'^KQ11',label:'KOSDAQ',pill:'KR',kind:'index'},
+ {symbol:'^GSPC',label:'S&P 500',pill:'US',kind:'index'},
+ {symbol:'^IXIC',label:'NASDAQ',pill:'US',kind:'index'},
+];
+const HOME_MARKET_EXTRA=[
+ {symbol:'^TNX',label:'미 10년물',pill:'금리',kind:'yield'},
+ {symbol:'^VIX',label:'VIX',pill:'변동성',kind:'vix'},
+ {symbol:'CL=F',label:'WTI 유가',pill:'원유',kind:'oil'},
+ {symbol:'KRW=X',label:'원/달러',pill:'환율',kind:'fx'},
+];
 const displayName=(symbol,fallback='')=>DISPLAY_NAMES[symbol]||fallback||symbol;
 const fmtPrice=(value)=>{const n=finiteNumber(value);if(n===null)return '-';if(Math.abs(n)>=1000)return n.toLocaleString('ko-KR',{maximumFractionDigits:2});if(Math.abs(n)>=100)return n.toLocaleString('ko-KR',{maximumFractionDigits:2});return n.toLocaleString('ko-KR',{maximumFractionDigits:3})};
 const fmtChange=(value)=>{const n=finiteNumber(value);if(n===null)return '-';return `${n>0?'+':''}${n.toFixed(2)}%`};
@@ -33,6 +45,9 @@ let analysisCleanup=null;
 let searchSeq=0;
 let chartLoadSeq=0;
 let toastTimer=null;
+let homeMarketExpanded=false;
+let homeMarketPayload=null;
+let homeMarketExtraPromise=null;
 const scrollPositions=new Map();
 // A feature deep link has no app-owned history entry to return to.
 let navigationDepth=0;
@@ -152,23 +167,112 @@ function bindNav(){
 }
 function cleanupChart(){analysisCleanup?.();analysisCleanup=null;viewEpoch++;chartLoadSeq++;chartResizeObserver?.disconnect();chartResizeObserver=null;if(chartInstance){try{chartInstance.remove()}catch{}chartInstance=null}}
 
+function previousFromPct(price,changePct){
+ const p=finiteNumber(price),c=finiteNumber(changePct);
+ if(p===null||c===null||Math.abs(100+c)<0.0001)return null;
+ return p/(1+c/100);
+}
+function formatHomeMarketValue(item,row){
+ const price=finiteNumber(row?.price);
+ if(price===null)return '-';
+ if(item.kind==='yield')return `${price.toFixed(2)}%`;
+ if(item.kind==='oil')return `${price.toFixed(2)}`;
+ if(item.kind==='fx')return `₩${Math.round(price).toLocaleString('ko-KR')}`;
+ if(item.kind==='vix')return price.toFixed(1);
+ return fmtPrice(price);
+}
+function formatHomeMarketChange(item,row){
+ const price=finiteNumber(row?.price),change=finiteNumber(row?.change);
+ if(change===null)return {text:'-',cls:'flat'};
+ if(item.kind==='yield'&&price!==null){
+   const prev=previousFromPct(price,change);
+   if(prev!==null){const bp=(price-prev)*100;return {text:`${bp>0?'+':''}${bp.toFixed(Math.abs(bp)<1?1:0)}bp`,cls:bp>0?'up':bp<0?'down':'flat'};}
+ }
+ if(item.kind==='vix'&&price!==null){
+   const prev=previousFromPct(price,change);
+   if(prev!==null){const pt=price-prev;return {text:`${pt>0?'+':''}${pt.toFixed(1)}pt`,cls:pt>0?'up':pt<0?'down':'flat'};}
+ }
+ return {text:fmtChange(change),cls:change>0?'up':change<0?'down':'flat'};
+}
+function marketCard(item,row,index,{extra=false}={}){
+ const change=formatHomeMarketChange(item,row);
+ const cardTag=extra?'div':'button';
+ const action=extra?'':' data-go-chart';
+ const loading=!row;
+ return `<${cardTag} class="quote-card market-${index}${extra?' market-extra-card':''}${loading?' market-card-loading':''}"${action}>
+   <div class="quote-top"><span class="market-pill">${esc(item.pill)}</span><small>${esc(item.label)}</small></div>
+   <strong>${loading?'—':esc(formatHomeMarketValue(item,row))}</strong>
+   <em class="${loading?'flat':change.cls}">${loading?'불러오는 중':esc(change.text)}</em>
+   <span class="quote-asof">${loading?'':esc(formatKst(row?.asOf))}</span>
+ </${cardTag}>`;
+}
 function paintHomeMarket(market,{allowError=true}={}){
  const host=document.querySelector('#market-card');
  if(!host)return false;
- const rows=Array.isArray(market?.results)?market.results:[];
- const preferred=['^KS11','^KQ11','^GSPC','^IXIC'];
- const shown=preferred.map(t=>rows.find(r=>r.ticker===t)).filter(Boolean).slice(0,4);
+ if(market)homeMarketPayload=market;
+ const rows=Array.isArray(homeMarketPayload?.results)?homeMarketPayload.results:[];
+ const byTicker=new Map(rows.map(row=>[String(row.ticker||'').toUpperCase(),row]));
+ const primary=HOME_MARKET_PRIMARY.map(item=>({item,row:byTicker.get(item.symbol)})).filter(x=>x.row);
  const time=document.querySelector('#market-time');
- if(shown.length){
-   if(time)time.textContent='각 지수의 실제 기준 시각';
-   host.innerHTML=`<div class="market-grid">${shown.map((row,i)=>{const ch=Number(row.change);const region=i<2?'KR':'US';return `<button class="quote-card market-${i}" data-go-chart><div class="quote-top"><span class="market-pill">${region}</span><small>${esc(displayName(row.ticker,row.name))}</small></div><strong>${esc(fmtPrice(row.price))}</strong><em class="${ch>0?'up':ch<0?'down':'flat'}">${esc(fmtChange(row.change))}</em><span class="quote-asof">${esc(formatKst(row.asOf))}</span></button>`}).join('')}</div>`;
+ const toggle=document.querySelector('#market-expand');
+ if(primary.length){
+   if(time)time.textContent='각 지표의 실제 기준 시각';
+   const primaryGrid=`<div class="market-grid">${HOME_MARKET_PRIMARY.map((item,i)=>marketCard(item,byTicker.get(item.symbol),i)).join('')}</div>`;
+   const extraGrid=homeMarketExpanded?`<div class="market-extra-wrap"><div class="market-extra-grid">${HOME_MARKET_EXTRA.map((item,i)=>marketCard(item,byTicker.get(item.symbol),i+4,{extra:true})).join('')}</div><p class="market-extra-note">미 10년물·VIX·WTI·원/달러 · 직전 종가 대비</p></div>`:'';
+   host.innerHTML=primaryGrid+extraGrid;
+   if(toggle){
+     toggle.hidden=false;
+     toggle.setAttribute('aria-expanded',String(homeMarketExpanded));
+     toggle.innerHTML=homeMarketExpanded?`접기 <span>⌃</span>`:`더 보기 <span>⌄</span>`;
+   }
+   bindNav();
    return true;
  }
+ if(toggle)toggle.hidden=true;
  if(!allowError)return false;
  if(time)time.textContent='연결 확인 필요';
  host.innerHTML='<div class="market-error"><div><strong>시장 정보를 불러오지 못했어요</strong><span>다른 기능은 계속 사용할 수 있어요.</span></div><button id="retry-market">다시 시도</button></div>';
  document.querySelector('#retry-market')?.addEventListener('click',renderHome);
  return false;
+}
+function mergeHomeMarketRows(extraRows){
+ const base=Array.isArray(homeMarketPayload?.results)?homeMarketPayload.results:[];
+ const map=new Map(base.map(row=>[String(row.ticker||'').toUpperCase(),row]));
+ (extraRows||[]).forEach(row=>{if(row?.ticker)map.set(String(row.ticker).toUpperCase(),row);});
+ homeMarketPayload={...(homeMarketPayload||{}),results:[...map.values()]};
+ return homeMarketPayload;
+}
+async function ensureHomeMarketExtras(){
+ const missing=HOME_MARKET_EXTRA.map(x=>x.symbol).filter(symbol=>!homeMarketPayload?.results?.some(row=>String(row?.ticker||'').toUpperCase()===symbol));
+ if(!missing.length){paintHomeMarket(homeMarketPayload,{allowError:false});return;}
+ const cached=readHomeFast('market-extra',30*60*1000);
+ if(cached?.results?.length){
+   mergeHomeMarketRows(cached.results);
+   paintHomeMarket(homeMarketPayload,{allowError:false});
+ }
+ if(homeMarketExtraPromise)return homeMarketExtraPromise;
+ homeMarketExtraPromise=quoteSnapshots(HOME_MARKET_EXTRA.map(x=>x.symbol))
+   .then(payload=>{
+     if(payload?.results?.length){writeHomeFast('market-extra',payload);mergeHomeMarketRows(payload.results);}
+     paintHomeMarket(homeMarketPayload,{allowError:false});
+   })
+   .catch(()=>{
+     paintHomeMarket(homeMarketPayload,{allowError:false});
+     const note=document.querySelector('.market-extra-note');
+     if(note)note.textContent='일부 보조 시장지표를 불러오지 못했어요. 잠시 후 다시 확인해주세요.';
+   })
+   .finally(()=>{homeMarketExtraPromise=null;});
+ return homeMarketExtraPromise;
+}
+function bindHomeMarketToggle(){
+ const button=document.querySelector('#market-expand');
+ if(!button)return;
+ button.onclick=()=>{
+   homeMarketExpanded=!homeMarketExpanded;
+   haptic('tickWeak');
+   paintHomeMarket(homeMarketPayload,{allowError:false});
+   if(homeMarketExpanded)ensureHomeMarketExtras();
+ };
 }
 
 function patchHomeWatchLive(quotes){
@@ -219,7 +323,7 @@ async function renderHome(){
      <div><span class="home-kicker">오늘 시장</span><h2>시장과 내 종목을 한눈에</h2></div>
      <button class="search-box elevated home-search" data-go-chart>${iconSvg('search',20)}<span>종목 검색</span><b>${iconSvg('arrow',18)}</b></button>
    </section>
-   <section class="market-section home-primary"><div class="section-head market-head"><h2>주요 시장</h2><span id="market-time">기준 시각 확인 중</span></div><div id="market-card"><div class="market-grid"><div class="skeleton quote"></div><div class="skeleton quote"></div><div class="skeleton quote"></div><div class="skeleton quote"></div></div></div></section>
+   <section class="market-section home-primary"><div class="section-head market-head"><h2>주요 시장</h2><div class="market-head-actions"><span id="market-time">기준 시각 확인 중</span><button type="button" id="market-expand" class="market-expand" aria-expanded="false" hidden>더 보기 <span>⌄</span></button></div></div><div id="market-card"><div class="market-grid"><div class="skeleton quote"></div><div class="skeleton quote"></div><div class="skeleton quote"></div><div class="skeleton quote"></div></div></div></section>
    <section class="section watch-section home-primary">${sectionTitle('내 관심종목','<button class="text-button" data-tab="watch">'+(hasWatch?'관리':'추가')+'</button>')}<div id="home-watchlist" class="watch-card">${hasWatch?'<div class="skeleton watch"></div><div class="skeleton watch"></div>':'<div class="home-empty-watch"><strong>관심종목을 추가해보세요</strong><span>저장한 종목의 가격과 주요 뉴스를 홈에서 바로 볼 수 있어요.</span><button type="button" data-tab="watch">관심종목 추가</button></div>'}</div></section>
    <section id="brief-card" class="brief-card compact-brief skeleton brief"></section>
    <section class="tool-section compact-tools">${sectionTitle('분석 도구','<span class="section-caption">필요할 때 바로 열기</span>')}<div class="tool-row">
@@ -232,6 +336,7 @@ async function renderHome(){
    <section class="section home-news-section" id="home-news-section">${sectionTitle('관심종목 뉴스','<button class="text-button" data-tab="news">전체보기</button>')}<div id="home-news"><div class="skeleton news"></div></div></section>
  `);
  bindNav();
+ bindHomeMarketToggle();
 
  const watchSymbols=state.watchlist.slice(0,4).map(x=>x.symbol);
  const watchNames=state.watchlist.slice(0,4).map(x=>displayName(x.symbol,x.name));
@@ -242,7 +347,7 @@ async function renderHome(){
  const watchCacheKey=watchSymbols.length?'quotes:'+watchSymbols.join('|'):'';
  const cachedWatch=watchCacheKey?readHomeFast(watchCacheKey,30*60*1000):null;
  if(cachedWatch?.results)paintHomeWatch(cachedWatch.results,hasWatch);
- const settle=(task,paint)=>task.then(value=>({status:'fulfilled',value}),reason=>({status:'rejected',reason})).then(result=>{if(epoch===viewEpoch){paint(result);bindNav();}});
+ const settle=(task,paint)=>task.then(value=>({status:'fulfilled',value}),reason=>({status:'rejected',reason})).then(result=>{if(epoch===viewEpoch){paint(result);bindNav();bindHomeMarketToggle();}});
  const jobs=[];
  jobs.push(settle(marketNow(),marketRes=>{
  const market=marketRes.status==='fulfilled'?marketRes.value:null;

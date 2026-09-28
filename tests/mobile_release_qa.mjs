@@ -123,6 +123,10 @@ async function installMocks(page, mode='ok') {
       {ticker:'005930.KS',name:'삼성전자',price:84200,change:1.14,currency:'KRW',asOf:'2026-09-21T03:00:00Z',source:'Yahoo Chart 5m'},
       {ticker:'NVDA',name:'엔비디아',price:188.3,change:0.84,currency:'USD',asOf:'2026-09-21T03:00:00Z',source:'Yahoo Chart 5m'},
       {ticker:'AAPL',name:'애플',price:241.7,change:-0.31,currency:'USD',asOf:'2026-09-21T03:00:00Z',source:'Yahoo Chart 5m'},
+      {ticker:'^TNX',name:'미국 10년물',price:4.12,change:0.24,currency:'USD',asOf:'2026-09-21T03:00:00Z',source:'Yahoo Chart 5m'},
+      {ticker:'^VIX',name:'VIX',price:16.8,change:-2.33,currency:'USD',asOf:'2026-09-21T03:00:00Z',source:'Yahoo Chart 5m'},
+      {ticker:'CL=F',name:'WTI',price:67.42,change:1.18,currency:'USD',asOf:'2026-09-21T03:00:00Z',source:'Yahoo Chart 5m'},
+      {ticker:'KRW=X',name:'원/달러',price:1392.4,change:-0.36,currency:'KRW',asOf:'2026-09-21T03:00:00Z',source:'Yahoo Chart 5m'},
     ],dataContract:{currency:'provider currency'}});
     if(path==='/api/compare') return json(route,{stocks:compareStocks,errors:[],fetchedAt:'2026-09-21T03:03:00Z',comparisonBasis:{currencyMode:'local currency per symbol; no FX conversion',missingObservationPolicy:'missing observations are omitted; no interpolation'}});
     if(path==='/api/valuation') return json(route,{stocks:valuationStocks});
@@ -158,6 +162,23 @@ try{
       await page.goto(`${BASE}/#${tab}`,{waitUntil:'networkidle'});
       await page.waitForTimeout(120);
       if(tab==='home'){
+        await page.waitForSelector('#market-card .quote-card');
+        const initialMarketCards=await page.locator('#market-card .quote-card').count();
+        if(initialMarketCards!==4) throw new Error(`${width}px Home market should stay compact before expand: ${initialMarketCards}`);
+        const marketButton=page.locator('#market-expand');
+        if(await marketButton.isHidden()) throw new Error(`${width}px Home market expand button missing`);
+        await marketButton.click();
+        await page.waitForSelector('#market-card .market-extra-card:not(.market-card-loading)');
+        const expandedMarketCards=await page.locator('#market-card .quote-card').count();
+        if(expandedMarketCards!==8) throw new Error(`${width}px Home market expanded card count mismatch: ${expandedMarketCards}`);
+        const expandedText=await page.locator('#market-card').innerText();
+        for(const label of ['미 10년물','VIX','WTI 유가','원/달러']){
+          if(!expandedText.includes(label)) throw new Error(`${width}px Home market extra missing: ${label}`);
+        }
+        await assertNoHorizontalOverflow(page,`${width}px expanded Home market`);
+        await marketButton.click();
+        if(await page.locator('#market-card .market-extra-card').count()) throw new Error(`${width}px Home market did not collapse`);
+
         await page.waitForSelector('#home-top-picks .home-pick-row');
         if(await page.locator('#home-top-picks .home-pick-row').count()!==3) throw new Error(`${width}px home picks missing`);
         await page.waitForSelector('#home-top-picks .home-pick-performance');
