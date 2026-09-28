@@ -73,3 +73,10 @@ Last updated: 2026-09-22
 - 경제지표 카드의 미니 차트는 `/api/macro`의 기존 `chart_data`를 사용해야 하며, 별도 네트워크 요청이나 heavyweight 차트 인스턴스를 추가하지 않는다. 320px 모바일에서 가로 오버플로가 없어야 한다.
 
 - 홈 주요시장은 접힌 상태에서 4개 핵심 지수만 렌더링해야 하며, 보조 시장지표(^TNX/^VIX/CL=F/KRW=X)는 사용자가 `더 보기`를 눌렀을 때만 조회·표시한다. 펼침 후 320px 화면에서 가로 오버플로가 없어야 한다.
+
+
+### Live quote parity guardrail
+- Do not restore a separate 15s route-cache-only current price for detail.
+- Home/detail/full-heatmap should overlay the newest in-session quote by ticker.
+- Detail live refresh must use `fresh=true` and remain one-symbol-only at 5s cadence.
+- Returning to Home after viewing detail must preserve the newer detail quote in the Home fast snapshot until the next Home live event supersedes it.

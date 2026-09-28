@@ -69,3 +69,7 @@ Apps in Toss 클라이언트는 시세 공급자를 직접 갱신하지 않는�
 
 ## 2026-09-28 — 홈 주요시장 보조지표는 지연 로딩
 원본 Chart View의 8개 시장 구성(KOSPI, KOSDAQ, S&P 500, NASDAQ, 미 10년물, VIX, WTI, 원/달러)을 Toss 홈에도 제공하되 첫 화면 밀도와 로딩시간을 지키기 위해 기본 4개 + 펼침 4개 구조로 구현한다. 보조 4개는 사용자가 펼칠 때만 시세를 요청한다.
+
+
+## 2026-09-28 — Canonical quote parity across Home, heatmap, and detail
+Home live events, Home snapshot rows, detail fresh quotes, and the full heatmap now share one in-session quote store keyed by ticker. Navigating from a Home heatmap cell to detail paints the newest in-session quote immediately instead of falling back to an older route cache. Detail then refreshes only that ticker every 5 seconds through `/api/quotes?...&fresh=true` and writes successful quotes back into the Home fast snapshot. This keeps return navigation and the full heatmap aligned without adding work to Home first paint.

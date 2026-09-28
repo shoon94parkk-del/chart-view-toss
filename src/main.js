@@ -8,12 +8,13 @@ import { renderPickLedger } from './pickLedger.js';
 import { ANALYSIS_ROUTES, renderAnalysis } from './analysisViews.js';
 import { finiteNumber } from './analysisData.js';
 import { createChart, ColorType, LineStyle } from 'lightweight-charts';
-import { API_BASE, quoteSnapshots, compareStocks, marketNow, homeSnapshot, searchStocks, valuationStocks, macroData, homeInsights, personalizedNews } from './api.js';
+import { API_BASE, quoteSnapshots, quoteSnapshotsLive, compareStocks, marketNow, homeSnapshot, searchStocks, valuationStocks, macroData, homeInsights, personalizedNews } from './api.js';
 import { applyRuntimeClass, haptic, openExternal, syncNativeBackHandler, closeMiniApp, isAppsInTossRuntime } from './tossBridge.js';
 import { openStockSelector, closeStockSelector } from './stockSelector.js';
 import { initializeStorage, readStored, writeStored, clearStored, getActivityVisitorId } from './storage.js';
 import { startHomeLiveSync, setLiveSurface } from './liveHomeSync.js';
 import { readHomeFast, writeHomeFast } from './homeFastCache.js';
+import { rememberLiveQuotes, getLiveQuote } from './liveQuoteStore.js';
 import { formatKst, formatCurrencyPrice, formatMacroValue, formatMacroChange, observationLabel, macroCategory, macroPublicationLabel, macroSourceUrl, changeBasisLabel, newsRelation, translatedTag, titleLanguage } from './dataPresentation.js';
 
 const WATCHLIST_KEY='chartview-toss-watchlist-v1';
@@ -40,6 +41,7 @@ const fmtChange=(value)=>{const n=finiteNumber(value);if(n===null)return '-';ret
 const state={tab:'home',watchlist:load(WATCHLIST_KEY,[]),selected:load(SELECTED_KEY,DEFAULTS.map(x=>x.symbol)),period:'1mo',customRange:null,detailSymbol:null,valuationMetric:'forwardPE',watchSort:'manual',newsSort:'major',detailPeriod:'3mo'};
 let chartInstance=null;
 let chartResizeObserver=null;
+let detailLiveTimer=null;
 let viewEpoch=0;
 let analysisCleanup=null;
 let searchSeq=0;
@@ -165,7 +167,7 @@ function bindNav(){
    if(!opened)showToast('외부 링크를 열지 못했어요. 잠시 후 다시 시도해주세요.');
  });
 }
-function cleanupChart(){analysisCleanup?.();analysisCleanup=null;viewEpoch++;chartLoadSeq++;chartResizeObserver?.disconnect();chartResizeObserver=null;if(chartInstance){try{chartInstance.remove()}catch{}chartInstance=null}}
+function cleanupChart(){analysisCleanup?.();analysisCleanup=null;viewEpoch++;chartLoadSeq++;chartResizeObserver?.disconnect();chartResizeObserver=null;if(detailLiveTimer){clearTimeout(detailLiveTimer);detailLiveTimer=null;}if(chartInstance){try{chartInstance.remove()}catch{}chartInstance=null}}
 
 function previousFromPct(price,changePct){
  const p=finiteNumber(price),c=finiteNumber(changePct);
@@ -343,7 +345,10 @@ async function renderHome(){
  const cachedMarket=readHomeFast('market',6*60*60*1000);
  if(cachedMarket)paintHomeMarket(cachedMarket,{allowError:false});
  const cachedSnapshot=readHomeFast('snapshot',6*60*60*1000);
- if(cachedSnapshot)paintHomeBrief(cachedSnapshot);
+ if(cachedSnapshot){
+   rememberLiveQuotes(cachedSnapshot?.heatmap?.results||[]);
+   paintHomeBrief(cachedSnapshot);
+ }
  const watchCacheKey=watchSymbols.length?'quotes:'+watchSymbols.join('|'):'';
  const cachedWatch=watchCacheKey?readHomeFast(watchCacheKey,30*60*1000):null;
  if(cachedWatch?.results)paintHomeWatch(cachedWatch.results,hasWatch);
@@ -359,12 +364,14 @@ async function renderHome(){
  jobs.push(settle(watchSymbols.length?quoteSnapshots(watchSymbols):Promise.resolve({results:[]}),watchRes=>{
  const payload=watchRes.status==='fulfilled'?watchRes.value:null;
  const quotes=payload?.results||[];
+ rememberLiveQuotes(quotes);
  if(payload&&watchCacheKey)writeHomeFast(watchCacheKey,payload);
  if(payload||!cachedWatch)paintHomeWatch(quotes,hasWatch);
  }));
  jobs.push(settle(homeSnapshot(),homeRes=>{
  const home=homeRes.status==='fulfilled'?homeRes.value:null;
  if(home){
+   rememberLiveQuotes(home?.heatmap?.results||[]);
    writeHomeFast('snapshot',home);
    paintHomeBrief(home);
  }else if(!cachedSnapshot)paintHomeBrief(null);
@@ -670,6 +677,28 @@ function timeAgo(value){
  const day=Math.floor(hour/24);return day<7?`${day}일 전`:String(value||'').slice(0,10);
 }
 
+function homeCachedQuote(symbol){
+ const cached=readHomeFast('snapshot',6*60*60*1000);
+ const rows=cached?.heatmap?.results;
+ if(!Array.isArray(rows))return null;
+ return rows.find(row=>String(row?.ticker||'').toUpperCase()===String(symbol||'').toUpperCase())||null;
+}
+
+function persistLiveQuoteToHomeSnapshot(quote){
+ if(!quote?.ticker)return;
+ const cached=readHomeFast('snapshot',6*60*60*1000);
+ const rows=cached?.heatmap?.results;
+ if(!cached||!Array.isArray(rows))return;
+ let changed=false;
+ const ticker=String(quote.ticker).toUpperCase();
+ const nextRows=rows.map(row=>{
+   if(String(row?.ticker||'').toUpperCase()!==ticker)return row;
+   changed=true;
+   return {...row,...quote};
+ });
+ if(changed)writeHomeFast('snapshot',{...cached,heatmap:{...(cached.heatmap||{}),results:nextRows,generatedAt:quote.asOf||cached?.heatmap?.generatedAt}});
+}
+
 async function renderDetail(){
  cleanupChart();
  const epoch=viewEpoch;
@@ -707,14 +736,40 @@ async function renderDetail(){
 
  const settle=(task,paint)=>task.then(value=>({status:'fulfilled',value}),reason=>({status:'rejected',reason})).then(result=>{if(epoch===viewEpoch){paint(result);bindNav();}});
  const jobs=[];
- jobs.push(settle(quoteSnapshots([symbol]),quoteRes=>{
- const quote=quoteRes.status==='fulfilled'?quoteRes.value?.results?.[0]:null;
- const dayChange=finiteNumber(quote?.change);
- const priceBox=document.querySelector('#detail-price');
- priceBox.classList.remove('skeleton','detail-price-skeleton');
- priceBox.innerHTML=`<div><span>현재가${quote?.asOf?' · '+esc(formatKst(quote.asOf)):''}</span><strong>${quote?.price!=null?esc(formatCurrencyPrice(quote.price,quote.currency)):'-'}</strong><small>${esc(currencyLabel(quote?.currency))}</small></div><div class="detail-return ${dayChange>0?'up':dayChange<0?'down':'flat'}"><span>전 거래일 대비</span><strong>${Number.isFinite(dayChange)?esc(fmtChange(dayChange)):'-'}</strong><small>${quote?.source?esc(quote.source):'시세 출처 확인 필요'}</small></div>${quoteRes.status==='rejected'?'<button class="retry" data-retry-detail>시세 다시 시도</button>':''}`;
-
- }));
+ const paintDetailQuote=(quote,{failed=false}={})=>{
+   if(epoch!==viewEpoch||state.tab!=='detail'||state.detailSymbol!==symbol)return;
+   if(quote)rememberLiveQuotes([quote]);
+   const current=quote||getLiveQuote(symbol);
+   const dayChange=finiteNumber(current?.change);
+   const priceBox=document.querySelector('#detail-price');
+   if(!priceBox)return;
+   priceBox.classList.remove('skeleton','detail-price-skeleton');
+   priceBox.innerHTML=`<div><span>현재가${current?.asOf?' · '+esc(formatKst(current.asOf)):''}</span><strong>${current?.price!=null?esc(formatCurrencyPrice(current.price,current.currency)):'-'}</strong><small>${esc(currencyLabel(current?.currency))}</small></div><div class="detail-return ${dayChange>0?'up':dayChange<0?'down':'flat'}"><span>전 거래일 대비</span><strong>${Number.isFinite(dayChange)?esc(fmtChange(dayChange)):'-'}</strong><small>${current?.source?esc(current.source):'시세 출처 확인 필요'}</small></div>${failed?'<button class="retry" data-retry-detail>시세 다시 시도</button>':''}`;
+ };
+ const cachedQuote=getLiveQuote(symbol)||homeCachedQuote(symbol);
+ if(cachedQuote){
+   rememberLiveQuotes([cachedQuote]);
+   paintDetailQuote(cachedQuote);
+ }
+ const pullDetailLive=async()=>{
+   if(epoch!==viewEpoch||state.tab!=='detail'||state.detailSymbol!==symbol)return;
+   try{
+     const payload=await quoteSnapshotsLive([symbol]);
+     const quote=payload?.results?.[0];
+     if(quote){
+       rememberLiveQuotes([quote]);
+       persistLiveQuoteToHomeSnapshot(quote);
+       paintDetailQuote(quote);
+     }
+   }catch{
+     if(!getLiveQuote(symbol))paintDetailQuote(null,{failed:true});
+   }finally{
+     if(epoch===viewEpoch&&state.tab==='detail'&&state.detailSymbol===symbol){
+       detailLiveTimer=setTimeout(pullDetailLive,5_000);
+     }
+   }
+ };
+ jobs.push(pullDetailLive());
  jobs.push(settle(compareStocks([symbol],state.detailPeriod),compareRes=>{
  const stock=compareRes.status==='fulfilled'?compareRes.value?.stocks?.[0]:null;
  const periodReturn=finiteNumber(stock?.return);
@@ -876,8 +931,9 @@ window.addEventListener('online',()=>render());
 window.addEventListener('offline',()=>render());
 document.addEventListener('chartview:storage-error',()=>showToast('목록을 기기에 저장하지 못했어요. 다시 시도해주세요.'));
 document.addEventListener('chartview:home-live',(event)=>{
- if(state.tab!=='home')return;
  const rows=Array.isArray(event.detail?.results)?event.detail.results:[];
+ rememberLiveQuotes(rows);
+ if(state.tab!=='home')return;
  patchHomeWatchLive(rows);
 });
 document.addEventListener('chartview:market-now-live',(event)=>{
