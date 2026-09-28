@@ -157,7 +157,7 @@ function createSections(marketSection) {
   picks.className = 'section home-extra-section home-pick-section home-primary';
   picks.id = 'home-top-picks-section';
   picks.innerHTML =
-    '<div class="section-head"><h2>오늘의 종목발굴</h2><button type="button" class="text-button" data-home-extra-route="picks">추천 기록</button></div>' +
+    '<div class="section-head"><h2>오늘의 종목발굴</h2><button type="button" class="text-button" data-home-extra-route="picks">PICK 관리</button></div>' +
     '<div id="home-top-picks" class="home-pick-list"><div class="skeleton home-extra-skeleton"></div></div>';
 
   const heatmap = document.createElement('section');
