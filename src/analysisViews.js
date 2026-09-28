@@ -3,12 +3,14 @@ import { filterScreener, finiteNumber, estimateRevision } from './analysisData.j
 import { formatKst } from './dataPresentation.js';
 import { renderSharedHeatmap } from './heatmapView.js';
 import { createChart, ColorType } from 'lightweight-charts';
+import { rememberLiveQuotes, mergeRowsWithLive } from './liveQuoteStore.js';
 
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const number=(v,suffix='')=>finiteNumber(v)===null?'—':Number(v).toLocaleString('ko-KR',{maximumFractionDigits:2})+suffix;
 const pct=v=>finiteNumber(v)===null?'—':`${Number(v)>0?'+':''}${number(v,'%')}`;
 const empty=text=>`<div class="empty"><strong>${esc(text)}</strong></div>`;
 const alignFullHeatmapWithHome=(full,home)=>{
+ rememberLiveQuotes(home?.heatmap?.results||[]);
  const homeRows=new Map(
   ((home?.heatmap?.results)||[])
    .filter(row=>row?.ticker)
@@ -17,7 +19,7 @@ const alignFullHeatmapWithHome=(full,home)=>{
  if(!homeRows.size)return full;
  return {
   ...full,
-  results:((full?.results)||[]).map(row=>{
+  results:mergeRowsWithLive(((full?.results)||[]).map(row=>{
    const ticker=String(row?.ticker||'').toUpperCase();
    const visible=homeRows.get(ticker);
    if(!visible)return row;
@@ -32,7 +34,7 @@ const alignFullHeatmapWithHome=(full,home)=>{
     source:visible.source??row.source,
     quoteBasis:'client-home-parity',
    };
-  }),
+  })),
  };
 };
 export const ANALYSIS_ROUTES=new Set(['discover','heatmap','consensus','bands','tools']);
