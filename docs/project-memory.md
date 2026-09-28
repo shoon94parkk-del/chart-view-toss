@@ -104,3 +104,8 @@ Toss-specific navigation, safe-area, storage, SDK bridge, and release logic belo
 ### 2026-09-28 — Heatmap/detail identity + structural quote merge
 - Heatmap cells carry both ticker and the visible company name into detail navigation, so opening a stock such as `009150.KS` shows `삼성전기` instead of a raw ticker-only header.
 - Live quote overlays are null-safe. A detail quote may update price/change but must not erase structural heatmap fields such as `marketCap` or `name`; otherwise the just-viewed stock can disappear when returning to the heatmap.
+
+### 2026-09-28 — Watchlist canonical quote painting
+- Watchlist and Home-watch rows always pass fetched/browser-cached quote rows through the in-session `liveQuoteStore` before painting.
+- A late/stale `/api/quotes` response may populate missing symbols but may not repaint a symbol backward over a newer Home/detail quote.
+- Canonical rows, not the older raw response, are written back to the Home fast watch cache.
