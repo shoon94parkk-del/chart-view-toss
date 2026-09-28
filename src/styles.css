@@ -143,7 +143,7 @@ svg{display:block}
 .detail-actions button:last-child{background:#e8f3ff;color:#1769c2}
 .detail-price{min-height:115px;border-radius:22px;padding:19px 20px;margin:8px 0 14px;background:linear-gradient(135deg,#192b47,#263d61);color:#fff;display:flex;align-items:flex-end;justify-content:space-between;box-shadow:0 14px 32px rgba(26,45,75,.18)}
 .detail-price>div>span,.detail-price>div>small{display:block;color:rgba(255,255,255,.62);font-size:11px}
-.detail-price>div>strong{display:inline-block;font-size:29px;letter-spacing:-.8px;margin-top:8px}.detail-price>div>small{display:inline-block;margin-left:6px}
+.detail-price>div>strong{display:inline-block;font-size:29px;letter-spacing:-.8px;margin-top:8px;white-space:nowrap}.detail-price>div>small{display:inline-block;margin-left:6px}
 .detail-return{text-align:right}.detail-return span{color:rgba(255,255,255,.62)!important}.detail-return strong{font-size:18px!important;margin-top:8px!important}
 .detail-return.up strong{color:#ff8d98}.detail-return.down strong{color:#7ab7ff}.detail-return.flat strong{color:#d1d6db}
 .detail-price-skeleton{height:115px}

@@ -15,7 +15,7 @@ import { initializeStorage, readStored, writeStored, clearStored, getActivityVis
 import { startHomeLiveSync, setLiveSurface } from './liveHomeSync.js';
 import { readHomeFast, writeHomeFast } from './homeFastCache.js';
 import { rememberLiveQuotes, getLiveQuote } from './liveQuoteStore.js';
-import { formatKst, formatCurrencyPrice, formatMacroValue, formatMacroChange, observationLabel, macroCategory, macroPublicationLabel, macroSourceUrl, changeBasisLabel, newsRelation, translatedTag, titleLanguage } from './dataPresentation.js';
+import { formatKst, formatChartDate, formatMetricPeriod, formatCurrencyPrice, formatMacroValue, formatMacroChange, macroFreshness, observationLabel, macroCategory, macroPublicationLabel, macroSourceUrl, changeBasisLabel, relationBasisLabel, newsRelation, translatedTag, titleLanguage } from './dataPresentation.js';
 
 const WATCHLIST_KEY='chartview-toss-watchlist-v1';
 const SELECTED_KEY='chartview-toss-selected-v1';
@@ -307,13 +307,14 @@ function paintHomeWatch(quotes,hasWatch){
 
 function paintHomeBrief(home){
  const macro=home?.macro?.summary||{};
+ const staleVix=(home?.macro?.results||[]).find(row=>(row.original_symbol||row.symbol)==='^VIX'&&macroFreshness(row).stale);
  const brief=document.querySelector('#brief-card');
  if(!brief)return false;
  brief.classList.remove('skeleton','brief');
  if(macro.text){
    const level=macro.level||'yellow';
    const label=level==='red'?'위험 신호 많음':level==='green'?'안정 신호 많음':'신호 혼재';
-   brief.innerHTML=`<div class="brief-icon ${esc(level)}">${iconSvg('spark',22)}</div><div class="brief-copy"><span>시장 지표 요약 <b class="status-badge ${esc(level)}">${label}</b></span><strong>${esc(String(macro.text).slice(0,105))}</strong><small>최근 원자료 ${esc(macro.latestBasisDate||'-')} · 투자 행동을 권유하는 신호가 아니에요.</small></div><button data-tab="macro" aria-label="경제 지표 보기">${iconSvg('arrow',20)}</button>`;
+   brief.innerHTML=`<div class="brief-icon ${esc(level)}">${iconSvg('spark',22)}</div><div class="brief-copy"><span>시장 지표 요약 <b class="status-badge ${esc(level)}">${label}</b></span><strong>${esc(String(macro.text).slice(0,105))}</strong><small>${staleVix?'VIX 관측일이 오래되어 시장 요약 해석에 주의가 필요해요. ':''}최근 원자료 ${esc(macro.latestBasisDate||'-')} · 투자 행동을 권유하는 신호가 아니에요.</small></div><button data-tab="macro" aria-label="경제 지표 보기">${iconSvg('arrow',20)}</button>`;
    return true;
  }
  brief.innerHTML=`<div class="brief-icon yellow">${iconSvg('spark',22)}</div><div class="brief-copy"><span>시장 지표 요약</span><strong>요약 데이터를 확인하고 있어요.</strong><small>경제지표 화면에서 개별 관측일을 확인할 수 있어요.</small></div>`;
@@ -487,7 +488,7 @@ async function loadChart(){
        return `<span><i style="background:${COLORS[row.index%COLORS.length]}"></i>${esc(displayName(row.stock.ticker,row.stock.name))}<b>${value>=0?'+':''}${value.toFixed(2)}%</b></span>`;
      }).filter(Boolean).join('');
      if(!values){tooltip.hidden=true;return}
-     tooltip.innerHTML=`<strong>${esc(String(param.time))}</strong>${values}`;
+     tooltip.innerHTML=`<strong>${esc(formatChartDate(param.time))}</strong>${values}`;
      tooltip.hidden=false;
      const desiredX=Math.min(Math.max(param.point.x+12,8),(canvas.clientWidth||320)-158);
      const desiredY=Math.max(param.point.y-16,8);
@@ -622,7 +623,7 @@ async function renderValuation(){
    document.querySelectorAll('[data-valuation-metric]').forEach(b=>b.onclick=()=>{state.valuationMetric=b.dataset.valuationMetric;haptic('tickWeak');paint()});
    paint();
 
-   document.querySelector('#all-metrics-list').innerHTML=rows.map((s,i)=>`<section class="valuation-card rich-valuation-card"><button class="valuation-top" data-stock-detail="${esc(s.ticker)}"><span class="stock-logo tone-${i%4}">${esc(displayName(s.ticker,s.name).slice(0,1))}</span><span class="valuation-title-copy"><strong>${esc(displayName(s.ticker,s.name))}</strong><small>${esc(s.ticker)}${s.sector?' · '+esc(s.sector):''}</small></span><span class="valuation-price"><strong>${esc(formatCurrencyPrice(s.price,s.currency))}</strong><i>${iconSvg('arrow',18)}</i></span></button><div class="metric-grid rich-metrics">${Object.values(metricDefs).map((m,j)=>`<div class="metric-cell tone-bg-${j%3}"><span>${m.label}</span><strong>${s[m.key]==null?'-':esc(Number(s[m.key]).toLocaleString('ko-KR',{maximumFractionDigits:2})+m.suffix)}</strong><small>${esc(s.fieldMeta?.[m.key]?.period||m.desc)}</small></div>`).join('')}</div></section>`).join('');
+   document.querySelector('#all-metrics-list').innerHTML=rows.map((s,i)=>`<section class="valuation-card rich-valuation-card"><button class="valuation-top" data-stock-detail="${esc(s.ticker)}"><span class="stock-logo tone-${i%4}">${esc(displayName(s.ticker,s.name).slice(0,1))}</span><span class="valuation-title-copy"><strong>${esc(displayName(s.ticker,s.name))}</strong><small>${esc(s.ticker)}${s.sector?' · '+esc(s.sector):''}</small></span><span class="valuation-price"><strong>${esc(formatCurrencyPrice(s.price,s.currency))}</strong><i>${iconSvg('arrow',18)}</i></span></button><div class="metric-grid rich-metrics">${Object.values(metricDefs).map((m,j)=>`<div class="metric-cell tone-bg-${j%3}"><span>${m.label}</span><strong>${s[m.key]==null?'-':esc(Number(s[m.key]).toLocaleString('ko-KR',{maximumFractionDigits:2})+m.suffix)}</strong><small>${esc(formatMetricPeriod(s.fieldMeta?.[m.key]?.period||m.desc))}</small></div>`).join('')}</div></section>`).join('');
    bindNav();
  }catch(e){
    if(epoch!==viewEpoch)return;
@@ -664,16 +665,17 @@ async function renderMacro(){
    const s=d?.summary||{};
    const freshness=document.querySelector('#macro-freshness');
    freshness.classList.remove('skeleton');
-   freshness.innerHTML=`<div><strong>${Number(d?.staleCount||0)?'일부 지표는 직전값이에요':'경제지표 캐시가 갱신됐어요'}</strong><span>수집 ${esc(formatKst(d?.generatedAt))} · 정상 ${esc(d?.freshCount??'-')} · 과거값 ${esc(d?.staleCount??0)}</span></div><button data-tab="info">데이터 기준</button>`;
+   const rows=d?.results||[];const freshnessRows=rows.map(row=>({row,status:macroFreshness(row)}));const staleCount=freshnessRows.filter(item=>item.status.stale).length;const freshCount=rows.length-staleCount;
+   freshness.innerHTML=`<div><strong>${staleCount?'관측일이 오래된 지표가 있어요':'지표 관측일을 확인했어요'}</strong><span>수집 ${esc(formatKst(d?.generatedAt))} · 최신 기준 ${freshCount}개 · 확인 필요 ${staleCount}개</span></div><button data-tab="info">데이터 기준</button>`;
 
    const summary=document.querySelector('#macro-summary');summary.classList.remove('skeleton');
    const level=s.level||'yellow';const label=level==='red'?'위험 신호 많음':level==='green'?'안정 신호 많음':'신호 혼재';
-   summary.innerHTML=`<div class="macro-signal-orb ${esc(level)}"><span></span></div><div class="macro-summary-copy"><span>규칙 기반 지표 요약 <b class="status-badge ${esc(level)}">${label}</b></span><strong>${esc(s.text||'개별 지표를 확인해주세요.')}</strong><small>${esc(s.notice||'시장 환경 설명용 요약이며 투자 행동을 권유하지 않아요.')}</small></div>`;
+   summary.innerHTML=`<div class="macro-signal-orb ${esc(level)}"><span></span></div><div class="macro-summary-copy"><span>규칙 기반 지표 요약 <b class="status-badge ${esc(level)}">${label}</b></span><strong>${esc(s.text||'개별 지표를 확인해주세요.')}</strong><small>${staleCount?'일부 값은 최근 관측이 아닐 수 있어요. 관측일과 출처를 함께 확인해주세요. ':''}${esc(s.notice||'시장 환경 설명용 요약이며 투자 행동을 권유하지 않아요.')}</small></div>`;
 
    const groups=new Map();
    (d?.results||[]).forEach(row=>{const category=macroCategory(row);if(!groups.has(category))groups.set(category,[]);groups.get(category).push(row)});
    const order=['금리','물가','유동성','위험','고용','경기','기타'];
-   document.querySelector('#macro-groups').innerHTML=order.filter(k=>groups.has(k)).map(category=>`<section class="macro-group"><div class="section-head"><h2>${category}</h2><small>${groups.get(category).length}개 지표</small></div><div class="macro-grid">${groups.get(category).map((r,i)=>{const change=formatMacroChange(r);const chart=Array.isArray(r.chart_data)?r.chart_data:[];const isUp=Number(r.delta??r.change)>=0;const spark=macroSparklineSvg(chart,isUp);return `<article class="macro-tile neutral-macro"><div class="macro-tile-top"><span class="macro-symbol">${esc(r.symbol||r.original_symbol||'')}</span><small class="${r.stale?'stale-text':''}">${r.stale?'직전값 유지':'정상'}</small></div><strong>${esc(r.name||r.symbol)}</strong><div class="macro-value"><b>${esc(formatMacroValue(r))}</b><em>${esc(change)}</em></div><div class="macro-mini-chart" aria-label="${esc(r.name||r.symbol)} 추세">${spark||'<span>시계열 없음</span>'}</div>${spark?`<div class="macro-mini-dates"><span>${esc(chart[0]?.time||'')}</span><span>${esc(chart.at(-1)?.time||r.asOf||'')}</span></div>`:''}<p>${esc(r.desc||'')}</p><div class="macro-meta-line"><span>${esc(observationLabel(r))}</span><span>${esc(changeBasisLabel(r.changeBasis))}</span>${macroPublicationLabel(r)?`<span>${esc(macroPublicationLabel(r))}</span>`:''}</div><div class="source-row"><small class="source-line">${esc(r.source||'출처 미제공')}</small>${macroSourceUrl(r)?`<button type="button" data-external-url="${esc(macroSourceUrl(r))}">원본 시리즈</button>`:''}</div></article>`}).join('')}</div></section>`).join('');
+   document.querySelector('#macro-groups').innerHTML=order.filter(k=>groups.has(k)).map(category=>`<section class="macro-group"><div class="section-head"><h2>${category}</h2><small>${groups.get(category).length}개 지표</small></div><div class="macro-grid">${groups.get(category).map((r)=>{const change=formatMacroChange(r);const chart=Array.isArray(r.chart_data)?r.chart_data:[];const isUp=Number(r.delta??r.change)>=0;const spark=macroSparklineSvg(chart,isUp);const status=macroFreshness(r);return `<article class="macro-tile neutral-macro"><div class="macro-tile-top"><span class="macro-symbol">${esc(r.symbol||r.original_symbol||'')}</span><small class="${status.stale?'stale-text':''}">${status.stale?'관측일 확인 필요':'최근 관측'}</small></div><strong>${esc(r.name||r.symbol)}</strong><div class="macro-value"><b>${esc(formatMacroValue(r))}</b><em>${esc(change)}</em></div><div class="macro-mini-chart" aria-label="${esc(r.name||r.symbol)} 추세">${spark||'<span>시계열 없음</span>'}</div>${spark?`<div class="macro-mini-dates"><span>${esc(formatChartDate(chart[0]?.time||''))}</span><span>${esc(formatChartDate(chart.at(-1)?.time||r.asOf||''))}</span></div>`:''}<p>${esc(r.desc||'')}</p><div class="macro-meta-line"><span>${esc(observationLabel(r))}</span><span>${esc(changeBasisLabel(r.changeBasis))}</span>${macroPublicationLabel(r)?`<span>${esc(macroPublicationLabel(r))}</span>`:''}</div><div class="source-row"><small class="source-line">${esc(r.source||'출처 미제공')}</small>${macroSourceUrl(r)?`<button type="button" data-external-url="${esc(macroSourceUrl(r))}">원본 시리즈</button>`:''}</div></article>`}).join('')}</div></section>`).join('');
    bindNav();
  }catch(e){
    if(epoch!==viewEpoch)return;
@@ -758,7 +760,7 @@ async function renderDetail(){
    const priceBox=document.querySelector('#detail-price');
    if(!priceBox)return;
    priceBox.classList.remove('skeleton','detail-price-skeleton');
-   priceBox.innerHTML=`<div><span>현재가${current?.asOf?' · '+esc(formatKst(current.asOf)):''}</span><strong>${current?.price!=null?esc(formatCurrencyPrice(current.price,current.currency)):'-'}</strong><small>${esc(currencyLabel(current?.currency))}</small></div><div class="detail-return ${dayChange>0?'up':dayChange<0?'down':'flat'}"><span>전 거래일 대비</span><strong>${Number.isFinite(dayChange)?esc(fmtChange(dayChange)):'-'}</strong><small>${current?.source?esc(current.source):'시세 출처 확인 필요'}</small></div>${failed?'<button class="retry" data-retry-detail>시세 다시 시도</button>':''}`;
+   priceBox.innerHTML=`<div><span>현재가${current?.asOf?' · '+esc(formatKst(current.asOf)):''}</span><strong>${current?.price!=null?esc(formatCurrencyPrice(current.price,current.currency)):'-'}</strong>${current?.currency&&current.currency!=='KRW'?`<small>${esc(currencyLabel(current.currency))}</small>`:''}</div><div class="detail-return ${dayChange>0?'up':dayChange<0?'down':'flat'}"><span>전 거래일 대비</span><strong>${Number.isFinite(dayChange)?esc(fmtChange(dayChange)):'-'}</strong><small>${current?.source?esc(current.source):'시세 출처 확인 필요'}</small></div>${failed?'<button class="retry" data-retry-detail>시세 다시 시도</button>':''}`;
  };
  const cachedQuote=getLiveQuote(symbol)||homeCachedQuote(symbol);
  if(cachedQuote){
@@ -805,7 +807,7 @@ async function renderDetail(){
  jobs.push(settle(valuationStocks([symbol]),valRes=>{
  const valuation=valRes.status==='fulfilled'?valRes.value?.stocks?.[0]:null;
  const metricDefs=[['예상 PER','forwardPE','배'],['실적 PER','trailingPE','배'],['PBR','pbr','배'],['ROE','roe','%'],['영업이익률','operatingMargin','%'],['배당수익률','dividendYield','%']];
- document.querySelector('#detail-metrics').innerHTML=metricDefs.map(([label,key,suffix],i)=>{const v=valuation?.[key];return `<div class="detail-metric tone-bg-${i%3}"><span>${label}</span><strong>${v==null?'-':esc(Number(v).toLocaleString('ko-KR',{maximumFractionDigits:2})+suffix)}</strong><small>${esc(valuation?.fieldMeta?.[key]?.period||'기준기간 미제공')}</small></div>`}).join('');
+   document.querySelector('#detail-metrics').innerHTML=metricDefs.map(([label,key,suffix],i)=>{const v=valuation?.[key];return `<div class="detail-metric tone-bg-${i%3}"><span>${label}</span><strong>${v==null?'-':esc(Number(v).toLocaleString('ko-KR',{maximumFractionDigits:2})+suffix)}</strong><small>${esc(formatMetricPeriod(valuation?.fieldMeta?.[key]?.period))}</small></div>`}).join('');
  document.querySelector('#detail-metric-meta').innerHTML=valuation?`재무 데이터 조회 ${esc(formatKst(valuation.generatedAt))} · 지표별 출처는 밸류에이션 비교에서 확인할 수 있어요.`:'재무 데이터를 불러오지 못했어요. <button class="retry" data-retry-detail>다시 시도</button>';
 
  }));
@@ -820,7 +822,7 @@ function newsCard(row){
  const relation=newsRelation(row);
  const tags=(row.investmentTags||[]).slice(0,2).map(translatedTag);
  const language=titleLanguage(row.title);
- return `<button class="news-card" data-external-url="${esc(row.url||'')}"><div class="news-meta"><span class="relation-badge ${relation.className}">${relation.label}</span><span>${esc(displayName(row.symbol,row.name))}</span><small>${esc(row.source||'뉴스')} · ${esc(timeAgo(row.publishedAt))}</small></div><strong>${esc(row.title||'')}</strong><div class="news-context"><span>${esc(language)}</span>${row.relationBasis?`<span>${esc(row.relationBasis)}</span>`:''}</div>${tags.length?`<div class="news-tags">${tags.map(t=>`<span>${esc(t)}</span>`).join('')}</div>`:''}<span class="news-arrow">${iconSvg('arrow',18)}</span></button>`;
+ return `<button class="news-card" data-external-url="${esc(row.url||'')}"><div class="news-meta"><span class="relation-badge ${relation.className}">${relation.label}</span><span>${esc(displayName(row.symbol,row.name))}</span><small>${esc(row.source||'뉴스')} · ${esc(timeAgo(row.publishedAt))}</small></div><strong>${esc(row.title||'')}</strong><div class="news-context"><span>${esc(language)}</span>${row.relationBasis?`<span>${esc(relationBasisLabel(row.relationBasis))}</span>`:''}</div>${tags.length?`<div class="news-tags">${tags.map(t=>`<span>${esc(t)}</span>`).join('')}</div>`:''}<span class="news-arrow">${iconSvg('arrow',18)}</span></button>`;
 }
 
 async function renderNews(){

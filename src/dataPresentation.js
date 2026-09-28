@@ -21,6 +21,56 @@ export function formatKst(value, { dateOnly = false } = {}) {
   }).format(date) + (dateOnly ? '' : ' KST');
 }
 
+export function formatChartDate(value) {
+  if (value && typeof value === 'object' && 'year' in value && 'month' in value && 'day' in value) {
+    return `${value.year}.${String(value.month).padStart(2,'0')}.${String(value.day).padStart(2,'0')}`;
+  }
+  if (typeof value === 'number' && Number.isFinite(value)) return formatKst(value * 1000, { dateOnly: true }).replaceAll('. ','.').replace(/\.$/,'');
+  const text = String(value ?? '');
+  if (/^\d{4}-\d{2}$/.test(text)) return text.replace('-', '.');
+  if (/^\d{4}-\d{2}-\d{2}$/.test(text)) return text.replaceAll('-', '.');
+  const date = new Date(text);
+  return Number.isNaN(date.getTime()) ? text : formatKst(date, { dateOnly: true }).replaceAll('. ','.').replace(/\.$/,'');
+}
+
+export function formatMetricPeriod(value) {
+  const period = String(value ?? '').trim();
+  if (!period) return '기준기간 미제공';
+  if (/^FY\+1(?:\s|$)/i.test(period)) return '다음 회계연도 예상';
+  if (/^TTM(?:\s|$)/i.test(period)) return '최근 12개월 실적';
+  const labels = {
+    TTM: '최근 12개월 실적', 'FY+1': '다음 회계연도 예상', FY: '회계연도',
+    'FY+2': '2년 후 회계연도 예상', 'LTM': '최근 12개월 실적',
+    'MRQ': '최근 분기', 'Last Quarter': '최근 분기', 'Next Year': '다음 회계연도 예상',
+  };
+  return labels[period] || period;
+}
+
+const MONTHLY_MACRO = new Set(['PCEPI','PCETRIM12M159SFRBDAL','UNRATE']);
+const SLOW_MONTHLY_MACRO = new Set(['M2SL','RSAFS']);
+const WEEKLY_MACRO = new Set(['WALCL','WTREGEN']);
+export function macroFreshness(row, now = Date.now()) {
+  if (!row?.asOf) return { stale: true, ageDays: null, limitDays: null };
+  const timestamp = new Date(row.asOf).getTime();
+  if (!Number.isFinite(timestamp)) return { stale: true, ageDays: null, limitDays: null };
+  const symbol = row.original_symbol || row.symbol;
+  const limitDays = MONTHLY_MACRO.has(symbol) ? 50 : SLOW_MONTHLY_MACRO.has(symbol) ? 65 : WEEKLY_MACRO.has(symbol) ? 18 : 4;
+  const ageDays = Math.max(0, (now - timestamp) / 86_400_000);
+  return { stale: ageDays > limitDays, ageDays: Math.floor(ageDays), limitDays };
+}
+
+export function relationBasisLabel(value) {
+  const basis = String(value || '').trim();
+  const translations = {
+    'title entity match': '제목에서 기업명 확인',
+    'company name in title': '제목에서 기업명 확인',
+    'sector keyword match': '관련 업종 키워드 확인',
+    'industry keyword match': '관련 업종 키워드 확인',
+    'ticker match': '종목 코드 확인',
+  };
+  return translations[basis.toLowerCase()] || basis;
+}
+
 export function formatCurrencyPrice(value, currency) {
   const n = finiteNumber(value);
   if (!Number.isFinite(n)) return '-';

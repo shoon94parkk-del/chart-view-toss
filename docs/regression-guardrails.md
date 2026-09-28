@@ -88,3 +88,8 @@ Last updated: 2026-09-22
 ### Watchlist quote rollback guardrail
 - Opening Watchlist must not replace a newer in-session quote with an older API/browser-cache row for the same ticker.
 - Home watch cards, dedicated Watchlist cards, Heatmap, and Detail should converge through `liveQuoteStore`; raw response order is never a freshness guarantee.
+
+### Toss release UI data clarity
+- Macro freshness must derive from each row's `asOf` date and expected observation cadence; backend `freshCount`/`staleCount` can lag and must not override row-level age.
+- Tooltip and macro mini-chart dates should be readable Korean calendar dates; valuation periods and known relation-basis metadata should use Korean labels.
+- Detail KRW price includes `원` exactly once and must stay on one line at mobile widths. Presentation changes must preserve canonical quote values and currencies.

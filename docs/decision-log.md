@@ -82,3 +82,6 @@ The Watchlist previously rendered the raw batch `/api/quotes` response, bypassin
 
 ## 2026-09-28 — Render preview sync is latest-main authoritative
 Concurrent push-triggered sync jobs could finish out of order and move `feat/apps-in-toss-mvp` backward to an older commit. The sync workflow is now serialized/cancelable and pushes the freshly fetched `origin/main` ref rather than the triggering job's stale `HEAD`. The Render preview branch must never lag or roll back behind main because of workflow completion order.
+
+## 2026-09-28 — 0.9.2 Toss review polish for dates, freshness, and quote display
+Chart tooltips and macro mini-chart endpoints use readable Korean dates; valuation periods and known news relation metadata use Korean labels. Macro freshness is derived from each observation date and its expected cadence, and stale inputs are disclosed in macro and Home summaries even when the backend aggregate count says fresh. KRW detail prices show the unit once and stay on one line. Keep provider quotes, canonical live quote merging, polling cadence, and currencies unchanged.

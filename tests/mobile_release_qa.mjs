@@ -78,7 +78,7 @@ const valuationStocks = [
 ];
 
 const macroRows = [
-  {symbol:'T10Y2Y',original_symbol:'T10Y2Y',name:'10Y-2Y 금리차',value:0.62,delta:0.02,displayChange:2,unit:'%p',changeUnit:'bp',changeBasis:'previous observation',asOf:'2026-09-19',observedAt:'2026-09-19',status:'current',stale:false,source:'FRED',desc:'장단기 금리차',chart_data:[{time:'2026-06',value:0.18},{time:'2026-07',value:0.31},{time:'2026-08',value:0.46},{time:'2026-09',value:0.62}]},
+  {symbol:'T10Y2Y',original_symbol:'T10Y2Y',name:'10Y-2Y 금리차',value:0.62,delta:0.02,displayChange:2,unit:'%p',changeUnit:'bp',changeBasis:'previous observation',asOf:'2026-09-25',observedAt:'2026-09-25',status:'current',stale:false,source:'FRED',desc:'장단기 금리차',chart_data:[{time:'2026-06',value:0.18},{time:'2026-07',value:0.31},{time:'2026-08',value:0.46},{time:'2026-09',value:0.62}]},
   {symbol:'PCEPI',original_symbol:'PCEPI',name:'PCE 물가',value:2.7,delta:0.1,displayChange:10,unit:'% YoY',changeUnit:'bp',changeBasis:'previous monthly observation',asOf:'2026-08-01',observedAt:'2026-08-01',status:'current',stale:false,source:'FRED',desc:'개인소비지출 물가지수',chart_data:[{time:'2026-05',value:2.5},{time:'2026-06',value:2.6},{time:'2026-07',value:2.6},{time:'2026-08',value:2.7}]},
   {symbol:'PCETRIM12M159SFRBDAL',original_symbol:'PCETRIM12M159SFRBDAL',name:'절사평균 PCE',value:2.5,delta:-0.05,displayChange:-5,unit:'% YoY',changeUnit:'bp',changeBasis:'previous monthly observation',asOf:'2026-08-01',observedAt:'2026-08-01',status:'current',stale:false,source:'Dallas Fed',desc:'절사평균 PCE',chart_data:[{time:'2026-05',value:2.7},{time:'2026-06',value:2.65},{time:'2026-07',value:2.55},{time:'2026-08',value:2.5}]},
   {symbol:'^VIX',original_symbol:'^VIX',name:'VIX',value:16.8,delta:-0.4,displayChange:-0.4,unit:'index point',changeUnit:'pt',changeBasis:'previous observation',asOf:'2026-09-20',observedAt:'2026-09-20',status:'current',stale:false,source:'Yahoo',desc:'시장 변동성 지수',chart_data:[{time:'09-17',value:18.2},{time:'09-18',value:17.6},{time:'09-19',value:17.2},{time:'09-20',value:16.8}]},
@@ -97,15 +97,15 @@ async function installMocks(page, mode='ok') {
   await page.route('https://chart-view-pkv8.onrender.com/**', async (route) => {
     const url = new URL(route.request().url());
     if (mode === 'server-error') return json(route,{detail:'temporary'},503);
-    if (mode === 'slow') {
-      await new Promise(r=>setTimeout(r,900));
-      return json(route,{results:[]});
-    }
     const path=url.pathname;
+    if (mode === 'slow' && path==='/api/compare') {
+      await new Promise(r=>setTimeout(r,9_000));
+      return json(route,{stocks:[]});
+    }
     if(path==='/api/activity') return json(route,{ok:true,heartbeatSec:20});
     if(path==='/api/home-live') return json(route,{updatedAt:'2026-09-21T03:05:00Z',cacheAgeSec:1.2,refreshing:false,results:heatmapRows.map(row=>row.ticker==='005930.KS'?{...row,change:4.44}:row.ticker==='NVDA'?{...row,change:2.22}:row)});
     if(path==='/api/market-now') return json(route,{results:marketRows,timestamp:'2026-09-21 12:00:00'});
-    if(path==='/api/home-snapshot') return json(route,{generatedAt:'2026-09-21T03:02:00Z',macro:{summary:{level:'yellow',text:'금리·물가·위험 신호가 함께 나타납니다.',latestBasisDate:'2026-09-20',notice:'시장 환경 설명용 요약입니다.'}},heatmap:{results:heatmapRows}});
+    if(path==='/api/home-snapshot') return json(route,{generatedAt:'2026-09-21T03:02:00Z',macro:{summary:{level:'yellow',text:'금리·물가·위험 신호가 함께 나타납니다.',latestBasisDate:'2026-09-20',notice:'시장 환경 설명용 요약입니다.'},results:macroRows},heatmap:{results:heatmapRows}});
     if(path==='/api/home-bootstrap') return json(route,{day:{tradeDate:'2026-09-21',top3:[{symbol:'005930.KS',name:'삼성전자'},{symbol:'000660.KS',name:'SK하이닉스'},{symbol:'NVDA',name:'엔비디아'}]},recommendations:[
       {rank:1,symbol:'005930.KS',name:'삼성전자',recommendedDate:'2026-09-18',recommendedPrice:81000,currentPrice:87480,returnPct:8,bestReturnPct:11.2,score:88,grade:'A',statusLabel:'성과 추적 중',reason:'거래량과 추세 조건이 함께 개선되었습니다.',lastUpdatedTradeDate:'2026-09-20'},
       {rank:2,symbol:'000660.KS',name:'SK하이닉스',recommendedDate:'2026-09-18',recommendedPrice:300000,currentPrice:294000,returnPct:-2,bestReturnPct:3.4,score:81,grade:'B+',statusLabel:'성과 추적 중',reason:'중기 모멘텀 조건을 충족했습니다.',lastUpdatedTradeDate:'2026-09-20'},
@@ -247,6 +247,24 @@ try{
       if(sparkCount!==macroRows.length) throw new Error(`macro mini chart count mismatch: ${sparkCount}`);
       const clippedMacro=await page.locator('.macro-mini-chart').evaluateAll(nodes=>nodes.filter(node=>node.scrollWidth>node.clientWidth+1).length);
       if(clippedMacro) throw new Error(`macro mini chart overflow: ${clippedMacro}`);
+      const macroText=await page.locator('#macro-freshness').innerText();
+      if(!macroText.includes('확인 필요 3개')||await page.locator('.macro-tile .stale-text').count()!==3) throw new Error(`macro freshness must be derived from each observation date: ${macroText}`);
+      if(!await page.locator('.macro-tile').filter({hasText:'VIX'}).getByText('관측일 확인 필요').count()) throw new Error('stale VIX observation date warning missing');
+      const macroDates=await page.locator('.macro-mini-dates').first().innerText();
+      if(macroDates.includes('2026-06')) throw new Error(`macro mini chart dates should use Korean date formatting: ${macroDates}`);
+    }
+    if(tab==='detail/005930.KS'){
+      await page.waitForSelector('#detail-price strong');
+      const detailPrice=await page.locator('#detail-price').innerText();
+      if((detailPrice.match(/원/g)||[]).length!==1||!detailPrice.includes('84,200원')) throw new Error(`KRW detail price should show its unit exactly once: ${detailPrice}`);
+      const priceStyle=await page.locator('#detail-price>div:first-child strong').evaluate(node=>getComputedStyle(node).whiteSpace);
+      if(priceStyle!=='nowrap') throw new Error(`detail price should not wrap on mobile: ${priceStyle}`);
+      const periodText=await page.locator('#detail-metrics').innerText();
+      if(periodText.includes('FY+1 추정')||!periodText.includes('다음 회계연도 예상')) throw new Error(`valuation period label not translated: ${periodText}`);
+    }
+    if(tab==='news'){
+      const relationText=await page.locator('.news-context').first().innerText();
+      if(relationText.includes('title entity match')) throw new Error(`news relation basis leaked English metadata: ${relationText}`);
     }
     if(tab==='picks'){
       await page.waitForSelector('.pick-ledger-item');
@@ -324,7 +342,7 @@ try{
   const slowContext=await browser.newContext({viewport:{width:390,height:844}});
   const slowPage=await slowContext.newPage();await seed(slowPage);await installMocks(slowPage,'slow');
   await slowPage.goto(`${BASE}/#chart`);
-  await slowPage.waitForSelector('#retry-chart',{timeout:6000});
+  await slowPage.waitForSelector('#retry-chart',{timeout:10_000});
   if(!(await slowPage.locator('body').innerText()).includes('데이터 연결이 지연되고 있어요')) throw new Error('timeout friendly error message missing');
   await slowContext.close();
 
