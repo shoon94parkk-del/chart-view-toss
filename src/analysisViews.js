@@ -1,5 +1,5 @@
 import { screenerData, fullHeatmap, homeSnapshot, consensusData, valuationBandData } from './api.js';
-import { filterScreener, finiteNumber, estimateRevision } from './analysisData.js';
+import { SCREENER_PRESETS, screenerPreset, screenerMatchReasons, filterScreener, finiteNumber, estimateRevision } from './analysisData.js';
 import { formatKst } from './dataPresentation.js';
 import { renderSharedHeatmap } from './heatmapView.js';
 import { loadChartRuntime } from './chartRuntime.js';
@@ -40,17 +40,40 @@ export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareS
    if(tab==='discover'){
     const data=await screenerData();if(!current())return;
     const rows=Array.isArray(data.stocks)?data.stocks:[];
-    controls.innerHTML=`<form class="analysis-filters" id="screener-filters"><label>종목명·코드<input name="query" type="search" placeholder="삼성전자 또는 005930" autocomplete="off"></label><label>시장<select name="market"><option value="">전체</option><option>KOSPI</option><option>KOSDAQ</option></select></label><label>RSI 하한<input name="rsiMin" type="number" min="0" max="100" placeholder="제한 없음"></label><label>RSI 상한<input name="rsiMax" type="number" min="0" max="100" placeholder="제한 없음"></label><label>거래량 배수 하한<input name="volumeMin" type="number" min="0" step="0.1" placeholder="제한 없음"></label><label>20일 수익률 하한(%)<input name="ret20Min" type="number" step="any" placeholder="제한 없음"></label><label>평균 거래대금 하한(억원)<input name="valueMin" type="number" min="0" step="any" placeholder="제한 없음"></label><label>추세 조건<select name="trend"><option value="">전체</option><option value="above20">20일선 위</option><option value="cross20">20일선 돌파</option><option value="aligned">정배열</option></select></label><label>정렬<select name="sort"><option value="name">이름순</option><option value="change1d">등락률순</option><option value="volumeRatio">거래량 배수순</option><option value="avgValue20">평균 거래대금순</option><option value="ret20">20일 수익률순</option></select></label><button type="reset" class="neutral-action">초기화</button></form>`;
-    const form=controls.querySelector('form');let count=30;
+    let activePreset='';
+    controls.innerHTML=`<section class="screener-preset-panel"><div class="screener-preset-head"><div><strong>인기 필터</strong><small>많이 쓰는 기술적 조건을 한 번에 적용해요.</small></div><button type="button" class="screener-preset-clear" data-clear-preset hidden>프리셋 해제</button></div><div class="screener-preset-strip">${SCREENER_PRESETS.map(item=>`<button type="button" class="screener-preset" data-screener-preset="${esc(item.id)}" aria-pressed="false"><span>${esc(item.icon)}</span><b>${esc(item.label)}</b><small>${esc(item.description)}</small></button>`).join('')}</div></section><form class="analysis-filters" id="screener-filters"><label>종목명·코드<input name="query" type="search" placeholder="삼성전자 또는 005930" autocomplete="off"></label><label>시장<select name="market"><option value="">전체</option><option>KOSPI</option><option>KOSDAQ</option></select></label><label>RSI 하한<input name="rsiMin" type="number" min="0" max="100" placeholder="제한 없음"></label><label>RSI 상한<input name="rsiMax" type="number" min="0" max="100" placeholder="제한 없음"></label><label>거래량 배수 하한<input name="volumeMin" type="number" min="0" step="0.1" placeholder="제한 없음"></label><label>20일 수익률 하한(%)<input name="ret20Min" type="number" step="any" placeholder="제한 없음"></label><label>평균 거래대금 하한(억원)<input name="valueMin" type="number" min="0" step="any" placeholder="제한 없음"></label><label>추세 조건<select name="trend"><option value="">전체</option><option value="above20">20일선 위</option><option value="cross20">20일선 돌파</option><option value="trend2060">20일선 > 60일선</option><option value="aligned">20·60·120 정배열</option></select></label><label>기술 신호<select name="signal"><option value="">전체</option><option value="macdBullish">MACD 강세</option><option value="macdCrossUp">MACD 상향돌파</option><option value="goldenCross2060">20·60 골든크로스</option><option value="near52High">52주 신고가 근접</option><option value="bbBreakout">볼린저 상단 돌파</option></select></label><label>정렬<select name="sort"><option value="name">이름순</option><option value="change1d">등락률순</option><option value="volumeRatio">거래량 배수순</option><option value="avgValue20">평균 거래대금순</option><option value="ret20">20일 수익률순</option><option value="rsiAsc">RSI 낮은순</option><option value="rsiDesc">RSI 높은순</option><option value="distance52HighPct">52주 고점 근접순</option></select></label><button type="reset" class="neutral-action">초기화</button></form>`;
+    const form=controls.querySelector('form');let count=30;let applyingPreset=false;
+    const presetButtons=[...controls.querySelectorAll('[data-screener-preset]')];
+    const clearPreset=controls.querySelector('[data-clear-preset]');
+    const technicalNames=['rsiMin','rsiMax','volumeMin','ret20Min','valueMin','trend','signal','sort'];
+    function syncPresetUi(){
+     presetButtons.forEach(button=>{const on=button.dataset.screenerPreset===activePreset;button.classList.toggle('active',on);button.setAttribute('aria-pressed',String(on));});
+     if(clearPreset)clearPreset.hidden=!activePreset;
+    }
+    function setPreset(id){
+     const preset=screenerPreset(id);if(!preset)return;
+     applyingPreset=true;
+     for(const name of technicalNames){const field=form.elements.namedItem(name);if(field)field.value=name==='sort'?'name':'';}
+     for(const [name,value] of Object.entries(preset.filters)){const field=form.elements.namedItem(name);if(field)field.value=String(value);}
+     activePreset=id;count=30;syncPresetUi();paint();applyingPreset=false;
+    }
     function paint(){
      if(!current())return;
      const filters=Object.fromEntries(new FormData(form));
      if(!form.checkValidity()||(filters.rsiMin!==''&&filters.rsiMax!==''&&Number(filters.rsiMin)>Number(filters.rsiMax))){host.innerHTML=empty('조건의 범위와 RSI 상·하한을 확인해주세요.');return;}
      const filtered=filterScreener(rows,filters);
-     host.innerHTML=`<p class="analysis-meta">기준 거래일 ${esc(data.tradeDate||data.updated||'미제공')} · 수집 ${rows.length.toLocaleString()}개 · 조건 일치 <strong>${filtered.length.toLocaleString()}개</strong></p><p class="muted-copy">시세는 장마감 수집값이에요. 각 행의 기준일이 다를 수 있어요.</p><div class="analysis-list">${filtered.slice(0,count).map(row=>`<button class="analysis-stock" data-stock-detail="${esc(row.symbol)}"><span><strong>${esc(row.name||row.symbol)}</strong><small>${esc(row.symbol)} · ${esc(row.market)} · ${esc(row.date||'기준일 미제공')}</small></span><span><b>${number(row.price,'원')}</b><em class="${Number(row.change1d)>0?'up':'down'}">${pct(row.change1d)}</em></span><span class="analysis-row-metrics">RSI ${number(row.rsi14)} · 거래량 ${number(row.volumeRatio,'배')} · 20일 ${pct(row.ret20)}</span></button>`).join('')||empty('조건에 맞는 종목이 없어요.')}</div>${count<filtered.length?'<button class="retry" id="screener-more">30개 더 보기</button>':''}`;
+     const active=screenerPreset(activePreset);
+     const presetLine=active?`<p class="screener-active-preset"><span>${esc(active.icon)} ${esc(active.label)}</span><small>${esc(active.description)}</small></p>`:'';
+     host.innerHTML=`${presetLine}<p class="analysis-meta">기준 거래일 ${esc(data.tradeDate||data.updated||'미제공')} · 수집 ${rows.length.toLocaleString()}개 · 조건 일치 <strong>${filtered.length.toLocaleString()}개</strong></p><p class="muted-copy">시세는 장마감 수집값이에요. 지표는 종목별 동일 기준일의 일봉으로 계산해요.</p><div class="analysis-list">${filtered.slice(0,count).map(row=>{const reasons=screenerMatchReasons(row,filters);return `<button class="analysis-stock" data-stock-detail="${esc(row.symbol)}"><span><strong>${esc(row.name||row.symbol)}</strong><small>${esc(row.symbol)} · ${esc(row.market)} · ${esc(row.date||'기준일 미제공')}</small></span><span><b>${number(row.price,'원')}</b><em class="${Number(row.change1d)>0?'up':'down'}">${pct(row.change1d)}</em></span><span class="analysis-row-metrics">RSI ${number(row.rsi14)} · 거래량 ${number(row.volumeRatio,'배')} · 20일 ${pct(row.ret20)}</span>${reasons.length?`<span class="analysis-match-reasons">${reasons.map(reason=>`<i>${esc(reason)}</i>`).join('')}</span>`:''}</button>`}).join('')||empty('조건에 맞는 종목이 없어요.')}</div>${count<filtered.length?'<button class="retry" id="screener-more">30개 더 보기</button>':''}`;
      bindNav();host.querySelector('#screener-more')?.addEventListener('click',()=>{count+=30;paint();});
     }
-    form.onsubmit=e=>e.preventDefault();form.oninput=()=>{count=30;paint();};form.onchange=()=>{count=30;paint();};form.onreset=e=>{e.preventDefault();for(const input of form.querySelectorAll('input,select'))input.value=input.name==='sort'?'name':'';count=30;paint();};paint();
+    presetButtons.forEach(button=>button.addEventListener('click',()=>setPreset(button.dataset.screenerPreset)));
+    clearPreset?.addEventListener('click',()=>{activePreset='';syncPresetUi();});
+    form.onsubmit=e=>e.preventDefault();
+    const manualChange=()=>{if(!applyingPreset&&activePreset){activePreset='';syncPresetUi();}count=30;paint();};
+    form.oninput=manualChange;form.onchange=manualChange;
+    form.onreset=e=>{e.preventDefault();activePreset='';for(const input of form.querySelectorAll('input,select'))input.value=input.name==='sort'?'name':'';count=30;syncPresetUi();paint();};
+    syncPresetUi();paint();
    }else if(tab==='heatmap'){
     seedWatchQuoteCache(state.watchlist.map(x=>x.symbol));
     let latestHome=readHomeFast('snapshot',6*60*60*1000);
