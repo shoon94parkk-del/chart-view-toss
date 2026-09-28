@@ -76,3 +76,6 @@ Home live events, Home snapshot rows, detail fresh quotes, and the full heatmap 
 
 ## 2026-09-28 — Heatmap detail round-trip keeps identity and treemap membership
 Heatmap cells now hand the resolved company name through app history to the detail view instead of passing only the ticker. Separately, live-quote merging ignores null/undefined fields so a one-symbol detail refresh cannot erase `marketCap`/name metadata and make that stock disappear from the full heatmap after back navigation.
+
+## 2026-09-28 — Watchlist paints canonical session quotes
+The Watchlist previously rendered the raw batch `/api/quotes` response, bypassing the canonical in-session quote store used by Home/detail. It now merges every batch into `liveQuoteStore`, paints the newest accepted row per ticker, and persists those canonical rows to the fast watch cache so a stale response cannot move the UI backward.
