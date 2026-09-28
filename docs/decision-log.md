@@ -79,3 +79,6 @@ Heatmap cells now hand the resolved company name through app history to the deta
 
 ## 2026-09-28 — Watchlist paints canonical session quotes
 The Watchlist previously rendered the raw batch `/api/quotes` response, bypassing the canonical in-session quote store used by Home/detail. It now merges every batch into `liveQuoteStore`, paints the newest accepted row per ticker, and persists those canonical rows to the fast watch cache so a stale response cannot move the UI backward.
+
+## 2026-09-28 — Render preview sync is latest-main authoritative
+Concurrent push-triggered sync jobs could finish out of order and move `feat/apps-in-toss-mvp` backward to an older commit. The sync workflow is now serialized/cancelable and pushes the freshly fetched `origin/main` ref rather than the triggering job's stale `HEAD`. The Render preview branch must never lag or roll back behind main because of workflow completion order.
