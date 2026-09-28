@@ -19,6 +19,7 @@ export const quoteSnapshots=tickers=>api(`/api/quotes?tickers=${list(tickers)}`,
 export const compareStocks=(tickers,period='1mo',range={})=>api(`/api/compare?tickers=${list(tickers)}&period=${encodeURIComponent(period)}${range.start&&range.end?`&start=${encodeURIComponent(range.start)}&end=${encodeURIComponent(range.end)}`:''}`,{ttlMs:60000});
 export const searchStocks=query=>api(`/api/search?q=${encodeURIComponent(query)}`,{timeoutMs:8000,retries:0,ttlMs:60000});
 export const marketNow=()=>earlyHome('market',()=>api('/api/market-now',{ttlMs:15000}));
+export const marketNowLive=()=>api('/api/market-now',{ttlMs:0,force:true,timeoutMs:5000,retries:0});
 export const homeSnapshot=()=>earlyHome('snapshot',()=>api('/api/home-snapshot',{ttlMs:60000}));
 export const homeBootstrap=()=>earlyHome('bootstrap',()=>api('/api/home-bootstrap',{ttlMs:60000}));
 export const pickMonitor=()=>api('/static/data/pick_monitor.json',{ttlMs:60000});
