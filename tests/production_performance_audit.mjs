@@ -170,3 +170,38 @@ if(process.env.GITHUB_STEP_SUMMARY){
   const fs=await import('node:fs');
   fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY,'## Chart View Toss route performance\n\n'+table+'\n');
 }
+
+
+async function verifyProductionScreenerPresets(){
+  const browser=await chromium.launch({headless:true});
+  const context=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:1});
+  await seed(context);
+  const page=await context.newPage();
+  const errors=[];
+  page.on('pageerror',e=>errors.push(e.message));
+  await page.goto(`${BASE}/#discover`,{waitUntil:'domcontentloaded',timeout:30000});
+  await page.waitForSelector('[data-screener-preset]',{timeout:30000});
+  const presetCount=await page.locator('[data-screener-preset]').count();
+  if(presetCount<8)throw new Error(`Expected >=8 popular presets, got ${presetCount}`);
+  const result={presetCount,checks:{}};
+  for(const [id,field,expected] of [
+    ['volume-surge','volumeMin','2'],
+    ['rsi-oversold','rsiMax','30'],
+    ['golden-cross','signal','goldenCross2060'],
+    ['near-high','signal','near52High'],
+    ['macd-bullish','signal','macdBullish'],
+  ]){
+    await page.locator(`[data-screener-preset="${id}"]`).click();
+    await page.waitForTimeout(120);
+    const actual=await page.locator(`[name="${field}"]`).inputValue();
+    if(actual!==expected)throw new Error(`${id} did not populate ${field}: ${actual}`);
+    const meta=await page.locator('.analysis-meta').innerText();
+    const firstReason=await page.locator('.analysis-match-reasons').first().innerText().catch(()=> '');
+    result.checks[id]={field:actual,meta,firstReason};
+  }
+  if(errors.length)throw new Error(`Browser errors: ${errors.join(' | ')}`);
+  console.log('SCREENER_PRESETS '+JSON.stringify(result));
+  await context.close();
+  await browser.close();
+}
+await verifyProductionScreenerPresets();
