@@ -1,6 +1,6 @@
 import { chromium } from 'playwright';
 
-// audit-run: p0-valuation-swr-live-20260928
+// audit-run: p0-live-cadence-production-20260928
 
 // audit-run: default-analysis-prewarm-20260928
 const BASE=process.env.PERF_BASE_URL||'https://chart-view-toss.onrender.com';
@@ -170,4 +170,51 @@ console.log('\nPERF_TABLE\n'+table);
 if(process.env.GITHUB_STEP_SUMMARY){
   const fs=await import('node:fs');
   fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY,'## Chart View Toss route performance\n\n'+table+'\n');
+}
+
+
+async function liveCadenceMeasure(){
+  const context=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:1});
+  await seed(context);
+  const page=await context.newPage();
+  const started=performance.now();
+  const seen={homeLive:[],marketNow:[]};
+  page.on('request',req=>{
+    try{
+      const url=new URL(req.url());
+      const t=round(performance.now()-started);
+      if(url.pathname==='/api/home-live')seen.homeLive.push(t);
+      if(url.pathname==='/api/market-now')seen.marketNow.push(t);
+    }catch{}
+  });
+  await page.goto(`${BASE}/#home`,{waitUntil:'domcontentloaded',timeout:30000});
+  const ready=await waitReady(page,routes[0]);
+  const homeReadyMs=round(performance.now()-started);
+  await sleep(22_000);
+  const intervals=rows=>rows.slice(1).map((v,i)=>v-rows[i]);
+  const result={
+    homeReadyMs,
+    readyState:ready.state,
+    homeLiveRequests:seen.homeLive,
+    homeLiveIntervals:intervals(seen.homeLive),
+    marketNowRequests:seen.marketNow,
+    marketNowIntervals:intervals(seen.marketNow),
+  };
+  console.log('LIVE_CADENCE_RESULT '+JSON.stringify(result));
+  await context.close();
+  return result;
+}
+
+const cadence=await liveCadenceMeasure();
+if(process.env.GITHUB_STEP_SUMMARY){
+  const fs=await import('node:fs');
+  fs.appendFileSync(
+    process.env.GITHUB_STEP_SUMMARY,
+    '\n## Home live cadence\n\n'+
+    `- Home ready: ${cadence.homeReadyMs}ms\n`+
+    `- /api/home-live requests: ${cadence.homeLiveRequests.join(', ')} ms\n`+
+    `- /api/home-live intervals: ${cadence.homeLiveIntervals.join(', ')} ms\n`+
+    `- /api/market-now requests: ${cadence.marketNowRequests.join(', ')} ms\n`+
+    `- /api/market-now intervals: ${cadence.marketNowIntervals.join(', ')} ms\n`
+  );
 }
