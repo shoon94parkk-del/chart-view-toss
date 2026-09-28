@@ -84,3 +84,12 @@ test('heatmap navigation forwards the visible company name to detail',async()=>{
   assert.ok(main.includes("state.detailName=route.tab==='detail'?(history.state?.detailName||''):''"));
   assert.ok(extras.includes("cell.dataset.stockName || ''"));
 });
+
+
+test('watchlist and Home watch rows paint the newest canonical quote',async()=>{
+  const fs=await import('node:fs/promises');
+  const main=await fs.readFile(new URL('../src/main.js',import.meta.url),'utf8');
+  assert.ok(main.includes("const quotes=tickers.map(symbol=>getLiveQuote(symbol)||fetchedByTicker.get(String(symbol).toUpperCase())).filter(Boolean)"));
+  assert.ok(main.includes("const canonicalCached=watchSymbols.map(symbol=>getLiveQuote(symbol)||cachedByTicker.get(String(symbol).toUpperCase())).filter(Boolean)"));
+  assert.ok(main.includes("writeHomeFast(watchCacheKey,{...payload,results:quotes})"));
+});
