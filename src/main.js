@@ -355,7 +355,12 @@ async function renderHome(){
  }
  const watchCacheKey=watchSymbols.length?'quotes:'+watchSymbols.join('|'):'';
  const cachedWatch=watchCacheKey?readHomeFast(watchCacheKey,30*60*1000):null;
- if(cachedWatch?.results)paintHomeWatch(cachedWatch.results,hasWatch);
+ if(cachedWatch?.results){
+   rememberLiveQuotes(cachedWatch.results);
+   const cachedByTicker=new Map(cachedWatch.results.filter(row=>row?.ticker).map(row=>[String(row.ticker).toUpperCase(),row]));
+   const canonicalCached=watchSymbols.map(symbol=>getLiveQuote(symbol)||cachedByTicker.get(String(symbol).toUpperCase())).filter(Boolean);
+   paintHomeWatch(canonicalCached,hasWatch);
+ }
  const settle=(task,paint)=>task.then(value=>({status:'fulfilled',value}),reason=>({status:'rejected',reason})).then(result=>{if(epoch===viewEpoch){paint(result);bindNav();bindHomeMarketToggle();}});
  const jobs=[];
  jobs.push(settle(marketNow(),marketRes=>{
@@ -367,9 +372,11 @@ async function renderHome(){
  }));
  jobs.push(settle(watchSymbols.length?quoteSnapshots(watchSymbols):Promise.resolve({results:[]}),watchRes=>{
  const payload=watchRes.status==='fulfilled'?watchRes.value:null;
- const quotes=payload?.results||[];
- rememberLiveQuotes(quotes);
- if(payload&&watchCacheKey)writeHomeFast(watchCacheKey,payload);
+ const fetchedQuotes=payload?.results||[];
+ rememberLiveQuotes(fetchedQuotes);
+ const fetchedByTicker=new Map(fetchedQuotes.filter(row=>row?.ticker).map(row=>[String(row.ticker).toUpperCase(),row]));
+ const quotes=watchSymbols.map(symbol=>getLiveQuote(symbol)||fetchedByTicker.get(String(symbol).toUpperCase())).filter(Boolean);
+ if(payload&&watchCacheKey)writeHomeFast(watchCacheKey,{...payload,results:quotes});
  if(payload||!cachedWatch)paintHomeWatch(quotes,hasWatch);
  }));
  jobs.push(settle(homeSnapshot(),homeRes=>{
@@ -533,9 +540,12 @@ async function renderWatch(){
    const [quotesRes]=await Promise.allSettled([quoteSnapshots(tickers)]);
    if(epoch!==viewEpoch)return;
    if(quotesRes.status==='rejected')throw quotesRes.reason;
-   const quotes=quotesRes.value?.results||[];
+   const fetchedQuotes=quotesRes.value?.results||[];
+   rememberLiveQuotes(fetchedQuotes);
+   const fetchedByTicker=new Map(fetchedQuotes.filter(row=>row?.ticker).map(row=>[String(row.ticker).toUpperCase(),row]));
+   const quotes=tickers.map(symbol=>getLiveQuote(symbol)||fetchedByTicker.get(String(symbol).toUpperCase())).filter(Boolean);
    const vals=[];
-   let items=state.watchlist.map((x,index)=>({x,index,q:quotes.find(r=>r.ticker===x.symbol)||{},v:vals.find(r=>r.ticker===x.symbol)||{}}));
+   let items=state.watchlist.map((x,index)=>({x,index,q:quotes.find(r=>r.ticker===x.symbol)||getLiveQuote(x.symbol)||{},v:vals.find(r=>r.ticker===x.symbol)||{}}));
    if(state.watchSort==='name')items.sort((a,b)=>displayName(a.x.symbol,a.x.name).localeCompare(displayName(b.x.symbol,b.x.name),'ko'));
    if(state.watchSort==='change')items.sort((a,b)=>(finiteNumber(b.q.change)??-Infinity)-(finiteNumber(a.q.change)??-Infinity));
 
