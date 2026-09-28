@@ -98,3 +98,10 @@ Last updated: 2026-09-22
 - Macro freshness must derive from each row's `asOf` date and expected observation cadence; backend `freshCount`/`staleCount` can lag and must not override row-level age.
 - Tooltip and macro mini-chart dates should be readable Korean calendar dates; valuation periods and known relation-basis metadata should use Korean labels.
 - Detail KRW price includes `원` exactly once and must stay on one line at mobile widths. Presentation changes must preserve canonical quote values and currencies.
+
+
+### Screener popular preset guardrail
+- Popular presets must use filterScreener and the visible form values; do not maintain a hidden second ranking/filter implementation.
+- Preset clicks must populate the manual filter fields and update results immediately; reset restores the full universe.
+- RSI/volume/MACD/MA/52-week fields are end-of-day screener data. Missing fields must fail closed rather than inventing a match.
+- Result reason chips must reflect actual active filter conditions.
