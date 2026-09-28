@@ -73,3 +73,6 @@ Apps in Toss 클라이언트는 시세 공급자를 직접 갱신하지 않는�
 
 ## 2026-09-28 — Canonical quote parity across Home, heatmap, and detail
 Home live events, Home snapshot rows, detail fresh quotes, and the full heatmap now share one in-session quote store keyed by ticker. Navigating from a Home heatmap cell to detail paints the newest in-session quote immediately instead of falling back to an older route cache. Detail then refreshes only that ticker every 5 seconds through `/api/quotes?...&fresh=true` and writes successful quotes back into the Home fast snapshot. This keeps return navigation and the full heatmap aligned without adding work to Home first paint.
+
+## 2026-09-28 — Heatmap detail round-trip keeps identity and treemap membership
+Heatmap cells now hand the resolved company name through app history to the detail view instead of passing only the ticker. Separately, live-quote merging ignores null/undefined fields so a one-symbol detail refresh cannot erase `marketCap`/name metadata and make that stock disappear from the full heatmap after back navigation.
