@@ -100,3 +100,7 @@ Toss-specific navigation, safe-area, storage, SDK bridge, and release logic belo
 - `src/liveQuoteStore.js` is the in-session canonical quote memory.
 - Detail paints Home's newest known quote immediately, then polls one symbol every 5s via the fresh quote endpoint.
 - Detail live polling is cleared on route/chart cleanup and must never be added to Home first-paint work.
+
+### 2026-09-28 — Heatmap/detail identity + structural quote merge
+- Heatmap cells carry both ticker and the visible company name into detail navigation, so opening a stock such as `009150.KS` shows `삼성전기` instead of a raw ticker-only header.
+- Live quote overlays are null-safe. A detail quote may update price/change but must not erase structural heatmap fields such as `marketCap` or `name`; otherwise the just-viewed stock can disappear when returning to the heatmap.
