@@ -174,7 +174,8 @@ if(process.env.GITHUB_STEP_SUMMARY){
 
 
 async function liveCadenceMeasure(){
-  const context=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:1});
+  const cadenceBrowser=await chromium.launch({headless:true});
+  const context=await cadenceBrowser.newContext({viewport:{width:390,height:844},deviceScaleFactor:1});
   await seed(context);
   const page=await context.newPage();
   const started=performance.now();
@@ -202,6 +203,7 @@ async function liveCadenceMeasure(){
   };
   console.log('LIVE_CADENCE_RESULT '+JSON.stringify(result));
   await context.close();
+  await cadenceBrowser.close();
   return result;
 }
 
