@@ -934,7 +934,8 @@ document.addEventListener('chartview:home-live',(event)=>{
  const rows=Array.isArray(event.detail?.results)?event.detail.results:[];
  rememberLiveQuotes(rows);
  if(state.tab!=='home')return;
- patchHomeWatchLive(rows);
+ const canonical=rows.map(row=>getLiveQuote(row?.ticker)||row);
+ patchHomeWatchLive(canonical);
 });
 document.addEventListener('chartview:market-now-live',(event)=>{
  if(state.tab!=='home')return;
