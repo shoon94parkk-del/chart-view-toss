@@ -2,6 +2,14 @@ const quotes=new Map();
 
 const key=value=>String(value||'').trim().toUpperCase();
 
+function nonNullPatch(raw={}){
+  const patch={};
+  for(const [field,value] of Object.entries(raw||{})){
+    if(value!==null&&value!==undefined)patch[field]=value;
+  }
+  return patch;
+}
+
 function asOfMs(value){
   if(!value)return 0;
   const direct=Date.parse(value);
@@ -16,7 +24,7 @@ export function rememberLiveQuotes(rows=[]){
   for(const raw of Array.isArray(rows)?rows:[]){
     const ticker=key(raw?.ticker);
     if(!ticker)continue;
-    const incoming={...raw,ticker};
+    const incoming={...nonNullPatch(raw),ticker};
     const incomingMs=asOfMs(incoming.asOf);
     const current=quotes.get(ticker);
     const currentMs=asOfMs(current?.asOf);
@@ -36,7 +44,7 @@ export function getLiveQuote(symbol){
 export function mergeRowsWithLive(rows=[]){
   return (Array.isArray(rows)?rows:[]).map(row=>{
     const live=getLiveQuote(row?.ticker);
-    return live?{...row,...live}:row;
+    return live?{...row,...nonNullPatch(live)}:row;
   });
 }
 
