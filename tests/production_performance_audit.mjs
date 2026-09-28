@@ -171,3 +171,41 @@ if(process.env.GITHUB_STEP_SUMMARY){
   const fs=await import('node:fs');
   fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY,'## Chart View Toss route performance\n\n'+table+'\n');
 }
+
+async function verifySamsungParity(){
+  const browser=await chromium.launch({headless:true});
+  const context=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:1});
+  await seed(context);
+  const page=await context.newPage();
+  const freshResponses=[];
+  page.on('response',async res=>{
+    try{
+      const u=new URL(res.url());
+      if(u.pathname==='/api/quotes'&&u.searchParams.get('fresh')==='true'){
+        freshResponses.push(await res.json());
+      }
+    }catch{}
+  });
+  await page.goto(`${BASE}/#home`,{waitUntil:'domcontentloaded',timeout:30000});
+  await page.waitForSelector('#home-daily-heatmap [data-stock-detail="005930.KS"]',{timeout:20000});
+  await sleep(6500);
+  const homeRow=await page.evaluate(()=>{
+    const raw=localStorage.getItem('chartview-home-fast-v1:snapshot');
+    const value=raw?JSON.parse(raw)?.value:null;
+    return value?.heatmap?.results?.find(row=>String(row?.ticker||'').toUpperCase()==='005930.KS')||null;
+  });
+  await page.locator('#home-daily-heatmap [data-stock-detail="005930.KS"]').click();
+  await page.waitForSelector('#detail-price:not(.skeleton)',{timeout:10000});
+  const immediate=await page.locator('#detail-price').innerText();
+  await sleep(6200);
+  const after=await page.locator('#detail-price').innerText();
+  const cachedAfter=await page.evaluate(()=>{
+    const raw=localStorage.getItem('chartview-home-fast-v1:snapshot');
+    const value=raw?JSON.parse(raw)?.value:null;
+    return value?.heatmap?.results?.find(row=>String(row?.ticker||'').toUpperCase()==='005930.KS')||null;
+  });
+  console.log('QUOTE_PARITY '+JSON.stringify({homeRow,immediate,after,cachedAfter,freshResponses}));
+  await context.close();
+  await browser.close();
+}
+await verifySamsungParity();
