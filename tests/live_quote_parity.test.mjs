@@ -49,3 +49,38 @@ test('older Home live events cannot overwrite a newer detail quote',async()=>{
   assert.ok(extras.includes("const canonicalRows = liveRows.map((row) => getLiveQuote(row?.ticker) || row)"));
   assert.ok(extras.includes("mergeLiveRows(baseRows, canonicalRows)"));
 });
+
+
+test('null fields from a detail quote cannot remove a full heatmap stock',()=>{
+  clearLiveQuotes();
+  rememberLiveQuotes([{
+    ticker:'009150.KS',
+    name:null,
+    marketCap:null,
+    price:1498000,
+    change:-0.6,
+    asOf:'2026-09-28T09:03:00Z',
+  }]);
+  const [row]=mergeRowsWithLive([{
+    ticker:'009150.KS',
+    name:'삼성전기',
+    marketCap:12500000000000,
+    price:1507000,
+    change:0.4,
+  }]);
+  assert.equal(row.name,'삼성전기');
+  assert.equal(row.marketCap,12500000000000);
+  assert.equal(row.price,1498000);
+  assert.equal(row.change,-0.6);
+});
+
+test('heatmap navigation forwards the visible company name to detail',async()=>{
+  const fs=await import('node:fs/promises');
+  const [main,extras]=await Promise.all([
+    fs.readFile(new URL('../src/main.js',import.meta.url),'utf8'),
+    fs.readFile(new URL('../src/homeExtras.js',import.meta.url),'utf8'),
+  ]);
+  assert.ok(main.includes("b.dataset.stockName||''"));
+  assert.ok(main.includes("state.detailName=route.tab==='detail'?(history.state?.detailName||''):''"));
+  assert.ok(extras.includes("cell.dataset.stockName || ''"));
+});
