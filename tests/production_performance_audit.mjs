@@ -204,7 +204,19 @@ async function verifySamsungParity(){
     const value=raw?JSON.parse(raw)?.value:null;
     return value?.heatmap?.results?.find(row=>String(row?.ticker||'').toUpperCase()==='005930.KS')||null;
   });
-  console.log('QUOTE_PARITY '+JSON.stringify({homeRow,immediate,after,cachedAfter,freshResponses}));
+  await page.evaluate(()=>{location.hash='#home';});
+  await page.waitForSelector('#home-daily-heatmap [data-stock-detail="005930.KS"]',{timeout:10000});
+  await sleep(1800);
+  const returnHomeRow=await page.evaluate(()=>{
+    const raw=localStorage.getItem('chartview-home-fast-v1:snapshot');
+    const value=raw?JSON.parse(raw)?.value:null;
+    return value?.heatmap?.results?.find(row=>String(row?.ticker||'').toUpperCase()==='005930.KS')||null;
+  });
+  const beforeTs=Date.parse(cachedAfter?.asOf||'')||0;
+  const returnTs=Date.parse(returnHomeRow?.asOf||'')||0;
+  if(beforeTs&&returnTs&&returnTs<beforeTs)throw new Error('Home quote rolled backward after detail');
+  if(cachedAfter?.price!=null&&returnHomeRow?.price!==cachedAfter.price)throw new Error(`Home price rolled back: ${cachedAfter.price} -> ${returnHomeRow?.price}`);
+  console.log('QUOTE_PARITY '+JSON.stringify({homeRow,immediate,after,cachedAfter,returnHomeRow,freshResponses}));
   await context.close();
   await browser.close();
 }
