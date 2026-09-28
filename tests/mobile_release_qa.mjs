@@ -179,11 +179,7 @@ try{
         await marketButton.click();
         if(await page.locator('#market-card .market-extra-card').count()) throw new Error(`${width}px Home market did not collapse`);
 
-        await page.waitForSelector('#home-top-picks .home-pick-row');
-        if(await page.locator('#home-top-picks .home-pick-row').count()!==3) throw new Error(`${width}px home picks missing`);
-        await page.waitForSelector('#home-top-picks .home-pick-performance');
-        const performanceText=await page.locator('#home-top-picks .home-pick-performance').innerText();
-        if(!performanceText.includes('추천 평균 수익률')||!performanceText.includes('+4.00%')||!performanceText.includes('67%')||!performanceText.includes('3/3건')) throw new Error(`${width}px recommendation performance missing: ${performanceText}`);
+        if(await page.locator('#home-top-picks-section,[data-tab="picks"]').count()) throw new Error(`${width}px recommendation entry leaked into Toss Home`);
         await page.waitForSelector('#home-daily-heatmap .home-heatmap-cell');
         if(await page.locator('#home-daily-heatmap .home-heatmap-cell').count()!==18) throw new Error(`${width}px home heatmap representative set mismatch`);
         if(await page.locator('#home-daily-heatmap .home-heatmap-logo').count()<3) throw new Error(`${width}px heatmap logos missing`);
@@ -238,7 +234,7 @@ try{
 
   const context=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:1});
   const page=await context.newPage();await seed(page);await installMocks(page);
-  for(const tab of ['valuation','macro','watch','news','picks','heatmap','detail/005930.KS','more','info']){
+  for(const tab of ['valuation','macro','watch','news','heatmap','detail/005930.KS','more','info']){
     await page.goto(`${BASE}/#${tab}`,{waitUntil:'networkidle'});
     await page.waitForTimeout(120);
     if(tab==='macro'){
@@ -266,15 +262,7 @@ try{
       const relationText=await page.locator('.news-context').first().innerText();
       if(relationText.includes('title entity match')) throw new Error(`news relation basis leaked English metadata: ${relationText}`);
     }
-    if(tab==='picks'){
-      await page.waitForSelector('.pick-ledger-item');
-      const body=await page.locator('body').innerText();
-      if(!body.includes('PICK 관리')||!body.includes('추천 81,000원')||!body.includes('점검가 87,480원')||!body.includes('+8.00%')||!body.includes('검토 대기')) throw new Error('PICK management summary missing');
-      await page.locator('.pick-ledger-row').first().click();
-      if(await page.locator('.pick-ledger-detail').first().isHidden()) throw new Error('PICK management detail did not expand');
-      const detailText=await page.locator('.pick-ledger-detail').first().innerText();
-      if(!detailText.includes('추천 당시 이유')||!detailText.includes('투자논리 기준선')||!detailText.includes('최근 점검')||!detailText.includes('검증 근거')) throw new Error(`PICK management review sections missing: ${detailText}`);
-    }
+    if(tab==='more'&&await page.locator('[data-tab="picks"]').count()) throw new Error('PICK entry leaked into Toss menu');
     if(tab==='heatmap'){
       await page.waitForSelector('#analysis-body .home-heatmap-cell');
       if(await page.locator('#analysis-body .home-heatmap-cell').count()!==60) throw new Error('full heatmap must show expanded 60-stock set');
@@ -329,6 +317,17 @@ try{
   const shortFooter=await page.locator('.selector-footer').boundingBox();
   if(!shortFooter||shortFooter.y+shortFooter.height>560) throw new Error('selector footer is outside reduced viewport');
   await page.screenshot({path:`${OUT}/360-selector-short-viewport.png`});
+  const recommendationCalls=[];
+  page.on('request',request=>{
+    if(/\/api\/home-bootstrap|\/static\/data\/pick_monitor\.json/.test(request.url())) recommendationCalls.push(request.url());
+  });
+  await page.goto(`${BASE}/#picks`,{waitUntil:'networkidle'});
+  if(!await page.locator('#market-card').count()) throw new Error('PICK deep link must resolve to lookup-only Home');
+  if(await page.locator('#pick-ledger-list,#home-top-picks-section,[data-tab="picks"]').count()) throw new Error('PICK content leaked through deep link');
+  if(recommendationCalls.length) throw new Error(`Toss requested recommendation data: ${recommendationCalls.join(', ')}`);
+  await page.goto(`${BASE}/picks`,{waitUntil:'networkidle'});
+  if(!await page.locator('#market-card').count()) throw new Error('Legacy /picks path must resolve to lookup-only Home');
+  if(recommendationCalls.length) throw new Error(`Legacy path requested recommendation data: ${recommendationCalls.join(', ')}`);
   await context.close();
 
   const errorContext=await browser.newContext({viewport:{width:390,height:844}});

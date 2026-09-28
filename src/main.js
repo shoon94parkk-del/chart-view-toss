@@ -3,8 +3,7 @@ import { recordMetric, diagnosticSummary, clearDiagnostics } from './diagnostics
 import './styles.css';
 import './homeExtras.css';
 import './homeExtras.js';
-import './pickLedger.css';
-import { renderPickLedger } from './pickLedger.js';
+import { TOSS_RECOMMENDATIONS_ALLOWED } from './releaseScope.js';
 import { ANALYSIS_ROUTES, renderAnalysis } from './analysisViews.js';
 import { finiteNumber } from './analysisData.js';
 import { loadChartRuntime } from './chartRuntime.js';
@@ -143,6 +142,7 @@ function stockRow(x){const name=displayName(x.symbol,x.name);return `<button cla
 function esc(v=''){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 
 function navigate(tab,detailSymbol=null,detailName=''){
+ if(tab==='picks'&&!TOSS_RECOMMENDATIONS_ALLOWED)tab='home';
  if(tab===state.tab&&(!detailSymbol||detailSymbol===state.detailSymbol)){
    if(detailSymbol&&detailName)state.detailName=detailName;
    window.scrollTo(0,0);
@@ -926,7 +926,7 @@ function renderMore(){
      <button class="feature-row" data-tab="valuation"><span class="feature-icon purple">${iconSvg('value',22)}</span><span><strong>밸류에이션</strong><small>같은 재무지표를 종목별 비교</small></span><b>${iconSvg('arrow',19)}</b></button>
      <button class="feature-row" data-tab="macro"><span class="feature-icon green">${iconSvg('macro',22)}</span><span><strong>경제 지표</strong><small>단위·관측일·변화 기준 확인</small></span><b>${iconSvg('arrow',19)}</b></button>
      <button class="feature-row" data-tab="discover"><span class="feature-icon yellow">${iconSvg('discover',22)}</span><span><strong>시장 스크리너</strong><small>전체 종목 검색·조건 필터·정렬</small></span><b>${iconSvg('arrow',19)}</b></button>
-     <button class="feature-row" data-tab="picks"><span class="feature-icon blue">${iconSvg('spark',22)}</span><span><strong>PICK 관리</strong><small>추천 성과·유지/경계·투자논리·점검 근거</small></span><b>${iconSvg('arrow',19)}</b></button>
+     ${TOSS_RECOMMENDATIONS_ALLOWED?`<button class="feature-row" data-tab="picks"><span class="feature-icon blue">${iconSvg('spark',22)}</span><span><strong>PICK 관리</strong><small>추천 성과·유지/경계·투자논리·점검 근거</small></span><b>${iconSvg('arrow',19)}</b></button>`:''}
 <button class="feature-row" data-tab="heatmap"><span class="feature-icon blue">${iconSvg('chart',22)}</span><span><strong>시장 히트맵</strong><small>업종별 등락 한눈에 조회</small></span><b>${iconSvg('arrow',19)}</b></button><button class="feature-row" data-tab="consensus"><span class="feature-icon blue">${iconSvg('chart',22)}</span><span><strong>실적 전망 조회</strong><small>EPS·매출 추정치 및 변경 내역</small></span><b>${iconSvg('arrow',19)}</b></button><button class="feature-row" data-tab="bands"><span class="feature-icon blue">${iconSvg('chart',22)}</span><span><strong>역사적 밸류에이션</strong><small>과거 PER·PBR 분포와 추이</small></span><b>${iconSvg('arrow',19)}</b></button><button class="feature-row" data-tab="tools"><span class="feature-icon blue">${iconSvg('chart',22)}</span><span><strong>자료 출처</strong><small>공시·거래소·경제지표 원자료</small></span><b>${iconSvg('arrow',19)}</b></button>   </div></section>
    <section class="menu-group"><h3>뉴스</h3><div class="feature-menu"><button class="feature-row" data-tab="news"><span class="feature-icon coral">${iconSvg('news',22)}</span><span><strong>관심종목 뉴스</strong><small>직접 관련·업종 관련을 구분해 표시</small></span><b>${iconSvg('arrow',19)}</b></button></div></section>
    <section class="menu-group"><h3>이용 및 지원</h3><div class="feature-menu">
@@ -934,7 +934,7 @@ function renderMore(){
      <button class="feature-row" data-tab="info"><span class="feature-icon blue">${iconSvg('spark',22)}</span><span><strong>데이터 및 이용 안내</strong><small>기준·지연·개인정보·지원 안내</small></span><b>${iconSvg('arrow',19)}</b></button>
      <div class="feature-row"><span><strong>고객문의</strong><small>박상훈 · kimtang89@naver.com</small></span></div>
    </div></section>
-   <div class="version-card"><span class="brand-mark">${iconSvg('spark',16)}</span><div><strong>Chart View</strong><small>버전 0.9.2</small></div></div>
+   <div class="version-card"><span class="brand-mark">${iconSvg('spark',16)}</span><div><strong>Chart View</strong><small>버전 0.9.3</small></div></div>
  `,'전체');
  bindNav();
 }
@@ -954,7 +954,13 @@ function render(){
  if(state.tab==='watch')return renderWatch();
  if(state.tab==='valuation')return renderValuation();
  if(state.tab==='macro')return renderMacro();
- if(state.tab==='picks'){cleanupChart();return renderPickLedger({shell,bindNav,displayName});}
+ if(state.tab==='picks'&&TOSS_RECOMMENDATIONS_ALLOWED){
+   cleanupChart();
+   void Promise.all([import('./pickLedger.js'),import('./pickLedger.css')]).then(([ledger])=>{
+     if(state.tab==='picks')ledger.renderPickLedger({shell,bindNav,displayName});
+   });
+   return;
+ }
  if(ANALYSIS_ROUTES.has(state.tab)){cleanupChart();analysisCleanup=renderAnalysis({tab:state.tab,state,shell,bindNav,displayName,openCompareSheet});return;}
  if(state.tab==='news')return renderNews();
  if(state.tab==='detail')return renderDetail();

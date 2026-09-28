@@ -9,5 +9,5 @@ test('feature paths and hash re-entry resolve to the same page',()=>{
   assert.deepEqual(resolveRoute({pathname:'/stock/005930.KS'}),{tab:'detail',detailSymbol:'005930.KS'});
 });
 test('malformed escapes, unknown routes and empty detail never crash startup',()=>{
-  for(const location of [{pathname:'/%ZZ'},{hash:'#detail/%E0%A4'},{pathname:'/unknown'},{hash:'#detail'},{pathname:'/stock/<script>'}]) assert.equal(resolveRoute(location).tab,'home');
+  for(const location of [{pathname:'/%ZZ'},{hash:'#detail/%E0%A4'},{pathname:'/unknown'},{hash:'#detail'},{pathname:'/stock/<script>'},{hash:'#picks'},{pathname:'/picks'}]) assert.equal(resolveRoute(location).tab,'home');
 });

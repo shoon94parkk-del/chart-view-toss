@@ -6,6 +6,7 @@ const ledger=readFileSync(new URL('../src/pickLedger.js',import.meta.url),'utf8'
 const api=readFileSync(new URL('../src/api.js',import.meta.url),'utf8');
 const main=readFileSync(new URL('../src/main.js',import.meta.url),'utf8');
 const home=readFileSync(new URL('../src/homeExtras.js',import.meta.url),'utf8');
+const scope=readFileSync(new URL('../src/releaseScope.js',import.meta.url),'utf8');
 
 test('PICK management combines recommendation performance and monitoring',()=>{
   assert.match(api,/pick_monitor\.json/);
@@ -20,9 +21,10 @@ test('PICK management keeps review-only sell semantics',()=>{
   assert.ok(ledger.includes('사용자 확인 필요'));
 });
 
-test('Toss navigation reuses the existing picks route',()=>{
-  assert.ok(main.includes('data-tab="picks"'));
-  assert.ok(main.includes('<strong>PICK 관리</strong>'));
+test('PICK source is preserved but Toss release scope hides its navigation',()=>{
+  assert.match(scope,/TOSS_RECOMMENDATIONS_ALLOWED = false/);
+  assert.ok(main.includes('TOSS_RECOMMENDATIONS_ALLOWED?`<button class="feature-row" data-tab="picks"'));
+  assert.ok(home.includes('if (TOSS_RECOMMENDATIONS_ALLOWED) {'));
   assert.ok(home.includes('data-home-extra-route="picks">PICK 관리</button>'));
 });
 

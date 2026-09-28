@@ -7,13 +7,12 @@ const BASE=process.env.PERF_BASE_URL||'https://chart-view-toss.onrender.com';
 const TIMEOUT=Number(process.env.PERF_TIMEOUT_MS||20000);
 
 const routes=[
-  {route:'home',label:'홈',ready:()=>Boolean(document.querySelector('#market-card .quote-card'))&&document.querySelectorAll('#home-top-picks .skeleton,#home-daily-heatmap .skeleton').length===0},
+  {route:'home',label:'홈',ready:()=>Boolean(document.querySelector('#market-card .quote-card'))&&document.querySelectorAll('#home-daily-heatmap .skeleton').length===0},
   {route:'chart',label:'차트',ready:()=>{const s=document.querySelector('#chart-status');return Boolean(s)&&!String(s.textContent||'').includes('불러오는 중')&&Boolean(document.querySelector('#chart-table-wrap .return-table,#chart-table-wrap .empty'))}},
   {route:'watch',label:'관심종목',ready:()=>Boolean(document.querySelector('#watch-rich-list'))&&document.querySelectorAll('#watch-rich-list .skeleton').length===0},
   {route:'valuation',label:'밸류에이션',ready:()=>Boolean(document.querySelector('#valuation-list'))&&document.querySelectorAll('#valuation-list .skeleton').length===0},
   {route:'macro',label:'경제지표',ready:()=>Boolean(document.querySelector('#macro-groups'))&&document.querySelectorAll('#macro-groups .skeleton').length===0&&Boolean(document.querySelector('#macro-groups .macro-group,#macro-groups .empty'))},
   {route:'discover',label:'시장 스크리너',ready:()=>Boolean(document.querySelector('#analysis-body'))&&document.querySelectorAll('#analysis-body .skeleton').length===0&&Boolean(document.querySelector('#analysis-body .analysis-list,#analysis-body .empty'))},
-  {route:'picks',label:'추천 기록',ready:()=>Boolean(document.querySelector('#pick-ledger-list'))&&document.querySelectorAll('#pick-ledger-list .skeleton').length===0},
   {route:'news',label:'관심종목 뉴스',ready:()=>Boolean(document.querySelector('#news-list'))&&document.querySelectorAll('#news-list .skeleton').length===0},
   {route:'heatmap',label:'시장 히트맵',ready:()=>document.querySelectorAll('#analysis-body .home-heatmap-cell').length>=18||Boolean(document.querySelector('#analysis-body .empty'))},
   {route:'consensus',label:'실적 전망',ready:()=>Boolean(document.querySelector('#analysis-body'))&&document.querySelectorAll('#analysis-body [role="status"]').length===0&&document.querySelectorAll('#analysis-body .skeleton').length===0},

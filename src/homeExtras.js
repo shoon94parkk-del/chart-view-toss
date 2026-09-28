@@ -4,6 +4,7 @@ import { HOME_STOCK_META, renderSharedHeatmap } from './heatmapView.js';
 import { readHomeFast, writeHomeFast } from './homeFastCache.js';
 import { mergeLiveRows } from './liveHomeSync.js';
 import { rememberLiveQuotes, getLiveQuote, mergeRowsWithLive } from './liveQuoteStore.js';
+import { TOSS_RECOMMENDATIONS_ALLOWED } from './releaseScope.js';
 
 const STOCK_META = HOME_STOCK_META;
 
@@ -154,12 +155,15 @@ function heatmapMarketMarkup(payload, market) {
 }
 
 function createSections(marketSection) {
-  const picks = document.createElement('section');
-  picks.className = 'section home-extra-section home-pick-section home-primary';
-  picks.id = 'home-top-picks-section';
-  picks.innerHTML =
-    '<div class="section-head"><h2>오늘의 종목발굴</h2><button type="button" class="text-button" data-home-extra-route="picks">PICK 관리</button></div>' +
-    '<div id="home-top-picks" class="home-pick-list"><div class="skeleton home-extra-skeleton"></div></div>';
+  let picks = null;
+  if (TOSS_RECOMMENDATIONS_ALLOWED) {
+    picks = document.createElement('section');
+    picks.className = 'section home-extra-section home-pick-section home-primary';
+    picks.id = 'home-top-picks-section';
+    picks.innerHTML =
+      '<div class="section-head"><h2>오늘의 종목발굴</h2><button type="button" class="text-button" data-home-extra-route="picks">PICK 관리</button></div>' +
+      '<div id="home-top-picks" class="home-pick-list"><div class="skeleton home-extra-skeleton"></div></div>';
+  }
 
   const heatmap = document.createElement('section');
   heatmap.className = 'section home-extra-section home-heatmap-section home-primary';
@@ -169,8 +173,12 @@ function createSections(marketSection) {
     '<p class="home-extra-caption">대표 종목의 당일 등락률을 시가총액 비중으로 보여줘요.</p>' +
     '<div id="home-daily-heatmap"><div class="skeleton home-heatmap-skeleton"></div></div>';
 
-  marketSection.insertAdjacentElement('afterend', picks);
-  picks.insertAdjacentElement('afterend', heatmap);
+  if (picks) {
+    marketSection.insertAdjacentElement('afterend', picks);
+    picks.insertAdjacentElement('afterend', heatmap);
+  } else {
+    marketSection.insertAdjacentElement('afterend', heatmap);
+  }
   return { picks, heatmap };
 }
 
@@ -254,8 +262,10 @@ async function mount() {
   const token = ++generation;
   const sections = createSections(marketSection);
 
-  const cachedPicks = readHomeFast('bootstrap', 36 * 60 * 60 * 1000);
-  if (cachedPicks) paintPicks(sections.picks.querySelector('#home-top-picks'), cachedPicks);
+  if (TOSS_RECOMMENDATIONS_ALLOWED) {
+    const cachedPicks = readHomeFast('bootstrap', 36 * 60 * 60 * 1000);
+    if (cachedPicks) paintPicks(sections.picks.querySelector('#home-top-picks'), cachedPicks);
+  }
   const cachedSnapshot = readHomeFast('snapshot', 6 * 60 * 60 * 1000);
   if (cachedSnapshot?.heatmap?.results?.length) {
     paintHeatmap(sections.heatmap.querySelector('#home-daily-heatmap'), {
@@ -264,7 +274,7 @@ async function mount() {
     });
   }
 
-  const picksTask = homeBootstrap()
+  const picksTask = TOSS_RECOMMENDATIONS_ALLOWED ? homeBootstrap()
     .then((payload) => {
       if (token !== generation || !sections.picks.isConnected) return;
       writeHomeFast('bootstrap', payload);
@@ -274,7 +284,7 @@ async function mount() {
       if (token !== generation || !sections.picks.isConnected) return;
       sections.picks.querySelector('#home-top-picks').innerHTML =
         '<div class="home-extra-empty"><strong>종목발굴을 불러오지 못했어요.</strong><span>스크리너 화면은 계속 사용할 수 있어요.</span></div>';
-    });
+    }) : Promise.resolve();
 
   const heatmapTask = homeSnapshot()
     .then((snapshot) => {
