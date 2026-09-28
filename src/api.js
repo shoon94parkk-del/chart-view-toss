@@ -21,6 +21,7 @@ export const searchStocks=query=>api(`/api/search?q=${encodeURIComponent(query)}
 export const marketNow=()=>earlyHome('market',()=>api('/api/market-now',{ttlMs:15000}));
 export const homeSnapshot=()=>earlyHome('snapshot',()=>api('/api/home-snapshot',{ttlMs:60000}));
 export const homeBootstrap=()=>earlyHome('bootstrap',()=>api('/api/home-bootstrap',{ttlMs:60000}));
+export const pickMonitor=()=>api('/static/data/pick_monitor.json',{ttlMs:60000});
 export const visitorActivity=(visitorId,surface='other')=>api('/api/activity',{
  method:'POST',
  headers:{'Content-Type':'application/json'},
