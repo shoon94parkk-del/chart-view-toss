@@ -83,12 +83,13 @@ const SIGNAL_LABELS={macdBullish:'MACD 강세',macdCrossUp:'MACD 상향돌파',g
 
 export function screenerMatchReasons(row,filters={}){
  const reasons=[];
+ const hasValue=value=>value!==undefined&&value!==null&&String(value).trim()!=='';
  const rsi=finiteNumber(row.rsi14),volume=finiteNumber(row.volumeRatio),ret20=finiteNumber(row.ret20),distance=finiteNumber(row.distance52HighPct);
- if((filters.rsiMin!==''||filters.rsiMax!=='')&&rsi!==null)reasons.push(`RSI ${rsi.toFixed(1)}`);
- if(filters.volumeMin!==''&&volume!==null)reasons.push(`거래량 ${volume.toFixed(1)}배`);
+ if((hasValue(filters.rsiMin)||hasValue(filters.rsiMax))&&rsi!==null)reasons.push(`RSI ${rsi.toFixed(1)}`);
+ if(hasValue(filters.volumeMin)&&volume!==null)reasons.push(`거래량 ${volume.toFixed(1)}배`);
  if(filters.trend&&TREND_LABELS[filters.trend])reasons.push(TREND_LABELS[filters.trend]);
  if(filters.signal&&SIGNAL_LABELS[filters.signal])reasons.push(filters.signal==='near52High'&&distance!==null?`52주 고점 ${Math.abs(distance).toFixed(1)}% 이내`:SIGNAL_LABELS[filters.signal]);
- if(filters.ret20Min!==''&&ret20!==null)reasons.push(`20일 ${ret20>=0?'+':''}${ret20.toFixed(1)}%`);
+ if(hasValue(filters.ret20Min)&&ret20!==null)reasons.push(`20일 ${ret20>=0?'+':''}${ret20.toFixed(1)}%`);
  if(!reasons.length){
   if(rsi!==null)reasons.push(`RSI ${rsi.toFixed(1)}`);
   if(volume!==null)reasons.push(`거래량 ${volume.toFixed(1)}배`);
