@@ -145,3 +145,13 @@ test('Home compact cells are explicitly marked for narrow-screen secondary text 
   const teslaCell = html.match(/<div class="home-heatmap-cell[^"]*is-compact[^"]*"[^>]*data-stock-detail="TSLA"[^>]*>/);
   assert.ok(teslaCell, 'TSLA should be marked compact so narrow screens can omit the return line');
 });
+
+
+test('heatmap cell exposes the Korean company name for detail navigation',()=>{
+  const html=renderSharedHeatmap({
+    generatedAt:'2026-09-28T09:03:00Z',
+    results:[{ticker:'009150.KS',name:'Samsung Electro-Mechanics',marketCap:12e12,change:-0.6}],
+  },{scope:'full'});
+  assert.match(html,/data-stock-detail="009150\.KS"/);
+  assert.match(html,/data-stock-name="삼성전기"/);
+});
