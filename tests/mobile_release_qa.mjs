@@ -222,7 +222,10 @@ try{
           if(visibleSmallChanges) throw new Error(`${width}px small Home heatmap changes must be hidden; visible=${visibleSmallChanges}`);
         }
         if(width===390){
-          await page.waitForTimeout(700);
+          await page.waitForFunction(()=>{
+            const text=document.querySelector('#home-daily-heatmap')?.innerText||'';
+            return text.includes('+4.44%')&&text.includes('+2.22%');
+          },{timeout:6_500});
           const liveText=await page.locator('#home-daily-heatmap').innerText();
           if(!liveText.includes('+4.44%')||!liveText.includes('+2.22%')) throw new Error(`Home live shared-cache update missing: ${liveText}`);
         }
