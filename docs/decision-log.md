@@ -63,3 +63,6 @@ Apps in Toss 클라이언트는 시세 공급자를 직접 갱신하지 않는�
 
 ## 2026-09-27 — 외부 링크는 top-level Apps in Toss openURL 계약을 사용
 `20260921-5` 심사에서 서비스 이용 외부 링크 미동작으로 반려됐다. Toss runtime에서 `Device.openURL`을 사용하지 않고 SDK의 top-level `openURL(url)`을 단일 외부 링크 경로로 사용한다. 정책 링크는 `.ait` origin과 분리된 공개 HTTPS URL로 고정하고, 실패를 조용히 무시하지 않는다.
+
+## 2026-09-28 — 추천 기록을 PICK 관리로 통합
+기존 Toss `#picks` 추천 원장을 새 라우트로 갈아엎지 않고 `PICK 관리`로 확장한다. `/api/home-bootstrap`의 누적 추천 성과와 Web Chart View가 관리하는 `/static/data/pick_monitor.json`의 유지/경계/매도검토/검토대기, 투자논리 기준선, 최근 점검, 검증 근거를 추천 건별로 병합한다. 점검 데이터는 보조 데이터이므로 실패해도 기존 성과 기록은 계속 보여야 하며, 매도검토는 자동 종료가 아니다.
