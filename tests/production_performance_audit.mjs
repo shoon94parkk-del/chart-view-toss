@@ -1,7 +1,7 @@
 import { chromium } from 'playwright';
 
 const BASE=process.env.PERF_BASE_URL||'https://chart-view-pkv8.onrender.com';
-// audit-run: original-home-p0-after-20260928
+// audit-run: original-home-p0-live-20260928-1010kst
 const TIMEOUT=Number(process.env.PERF_TIMEOUT_MS||20000);
 const RUNS=3;
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
