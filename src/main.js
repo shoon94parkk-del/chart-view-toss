@@ -880,6 +880,14 @@ document.addEventListener('chartview:home-live',(event)=>{
  const rows=Array.isArray(event.detail?.results)?event.detail.results:[];
  patchHomeWatchLive(rows);
 });
+document.addEventListener('chartview:market-now-live',(event)=>{
+ if(state.tab!=='home')return;
+ const payload=event.detail;
+ if(!Array.isArray(payload?.results)||!payload.results.length)return;
+ writeHomeFast('market',payload);
+ paintHomeMarket(payload,{allowError:false});
+ bindHomeMarketToggle();
+});
 async function startApp(){
  const started=performance.now();
  syncFromLocation();
