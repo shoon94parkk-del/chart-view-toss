@@ -55,7 +55,6 @@ function rowMarkup(row,index,displayName){
   const reviewed=pick?.monitor?.lastReviewedTradeDate||String(pick?.monitor?.lastReviewedAt||'').slice(0,10)||'—';
   return `<article class="pick-ledger-item ${meta.cls}">
     <button type="button" class="pick-ledger-row" data-pick-expand="${esc(id)}" aria-expanded="false">
-      <span class="pick-ledger-rank">${Number(row?.rank)||index+1}</span>
       <span class="pick-ledger-stock"><strong>${esc(name)}</strong><small>${esc(symbol||row?.code||'')} · ${esc(row?.recommendedDate||'추천일 미제공')}</small></span>
       <span class="pick-ledger-status ${meta.cls}">${meta.icon} ${meta.label}</span>
       <span class="pick-ledger-return ${tone(row?.returnPct)}">${pct(row?.returnPct)}</span>
