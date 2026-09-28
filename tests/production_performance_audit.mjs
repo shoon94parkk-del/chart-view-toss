@@ -1,7 +1,7 @@
 import { chromium } from 'playwright';
 
 const BASE=process.env.PERF_BASE_URL||'https://chart-view-pkv8.onrender.com';
-// audit-run: original-home-p0-v2-live-20260928-1028kst
+// audit-run: original-static-resource-timing-20260928
 const TIMEOUT=Number(process.env.PERF_TIMEOUT_MS||20000);
 const RUNS=3;
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
@@ -44,7 +44,19 @@ async function measureRun(browser,run){
   const dom=round(performance.now()-t);
   await page.waitForSelector('.app-bottom-nav',{timeout:TIMEOUT});
   await waitFor(page,()=>document.querySelectorAll('#home-market-v9-grid .home-market-v9-item:not(.is-loading)').length>=4);
-  out.home={ms:round(performance.now()-t),domMs:dom,api:api.rows.slice(mark)};
+  const perf=await page.evaluate(()=>{
+    const nav=performance.getEntriesByType('navigation')[0];
+    const resources=performance.getEntriesByType('resource')
+      .map(r=>({name:new URL(r.name).pathname,duration:Math.round(r.duration),transferSize:r.transferSize||0,decodedBodySize:r.decodedBodySize||0,initiatorType:r.initiatorType}))
+      .filter(r=>r.name.startsWith('/static/'))
+      .sort((a,b)=>b.duration-a.duration)
+      .slice(0,12);
+    return {
+      nav:nav?{ttfb:Math.round(nav.responseStart-nav.requestStart),response:Math.round(nav.responseEnd-nav.responseStart),dcl:Math.round(nav.domContentLoadedEventEnd-nav.startTime)}:null,
+      resources
+    };
+  });
+  out.home={ms:round(performance.now()-t),domMs:dom,api:api.rows.slice(mark),perf};
 
   mark=api.mark(); t=performance.now();
   await page.locator('.app-bottom-btn[data-app-mode="analysis"]').click();
