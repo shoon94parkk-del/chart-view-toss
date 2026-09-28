@@ -505,6 +505,23 @@ async function renderValuation(){
  }
 }
 
+function macroSparklineSvg(rows,isUp){
+ const clean=(Array.isArray(rows)?rows:[]).map((row,index)=>({index,value:Number(row?.value)})).filter((row)=>Number.isFinite(row.value));
+ if(clean.length<2)return '';
+ const values=clean.map((row)=>row.value);
+ let min=Math.min(...values),max=Math.max(...values);
+ if(max===min){max+=0.5;min-=0.5}
+ const pad=(max-min)*0.08;max+=pad;min-=pad;
+ const width=100,height=38,yTop=3,yBottom=35;
+ const line=clean.map((row,index)=>{
+   const x=(index/(clean.length-1))*width;
+   const y=yBottom-((row.value-min)/(max-min))*(yBottom-yTop);
+   return `${index?'L':'M'}${x.toFixed(2)},${y.toFixed(2)}`;
+ }).join(' ');
+ const tone=isUp?'var(--macro-up,#e54855)':'var(--macro-down,#3182f6)';
+ return `<svg class="macro-sparkline" viewBox="0 0 100 38" preserveAspectRatio="none" aria-hidden="true"><path d="${line}" fill="none" stroke="${tone}" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+}
+
 async function renderMacro(){
  cleanupChart();
  const epoch=viewEpoch;
@@ -530,7 +547,7 @@ async function renderMacro(){
    const groups=new Map();
    (d?.results||[]).forEach(row=>{const category=macroCategory(row);if(!groups.has(category))groups.set(category,[]);groups.get(category).push(row)});
    const order=['금리','물가','유동성','위험','고용','경기','기타'];
-   document.querySelector('#macro-groups').innerHTML=order.filter(k=>groups.has(k)).map(category=>`<section class="macro-group"><div class="section-head"><h2>${category}</h2><small>${groups.get(category).length}개 지표</small></div><div class="macro-grid">${groups.get(category).map((r,i)=>{const change=formatMacroChange(r);return `<article class="macro-tile neutral-macro"><div class="macro-tile-top"><span class="macro-symbol">${esc(r.symbol||r.original_symbol||'')}</span><small class="${r.stale?'stale-text':''}">${r.stale?'직전값 유지':'정상'}</small></div><strong>${esc(r.name||r.symbol)}</strong><div class="macro-value"><b>${esc(formatMacroValue(r))}</b><em>${esc(change)}</em></div><p>${esc(r.desc||'')}</p><div class="macro-meta-line"><span>${esc(observationLabel(r))}</span><span>${esc(changeBasisLabel(r.changeBasis))}</span>${macroPublicationLabel(r)?`<span>${esc(macroPublicationLabel(r))}</span>`:''}</div><div class="source-row"><small class="source-line">${esc(r.source||'출처 미제공')}</small>${macroSourceUrl(r)?`<button type="button" data-external-url="${esc(macroSourceUrl(r))}">원본 시리즈</button>`:''}</div></article>`}).join('')}</div></section>`).join('');
+   document.querySelector('#macro-groups').innerHTML=order.filter(k=>groups.has(k)).map(category=>`<section class="macro-group"><div class="section-head"><h2>${category}</h2><small>${groups.get(category).length}개 지표</small></div><div class="macro-grid">${groups.get(category).map((r,i)=>{const change=formatMacroChange(r);const chart=Array.isArray(r.chart_data)?r.chart_data:[];const isUp=Number(r.delta??r.change)>=0;const spark=macroSparklineSvg(chart,isUp);return `<article class="macro-tile neutral-macro"><div class="macro-tile-top"><span class="macro-symbol">${esc(r.symbol||r.original_symbol||'')}</span><small class="${r.stale?'stale-text':''}">${r.stale?'직전값 유지':'정상'}</small></div><strong>${esc(r.name||r.symbol)}</strong><div class="macro-value"><b>${esc(formatMacroValue(r))}</b><em>${esc(change)}</em></div><div class="macro-mini-chart" aria-label="${esc(r.name||r.symbol)} 추세">${spark||'<span>시계열 없음</span>'}</div>${spark?`<div class="macro-mini-dates"><span>${esc(chart[0]?.time||'')}</span><span>${esc(chart.at(-1)?.time||r.asOf||'')}</span></div>`:''}<p>${esc(r.desc||'')}</p><div class="macro-meta-line"><span>${esc(observationLabel(r))}</span><span>${esc(changeBasisLabel(r.changeBasis))}</span>${macroPublicationLabel(r)?`<span>${esc(macroPublicationLabel(r))}</span>`:''}</div><div class="source-row"><small class="source-line">${esc(r.source||'출처 미제공')}</small>${macroSourceUrl(r)?`<button type="button" data-external-url="${esc(macroSourceUrl(r))}">원본 시리즈</button>`:''}</div></article>`}).join('')}</div></section>`).join('');
    bindNav();
  }catch(e){
    if(epoch!==viewEpoch)return;

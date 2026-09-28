@@ -78,10 +78,10 @@ const valuationStocks = [
 ];
 
 const macroRows = [
-  {symbol:'T10Y2Y',original_symbol:'T10Y2Y',name:'10Y-2Y 금리차',value:0.62,delta:0.02,displayChange:2,unit:'%p',changeUnit:'bp',changeBasis:'previous observation',asOf:'2026-09-19',observedAt:'2026-09-19',status:'current',stale:false,source:'FRED',desc:'장단기 금리차'},
-  {symbol:'PCEPI',original_symbol:'PCEPI',name:'PCE 물가',value:2.7,delta:0.1,displayChange:10,unit:'% YoY',changeUnit:'bp',changeBasis:'previous monthly observation',asOf:'2026-08-01',observedAt:'2026-08-01',status:'current',stale:false,source:'FRED',desc:'개인소비지출 물가지수'},
-  {symbol:'PCETRIM12M159SFRBDAL',original_symbol:'PCETRIM12M159SFRBDAL',name:'절사평균 PCE',value:2.5,delta:-0.05,displayChange:-5,unit:'% YoY',changeUnit:'bp',changeBasis:'previous monthly observation',asOf:'2026-08-01',observedAt:'2026-08-01',status:'current',stale:false,source:'Dallas Fed',desc:'절사평균 PCE'},
-  {symbol:'^VIX',original_symbol:'^VIX',name:'VIX',value:16.8,delta:-0.4,displayChange:-0.4,unit:'index point',changeUnit:'pt',changeBasis:'previous observation',asOf:'2026-09-20',observedAt:'2026-09-20',status:'current',stale:false,source:'Yahoo',desc:'시장 변동성 지수'},
+  {symbol:'T10Y2Y',original_symbol:'T10Y2Y',name:'10Y-2Y 금리차',value:0.62,delta:0.02,displayChange:2,unit:'%p',changeUnit:'bp',changeBasis:'previous observation',asOf:'2026-09-19',observedAt:'2026-09-19',status:'current',stale:false,source:'FRED',desc:'장단기 금리차',chart_data:[{time:'2026-06',value:0.18},{time:'2026-07',value:0.31},{time:'2026-08',value:0.46},{time:'2026-09',value:0.62}]},
+  {symbol:'PCEPI',original_symbol:'PCEPI',name:'PCE 물가',value:2.7,delta:0.1,displayChange:10,unit:'% YoY',changeUnit:'bp',changeBasis:'previous monthly observation',asOf:'2026-08-01',observedAt:'2026-08-01',status:'current',stale:false,source:'FRED',desc:'개인소비지출 물가지수',chart_data:[{time:'2026-05',value:2.5},{time:'2026-06',value:2.6},{time:'2026-07',value:2.6},{time:'2026-08',value:2.7}]},
+  {symbol:'PCETRIM12M159SFRBDAL',original_symbol:'PCETRIM12M159SFRBDAL',name:'절사평균 PCE',value:2.5,delta:-0.05,displayChange:-5,unit:'% YoY',changeUnit:'bp',changeBasis:'previous monthly observation',asOf:'2026-08-01',observedAt:'2026-08-01',status:'current',stale:false,source:'Dallas Fed',desc:'절사평균 PCE',chart_data:[{time:'2026-05',value:2.7},{time:'2026-06',value:2.65},{time:'2026-07',value:2.55},{time:'2026-08',value:2.5}]},
+  {symbol:'^VIX',original_symbol:'^VIX',name:'VIX',value:16.8,delta:-0.4,displayChange:-0.4,unit:'index point',changeUnit:'pt',changeBasis:'previous observation',asOf:'2026-09-20',observedAt:'2026-09-20',status:'current',stale:false,source:'Yahoo',desc:'시장 변동성 지수',chart_data:[{time:'09-17',value:18.2},{time:'09-18',value:17.6},{time:'09-19',value:17.2},{time:'09-20',value:16.8}]},
 ];
 
 const newsItems = [
@@ -217,6 +217,13 @@ try{
   for(const tab of ['valuation','macro','watch','news','picks','heatmap','detail/005930.KS','more','info']){
     await page.goto(`${BASE}/#${tab}`,{waitUntil:'networkidle'});
     await page.waitForTimeout(120);
+    if(tab==='macro'){
+      await page.waitForSelector('.macro-mini-chart .macro-sparkline');
+      const sparkCount=await page.locator('.macro-mini-chart .macro-sparkline').count();
+      if(sparkCount!==macroRows.length) throw new Error(`macro mini chart count mismatch: ${sparkCount}`);
+      const clippedMacro=await page.locator('.macro-mini-chart').evaluateAll(nodes=>nodes.filter(node=>node.scrollWidth>node.clientWidth+1).length);
+      if(clippedMacro) throw new Error(`macro mini chart overflow: ${clippedMacro}`);
+    }
     if(tab==='picks'){
       await page.waitForSelector('.pick-ledger-item');
       const body=await page.locator('body').innerText();
