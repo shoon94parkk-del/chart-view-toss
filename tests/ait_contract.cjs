@@ -2,6 +2,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 
 const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+const lock = JSON.parse(fs.readFileSync('package-lock.json', 'utf8'));
 const config = fs.readFileSync('apps-in-toss.config.ts', 'utf8');
 const main = fs.readFileSync('src/main.js', 'utf8');
 const api = fs.readFileSync('src/api.js', 'utf8');
@@ -16,7 +17,9 @@ const liveSync = fs.readFileSync('src/liveHomeSync.js', 'utf8');
 const releaseScope = fs.readFileSync('src/releaseScope.js', 'utf8');
 const html = fs.readFileSync('index.html', 'utf8');
 
-assert.equal(pkg.version, '0.9.5');
+assert.match(pkg.version, /^\d+\.\d+\.\d+$/);
+assert.equal(lock.version, pkg.version);
+assert.equal(lock.packages[''].version, pkg.version);
 assert.equal(pkg.dependencies['@apps-in-toss/web-framework'], '3.5.0');
 assert.equal(pkg.engines.node, '24.x');
 assert.match(pkg.engines.npm, />=10 <12/);
