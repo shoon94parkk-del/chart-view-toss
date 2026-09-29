@@ -1,5 +1,13 @@
 # Chart View for Apps in Toss
 
+![차트뷰 토스 홍보 이미지](public/marketing/chartview-toss-instagram-20260930.png)
+
+**숫자만 보지 말고, 공시까지 같이 보세요.**  
+DART 공시 기반 기업 정보, 한국·미국 주식 비교, 히트맵, 스크리너, 밸류에이션을 한곳에서 확인할 수 있는 무료 주식 분석 앱입니다.
+
+- 서비스: https://chart-view-toss.onrender.com
+- 홍보/공유용 자산: [docs/marketing/README.md](docs/marketing/README.md)
+
 Chart View의 앱인토스 전용 클라이언트 프로젝트입니다.
 
 - 기존 웹 UI: `shoon94parkk-del/chart_View` (웹 UI 유지, Toss에 필요한 공용 API 계약은 additive 방식으로 확장)
