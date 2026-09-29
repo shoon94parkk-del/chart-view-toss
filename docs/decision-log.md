@@ -165,3 +165,8 @@ Home places the device-local watchlist directly after search and before the mark
 ## 2026-09-30 — 공유 URL 버전으로 소셜 캐시 갱신
 
 카카오톡 등 메신저가 동일한 공유 URL의 Open Graph 메타데이터를 오래 캐시할 수 있으므로 앱에서 생성하는 공유 링크에 `v=promo-20260930-v1` 버전을 붙인다. 목적은 미리보기 캐시 갱신뿐이며 실제 목적지·화면 라우팅·데이터 계약은 변경하지 않는다.
+
+
+## 2026-09-30 — 모든 공유 링크는 차트뷰 토스 도메인을 기준으로 사용
+
+사용자에게 노출되는 공유 URL은 백엔드 `chart-view-pkv8.onrender.com/share/toss`를 사용하지 않고 서비스 본주소 `https://chart-view-toss.onrender.com`을 기준으로 생성한다. 홈은 본주소, 기능 화면은 동일 도메인의 hash deep link, 종목 상세는 `#detail/{ticker}`를 사용한다. Open Graph 미리보기는 루트 HTML의 공식 홍보 이미지를 공통으로 사용하며, `v=promo-20260930-v2` 쿼리는 메신저 미리보기 캐시 갱신 용도다. API 데이터 주소는 기존 백엔드를 그대로 유지한다.
