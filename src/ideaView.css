@@ -52,3 +52,10 @@
 .idea-checks div:first-child b{color:#1b64da}.idea-checks div:last-child b{color:#c93445}
 .idea-context{display:none}
 @media(max-width:420px){.idea-checks{grid-template-columns:1fr}}
+.idea-candidate-wrap>.industry-context-card{margin:0 10px 10px;border-radius:13px;box-shadow:none}
+.idea-candidate-wrap>.industry-context-card>summary{padding:10px 11px;background:#fbfcfe}
+.idea-candidate-wrap>.industry-context-card>summary span{font-size:11px}
+.idea-candidate-wrap>.industry-context-card>summary strong{padding:4px 7px;font-size:9px}
+.idea-candidate-wrap>.industry-context-card:not([open]){border-color:#edf1f5;background:#fbfcfe}
+.idea-candidate-wrap>.industry-context-card[open]{margin-top:2px}
+
