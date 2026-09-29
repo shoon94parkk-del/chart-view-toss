@@ -8,11 +8,15 @@ const browser=await chromium.launch({headless:true});
 try{
  for(const width of [320,390,430]){
   const page=await browser.newPage({viewport:{width,height:844}}),errors=[];
+  let financialAttempts=0;
   page.on('pageerror',error=>errors.push(error.message));
   await page.route('https://chart-view-pkv8.onrender.com/**',async route=>{
    const url=new URL(route.request().url()),path=url.pathname;
    if(path==='/static/data/screener.json'||path==='/api/business-report'){
     const response=await route.fetch();return route.fulfill({response});
+   }
+   if(path==='/api/financial-history'&&width===320&&financialAttempts++===0){
+    return route.fulfill({status:503,contentType:'application/json',body:'{"detail":"temporary unavailable"}'});
    }
    let body={};
    if(path==='/api/financial-history')body={
@@ -29,6 +33,10 @@ try{
    return route.fulfill({contentType:'application/json',body:JSON.stringify(body)});
   });
   await page.goto(`${base}/#detail/005930.KS`);
+  if(width===320){
+   await page.locator('[data-retry-financial]').waitFor({timeout:45000});
+   await page.locator('[data-retry-financial]').click();
+  }
   await page.locator('.financial-history').waitFor({timeout:45000});
   assert.match(await page.locator('#detail-financial-history').innerText(),/2026년 반기 누적/);
   assert.match(await page.locator('#detail-financial-history').innerText(),/연간 실적/);

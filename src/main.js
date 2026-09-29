@@ -959,13 +959,18 @@ async function renderDetail(){
  });
  const koreanDetail=/\.(KS|KQ)$/i.test(symbol);
  if(koreanDetail){
-   jobs.push(settle(Promise.all([financialHistoryData(symbol).catch(()=>({loadError:true})),import('./financialHistoryView.js')]),result=>{
+   const loadFinancial=()=>{
      const host=document.querySelector('#detail-financial-history');
-     if(!host)return;
-     if(result.status!=='fulfilled'){host.textContent='DART 재무제표를 불러오지 못했어요.';return;}
-     const [data,view]=result.value;
-     host.innerHTML=view.financialHistoryHtml(data);
-   }));
+     if(host)host.innerHTML=loadingIndicator('최근 재무제표를 확인하고 있어요');
+     return settle(Promise.all([financialHistoryData(symbol).catch(()=>({loadError:true})),import('./financialHistoryView.js')]),result=>{
+       const target=document.querySelector('#detail-financial-history');
+       if(!target)return;
+       if(result.status!=='fulfilled'){target.innerHTML='<div class="financial-empty">DART 재무제표를 불러오지 못했어요. <button type="button" class="retry" data-retry-financial>다시 시도</button></div>';}
+       else{const [data,view]=result.value;target.innerHTML=view.financialHistoryHtml(data);}
+       target.querySelector('[data-retry-financial]')?.addEventListener('click',loadFinancial);
+     });
+   };
+   jobs.push(loadFinancial());
  }
  const enrichment={report:null,reportState:koreanDetail?'loading':'idle',directRelations:[],relationsState:koreanDetail?'loading':'idle'};
  jobs.push(settle(industryBasePromise,industryRes=>{

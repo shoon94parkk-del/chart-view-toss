@@ -33,6 +33,15 @@ test('revenue UI labels the value as report-derived and exposes source',()=>{
  assert.match(view,/data-external-url/);
 });
 
+test('financial-history failure can retry without reloading stock detail',()=>{
+ assert.match(main,/const loadFinancial=\(\)=>/);
+ assert.match(main,/data-retry-financial/);
+ const financial=readFileSync(new URL('../src/financialHistoryView.js',import.meta.url),'utf8');
+ assert.match(financial,/data-retry-financial/);
+ assert.match(financial,/연간 실적/);
+ assert.match(financial,/전년 같은 기간 대비/);
+});
+
 test('IDEA LAB keeps industry context collapsed and loads DART only on expand',()=>{
  const idea=readFileSync(new URL('../src/ideaView.js',import.meta.url),'utf8');
  assert.match(idea,/industryContextHtml\(row\.context,\{collapsible:true,open:false\}\)/);

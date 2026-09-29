@@ -25,7 +25,7 @@ const changeTone=(current,previous)=>Number.isFinite(Number(current))&&Number.is
 const source=(url,label)=>url?`<button type="button" class="financial-source" data-external-url="${esc(url)}">${esc(label)} 원문 보기</button>`:'';
 
 export function financialHistoryHtml(data){
-  if(!data?.available)return `<div class="financial-empty">${data?.loadError?'DART 재무제표를 불러오지 못했어요.':'확인 가능한 재무제표가 없어요.'}</div>`;
+  if(!data?.available)return `<div class="financial-empty">${data?.loadError?'DART 재무제표를 불러오지 못했어요. <button type="button" class="retry" data-retry-financial>다시 시도</button>':'확인 가능한 재무제표가 없어요.'}</div>`;
   const years=Array.isArray(data.annual)?data.annual:[];
   const interim=data.interim;
   return `<div class="financial-history">
