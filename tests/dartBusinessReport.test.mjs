@@ -29,7 +29,7 @@ test('revenue UI labels the value as report-derived and exposes source',()=>{
  assert.match(view,/매출 1위/);
  assert.match(view,/공시 표에서 직접 확인한 값만 표시/);
  assert.match(view,/data-external-url/);
-
+});
 
 test('IDEA LAB keeps industry context collapsed and loads DART only on expand',()=>{
  const idea=readFileSync(new URL('../src/ideaView.js',import.meta.url),'utf8');
