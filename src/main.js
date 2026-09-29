@@ -24,8 +24,7 @@ const WATCHLIST_KEY='chartview-toss-watchlist-v1';
 const SELECTED_KEY='chartview-toss-selected-v1';
 const DEFAULTS=[{symbol:'005930.KS',name:'삼성전자'},{symbol:'NVDA',name:'엔비디아'},{symbol:'AAPL',name:'애플'}];
 const PUBLIC_SITE_BASE='https://chart-view-toss.onrender.com';
-const SHARE_BASE='https://chart-view-pkv8.onrender.com/share/toss';
-const SHARE_PREVIEW_VERSION='promo-20260930-v1';
+const SHARE_PREVIEW_VERSION='promo-20260930-v2';
 const COLORS=['#3182f6','#f04452','#00a86b','#8b5cf6','#f59f00','#00a8cc'];
 const DISPLAY_NAMES={'005930.KS':'삼성전자','000660.KS':'SK하이닉스','NVDA':'엔비디아','AAPL':'애플','MSFT':'마이크로소프트','META':'메타','TSLA':'테슬라','GOOGL':'알파벳','^KS11':'코스피','^KQ11':'코스닥','^GSPC':'S&P 500','^IXIC':'나스닥','^TNX':'미국 10년물','^VIX':'VIX','CL=F':'WTI','KRW=X':'원/달러'};
 const HOME_MARKET_PRIMARY=[
@@ -187,8 +186,10 @@ function shareDetails(){
  const tab=state.tab;
  const symbol=tab==='detail'?String(state.detailSymbol||'').toUpperCase():'';
  const name=tab==='detail'?(usableStockName(state.detailName,symbol)||resolvedNames.get(symbol)||symbol):'';
- const url=new URL(`${SHARE_BASE}/${tab}`);
- if(symbol)url.searchParams.set('symbol',symbol);
+ const url=new URL(PUBLIC_SITE_BASE);
+ url.searchParams.set('v',SHARE_PREVIEW_VERSION);
+ if(tab==='detail'&&symbol)url.hash=`detail/${encodeURIComponent(symbol)}`;
+ else if(tab!=='home')url.hash=tab;
  const titleByTab={home:'차트뷰',chart:'수익률 비교 | 차트뷰',watch:'관심종목 | 차트뷰',valuation:'밸류에이션 | 차트뷰',macro:'경제 지표 | 차트뷰',discover:'시장 스크리너 | 차트뷰',heatmap:'시장 히트맵 | 차트뷰',consensus:'실적 전망 | 차트뷰',bands:'역사적 밸류에이션 | 차트뷰',ideas:'투자 아이디어 LAB | 차트뷰',picks:'PICK 관리 | 차트뷰',news:'관심종목 뉴스 | 차트뷰',more:'차트뷰',info:'데이터 안내 | 차트뷰',tools:'투자 도구 | 차트뷰'};
  return {url:url.toString(),title:tab==='detail'?`${name} (${symbol}) | 차트뷰`:titleByTab[tab]||'차트뷰',text:tab==='detail'?`${name} 종목의 차트와 기업 정보를 확인해보세요.`:'차트뷰에서 시장 데이터와 종목 정보를 확인해보세요.'};
 }
