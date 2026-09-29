@@ -26,7 +26,9 @@ test('chart and detail loading overlays clear for data and error states',()=>{
 test('all route shells expose share, including Toss native-hidden topbar',()=>{
  assert.match(main,/class="ait-share-row"/);
  assert.match(main,/\[data-share-current\]/);
- assert.match(main,/share\/toss/);
+ assert.match(main,/new URL\(PUBLIC_SITE_BASE\)/);
+ assert.match(main,/url\.hash=.*detail/);
+ assert.doesNotMatch(main,/chart-view-pkv8\.onrender\.com\/share\/toss/);
  assert.match(styles,/html\[data-ait-runtime="true"\] \.ait-share-row/);
  assert.match(analysis,/loadingIndicator\(`\$\{titles\[tab\]\} 데이터를 불러오고 있어요`\)/);
 });
