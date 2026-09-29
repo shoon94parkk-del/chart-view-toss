@@ -37,3 +37,11 @@ test('company context keeps KRX product text separate from inferred supply chain
  assert.equal(ctx.supply.chainLabel,'반도체');
  assert.ok(ctx.sector);
 });
+
+test('medical device makers are not grouped into pharma by the generic medical term',()=>{
+ const medical={symbol:'208370.KQ',name:'셀바스헬스케어',industry:'의료용 기기 제조업',mainProducts:'체성분측정기, 혈압계, 전자정보단말기'};
+ const cls=classifySupplyChain(medical);
+ assert.equal(cls.chain,'medical-device');
+ assert.equal(cls.chainLabel,'의료기기');
+ assert.equal(cls.stage,'진단·측정기기');
+});
