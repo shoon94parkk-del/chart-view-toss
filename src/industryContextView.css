@@ -81,4 +81,5 @@
 .industry-direct-row>div{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .industry-direct-row>div small{color:#98a59f;font-size:8px}
 .industry-direct-row .industry-source-link{color:#168157}
+.industry-report-detail{margin:7px 2px 0;color:#7b6850;font-size:9px;line-height:1.45}
 
