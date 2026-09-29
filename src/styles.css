@@ -373,3 +373,15 @@ input::placeholder,textarea::placeholder {
   -webkit-text-fill-color:#6b7684!important;
   opacity:1;
 }
+
+/* Stock detail: company / sector / supply-chain context */
+.detail-industry-block{padding:0!important;border:1px solid #e8edf5!important;border-radius:22px!important;overflow:hidden;background:#fff!important;box-shadow:0 10px 30px rgba(16,24,40,.045)}
+.detail-industry-block>.section-head{margin:0;padding:16px 17px;background:linear-gradient(135deg,#f2f7ff 0%,#f8f5ff 100%);border-bottom:1px solid #e9edf4}
+.detail-industry-block>.section-head>div{display:grid;gap:3px}
+.detail-industry-block>.section-head h2{margin:0;color:#202632;font-size:17px}
+.detail-industry-block>.section-head p{margin:0;color:#8290a3;font-size:11px}
+.detail-context-badge{padding:5px 9px;border-radius:999px;background:#e7f1ff;color:#1b64da;font-size:10px;font-weight:900;letter-spacing:.04em}
+.detail-industry-context{padding:12px}
+.detail-industry-context .industry-context-card{box-shadow:none;border-color:#e7ebf1}
+.detail-context-skeleton{height:280px;border-radius:18px}
+.detail-context-empty{padding:18px;border-radius:16px;background:#f7f8fa;color:#8b95a1;font-size:12px;line-height:1.55}
