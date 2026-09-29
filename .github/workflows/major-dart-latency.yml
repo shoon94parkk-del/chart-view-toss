@@ -1,0 +1,90 @@
+name: Major Companies DART Latency
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/major-dart-latency.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Measure live Render DART cold and warm latency
+        run: |
+          python - <<'PY'
+          import json,time,urllib.parse,urllib.request
+
+          base='https://chart-view-pkv8.onrender.com'
+          companies=[
+              ('005930.KS','삼성전자'),
+              ('000660.KS','SK하이닉스'),
+              ('373220.KS','LG에너지솔루션'),
+              ('207940.KS','삼성바이오로직스'),
+              ('005380.KS','현대차'),
+              ('000270.KS','기아'),
+              ('006400.KS','삼성SDI'),
+              ('066570.KS','LG전자'),
+              ('035420.KS','NAVER'),
+              ('035720.KS','카카오'),
+              ('068270.KS','셀트리온'),
+              ('005490.KS','POSCO홀딩스'),
+          ]
+
+          def fetch(symbol,name,timeout=35):
+              qs=urllib.parse.urlencode({'ticker':symbol,'name':name})
+              url=base+'/api/business-report?'+qs
+              t=time.perf_counter()
+              try:
+                  with urllib.request.urlopen(url,timeout=timeout) as r:
+                      body=json.loads(r.read().decode('utf-8'))
+                      status=r.status
+                  elapsed=time.perf_counter()-t
+                  return {'status':status,'sec':elapsed,'body':body,'error':None}
+              except Exception as exc:
+                  elapsed=time.perf_counter()-t
+                  return {'status':None,'sec':elapsed,'body':{},'error':f'{type(exc).__name__}: {exc}'}
+
+          rows=[]
+          for symbol,name in companies:
+              cold=fetch(symbol,name)
+              warm=fetch(symbol,name)
+              body=cold['body']
+              row={
+                  'symbol':symbol,
+                  'name':name,
+                  'coldSec':round(cold['sec'],3),
+                  'warmSec':round(warm['sec'],3),
+                  'status':cold['status'],
+                  'available':body.get('available'),
+                  'reportFound':body.get('reportFound'),
+                  'sourceMode':body.get('sourceMode'),
+                  'basis':body.get('basis'),
+                  'topItem':(body.get('topItem') or {}).get('name'),
+                  'topShare':(body.get('topItem') or {}).get('share'),
+                  'reason':body.get('reason'),
+                  'error':cold['error'],
+              }
+              rows.append(row)
+              print('DART_BENCH '+json.dumps(row,ensure_ascii=False),flush=True)
+
+          ok=[r for r in rows if r['status']==200]
+          available=[r for r in ok if r['available']]
+          print('DART_SUMMARY '+json.dumps({
+              'count':len(rows),
+              'http200':len(ok),
+              'available':len(available),
+              'coldAvgSec':round(sum(r['coldSec'] for r in rows)/len(rows),3),
+              'coldMedianSec':round(sorted(r['coldSec'] for r in rows)[len(rows)//2],3),
+              'coldMaxSec':max(r['coldSec'] for r in rows),
+              'warmAvgSec':round(sum(r['warmSec'] for r in rows)/len(rows),3),
+          },ensure_ascii=False),flush=True)
+          PY
