@@ -71,7 +71,7 @@ function bindLazyIdeaContext(host,ideas,bindNav){
         },()=>{result.reportState='error';}).then(repaint),
         relationshipEvidenceData(symbol,name).then(evidence=>{
           result.directRelations=evidence?.available?evidence.relations||[]:[];
-          result.relationsState='ready';
+          result.relationsState=['provider_timeout','news_provider_unavailable'].includes(evidence?.reason)?'unavailable':'ready';
         },()=>{result.relationsState='error';}).then(repaint),
       ]);
     });

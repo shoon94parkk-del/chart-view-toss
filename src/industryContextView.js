@@ -85,6 +85,7 @@ const enrichmentMessage=(state,kind)=>{
     error:'DART 공시를 불러오지 못했어요. 잠시 후 다시 확인해주세요.',
   }:{
     loading:'직접 관계 근거 확인 중',
+    unavailable:'기사 제공처가 지연되어 거래 단서를 지금 확인하지 못했어요.',
     error:'직접 관계 근거를 확인하지 못했어요.',
   };
   return messages[state]||'';
@@ -143,6 +144,7 @@ export function industryContextHtml(context,{collapsible=false,open=false,busine
     </div>
     ${directHtml}
     ${enrichmentStatus(relationsState,'relations')}
+    ${relationsState==='ready'&&!directRelations?.length?'<p class="industry-empty">최근 기사에서 두 회사의 구체적 계약·납품 단서를 찾지 못했어요.</p>':''}
     <div class="industry-adjacent-head"><b>같은 산업 분류 후보</b><span>거래 관계 미확인</span></div>
     ${peers.length?`<div class="industry-peer-group">${peers.map(x=>peer(x,`${x.stage||x.relation||''}${x.relation?' · '+x.relation:''}`)).join('')}</div>`:'<p class="industry-empty">현재 분류에서 함께 볼 상장 종목을 찾지 못했어요.</p>'}
     <p class="industry-caption">KRX 업종·주요제품만으로 분류한 후보예요. 실제 고객·납품 관계가 확인된 목록은 위의 공시·기사 근거에서만 표시해요.</p>

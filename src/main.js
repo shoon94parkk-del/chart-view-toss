@@ -1022,7 +1022,7 @@ async function renderDetail(){
      const [base,evidence]=evidenceRes.value||[];
      if(!base)return;
      enrichment.directRelations=evidence?.available?evidence.relations||[]:[];
-     enrichment.relationsState=evidence?.loadError?'error':'ready';
+     enrichment.relationsState=evidence?.loadError?'error':['provider_timeout','news_provider_unavailable'].includes(evidence?.reason)?'unavailable':'ready';
      renderEnrichment(base);
    }));
  }
