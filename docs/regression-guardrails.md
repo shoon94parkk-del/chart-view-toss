@@ -119,3 +119,10 @@ Last updated: 2026-09-22
 - Supply-chain peers are adjacency candidates derived from industry/product classification. Never label them as actual customers, suppliers, or contract partners without separate evidence.
 - Missing `industry` / `mainProducts` must show a missing/updating state; do not infer a company business description from its name alone.
 - Keep this context inside the lazy-loaded IDEA LAB bundle; Home startup remains unchanged.
+
+### Stock detail industry-context guardrail
+- Detail price, quote polling and chart must render independently of company/sector/supply-chain data.
+- `industryContext.js` and `industryContextView.js` stay dynamically imported from the detail route so Home initial load is not enlarged by this feature.
+- If KRX company context is missing (e.g. overseas ticker), remove the optional industry panel instead of showing invented company facts.
+- Medical-device companies must not fall into pharma solely because their industry text contains the generic word “의료”.
+- Company / sector / supply-chain sections need distinct but restrained visual hierarchy; do not collapse them back into identical gray surfaces.
