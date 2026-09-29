@@ -59,3 +59,26 @@
 .industry-revenue-bar{height:6px;border-radius:999px;background:#f3ead7;overflow:hidden}
 .industry-revenue-bar i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#f3a83b,#f5c36f)}
 .industry-revenue-row>small{align-self:center;color:#a1a8b3;font-size:9px;text-align:right}
+.industry-context-card>summary:after{content:'⌄';margin-left:8px;color:#8b95a1;font-size:12px;font-weight:900}
+.industry-context-card[open]>summary:after{content:'⌃'}
+.industry-context-card:not([open])>summary{border-bottom:0}
+.industry-context-card.is-enriching>summary span:after{content:' · DART/근거 확인 중';color:#8b95a1;font-size:9px;font-weight:700}
+.industry-adjacent-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px}
+.industry-adjacent-head b{color:#4f3b78;font-size:11px}
+.industry-adjacent-head span{padding:4px 7px;border-radius:999px;background:#f1edfa;color:#8063b7;font-size:9px;font-weight:800}
+.industry-direct-relations{margin:12px -2px 4px;padding:13px;border:1px solid #d9eee5;border-radius:15px;background:linear-gradient(145deg,#f3fbf7 0%,#ffffff 74%)}
+.industry-direct-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:9px}
+.industry-direct-head>span{display:flex;align-items:center;gap:7px}
+.industry-direct-head b{color:#214b3b;font-size:11px}
+.industry-direct-head em{padding:3px 6px;border-radius:999px;background:#dff7ea;color:#087c50;font-size:8px;font-style:normal;font-weight:900}
+.industry-direct-head small{color:#81968d;font-size:9px;text-align:right}
+.industry-direct-list{display:grid;gap:8px}
+.industry-direct-row{padding:10px 11px;border:1px solid #e1eee8;border-radius:12px;background:rgba(255,255,255,.9)}
+.industry-direct-company{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;padding:0;border:0;background:transparent;text-align:left}
+.industry-direct-company strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#293c35;font-size:11px}
+.industry-direct-company span{flex:none;padding:3px 6px;border-radius:999px;background:#e9f7f0;color:#168157;font-size:8px;font-weight:800}
+.industry-direct-row p{margin:7px 0 6px;color:#56665f;font-size:10px;line-height:1.45}
+.industry-direct-row>div{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.industry-direct-row>div small{color:#98a59f;font-size:8px}
+.industry-direct-row .industry-source-link{color:#168157}
+
