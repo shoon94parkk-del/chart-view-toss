@@ -7,7 +7,7 @@ import { SHOW_SPOTLIGHT } from './releaseScope.js';
 import { ANALYSIS_ROUTES, renderAnalysis } from './analysisViews.js';
 import { finiteNumber } from './analysisData.js';
 import { loadChartRuntime } from './chartRuntime.js';
-import { API_BASE, quoteSnapshots, quoteSnapshotsLive, compareStocks, marketNow, homeSnapshot, searchStocks, valuationStocks, macroData, homeInsights, personalizedNews, screenerData, companyContextData, businessReportData } from './api.js';
+import { API_BASE, quoteSnapshots, quoteSnapshotsLive, compareStocks, marketNow, homeSnapshot, searchStocks, valuationStocks, macroData, homeInsights, personalizedNews, screenerData, companyContextData, businessReportData, relationshipEvidenceData } from './api.js';
 import { applyRuntimeClass, haptic, openExternal, syncNativeBackHandler, closeMiniApp, isAppsInTossRuntime } from './tossBridge.js';
 import { openStockSelector, closeStockSelector } from './stockSelector.js';
 import { initializeStorage, readStored, writeStored, clearStored, getActivityVisitorId } from './storage.js';
@@ -866,14 +866,22 @@ async function renderDetail(){
    jobs.push(settle(Promise.all([
      industryBasePromise,
      businessReportData(symbol,knownName).catch(()=>null),
+     relationshipEvidenceData(symbol,knownName).catch(()=>null),
    ]),reportRes=>{
      const host=document.querySelector('#detail-industry-context');
      if(!host||reportRes.status!=='fulfilled')return;
-     const [base,report]=reportRes.value||[];
-     if(!base||!report?.available)return;
-     host.innerHTML=base.viewModule.industryContextHtml(base.context,{collapsible:false,businessReport:report});
+     const [base,report,evidence]=reportRes.value||[];
+     if(!base)return;
+     const directRelations=evidence?.available?(evidence.relations||[]):[];
+     if(!report?.available&&!directRelations.length)return;
+     host.innerHTML=base.viewModule.industryContextHtml(base.context,{
+       collapsible:false,
+       businessReport:report?.available?report:null,
+       directRelations,
+     });
      const badge=document.querySelector('#detail-industry-block .detail-context-badge');
-     if(badge)badge.textContent='KRX + DART';
+     if(badge)badge.textContent=report?.available&&directRelations.length?'KRX + DART + 근거':report?.available?'KRX + DART':'KRX + 근거';
+     bindNav();
    }));
  }
  jobs.push(settle(valuationStocks([symbol]),valRes=>{
