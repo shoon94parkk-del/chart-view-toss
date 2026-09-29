@@ -80,7 +80,7 @@ export function industryContextSkeleton(){
 
 const enrichmentMessage=(state,kind)=>{
   const messages=kind==='report'?{
-    loading:'DART 사업보고서 매출 구조 확인 중',
+    loading:'DART 사업보고서 매출 구조 확인 중 · 첫 조회는 공시 확인에 시간이 걸릴 수 있어요.',
     unavailable:'DART 공시에서 확인 가능한 매출 구조가 없어요.',
     error:'DART 공시를 불러오지 못했어요. 잠시 후 다시 확인해주세요.',
   }:{

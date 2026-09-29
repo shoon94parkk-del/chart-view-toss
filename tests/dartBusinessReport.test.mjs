@@ -22,6 +22,7 @@ test('DART detail call is restricted to Korean exchange tickers',()=>{
 test('business report client keeps a short stale-safe cache and no retry storm',()=>{
  assert.match(api,/\/api\/business-report\?ticker=/);
  assert.match(api,/ttlMs:300000/);
+ assert.match(api,/businessReportData=.*timeoutMs:45000,retries:0/);
  assert.match(api,/retries:0/);
 });
 
@@ -48,6 +49,7 @@ test('slow DART and direct evidence show independent loading and failure states'
  assert.match(main,/reportState:koreanDetail\?'loading':'idle'/);
  assert.match(main,/report\?\.loadError\?'error':report\?\.available\?'ready':'unavailable'/);
  assert.match(view,/DART 사업보고서 매출 구조 확인 중/);
+ assert.match(view,/첫 조회는 공시 확인에 시간이 걸릴 수 있어요/);
  assert.match(view,/DART 공시를 불러오지 못했어요/);
  assert.match(view,/직접 관계 근거 확인 중/);
 });

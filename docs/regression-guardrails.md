@@ -135,6 +135,7 @@ Last updated: 2026-09-22
 - If a report/table is missing or ambiguous, preserve the KRX company card and omit the revenue mix rather than guessing.
 - A displayed revenue mix must expose the DART original-report link and report year/basis.
 - While detail DART is pending, show a visible loading state in the company context; clear it on success, unavailable data, or error. Keep the initial price/industry loading states readable.
+- First uncached DART parsing can exceed 10 seconds. The report request gets a 45-second budget and explicit first-lookup loading text, while price, chart, valuation, KRX context, and direct evidence continue independently.
 
 ### IDEA LAB expansion / direct-relation guardrail
 - Every candidate company/sector/supply-chain panel starts collapsed. Do not restore the `open` attribute by default.
