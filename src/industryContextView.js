@@ -4,6 +4,33 @@ const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const pct=v=>Number.isFinite(Number(v))?`${Number(v)>0?'+':''}${Number(v).toFixed(2)}%`:'—';
 const ratio=v=>Number.isFinite(Number(v))?`${Math.round(Number(v)*100)}%`:'—';
 const clip=(value,max=120)=>{const text=String(value||'').trim();return text.length>max?`${text.slice(0,max)}…`:text;};
+const revenueAmount=(value,unit='')=>{
+  const n=Number(value);
+  if(!Number.isFinite(n))return '';
+  const formatted=Math.abs(n)>=1_000_000?n.toLocaleString('ko-KR',{maximumFractionDigits:0}):n.toLocaleString('ko-KR',{maximumFractionDigits:1});
+  return `${formatted}${unit?' '+unit:''}`;
+};
+function reportRevenueHtml(report){
+  if(!report?.available||!Array.isArray(report.items)||!report.items.length)return '';
+  const items=report.items.slice(0,4);
+  const top=report.topItem||items[0];
+  const maxShare=Math.max(...items.map(x=>Number(x?.share)||0),1);
+  const sourceLabel=[report.source,report.reportYear?String(report.reportYear):'',report.basis].filter(Boolean).join(' · ');
+  return `<section class="industry-report">
+    <div class="industry-report-head">
+      <div><span class="industry-kicker amber">DART</span><strong>사업보고서 매출 구조</strong></div>
+      <button type="button" class="industry-source-link" data-external-url="${esc(report.sourceUrl||'')}" ${report.sourceUrl?'':'disabled'}>원문 보기</button>
+    </div>
+    <div class="industry-report-top"><span>매출 1위</span><strong>${esc(top?.name||'')}</strong><em>${Number.isFinite(Number(top?.share))?Number(top.share).toFixed(1)+'%':'—'}</em></div>
+    <div class="industry-revenue-list">${items.map(item=>`
+      <div class="industry-revenue-row">
+        <div><span>${esc(item.name||'')}</span><strong>${Number.isFinite(Number(item.share))?Number(item.share).toFixed(1)+'%':'—'}</strong></div>
+        <div class="industry-revenue-bar"><i style="width:${Math.max(3,Math.min(100,(Number(item.share)||0)/maxShare*100))}%"></i></div>
+        ${Number.isFinite(Number(item.revenue))?`<small>${esc(revenueAmount(item.revenue,report.unit||''))}</small>`:''}
+      </div>`).join('')}</div>
+    <p class="industry-caption">${esc(sourceLabel||'DART 사업보고서')} · 공시 표에서 직접 계산/추출한 값만 표시해요.</p>
+  </section>`;
+}
 
 function peer(row,meta=''){
   const change=Number(row?.change1d);
@@ -21,13 +48,14 @@ export function industryContextSkeleton(){
   </div>`;
 }
 
-export function industryContextHtml(context,{collapsible=false}={}){
+export function industryContextHtml(context,{collapsible=false,businessReport=null}={}){
   const sector=context?.sector||null;
   const supply=context?.supply||{};
   const industry=String(context?.industry||'').trim();
   const products=String(context?.mainProducts||'').trim();
   if(!industry&&!products&&!sector&&!supply?.peers?.length)return '';
 
+  const reportHtml=reportRevenueHtml(businessReport);
   const company=`<section class="industry-section company">
     <div class="industry-section-head">
       <span class="industry-kicker blue">COMPANY</span>
@@ -35,7 +63,8 @@ export function industryContextHtml(context,{collapsible=false}={}){
       <small>${esc(industry||'업종 미제공')}</small>
     </div>
     <p class="industry-product">${esc(clip(products)||'KRX 주요제품 정보가 없어요.')}</p>
-    <p class="industry-caption">KRX ‘주요제품’ 기준 · 실제 매출 1위 품목은 공시 매출비중 연동 전까지 추정하지 않아요.</p>
+    <p class="industry-caption">${businessReport?.available?'KRX 주요제품 + DART 사업보고서 매출표를 함께 봐요.':'KRX ‘주요제품’ 기준 · 매출 1위는 DART 공시 표가 확인될 때만 표시해요.'}</p>
+    ${reportHtml}
   </section>`;
 
   const sectorHtml=sector?`<section class="industry-section sector">
