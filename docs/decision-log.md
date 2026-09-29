@@ -103,3 +103,6 @@ At the operator's explicit follow-up, `0.9.4` restores the previous Home selecti
 
 ## 2026-09-29 — Screener popular one-tap presets
 The market screener exposes horizontal mobile-friendly popular presets that fill the existing filter form rather than creating a second filtering engine. Presets cover volume surge, RSI oversold, strong momentum, 20/60 golden cross, price>20MA>60MA uptrend, 52-week-high proximity, pullback candidate, and MACD bullish. Result rows show the concrete conditions that matched. Manual edits clear the active-preset badge but keep the edited values. All results remain end-of-day technical filters, not recommendations.
+
+## 2026-09-29 — 투자 아이디어 LAB는 기존 화면을 건드리지 않는 실험 탭으로 시작
+기존 Home, 시장 스크리너, PICK, 차트, 관심종목의 정보 구조와 데이터 계약은 변경하지 않는다. `#ideas`는 별도 지연 로딩 화면으로 추가하며, 현재 장마감 `screener.json`의 확인 가능한 기술 지표만 조합한다. 첫 버전은 거래량 동반 상승, 상승추세 속 눌림, 52주 고점 근접, 모멘텀 강화, RSI 과매도 관찰 패턴을 제공한다. 각 아이디어에는 실제 후보 수치, 다음 확인 포인트, 반대 신호를 함께 표시하고 종목 클릭은 기존 상세 화면으로 연결한다. 산업/뉴스 인과관계는 근거 데이터가 추가되기 전까지 자동 생성하지 않는다.
