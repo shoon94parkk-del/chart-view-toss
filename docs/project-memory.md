@@ -132,3 +132,10 @@ Toss-specific navigation, safe-area, storage, SDK bridge, and release logic belo
 - DART shows actual report-derived top revenue product and mix when parsing is confident.
 - Direct relationships are shown separately from classification-based supply-chain adjacency and include evidence headline/source/link.
 - The same direct-evidence section is also rendered in Korean stock detail.
+
+### 2026-09-29 OpenDART latency optimization
+- Backend now uses a checked-in OpenDART corp-code cache generated weekly by GitHub Actions instead of downloading corpCode.xml during user requests.
+- OpenDART still selects the authoritative annual report; content parsing reads only targeted DART viewer sections.
+- Samsung Electronics 2025 annual report now resolves as business-division revenue: DX 56.3% (top), DS 39.0%, SDC 8.9%, Harman 4.7%, with internal-transaction elimination used only for reconciliation.
+- Detail/LAB UI labels segment-level results as “매출 1위 사업부문” and shows the division’s major products separately.
+- Measured Render latency: first Samsung request 4.147s; repeated cached request 0.084s.
