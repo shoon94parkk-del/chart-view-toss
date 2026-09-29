@@ -155,3 +155,8 @@ Home places the device-local watchlist directly after search and before the mark
 ## 2026-09-30 — 차트 선택 요약에 종목명 + 티커 유지
 
 차트의 상단 선택 요약은 더 이상 저장된 티커만 나열하지 않는다. 종목 선택창에서 확인한 정확한 종목명을 차트 상태로 전달하고, 비교 API 응답의 종목명으로 한 번 더 보강해 `Micron Technology (MU)`, `글로벌텍스프리 (204620.KQ)`처럼 종목명과 티커를 함께 표시한다. 이름을 확인하지 못한 경우에만 기존처럼 티커를 표시한다. 차트 데이터, 기간 전환, 선택창 UI, 밸류에이션 화면, 스타일은 변경하지 않는다.
+
+
+## 2026-09-30 — URL 미리보기는 공식 홍보 이미지를 사용
+
+웹 URL과 공유 링크의 Open Graph/Twitter 미리보기 이미지는 기존의 별도 소셜 카드 대신 `public/marketing/chartview-toss-instagram-20260930.png`를 단일 홍보 자산으로 사용한다. 링크를 카카오톡·SNS·메신저에 붙였을 때 DART 공시 기반, 한국·미국 주식 비교, 히트맵·스크리너라는 핵심 메시지가 동일하게 노출되도록 한다.
