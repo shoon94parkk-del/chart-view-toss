@@ -164,6 +164,8 @@ try{
       await page.waitForTimeout(120);
       if(tab==='home'){
         await page.waitForSelector('#market-card .quote-card');
+        const homePriority=await page.evaluate(()=>({watch:document.querySelector('.watch-section.home-primary')?.getBoundingClientRect().top,market:document.querySelector('.market-section.home-primary')?.getBoundingClientRect().top}));
+        if(!(homePriority.watch<homePriority.market&&homePriority.watch<820)) throw new Error(`${width}px Home must surface the watchlist before market cards: ${JSON.stringify(homePriority)}`);
         const initialMarketCards=await page.locator('#market-card .quote-card').count();
         if(initialMarketCards!==4) throw new Error(`${width}px Home market should stay compact before expand: ${initialMarketCards}`);
         const marketButton=page.locator('#market-expand');
@@ -229,6 +231,24 @@ try{
           if(!liveText.includes('+4.44%')||!liveText.includes('+2.22%')) throw new Error(`Home live shared-cache update missing: ${liveText}`);
         }
       }
+      if(tab==='chart'&&width===390){
+        await page.locator('#chart-loading').waitFor({state:'detached'});
+        const initialCanvasCount=await page.locator('#chart-canvas canvas').count();
+        if(!initialCanvasCount) throw new Error('initial comparison chart did not render');
+        await page.route(/\/api\/compare\?/,async route=>{
+          if(new URL(route.request().url()).searchParams.get('period')==='3mo') await new Promise(resolve=>setTimeout(resolve,650));
+          await route.fallback();
+        });
+        await page.locator('[data-period="3mo"]').click();
+        await page.locator('#chart-loading.is-refresh').waitFor();
+        if(await page.locator('#chart-canvas canvas').count()!==initialCanvasCount) throw new Error('period refresh blanked the previous comparison chart');
+        await page.locator('#chart-loading').waitFor({state:'detached'});
+        if(await page.locator('[data-period="3mo"]').getAttribute('aria-pressed')!=='true') throw new Error('period change did not finish');
+      }
+      const smallTargets=await page.locator(tab==='home'?'.topbar .icon-button, #market-expand':'.topbar .icon-button, .period-tabs button').evaluateAll(nodes=>nodes.filter(node=>{
+        const rect=node.getBoundingClientRect();return rect.width<44||rect.height<44;
+      }).map(node=>({label:node.getAttribute('aria-label')||node.textContent.trim(),width:node.getBoundingClientRect().width,height:node.getBoundingClientRect().height})));
+      if(smallTargets.length) throw new Error(`${width}px ${tab} has undersized primary controls: ${JSON.stringify(smallTargets)}`);
       await assertNoHorizontalOverflow(page,`${width}px ${tab}`);
       await page.screenshot({path:`${OUT}/${width}-${tab}.png`,fullPage:true});
     }
@@ -253,6 +273,9 @@ try{
       if(macroDates.includes('2026-06')) throw new Error(`macro mini chart dates should use Korean date formatting: ${macroDates}`);
     }
     if(tab==='detail/005930.KS'){
+      if(await page.locator('#detail-watch-quick').count()) throw new Error('detail has a duplicate interest action');
+      const jumpHeights=await page.locator('.detail-jump-nav button').evaluateAll(nodes=>nodes.map(node=>node.getBoundingClientRect().height));
+      if(jumpHeights.length!==4||jumpHeights.some(height=>height<44)) throw new Error(`detail jump controls are too small: ${jumpHeights}`);
       await page.waitForSelector('#detail-price strong');
       const detailPrice=await page.locator('#detail-price').innerText();
       if((detailPrice.match(/원/g)||[]).length!==1||!detailPrice.includes('84,200원')) throw new Error(`KRW detail price should show its unit exactly once: ${detailPrice}`);
@@ -260,12 +283,29 @@ try{
       if(priceStyle!=='nowrap') throw new Error(`detail price should not wrap on mobile: ${priceStyle}`);
       const periodText=await page.locator('#detail-metrics').innerText();
       if(periodText.includes('FY+1 추정')||!periodText.includes('다음 회계연도 예상')) throw new Error(`valuation period label not translated: ${periodText}`);
+      await page.locator('#detail-chart-loading').waitFor({state:'detached'});
+      const beforePrice=await page.locator('#detail-price').innerText();
+      await page.route(/\/api\/compare\?/,async route=>{
+        if(new URL(route.request().url()).searchParams.get('period')==='6mo') await new Promise(resolve=>setTimeout(resolve,650));
+        await route.fallback();
+      });
+      await page.locator('[data-detail-period="6mo"]').click();
+      await page.locator('#detail-chart-loading.is-refresh').waitFor();
+      if(await page.locator('#detail-price').innerText()!==beforePrice) throw new Error('period refresh unnecessarily reset the detail price');
+      await page.locator('#detail-chart-loading').waitFor({state:'detached'});
+      const beforeJump=await page.evaluate(()=>window.scrollY);
+      await page.locator('[data-detail-jump="detail-news-section"]').click();
+      await page.waitForFunction(previous=>window.scrollY>previous+200&&document.querySelector('#detail-news-section')?.getBoundingClientRect().top<window.innerHeight-140,beforeJump);
     }
     if(tab==='news'){
       const relationText=await page.locator('.news-context').first().innerText();
       if(relationText.includes('title entity match')) throw new Error(`news relation basis leaked English metadata: ${relationText}`);
     }
-    if(tab==='more'&&!(await page.locator('[data-tab="picks"]').innerText()).includes('최근 주목받는 종목')) throw new Error('Spotlight entry missing from menu');
+    if(tab==='more'){
+      if(!(await page.locator('[data-tab="picks"]').innerText()).includes('최근 주목받는 종목')) throw new Error('Spotlight entry missing from menu');
+      const groups=await page.locator('.menu-group>h3').allInnerTexts();
+      if(!groups.includes('종목 찾기')||!groups.includes('종목 비교하기')||!groups.includes('근거와 시장 환경 확인')) throw new Error(`task-based menu groups missing: ${groups}`);
+    }
     if(tab==='picks'){
       await page.waitForSelector('.pick-ledger-item');
       const body=await page.locator('body').innerText();
@@ -313,6 +353,23 @@ try{
     await assertNoHorizontalOverflow(page,`390px ${tab}`);
     await page.screenshot({path:`${OUT}/390-${tab.replaceAll('/','-')}.png`,fullPage:true});
   }
+
+  const ideaPage=await context.newPage();
+  await seed(ideaPage);await installMocks(ideaPage);
+  await ideaPage.route(/\/static\/data\/screener\.json/,route=>json(route,{tradeDate:'2026-09-21',stocks:[
+    {symbol:'005930.KS',name:'삼성전자',market:'KOSPI',price:84200,change1d:3.62,volumeRatio:3.2,rsi14:61,ret20:14,avgValue20:2_000_000_000,ma20:80000,ma60:75000,macd:3,macdSignal:2,distance52HighPct:-1,industry:'반도체 제조',mainProducts:'메모리 반도체'},
+    {symbol:'000660.KS',name:'SK하이닉스',market:'KOSPI',price:295000,change1d:1.25,volumeRatio:2.4,rsi14:64,ret20:9,avgValue20:2_000_000_000,ma20:280000,ma60:250000,macd:2,macdSignal:1,distance52HighPct:-2,industry:'반도체 제조',mainProducts:'메모리 반도체'},
+  ]}));
+  await ideaPage.route(/\/static\/data\/company_context\.json/,route=>json(route,{companies:[]}));
+  await ideaPage.goto(`${BASE}/#ideas`,{waitUntil:'networkidle'});
+  await ideaPage.locator('.idea-card .idea-candidate').first().waitFor();
+  if(await ideaPage.locator('#idea-body').getAttribute('aria-busy')!=='false') throw new Error('idea results did not leave the loading state');
+  if(await ideaPage.locator('.idea-guide').evaluate(node=>node.open)) throw new Error('idea methodology should start collapsed');
+  const firstIdea=await ideaPage.locator('.idea-card .idea-candidate').first().boundingBox();
+  if(!firstIdea||firstIdea.y>=844) throw new Error(`the first idea candidate is below the first viewport: ${JSON.stringify(firstIdea)}`);
+  await assertNoHorizontalOverflow(ideaPage,'390px ideas');
+  await ideaPage.screenshot({path:`${OUT}/390-ideas.png`,fullPage:true});
+  await ideaPage.close();
 
   await page.goto(`${BASE}/#chart`,{waitUntil:'networkidle'});
   await page.click('#open-compare-selector');

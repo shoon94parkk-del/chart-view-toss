@@ -146,3 +146,7 @@ KRX와 네이버 금융의 favicon 제공처가 공통 지구본을 반환하는
 직접 관계 API가 시간 초과 또는 제공처 실패를 반환하면 ‘자료를 찾지 못함’과 구분해 지연 상태를 알린다. 정상 조회 후 확인 가능한 근거가 없을 때만 ‘최근 기사에서 단서를 찾지 못함’을 표시한다.
 
 관계 API의 서버 제한시간은 9초지만 Render 연결 지연이 추가되어 첫 운영 요청이 12초 클라이언트 제한을 넘을 수 있었다. 관계 카드만 18초로 늘려 서버의 `provider_timeout` 상태를 화면에 전달한다. 카드의 비동기 조회는 재무·차트 렌더링을 막지 않는다.
+
+## 2026-09-29 — Task-first mobile UX pass
+
+Home places the device-local watchlist directly after search and before the market cards. Market, spotlight, and heatmap data sources and request timing stay independent. The chart and detail period controls keep the last valid chart visible while a new period loads; a failed refresh labels the displayed result as the previous one and offers retry. Detail uses in-page jump controls without changing the hash route or native back behavior. The duplicate topbar heart is removed so the visible in-card interest button is the single action in web preview and AIT. IDEA LAB collapses its methodology and surfaces the first screened candidate earlier. More groups existing routes by finding, comparing, and checking evidence. Touch targets and reading scale are adjusted without changing the dense heatmap's geometry-specific labels. Browser validation covers responsive widths and state transitions; Android/iOS Sandbox remains the release gate.

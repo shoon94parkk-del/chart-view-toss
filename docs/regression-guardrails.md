@@ -13,6 +13,7 @@ Last updated: 2026-09-22
 - Deep links for major features remain functional.
 - Scroll restoration must not create stale-page navigation races.
 - Safe-area support remains on mobile devices.
+- Detail in-page shortcuts must scroll within the current detail route; they must not replace the hash route or native back stack.
 
 ## Data/loading
 - API timeout/retry/offline states remain visible and recoverable.
@@ -22,6 +23,8 @@ Last updated: 2026-09-22
 - Chart comparison basis remains explicit: local currency, adjusted-close where applicable, no interpolation.
 - Macro source/unit/observation/change basis remain visible.
 - News direct vs industry/indirect relation remains distinguishable.
+- Changing comparison/detail chart periods must keep the last valid chart visible until the new period settles. A failed refresh must identify the visible chart as the previous result and provide a retry.
+- Home search and saved watchlist must remain above the market section on mobile. The market cards and Home extras still load independently.
 
 ## Storage
 - Watchlist and selected tickers remain device-local unless an intentional sync feature is added.
@@ -84,7 +87,7 @@ Last updated: 2026-09-22
 ### Heatmap/detail round-trip guardrail
 - A heatmap click must preserve the visible company identity in the detail header; raw ticker-only detail is a regression when the heatmap already knows the company name.
 - A direct `#detail/{ticker}` link resolves the exact stock name asynchronously without delaying quote or chart loading. Show the ticker separately; do not repeat it as the company name or use its first digit as a logo.
-- Both detail heart buttons show the same red filled state and `aria-pressed` after device-local watch registration. Toggling a heart must not reload the detail data.
+- Detail has one visible interest action beside the company name in both web preview and AIT; it shows a red filled heart and `aria-pressed` after device-local registration. Toggling it must not reload the detail data.
 - Home `종목 검색` opens stock search. A result opens that stock's detail directly; chart comparison remains a separate action.
 - Returning from detail must not remove the viewed heatmap stock. Null/undefined fields from a live quote must never overwrite valid structural fields such as `marketCap`, `name`, or market identity used by the treemap filter/layout.
 

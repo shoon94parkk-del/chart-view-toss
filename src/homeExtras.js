@@ -162,7 +162,7 @@ function createSections(marketSection) {
     picks.className = 'section home-extra-section home-pick-section home-primary';
     picks.id = 'home-top-picks-section';
     picks.innerHTML =
-      '<div class="section-head"><h2>최근 주목받는 종목</h2><button type="button" class="text-button" data-home-extra-route="picks">전체보기</button></div>' +
+      '<div class="section-head"><h2>최근 주목받는 종목</h2><button type="button" class="text-button" data-home-extra-route="picks">선정 기록 보기</button></div>' +
       `<div id="home-top-picks" class="home-pick-list">${loadingIndicator('최근 선정 종목을 불러오고 있어요')}<div class="skeleton home-extra-skeleton"></div></div>`;
   }
 
@@ -170,7 +170,7 @@ function createSections(marketSection) {
   heatmap.className = 'section home-extra-section home-heatmap-section home-primary';
   heatmap.id = 'home-daily-heatmap-section';
   heatmap.innerHTML =
-    '<div class="section-head"><h2>오늘 등락 히트맵</h2><button type="button" class="text-button" data-home-extra-route="heatmap">전체보기</button></div>' +
+    '<div class="section-head"><h2>오늘 등락 히트맵</h2><button type="button" class="text-button" data-home-extra-route="heatmap">히트맵 보기</button></div>' +
     '<p class="home-extra-caption">대표 종목의 당일 등락률을 시가총액 비중으로 보여줘요.</p>' +
     `<div id="home-daily-heatmap">${loadingIndicator('오늘 등락 히트맵을 불러오고 있어요')}<div class="skeleton home-heatmap-skeleton"></div></div>`;
 
@@ -204,7 +204,7 @@ function paintPicks(host, payload) {
   const performance =
     '<div class="home-pick-performance">' +
       '<div class="home-pick-performance-main">' +
-        '<span>추천 평균 수익률</span>' +
+        '<span>선정 종목 사후 수익률</span>' +
         '<strong class="' + returnTone(avgReturn) + '">' + esc(signedPct(avgReturn)) + '</strong>' +
         '<small>' + esc((latestClose || day && day.tradeDate || '기준일 확인 중') + ' 종가 기준 · 미평가 제외') + '</small>' +
       '</div>' +

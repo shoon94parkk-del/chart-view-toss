@@ -59,3 +59,33 @@
 .idea-candidate-wrap>.industry-context-card:not([open]){border-color:#edf1f5;background:#fbfcfe}
 .idea-candidate-wrap>.industry-context-card[open]{margin-top:2px}
 
+/* Put the first research result above the fold and keep methodology available. */
+.idea-hero{padding:12px 2px 10px}
+.idea-hero .page-kicker{margin-bottom:5px}
+.idea-hero h2{font-size:25px;line-height:1.24}
+.idea-hero p{margin-top:7px;font-size:13px}
+.idea-guide{display:block;padding:0;margin:0 0 12px;border:1px solid #e7edf5;border-radius:13px;background:#f8fafc}
+.idea-guide summary{display:flex;align-items:center;justify-content:space-between;min-height:44px;padding:9px 13px;color:#4e5968;font-size:12px;font-weight:800;cursor:pointer;list-style:none}
+.idea-guide summary::-webkit-details-marker{display:none}
+.idea-guide summary:after{content:'⌄';color:#3182f6;font-size:16px}
+.idea-guide[open] summary:after{content:'⌃'}
+.idea-guide div{padding:0 13px 7px;flex-wrap:wrap}
+.idea-guide p{margin:0;padding:0 13px 12px;color:#6b7684;font-size:12px;line-height:1.5}
+.idea-grid{gap:10px}
+.idea-grid>.loading-indicator{justify-content:flex-start;padding:4px 2px}
+.idea-loading-preview{display:grid;gap:9px;padding:15px;border:1px solid #e7edf5;border-radius:18px;background:#fff}
+.idea-skeleton-title{height:22px;width:62%}
+.idea-skeleton-row{height:56px}
+.idea-results-head{display:flex;align-items:baseline;justify-content:space-between;gap:9px}
+.idea-results-head strong{font-size:17px;color:#191f28}
+.idea-results-head span{font-size:12px;color:#6b7684;white-space:nowrap}
+.idea-meta{font-size:12px;line-height:1.45;color:#6b7684}
+.idea-card-list{gap:11px}
+.idea-card{padding:14px}
+.idea-card h3{font-size:17px}
+.idea-card-head small,.idea-candidate-main small,.idea-candidate-price em,.idea-checks b,.idea-checks span{font-size:12px}
+.idea-summary{margin:8px 0 10px;padding:8px 10px;font-size:12px}
+.idea-candidate{min-height:58px}
+.idea-reasons i{font-size:11px}
+@media(max-width:360px){.idea-hero h2{font-size:23px}.idea-results-head{align-items:flex-start;flex-direction:column;gap:2px}}
+

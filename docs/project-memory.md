@@ -16,6 +16,7 @@ Toss-specific navigation, safe-area, storage, SDK bridge, and release logic belo
 - Build: `npm run build`; AIT bundle: `npm run build:ait`.
 
 ## UX already implemented
+- 2026-09-29 UX pass: Home prioritizes device-local watch stocks over the market grid; chart/detail period changes preserve the previous chart during refresh; detail has price/filing/industry/news jumps; IDEA LAB puts the first candidate higher and collapses its methodology; More is grouped by user task. The four floating primary tabs and AIT native navigation contract are retained.
 - Toss-style mobile information hierarchy and bottom navigation.
 - Safe-area handling.
 - Home/chart/watchlist/more plus valuation, macro, discover, news, and stock-detail surfaces.
@@ -152,7 +153,7 @@ Toss-specific navigation, safe-area, storage, SDK bridge, and release logic belo
 - Detail reuses a screener row's industry/products when both are present; `company_context.json` is only a fallback for missing metadata or missing symbols.
 - IDEA LAB only fetches enrichment when a candidate is expanded and paints each completed source without waiting for the other source.
 - Missing/ambiguous DART revenue stays distinct from a network failure; neither state creates an unsupported top-revenue claim.
-- 2026-09-29 stock identity polish: direct ticker links resolve an exact API search result and update the detail title/logo while quotes and charts load independently. Stale watchlist entries whose name equals the ticker are repaired when the name resolves. The top and in-card hearts toggle one device-local watch state without reloading detail.
+- 2026-09-29 stock identity polish: direct ticker links resolve an exact API search result and update the detail title/logo while quotes and charts load independently. Stale watchlist entries whose name equals the ticker are repaired when the name resolves. The current detail interest action toggles device-local watch state without reloading detail; the earlier duplicate topbar heart was removed in the later task-first UX pass.
 - Home `종목 검색` uses the stock selector in search-only mode; tapping a result opens detail. The chart selector continues to manage comparison selections separately.
 - 2026-09-29 live uncached DART probe for a non-major Korean stock took 23.4 seconds while a cached request returned in about 0.3 seconds. The Toss report request now waits up to 45 seconds with a visible first-lookup explanation; other detail data remains independently rendered.
 - 2026-09-29 loading/share polish: Home, chart, detail, watchlist, valuation, macro, news, analysis, IDEA, PICK, heatmap, and selector pending areas have a named visible spinner. Chart plot areas use a centered overlay that clears when loading settles. Share actions work in both web preview and AIT's hidden-topbar runtime; the backend serves per-route Open Graph previews, including the exact stock name and ticker.

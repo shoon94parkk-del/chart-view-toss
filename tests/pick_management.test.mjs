@@ -28,7 +28,7 @@ test('recent spotlight restores existing selection and PICK navigation',()=>{
   assert.ok(home.includes('최근 주목받는 종목'));
   assert.ok(main.includes('<strong>최근 주목받는 종목</strong>'));
   assert.ok(ledger.includes('<h2>최근 주목받는 종목</h2>'));
-  assert.ok(home.includes('data-home-extra-route="picks">전체보기</button>'));
+  assert.ok(home.includes('data-home-extra-route="picks">선정 기록 보기</button>'));
 });
 
 test('PICK monitoring failure does not blank recommendation performance',()=>{

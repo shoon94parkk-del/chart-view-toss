@@ -26,18 +26,22 @@ try {
 
   await page.locator('#detail-watch').click();
   assert.equal(await page.locator('#detail-watch').getAttribute('aria-pressed'), 'true');
-  assert.equal(await page.locator('#detail-watch-quick').getAttribute('aria-pressed'), 'true');
+  assert.equal(await page.locator('#detail-watch-quick').count(), 0);
   assert.match(await page.locator('#detail-watch').innerText(), /관심 등록됨/);
   assert.equal(await page.locator('#detail-watch').evaluate(el => getComputedStyle(el).color), 'rgb(240, 68, 82)');
   assert.deepEqual(await page.evaluate(() => JSON.parse(localStorage.getItem('chartview-toss-watchlist-v1'))), [{ symbol, name: 'LG전자' }]);
+  await page.evaluate(() => document.documentElement.dataset.aitRuntime='true');
+  assert.equal(await page.locator('.topbar').isVisible(),false);
+  assert.equal(await page.locator('#detail-watch').isVisible(),true);
+  await page.evaluate(() => document.documentElement.dataset.aitRuntime='false');
   if (process.env.QA_SCREENSHOT) await page.screenshot({ path: process.env.QA_SCREENSHOT });
 
-  await page.locator('#detail-watch-quick').click();
+  await page.locator('#detail-watch').click();
   assert.equal(await page.locator('#detail-watch').getAttribute('aria-pressed'), 'false');
   assert.deepEqual(await page.evaluate(() => JSON.parse(localStorage.getItem('chartview-toss-watchlist-v1'))), []);
   await page.locator('.app-toast button').click();
   assert.equal(await page.locator('#detail-watch').getAttribute('aria-pressed'), 'true');
-  await page.locator('#detail-watch-quick').click();
+  await page.locator('#detail-watch').click();
 
   await page.goto(`${base}/#home`, { waitUntil: 'domcontentloaded' });
   await page.locator('#home-search-open').click();
@@ -46,14 +50,14 @@ try {
   await page.locator(`[data-selector-symbol="${symbol}"]`).click({ timeout: 20000 });
   assert.match(page.url(), /#detail\/066570\.KS$/);
   await page.locator('#detail-name').getByText('LG전자', { exact: true }).waitFor();
-  await page.locator('#detail-watch-quick').click();
-  assert.equal(await page.locator('#detail-watch-quick').getAttribute('aria-pressed'), 'true');
+  await page.locator('#detail-watch').click();
+  assert.equal(await page.locator('#detail-watch').getAttribute('aria-pressed'), 'true');
 
   await page.evaluate(symbol => localStorage.setItem('chartview-toss-watchlist-v1', JSON.stringify([{ symbol, name: symbol }])), symbol);
   await page.reload({ waitUntil: 'domcontentloaded' });
   await page.locator('#detail-name').getByText('LG전자', { exact: true }).waitFor({ timeout: 20000 });
   assert.deepEqual(await page.evaluate(() => JSON.parse(localStorage.getItem('chartview-toss-watchlist-v1'))), [{ symbol, name: 'LG전자' }]);
-  assert.equal(await page.locator('#detail-watch-quick').getAttribute('aria-pressed'), 'true');
+  assert.equal(await page.locator('#detail-watch').getAttribute('aria-pressed'), 'true');
 
   const fallbackPage = await browser.newPage({ viewport: { width: 390, height: 844 } });
   await fallbackPage.route('https://chart-view-pkv8.onrender.com/**', route => {
@@ -68,7 +72,7 @@ try {
   assert.equal(await fallbackPage.locator('#detail-top-title').innerText(), 'LG전자');
   await fallbackPage.close();
 
-  console.log('PASS direct ticker name, red watch hearts, stale-name repair, Home search to detail, and screener name fallback');
+  console.log('PASS direct ticker name, single red watch action, stale-name repair, Home search to detail, and screener name fallback');
 } finally {
   await browser.close();
 }

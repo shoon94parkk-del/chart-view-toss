@@ -10,7 +10,7 @@ for(const route of ['chartviewHome','chartview/chartviewHome','chart','watch','v
 const assets=new URL('assets/',dist);
 const scripts=(await readdir(assets)).filter(name=>name.endsWith('.js'));
 const bundled=(await Promise.all(scripts.map(name=>readFile(new URL(name,assets),'utf8')))).join('\n');
-for(const required of ['최근 주목받는 종목','추천 평균 수익률','pick_monitor.json','/api/home-bootstrap']){
+for(const required of ['최근 주목받는 종목','선정 종목 사후 수익률','pick_monitor.json','/api/home-bootstrap']){
   assert.equal(bundled.includes(required),true,`App bundle must include ${required}`);
 }
 console.log('Direct-entry static route files match the production app bundle');

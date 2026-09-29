@@ -82,14 +82,11 @@ export async function renderIdeaView({shell,bindNav}){
   document.querySelector('#app').innerHTML=shell(`
     <section class="idea-hero">
       <span class="page-kicker">IDEA LAB · BETA</span>
-      <h2>종목 하나가 아니라<br><em>산업 흐름</em>까지 봐요</h2>
-      <p>기술적 신호를 시작점으로 회사의 실제 매출 구조, 최근 5거래일 비교군 흐름, 기사에 나타난 거래 단서까지 이어서 확인해요.</p>
+      <h2>조건에 맞는 종목을 찾고<br><em>근거를 확인해요</em></h2>
+      <p>거래가 활발한 종목의 기술 신호와 공시·산업 자료를 이어서 살펴봐요.</p>
     </section>
-    <section class="idea-guide">
-      <div><strong>분석 흐름</strong><span>기술 신호 → 실제 매출구조 → 5거래일 비교군 → 산업 분류/거래 단서</span></div>
-      <small>20일 평균 거래대금 10억원 이상인 종목만 살펴봐요. 상세 정보는 필요한 종목만 펼쳐서 불러와요.</small>
-    </section>
-    <div id="idea-body" class="idea-grid">${loadingIndicator('투자 아이디어를 찾고 있어요')}<div class="skeleton idea-skeleton"></div><div class="skeleton idea-skeleton"></div></div>
+    <details class="idea-guide"><summary>선정 기준과 분석 흐름 보기</summary><div><strong>분석 흐름</strong><span>기술 신호 → 실제 매출 구조 → 최근 5거래일 비교군 → 거래 단서</span></div><p>20일 평균 거래대금 10억원 이상을 대상으로 해요. 상세 자료는 종목을 펼칠 때 불러와요.</p></details>
+    <div id="idea-body" class="idea-grid" aria-busy="true">${loadingIndicator('조건에 맞는 종목을 찾고 있어요')}<div class="idea-loading-preview" aria-hidden="true"><div class="skeleton idea-skeleton-title"></div><div class="skeleton idea-skeleton-row"></div><div class="skeleton idea-skeleton-row"></div></div></div>
   `,'투자 아이디어');
   bindNav();
   const host=document.querySelector('#idea-body');
@@ -111,12 +108,15 @@ export async function renderIdeaView({shell,bindNav}){
     const coverage=ideaCoverage(enrichedData);
     const companyCoverage=(enrichedData?.stocks||[]).filter(row=>row?.industry||row?.mainProducts).length;
     if(!host?.isConnected)return;
+    host.setAttribute('aria-busy','false');
     if(!ideas.length){
       host.innerHTML='<div class="empty"><strong>지금 조건에서 포착된 아이디어가 없어요</strong><span>다음 스크리너 갱신 뒤 다시 확인해주세요.</span></div>';
       return;
     }
+    const candidateCount=new Set(ideas.flatMap(idea=>idea.candidates.map(row=>row.symbol))).size;
     host.innerHTML=`
-      <p class="idea-meta">기준 거래일 <strong>${esc(coverage.tradeDate||'미제공')}</strong> · 수집 ${coverage.total.toLocaleString()}개 · 회사정보 ${companyCoverage.toLocaleString()}개 · 20일 평균 거래대금 10억원 이상</p>
+      <div class="idea-results-head"><strong>확인할 종목 ${candidateCount}개</strong><span>${esc(coverage.tradeDate||'거래일 확인 중')} 종가 기준</span></div>
+      <p class="idea-meta">${ideas.length}개 관찰 패턴 · 20일 평균 거래대금 10억원 이상 · 수집 ${coverage.total.toLocaleString()}개 · 회사정보 ${companyCoverage.toLocaleString()}개</p>
       <div class="idea-card-list">${ideas.map(ideaCard).join('')}</div>
       <section class="idea-next"><strong>현재 분석 방식</strong><span>DART 사업보고서로 매출 1위 사업·제품 비중을 확인하고, 거래 단서는 단일 기업 기사에서 두 회사의 구체적 계약·납품 표현이 있을 때만 표시해요. 원문과 공시를 함께 확인해주세요.</span></section>
     `;
@@ -124,6 +124,7 @@ export async function renderIdeaView({shell,bindNav}){
     bindLazyIdeaContext(host,ideas,bindNav);
   }catch(error){
     if(!host?.isConnected)return;
+    host.setAttribute('aria-busy','false');
     host.innerHTML=`<div class="empty"><strong>투자 아이디어 데이터를 불러오지 못했어요</strong><span>${esc(error?.message||'잠시 후 다시 시도해주세요.')}</span><button class="retry" id="retry-ideas">다시 시도</button></div>`;
     document.querySelector('#retry-ideas')?.addEventListener('click',()=>renderIdeaView({shell,bindNav}));
   }

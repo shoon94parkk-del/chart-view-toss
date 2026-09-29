@@ -54,7 +54,7 @@ assert.match(liveSync, /pollDelayForVisitor/);
 assert.match(main, /homeExtras\.js/);
 assert.match(homeExtras, /최근 주목받는 종목/);
 assert.match(homeExtras, /오늘 등락 히트맵/);
-assert.match(homeExtras, /추천 평균 수익률/);
+assert.match(homeExtras, /선정 종목 사후 수익률/);
 assert.match(homeExtras, /플러스 비율/);
 assert.match(homeExtras, /data-home-extra-route="picks"/);
 assert.match(pickLedger, /최근 주목받는 종목/);
