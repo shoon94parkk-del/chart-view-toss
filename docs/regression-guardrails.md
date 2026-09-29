@@ -112,3 +112,10 @@ Last updated: 2026-09-22
 - Every candidate card must show concrete metric reasons and link to the existing stock-detail route.
 - Keep the idea view lazy-loaded so Home, Watchlist, and initial app startup do not download the idea view/CSS until the user opens it.
 - Screener trade-date/closing-price semantics remain explicit; idea candidates are research prompts, not live-price recommendations.
+
+### IDEA LAB industry-context guardrail
+- Sector strength must be calculated from all same-industry screener rows for the same trade date, not from the small displayed candidate list.
+- KRX `mainProducts` must be labeled as major products/services, never as the #1 revenue product unless filing-derived revenue evidence exists.
+- Supply-chain peers are adjacency candidates derived from industry/product classification. Never label them as actual customers, suppliers, or contract partners without separate evidence.
+- Missing `industry` / `mainProducts` must show a missing/updating state; do not infer a company business description from its name alone.
+- Keep this context inside the lazy-loaded IDEA LAB bundle; Home startup remains unchanged.
