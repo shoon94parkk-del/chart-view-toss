@@ -20,7 +20,7 @@ test('sector context measures breadth instead of judging a stock in isolation',(
  const ctx=buildSectorContext(rows[0],rows);
  assert.equal(ctx.peerCount,4);
  assert.equal(ctx.upRatio,0.75);
- assert.equal(ctx.label,'양호');
+ assert.equal(ctx.label,'강함');
  assert.equal(ctx.leaders[0].symbol,'C.KQ');
 });
 
