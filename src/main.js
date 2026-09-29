@@ -102,6 +102,7 @@ function openCompareSheet(onApplied){
    description:'검색해서 최대 6개까지 선택하세요. 적용 전에는 기존 선택이 바뀌지 않아요.',
    initial:[...state.selected],
    limit:6,
+   favorites:state.watchlist,
    nameFor:(symbol)=>displayName(symbol),
    restoreBack:restoreNativeBack,
    onApply:(symbols)=>{
@@ -218,6 +219,7 @@ function openHomeSearch(){
    title:'종목 검색',
    description:'종목명이나 티커를 검색해 상세 정보를 확인하세요.',
    initial:[],
+   favorites:state.watchlist,
    nameFor:(symbol)=>displayName(symbol),
    onPick:(symbol,name)=>navigate('detail',symbol,name),
    restoreBack:restoreNativeBack,
@@ -585,6 +587,7 @@ async function renderWatch(){
    description:'현재 기기에 저장할 종목을 선택하세요. 최대 20개까지 저장할 수 있어요.',
    initial:state.watchlist.map(x=>x.symbol),
    limit:20,
+   favorites:state.watchlist,
    nameFor:(symbol)=>displayName(symbol,state.watchlist.find(x=>x.symbol===symbol)?.name),
    restoreBack:restoreNativeBack,
    onApply:(symbols,names)=>{state.watchlist=symbols.map(symbol=>({symbol,name:names[symbol]||displayName(symbol)}));persist();renderWatch()},

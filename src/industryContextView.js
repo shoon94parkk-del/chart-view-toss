@@ -45,8 +45,8 @@ function directRelationsHtml(relations){
   if(!rows.length)return '';
   return `<div class="industry-direct-relations">
     <div class="industry-direct-head">
-      <span><b>확인된 직접 관계</b><em>근거 있음</em></span>
-      <small>뉴스·수주·고객사 근거</small>
+      <span><b>기사에서 확인한 거래 단서</b><em>기사 근거</em></span>
+      <small>계약·납품 표현 확인</small>
     </div>
     <div class="industry-direct-list">${rows.map(row=>`
       <article class="industry-direct-row">
@@ -58,12 +58,12 @@ function directRelationsHtml(relations){
         <div><small>${esc([row.source,evidenceDate(row.publishedAt)].filter(Boolean).join(' · '))}</small>
         ${row.url?`<button type="button" class="industry-source-link" data-external-url="${esc(row.url)}">근거 보기</button>`:''}</div>
       </article>`).join('')}</div>
-    <p class="industry-caption">상장사명과 수주·납품·고객사 등 직접 거래 키워드가 같은 뉴스 근거에서 확인될 때만 표시해요.</p>
+    <p class="industry-caption">단일 기업 기사의 제목·요약에서 두 회사의 구체적 계약·납품 표현을 확인한 경우예요. 실제 계약 내용은 근거 원문과 공시에서 다시 확인해주세요.</p>
   </div>`;
 }
 
 function peer(row,meta=''){
-  const change=Number(row?.change1d);
+  const change=row?.ret5==null?NaN:Number(row.ret5);
   return `<button class="industry-peer" data-stock-detail="${esc(row?.symbol)}" data-stock-name="${esc(row?.name)}">
     <span class="industry-peer-copy"><strong>${esc(row?.name||row?.symbol)}</strong><small>${esc(meta)}</small></span>
     ${Number.isFinite(change)?`<em class="${change>0?'up':change<0?'down':'flat'}">${pct(change)}</em>`:''}
@@ -120,16 +120,16 @@ export function industryContextHtml(context,{collapsible=false,open=false,busine
       <strong>관련 기업 흐름</strong>
       <span class="industry-status ${esc(sector.tone)}">${esc(sector.label)}</span>
     </div>
-    <p class="industry-name">${esc(sector.industry)} <span>· 비교군 ${Number(sector.peerCount||0).toLocaleString()}개</span></p>
-    <p class="industry-caption">${esc(sector.groupBasis||'KRX 업종')} 기준${sector.tradeDate?' · '+esc(sector.tradeDate)+' 종가':''}${sector.officialIndustry&&sector.officialIndustry!==sector.industry?' · KRX 업종: '+esc(sector.officialIndustry):''}. 등락은 단순 평균이며 사업 연관 후보가 같은 방향으로 움직인다는 뜻은 아니에요.</p>
+    <p class="industry-name">${esc(sector.industry)} <span>· 비교군 ${Number(sector.peerCount||0).toLocaleString()}개 · 5거래일 수익률 확인 ${Number(sector.observedCount||0).toLocaleString()}개</span></p>
+    <p class="industry-caption">${esc(sector.groupBasis||'KRX 업종')} 기준 · 최근 5거래일${sector.tradeDate?' ('+esc(sector.tradeDate)+' 종가 기준)':''}${sector.officialIndustry&&sector.officialIndustry!==sector.industry?' · KRX 업종: '+esc(sector.officialIndustry):''}. 수익률은 5거래일 전 종가 대비이며, 평균은 수익률 확인 종목의 단순 평균이에요. 산업 분류만으로 직접 거래 관계를 뜻하지 않아요.</p>
     <div class="industry-meter"><span style="width:${Math.max(0,Math.min(100,Math.round(Number(sector.upRatio||0)*100)))}%"></span></div>
     <div class="industry-metrics">
-      <div><span>상승 종목</span><strong>${ratio(sector.upRatio)}</strong></div>
-      <div><span>평균 등락</span><strong class="${Number(sector.avgChange)>0?'up':Number(sector.avgChange)<0?'down':'flat'}">${pct(sector.avgChange)}</strong></div>
-      <div><span>상승추세</span><strong>${ratio(sector.trendRatio)}</strong></div>
-      <div><span>거래량 2배+</span><strong>${ratio(sector.volumeSurgeRatio)}</strong></div>
+      <div><span>5거래일 상승</span><strong>${ratio(sector.upRatio)}</strong></div>
+      <div><span>5거래일 평균</span><strong class="${Number(sector.avgChange)>0?'up':Number(sector.avgChange)<0?'down':'flat'}">${pct(sector.avgChange)}</strong></div>
+      <div><span>20·60일 상승추세</span><strong>${ratio(sector.trendRatio)}</strong></div>
+      <div><span>당일 거래량 2배+</span><strong>${ratio(sector.volumeSurgeRatio)}</strong></div>
     </div>
-    ${sector.leaders?.length?`<div class="industry-peer-group"><small>비교군 당일 강세</small>${sector.leaders.map(x=>peer(x,'같은 비교군')).join('')}</div>`:''}
+    ${sector.leaders?.length?`<div class="industry-peer-group"><small>비교군 최근 5거래일 강세</small>${sector.leaders.map(x=>peer(x,'같은 비교군')).join('')}</div>`:''}
   </section>`:'';
 
   const chainLabel=supply?.chainLabel?`${supply.chainLabel} · ${supply.stage||'관련기업'}`:(industry?'동일 업종 연결':'산업 연결 데이터 준비 중');
@@ -143,9 +143,9 @@ export function industryContextHtml(context,{collapsible=false,open=false,busine
     </div>
     ${directHtml}
     ${enrichmentStatus(relationsState,'relations')}
-    <div class="industry-adjacent-head"><b>산업상 연관 후보</b><span>분류 기반</span></div>
+    <div class="industry-adjacent-head"><b>같은 산업 분류 후보</b><span>거래 관계 미확인</span></div>
     ${peers.length?`<div class="industry-peer-group">${peers.map(x=>peer(x,`${x.stage||x.relation||''}${x.relation?' · '+x.relation:''}`)).join('')}</div>`:'<p class="industry-empty">현재 분류에서 함께 볼 상장 종목을 찾지 못했어요.</p>'}
-    <p class="industry-caption">이 목록은 KRX 업종·주요제품 기반의 산업상 인접 후보예요. 직접 고객·납품 관계로 해석하지 않아요.</p>
+    <p class="industry-caption">KRX 업종·주요제품만으로 분류한 후보예요. 실제 고객·납품 관계가 확인된 목록은 위의 공시·기사 근거에서만 표시해요.</p>
   </section>`;
 
   const body=`<div class="industry-context-body">${company}${sectorHtml}${supplyHtml}</div>`;

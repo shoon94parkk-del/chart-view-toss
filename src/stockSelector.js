@@ -9,6 +9,18 @@ const esc = (value = '') => String(value).replace(/[&<>"']/g, (c) => ({
 let activeClose = null;
 let querySeq = 0;
 
+export function prioritizeStocks(rows, favorites = []) {
+  const rank = new Map(favorites.map((row, index) => [String(row.symbol || '').toUpperCase(), index]));
+  const seen = new Set();
+  return rows.filter(row => {
+    const symbol = String(row?.symbol || '').toUpperCase();
+    if (!symbol || seen.has(symbol)) return false;
+    seen.add(symbol);
+    return true;
+  }).sort((a, b) => (rank.get(String(a.symbol).toUpperCase()) ?? Infinity) -
+    (rank.get(String(b.symbol).toUpperCase()) ?? Infinity));
+}
+
 export function closeStockSelector() {
   activeClose?.();
 }
@@ -18,6 +30,7 @@ export function openStockSelector({
   description = '최대 6개까지 선택할 수 있어요.',
   initial = [],
   limit = 6,
+  favorites = [],
   nameFor = (symbol) => symbol,
   onApply,
   onPick,
@@ -27,6 +40,10 @@ export function openStockSelector({
 
   const draft = new Set(initial);
   const searchOnly = typeof onPick === 'function';
+  const favoriteRows = prioritizeStocks(favorites.filter(row => row?.symbol).map(row => ({
+    symbol: row.symbol, name: row.name || nameFor(row.symbol), market: row.market || '',
+  })));
+  const favoriteSymbols = new Set(favoriteRows.map(row => String(row.symbol).toUpperCase()));
   const names = new Map(initial.map((symbol) => [symbol, nameFor(symbol)]));
   const overlay = document.createElement('div');
   overlay.className = 'selector-overlay';
@@ -44,7 +61,7 @@ export function openStockSelector({
       <div class="selector-selected" id="selector-selected"></div>
       <div class="selector-message" id="selector-message" aria-live="polite"></div>
       <div class="selector-results" id="selector-results">
-        <div class="selector-empty">검색해서 종목을 추가해보세요.</div>
+        <div class="selector-empty">관심종목을 확인하고 있어요.</div>
       </div>
       <footer class="selector-footer">
         <button class="selector-cancel" type="button">취소</button>
@@ -79,17 +96,21 @@ export function openStockSelector({
   };
 
   let lastRows = [];
-  const paintResults = (rows) => {
-    lastRows = rows;
-    resultEl.innerHTML = rows.length
-      ? rows.map((row) => {
+  let currentQuery = '';
+  const paintResults = (rows, query = currentQuery) => {
+    lastRows = prioritizeStocks(rows, favoriteRows);
+    const visible = query ? lastRows : favoriteRows;
+    resultEl.innerHTML = visible.length
+      ? `${favoriteSymbols.has(String(visible[0].symbol).toUpperCase()) ? '<div class="selector-group-heading">내 관심종목</div>' : ''}${visible.map((row, index) => {
           const chosen = !searchOnly && draft.has(row.symbol);
-          return `<button type="button" class="${chosen ? 'selected' : ''}" data-selector-symbol="${esc(row.symbol)}" data-selector-name="${esc(row.name || row.symbol)}">
+          const isFavorite = favoriteSymbols.has(String(row.symbol).toUpperCase());
+          const previousFavorite = index > 0 && favoriteSymbols.has(String(visible[index - 1].symbol).toUpperCase());
+          return `${query && !isFavorite && (index === 0 || previousFavorite) ? '<div class="selector-group-heading">검색 결과</div>' : ''}<button type="button" class="${chosen ? 'selected' : ''}" data-selector-symbol="${esc(row.symbol)}" data-selector-name="${esc(row.name || row.symbol)}">
             <span><strong>${esc(row.name || row.symbol)}</strong><small>${esc(row.symbol)}${row.market ? ` · ${esc(row.market)}` : ''}</small></span>
-            <b>${searchOnly ? '상세 보기' : chosen ? '선택됨' : '선택'}</b>
+            <b>${searchOnly ? '상세 보기' : chosen ? '선택됨' : isFavorite ? '관심종목' : '선택'}</b>
           </button>`;
-        }).join('')
-      : '<div class="selector-empty">검색 결과가 없어요.</div>';
+        }).join('')}`
+      : `<div class="selector-empty">${query ? '검색 결과가 없어요.' : '관심종목이 없어요. 이름이나 티커로 검색해보세요.'}</div>`;
 
     resultEl.querySelectorAll('[data-selector-symbol]').forEach((button) => {
       button.onclick = () => {
@@ -120,30 +141,36 @@ export function openStockSelector({
   };
 
   let timer = null;
+  paintResults(favoriteRows);
   input.addEventListener('input', () => {
     clearTimeout(timer);
     const query = input.value.trim();
+    currentQuery = query;
+    const seq = ++querySeq;
     if (!query) {
-      lastRows = [];
-      resultEl.innerHTML = '<div class="selector-empty">검색해서 종목을 추가해보세요.</div>';
+      paintResults(favoriteRows, '');
       return;
     }
-    resultEl.innerHTML = loadingIndicator('종목을 검색하고 있어요');
+    const matchedFavorites = favoriteRows.filter(row => `${row.name} ${row.symbol}`.toLowerCase().includes(query.toLowerCase()));
+    paintResults(matchedFavorites, query);
+    resultEl.insertAdjacentHTML('beforeend', loadingIndicator('종목을 검색하고 있어요'));
     timer = setTimeout(async () => {
-      const seq = ++querySeq;
       try {
         const data = await searchStocks(query);
-        if (seq !== querySeq) return;
-        paintResults((data?.results || []).slice(0, 12));
+        if (seq !== querySeq || !overlay.isConnected) return;
+        paintResults([...matchedFavorites, ...(data?.results || []).slice(0, 12)], query);
       } catch (error) {
-        if (seq !== querySeq) return;
-        resultEl.innerHTML = `<div class="selector-empty">검색을 완료하지 못했어요.<small>${esc(error?.message || '')}</small></div>`;
+        if (seq !== querySeq || !overlay.isConnected) return;
+        paintResults(matchedFavorites, query);
+        resultEl.insertAdjacentHTML('beforeend', `<div class="selector-empty">추가 검색을 완료하지 못했어요.<small>${esc(error?.message || '')}</small></div>`);
       }
     }, 180);
   });
 
   const close = () => {
     if (!overlay.isConnected) return;
+    ++querySeq;
+    clearTimeout(timer);
     overlay.remove();
     document.body.classList.remove('sheet-open');
     activeClose = null;

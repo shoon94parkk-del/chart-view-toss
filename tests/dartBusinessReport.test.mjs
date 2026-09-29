@@ -64,9 +64,10 @@ test('slow DART and direct evidence show independent loading and failure states'
 });
 
 test('direct supply-chain UI is evidence-backed and separate from inferred adjacency',()=>{
- assert.match(view,/확인된 직접 관계/);
- assert.match(view,/뉴스·수주·고객사 근거/);
- assert.match(view,/산업상 연관 후보/);
- assert.match(view,/직접 고객·납품 관계로 해석하지 않아요/);
+ assert.match(view,/기사에서 확인한 거래 단서/);
+ assert.match(view,/계약·납품 표현 확인/);
+ assert.match(view,/같은 산업 분류 후보/);
+ assert.match(view,/거래 관계 미확인/);
+ assert.match(view,/실제 고객·납품 관계가 확인된 목록/);
 });
 

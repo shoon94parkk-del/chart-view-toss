@@ -102,14 +102,36 @@ export function classifySupplyChain(row){
     // even when their disclosed major products include memory chips.
     const products=norm(row?.mainProducts);
     const industry=norm(row?.industry);
+    if(chain.id==='shipbuilding'){
+      if(/해상 운송|해운업|화물 운송/.test(industry)){
+        return {chain:chain.id,chainLabel:chain.label,stage:'운송'};
+      }
+      // An incidental ship-engine sales line must not turn a solar-first
+      // distributor into a shipbuilding comparison peer.
+      if(/태양광|태양전지/.test(products)&&products.search(/태양광|태양전지/)<products.search(/선박|조선|lng/)){
+        return null;
+      }
+      if(/보냉|단열판넬|lng.*단열|단열.*lng/.test(products)){
+        return {chain:chain.id,chainLabel:chain.label,stage:'소재·기자재'};
+      }
+      if(/^(?:선박(?:\s*제조|\s*및\s*보트\s*건조업|\s*\(|\s*[,，])|상선|특수선)/.test(products)){
+        return {chain:chain.id,chainLabel:chain.label,stage:'조선·플랜트'};
+      }
+      if(/선박용|조선용|해양용|선박기자재/.test(products)){
+        return {chain:chain.id,chainLabel:chain.label,stage:'소재·기자재'};
+      }
+      if(/선용|조명등|측정시스템|경보시스템|크레인|환경장비|deck house|선박 블록/.test(products)){
+        return {chain:chain.id,chainLabel:chain.label,stage:'소재·기자재'};
+      }
+      if(/선박 및 보트 건조업/.test(industry)){
+        return {chain:chain.id,chainLabel:chain.label,stage:'조선·플랜트'};
+      }
+    }
     if(chain.id==='semiconductor'&&(/반도체 제조\(메모리\)/.test(products)||
       (/반도체 제조.*메모리|dram|nand|hbm|파운드리|반도체 설계|반도체 칩/.test(products)&&!/비메모리|테스트|테스터|검사장비|프로브|모듈|기판/.test(products))||
       String(row?.symbol).toUpperCase()==='000660.KS')){
       stage='칩·소자';
       return {chain:chain.id,chainLabel:chain.label,stage};
-    }
-    if(chain.id==='shipbuilding'&&/해상 운송|해운업|화물 운송/.test(industry)){
-      return {chain:chain.id,chainLabel:chain.label,stage:'운송'};
     }
     for(const [label,pattern] of chain.stages){
       if(pattern.test(text)){stage=label;break;}
@@ -131,15 +153,18 @@ function memoryChipMaker(row){
 function comparisonGroup(row){
   if(memoryChipMaker(row))return {key:'memory-chip',label:'메모리 반도체 제조',basis:'KRX 주요제품·사업 구분'};
   const cls=classifySupplyChain(row);
+  if(cls?.chain==='shipbuilding'&&/보냉|단열판넬|lng.*단열|단열.*lng/.test(norm(row?.mainProducts))){
+    return {key:'lng-insulation',label:'LNG 선박 보냉재',basis:'KRX 주요제품'};
+  }
   if(cls&&cls.stage!=='관련기업')return {key:`${cls.chain}:${cls.stage}`,label:`${cls.chainLabel} · ${cls.stage}`,basis:'KRX 주요제품·산업 단계'};
   const industry=String(row?.industry||'').trim();
   return industry?{key:`industry:${industry}`,label:industry,basis:'KRX 업종'}:null;
 }
 
-function sectorTone({peerCount,upRatio,avgChange,trendRatio}){
+function sectorTone({peerCount,upRatio,avgChange}){
   if(peerCount<3)return {label:'표본 부족',tone:'neutral'};
-  if(upRatio>=0.65&&avgChange>=0.5)return {label:'강함',tone:'strong'};
-  if((upRatio>=0.55&&avgChange>=0)||(trendRatio>=0.6&&avgChange>=-0.2))return {label:'양호',tone:'good'};
+  if(upRatio>=0.65&&avgChange>=2)return {label:'강함',tone:'strong'};
+  if(upRatio>=0.55&&avgChange>0)return {label:'양호',tone:'good'};
   if(upRatio<0.4&&avgChange<0)return {label:'약함',tone:'weak'};
   return {label:'혼조',tone:'mixed'};
 }
@@ -153,7 +178,8 @@ export function buildSectorContext(row,rows){
     if(row?.date&&x?.date!==row.date)return false;
     return comparisonGroup(x)?.key===group.key;
   });
-  const changes=peers.map(x=>n(x,'change1d')).filter(v=>v!==null);
+  // ret5 is the close-to-close return over five trading sessions in the screener.
+  const changes=peers.map(x=>n(x,'ret5')).filter(v=>v!==null);
   if(!peers.length||!changes.length)return null;
   const upCount=changes.filter(v=>v>0).length;
   const trendKnown=peers.filter(x=>typeof x?.trend2060==='boolean');
@@ -163,15 +189,16 @@ export function buildSectorContext(row,rows){
   const upRatio=upCount/changes.length;
   const trendRatio=trendKnown.length?trendCount/trendKnown.length:0;
   const volumeSurgeRatio=volumeKnown.length?volumeKnown.filter(v=>v>=2).length/volumeKnown.length:0;
-  const leaders=peers.filter(x=>x.symbol!==row.symbol&&n(x,'change1d')!==null)
-    .sort((a,b)=>(n(b,'change1d')||0)-(n(a,'change1d')||0))
+  const leaders=peers.filter(x=>x.symbol!==row.symbol&&n(x,'ret5')!==null)
+    .sort((a,b)=>(n(b,'ret5')||0)-(n(a,'ret5')||0))
     .slice(0,3)
-    .map(x=>({symbol:x.symbol,name:x.name||x.symbol,change1d:n(x,'change1d')}));
+    .map(x=>({symbol:x.symbol,name:x.name||x.symbol,ret5:n(x,'ret5')}));
   return {
     industry:groupLabel,
     officialIndustry:industry,
     groupBasis:group.basis,
     tradeDate:row?.date||'',
+    period:'최근 5거래일',
     peerCount:peers.length,
     observedCount:changes.length,
     avgChange,
@@ -179,16 +206,22 @@ export function buildSectorContext(row,rows){
     trendRatio,
     volumeSurgeRatio,
     leaders,
-    ...sectorTone({peerCount:peers.length,upRatio,avgChange,trendRatio}),
+    ...sectorTone({peerCount:changes.length,upRatio,avgChange}),
   };
 }
 
-const peerScore=(row,baseStage)=>{
+const peerScore=(row,baseStage,base)=>{
   const technical=n(row,'technicalScore')||0;
   const value=Math.log10(Math.max(n(row,'avgValue20')||1,1));
   const chain=classifySupplyChain(row);
   const adjacency=chain&&chain.stage!==baseStage?8:3;
-  return adjacency+technical/10+value/10;
+  const products=norm(row?.mainProducts);
+  const baseProducts=norm(base?.mainProducts);
+  const shipMatch=chain?.chain==='shipbuilding'
+    ? (/보냉|단열|lng/.test(baseProducts)&&/보냉|단열|lng/.test(products)?30:0)
+      +(chain.stage==='조선·플랜트'?15:0)
+    :0;
+  return shipMatch+adjacency+technical/10+value/10;
 };
 
 export function findSupplyChainPeers(row,rows,{limit=4}={}){
@@ -205,7 +238,7 @@ export function findSupplyChainPeers(row,rows,{limit=4}={}){
       })
       .sort((a,b)=>{
         const memoryScore=x=>memoryChipMaker(row)&&/메모리|dram|nand|hbm/i.test(x.row?.mainProducts||'')?20:0;
-        return memoryScore(b)+peerScore(b.row,base.stage)-memoryScore(a)-peerScore(a.row,base.stage);
+        return memoryScore(b)+peerScore(b.row,base.stage,row)-memoryScore(a)-peerScore(a.row,base.stage,row);
       })
       .slice(0,limit)
       .map(({row:x,cls})=>({
@@ -215,7 +248,7 @@ export function findSupplyChainPeers(row,rows,{limit=4}={}){
         mainProducts:x.mainProducts||'',
         stage:cls.stage,
         relation:cls.stage===base.stage?'같은 산업 단계':'인접 산업 단계',
-        change1d:n(x,'change1d'),
+        ret5:n(x,'ret5'),
       }));
   }
   const industry=String(row?.industry||'').trim();
@@ -223,7 +256,7 @@ export function findSupplyChainPeers(row,rows,{limit=4}={}){
   return universe.filter(x=>x.symbol!==row.symbol&&String(x?.industry||'').trim()===industry)
     .sort((a,b)=>(n(b,'technicalScore')||0)-(n(a,'technicalScore')||0))
     .slice(0,limit)
-    .map(x=>({symbol:x.symbol,name:x.name||x.symbol,industry:x.industry||'',mainProducts:x.mainProducts||'',stage:'동일 업종',relation:'동일 업종',change1d:n(x,'change1d')}));
+    .map(x=>({symbol:x.symbol,name:x.name||x.symbol,industry:x.industry||'',mainProducts:x.mainProducts||'',stage:'동일 업종',relation:'동일 업종',ret5:n(x,'ret5')}));
 }
 
 export function companyContext(row,rows){

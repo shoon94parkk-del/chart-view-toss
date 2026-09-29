@@ -161,3 +161,8 @@ Toss-specific navigation, safe-area, storage, SDK bridge, and release logic belo
 - Korean detail screens lazy-load `/api/financial-history` independently of quote/chart/industry work. Annual and interim numbers show DART source links and statement basis. Unsupported values remain unavailable.
 - Related-company breadth uses same-date KRX major-product/industry-stage groups when classification is specific, with the official KRX industry still disclosed. Samsung Electronics and SK hynix are grouped with memory-chip makers; Dongseong Finetec's insulation is grouped with LNG/shipbuilding materials. Company names alone do not determine an industry. Fewer than three peers means no strength judgment.
 - Detail bottom navigation retains its originating primary tab. More is titled `분석과 도구` in the body, and displayed version comes from package.json.
+### 2026-09-29 — Weekly sector breadth and favorite-first selection
+- Detail and IDEA sector breadth uses screener `ret5` (five trading sessions), not daily `change1d`; missing weekly values do not enter breadth or tone denominators.
+- IDEA LAB requires `avgValue20 >= 1_000_000_000` KRW (20-day average traded value of at least 10억원).
+- Stock selector opens with saved watchlist rows and ranks those rows first in search results. Search-only Home behavior still opens detail; chart/analysis selection still applies comparison symbols.
+- LNG insulation has its own narrow comparison group; weak product overlap alone is never described as a proven customer or supplier relationship.

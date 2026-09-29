@@ -2,6 +2,7 @@ import { finiteNumber } from './analysisData.js';
 import { companyContext } from './industryContext.js';
 
 const num=(row,key)=>finiteNumber(row?.[key]);
+export const MIN_AVG_VALUE_20=1_000_000_000; // KRW: 10억원 per trading day, averaged over 20 days.
 const has=(v)=>v!==null&&v!==undefined&&Number.isFinite(Number(v));
 const isTrend2060=row=>{
   if(typeof row?.trend2060==='boolean') return row.trend2060;
@@ -36,6 +37,7 @@ const candidate=(row,reasons,score,rows)=>({
   change1d:num(row,'change1d'),
   rsi14:num(row,'rsi14'),
   volumeRatio:num(row,'volumeRatio'),
+  avgValue20:num(row,'avgValue20'),
   ret20:num(row,'ret20'),
   distance52HighPct:num(row,'distance52HighPct'),
   reasons:reasons.filter(Boolean).slice(0,4),
@@ -140,7 +142,7 @@ const defs=[
 ];
 
 export function buildInvestmentIdeas(data,{limit=4,perIdea=4}={}){
-  const rows=(Array.isArray(data?.stocks)?data.stocks:[]).filter(row=>row?.symbol&&row?.name);
+  const rows=(Array.isArray(data?.stocks)?data.stocks:[]).filter(row=>row?.symbol&&row?.name&&(num(row,'avgValue20')??0)>=MIN_AVG_VALUE_20);
   return defs.map(def=>{
     const candidates=rows.filter(def.match).map(row=>candidate(row,def.reasons(row),def.score(row),rows)).sort((a,b)=>b.score-a.score).slice(0,perIdea);
     if(!candidates.length)return null;

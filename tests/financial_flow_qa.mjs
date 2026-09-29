@@ -42,6 +42,8 @@ try{
   assert.match(await page.locator('#detail-financial-history').innerText(),/연간 실적/);
   await page.locator('.industry-context-card').waitFor({timeout:45000});
   assert.ok((await page.locator('.industry-name').innerText()).includes('반도체'));
+  assert.match(await page.locator('.industry-section.sector').innerText(),/5거래일 상승/);
+  assert.match(await page.locator('.industry-section.sector').innerText(),/5거래일 평균/);
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+2),`${width}px detail overflow`);
   await page.screenshot({path:`artifacts/financial-flow/${width}-detail.png`,fullPage:true});
   assert.ok(await page.locator('.bottom-nav [data-tab="home"]').evaluate(el=>el.classList.contains('active')),'direct detail has Home context');

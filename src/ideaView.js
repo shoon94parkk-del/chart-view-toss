@@ -83,11 +83,11 @@ export async function renderIdeaView({shell,bindNav}){
     <section class="idea-hero">
       <span class="page-kicker">IDEA LAB · BETA</span>
       <h2>종목 하나가 아니라<br><em>산업 흐름</em>까지 봐요</h2>
-      <p>기술적 신호를 시작점으로 회사의 실제 매출 구조, 같은 업종의 동반 강도, 근거가 확인된 직접 관계까지 이어서 확인해요.</p>
+      <p>기술적 신호를 시작점으로 회사의 실제 매출 구조, 최근 5거래일 비교군 흐름, 기사에 나타난 거래 단서까지 이어서 확인해요.</p>
     </section>
     <section class="idea-guide">
-      <div><strong>분석 흐름</strong><span>기술 신호 → 실제 매출구조 → 섹터 체온 → 공급망/직접관계</span></div>
-      <small>종목별 상세 정보는 필요한 종목만 펼쳐서 불러와요. 직접 관계는 뉴스·수주·고객사 근거가 있을 때만 별도 표시해요.</small>
+      <div><strong>분석 흐름</strong><span>기술 신호 → 실제 매출구조 → 5거래일 비교군 → 산업 분류/거래 단서</span></div>
+      <small>20일 평균 거래대금 10억원 이상인 종목만 살펴봐요. 상세 정보는 필요한 종목만 펼쳐서 불러와요.</small>
     </section>
     <div id="idea-body" class="idea-grid">${loadingIndicator('투자 아이디어를 찾고 있어요')}<div class="skeleton idea-skeleton"></div><div class="skeleton idea-skeleton"></div></div>
   `,'투자 아이디어');
@@ -116,9 +116,9 @@ export async function renderIdeaView({shell,bindNav}){
       return;
     }
     host.innerHTML=`
-      <p class="idea-meta">기준 거래일 <strong>${esc(coverage.tradeDate||'미제공')}</strong> · 수집 ${coverage.total.toLocaleString()}개 · 회사정보 ${companyCoverage.toLocaleString()}개</p>
+      <p class="idea-meta">기준 거래일 <strong>${esc(coverage.tradeDate||'미제공')}</strong> · 수집 ${coverage.total.toLocaleString()}개 · 회사정보 ${companyCoverage.toLocaleString()}개 · 20일 평균 거래대금 10억원 이상</p>
       <div class="idea-card-list">${ideas.map(ideaCard).join('')}</div>
-      <section class="idea-next"><strong>현재 분석 방식</strong><span>DART 사업보고서로 실제 매출 1위 제품·매출 비중을 확인하고, 직접 공급망 관계는 최근 뉴스에서 상장사명과 수주·납품·고객사 근거가 함께 확인될 때만 표시해요.</span></section>
+      <section class="idea-next"><strong>현재 분석 방식</strong><span>DART 사업보고서로 매출 1위 사업·제품 비중을 확인하고, 거래 단서는 단일 기업 기사에서 두 회사의 구체적 계약·납품 표현이 있을 때만 표시해요. 원문과 공시를 함께 확인해주세요.</span></section>
     `;
     bindNav();
     bindLazyIdeaContext(host,ideas,bindNav);
