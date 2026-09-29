@@ -830,8 +830,8 @@ async function renderDetail(){
 
  }));
  jobs.push(settle(Promise.all([
-   screenerData(),
-   companyContextData(),
+   screenerData().catch(()=>null),
+   companyContextData().catch(()=>null),
    import('./industryContext.js'),
    import('./industryContextView.js'),
  ]),industryRes=>{
