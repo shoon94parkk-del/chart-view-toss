@@ -29,8 +29,8 @@ jobs:
         env:
           BASE: https://chart-view-toss.onrender.com
         run: |
-          node - <<'NODE'
-          const { chromium } = require('playwright');
+          node --input-type=module - <<'NODE'
+          import { chromium } from 'playwright';
 
           const companies=[
             ['005930.KS','삼성전자'],
