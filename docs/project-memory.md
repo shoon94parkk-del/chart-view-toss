@@ -125,3 +125,10 @@ Toss-specific navigation, safe-area, storage, SDK bridge, and release logic belo
 - Source: shared backend `/static/data/screener.json` only for v1, preserving dated end-of-day semantics.
 - Patterns: 거래량 동반 상승, 상승추세 속 숨 고르기, 52주 고점 근접, 모멘텀 강화, 과매도 반등 관찰.
 - Candidate click reuses existing detail; next planned expansion is sector co-movement → news evidence → related/supply-chain stocks → PICK change tracking.
+
+### 2026-09-29 IDEA LAB compact + evidence enrichment
+- Candidate context cards are collapsed by default to keep the LAB list scannable.
+- Opening a candidate lazily enriches it with `/api/business-report` and `/api/relationship-evidence`.
+- DART shows actual report-derived top revenue product and mix when parsing is confident.
+- Direct relationships are shown separately from classification-based supply-chain adjacency and include evidence headline/source/link.
+- The same direct-evidence section is also rendered in Korean stock detail.
