@@ -1,4 +1,5 @@
 import { finiteNumber } from './analysisData.js';
+import { companyContext } from './industryContext.js';
 
 const num=(row,key)=>finiteNumber(row?.[key]);
 const has=(v)=>v!==null&&v!==undefined&&Number.isFinite(Number(v));
@@ -26,7 +27,7 @@ const labelPct=value=>{
   const n=finiteNumber(value);
   return n===null?null:`${n>0?'+':''}${n.toFixed(1)}%`;
 };
-const candidate=(row,reasons,score)=>({
+const candidate=(row,reasons,score,rows)=>({
   symbol:row.symbol,
   name:row.name||row.symbol,
   market:row.market||'',
@@ -39,6 +40,7 @@ const candidate=(row,reasons,score)=>({
   distance52HighPct:num(row,'distance52HighPct'),
   reasons:reasons.filter(Boolean).slice(0,4),
   score:Number.isFinite(score)?score:0,
+  context:companyContext(row,rows),
 });
 const defs=[
   {
@@ -140,7 +142,7 @@ const defs=[
 export function buildInvestmentIdeas(data,{limit=4,perIdea=4}={}){
   const rows=(Array.isArray(data?.stocks)?data.stocks:[]).filter(row=>row?.symbol&&row?.name);
   return defs.map(def=>{
-    const candidates=rows.filter(def.match).map(row=>candidate(row,def.reasons(row),def.score(row))).sort((a,b)=>b.score-a.score).slice(0,perIdea);
+    const candidates=rows.filter(def.match).map(row=>candidate(row,def.reasons(row),def.score(row),rows)).sort((a,b)=>b.score-a.score).slice(0,perIdea);
     if(!candidates.length)return null;
     return {
       id:def.id,
