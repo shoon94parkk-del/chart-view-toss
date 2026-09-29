@@ -131,3 +131,6 @@ IDEA LAB 후보 종목의 회사·섹터·공급망 상세는 기본적으로 �
 - Every initially empty data area now names the pending data and shows a visible spinner; chart and detail graph overlays clear on success, empty data, and failure. Existing source-specific DART progress/failure states remain separate.
 - The shell shares the current route from web and Apps in Toss runtime. Share URLs use the shared backend's crawler-readable `/share/toss/{tab}` entry, with exact detail ticker in the query. AIT's hidden web topbar is compensated by an in-content share action.
 - Browser sharing uses the native share sheet when available and copies the same link otherwise. The Toss static shell also includes a generic social card for manually copied URLs.
+
+## 2026-09-29 — 투자 도구와 분석 메뉴 아이콘
+기존 Chart View의 투자 도구 12개 링크를 Toss 분석 도구에 추가한다. 기존 외부 링크 브리지를 그대로 사용하며, 사이트 favicon과 브랜드색 약칭 대체 로고를 함께 제공한다. 분석 메뉴의 히트맵·실적 전망·밸류에이션 추이·투자 도구 아이콘을 서로 구별되게 바꾼다. DART의 사업부문별 매출에 연결조정이 있으면 비중 합계가 100%를 넘는 이유를 공시 카드에 밝힌다.

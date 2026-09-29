@@ -36,7 +36,7 @@ function reportRevenueHtml(report){
         <div class="industry-revenue-bar"><i style="width:${Math.max(3,Math.min(100,(Number(item.share)||0)/maxShare*100))}%"></i></div>
         ${Number.isFinite(Number(item.revenue))?`<small>${esc(revenueAmount(item.revenue,report.unit||''))}</small>`:''}
       </div>`).join('')}</div>
-    <p class="industry-caption">${esc(sourceLabel||'DART 사업보고서')} · 공시 표에서 직접 확인한 값만 표시해요.</p>
+    <p class="industry-caption">${esc(sourceLabel||'DART 사업보고서')} · 공시 표에서 직접 확인한 값만 표시해요.${report.hasConsolidationAdjustment?' 연결조정을 반영한 매출을 기준으로 계산해 부문 비중의 합은 100%를 넘을 수 있어요.':''}</p>
   </section>`;
 }
 

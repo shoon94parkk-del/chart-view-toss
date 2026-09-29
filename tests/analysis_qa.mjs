@@ -19,6 +19,7 @@ try{
    if(path==='/api/compare')body={stocks:[],errors:[]};
    return route.fulfill({contentType:'application/json',body:JSON.stringify(body)});
   });
+  await page.route('https://www.google.com/s2/favicons**',route=>route.abort());
   for(const tab of ['discover','heatmap','consensus','bands','tools']){
    await page.goto(`${base}/#${tab}`);await page.waitForSelector('#analysis-body:not(:has(.skeleton))');
    await page.waitForTimeout(120);
@@ -44,6 +45,14 @@ try{
    }
    if(tab==='consensus'){await page.waitForSelector('.analysis-metrics');await page.selectOption('#consensus-period','+1y');assert.match(await page.locator('#analysis-body').innerText(),/제공되지/);}
    if(tab==='bands'){await page.waitForSelector('#band-chart canvas');await page.selectOption('#band-metric','pbr');assert.match(await page.locator('#analysis-body').innerText(),/제공되지/);}
+   if(tab==='tools'){
+    assert.equal(await page.locator('.investment-tool-card').count(),12);
+    await page.waitForFunction(()=>[...document.querySelectorAll('.investment-tool-logo img')].every(img=>img.hidden));
+    assert.equal(await page.locator('.investment-tool-logo span').first().isVisible(),true);
+    await page.evaluate(()=>{window.open=(url)=>{window.__lastExternalUrl=url;return {};};});
+    await page.getByRole('button',{name:'DART 외부 사이트 열기'}).click();
+    assert.equal(await page.evaluate(()=>window.__lastExternalUrl),'https://dart.fss.or.kr/');
+   }
    await page.screenshot({path:`artifacts/analysis-qa/${width}-${tab}.png`,fullPage:true});
   }
   await page.goto(`${base}/#chart`);await page.locator('summary').filter({hasText:'기간 직접 지정'}).click();

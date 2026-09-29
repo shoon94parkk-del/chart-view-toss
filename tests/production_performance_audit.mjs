@@ -18,7 +18,7 @@ const routes=[
   {route:'consensus',label:'실적 전망',ready:()=>Boolean(document.querySelector('#analysis-body'))&&document.querySelectorAll('#analysis-body [role="status"]').length===0&&document.querySelectorAll('#analysis-body .skeleton').length===0},
   {route:'bands',label:'역사적 밸류에이션',ready:()=>Boolean(document.querySelector('#analysis-body .analysis-metrics,#analysis-body .empty'))},
   {route:'detail/005930.KS',label:'종목 상세',ready:()=>Boolean(document.querySelector('#detail-price'))&&!document.querySelector('#detail-price')?.classList.contains('skeleton')},
-  {route:'tools',label:'자료 출처',ready:()=>Boolean(document.querySelector('#analysis-body .feature-row,#analysis-body .empty'))},
+  {route:'tools',label:'투자 도구',ready:()=>Boolean(document.querySelector('#analysis-body .investment-tool-card,#analysis-body .empty'))},
   {route:'info',label:'데이터·이용 안내',ready:()=>Boolean(document.querySelector('.info-stack'))},
   {route:'more',label:'전체 메뉴',ready:()=>Boolean(document.querySelector('.menu-group'))},
 ];
