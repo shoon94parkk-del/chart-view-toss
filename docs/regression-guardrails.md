@@ -105,3 +105,10 @@ Last updated: 2026-09-22
 - Preset clicks must populate the manual filter fields and update results immediately; reset restores the full universe.
 - RSI/volume/MACD/MA/52-week fields are end-of-day screener data. Missing fields must fail closed rather than inventing a match.
 - Result reason chips must reflect actual active filter conditions.
+
+### Investment idea LAB guardrail
+- `#ideas` is additive; do not replace or reorder the existing Home/bottom-nav structure to expose it.
+- Idea generation must use visible screener fields and fail closed when required metrics are missing. Never fabricate a technical match or causal news story.
+- Every candidate card must show concrete metric reasons and link to the existing stock-detail route.
+- Keep the idea view lazy-loaded so Home, Watchlist, and initial app startup do not download the idea view/CSS until the user opens it.
+- Screener trade-date/closing-price semantics remain explicit; idea candidates are research prompts, not live-price recommendations.
