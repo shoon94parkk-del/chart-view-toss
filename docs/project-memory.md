@@ -118,3 +118,10 @@ Toss-specific navigation, safe-area, storage, SDK bridge, and release logic belo
 - A preset writes values into the same manual filter controls; users can refine them afterward.
 - Each matching result shows reason chips such as RSI, volume multiple, trend, MACD, or 52-week-high proximity.
 - Do not describe these end-of-day technical filters as buy/sell recommendations.
+
+## 2026-09-29 — 투자 아이디어 LAB beta
+- Route: `#ideas` / `/ideas`; entry: 전체 > 분석 도구 > 투자 아이디어 LAB.
+- Implementation: `src/ideaEngine.js` pure rule engine + `src/ideaView.js`/CSS lazy-loaded view.
+- Source: shared backend `/static/data/screener.json` only for v1, preserving dated end-of-day semantics.
+- Patterns: 거래량 동반 상승, 상승추세 속 숨 고르기, 52주 고점 근접, 모멘텀 강화, 과매도 반등 관찰.
+- Candidate click reuses existing detail; next planned expansion is sector co-movement → news evidence → related/supply-chain stocks → PICK change tracking.
