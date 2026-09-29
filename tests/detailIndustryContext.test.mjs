@@ -15,6 +15,7 @@ test('stock detail includes non-blocking company sector supply-chain context',()
 });
 
 test('missing Korean company context removes the optional panel instead of breaking detail',()=>{
- assert.match(main,/if\(!current\)\{\s*block\.remove\(\)/);
- assert.match(main,/if\(!html\)\{\s*block\.remove\(\)/);
+ assert.match(main,/if\(!current\)return null/);
+ assert.match(main,/industryRes\.status!==['"]fulfilled['"]\|\|!industryRes\.value/);
+ assert.match(main,/block\.remove\(\)/);
 });
