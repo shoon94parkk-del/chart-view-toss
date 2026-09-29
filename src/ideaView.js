@@ -1,4 +1,4 @@
-import { screenerData } from './api.js';
+import { screenerData, companyContextData } from './api.js';
 import { buildInvestmentIdeas, ideaCoverage } from './ideaEngine.js';
 
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -90,10 +90,22 @@ export async function renderIdeaView({shell,bindNav}){
   bindNav();
   const host=document.querySelector('#idea-body');
   try{
-    const data=await screenerData();
-    const ideas=buildInvestmentIdeas(data,{limit:4,perIdea:4});
-    const coverage=ideaCoverage(data);
-    const companyCoverage=(data?.stocks||[]).filter(row=>row?.industry||row?.mainProducts).length;
+    const [data,companyMeta]=await Promise.all([
+      screenerData(),
+      companyContextData().catch(()=>null),
+    ]);
+    const metaBySymbol=new Map((companyMeta?.companies||[]).map(row=>[String(row.symbol||'').toUpperCase(),row]));
+    const enrichedData={
+      ...data,
+      stocks:(data?.stocks||[]).map(row=>{
+        const meta=metaBySymbol.get(String(row.symbol||'').toUpperCase());
+        if(!meta)return row;
+        return {...row,industry:meta.industry||row.industry||'',mainProducts:meta.mainProducts||row.mainProducts||''};
+      }),
+    };
+    const ideas=buildInvestmentIdeas(enrichedData,{limit:4,perIdea:4});
+    const coverage=ideaCoverage(enrichedData);
+    const companyCoverage=(enrichedData?.stocks||[]).filter(row=>row?.industry||row?.mainProducts).length;
     if(!host?.isConnected)return;
     if(!ideas.length){
       host.innerHTML='<div class="empty"><strong>지금 조건에서 포착된 아이디어가 없어요</strong><span>다음 스크리너 갱신 뒤 다시 확인해주세요.</span></div>';
