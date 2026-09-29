@@ -55,7 +55,20 @@ try {
   assert.deepEqual(await page.evaluate(() => JSON.parse(localStorage.getItem('chartview-toss-watchlist-v1'))), [{ symbol, name: 'LG전자' }]);
   assert.equal(await page.locator('#detail-watch-quick').getAttribute('aria-pressed'), 'true');
 
-  console.log('PASS direct ticker name, red watch hearts, stale-name repair, and Home search to detail');
+  const fallbackPage = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  await fallbackPage.route('https://chart-view-pkv8.onrender.com/**', route => {
+    const path = new URL(route.request().url()).pathname;
+    if (path === '/api/search') return route.fulfill({ status: 503, contentType: 'application/json', headers: { 'access-control-allow-origin': '*' }, body: '{}' });
+    if (path === '/static/data/screener.json') return route.fulfill(json({ stocks: [{ symbol, name: 'LG전자', industry: '전자제품 제조업', mainProducts: '가전제품' }] }));
+    if (path === '/api/quotes') return route.fulfill(json({ results: [] }));
+    return route.fulfill(json({}));
+  });
+  await fallbackPage.goto(`${base}/#detail/${symbol}`, { waitUntil: 'domcontentloaded' });
+  await fallbackPage.locator('#detail-name').getByText('LG전자', { exact: true }).waitFor({ timeout: 20000 });
+  assert.equal(await fallbackPage.locator('#detail-top-title').innerText(), 'LG전자');
+  await fallbackPage.close();
+
+  console.log('PASS direct ticker name, red watch hearts, stale-name repair, Home search to detail, and screener name fallback');
 } finally {
   await browser.close();
 }

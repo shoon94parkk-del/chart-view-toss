@@ -948,6 +948,7 @@ async function renderDetail(){
      current=rows.find(row=>String(row?.symbol||'').toUpperCase()===String(symbol).toUpperCase())||metaBySymbol.get(String(symbol).toUpperCase());
    }
    if(!current)return null;
+   if(!knownName&&current.name)applyDetailName(current.name);
    return {
      context:industryModule.companyContext(current,rows),
      viewModule,
