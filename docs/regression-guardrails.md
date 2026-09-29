@@ -126,3 +126,10 @@ Last updated: 2026-09-22
 - If KRX company context is missing (e.g. overseas ticker), remove the optional industry panel instead of showing invented company facts.
 - Medical-device companies must not fall into pharma solely because their industry text contains the generic word “의료”.
 - Company / sector / supply-chain sections need distinct but restrained visual hierarchy; do not collapse them back into identical gray surfaces.
+
+### DART revenue-mix guardrail
+- DART revenue loading must never delay price, chart, valuation, or the base KRX industry context.
+- Call DART only for `.KS` / `.KQ` detail tickers; overseas detail must not issue the request.
+- Never show ‘매출 1위’ from KRX `mainProducts` alone. It requires a DART-derived `available=true` payload.
+- If a report/table is missing or ambiguous, preserve the KRX company card and omit the revenue mix rather than guessing.
+- A displayed revenue mix must expose the DART original-report link and report year/basis.
