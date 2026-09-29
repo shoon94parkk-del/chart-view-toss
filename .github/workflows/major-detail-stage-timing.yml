@@ -1,0 +1,212 @@
+name: Major Detail Stage Timing
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/major-detail-stage-timing.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  timing:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.21.0'
+          cache: npm
+      - name: Install browser
+        run: |
+          npm ci
+          npm install --no-save --package-lock=false playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Measure live detail stages
+        env:
+          BASE: https://chart-view-toss.onrender.com
+        run: |
+          node - <<'NODE'
+          const { chromium } = require('playwright');
+
+          const companies=[
+            ['005930.KS','삼성전자'],
+            ['000660.KS','SK하이닉스'],
+            ['373220.KS','LG에너지솔루션'],
+            ['207940.KS','삼성바이오로직스'],
+            ['005380.KS','현대차'],
+            ['000270.KS','기아'],
+            ['006400.KS','삼성SDI'],
+            ['066570.KS','LG전자'],
+            ['035420.KS','NAVER'],
+            ['035720.KS','카카오'],
+            ['068270.KS','셀트리온'],
+            ['005490.KS','POSCO홀딩스'],
+          ];
+          const BASE=process.env.BASE;
+          const round=n=>Math.round(Number(n)||0);
+          const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+
+          async function measure(browser,symbol,name){
+            const context=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:1});
+            const page=await context.newPage();
+            const start=performance.now();
+            const apiStarts=new WeakMap();
+            const apiRows=[];
+            const failures=[];
+
+            page.on('request',req=>{
+              const url=req.url();
+              if(url.includes('chart-view-pkv8.onrender.com/')){
+                apiStarts.set(req,performance.now());
+              }
+            });
+            page.on('response',res=>{
+              const req=res.request();
+              const st=apiStarts.get(req);
+              if(st==null)return;
+              const url=new URL(req.url());
+              apiRows.push({
+                path:url.pathname,
+                ms:round(performance.now()-st),
+                status:res.status(),
+              });
+            });
+            page.on('requestfailed',req=>{
+              const url=req.url();
+              if(url.includes('chart-view-pkv8.onrender.com/')){
+                failures.push({path:new URL(url).pathname,error:req.failure()?.errorText||''});
+              }
+            });
+
+            const marks={};
+            const mark=async(key,fn,timeout=15000)=>{
+              const now=performance.now();
+              try{
+                await page.waitForFunction(fn,{timeout,polling:40});
+                marks[key]=round(performance.now()-start);
+              }catch{
+                marks[key]=null;
+              }
+              return round(performance.now()-now);
+            };
+
+            await page.goto(`${BASE}/#detail/${symbol}`,{waitUntil:'domcontentloaded',timeout:30000});
+            marks.domContentLoaded=round(performance.now()-start);
+
+            const tasks=[
+              mark('shell',()=>Boolean(document.querySelector('.app-shell')),5000),
+              mark('price',()=>{
+                const n=document.querySelector('#detail-price');
+                return Boolean(n)&&!n.classList.contains('skeleton');
+              }),
+              mark('chart',()=>{
+                const s=document.querySelector('#detail-chart-status');
+                return Boolean(s)&&!String(s.textContent||'').includes('불러오는 중');
+              }),
+              mark('industryBase',()=>{
+                const n=document.querySelector('#detail-industry-context');
+                return Boolean(n)&&!n.querySelector('.detail-context-skeleton')&&!n.querySelector('.skeleton');
+              }),
+              mark('dart',()=>{
+                const badge=document.querySelector('.detail-context-badge')?.textContent||'';
+                const text=document.querySelector('#detail-industry-context')?.textContent||'';
+                return badge.includes('DART')&&text.includes('DART')&&/매출/.test(text);
+              }),
+              mark('metrics',()=>{
+                const n=document.querySelector('#detail-metrics');
+                return Boolean(n)&&!n.querySelector('.skeleton');
+              }),
+              mark('news',()=>{
+                const n=document.querySelector('#detail-news');
+                return Boolean(n)&&!n.querySelector('.skeleton');
+              }),
+            ];
+            await Promise.all(tasks);
+
+            // Relationship evidence has no guaranteed visible card when there is
+            // no verified relationship, so wait briefly for its network call.
+            const relDeadline=performance.now()+13000;
+            while(performance.now()<relDeadline){
+              if(apiRows.some(x=>x.path==='/api/relationship-evidence'))break;
+              await sleep(50);
+            }
+            await sleep(150);
+
+            const nav=await page.evaluate(()=>{
+              const n=performance.getEntriesByType('navigation')[0];
+              return n?{
+                ttfb:Math.round(n.responseStart),
+                dom:Math.round(n.domContentLoadedEventEnd),
+                load:Math.round(n.loadEventEnd),
+              }:null;
+            });
+            const body=await page.evaluate(()=>({
+              badge:document.querySelector('.detail-context-badge')?.textContent||'',
+              title:document.querySelector('.detail-brand h2')?.textContent||'',
+            }));
+
+            const paths=[
+              '/api/quotes','/api/compare','/static/data/screener.json',
+              '/static/data/company_context.json','/api/business-report',
+              '/api/relationship-evidence','/api/valuation','/api/personalized-news'
+            ];
+            const api={};
+            for(const path of paths){
+              const matches=apiRows.filter(x=>x.path===path);
+              api[path]=matches.length?{
+                calls:matches.length,
+                maxMs:Math.max(...matches.map(x=>x.ms)),
+                status:matches.map(x=>x.status).join(',')
+              }:null;
+            }
+
+            const core=[marks.price,marks.chart,marks.industryBase,marks.dart,marks.metrics,marks.news].filter(Number.isFinite);
+            const result={
+              symbol,name,
+              ...marks,
+              coreComplete:core.length===6?Math.max(...core):null,
+              navTtfb:nav?.ttfb??null,
+              badge:body.badge,
+              api,
+              failures,
+            };
+            console.log('DETAIL_STAGE '+JSON.stringify(result));
+            await context.close();
+            return result;
+          }
+
+          const browser=await chromium.launch({headless:true});
+          const rows=[];
+          try{
+            for(const [symbol,name] of companies){
+              rows.push(await measure(browser,symbol,name));
+            }
+          }finally{
+            await browser.close();
+          }
+
+          const finite=(key)=>rows.map(r=>r[key]).filter(Number.isFinite);
+          const avg=key=>{
+            const xs=finite(key);
+            return xs.length?Math.round(xs.reduce((a,b)=>a+b,0)/xs.length):null;
+          };
+          const max=key=>{
+            const xs=finite(key);
+            return xs.length?Math.max(...xs):null;
+          };
+          console.log('DETAIL_STAGE_SUMMARY '+JSON.stringify({
+            count:rows.length,
+            avgMs:{
+              price:avg('price'),chart:avg('chart'),industryBase:avg('industryBase'),
+              dart:avg('dart'),metrics:avg('metrics'),news:avg('news'),coreComplete:avg('coreComplete')
+            },
+            maxMs:{
+              price:max('price'),chart:max('chart'),industryBase:max('industryBase'),
+              dart:max('dart'),metrics:max('metrics'),news:max('news'),coreComplete:max('coreComplete')
+            }
+          }));
+          NODE
