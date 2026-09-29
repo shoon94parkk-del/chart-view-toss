@@ -83,6 +83,9 @@ Last updated: 2026-09-22
 
 ### Heatmap/detail round-trip guardrail
 - A heatmap click must preserve the visible company identity in the detail header; raw ticker-only detail is a regression when the heatmap already knows the company name.
+- A direct `#detail/{ticker}` link resolves the exact stock name asynchronously without delaying quote or chart loading. Show the ticker separately; do not repeat it as the company name or use its first digit as a logo.
+- Both detail heart buttons show the same red filled state and `aria-pressed` after device-local watch registration. Toggling a heart must not reload the detail data.
+- Home `종목 검색` opens stock search. A result opens that stock's detail directly; chart comparison remains a separate action.
 - Returning from detail must not remove the viewed heatmap stock. Null/undefined fields from a live quote must never overwrite valid structural fields such as `marketCap`, `name`, or market identity used by the treemap filter/layout.
 
 ### Watchlist quote rollback guardrail

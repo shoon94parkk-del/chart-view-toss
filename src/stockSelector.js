@@ -19,11 +19,13 @@ export function openStockSelector({
   limit = 6,
   nameFor = (symbol) => symbol,
   onApply,
+  onPick,
   restoreBack,
 }) {
   activeClose?.();
 
   const draft = new Set(initial);
+  const searchOnly = typeof onPick === 'function';
   const names = new Map(initial.map((symbol) => [symbol, nameFor(symbol)]));
   const overlay = document.createElement('div');
   overlay.className = 'selector-overlay';
@@ -50,6 +52,7 @@ export function openStockSelector({
     </section>`;
 
   document.body.appendChild(overlay);
+  overlay.querySelector('.selector-sheet').classList.toggle('search-only', searchOnly);
   document.body.classList.add('sheet-open');
 
   const selectedEl = overlay.querySelector('#selector-selected');
@@ -59,6 +62,7 @@ export function openStockSelector({
   const apply = overlay.querySelector('.selector-apply');
 
   const renderSelected = () => {
+    if (searchOnly) return;
     selectedEl.innerHTML = draft.size
       ? [...draft].map((symbol) => `<button type="button" data-selected-remove="${esc(symbol)}"><span>${esc(names.get(symbol) || nameFor(symbol))}</span><small>${esc(symbol)}</small><b>×</b></button>`).join('')
       : '<span class="selector-none">선택한 종목이 없어요.</span>';
@@ -78,10 +82,10 @@ export function openStockSelector({
     lastRows = rows;
     resultEl.innerHTML = rows.length
       ? rows.map((row) => {
-          const chosen = draft.has(row.symbol);
+          const chosen = !searchOnly && draft.has(row.symbol);
           return `<button type="button" class="${chosen ? 'selected' : ''}" data-selector-symbol="${esc(row.symbol)}" data-selector-name="${esc(row.name || row.symbol)}">
             <span><strong>${esc(row.name || row.symbol)}</strong><small>${esc(row.symbol)}${row.market ? ` · ${esc(row.market)}` : ''}</small></span>
-            <b>${chosen ? '선택됨' : '선택'}</b>
+            <b>${searchOnly ? '상세 보기' : chosen ? '선택됨' : '선택'}</b>
           </button>`;
         }).join('')
       : '<div class="selector-empty">검색 결과가 없어요.</div>';
@@ -89,6 +93,12 @@ export function openStockSelector({
     resultEl.querySelectorAll('[data-selector-symbol]').forEach((button) => {
       button.onclick = () => {
         const symbol = button.dataset.selectorSymbol;
+        if (searchOnly) {
+          const name = button.dataset.selectorName || symbol;
+          close();
+          onPick(symbol, name);
+          return;
+        }
         if (draft.has(symbol)) {
           draft.delete(symbol);
           messageEl.textContent = '';

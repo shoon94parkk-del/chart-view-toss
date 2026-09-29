@@ -9,7 +9,7 @@ const view=readFileSync(new URL('../src/industryContextView.js',import.meta.url)
 test('detail loads DART revenue only after the base industry context can render',()=>{
  assert.match(main,/const industryBasePromise=Promise\.all/);
  assert.match(main,/jobs\.push\(settle\(industryBasePromise/);
- assert.match(main,/businessReportData\(symbol,knownName\)\.catch/);
+ assert.match(main,/resolvedName\.then\(name=>businessReportData\(symbol,name\)\)\.catch/);
  assert.match(main,/report\?\.available/);
  assert.match(main,/KRX \+ DART/);
 });

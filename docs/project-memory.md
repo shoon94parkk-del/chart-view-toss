@@ -152,4 +152,6 @@ Toss-specific navigation, safe-area, storage, SDK bridge, and release logic belo
 - Detail reuses a screener row's industry/products when both are present; `company_context.json` is only a fallback for missing metadata or missing symbols.
 - IDEA LAB only fetches enrichment when a candidate is expanded and paints each completed source without waiting for the other source.
 - Missing/ambiguous DART revenue stays distinct from a network failure; neither state creates an unsupported top-revenue claim.
+- 2026-09-29 stock identity polish: direct ticker links resolve an exact API search result and update the detail title/logo while quotes and charts load independently. Stale watchlist entries whose name equals the ticker are repaired when the name resolves. The top and in-card hearts toggle one device-local watch state without reloading detail.
+- Home `종목 검색` uses the stock selector in search-only mode; tapping a result opens detail. The chart selector continues to manage comparison selections separately.
 - 2026-09-29 live uncached DART probe for a non-major Korean stock took 23.4 seconds while a cached request returned in about 0.3 seconds. The Toss report request now waits up to 45 seconds with a visible first-lookup explanation; other detail data remains independently rendered.

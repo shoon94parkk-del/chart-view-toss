@@ -36,9 +36,14 @@ const HOME_MARKET_EXTRA=[
  {symbol:'KRW=X',label:'원/달러',pill:'환율',kind:'fx'},
 ];
 const displayName=(symbol,fallback='')=>DISPLAY_NAMES[symbol]||fallback||symbol;
+const usableStockName=(name,symbol)=>{
+ const value=String(name||'').trim();
+ return value&&value.toUpperCase()!==String(symbol).toUpperCase()&&value!==String(symbol).split('.')[0]?value:'';
+};
 const fmtPrice=(value)=>{const n=finiteNumber(value);if(n===null)return '-';if(Math.abs(n)>=1000)return n.toLocaleString('ko-KR',{maximumFractionDigits:2});if(Math.abs(n)>=100)return n.toLocaleString('ko-KR',{maximumFractionDigits:2});return n.toLocaleString('ko-KR',{maximumFractionDigits:3})};
 const fmtChange=(value)=>{const n=finiteNumber(value);if(n===null)return '-';return `${n>0?'+':''}${n.toFixed(2)}%`};
 const state={tab:'home',watchlist:load(WATCHLIST_KEY,[]),selected:load(SELECTED_KEY,DEFAULTS.map(x=>x.symbol)),period:'1mo',customRange:null,detailSymbol:null,detailName:'',valuationMetric:'forwardPE',watchSort:'manual',newsSort:'major',detailPeriod:'3mo'};
+const resolvedNames=new Map();
 let chartInstance=null;
 let chartResizeObserver=null;
 let detailLiveTimer=null;
@@ -135,7 +140,9 @@ function shell(content,title='차트뷰'){
  const navTab=secondary?'more':state.tab;
  const leading=secondary?`<button class="icon-button back-button" aria-label="뒤로가기" data-back>${iconSvg('back',22)}</button>`:`<span class="brand-mark">${iconSvg('spark',18)}</span>`;
  const offline=typeof navigator!=='undefined'&&navigator.onLine===false;
- return `<main class="app-shell">${offline?'<div class="network-banner" role="status">인터넷 연결이 끊어졌어요. 연결되면 다시 시도해주세요.</div>':''}<header class="topbar"><div class="brand-lockup">${leading}<h1>${title}</h1></div><button class="icon-button" aria-label="관심종목" data-tab="watch">${iconSvg('heart',22)}</button></header><section class="content">${content}${state.tab==='info'?'':dataDisclosure()}</section><nav class="bottom-nav" aria-label="주요 메뉴">${[['home','홈'],['chart','차트'],['watch','관심'],['more','전체']].map(([id,label])=>`<button data-tab="${id}" class="${navTab===id?'active':''}"><i>${iconSvg(id,22)}</i><span>${label}</span></button>`).join('')}</nav></main>`;
+ const detailWatch=state.tab==='detail'&&state.watchlist.some(row=>row.symbol===state.detailSymbol);
+ const topAction=state.tab==='detail'?`<button class="icon-button detail-watch-quick ${detailWatch?'is-watched':''}" id="detail-watch-quick" type="button" aria-pressed="${detailWatch}" aria-label="${detailWatch?'관심종목에서 해제':'관심종목에 등록'}">${iconSvg('heart',22)}</button>`:`<button class="icon-button" aria-label="관심종목" data-tab="watch">${iconSvg('heart',22)}</button>`;
+ return `<main class="app-shell">${offline?'<div class="network-banner" role="status">인터넷 연결이 끊어졌어요. 연결되면 다시 시도해주세요.</div>':''}<header class="topbar"><div class="brand-lockup">${leading}<h1${state.tab==='detail'?' id="detail-top-title"':''}>${esc(title)}</h1></div>${topAction}</header><section class="content">${content}${state.tab==='info'?'':dataDisclosure()}</section><nav class="bottom-nav" aria-label="주요 메뉴">${[['home','홈'],['chart','차트'],['watch','관심'],['more','전체']].map(([id,label])=>`<button data-tab="${id}" class="${navTab===id?'active':''}"><i>${iconSvg(id,22)}</i><span>${label}</span></button>`).join('')}</nav></main>`;
 }
 function sectionTitle(title,action=''){return `<div class="section-head"><h2>${title}</h2>${action}</div>`}
 function stockRow(x){const name=displayName(x.symbol,x.name);return `<button class="stock-row" data-stock-detail="${x.symbol}"><span class="stock-logo">${esc(name.slice(0,1))}</span><span class="stock-copy"><strong>${esc(name)}</strong><small>${esc(x.symbol)}</small></span><span class="chevron">${iconSvg('arrow',18)}</span></button>`}
@@ -170,6 +177,16 @@ function bindNav(){
    haptic('tickWeak');
    const opened=await openExternal(b.dataset.externalUrl);
    if(!opened)showToast('외부 링크를 열지 못했어요. 잠시 후 다시 시도해주세요.');
+ });
+}
+function openHomeSearch(){
+ openStockSelector({
+   title:'종목 검색',
+   description:'종목명이나 티커를 검색해 상세 정보를 확인하세요.',
+   initial:[],
+   nameFor:(symbol)=>displayName(symbol),
+   onPick:(symbol,name)=>navigate('detail',symbol,name),
+   restoreBack:restoreNativeBack,
  });
 }
 function cleanupChart(){analysisCleanup?.();analysisCleanup=null;viewEpoch++;chartLoadSeq++;chartResizeObserver?.disconnect();chartResizeObserver=null;if(detailLiveTimer){clearTimeout(detailLiveTimer);detailLiveTimer=null;}if(chartInstance){try{chartInstance.remove()}catch{}chartInstance=null}}
@@ -330,7 +347,7 @@ async function renderHome(){
  document.querySelector('#app').innerHTML=shell(`
    <section class="home-compact-head">
      <div><span class="home-kicker">오늘 시장</span><h2>시장과 내 종목을 한눈에</h2></div>
-     <button class="search-box elevated home-search" data-go-chart>${iconSvg('search',20)}<span>종목 검색</span><b>${iconSvg('arrow',18)}</b></button>
+     <button class="search-box elevated home-search" id="home-search-open" type="button">${iconSvg('search',20)}<span>종목 검색</span><b>${iconSvg('arrow',18)}</b></button>
    </section>
    <section class="market-section home-primary"><div class="section-head market-head"><h2>주요 시장</h2><div class="market-head-actions"><span id="market-time">기준 시각 확인 중</span><button type="button" id="market-expand" class="market-expand" aria-expanded="false" hidden>더 보기 <span>⌄</span></button></div></div><div id="market-card"><div class="market-grid"><div class="skeleton quote"></div><div class="skeleton quote"></div><div class="skeleton quote"></div><div class="skeleton quote"></div></div></div></section>
    <section class="section watch-section home-primary">${sectionTitle('내 관심종목','<button class="text-button" data-tab="watch">'+(hasWatch?'관리':'추가')+'</button>')}<div id="home-watchlist" class="watch-card">${hasWatch?'<div class="skeleton watch"></div><div class="skeleton watch"></div>':'<div class="home-empty-watch"><strong>관심종목을 추가해보세요</strong><span>저장한 종목의 가격과 주요 뉴스를 홈에서 바로 볼 수 있어요.</span><button type="button" data-tab="watch">관심종목 추가</button></div>'}</div></section>
@@ -345,6 +362,7 @@ async function renderHome(){
    <section class="section home-news-section" id="home-news-section">${sectionTitle('관심종목 뉴스','<button class="text-button" data-tab="news">전체보기</button>')}<div id="home-news"><div class="skeleton news"></div></div></section>
  `);
  bindNav();
+ document.querySelector('#home-search-open').onclick=openHomeSearch;
  bindHomeMarketToggle();
 
  const watchSymbols=state.watchlist.slice(0,4).map(x=>x.symbol);
@@ -741,11 +759,12 @@ async function renderDetail(){
  const epoch=viewEpoch;
  const symbol=state.detailSymbol||state.selected[0]||'005930.KS';
  const saved=state.watchlist.find(x=>x.symbol===symbol);
- const knownName=displayName(symbol,saved?.name||state.detailName||symbol);
+ let knownName=usableStockName(state.detailName,symbol)||usableStockName(saved?.name,symbol)||usableStockName(DISPLAY_NAMES[symbol],symbol);
+ const headingName=knownName||'종목명 확인 중';
  document.querySelector('#app').innerHTML=shell(`
    <section class="detail-compact-head">
-     <div class="detail-brand"><span class="detail-logo">${esc(knownName.slice(0,1))}</span><div><span>${esc(symbol)}</span><h2>${esc(knownName)}</h2></div></div>
-     <div class="detail-actions"><button id="detail-watch">${iconSvg('heart',18)} <span>${saved?'관심 해제':'관심 추가'}</span></button><button id="detail-compare">${iconSvg('chart',18)} <span>비교에 추가</span></button></div>
+     <div class="detail-brand"><span class="detail-logo" id="detail-logo">${knownName?esc(knownName.slice(0,1)):'?'}</span><div><span>${esc(symbol)}</span><h2 id="detail-name">${esc(headingName)}</h2></div></div>
+     <div class="detail-actions"><button id="detail-watch" class="detail-watch-button" type="button">${iconSvg('heart',18)} <span>${saved?'관심 등록됨':'관심 등록'}</span></button><button id="detail-compare">${iconSvg('chart',18)} <span>비교에 추가</span></button></div>
    </section>
    <section class="detail-price skeleton detail-price-skeleton" id="detail-price"><span class="detail-price-loading" role="status">현재가 확인 중</span></section>
    <div class="segmented detail-period-tabs">${[['1mo','1개월'],['3mo','3개월'],['6mo','6개월'],['1y','1년']].map(([p,l])=>`<button data-detail-period="${p}" aria-pressed="${state.detailPeriod===p}" class="${state.detailPeriod===p?'active':''}">${l}</button>`).join('')}</div>
@@ -753,22 +772,64 @@ async function renderDetail(){
    <section class="detail-block detail-industry-block" id="detail-industry-block"><div class="section-head"><div><h2>회사 · 산업 맥락</h2><p>주요제품부터 섹터와 공급망까지</p></div><span class="detail-context-badge">KRX</span></div><div id="detail-industry-context" class="detail-industry-context"><div class="skeleton detail-context-skeleton"></div><p class="detail-context-loading" role="status">회사·산업 정보 불러오는 중</p></div></section>
    <section class="detail-block"><div class="section-head"><h2>핵심 지표</h2><button class="text-button" data-tab="valuation">같은 지표 비교</button></div><div id="detail-metrics" class="detail-metrics"><div class="skeleton metric"></div><div class="skeleton metric"></div><div class="skeleton metric"></div><div class="skeleton metric"></div></div><div id="detail-metric-meta" class="detail-metric-meta"></div></section>
    <section class="detail-block"><div class="section-head"><h2>관련 뉴스</h2><button class="text-button" data-tab="news">전체 뉴스</button></div><div id="detail-news" class="detail-news"><div class="skeleton news"></div><div class="skeleton news"></div></div></section>
- `,knownName);
+ `,headingName);
  bindNav();
- document.querySelector('#detail-watch')?.addEventListener('click',()=>{
+ const paintWatchState=()=>{
+   const watched=state.watchlist.some(row=>row.symbol===symbol);
+   const label=knownName||symbol;
+   for(const button of [document.querySelector('#detail-watch'),document.querySelector('#detail-watch-quick')]){
+     if(!button)continue;
+     button.classList.toggle('is-watched',watched);
+     button.setAttribute('aria-pressed',String(watched));
+     button.setAttribute('aria-label',`${label} ${watched?'관심종목에서 해제':'관심종목에 등록'}`);
+   }
+   const text=document.querySelector('#detail-watch span');
+   if(text)text.textContent=watched?'관심 등록됨':'관심 등록';
+ };
+ const applyDetailName=name=>{
+   const resolved=usableStockName(name,symbol);
+   if(!resolved||epoch!==viewEpoch||state.tab!=='detail'||state.detailSymbol!==symbol)return;
+   knownName=resolved;
+   state.detailName=resolved;
+   resolvedNames.set(symbol,resolved);
+   const title=document.querySelector('#detail-top-title');if(title)title.textContent=resolved;
+   const hero=document.querySelector('#detail-name');if(hero)hero.textContent=resolved;
+   const logo=document.querySelector('#detail-logo');if(logo)logo.textContent=resolved.slice(0,1);
+   const entry=state.watchlist.find(row=>row.symbol===symbol);
+   if(entry&&!usableStockName(entry.name,symbol)){entry.name=resolved;persist();}
+   paintWatchState();
+ };
+ const resolvedName=knownName?Promise.resolve(knownName):searchStocks(symbol).then(data=>{
+   const exact=(data?.results||[]).find(row=>String(row.symbol).toUpperCase()===symbol.toUpperCase());
+   if(exact?.name)applyDetailName(exact.name);
+   return knownName||symbol;
+ }).catch(()=>knownName||symbol);
+ if(knownName)applyDetailName(knownName);
+ paintWatchState();
+ const toggleDetailWatch=()=>{
    const idx=state.watchlist.findIndex(x=>x.symbol===symbol);
    if(idx>=0){
      const removed=state.watchlist[idx];state.watchlist.splice(idx,1);
-     if(persist()){showToast(`${knownName} 관심종목에서 삭제했어요.`,'실행 취소',()=>{state.watchlist.splice(idx,0,removed);persist();renderDetail()});renderDetail()}
+     if(!persist()){state.watchlist.splice(idx,0,removed);return;}
+     paintWatchState();
+     showToast(`${knownName||symbol} 관심종목에서 삭제했어요.`,'실행 취소',()=>{
+       if(state.watchlist.some(row=>row.symbol===symbol))return;
+       state.watchlist.splice(idx,0,removed);
+       if(!persist()){state.watchlist.splice(idx,1);return;}
+       paintWatchState();
+     });
    }else{
-     state.watchlist.unshift({symbol,name:knownName});
-     if(persist()){haptic('tickWeak');showToast(`${knownName} 관심종목에 저장했어요.`);renderDetail()}
+     state.watchlist.unshift({symbol,name:knownName||symbol});
+     if(!persist()){state.watchlist.shift();return;}
+     haptic('tickWeak');paintWatchState();showToast(`${knownName||symbol} 관심종목에 저장했어요.`);
    }
- });
+ };
+ document.querySelector('#detail-watch')?.addEventListener('click',toggleDetailWatch);
+ document.querySelector('#detail-watch-quick')?.addEventListener('click',toggleDetailWatch);
  document.querySelector('#detail-compare')?.addEventListener('click',()=>{
    if(state.selected.includes(symbol)){showToast('이미 비교 종목에 포함돼 있어요.');navigate('chart');return}
    if(state.selected.length>=6){showToast('비교는 최대 6개까지 가능해요. 차트에서 종목을 변경해주세요.','차트 열기',()=>navigate('chart'));return}
-   state.selected=[...state.selected,symbol];persist();showToast(`${knownName}을 비교에 추가했어요.`);navigate('chart');
+   state.selected=[...state.selected,symbol];persist();showToast(`${knownName||symbol}을 비교에 추가했어요.`);navigate('chart');
  });
  document.querySelectorAll('[data-detail-period]').forEach(b=>b.onclick=()=>{state.detailPeriod=b.dataset.detailPeriod;haptic('tickWeak');renderDetail()});
 
@@ -796,6 +857,7 @@ async function renderDetail(){
      const payload=await quoteSnapshotsLive([symbol]);
      const quote=payload?.results?.[0];
      if(quote){
+       if(!knownName&&quote.name)applyDetailName(quote.name);
        rememberLiveQuotes([quote],{priority:50});
        const canonical=getLiveQuote(symbol)||quote;
        persistLiveQuoteToHomeSnapshot(canonical);
@@ -885,7 +947,7 @@ async function renderDetail(){
    };
    jobs.push(settle(Promise.all([
      industryBasePromise,
-     businessReportData(symbol,knownName).catch(()=>({loadError:true})),
+     resolvedName.then(name=>businessReportData(symbol,name)).catch(()=>({loadError:true})),
    ]),dartRes=>{
      if(dartRes.status!=='fulfilled')return;
      const [base,report]=dartRes.value||[];
@@ -896,7 +958,7 @@ async function renderDetail(){
    }));
    jobs.push(settle(Promise.all([
      industryBasePromise,
-     relationshipEvidenceData(symbol,knownName).catch(()=>({loadError:true})),
+     resolvedName.then(name=>relationshipEvidenceData(symbol,name)).catch(()=>({loadError:true})),
    ]),evidenceRes=>{
      if(evidenceRes.status!=='fulfilled')return;
      const [base,evidence]=evidenceRes.value||[];
@@ -913,7 +975,7 @@ async function renderDetail(){
  document.querySelector('#detail-metric-meta').innerHTML=valuation?`재무 데이터 조회 ${esc(formatKst(valuation.generatedAt))} · 지표별 출처는 밸류에이션 비교에서 확인할 수 있어요.`:'재무 데이터를 불러오지 못했어요. <button class="retry" data-retry-detail>다시 시도</button>';
 
  }));
- jobs.push(settle(personalizedNews([symbol],[knownName]),newsRes=>{
+ jobs.push(settle(resolvedName.then(name=>personalizedNews([symbol],[name])),newsRes=>{
  const news=newsRes.status==='fulfilled'?(newsRes.value?.items||[]).slice(0,4):[];
  document.querySelector('#detail-news').innerHTML=news.length?news.map(row=>newsCard(row)).join(''):'<div class="empty compact"><strong>표시할 관련 뉴스가 없어요</strong><span>직접 또는 업종 관련 근거가 확인된 기사를 표시해요.</span></div>';
  }));
@@ -1059,6 +1121,7 @@ function syncFromLocation(){
  const route=resolveRoute(location);
  Object.assign(state,route);
  state.detailName=route.tab==='detail'?(history.state?.detailName||''):'';
+ if(route.tab==='detail'&&!state.detailName)state.detailName=resolvedNames.get(route.detailSymbol)||'';
 }
 
 applyRuntimeClass();
