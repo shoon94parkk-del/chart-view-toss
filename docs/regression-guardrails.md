@@ -152,4 +152,5 @@ Last updated: 2026-09-22
 ### DART financials and sector comparability
 - The detail financial panel is Korean-only, dynamically loaded, and independent of price/chart/valuation/DART revenue-mix loading. Show original filing links, annual versus cumulative interim periods, and CFS/OFS basis.
 - Do not call unrelated companies a sector peer merely because they share a broad KRX industry. Prefer a specific product/industry-stage group, filter by screener trade date, and withhold a strength label below three peers.
+- A company name alone is not industry evidence. Samsung Electronics and SK hynix must share the memory-chip manufacturing comparison group; Dongseong Finetec's disclosed cryogenic insulation belongs in the LNG/shipbuilding materials group.
 - Detail navigation must preserve the originating bottom-nav tab; direct detail links may default to Home. The More body heading must not repeat the topbar `전체`.

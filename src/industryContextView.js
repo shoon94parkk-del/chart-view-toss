@@ -121,7 +121,7 @@ export function industryContextHtml(context,{collapsible=false,open=false,busine
       <span class="industry-status ${esc(sector.tone)}">${esc(sector.label)}</span>
     </div>
     <p class="industry-name">${esc(sector.industry)} <span>· 비교군 ${Number(sector.peerCount||0).toLocaleString()}개</span></p>
-    <p class="industry-caption">${esc(sector.groupBasis||'KRX 업종')} 기준${sector.tradeDate?' · '+esc(sector.tradeDate)+' 종가':''}${sector.officialIndustry&&sector.officialIndustry!==sector.industry?' · KRX 업종: '+esc(sector.officialIndustry):''}. 사업 연관 후보이며 수익률이 같게 움직인다는 뜻은 아니에요.</p>
+    <p class="industry-caption">${esc(sector.groupBasis||'KRX 업종')} 기준${sector.tradeDate?' · '+esc(sector.tradeDate)+' 종가':''}${sector.officialIndustry&&sector.officialIndustry!==sector.industry?' · KRX 업종: '+esc(sector.officialIndustry):''}. 등락은 단순 평균이며 사업 연관 후보가 같은 방향으로 움직인다는 뜻은 아니에요.</p>
     <div class="industry-meter"><span style="width:${Math.max(0,Math.min(100,Math.round(Number(sector.upRatio||0)*100)))}%"></span></div>
     <div class="industry-metrics">
       <div><span>상승 종목</span><strong>${ratio(sector.upRatio)}</strong></div>

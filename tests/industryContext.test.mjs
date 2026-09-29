@@ -33,10 +33,18 @@ test('Samsung Electronics and SK hynix use comparable chip peers despite differe
  assert.equal(classifySupplyChain(samsung).stage,'칩·소자');
  assert.equal(classifySupplyChain(hynix).stage,'칩·소자');
  const ctx=buildSectorContext(samsung,[samsung,hynix,irrelevant,old]);
- assert.equal(ctx.industry,'반도체 · 칩·소자');
+ assert.equal(ctx.industry,'메모리 반도체 제조');
  assert.equal(ctx.peerCount,2);
  assert.equal(ctx.avgChange,1.5);
  assert.equal(ctx.officialIndustry,'통신 및 방송 장비 제조업');
+});
+
+test('company names do not invent industries and LNG insulation is linked to shipbuilding',()=>{
+ const portal={symbol:'X.KQ',name:'디지틀조선',industry:'인터넷 정보매개 서비스업',mainProducts:'위성서비스'};
+ const insulation={symbol:'033500.KQ',name:'동성화인텍',industry:'기초 화학물질 제조업',mainProducts:'초저온 보냉재'};
+ assert.equal(classifySupplyChain(portal),null);
+ assert.equal(classifySupplyChain(insulation).chain,'shipbuilding');
+ assert.equal(classifySupplyChain(insulation).stage,'소재·기자재');
 });
 
 test('supply peers prefer related chain and identify adjacent stages',()=>{

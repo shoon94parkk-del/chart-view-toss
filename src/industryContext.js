@@ -1,7 +1,8 @@
 import { finiteNumber } from './analysisData.js';
 
 const norm=value=>String(value||'').toLowerCase().replace(/\s+/g,' ');
-const rowText=row=>norm([row?.industry,row?.mainProducts,row?.name].filter(Boolean).join(' '));
+// A company's name is not evidence that its disclosed products belong to that industry.
+const rowText=row=>norm([row?.industry,row?.mainProducts].filter(Boolean).join(' '));
 const n=(row,key)=>finiteNumber(row?.[key]);
 
 const CHAIN_DEFS=[
@@ -54,7 +55,7 @@ const CHAIN_DEFS=[
   },
   {
     id:'shipbuilding', label:'조선·LNG',
-    match:/조선|선박|lng|해양플랜트|선박엔진|조선기자재/,
+    match:/조선|선박|lng|해양플랜트|선박엔진|조선기자재|보냉재|초저온 보냉/,
     stages:[
       ['소재·기자재',/강관|후판|보냉|밸브|펌프|기자재|엔진|케이블/],
       ['조선·플랜트',/선박|조선|해양플랜트|ship/],
@@ -101,9 +102,14 @@ export function classifySupplyChain(row){
     // even when their disclosed major products include memory chips.
     const products=norm(row?.mainProducts);
     const industry=norm(row?.industry);
-    if(chain.id==='semiconductor'&&(/반도체 제조업/.test(industry)||/반도체 제조.*메모리|dram|nand|hbm|메모리 반도체|파운드리/.test(products))){
+    if(chain.id==='semiconductor'&&(/반도체 제조\(메모리\)/.test(products)||
+      (/반도체 제조.*메모리|dram|nand|hbm|파운드리|반도체 설계|반도체 칩/.test(products)&&!/비메모리|테스트|테스터|검사장비|프로브|모듈|기판/.test(products))||
+      String(row?.symbol).toUpperCase()==='000660.KS')){
       stage='칩·소자';
       return {chain:chain.id,chainLabel:chain.label,stage};
+    }
+    if(chain.id==='shipbuilding'&&/해상 운송|해운업|화물 운송/.test(industry)){
+      return {chain:chain.id,chainLabel:chain.label,stage:'운송'};
     }
     for(const [label,pattern] of chain.stages){
       if(pattern.test(text)){stage=label;break;}
@@ -111,6 +117,23 @@ export function classifySupplyChain(row){
     return {chain:chain.id,chainLabel:chain.label,stage};
   }
   return null;
+}
+
+function memoryChipMaker(row){
+  const products=norm(row?.mainProducts);
+  return String(row?.symbol).toUpperCase()==='000660.KS'||
+    /반도체 제조\(메모리\)/.test(products)||
+    (/dram|sdram|sram|psram|nand|hbm|메모리 반도체 제조/.test(products)&&
+     /반도체 제조업/.test(norm(row?.industry))&&
+     !/비메모리|테스트|테스터|프로브|모듈|기판|장비/.test(products));
+}
+
+function comparisonGroup(row){
+  if(memoryChipMaker(row))return {key:'memory-chip',label:'메모리 반도체 제조',basis:'KRX 주요제품·사업 구분'};
+  const cls=classifySupplyChain(row);
+  if(cls&&cls.stage!=='관련기업')return {key:`${cls.chain}:${cls.stage}`,label:`${cls.chainLabel} · ${cls.stage}`,basis:'KRX 주요제품·산업 단계'};
+  const industry=String(row?.industry||'').trim();
+  return industry?{key:`industry:${industry}`,label:industry,basis:'KRX 업종'}:null;
 }
 
 function sectorTone({peerCount,upRatio,avgChange,trendRatio}){
@@ -124,14 +147,11 @@ function sectorTone({peerCount,upRatio,avgChange,trendRatio}){
 export function buildSectorContext(row,rows){
   const industry=String(row?.industry||'').trim();
   if(!industry)return null;
-  const cls=classifySupplyChain(row);
-  const focused=cls&&cls.stage!=='관련기업';
-  const groupLabel=focused?`${cls.chainLabel} · ${cls.stage}`:industry;
+  const group=comparisonGroup(row);
+  const groupLabel=group?.label||industry;
   const peers=(Array.isArray(rows)?rows:[]).filter(x=>{
     if(row?.date&&x?.date!==row.date)return false;
-    if(!focused)return String(x?.industry||'').trim()===industry;
-    const other=classifySupplyChain(x);
-    return other?.chain===cls.chain&&other?.stage===cls.stage;
+    return comparisonGroup(x)?.key===group.key;
   });
   const changes=peers.map(x=>n(x,'change1d')).filter(v=>v!==null);
   if(!peers.length||!changes.length)return null;
@@ -150,7 +170,7 @@ export function buildSectorContext(row,rows){
   return {
     industry:groupLabel,
     officialIndustry:industry,
-    groupBasis:focused?'KRX 주요제품·산업 단계':'KRX 업종',
+    groupBasis:group.basis,
     tradeDate:row?.date||'',
     peerCount:peers.length,
     observedCount:changes.length,
@@ -176,8 +196,17 @@ export function findSupplyChainPeers(row,rows,{limit=4}={}){
   const base=classifySupplyChain(row);
   if(base){
     return universe.filter(x=>x.symbol!==row.symbol).map(x=>({row:x,cls:classifySupplyChain(x)}))
-      .filter(x=>x.cls?.chain===base.chain)
-      .sort((a,b)=>peerScore(b.row,base.stage)-peerScore(a.row,base.stage))
+      .filter(x=>{
+        if(x.cls?.chain!==base.chain)return false;
+        if(!memoryChipMaker(row))return true;
+        const products=norm(x.row?.mainProducts);
+        return /메모리|dram|nand|hbm|웨이퍼|반도체.{0,12}(검사|장비|소재|부품)/.test(products)&&
+          !/비메모리|통신장비|기지국|rf\b/.test(products);
+      })
+      .sort((a,b)=>{
+        const memoryScore=x=>memoryChipMaker(row)&&/메모리|dram|nand|hbm/i.test(x.row?.mainProducts||'')?20:0;
+        return memoryScore(b)+peerScore(b.row,base.stage)-memoryScore(a)-peerScore(a.row,base.stage);
+      })
       .slice(0,limit)
       .map(({row:x,cls})=>({
         symbol:x.symbol,
