@@ -131,7 +131,7 @@ function dataDisclosure(){
  return `<aside class="data-disclosure"><div><strong>데이터 이용 안내</strong><span>시세·재무·뉴스 데이터는 제공처 상황에 따라 지연·누락·오류가 있을 수 있으며 투자 권유가 아니에요.</span></div><button data-tab="info">자세히</button></aside>`;
 }
 function shell(content,title='차트뷰'){
- const secondary=ANALYSIS_ROUTES.has(state.tab)||['valuation','macro','discover','picks','news','detail','info'].includes(state.tab);
+ const secondary=ANALYSIS_ROUTES.has(state.tab)||['valuation','macro','discover','ideas','picks','news','detail','info'].includes(state.tab);
  const navTab=secondary?'more':state.tab;
  const leading=secondary?`<button class="icon-button back-button" aria-label="뒤로가기" data-back>${iconSvg('back',22)}</button>`:`<span class="brand-mark">${iconSvg('spark',18)}</span>`;
  const offline=typeof navigator!=='undefined'&&navigator.onLine===false;
@@ -926,6 +926,7 @@ function renderMore(){
      <button class="feature-row" data-tab="valuation"><span class="feature-icon purple">${iconSvg('value',22)}</span><span><strong>밸류에이션</strong><small>같은 재무지표를 종목별 비교</small></span><b>${iconSvg('arrow',19)}</b></button>
      <button class="feature-row" data-tab="macro"><span class="feature-icon green">${iconSvg('macro',22)}</span><span><strong>경제 지표</strong><small>단위·관측일·변화 기준 확인</small></span><b>${iconSvg('arrow',19)}</b></button>
      <button class="feature-row" data-tab="discover"><span class="feature-icon yellow">${iconSvg('discover',22)}</span><span><strong>시장 스크리너</strong><small>전체 종목 검색·조건 필터·정렬</small></span><b>${iconSvg('arrow',19)}</b></button>
+     <button class="feature-row" data-tab="ideas"><span class="feature-icon blue">${iconSvg('spark',22)}</span><span><strong>투자 아이디어 LAB</strong><small>기술적 패턴에서 다음 조사거리 찾기</small></span><b>${iconSvg('arrow',19)}</b></button>
      ${SHOW_SPOTLIGHT?`<button class="feature-row" data-tab="picks"><span class="feature-icon blue">${iconSvg('spark',22)}</span><span><strong>최근 주목받는 종목</strong><small>선정 종목과 이후 성과·점검 기록</small></span><b>${iconSvg('arrow',19)}</b></button>`:''}
 <button class="feature-row" data-tab="heatmap"><span class="feature-icon blue">${iconSvg('chart',22)}</span><span><strong>시장 히트맵</strong><small>업종별 등락 한눈에 조회</small></span><b>${iconSvg('arrow',19)}</b></button><button class="feature-row" data-tab="consensus"><span class="feature-icon blue">${iconSvg('chart',22)}</span><span><strong>실적 전망 조회</strong><small>EPS·매출 추정치 및 변경 내역</small></span><b>${iconSvg('arrow',19)}</b></button><button class="feature-row" data-tab="bands"><span class="feature-icon blue">${iconSvg('chart',22)}</span><span><strong>역사적 밸류에이션</strong><small>과거 PER·PBR 분포와 추이</small></span><b>${iconSvg('arrow',19)}</b></button><button class="feature-row" data-tab="tools"><span class="feature-icon blue">${iconSvg('chart',22)}</span><span><strong>자료 출처</strong><small>공시·거래소·경제지표 원자료</small></span><b>${iconSvg('arrow',19)}</b></button>   </div></section>
    <section class="menu-group"><h3>뉴스</h3><div class="feature-menu"><button class="feature-row" data-tab="news"><span class="feature-icon coral">${iconSvg('news',22)}</span><span><strong>관심종목 뉴스</strong><small>직접 관련·업종 관련을 구분해 표시</small></span><b>${iconSvg('arrow',19)}</b></button></div></section>
@@ -934,7 +935,7 @@ function renderMore(){
      <button class="feature-row" data-tab="info"><span class="feature-icon blue">${iconSvg('spark',22)}</span><span><strong>데이터 및 이용 안내</strong><small>기준·지연·개인정보·지원 안내</small></span><b>${iconSvg('arrow',19)}</b></button>
      <div class="feature-row"><span><strong>고객문의</strong><small>박상훈 · kimtang89@naver.com</small></span></div>
    </div></section>
-   <div class="version-card"><span class="brand-mark">${iconSvg('spark',16)}</span><div><strong>Chart View</strong><small>버전 0.9.4</small></div></div>
+   <div class="version-card"><span class="brand-mark">${iconSvg('spark',16)}</span><div><strong>Chart View</strong><small>버전 0.9.5</small></div></div>
  `,'전체');
  bindNav();
 }
@@ -954,6 +955,13 @@ function render(){
  if(state.tab==='watch')return renderWatch();
  if(state.tab==='valuation')return renderValuation();
  if(state.tab==='macro')return renderMacro();
+ if(state.tab==='ideas'){
+   cleanupChart();
+   void Promise.all([import('./ideaView.js'),import('./ideaView.css')]).then(([ideas])=>{
+     if(state.tab==='ideas')ideas.renderIdeaView({shell,bindNav});
+   });
+   return;
+ }
  if(state.tab==='picks'&&SHOW_SPOTLIGHT){
    cleanupChart();
    void Promise.all([import('./pickLedger.js'),import('./pickLedger.css')]).then(([ledger])=>{
@@ -1018,5 +1026,5 @@ async function startApp(){
 startApp();
 // Opt-in support diagnostics: aggregate timings only, local to this app session.
 if(new URLSearchParams(location.search).get('diagnostics')==='1') {
- Object.defineProperty(window,'chartviewDiagnostics',{value:()=>({version:'0.9.2',metrics:diagnosticSummary()}),configurable:true});
+ Object.defineProperty(window,'chartviewDiagnostics',{value:()=>({version:'0.9.5',metrics:diagnosticSummary()}),configurable:true});
 }
