@@ -19,3 +19,10 @@ test('missing Korean company context removes the optional panel instead of break
  assert.match(main,/industryRes\.status!==['"]fulfilled['"]\|\|!industryRes\.value/);
  assert.match(main,/block\.remove\(\)/);
 });
+
+test('Korean detail tickers enter DART enrichment branch',()=>{
+ assert.match(main,/if\(\/\\\.\(KS\|KQ\)\$\/i\.test\(symbol\)\)\{/);
+ assert.doesNotMatch(main,/if\(\/\\\\\.\(KS\|KQ\)\$\/i\.test\(symbol\)\)\{/);
+ assert.match(main,/businessReportData\(symbol,knownName\)/);
+});
+
