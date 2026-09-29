@@ -15,7 +15,8 @@ test('detail loads DART revenue only after the base industry context can render'
 });
 
 test('DART detail call is restricted to Korean exchange tickers',()=>{
- assert.match(main,/if\(\/\\\\\.\(KS\|KQ\)\$\/i\.test\(symbol\)\)/);
+ assert.equal(main.includes("if(/\\.(KS|KQ)$/i.test(symbol)){"),true);
+ assert.equal(main.includes("if(/\\\\.(KS|KQ)$/i.test(symbol)){"),false);
 });
 
 test('business report client keeps a short stale-safe cache and no retry storm',()=>{
