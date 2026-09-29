@@ -7,7 +7,7 @@ import { SHOW_SPOTLIGHT } from './releaseScope.js';
 import { ANALYSIS_ROUTES, renderAnalysis } from './analysisViews.js';
 import { finiteNumber } from './analysisData.js';
 import { loadChartRuntime } from './chartRuntime.js';
-import { API_BASE, quoteSnapshots, quoteSnapshotsLive, compareStocks, marketNow, homeSnapshot, searchStocks, valuationStocks, macroData, homeInsights, personalizedNews, screenerData, companyContextData } from './api.js';
+import { API_BASE, quoteSnapshots, quoteSnapshotsLive, compareStocks, marketNow, homeSnapshot, searchStocks, valuationStocks, macroData, homeInsights, personalizedNews, screenerData, companyContextData, businessReportData } from './api.js';
 import { applyRuntimeClass, haptic, openExternal, syncNativeBackHandler, closeMiniApp, isAppsInTossRuntime } from './tossBridge.js';
 import { openStockSelector, closeStockSelector } from './stockSelector.js';
 import { initializeStorage, readStored, writeStored, clearStored, getActivityVisitorId } from './storage.js';
@@ -829,20 +829,12 @@ async function renderDetail(){
  }
 
  }));
- jobs.push(settle(Promise.all([
+ const industryBasePromise=Promise.all([
    screenerData().catch(()=>null),
    companyContextData().catch(()=>null),
    import('./industryContext.js'),
    import('./industryContextView.js'),
- ]),industryRes=>{
-   const host=document.querySelector('#detail-industry-context');
-   const block=document.querySelector('#detail-industry-block');
-   if(!host||!block)return;
-   if(industryRes.status!=='fulfilled'){
-     host.innerHTML='<div class="detail-context-empty">회사·산업 데이터를 불러오지 못했어요. 다른 상세 정보는 계속 볼 수 있어요.</div>';
-     return;
-   }
-   const [screener,companyMeta,industryModule,viewModule]=industryRes.value;
+ ]).then(([screener,companyMeta,industryModule,viewModule])=>{
    const metaRows=Array.isArray(companyMeta?.companies)?companyMeta.companies:[];
    const metaBySymbol=new Map(metaRows.map(row=>[String(row?.symbol||'').toUpperCase(),row]));
    const screenerRows=Array.isArray(screener?.stocks)?screener.stocks:[];
@@ -852,18 +844,38 @@ async function renderDetail(){
    });
    const current=enrichedRows.find(row=>String(row?.symbol||'').toUpperCase()===String(symbol).toUpperCase())
      ||metaBySymbol.get(String(symbol).toUpperCase());
-   if(!current){
+   if(!current)return null;
+   return {
+     context:industryModule.companyContext(current,enrichedRows.length?enrichedRows:metaRows),
+     viewModule,
+   };
+ });
+ jobs.push(settle(industryBasePromise,industryRes=>{
+   const host=document.querySelector('#detail-industry-context');
+   const block=document.querySelector('#detail-industry-block');
+   if(!host||!block)return;
+   if(industryRes.status!=='fulfilled'||!industryRes.value){
      block.remove();
      return;
    }
-   const context=industryModule.companyContext(current,enrichedRows.length?enrichedRows:metaRows);
-   const html=viewModule.industryContextHtml(context,{collapsible:false});
-   if(!html){
-     block.remove();
-     return;
-   }
+   const html=industryRes.value.viewModule.industryContextHtml(industryRes.value.context,{collapsible:false});
+   if(!html){block.remove();return;}
    host.innerHTML=html;
  }));
+ if(/\\.(KS|KQ)$/i.test(symbol)){
+   jobs.push(settle(Promise.all([
+     industryBasePromise,
+     businessReportData(symbol,knownName).catch(()=>null),
+   ]),reportRes=>{
+     const host=document.querySelector('#detail-industry-context');
+     if(!host||reportRes.status!=='fulfilled')return;
+     const [base,report]=reportRes.value||[];
+     if(!base||!report?.available)return;
+     host.innerHTML=base.viewModule.industryContextHtml(base.context,{collapsible:false,businessReport:report});
+     const badge=document.querySelector('#detail-industry-block .detail-context-badge');
+     if(badge)badge.textContent='KRX + DART';
+   }));
+ }
  jobs.push(settle(valuationStocks([symbol]),valRes=>{
  const valuation=valRes.status==='fulfilled'?valRes.value?.stocks?.[0]:null;
  const metricDefs=[['예상 PER','forwardPE','배'],['실적 PER','trailingPE','배'],['PBR','pbr','배'],['ROE','roe','%'],['영업이익률','operatingMargin','%'],['배당수익률','dividendYield','%']];
