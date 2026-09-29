@@ -39,6 +39,7 @@ export const macroData=()=>api('/api/macro',{ttlMs:300000});
 export const homeInsights=(tickers=[])=>api(`/api/home-insights?tickers=${list(tickers)}`,{ttlMs:60000});
 export const personalizedNews=(tickers=[],names=[])=>api(`/api/personalized-news?tickers=${list(tickers)}&names=${encodeURIComponent(names.join('|'))}`,{timeoutMs:10000,retries:0,ttlMs:60000});
 export const screenerData=()=>staticData('screener.json',()=>api('/static/data/screener.json',{ttlMs:60000}));
+export const companyContextData=()=>staticData('company_context.json',()=>api('/static/data/company_context.json',{ttlMs:3600000}));
 export const heatmapData=()=>staticData('heatmap.json',()=>api('/static/data/heatmap.json',{ttlMs:60000}));
 export const consensusData=ticker=>api(`/api/consensus?ticker=${encodeURIComponent(ticker)}`,{ttlMs:300000});
 export const valuationBandData=(ticker,years=3)=>api(`/api/valuation-band?ticker=${encodeURIComponent(ticker)}&years=${years}`,{ttlMs:300000});
