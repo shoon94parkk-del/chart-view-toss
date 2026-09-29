@@ -1,0 +1,64 @@
+name: Live DART UI Smoke
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/live-dart-ui-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.21.0'
+          cache: npm
+      - name: Install dependencies
+        run: |
+          npm ci
+          npm install --no-save --package-lock=false playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Verify Samsung DART card on live Render
+        run: |
+          node - <<'NODE'
+          const { chromium } = require('playwright');
+          (async()=>{
+            const browser=await chromium.launch({headless:true});
+            const context=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:1});
+            const page=await context.newPage();
+            const requests=[];
+            page.on('response',async res=>{
+              if(res.url().includes('/api/business-report'))requests.push({url:res.url(),status:res.status()});
+            });
+            const started=Date.now();
+            await page.goto('https://chart-view-toss.onrender.com/#detail/005930.KS',{waitUntil:'domcontentloaded',timeout:30000});
+            await page.waitForFunction(()=>{
+              const badge=document.querySelector('.detail-context-badge')?.textContent||'';
+              const text=document.querySelector('#detail-industry-context')?.textContent||'';
+              return badge.includes('DART') && text.includes('DX 부문') && text.includes('56.3%');
+            },{timeout:20000,polling:100});
+            const result=await page.evaluate(()=>({
+              badge:document.querySelector('.detail-context-badge')?.textContent||'',
+              text:(document.querySelector('#detail-industry-context')?.textContent||'').replace(/\s+/g,' ').trim(),
+              reportCards:document.querySelectorAll('.industry-report').length,
+            }));
+            console.log('DART_UI_MS',Date.now()-started);
+            console.log('DART_UI_RESULT',JSON.stringify(result));
+            console.log('DART_API_RESPONSES',JSON.stringify(requests));
+            await page.screenshot({path:'artifacts/samsung-dart-live.png',fullPage:true});
+            await browser.close();
+          })().catch(err=>{console.error(err);process.exit(1)});
+          NODE
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: samsung-dart-live-ui
+          path: artifacts/samsung-dart-live.png
+          if-no-files-found: warn
