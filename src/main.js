@@ -11,7 +11,7 @@ import { finiteNumber } from './analysisData.js';
 import { loadChartRuntime } from './chartRuntime.js';
 import { API_BASE, quoteSnapshots, quoteSnapshotsLive, compareStocks, marketNow, homeSnapshot, searchStocks, valuationStocks, macroData, homeInsights, personalizedNews, screenerData, companyContextData, businessReportData, financialHistoryData, relationshipEvidenceData } from './api.js';
 import { applyRuntimeClass, haptic, openExternal, syncNativeBackHandler, closeMiniApp, isAppsInTossRuntime } from './tossBridge.js';
-import { openStockSelector, closeStockSelector } from './stockSelector.js';
+import { openStockSelector, closeStockSelector, formatSelectedStockLabel } from './stockSelector.js';
 import { initializeStorage, readStored, writeStored, clearStored, getActivityVisitorId } from './storage.js';
 import { startHomeLiveSync, setLiveSurface } from './liveHomeSync.js';
 import { readHomeFast, writeHomeFast } from './homeFastCache.js';
@@ -48,6 +48,26 @@ const fmtPrice=(value)=>{const n=finiteNumber(value);if(n===null)return '-';if(M
 const fmtChange=(value)=>{const n=finiteNumber(value);if(n===null)return '-';return `${n>0?'+':''}${n.toFixed(2)}%`};
 const state={tab:'home',watchlist:load(WATCHLIST_KEY,[]),selected:load(SELECTED_KEY,DEFAULTS.map(x=>x.symbol)),period:'1mo',customRange:null,detailSymbol:null,detailName:'',detailOrigin:'home',valuationMetric:'forwardPE',watchSort:'manual',newsSort:'major',detailPeriod:'3mo'};
 const resolvedNames=new Map();
+function comparisonStockName(symbol){
+ const saved=state.watchlist.find(row=>row.symbol===symbol)?.name;
+ return usableStockName(resolvedNames.get(symbol),symbol)
+  ||usableStockName(saved,symbol)
+  ||usableStockName(DISPLAY_NAMES[symbol],symbol)
+  ||'';
+}
+function chartSelectionSummaryText(){
+ if(!state.selected.length)return '비교할 종목을 선택해주세요.';
+ return `${state.selected.length}개 종목 · ${state.selected.map(symbol=>formatSelectedStockLabel(comparisonStockName(symbol),symbol)).join(' · ')}`;
+}
+function updateChartSelectionSummary(stocks=[]){
+ (stocks||[]).forEach(stock=>{
+  const symbol=String(stock?.ticker||'').trim();
+  const name=usableStockName(stock?.name,symbol);
+  if(symbol&&name)resolvedNames.set(symbol,name);
+ });
+ const summary=document.querySelector('#chart-selected-summary');
+ if(summary)summary.textContent=chartSelectionSummaryText();
+}
 let chartInstance=null;
 let chartResizeObserver=null;
 let detailLiveTimer=null;
@@ -107,9 +127,13 @@ function openCompareSheet(onApplied){
    initial:[...state.selected],
    limit:6,
    favorites:state.watchlist,
-   nameFor:(symbol)=>displayName(symbol),
+   nameFor:(symbol)=>comparisonStockName(symbol)||symbol,
    restoreBack:restoreNativeBack,
-   onApply:(symbols)=>{
+   onApply:(symbols,names={})=>{
+     symbols.forEach(symbol=>{
+       const name=usableStockName(names[symbol],symbol);
+       if(name)resolvedNames.set(symbol,name);
+     });
      state.selected=symbols;
      persist();
      onApplied?.();
@@ -466,7 +490,7 @@ async function renderChart(){
  const epoch=viewEpoch;
  document.querySelector('#app').innerHTML=shell(`
    <section class="task-head"><div><h2>수익률 비교</h2><p>선택한 종목의 기간 수익률을 같은 화면에서 확인해요.</p></div><button class="primary-subtle" id="open-compare-selector">종목 변경</button></section>
-   <div class="selected-summary">${state.selected.length?`${state.selected.length}개 종목 · ${state.selected.map(x=>esc(displayName(x))).join(' · ')}`:'비교할 종목을 선택해주세요.'}</div>
+   <div class="selected-summary" id="chart-selected-summary">${esc(chartSelectionSummaryText())}</div>
    <div class="segmented period-tabs">${[['1mo','1개월'],['3mo','3개월'],['6mo','6개월'],['1y','1년'],['5y','5년'],['max','전체']].map(([p,l])=>`<button data-period="${p}" aria-pressed="${state.period===p}" class="${state.period===p?'active':''}">${l}</button>`).join('')}</div>
    <details class="calculation-guide"><summary>기간 직접 지정${state.customRange?' · 적용 중':''}</summary><form id="custom-range" class="analysis-filters"><label>시작일<input type="date" name="start" required value="${esc(state.customRange?.start||'')}"></label><label>종료일<input type="date" name="end" required value="${esc(state.customRange?.end||'')}" max="${new Date().toISOString().slice(0,10)}"></label><button class="primary-subtle" type="submit">기간 적용</button><span id="range-error" role="alert"></span></form></details>
    <section class="surface chart-surface elevated-panel"><div class="chart-heading"><div><strong>기간 수익률</strong><small>각 종목의 첫 가용 관측값을 0%로 표시해요</small></div><span id="chart-status" role="status">불러오는 중</span></div><div class="chart-plot-wrap"><div id="chart-canvas" class="chart-canvas"></div><div id="chart-loading" class="chart-loading">${chartLoadingPreview('수익률 차트를 불러오고 있어요')}</div><div id="chart-tooltip" class="chart-tooltip" hidden></div></div><div id="chart-legend" class="chart-legend interactive-legend chart-legend-loading" aria-hidden="true"><span></span><span></span><span></span></div></section>
@@ -544,6 +568,7 @@ async function loadChart({retainPrevious=false}={}){
    if(!canvas.isConnected||seq!==chartLoadSeq||requestedPeriod!==state.period||requested.join('|')!==state.selected.join('|'))return;
    const stocks=Array.isArray(data?.stocks)?data.stocks.filter(s=>Array.isArray(s.data)&&s.data.length):[];
    if(!stocks.length)throw new Error('표시할 시세 데이터가 없어요');
+   updateChartSelectionSummary(stocks);
    chartResizeObserver?.disconnect();chartResizeObserver=null;
    if(chartInstance){chartInstance.remove();chartInstance=null;}
    canvas.innerHTML='';

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { prioritizeStocks, resolvedSelectorName, lookupSelectorName } from '../src/stockSelector.js';
+import { prioritizeStocks, resolvedSelectorName, lookupSelectorName, formatSelectedStockLabel } from '../src/stockSelector.js';
 
 test('favorite stocks come first in saved order and duplicate search hits collapse',()=>{
  const favorites=[{symbol:'000660.KS'},{symbol:'005930.KS'}];
@@ -23,5 +23,8 @@ test('selected ticker chips use company name instead of duplicating ticker',asyn
   ],
  }));
  assert.equal(name,'글로벌텍스프리');
+ assert.equal(formatSelectedStockLabel('Micron Technology','MU'),'Micron Technology (MU)');
+ assert.equal(formatSelectedStockLabel('글로벌텍스프리','204620.KQ'),'글로벌텍스프리 (204620.KQ)');
+ assert.equal(formatSelectedStockLabel('MU','MU'),'MU');
 });
 

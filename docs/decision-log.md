@@ -150,3 +150,8 @@ KRX와 네이버 금융의 favicon 제공처가 공통 지구본을 반환하는
 ## 2026-09-29 — Task-first mobile UX pass
 
 Home places the device-local watchlist directly after search and before the market cards. Market, spotlight, and heatmap data sources and request timing stay independent. The chart and detail period controls keep the last valid chart visible while a new period loads; a failed refresh labels the displayed result as the previous one and offers retry. Detail uses in-page jump controls without changing the hash route or native back behavior. The duplicate topbar heart is removed so the visible in-card interest button is the single action in web preview and AIT. IDEA LAB collapses its methodology and surfaces the first screened candidate earlier. More groups existing routes by finding, comparing, and checking evidence. Touch targets and reading scale are adjusted without changing the dense heatmap's geometry-specific labels. Browser validation covers responsive widths and state transitions; Android/iOS Sandbox remains the release gate.
+
+
+## 2026-09-30 — 차트 선택 요약에 종목명 + 티커 유지
+
+차트의 상단 선택 요약은 더 이상 저장된 티커만 나열하지 않는다. 종목 선택창에서 확인한 정확한 종목명을 차트 상태로 전달하고, 비교 API 응답의 종목명으로 한 번 더 보강해 `Micron Technology (MU)`, `글로벌텍스프리 (204620.KQ)`처럼 종목명과 티커를 함께 표시한다. 이름을 확인하지 못한 경우에만 기존처럼 티커를 표시한다. 차트 데이터, 기간 전환, 선택창 UI, 밸류에이션 화면, 스타일은 변경하지 않는다.

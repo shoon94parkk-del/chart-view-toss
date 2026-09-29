@@ -15,6 +15,12 @@ export function resolvedSelectorName(name, symbol) {
   return value && value.toUpperCase() !== ticker.toUpperCase() ? value : '';
 }
 
+export function formatSelectedStockLabel(name, symbol) {
+  const ticker = String(symbol || '').trim();
+  const resolved = resolvedSelectorName(name, ticker);
+  return resolved ? `${resolved} (${ticker})` : ticker;
+}
+
 export async function lookupSelectorName(symbol, search = searchStocks) {
   const ticker = String(symbol || '').trim();
   if (!ticker) return '';
