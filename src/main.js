@@ -863,25 +863,39 @@ async function renderDetail(){
    host.innerHTML=html;
  }));
  if(/\\.(KS|KQ)$/i.test(symbol)){
+   const enrichment={report:null,directRelations:[]};
+   const renderEnrichment=base=>{
+     const host=document.querySelector('#detail-industry-context');
+     if(!host||!base)return;
+     if(!enrichment.report?.available&&!enrichment.directRelations.length)return;
+     host.innerHTML=base.viewModule.industryContextHtml(base.context,{
+       collapsible:false,
+       businessReport:enrichment.report?.available?enrichment.report:null,
+       directRelations:enrichment.directRelations,
+     });
+     const badge=document.querySelector('#detail-industry-block .detail-context-badge');
+     if(badge)badge.textContent=enrichment.report?.available&&enrichment.directRelations.length?'KRX + DART + 근거':enrichment.report?.available?'KRX + DART':'KRX + 근거';
+     bindNav();
+   };
    jobs.push(settle(Promise.all([
      industryBasePromise,
      businessReportData(symbol,knownName).catch(()=>null),
+   ]),dartRes=>{
+     if(dartRes.status!=='fulfilled')return;
+     const [base,report]=dartRes.value||[];
+     if(!base||!report?.available)return;
+     enrichment.report=report;
+     renderEnrichment(base);
+   }));
+   jobs.push(settle(Promise.all([
+     industryBasePromise,
      relationshipEvidenceData(symbol,knownName).catch(()=>null),
-   ]),reportRes=>{
-     const host=document.querySelector('#detail-industry-context');
-     if(!host||reportRes.status!=='fulfilled')return;
-     const [base,report,evidence]=reportRes.value||[];
-     if(!base)return;
-     const directRelations=evidence?.available?(evidence.relations||[]):[];
-     if(!report?.available&&!directRelations.length)return;
-     host.innerHTML=base.viewModule.industryContextHtml(base.context,{
-       collapsible:false,
-       businessReport:report?.available?report:null,
-       directRelations,
-     });
-     const badge=document.querySelector('#detail-industry-block .detail-context-badge');
-     if(badge)badge.textContent=report?.available&&directRelations.length?'KRX + DART + 근거':report?.available?'KRX + DART':'KRX + 근거';
-     bindNav();
+   ]),evidenceRes=>{
+     if(evidenceRes.status!=='fulfilled')return;
+     const [base,evidence]=evidenceRes.value||[];
+     if(!base||!evidence?.available)return;
+     enrichment.directRelations=evidence.relations||[];
+     renderEnrichment(base);
    }));
  }
  jobs.push(settle(valuationStocks([symbol]),valRes=>{
