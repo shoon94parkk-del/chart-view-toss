@@ -5,6 +5,7 @@ import { readHomeFast, writeHomeFast } from './homeFastCache.js';
 import { mergeLiveRows } from './liveHomeSync.js';
 import { rememberLiveQuotes, getLiveQuote, mergeRowsWithLive } from './liveQuoteStore.js';
 import { SHOW_SPOTLIGHT } from './releaseScope.js';
+import { loadingIndicator } from './loadingView.js';
 
 const STOCK_META = HOME_STOCK_META;
 
@@ -162,7 +163,7 @@ function createSections(marketSection) {
     picks.id = 'home-top-picks-section';
     picks.innerHTML =
       '<div class="section-head"><h2>최근 주목받는 종목</h2><button type="button" class="text-button" data-home-extra-route="picks">전체보기</button></div>' +
-      '<div id="home-top-picks" class="home-pick-list"><div class="skeleton home-extra-skeleton"></div></div>';
+      `<div id="home-top-picks" class="home-pick-list">${loadingIndicator('최근 선정 종목을 불러오고 있어요')}<div class="skeleton home-extra-skeleton"></div></div>`;
   }
 
   const heatmap = document.createElement('section');
@@ -171,7 +172,7 @@ function createSections(marketSection) {
   heatmap.innerHTML =
     '<div class="section-head"><h2>오늘 등락 히트맵</h2><button type="button" class="text-button" data-home-extra-route="heatmap">전체보기</button></div>' +
     '<p class="home-extra-caption">대표 종목의 당일 등락률을 시가총액 비중으로 보여줘요.</p>' +
-    '<div id="home-daily-heatmap"><div class="skeleton home-heatmap-skeleton"></div></div>';
+    `<div id="home-daily-heatmap">${loadingIndicator('오늘 등락 히트맵을 불러오고 있어요')}<div class="skeleton home-heatmap-skeleton"></div></div>`;
 
   if (picks) {
     marketSection.insertAdjacentElement('afterend', picks);

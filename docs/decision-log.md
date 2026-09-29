@@ -127,3 +127,7 @@ IDEA LAB 후보 종목의 회사·섹터·공급망 상세는 기본적으로 �
 
 ## 2026-09-29 — 종목명·관심 하트·홈 검색 흐름
 티커 URL로 종목 상세를 직접 열 때 이름이 전달되지 않아 `066570.KS`가 제목과 회사명에 중복 표시되었다. 저장된 이름·이동 경로의 이름을 먼저 사용하고 없으면 정확한 티커로 검색 API를 조회해 제목과 로고를 갱신한다. 기존 관심 목록에 티커를 이름으로 저장한 경우도 정상 회사명으로 복구한다. 상세의 상단 하트와 본문 버튼은 같은 관심 상태를 바로 변경하며 등록 시 빨간 채움 하트와 접근성 상태를 보여준다. 기존 상세 데이터를 다시 불러오지 않고 상태만 갱신한다. 홈의 `종목 검색`은 비교 차트로 보내던 연결을 제거하고 검색 결과 선택 시 해당 종목 상세를 연다. 비교 종목 선택 흐름은 별도로 유지한다.
+## 2026-09-29 — Visible loading and share preview
+- Every initially empty data area now names the pending data and shows a visible spinner; chart and detail graph overlays clear on success, empty data, and failure. Existing source-specific DART progress/failure states remain separate.
+- The shell shares the current route from web and Apps in Toss runtime. Share URLs use the shared backend's crawler-readable `/share/toss/{tab}` entry, with exact detail ticker in the query. AIT's hidden web topbar is compensated by an in-content share action.
+- Browser sharing uses the native share sheet when available and copies the same link otherwise. The Toss static shell also includes a generic social card for manually copied URLs.

@@ -1,4 +1,5 @@
 import { homeBootstrap, pickMonitor } from './api.js';
+import { loadingIndicator } from './loadingView.js';
 
 const STATUS={
   SELL_REVIEW:{label:'매도검토',icon:'🔴',cls:'sell',order:0},
@@ -78,8 +79,8 @@ function rowMarkup(row,index,displayName){
 export async function renderPickLedger({shell,bindNav,displayName}){
   document.querySelector('#app').innerHTML=shell(`
     <section class="task-head pick-ledger-head"><div><span class="page-kicker">CHARTVIEW</span><h2>최근 주목받는 종목</h2><p>선정 종목의 기록과 이후 성과·점검 내용을 확인해요.</p></div></section>
-    <section class="pick-ledger-summary" id="pick-ledger-summary"><div class="skeleton quote"></div></section>
-    <section class="pick-ledger-status-strip" id="pick-ledger-status-strip"><div class="skeleton quote"></div></section>
+    <section class="pick-ledger-summary" id="pick-ledger-summary">${loadingIndicator('선정 기록을 불러오고 있어요')}<div class="skeleton quote"></div></section>
+    <section class="pick-ledger-status-strip" id="pick-ledger-status-strip">${loadingIndicator('점검 상태를 확인하고 있어요')}<div class="skeleton quote"></div></section>
     <p class="pick-ledger-policy" id="pick-ledger-policy">매도검토는 자동 매도 확정이 아니며 가격·차트만으로 판정하지 않아요.</p>
     <section class="pick-ledger-toolbar" id="pick-ledger-toolbar" hidden>
       <label class="pick-ledger-search"><span>종목 검색</span><input id="pick-ledger-search" type="search" placeholder="종목명 · 코드" autocomplete="off"></label>
@@ -91,7 +92,7 @@ export async function renderPickLedger({shell,bindNav,displayName}){
       </div>
     </section>
     <p class="pick-ledger-count" id="pick-ledger-count"></p>
-    <section class="pick-ledger-list" id="pick-ledger-list"><div class="skeleton watch"></div><div class="skeleton watch"></div></section>
+    <section class="pick-ledger-list" id="pick-ledger-list">${loadingIndicator('종목 목록을 불러오고 있어요')}<div class="skeleton watch"></div><div class="skeleton watch"></div></section>
   `,'최근 주목받는 종목');
   bindNav();
 

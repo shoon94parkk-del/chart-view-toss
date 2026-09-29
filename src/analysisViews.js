@@ -6,6 +6,7 @@ import { loadChartRuntime } from './chartRuntime.js';
 import { rememberLiveQuotes, mergeRowsWithLive } from './liveQuoteStore.js';
 import { readHomeFast, writeHomeFast } from './homeFastCache.js';
 import { seedWatchQuoteCache } from './watchQuoteCache.js';
+import { loadingIndicator } from './loadingView.js';
 
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const number=(v,suffix='')=>finiteNumber(v)===null?'—':Number(v).toLocaleString('ko-KR',{maximumFractionDigits:2})+suffix;
@@ -25,7 +26,7 @@ export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareS
  const titles={discover:'시장 스크리너',heatmap:'시장 히트맵',consensus:'실적 전망 조회',bands:'역사적 밸류에이션',tools:'자료 출처'};
  const descriptions={discover:'전체 수집 종목을 직접 검색·필터링해요. 장마감 데이터이며 추천 순위가 아니에요.',heatmap:'홈보다 넓은 한국·미국 주요 종목의 당일 등락을 시가총액 비중으로 비교해요.',consensus:'선택한 종목의 애널리스트 추정치와 변경 내역을 확인해요.',bands:'과거 가격과 재무자료로 재구성한 PER·PBR을 확인해요.',tools:'자료 확인에 필요한 외부 공식 사이트예요.'};
  const selection=['consensus','bands'].includes(tab);
- document.querySelector('#app').innerHTML=shell(`<section class="task-head"><div><h2>${titles[tab]}</h2><p>${descriptions[tab]}</p></div>${selection?'<button id="analysis-select" class="primary-subtle">종목 변경</button>':''}</section><div id="analysis-controls"></div><div id="analysis-body" class="analysis-body"><div class="skeleton quote"></div></div>`,titles[tab]);
+ document.querySelector('#app').innerHTML=shell(`<section class="task-head"><div><h2>${titles[tab]}</h2><p>${descriptions[tab]}</p></div>${selection?'<button id="analysis-select" class="primary-subtle">종목 변경</button>':''}</section><div id="analysis-controls"></div><div id="analysis-body" class="analysis-body">${loadingIndicator(`${titles[tab]} 데이터를 불러오고 있어요`)}<div class="skeleton quote"></div></div>`,titles[tab]);
  const host=document.querySelector('#analysis-body'),controls=document.querySelector('#analysis-controls');
  const alive=()=>!disposed&&host.isConnected;
  bindNav();document.querySelector('#analysis-select')?.addEventListener('click',()=>openCompareSheet(()=>load()));
@@ -35,7 +36,7 @@ export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareS
   const gen=++generation;
   const current=()=>alive()&&gen===generation;
   chart?.remove();chart=null;observer?.disconnect();
-  host.innerHTML='<div class="skeleton quote"></div>';
+  host.innerHTML=loadingIndicator(`${titles[tab]} 데이터를 불러오고 있어요`)+'<div class="skeleton quote"></div>';
   try{
    if(tab==='discover'){
     const data=await screenerData();if(!current())return;
@@ -111,7 +112,7 @@ export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareS
     const symbols=[...state.selected];
     if(!symbols.length){host.innerHTML=empty('종목 변경에서 조회할 종목을 선택해주세요.');return;}
     controls.innerHTML='<label class="analysis-period">추정 기간<select id="consensus-period"><option value="0y">올해</option><option value="+1y">내년</option><option value="0q">이번 분기</option><option value="+1q">다음 분기</option></select></label>';
-    host.innerHTML=symbols.map((symbol,i)=>`<section id="estimate-${i}" class="analysis-card"><h3>${esc(displayName(symbol))}</h3><p role="status">추정치 불러오는 중…</p></section>`).join('');
+    host.innerHTML=symbols.map((symbol,i)=>`<section id="estimate-${i}" class="analysis-card"><h3>${esc(displayName(symbol))}</h3>${loadingIndicator('추정치를 불러오고 있어요')}</section>`).join('');
     const loaded=new Map();
     function paint(i,result){
      if(!current())return;
@@ -136,7 +137,7 @@ export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareS
      const line=chart.addLineSeries({color:'#3182f6',lineWidth:2,priceLineVisible:false});line.setData(series.points);if(stats)for(const value of [stats.p20,stats.median,stats.p80])if(finiteNumber(value)!==null)line.createPriceLine({price:Number(value),color:'#9ca3af',lineWidth:1,lineStyle:2,axisLabelVisible:true});chart.timeScale().fitContent();
      observer=new ResizeObserver(()=>{if(chart&&canvas.isConnected)chart.applyOptions({width:canvas.clientWidth});});observer.observe(canvas);
     }
-    async function fetchBand(){const seq=++bandSeq;data=null;chart?.remove();chart=null;observer?.disconnect();host.innerHTML='<p role="status">과거 가격·재무자료를 조회하고 있어요…</p>';try{const [next,runtime]=await Promise.all([valuationBandData(controls.querySelector('#band-symbol').value,Number(controls.querySelector('#band-years').value)),loadChartRuntime()]);if(seq!==bandSeq||!current())return;data=next;chartRuntime=runtime;paint();}catch(error){if(seq===bandSeq&&current())fail(error,fetchBand);}}
+    async function fetchBand(){const seq=++bandSeq;data=null;chart?.remove();chart=null;observer?.disconnect();host.innerHTML=loadingIndicator('과거 가격·재무자료를 조회하고 있어요');try{const [next,runtime]=await Promise.all([valuationBandData(controls.querySelector('#band-symbol').value,Number(controls.querySelector('#band-years').value)),loadChartRuntime()]);if(seq!==bandSeq||!current())return;data=next;chartRuntime=runtime;paint();}catch(error){if(seq===bandSeq&&current())fail(error,fetchBand);}}
     controls.querySelector('#band-symbol').onchange=fetchBand;controls.querySelector('#band-years').onchange=fetchBand;controls.querySelector('#band-metric').onchange=()=>{if(data)paint();};await fetchBand();
    }else{
     const sources=[['DART','기업 공시','https://dart.fss.or.kr/'],['KRX','한국거래소 데이터','https://data.krx.co.kr/'],['FRED','경제지표 원자료','https://fred.stlouisfed.org/'],['Yahoo Finance','해외 시세·재무 원자료','https://finance.yahoo.com/'],['네이버 금융','국내 시세·뉴스 원자료','https://finance.naver.com/']];

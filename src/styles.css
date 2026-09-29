@@ -14,6 +14,10 @@ button:active{transform:scale(.985)}
 svg{display:block}
 .app-shell{max-width:600px;margin:auto;min-height:100vh;padding:env(safe-area-inset-top) 20px calc(86px + env(safe-area-inset-bottom));background:#fff}
 .topbar{height:62px;display:flex;align-items:center;justify-content:space-between;position:relative;z-index:3}
+.topbar-actions{display:flex;align-items:center;gap:6px;flex:none}
+.ait-share-row{display:none}html[data-ait-runtime="true"] .ait-share-row{display:flex;justify-content:flex-end;margin:0 0 8px}.ait-share-row button{border:0;background:#f2f6fd;color:#1769c2;border-radius:999px;padding:8px 12px;font-size:11px;font-weight:800;display:flex;align-items:center;gap:5px}
+.idea-grid>.loading-indicator{grid-column:1/-1}
+.identity-loading{display:flex;align-items:center;gap:8px}.identity-loading:after{content:'';width:13px;height:13px;flex:none;border:2px solid #d8e7fb;border-top-color:#3182f6;border-radius:50%;animation:loading-spin .8s linear infinite}@media(prefers-reduced-motion:reduce){.identity-loading:after{animation:none}}
 .brand-lockup{display:flex;align-items:center;gap:9px}
 .brand-lockup h1{font-size:20px;margin:0;font-weight:800;letter-spacing:-.4px}
 .brand-mark{width:30px;height:30px;border-radius:10px;background:linear-gradient(145deg,#3182f6,#6aa8ff);display:grid;place-items:center;color:#fff;box-shadow:0 6px 18px rgba(49,130,246,.22)}
@@ -114,6 +118,8 @@ svg{display:block}
 .bottom-nav button.active i{filter:drop-shadow(0 4px 7px rgba(49,130,246,.18))}
 
 .skeleton{background:linear-gradient(90deg,#eef1f4,#f8f9fa,#eef1f4);background-size:200%;border-radius:14px;animation:s 1.2s infinite}.skeleton.quote{height:135px}.skeleton.brief{height:132px}.skeleton.watch{height:68px;margin:4px 0}.skeleton.valuation{height:192px}.skeleton.macro{height:64px}
+.loading-indicator{display:flex;align-items:center;justify-content:center;gap:8px;min-height:34px;padding:5px 8px;color:#4e5968;font-size:12px;font-weight:700;line-height:1.4;text-align:center}.loading-spinner{width:16px;height:16px;flex:none;border:2px solid #d8e7fb;border-top-color:#3182f6;border-radius:50%;animation:loading-spin .8s linear infinite}.chart-loading{position:absolute;inset:0;z-index:1;display:grid;place-items:center;background:linear-gradient(135deg,#f8fbff,#fff 55%,#f4f8ff);pointer-events:none}.chart-loading .loading-indicator{padding:12px 16px;background:#fff;border:1px solid #e8edf4;border-radius:999px;box-shadow:0 8px 22px rgba(25,31,40,.06)}.detail-chart-wrap{position:relative}.startup-loading{min-height:60vh;display:grid;place-items:center}.skeleton.brief .loading-indicator,.skeleton.freshness-card .loading-indicator,.skeleton.macro-summary .loading-indicator,.detail-price-skeleton .loading-indicator{height:100%;background:#fff8;border-radius:inherit}.detail-metrics>.loading-indicator{grid-column:1/-1}@keyframes loading-spin{to{transform:rotate(360deg)}}@media(prefers-reduced-motion:reduce){.loading-spinner{animation:none;border-top-color:#3182f6;border-right-color:#3182f6}}
+.market-card-loading em{display:flex;align-items:center;gap:5px}.market-card-loading em:before{content:'';width:10px;height:10px;border:2px solid #d8e7fb;border-top-color:#3182f6;border-radius:50%;animation:loading-spin .8s linear infinite}@media(prefers-reduced-motion:reduce){.market-card-loading em:before{animation:none}}
 .empty{min-height:130px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}.empty span{color:#8b95a1;font-size:13px;margin-top:7px}.retry{margin-top:14px;border:0;border-radius:12px;background:#3182f6;color:#fff;padding:10px 14px;font-weight:700}
 
 .valuation-list,.macro-list{display:grid;gap:12px}

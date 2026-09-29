@@ -147,3 +147,5 @@ Last updated: 2026-09-22
 - A slow direct-relationship response must not hold back a ready DART revenue card, and vice versa. Each source has its own loading/error state.
 - “확인된 직접 관계” requires evidence-backed API rows. Industry/keyword adjacency stays under “산업상 연관 후보” and must never be relabeled as a confirmed customer/supplier.
 - Stock detail and IDEA LAB use the same relationship semantics so the meaning does not change between screens.
+- Pending chart/detail plot areas must show visible progress, not only a small status word above an empty panel. The progress overlay must clear for success, no data, and error.
+- Share controls must remain reachable when AIT hides the custom topbar; shared stock links must preserve the ticker and carry crawler-readable title/image metadata.

@@ -1,4 +1,5 @@
 import { searchStocks } from './api.js';
+import { loadingIndicator } from './loadingView.js';
 import { haptic, syncNativeBackHandler } from './tossBridge.js';
 
 const esc = (value = '') => String(value).replace(/[&<>"']/g, (c) => ({
@@ -127,7 +128,7 @@ export function openStockSelector({
       resultEl.innerHTML = '<div class="selector-empty">검색해서 종목을 추가해보세요.</div>';
       return;
     }
-    resultEl.innerHTML = '<div class="selector-loading">검색 중...</div>';
+    resultEl.innerHTML = loadingIndicator('종목을 검색하고 있어요');
     timer = setTimeout(async () => {
       const seq = ++querySeq;
       try {

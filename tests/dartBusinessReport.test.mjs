@@ -44,8 +44,8 @@ test('IDEA LAB keeps industry context collapsed and loads DART only on expand',(
 });
 
 test('slow DART and direct evidence show independent loading and failure states',()=>{
- assert.match(main,/현재가 확인 중/);
- assert.match(main,/회사·산업 정보 불러오는 중/);
+ assert.match(main,/현재가를 확인하고 있어요/);
+ assert.match(main,/회사·산업 정보를 불러오고 있어요/);
  assert.match(main,/reportState:koreanDetail\?'loading':'idle'/);
  assert.match(main,/report\?\.loadError\?'error':report\?\.available\?'ready':'unavailable'/);
  assert.match(view,/DART 사업보고서 매출 구조 확인 중/);

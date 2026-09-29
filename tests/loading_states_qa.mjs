@@ -35,7 +35,7 @@ await page.route('https://chart-view-pkv8.onrender.com/**', async route => {
 });
 await page.goto(`${base}/#detail/005930.KS`, { waitUntil: 'domcontentloaded' });
 await page.locator('#detail-price').waitFor();
-assert.equal(await page.locator('#detail-price .detail-price-loading').count(), 1);
+assert.equal(await page.locator('#detail-price .loading-indicator .loading-spinner').count(), 1);
 await page.locator('#detail-industry-context .industry-context-card').waitFor();
 assert.equal(companyCalls, 0, 'covered detail must not download company_context.json');
 assert.match(await page.locator('#detail-industry-context').innerText(), /DART 사업보고서 매출 구조 확인 중/);

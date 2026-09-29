@@ -1,6 +1,7 @@
 import { screenerData, companyContextData, businessReportData, relationshipEvidenceData } from './api.js';
 import { buildInvestmentIdeas, ideaCoverage } from './ideaEngine.js';
 import { industryContextHtml } from './industryContextView.js';
+import { loadingIndicator } from './loadingView.js';
 
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const pct=v=>Number.isFinite(Number(v))?`${Number(v)>0?'+':''}${Number(v).toFixed(2)}%`:'—';
@@ -88,7 +89,7 @@ export async function renderIdeaView({shell,bindNav}){
       <div><strong>분석 흐름</strong><span>기술 신호 → 실제 매출구조 → 섹터 체온 → 공급망/직접관계</span></div>
       <small>종목별 상세 정보는 필요한 종목만 펼쳐서 불러와요. 직접 관계는 뉴스·수주·고객사 근거가 있을 때만 별도 표시해요.</small>
     </section>
-    <div id="idea-body" class="idea-grid"><div class="skeleton idea-skeleton"></div><div class="skeleton idea-skeleton"></div></div>
+    <div id="idea-body" class="idea-grid">${loadingIndicator('투자 아이디어를 찾고 있어요')}<div class="skeleton idea-skeleton"></div><div class="skeleton idea-skeleton"></div></div>
   `,'투자 아이디어');
   bindNav();
   const host=document.querySelector('#idea-body');
