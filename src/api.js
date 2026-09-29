@@ -42,7 +42,7 @@ export const screenerData=()=>staticData('screener.json',()=>api('/static/data/s
 export const companyContextData=()=>staticData('company_context.json',()=>api('/static/data/company_context.json',{ttlMs:3600000}));
 export const businessReportData=(ticker,name='')=>api(`/api/business-report?ticker=${encodeURIComponent(ticker)}&name=${encodeURIComponent(name)}`,{ttlMs:300000,timeoutMs:45000,retries:0});
 export const financialHistoryData=ticker=>api(`/api/financial-history?ticker=${encodeURIComponent(ticker)}`,{ttlMs:300000,timeoutMs:35000,retries:0});
-export const relationshipEvidenceData=(ticker,name='')=>api(`/api/relationship-evidence?ticker=${encodeURIComponent(ticker)}&name=${encodeURIComponent(name)}`,{ttlMs:21600000,timeoutMs:12000,retries:0});
+export const relationshipEvidenceData=(ticker,name='')=>api(`/api/relationship-evidence?ticker=${encodeURIComponent(ticker)}&name=${encodeURIComponent(name)}`,{ttlMs:21600000,timeoutMs:18000,retries:0});
 export const heatmapData=()=>staticData('heatmap.json',()=>api('/static/data/heatmap.json',{ttlMs:60000}));
 export const consensusData=ticker=>api(`/api/consensus?ticker=${encodeURIComponent(ticker)}`,{ttlMs:300000});
 export const valuationBandData=(ticker,years=3)=>api(`/api/valuation-band?ticker=${encodeURIComponent(ticker)}&years=${years}`,{ttlMs:300000});

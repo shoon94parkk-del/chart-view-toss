@@ -71,5 +71,6 @@ test('direct supply-chain UI is evidence-backed and separate from inferred adjac
  assert.match(view,/실제 고객·납품 관계가 확인된 목록/);
  assert.match(view,/기사 제공처가 지연되어 거래 단서를 지금 확인하지 못했어요/);
  assert.match(view,/최근 기사에서 두 회사의 구체적 계약·납품 단서를 찾지 못했어요/);
+ assert.match(readFileSync(new URL('../src/api.js',import.meta.url),'utf8'),/relationshipEvidenceData=.*timeoutMs:18000/);
 });
 
