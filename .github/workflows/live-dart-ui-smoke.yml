@@ -1,5 +1,4 @@
 name: Live DART UI Smoke
-# live-ui-trigger: 2026-09-29
 
 on:
   push:
@@ -26,7 +25,7 @@ jobs:
           npm ci
           npm install --no-save --package-lock=false playwright@1.55.0
           npx playwright install --with-deps chromium
-      - name: Verify Samsung DART card on live Render
+      - name: Inspect Samsung DART card on live Render
         run: |
           node - <<'NODE'
           const { chromium } = require('playwright');
@@ -34,27 +33,43 @@ jobs:
             const browser=await chromium.launch({headless:true});
             const context=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:1});
             const page=await context.newPage();
-            const requests=[];
+            const api=[];
+            const consoleRows=[];
+            const failed=[];
+            page.on('console',msg=>consoleRows.push({type:msg.type(),text:msg.text()}));
+            page.on('pageerror',err=>consoleRows.push({type:'pageerror',text:String(err)}));
+            page.on('requestfailed',req=>failed.push({url:req.url(),failure:req.failure()?.errorText||''}));
             page.on('response',async res=>{
-              if(res.url().includes('/api/business-report'))requests.push({url:res.url(),status:res.status()});
+              if(res.url().includes('chart-view-pkv8.onrender.com/api/')){
+                let body=null;
+                if(res.url().includes('/api/business-report')){
+                  try{body=await res.json()}catch{}
+                }
+                api.push({url:res.url(),status:res.status(),body});
+              }
             });
             const started=Date.now();
             await page.goto('https://chart-view-toss.onrender.com/#detail/005930.KS',{waitUntil:'domcontentloaded',timeout:30000});
-            await page.waitForFunction(()=>{
-              const badge=document.querySelector('.detail-context-badge')?.textContent||'';
-              const text=document.querySelector('#detail-industry-context')?.textContent||'';
-              return badge.includes('DART') && text.includes('DX 부문') && text.includes('56.3%');
-            },{timeout:20000,polling:100});
+            await page.waitForTimeout(12000);
             const result=await page.evaluate(()=>({
+              href:location.href,
               badge:document.querySelector('.detail-context-badge')?.textContent||'',
-              text:(document.querySelector('#detail-industry-context')?.textContent||'').replace(/\s+/g,' ').trim(),
+              contextText:(document.querySelector('#detail-industry-context')?.textContent||'').replace(/\s+/g,' ').trim(),
               reportCards:document.querySelectorAll('.industry-report').length,
+              detailTitle:document.querySelector('.detail-brand h2')?.textContent||'',
+              symbol:document.querySelector('.detail-brand span')?.textContent||'',
+              bodyText:(document.body?.innerText||'').slice(0,3000),
             }));
             console.log('DART_UI_MS',Date.now()-started);
             console.log('DART_UI_RESULT',JSON.stringify(result));
-            console.log('DART_API_RESPONSES',JSON.stringify(requests));
+            console.log('DART_API_RESPONSES',JSON.stringify(api));
+            console.log('DART_REQUEST_FAILED',JSON.stringify(failed));
+            console.log('DART_CONSOLE',JSON.stringify(consoleRows));
+            require('fs').mkdirSync('artifacts',{recursive:true});
             await page.screenshot({path:'artifacts/samsung-dart-live.png',fullPage:true});
+            const ok=result.badge.includes('DART')&&result.contextText.includes('DX 부문')&&result.contextText.includes('56.3%');
             await browser.close();
+            if(!ok)process.exit(2);
           })().catch(err=>{console.error(err);process.exit(1)});
           NODE
       - uses: actions/upload-artifact@v4
