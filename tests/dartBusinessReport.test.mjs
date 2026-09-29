@@ -18,9 +18,9 @@ test('DART detail call is restricted to Korean exchange tickers',()=>{
  assert.match(main,/if\(\/\\\\\.\(KS\|KQ\)\$\/i\.test\(symbol\)\)/);
 });
 
-test('business report client has a long cache and no retry storm',()=>{
+test('business report client keeps a short stale-safe cache and no retry storm',()=>{
  assert.match(api,/\/api\/business-report\?ticker=/);
- assert.match(api,/ttlMs:86400000/);
+ assert.match(api,/ttlMs:300000/);
  assert.match(api,/retries:0/);
 });
 
