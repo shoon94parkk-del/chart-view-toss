@@ -862,7 +862,7 @@ async function renderDetail(){
    if(!html){block.remove();return;}
    host.innerHTML=html;
  }));
- if(/\\.(KS|KQ)$/i.test(symbol)){
+ if(/\.(KS|KQ)$/i.test(symbol)){
    const enrichment={report:null,directRelations:[]};
    const renderEnrichment=base=>{
      const host=document.querySelector('#detail-industry-context');
