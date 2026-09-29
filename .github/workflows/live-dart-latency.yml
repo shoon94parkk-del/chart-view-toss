@@ -1,0 +1,59 @@
+name: Live DART Latency Probe
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/live-dart-latency.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Measure live Samsung DART latency
+        run: |
+          python - <<'PY'
+          import json,time,urllib.parse,urllib.request
+
+          base='https://chart-view-pkv8.onrender.com'
+          qs=urllib.parse.urlencode({'ticker':'005930.KS','name':'삼성전자'})
+          url=base+'/api/business-report?'+qs
+
+          def fetch():
+              t=time.perf_counter()
+              with urllib.request.urlopen(url,timeout=30) as r:
+                  body=json.loads(r.read().decode('utf-8'))
+                  status=r.status
+              return status,body,time.perf_counter()-t
+
+          s1,b1,t1=fetch()
+          s2,b2,t2=fetch()
+
+          print('FIRST_SEC',round(t1,3))
+          print('SECOND_SEC',round(t2,3))
+          print('FIRST',json.dumps({
+              'status':s1,
+              'available':b1.get('available'),
+              'reportFound':b1.get('reportFound'),
+              'reportName':b1.get('reportName'),
+              'sourceMode':b1.get('sourceMode'),
+              'basis':b1.get('basis'),
+              'unit':b1.get('unit'),
+              'topItem':b1.get('topItem'),
+              'reason':b1.get('reason'),
+              'checkedAt':b1.get('checkedAt'),
+          },ensure_ascii=False))
+          assert s1==200 and s2==200
+          assert b1.get('sourceMode')=='opendart-api'
+          assert b1.get('available') is True
+          assert (b1.get('topItem') or {}).get('name')=='DX 부문'
+          assert abs(float((b1.get('topItem') or {}).get('share') or 0)-56.3)<0.01
+          PY
