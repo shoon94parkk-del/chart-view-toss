@@ -34,3 +34,21 @@
 .idea-peer small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#8b95a1;font-size:9px}
 .idea-peer em{flex:none;font-style:normal;font-size:10px;font-weight:800}
 @media(max-width:360px){.sector-metrics{grid-template-columns:1fr}.idea-context-title{align-items:flex-start}.idea-context-title>span{max-width:50%}}
+
+/* 2026-09-29 readability pass */
+.idea-card{position:relative;overflow:hidden;border-color:#e7ebf1;box-shadow:0 12px 32px rgba(16,24,40,.055)}
+.idea-card:before{content:'';position:absolute;left:0;top:0;right:0;height:4px;background:linear-gradient(90deg,#3182f6,#8b5cf6)}
+.idea-card:nth-child(2n):before{background:linear-gradient(90deg,#13a46b,#3182f6)}
+.idea-summary{padding:10px 12px;border-radius:12px;background:#f7faff;color:#526071}
+.idea-candidate-wrap{border:1px solid #e8edf3;background:#fff;box-shadow:0 5px 16px rgba(16,24,40,.035)}
+.idea-candidate-wrap .idea-candidate{background:linear-gradient(135deg,#fbfcff,#f7faff)}
+.idea-candidate-main strong{font-size:15px}
+.idea-reasons{flex-wrap:wrap;overflow:visible}
+.idea-reasons i{border:1px solid #e5ebf3;background:#fff;color:#526071;font-weight:700}
+.idea-candidate-price em.up{color:#f04452}.idea-candidate-price em.down{color:#3182f6}
+.idea-checks{grid-template-columns:1fr 1fr;gap:10px;border-top:0}
+.idea-checks div{display:grid;grid-template-columns:1fr;gap:5px;padding:11px 12px;border-radius:12px;background:#f8f9fb}
+.idea-checks div:first-child{background:#eef7ff}.idea-checks div:last-child{background:#fff4f5}
+.idea-checks div:first-child b{color:#1b64da}.idea-checks div:last-child b{color:#c93445}
+.idea-context{display:none}
+@media(max-width:420px){.idea-checks{grid-template-columns:1fr}}
