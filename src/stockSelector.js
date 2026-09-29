@@ -9,6 +9,22 @@ const esc = (value = '') => String(value).replace(/[&<>"']/g, (c) => ({
 let activeClose = null;
 let querySeq = 0;
 
+export function resolvedSelectorName(name, symbol) {
+  const value = String(name || '').trim();
+  const ticker = String(symbol || '').trim();
+  return value && value.toUpperCase() !== ticker.toUpperCase() ? value : '';
+}
+
+export async function lookupSelectorName(symbol, search = searchStocks) {
+  const ticker = String(symbol || '').trim();
+  if (!ticker) return '';
+  const data = await search(ticker);
+  const exact = (data?.results || []).find(
+    row => String(row?.symbol || '').toUpperCase() === ticker.toUpperCase(),
+  );
+  return resolvedSelectorName(exact?.name, ticker);
+}
+
 export function prioritizeStocks(rows, favorites = []) {
   const rank = new Map(favorites.map((row, index) => [String(row.symbol || '').toUpperCase(), index]));
   const seen = new Set();
@@ -44,7 +60,11 @@ export function openStockSelector({
     symbol: row.symbol, name: row.name || nameFor(row.symbol), market: row.market || '',
   })));
   const favoriteSymbols = new Set(favoriteRows.map(row => String(row.symbol).toUpperCase()));
-  const names = new Map(initial.map((symbol) => [symbol, nameFor(symbol)]));
+  const favoriteNames = new Map(favoriteRows.map(row => [String(row.symbol).toUpperCase(), resolvedSelectorName(row.name, row.symbol)]));
+  const names = new Map(initial.map((symbol) => {
+    const favoriteName = favoriteNames.get(String(symbol).toUpperCase());
+    return [symbol, favoriteName || resolvedSelectorName(nameFor(symbol), symbol) || ''];
+  }));
   const overlay = document.createElement('div');
   overlay.className = 'selector-overlay';
   overlay.innerHTML = `
@@ -82,7 +102,10 @@ export function openStockSelector({
   const renderSelected = () => {
     if (searchOnly) return;
     selectedEl.innerHTML = draft.size
-      ? [...draft].map((symbol) => `<button type="button" data-selected-remove="${esc(symbol)}"><span>${esc(names.get(symbol) || nameFor(symbol))}</span><small>${esc(symbol)}</small><b>×</b></button>`).join('')
+      ? [...draft].map((symbol) => {
+          const name = resolvedSelectorName(names.get(symbol), symbol);
+          return `<button type="button" data-selected-remove="${esc(symbol)}"><span>${esc(name || '종목명 확인 중')}</span><small>${esc(symbol)}</small><b>×</b></button>`;
+        }).join('')
       : '<span class="selector-none">선택한 종목이 없어요.</span>';
     apply.textContent = draft.size ? `${draft.size}개 종목 적용` : '선택 없이 적용';
     selectedEl.querySelectorAll('[data-selected-remove]').forEach((button) => {
@@ -142,6 +165,22 @@ export function openStockSelector({
 
   let timer = null;
   paintResults(favoriteRows);
+
+  // Initial comparison selections may only have a ticker (for example MU or
+  // 204620.KQ). Resolve exact stock names in the background so the selected
+  // chips always show "company name + ticker" instead of duplicating the ticker.
+  void Promise.all([...draft].map(async (symbol) => {
+    if (resolvedSelectorName(names.get(symbol), symbol)) return;
+    try {
+      const name = await lookupSelectorName(symbol);
+      if (!name || !overlay.isConnected || !draft.has(symbol)) return;
+      names.set(symbol, name);
+      renderSelected();
+    } catch {
+      // Keep the selector usable; unresolved names stay explicitly pending.
+    }
+  }));
+
   input.addEventListener('input', () => {
     clearTimeout(timer);
     const query = input.value.trim();
@@ -185,7 +224,7 @@ export function openStockSelector({
   });
   apply.onclick = () => {
     const selected = [...draft];
-    const selectedNames = Object.fromEntries(selected.map((symbol) => [symbol, names.get(symbol) || nameFor(symbol)]));
+    const selectedNames = Object.fromEntries(selected.map((symbol) => [symbol, resolvedSelectorName(names.get(symbol), symbol) || symbol]));
     close();
     onApply?.(selected, selectedNames);
   };
