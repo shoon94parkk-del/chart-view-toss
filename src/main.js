@@ -7,7 +7,7 @@ import { SHOW_SPOTLIGHT } from './releaseScope.js';
 import { ANALYSIS_ROUTES, renderAnalysis } from './analysisViews.js';
 import { finiteNumber } from './analysisData.js';
 import { loadChartRuntime } from './chartRuntime.js';
-import { API_BASE, quoteSnapshots, quoteSnapshotsLive, compareStocks, marketNow, homeSnapshot, searchStocks, valuationStocks, macroData, homeInsights, personalizedNews } from './api.js';
+import { API_BASE, quoteSnapshots, quoteSnapshotsLive, compareStocks, marketNow, homeSnapshot, searchStocks, valuationStocks, macroData, homeInsights, personalizedNews, screenerData, companyContextData } from './api.js';
 import { applyRuntimeClass, haptic, openExternal, syncNativeBackHandler, closeMiniApp, isAppsInTossRuntime } from './tossBridge.js';
 import { openStockSelector, closeStockSelector } from './stockSelector.js';
 import { initializeStorage, readStored, writeStored, clearStored, getActivityVisitorId } from './storage.js';
@@ -750,6 +750,7 @@ async function renderDetail(){
    <section class="detail-price skeleton detail-price-skeleton" id="detail-price"></section>
    <div class="segmented detail-period-tabs">${[['1mo','1개월'],['3mo','3개월'],['6mo','6개월'],['1y','1년']].map(([p,l])=>`<button data-detail-period="${p}" aria-pressed="${state.detailPeriod===p}" class="${state.detailPeriod===p?'active':''}">${l}</button>`).join('')}</div>
    <section class="detail-chart-card"><div class="detail-section-head"><div><span>기간 수익률</span><strong id="detail-period-label">선택 기간 흐름</strong></div><small id="detail-chart-status">불러오는 중</small></div><div id="detail-chart" class="detail-chart"></div><div id="detail-return-note" class="detail-return-note"></div></section>
+   <section class="detail-block detail-industry-block" id="detail-industry-block"><div class="section-head"><div><h2>회사 · 산업 맥락</h2><p>주요제품부터 섹터와 공급망까지</p></div><span class="detail-context-badge">KRX</span></div><div id="detail-industry-context" class="detail-industry-context"><div class="skeleton detail-context-skeleton"></div></div></section>
    <section class="detail-block"><div class="section-head"><h2>핵심 지표</h2><button class="text-button" data-tab="valuation">같은 지표 비교</button></div><div id="detail-metrics" class="detail-metrics"><div class="skeleton metric"></div><div class="skeleton metric"></div><div class="skeleton metric"></div><div class="skeleton metric"></div></div><div id="detail-metric-meta" class="detail-metric-meta"></div></section>
    <section class="detail-block"><div class="section-head"><h2>관련 뉴스</h2><button class="text-button" data-tab="news">전체 뉴스</button></div><div id="detail-news" class="detail-news"><div class="skeleton news"></div><div class="skeleton news"></div></div></section>
  `,knownName);
@@ -827,6 +828,41 @@ async function renderDetail(){
    canvas.innerHTML='<div class="empty compact"><strong>차트 데이터가 없어요</strong><span>잠시 후 다시 확인해주세요.</span></div>';status.textContent='데이터 없음';document.querySelector('#detail-return-note').textContent='';
  }
 
+ }));
+ jobs.push(settle(Promise.all([
+   screenerData(),
+   companyContextData(),
+   import('./industryContext.js'),
+   import('./industryContextView.js'),
+ ]),industryRes=>{
+   const host=document.querySelector('#detail-industry-context');
+   const block=document.querySelector('#detail-industry-block');
+   if(!host||!block)return;
+   if(industryRes.status!=='fulfilled'){
+     host.innerHTML='<div class="detail-context-empty">회사·산업 데이터를 불러오지 못했어요. 다른 상세 정보는 계속 볼 수 있어요.</div>';
+     return;
+   }
+   const [screener,companyMeta,industryModule,viewModule]=industryRes.value;
+   const metaRows=Array.isArray(companyMeta?.companies)?companyMeta.companies:[];
+   const metaBySymbol=new Map(metaRows.map(row=>[String(row?.symbol||'').toUpperCase(),row]));
+   const screenerRows=Array.isArray(screener?.stocks)?screener.stocks:[];
+   const enrichedRows=screenerRows.map(row=>{
+     const meta=metaBySymbol.get(String(row?.symbol||'').toUpperCase());
+     return meta?{...row,industry:meta.industry||row.industry||'',mainProducts:meta.mainProducts||row.mainProducts||''}:row;
+   });
+   const current=enrichedRows.find(row=>String(row?.symbol||'').toUpperCase()===String(symbol).toUpperCase())
+     ||metaBySymbol.get(String(symbol).toUpperCase());
+   if(!current){
+     block.remove();
+     return;
+   }
+   const context=industryModule.companyContext(current,enrichedRows.length?enrichedRows:metaRows);
+   const html=viewModule.industryContextHtml(context,{collapsible:false});
+   if(!html){
+     block.remove();
+     return;
+   }
+   host.innerHTML=html;
  }));
  jobs.push(settle(valuationStocks([symbol]),valRes=>{
  const valuation=valRes.status==='fulfilled'?valRes.value?.stocks?.[0]:null;
