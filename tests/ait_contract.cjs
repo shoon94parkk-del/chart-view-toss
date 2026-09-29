@@ -16,7 +16,7 @@ const liveSync = fs.readFileSync('src/liveHomeSync.js', 'utf8');
 const releaseScope = fs.readFileSync('src/releaseScope.js', 'utf8');
 const html = fs.readFileSync('index.html', 'utf8');
 
-assert.equal(pkg.version, '0.9.4');
+assert.equal(pkg.version, '0.9.5');
 assert.equal(pkg.dependencies['@apps-in-toss/web-framework'], '3.5.0');
 assert.equal(pkg.engines.node, '24.x');
 assert.match(pkg.engines.npm, />=10 <12/);
