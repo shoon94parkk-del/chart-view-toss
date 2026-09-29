@@ -28,7 +28,8 @@ function reportRevenueHtml(report){
       <div><span class="industry-kicker amber">DART</span><strong>사업보고서 매출 구조</strong></div>
       <button type="button" class="industry-source-link" data-external-url="${esc(report.sourceUrl||'')}" ${report.sourceUrl?'':'disabled'}>원문 보기</button>
     </div>
-    <div class="industry-report-top"><span>실제 매출 1위</span><strong>${esc(top?.name||'')}</strong><em>${Number.isFinite(Number(top?.share))?Number(top.share).toFixed(1)+'%':'—'}</em></div>
+    <div class="industry-report-top"><span>${report.basis==='사업부문별 매출'?'매출 1위 사업부문':'실제 매출 1위'}</span><strong>${esc(top?.name||'')}</strong><em>${Number.isFinite(Number(top?.share))?Number(top.share).toFixed(1)+'%':'—'}</em></div>
+    ${top?.detail?`<p class="industry-report-detail">${esc(clip(top.detail,150))}</p>`:''}
     <div class="industry-revenue-list">${items.map(item=>`
       <div class="industry-revenue-row">
         <div><span>${esc(item.name||'')}</span><strong>${Number.isFinite(Number(item.share))?Number(item.share).toFixed(1)+'%':'—'}</strong></div>
