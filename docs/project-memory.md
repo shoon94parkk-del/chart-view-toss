@@ -139,3 +139,10 @@ Toss-specific navigation, safe-area, storage, SDK bridge, and release logic belo
 - Samsung Electronics 2025 annual report now resolves as business-division revenue: DX 56.3% (top), DS 39.0%, SDC 8.9%, Harman 4.7%, with internal-transaction elimination used only for reconciliation.
 - Detail/LAB UI labels segment-level results as “매출 1위 사업부문” and shows the division’s major products separately.
 - Measured Render latency: first Samsung request 4.147s; repeated cached request 0.084s.
+
+### 2026-09-29 major-detail live timing + DART coverage
+- Major-company DART parser coverage verified at 12/12 for Samsung Electronics, SK Hynix, LG Energy Solution, Samsung Biologics, Hyundai Motor, Kia, Samsung SDI, LG Electronics, NAVER, Kakao, Celltrion, and POSCO Holdings.
+- The backend precomputes these validated DART contexts; first API access from an empty in-process cache but with the static cache present averaged 56 ms, max 102 ms. Browser-observed business-report request averaged about 172 ms.
+- Live mobile Chromium detail-page averages from navigation start: price 2632 ms, chart 3153 ms, company/industry + DART 2647 ms, valuation metrics 3604 ms, news 2898 ms, core detail completion 4037 ms.
+- Direct-relationship evidence averaged 5453 ms and maxed at 7487 ms, but it is asynchronous and must never block DART or core detail rendering.
+- Current remaining P0 performance bottlenecks are valuation, compare/chart, and fresh quote; DART itself is no longer the bottleneck.
