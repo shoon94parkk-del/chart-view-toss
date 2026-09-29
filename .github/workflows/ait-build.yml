@@ -3,6 +3,17 @@ name: Apps in Toss bundle
 on:
   pull_request:
     branches: [main]
+  push:
+    branches: [main]
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+      - 'apps-in-toss.config.ts'
+      - 'src/**'
+      - 'public/**'
+      - 'scripts/**'
+      - 'tests/**'
+      - '.github/workflows/ait-build.yml'
   workflow_dispatch:
 
 jobs:
