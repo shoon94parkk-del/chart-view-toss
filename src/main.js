@@ -5,9 +5,10 @@ import './homeExtras.css';
 import './homeExtras.js';
 import { SHOW_SPOTLIGHT } from './releaseScope.js';
 import { ANALYSIS_ROUTES, renderAnalysis } from './analysisViews.js';
+import packageInfo from '../package.json';
 import { finiteNumber } from './analysisData.js';
 import { loadChartRuntime } from './chartRuntime.js';
-import { API_BASE, quoteSnapshots, quoteSnapshotsLive, compareStocks, marketNow, homeSnapshot, searchStocks, valuationStocks, macroData, homeInsights, personalizedNews, screenerData, companyContextData, businessReportData, relationshipEvidenceData } from './api.js';
+import { API_BASE, quoteSnapshots, quoteSnapshotsLive, compareStocks, marketNow, homeSnapshot, searchStocks, valuationStocks, macroData, homeInsights, personalizedNews, screenerData, companyContextData, businessReportData, financialHistoryData, relationshipEvidenceData } from './api.js';
 import { applyRuntimeClass, haptic, openExternal, syncNativeBackHandler, closeMiniApp, isAppsInTossRuntime } from './tossBridge.js';
 import { openStockSelector, closeStockSelector } from './stockSelector.js';
 import { initializeStorage, readStored, writeStored, clearStored, getActivityVisitorId } from './storage.js';
@@ -44,7 +45,7 @@ const usableStockName=(name,symbol)=>{
 };
 const fmtPrice=(value)=>{const n=finiteNumber(value);if(n===null)return '-';if(Math.abs(n)>=1000)return n.toLocaleString('ko-KR',{maximumFractionDigits:2});if(Math.abs(n)>=100)return n.toLocaleString('ko-KR',{maximumFractionDigits:2});return n.toLocaleString('ko-KR',{maximumFractionDigits:3})};
 const fmtChange=(value)=>{const n=finiteNumber(value);if(n===null)return '-';return `${n>0?'+':''}${n.toFixed(2)}%`};
-const state={tab:'home',watchlist:load(WATCHLIST_KEY,[]),selected:load(SELECTED_KEY,DEFAULTS.map(x=>x.symbol)),period:'1mo',customRange:null,detailSymbol:null,detailName:'',valuationMetric:'forwardPE',watchSort:'manual',newsSort:'major',detailPeriod:'3mo'};
+const state={tab:'home',watchlist:load(WATCHLIST_KEY,[]),selected:load(SELECTED_KEY,DEFAULTS.map(x=>x.symbol)),period:'1mo',customRange:null,detailSymbol:null,detailName:'',detailOrigin:'home',valuationMetric:'forwardPE',watchSort:'manual',newsSort:'major',detailPeriod:'3mo'};
 const resolvedNames=new Map();
 let chartInstance=null;
 let chartResizeObserver=null;
@@ -146,7 +147,7 @@ function dataDisclosure(){
 }
 function shell(content,title='차트뷰'){
  const secondary=ANALYSIS_ROUTES.has(state.tab)||['valuation','macro','discover','ideas','picks','news','detail','info'].includes(state.tab);
- const navTab=secondary?'more':state.tab;
+ const navTab=state.tab==='detail'?state.detailOrigin:(secondary?'more':state.tab);
  const leading=secondary?`<button class="icon-button back-button" aria-label="뒤로가기" data-back>${iconSvg('back',22)}</button>`:`<span class="brand-mark">${iconSvg('spark',18)}</span>`;
  const offline=typeof navigator!=='undefined'&&navigator.onLine===false;
  const detailWatch=state.tab==='detail'&&state.watchlist.some(row=>row.symbol===state.detailSymbol);
@@ -188,10 +189,11 @@ function navigate(tab,detailSymbol=null,detailName=''){
  }
  scrollPositions.set(location.hash||'#home',window.scrollY);
  closeStockSelector();
+ if(tab==='detail')state.detailOrigin=state.tab==='detail'?state.detailOrigin:['home','chart','watch'].includes(state.tab)?state.tab:'more';
  state.tab=tab;
  if(detailSymbol){state.detailSymbol=detailSymbol;state.detailName=detailName||'';}
  const hash=detailSymbol?`#${tab}/${encodeURIComponent(detailSymbol)}`:`#${tab}`;
- history.pushState({tab,detailSymbol:state.detailSymbol,detailName:state.detailName},'',hash);
+ history.pushState({tab,detailSymbol:state.detailSymbol,detailName:state.detailName,detailOrigin:state.detailOrigin},'',hash);
  navigationDepth+=1;
  haptic('tickWeak');
  render();
@@ -803,7 +805,8 @@ async function renderDetail(){
    <section class="detail-price skeleton detail-price-skeleton" id="detail-price">${loadingIndicator('현재가를 확인하고 있어요')}</section>
    <div class="segmented detail-period-tabs">${[['1mo','1개월'],['3mo','3개월'],['6mo','6개월'],['1y','1년']].map(([p,l])=>`<button data-detail-period="${p}" aria-pressed="${state.detailPeriod===p}" class="${state.detailPeriod===p?'active':''}">${l}</button>`).join('')}</div>
    <section class="detail-chart-card"><div class="detail-section-head"><div><span>기간 수익률</span><strong id="detail-period-label">선택 기간 흐름</strong></div><small id="detail-chart-status">불러오는 중</small></div><div class="detail-chart-wrap"><div id="detail-chart" class="detail-chart"></div><div id="detail-chart-loading" class="chart-loading">${loadingIndicator('종목 차트를 불러오고 있어요')}</div></div><div id="detail-return-note" class="detail-return-note"></div></section>
-   <section class="detail-block detail-industry-block" id="detail-industry-block"><div class="section-head"><div><h2>회사 · 산업 맥락</h2><p>주요제품부터 섹터와 공급망까지</p></div><span class="detail-context-badge">KRX</span></div><div id="detail-industry-context" class="detail-industry-context">${loadingIndicator('회사·산업 정보를 불러오고 있어요')}<div class="skeleton detail-context-skeleton"></div></div></section>
+   ${/\.(KS|KQ)$/i.test(symbol)?`<section class="detail-block" id="detail-financial-block"><div class="section-head"><div><h2>공시 재무 흐름</h2><p>DART 보고서의 매출액과 영업이익</p></div><span class="detail-context-badge">DART</span></div><div id="detail-financial-history">${loadingIndicator('최근 재무제표를 확인하고 있어요')}</div></section>`:''}
+   <section class="detail-block detail-industry-block" id="detail-industry-block"><div class="section-head"><div><h2>회사 · 산업 맥락</h2><p>사업, 관련 기업, 산업 연결을 살펴봐요</p></div><span class="detail-context-badge">KRX</span></div><div id="detail-industry-context" class="detail-industry-context">${loadingIndicator('회사·산업 정보를 불러오고 있어요')}<div class="skeleton detail-context-skeleton"></div></div></section>
    <section class="detail-block"><div class="section-head"><h2>핵심 지표</h2><button class="text-button" data-tab="valuation">같은 지표 비교</button></div><div id="detail-metrics" class="detail-metrics">${loadingIndicator('핵심 지표를 불러오고 있어요')}<div class="skeleton metric"></div><div class="skeleton metric"></div><div class="skeleton metric"></div><div class="skeleton metric"></div></div><div id="detail-metric-meta" class="detail-metric-meta"></div></section>
    <section class="detail-block"><div class="section-head"><h2>관련 뉴스</h2><button class="text-button" data-tab="news">전체 뉴스</button></div><div id="detail-news" class="detail-news">${loadingIndicator('관련 뉴스를 불러오고 있어요')}<div class="skeleton news"></div><div class="skeleton news"></div></div></section>
  `,headingName);
@@ -955,6 +958,15 @@ async function renderDetail(){
    };
  });
  const koreanDetail=/\.(KS|KQ)$/i.test(symbol);
+ if(koreanDetail){
+   jobs.push(settle(Promise.all([financialHistoryData(symbol).catch(()=>({loadError:true})),import('./financialHistoryView.js')]),result=>{
+     const host=document.querySelector('#detail-financial-history');
+     if(!host)return;
+     if(result.status!=='fulfilled'){host.textContent='DART 재무제표를 불러오지 못했어요.';return;}
+     const [data,view]=result.value;
+     host.innerHTML=view.financialHistoryHtml(data);
+   }));
+ }
  const enrichment={report:null,reportState:koreanDetail?'loading':'idle',directRelations:[],relationsState:koreanDetail?'loading':'idle'};
  jobs.push(settle(industryBasePromise,industryRes=>{
    const host=document.querySelector('#detail-industry-context');
@@ -1060,7 +1072,7 @@ function renderInfo(){
    <section class="page-intro rich-intro subpage-hero info-hero"><span class="page-kicker">DATA & SERVICE</span><h2>숫자를 보기 전에<br><em>기준부터</em> 확인하세요</h2><p>Chart View가 데이터를 보여주는 방식과 이용 시 알아둘 내용을 정리했어요.</p></section>
    <section class="info-stack">
      <article class="info-card"><span class="info-icon blue">${iconSvg('chart',21)}</span><div><strong>시세·차트 데이터</strong><p>시장 데이터는 외부 데이터 제공처와 Chart View 백엔드를 통해 표시돼요. 거래소 실시간 체결값과 차이가 있거나 갱신이 지연될 수 있어요.</p></div></article>
-     <article class="info-card"><span class="info-icon purple">${iconSvg('value',21)}</span><div><strong>재무·밸류에이션</strong><p>PER, PBR, ROE, 배당수익률 등은 제공처의 최신 가용 재무 데이터를 사용하며 보고 시점·회계 기준에 따라 값이 달라질 수 있어요.</p></div></article>
+     <article class="info-card"><span class="info-icon purple">${iconSvg('value',21)}</span><div><strong>재무·밸류에이션</strong><p>종목 상세의 매출액·영업이익 흐름은 DART 공시 재무제표를 사용해요. PER, PBR, ROE 등 비교 지표는 제공처의 최신 가용 데이터를 사용하므로 기준 시점과 회계 기준이 다를 수 있어요.</p></div></article>
      <article class="info-card"><span class="info-icon green">${iconSvg('macro',21)}</span><div><strong>경제 지표</strong><p>각 지표의 발표 주기가 달라 동일 시점 데이터가 아닐 수 있어요. 화면에 표시된 기준일을 함께 확인해주세요.</p></div></article>
      <article class="info-card"><span class="info-icon coral">${iconSvg('news',21)}</span><div><strong>뉴스</strong><p>뉴스는 외부 매체의 기사 제목·링크를 모아 보여주며 기사 내용과 정확성에 대한 책임은 해당 제공처에 있어요.</p></div></article>
    </section>
@@ -1098,7 +1110,7 @@ function renderMore(){
  cleanupChart();
  const epoch=viewEpoch;
  document.querySelector('#app').innerHTML=shell(`
-   <section class="page-intro"><h2>전체</h2><p>분석 도구와 이용 안내를 모았어요.</p></section>
+   <section class="page-intro"><h2>분석과 도구</h2><p>종목 탐색부터 자료 확인까지 이어서 살펴봐요.</p></section>
    <section class="menu-group"><h3>분석 도구</h3><div class="feature-menu">
      <button class="feature-row" data-tab="chart"><span class="feature-icon blue">${iconSvg('chart',22)}</span><span><strong>차트 비교</strong><small>최대 6개 종목 기간 수익률 비교</small></span><b>${iconSvg('arrow',19)}</b></button>
      <button class="feature-row" data-tab="valuation"><span class="feature-icon purple">${iconSvg('value',22)}</span><span><strong>밸류에이션</strong><small>같은 재무지표를 종목별 비교</small></span><b>${iconSvg('arrow',19)}</b></button>
@@ -1113,7 +1125,7 @@ function renderMore(){
      <button class="feature-row" data-tab="info"><span class="feature-icon blue">${iconSvg('spark',22)}</span><span><strong>데이터 및 이용 안내</strong><small>기준·지연·개인정보·지원 안내</small></span><b>${iconSvg('arrow',19)}</b></button>
      <div class="feature-row"><span><strong>고객문의</strong><small>박상훈 · kimtang89@naver.com</small></span></div>
    </div></section>
-   <div class="version-card"><span class="brand-mark">${iconSvg('spark',16)}</span><div><strong>Chart View</strong><small>버전 0.9.5</small></div></div>
+   <div class="version-card"><span class="brand-mark">${iconSvg('spark',16)}</span><div><strong>Chart View</strong><small>버전 ${esc(packageInfo.version)}</small></div></div>
  `,'전체');
  bindNav();
 }
@@ -1159,6 +1171,7 @@ function syncFromLocation(){
  const route=resolveRoute(location);
  Object.assign(state,route);
  state.detailName=route.tab==='detail'?(history.state?.detailName||''):'';
+ state.detailOrigin=route.tab==='detail'&&['home','chart','watch','more'].includes(history.state?.detailOrigin)?history.state.detailOrigin:'home';
  if(route.tab==='detail'&&!state.detailName)state.detailName=resolvedNames.get(route.detailSymbol)||'';
 }
 
@@ -1205,5 +1218,5 @@ async function startApp(){
 startApp();
 // Opt-in support diagnostics: aggregate timings only, local to this app session.
 if(new URLSearchParams(location.search).get('diagnostics')==='1') {
- Object.defineProperty(window,'chartviewDiagnostics',{value:()=>({version:'0.9.5',metrics:diagnosticSummary()}),configurable:true});
+ Object.defineProperty(window,'chartviewDiagnostics',{value:()=>({version:packageInfo.version,metrics:diagnosticSummary()}),configurable:true});
 }

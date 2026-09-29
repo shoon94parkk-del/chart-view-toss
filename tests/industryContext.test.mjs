@@ -18,10 +18,25 @@ test('classifies supply chain by verifiable industry/product keywords',()=>{
 
 test('sector context measures breadth instead of judging a stock in isolation',()=>{
  const ctx=buildSectorContext(rows[0],rows);
- assert.equal(ctx.peerCount,4);
- assert.equal(ctx.upRatio,0.75);
- assert.equal(ctx.label,'강함');
+ assert.equal(ctx.peerCount,2);
+ assert.equal(ctx.upRatio,1);
+ assert.equal(ctx.label,'표본 부족');
  assert.equal(ctx.leaders[0].symbol,'C.KQ');
+ assert.equal(ctx.groupBasis,'KRX 주요제품·산업 단계');
+});
+
+test('Samsung Electronics and SK hynix use comparable chip peers despite different KRX industries',()=>{
+ const samsung={symbol:'005930.KS',name:'삼성전자',industry:'통신 및 방송 장비 제조업',mainProducts:'통신 장비, 반도체 제조(메모리) 제품, 디스플레이',change1d:1,date:'2026-09-28'};
+ const hynix={symbol:'000660.KS',name:'SK하이닉스',industry:'반도체 제조업',mainProducts:'반도체,컴퓨터,통신기기 제조,도매',change1d:2,date:'2026-09-28'};
+ const irrelevant={symbol:'X.KS',name:'통신사',industry:'통신 및 방송 장비 제조업',mainProducts:'방송 장비',change1d:-5,date:'2026-09-28'};
+ const old={...hynix,symbol:'OLD.KS',date:'2026-09-27',change1d:99};
+ assert.equal(classifySupplyChain(samsung).stage,'칩·소자');
+ assert.equal(classifySupplyChain(hynix).stage,'칩·소자');
+ const ctx=buildSectorContext(samsung,[samsung,hynix,irrelevant,old]);
+ assert.equal(ctx.industry,'반도체 · 칩·소자');
+ assert.equal(ctx.peerCount,2);
+ assert.equal(ctx.avgChange,1.5);
+ assert.equal(ctx.officialIndustry,'통신 및 방송 장비 제조업');
 });
 
 test('supply peers prefer related chain and identify adjacent stages',()=>{

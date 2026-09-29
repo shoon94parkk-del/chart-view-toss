@@ -97,6 +97,14 @@ export function classifySupplyChain(row){
   for(const chain of CHAIN_DEFS){
     if(!chain.match.test(text))continue;
     let stage='관련기업';
+    // Diversified electronics makers can be filed under communication equipment
+    // even when their disclosed major products include memory chips.
+    const products=norm(row?.mainProducts);
+    const industry=norm(row?.industry);
+    if(chain.id==='semiconductor'&&(/반도체 제조업/.test(industry)||/반도체 제조.*메모리|dram|nand|hbm|메모리 반도체|파운드리/.test(products))){
+      stage='칩·소자';
+      return {chain:chain.id,chainLabel:chain.label,stage};
+    }
     for(const [label,pattern] of chain.stages){
       if(pattern.test(text)){stage=label;break;}
     }
@@ -116,7 +124,15 @@ function sectorTone({peerCount,upRatio,avgChange,trendRatio}){
 export function buildSectorContext(row,rows){
   const industry=String(row?.industry||'').trim();
   if(!industry)return null;
-  const peers=(Array.isArray(rows)?rows:[]).filter(x=>String(x?.industry||'').trim()===industry);
+  const cls=classifySupplyChain(row);
+  const focused=cls&&cls.stage!=='관련기업';
+  const groupLabel=focused?`${cls.chainLabel} · ${cls.stage}`:industry;
+  const peers=(Array.isArray(rows)?rows:[]).filter(x=>{
+    if(row?.date&&x?.date!==row.date)return false;
+    if(!focused)return String(x?.industry||'').trim()===industry;
+    const other=classifySupplyChain(x);
+    return other?.chain===cls.chain&&other?.stage===cls.stage;
+  });
   const changes=peers.map(x=>n(x,'change1d')).filter(v=>v!==null);
   if(!peers.length||!changes.length)return null;
   const upCount=changes.filter(v=>v>0).length;
@@ -132,8 +148,12 @@ export function buildSectorContext(row,rows){
     .slice(0,3)
     .map(x=>({symbol:x.symbol,name:x.name||x.symbol,change1d:n(x,'change1d')}));
   return {
-    industry,
+    industry:groupLabel,
+    officialIndustry:industry,
+    groupBasis:focused?'KRX 주요제품·산업 단계':'KRX 업종',
+    tradeDate:row?.date||'',
     peerCount:peers.length,
+    observedCount:changes.length,
     avgChange,
     upRatio,
     trendRatio,

@@ -6,7 +6,7 @@ const main=readFileSync(new URL('../src/main.js',import.meta.url),'utf8');
 
 test('stock detail includes non-blocking company sector supply-chain context',()=>{
  assert.match(main,/id="detail-industry-block"/);
- assert.match(main,/주요제품부터 섹터와 공급망까지/);
+ assert.match(main,/사업, 관련 기업, 산업 연결을 살펴봐요/);
  assert.match(main,/screenerData\(\)\.catch\(\(\)=>null\)/);
  assert.match(main,/if\(!current\|\|!current\.industry\|\|!current\.mainProducts\)/);
  assert.match(main,/const companyMeta=await companyContextData\(\)\.catch\(\(\)=>null\)/);

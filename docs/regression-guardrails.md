@@ -149,3 +149,7 @@ Last updated: 2026-09-22
 - Stock detail and IDEA LAB use the same relationship semantics so the meaning does not change between screens.
 - Pending chart/detail plot areas must show visible progress, not only a small status word above an empty panel. The progress overlay must clear for success, no data, and error.
 - Share controls must remain reachable when AIT hides the custom topbar; shared stock links must preserve the ticker and carry crawler-readable title/image metadata.
+### DART financials and sector comparability
+- The detail financial panel is Korean-only, dynamically loaded, and independent of price/chart/valuation/DART revenue-mix loading. Show original filing links, annual versus cumulative interim periods, and CFS/OFS basis.
+- Do not call unrelated companies a sector peer merely because they share a broad KRX industry. Prefer a specific product/industry-stage group, filter by screener trade date, and withhold a strength label below three peers.
+- Detail navigation must preserve the originating bottom-nav tab; direct detail links may default to Home. The More body heading must not repeat the topbar `전체`.
