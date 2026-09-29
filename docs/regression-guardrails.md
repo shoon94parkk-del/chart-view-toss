@@ -133,3 +133,10 @@ Last updated: 2026-09-22
 - Never show ‘매출 1위’ from KRX `mainProducts` alone. It requires a DART-derived `available=true` payload.
 - If a report/table is missing or ambiguous, preserve the KRX company card and omit the revenue mix rather than guessing.
 - A displayed revenue mix must expose the DART original-report link and report year/basis.
+
+### IDEA LAB expansion / direct-relation guardrail
+- Every candidate company/sector/supply-chain panel starts collapsed. Do not restore the `open` attribute by default.
+- DART business-report and direct-relationship requests fire only after the user expands a candidate context panel.
+- DART/relationship fetch failures must keep the base KRX/sector context usable and must not block the list.
+- “확인된 직접 관계” requires evidence-backed API rows. Industry/keyword adjacency stays under “산업상 연관 후보” and must never be relabeled as a confirmed customer/supplier.
+- Stock detail and IDEA LAB use the same relationship semantics so the meaning does not change between screens.
