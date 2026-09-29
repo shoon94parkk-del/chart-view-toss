@@ -160,3 +160,8 @@ Home places the device-local watchlist directly after search and before the mark
 ## 2026-09-30 — URL 미리보기는 공식 홍보 이미지를 사용
 
 웹 URL과 공유 링크의 Open Graph/Twitter 미리보기 이미지는 기존의 별도 소셜 카드 대신 `public/marketing/chartview-toss-instagram-20260930.png`를 단일 홍보 자산으로 사용한다. 링크를 카카오톡·SNS·메신저에 붙였을 때 DART 공시 기반, 한국·미국 주식 비교, 히트맵·스크리너라는 핵심 메시지가 동일하게 노출되도록 한다.
+
+
+## 2026-09-30 — 공유 URL 버전으로 소셜 캐시 갱신
+
+카카오톡 등 메신저가 동일한 공유 URL의 Open Graph 메타데이터를 오래 캐시할 수 있으므로 앱에서 생성하는 공유 링크에 `v=promo-20260930-v1` 버전을 붙인다. 목적은 미리보기 캐시 갱신뿐이며 실제 목적지·화면 라우팅·데이터 계약은 변경하지 않는다.
