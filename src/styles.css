@@ -147,6 +147,8 @@ svg{display:block}
 .detail-return{text-align:right}.detail-return span{color:rgba(255,255,255,.62)!important}.detail-return strong{font-size:18px!important;margin-top:8px!important}
 .detail-return.up strong{color:#ff8d98}.detail-return.down strong{color:#7ab7ff}.detail-return.flat strong{color:#d1d6db}
 .detail-price-skeleton{height:115px}
+.detail-price-loading{color:#4e5968;font-size:12px;font-weight:700}
+.detail-context-loading{margin:10px 2px 0;color:#6b7684;font-size:11px;line-height:1.5}
 .detail-chart-card{border:1px solid #edf0f2;border-radius:21px;padding:17px 13px;background:#fff;box-shadow:0 8px 24px rgba(25,31,40,.035)}
 .detail-section-head{display:flex;justify-content:space-between;align-items:flex-start;padding:0 5px 10px}.detail-section-head span,.detail-section-head strong{display:block}.detail-section-head span{font-size:11px;color:#8b95a1}.detail-section-head strong{font-size:16px;margin-top:3px}.detail-section-head small{font-size:10px;color:#8b95a1;background:#f2f4f6;border-radius:999px;padding:5px 8px}
 .detail-chart{width:100%;height:220px}.detail-block{margin:28px 0}

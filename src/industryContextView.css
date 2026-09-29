@@ -82,4 +82,9 @@
 .industry-direct-row>div small{color:#98a59f;font-size:8px}
 .industry-direct-row .industry-source-link{color:#168157}
 .industry-report-detail{margin:7px 2px 0;color:#7b6850;font-size:9px;line-height:1.45}
+.industry-enrichment-status{display:flex;align-items:center;gap:7px;margin:10px 0 0;color:#6b7684;font-size:11px;line-height:1.5}
+.industry-enrichment-status.loading:before{content:'';width:11px;height:11px;flex:none;border:2px solid #d1d6db;border-top-color:#3182f6;border-radius:50%;animation:industrySpin .8s linear infinite}
+.industry-enrichment-status.error{color:#b9404d}
+@keyframes industrySpin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.industry-enrichment-status.loading:before{animation:none}}
 

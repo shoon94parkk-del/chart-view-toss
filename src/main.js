@@ -747,10 +747,10 @@ async function renderDetail(){
      <div class="detail-brand"><span class="detail-logo">${esc(knownName.slice(0,1))}</span><div><span>${esc(symbol)}</span><h2>${esc(knownName)}</h2></div></div>
      <div class="detail-actions"><button id="detail-watch">${iconSvg('heart',18)} <span>${saved?'관심 해제':'관심 추가'}</span></button><button id="detail-compare">${iconSvg('chart',18)} <span>비교에 추가</span></button></div>
    </section>
-   <section class="detail-price skeleton detail-price-skeleton" id="detail-price"></section>
+   <section class="detail-price skeleton detail-price-skeleton" id="detail-price"><span class="detail-price-loading" role="status">현재가 확인 중</span></section>
    <div class="segmented detail-period-tabs">${[['1mo','1개월'],['3mo','3개월'],['6mo','6개월'],['1y','1년']].map(([p,l])=>`<button data-detail-period="${p}" aria-pressed="${state.detailPeriod===p}" class="${state.detailPeriod===p?'active':''}">${l}</button>`).join('')}</div>
    <section class="detail-chart-card"><div class="detail-section-head"><div><span>기간 수익률</span><strong id="detail-period-label">선택 기간 흐름</strong></div><small id="detail-chart-status">불러오는 중</small></div><div id="detail-chart" class="detail-chart"></div><div id="detail-return-note" class="detail-return-note"></div></section>
-   <section class="detail-block detail-industry-block" id="detail-industry-block"><div class="section-head"><div><h2>회사 · 산업 맥락</h2><p>주요제품부터 섹터와 공급망까지</p></div><span class="detail-context-badge">KRX</span></div><div id="detail-industry-context" class="detail-industry-context"><div class="skeleton detail-context-skeleton"></div></div></section>
+   <section class="detail-block detail-industry-block" id="detail-industry-block"><div class="section-head"><div><h2>회사 · 산업 맥락</h2><p>주요제품부터 섹터와 공급망까지</p></div><span class="detail-context-badge">KRX</span></div><div id="detail-industry-context" class="detail-industry-context"><div class="skeleton detail-context-skeleton"></div><p class="detail-context-loading" role="status">회사·산업 정보 불러오는 중</p></div></section>
    <section class="detail-block"><div class="section-head"><h2>핵심 지표</h2><button class="text-button" data-tab="valuation">같은 지표 비교</button></div><div id="detail-metrics" class="detail-metrics"><div class="skeleton metric"></div><div class="skeleton metric"></div><div class="skeleton metric"></div><div class="skeleton metric"></div></div><div id="detail-metric-meta" class="detail-metric-meta"></div></section>
    <section class="detail-block"><div class="section-head"><h2>관련 뉴스</h2><button class="text-button" data-tab="news">전체 뉴스</button></div><div id="detail-news" class="detail-news"><div class="skeleton news"></div><div class="skeleton news"></div></div></section>
  `,knownName);
@@ -831,25 +831,31 @@ async function renderDetail(){
  }));
  const industryBasePromise=Promise.all([
    screenerData().catch(()=>null),
-   companyContextData().catch(()=>null),
    import('./industryContext.js'),
    import('./industryContextView.js'),
- ]).then(([screener,companyMeta,industryModule,viewModule])=>{
-   const metaRows=Array.isArray(companyMeta?.companies)?companyMeta.companies:[];
-   const metaBySymbol=new Map(metaRows.map(row=>[String(row?.symbol||'').toUpperCase(),row]));
+ ]).then(async([screener,industryModule,viewModule])=>{
    const screenerRows=Array.isArray(screener?.stocks)?screener.stocks:[];
-   const enrichedRows=screenerRows.map(row=>{
-     const meta=metaBySymbol.get(String(row?.symbol||'').toUpperCase());
-     return meta?{...row,industry:meta.industry||row.industry||'',mainProducts:meta.mainProducts||row.mainProducts||''}:row;
-   });
-   const current=enrichedRows.find(row=>String(row?.symbol||'').toUpperCase()===String(symbol).toUpperCase())
-     ||metaBySymbol.get(String(symbol).toUpperCase());
+   const screenerCurrent=screenerRows.find(row=>String(row?.symbol||'').toUpperCase()===String(symbol).toUpperCase());
+   let current=screenerCurrent;
+   let rows=screenerRows;
+   if(!current||!current.industry||!current.mainProducts){
+     const companyMeta=await companyContextData().catch(()=>null);
+     const metaRows=Array.isArray(companyMeta?.companies)?companyMeta.companies:[];
+     const metaBySymbol=new Map(metaRows.map(row=>[String(row?.symbol||'').toUpperCase(),row]));
+     rows=screenerRows.length?screenerRows.map(row=>{
+       const meta=metaBySymbol.get(String(row?.symbol||'').toUpperCase());
+       return meta?{...row,industry:meta.industry||row.industry||'',mainProducts:meta.mainProducts||row.mainProducts||''}:row;
+     }):metaRows;
+     current=rows.find(row=>String(row?.symbol||'').toUpperCase()===String(symbol).toUpperCase())||metaBySymbol.get(String(symbol).toUpperCase());
+   }
    if(!current)return null;
    return {
-     context:industryModule.companyContext(current,enrichedRows.length?enrichedRows:metaRows),
+     context:industryModule.companyContext(current,rows),
      viewModule,
    };
  });
+ const koreanDetail=/\.(KS|KQ)$/i.test(symbol);
+ const enrichment={report:null,reportState:koreanDetail?'loading':'idle',directRelations:[],relationsState:koreanDetail?'loading':'idle'};
  jobs.push(settle(industryBasePromise,industryRes=>{
    const host=document.querySelector('#detail-industry-context');
    const block=document.querySelector('#detail-industry-block');
@@ -858,20 +864,20 @@ async function renderDetail(){
      block.remove();
      return;
    }
-   const html=industryRes.value.viewModule.industryContextHtml(industryRes.value.context,{collapsible:false});
+   const html=industryRes.value.viewModule.industryContextHtml(industryRes.value.context,{collapsible:false,...enrichment});
    if(!html){block.remove();return;}
    host.innerHTML=html;
  }));
- if(/\.(KS|KQ)$/i.test(symbol)){
-   const enrichment={report:null,directRelations:[]};
+ if(koreanDetail){
    const renderEnrichment=base=>{
      const host=document.querySelector('#detail-industry-context');
      if(!host||!base)return;
-     if(!enrichment.report?.available&&!enrichment.directRelations.length)return;
      host.innerHTML=base.viewModule.industryContextHtml(base.context,{
        collapsible:false,
        businessReport:enrichment.report?.available?enrichment.report:null,
        directRelations:enrichment.directRelations,
+       reportState:enrichment.reportState,
+       relationsState:enrichment.relationsState,
      });
      const badge=document.querySelector('#detail-industry-block .detail-context-badge');
      if(badge)badge.textContent=enrichment.report?.available&&enrichment.directRelations.length?'KRX + DART + 근거':enrichment.report?.available?'KRX + DART':'KRX + 근거';
@@ -879,22 +885,24 @@ async function renderDetail(){
    };
    jobs.push(settle(Promise.all([
      industryBasePromise,
-     businessReportData(symbol,knownName).catch(()=>null),
+     businessReportData(symbol,knownName).catch(()=>({loadError:true})),
    ]),dartRes=>{
      if(dartRes.status!=='fulfilled')return;
      const [base,report]=dartRes.value||[];
-     if(!base||!report?.available)return;
+     if(!base)return;
      enrichment.report=report;
+     enrichment.reportState=report?.loadError?'error':report?.available?'ready':'unavailable';
      renderEnrichment(base);
    }));
    jobs.push(settle(Promise.all([
      industryBasePromise,
-     relationshipEvidenceData(symbol,knownName).catch(()=>null),
+     relationshipEvidenceData(symbol,knownName).catch(()=>({loadError:true})),
    ]),evidenceRes=>{
      if(evidenceRes.status!=='fulfilled')return;
      const [base,evidence]=evidenceRes.value||[];
-     if(!base||!evidence?.available)return;
-     enrichment.directRelations=evidence.relations||[];
+     if(!base)return;
+     enrichment.directRelations=evidence?.available?evidence.relations||[]:[];
+     enrichment.relationsState=evidence?.loadError?'error':'ready';
      renderEnrichment(base);
    }));
  }

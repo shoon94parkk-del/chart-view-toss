@@ -146,3 +146,9 @@ Toss-specific navigation, safe-area, storage, SDK bridge, and release logic belo
 - Live mobile Chromium detail-page averages from navigation start: price 2632 ms, chart 3153 ms, company/industry + DART 2647 ms, valuation metrics 3604 ms, news 2898 ms, core detail completion 4037 ms.
 - Direct-relationship evidence averaged 5453 ms and maxed at 7487 ms, but it is asynchronous and must never block DART or core detail rendering.
 - Current remaining P0 performance bottlenecks are valuation, compare/chart, and fresh quote; DART itself is no longer the bottleneck.
+
+### 2026-09-29 Detail and IDEA LAB loading states
+- Detail shows explicit text while the first quote and KRX company context are pending; its DART and direct-evidence states update independently after the base context renders.
+- Detail reuses a screener row's industry/products when both are present; `company_context.json` is only a fallback for missing metadata or missing symbols.
+- IDEA LAB only fetches enrichment when a candidate is expanded and paints each completed source without waiting for the other source.
+- Missing/ambiguous DART revenue stays distinct from a network failure; neither state creates an unsupported top-revenue claim.

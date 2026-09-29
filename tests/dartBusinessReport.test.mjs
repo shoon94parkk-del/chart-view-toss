@@ -15,8 +15,8 @@ test('detail loads DART revenue only after the base industry context can render'
 });
 
 test('DART detail call is restricted to Korean exchange tickers',()=>{
- assert.equal(main.includes("if(/\\.(KS|KQ)$/i.test(symbol)){"),true);
- assert.equal(main.includes("if(/\\\\.(KS|KQ)$/i.test(symbol)){"),false);
+ assert.match(main,/const koreanDetail=\/\\\.\(KS\|KQ\)\$\/i\.test\(symbol\)/);
+ assert.match(main,/if\(koreanDetail\)/);
 });
 
 test('business report client keeps a short stale-safe cache and no retry storm',()=>{
@@ -36,8 +36,20 @@ test('IDEA LAB keeps industry context collapsed and loads DART only on expand',(
  const idea=readFileSync(new URL('../src/ideaView.js',import.meta.url),'utf8');
  assert.match(idea,/industryContextHtml\(row\.context,\{collapsible:true,open:false\}\)/);
  assert.match(idea,/details\.addEventListener\('toggle'/);
- assert.match(idea,/businessReportData\(symbol,name\)\.catch/);
- assert.match(idea,/relationshipEvidenceData\(symbol,name\)\.catch/);
+ assert.match(idea,/businessReportData\(symbol,name\)\.then/);
+ assert.match(idea,/relationshipEvidenceData\(symbol,name\)\.then/);
+ assert.match(idea,/\.then\(repaint\)/);
+ assert.doesNotMatch(idea,/const \[report,evidence\]=await Promise\.all/);
+});
+
+test('slow DART and direct evidence show independent loading and failure states',()=>{
+ assert.match(main,/현재가 확인 중/);
+ assert.match(main,/회사·산업 정보 불러오는 중/);
+ assert.match(main,/reportState:koreanDetail\?'loading':'idle'/);
+ assert.match(main,/report\?\.loadError\?'error':report\?\.available\?'ready':'unavailable'/);
+ assert.match(view,/DART 사업보고서 매출 구조 확인 중/);
+ assert.match(view,/DART 공시를 불러오지 못했어요/);
+ assert.match(view,/직접 관계 근거 확인 중/);
 });
 
 test('direct supply-chain UI is evidence-backed and separate from inferred adjacency',()=>{

@@ -42,25 +42,37 @@ function bindLazyIdeaContext(host,ideas,bindNav){
       const row=bySymbol.get(symbol);
       if(!wrap||!row)return;
 
-      details.dataset.enrichmentState='loading';
-      details.classList.add('is-enriching');
-      const [report,evidence]=await Promise.all([
-        businessReportData(symbol,name).catch(()=>null),
-        relationshipEvidenceData(symbol,name).catch(()=>null),
+      let current=details;
+      const result={report:null,reportState:'loading',directRelations:[],relationsState:'loading'};
+      const repaint=()=>{
+        if(!wrap.isConnected)return;
+        const html=industryContextHtml(row.context,{
+          collapsible:true,
+          open:current.open,
+          businessReport:result.report,
+          directRelations:result.directRelations,
+          reportState:result.reportState,
+          relationsState:result.relationsState,
+        });
+        current.outerHTML=html;
+        current=wrap.querySelector('details[data-industry-context]');
+        if(!current)return;
+        const loading=result.reportState==='loading'||result.relationsState==='loading';
+        current.dataset.enrichmentState=loading?'loading':'loaded';
+        current.classList.toggle('is-enriching',loading);
+        bindNav();
+      };
+      repaint();
+      await Promise.all([
+        businessReportData(symbol,name).then(report=>{
+          result.report=report?.available?report:null;
+          result.reportState=report?.available?'ready':'unavailable';
+        },()=>{result.reportState='error';}).then(repaint),
+        relationshipEvidenceData(symbol,name).then(evidence=>{
+          result.directRelations=evidence?.available?evidence.relations||[]:[];
+          result.relationsState='ready';
+        },()=>{result.relationsState='error';}).then(repaint),
       ]);
-      if(!wrap.isConnected)return;
-      const shouldStayOpen=details.open;
-
-      const html=industryContextHtml(row.context,{
-        collapsible:true,
-        open:shouldStayOpen,
-        businessReport:report?.available?report:null,
-        directRelations:evidence?.available?evidence.relations:[],
-      });
-      details.outerHTML=html;
-      const refreshed=wrap.querySelector('details[data-industry-context]');
-      if(refreshed)refreshed.dataset.enrichmentState='loaded';
-      bindNav();
     });
   }
 }

@@ -78,7 +78,23 @@ export function industryContextSkeleton(){
   </div>`;
 }
 
-export function industryContextHtml(context,{collapsible=false,open=false,businessReport=null,directRelations=[]}={}){
+const enrichmentMessage=(state,kind)=>{
+  const messages=kind==='report'?{
+    loading:'DART 사업보고서 매출 구조 확인 중',
+    unavailable:'DART 공시에서 확인 가능한 매출 구조가 없어요.',
+    error:'DART 공시를 불러오지 못했어요. 잠시 후 다시 확인해주세요.',
+  }:{
+    loading:'직접 관계 근거 확인 중',
+    error:'직접 관계 근거를 확인하지 못했어요.',
+  };
+  return messages[state]||'';
+};
+const enrichmentStatus=(state,kind)=>{
+  const message=enrichmentMessage(state,kind);
+  return message?`<p class="industry-enrichment-status ${state}" role="status" aria-live="polite">${message}</p>`:'';
+};
+
+export function industryContextHtml(context,{collapsible=false,open=false,businessReport=null,directRelations=[],reportState='idle',relationsState='idle'}={}){
   const sector=context?.sector||null;
   const supply=context?.supply||{};
   const industry=String(context?.industry||'').trim();
@@ -94,6 +110,7 @@ export function industryContextHtml(context,{collapsible=false,open=false,busine
     </div>
     <p class="industry-product">${esc(clip(products)||'KRX 주요제품 정보가 없어요.')}</p>
     <p class="industry-caption">${businessReport?.available?'KRX 주요제품 + DART 사업보고서 매출표를 함께 봐요.':'KRX ‘주요제품’ 기준 · 실제 매출 1위는 DART 공시가 확인될 때만 표시해요.'}</p>
+    ${enrichmentStatus(reportState,'report')}
     ${reportHtml}
   </section>`;
 
@@ -124,6 +141,7 @@ export function industryContextHtml(context,{collapsible=false,open=false,busine
       <small>${esc(chainLabel)}</small>
     </div>
     ${directHtml}
+    ${enrichmentStatus(relationsState,'relations')}
     <div class="industry-adjacent-head"><b>산업상 연관 후보</b><span>분류 기반</span></div>
     ${peers.length?`<div class="industry-peer-group">${peers.map(x=>peer(x,`${x.stage||x.relation||''}${x.relation?' · '+x.relation:''}`)).join('')}</div>`:'<p class="industry-empty">현재 분류에서 함께 볼 상장 종목을 찾지 못했어요.</p>'}
     <p class="industry-caption">이 목록은 KRX 업종·주요제품 기반의 산업상 인접 후보예요. 직접 고객·납품 관계로 해석하지 않아요.</p>

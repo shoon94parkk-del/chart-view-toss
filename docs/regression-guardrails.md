@@ -124,6 +124,7 @@ Last updated: 2026-09-22
 - Detail price, quote polling and chart must render independently of company/sector/supply-chain data.
 - `industryContext.js` and `industryContextView.js` stay dynamically imported from the detail route so Home initial load is not enlarged by this feature.
 - If KRX company context is missing (e.g. overseas ticker), remove the optional industry panel instead of showing invented company facts.
+- Do not download `company_context.json` for a detail symbol that already has industry/products in the screener; retain the fallback for missing metadata and symbols.
 - Medical-device companies must not fall into pharma solely because their industry text contains the generic word “의료”.
 - Company / sector / supply-chain sections need distinct but restrained visual hierarchy; do not collapse them back into identical gray surfaces.
 
@@ -133,10 +134,12 @@ Last updated: 2026-09-22
 - Never show ‘매출 1위’ from KRX `mainProducts` alone. It requires a DART-derived `available=true` payload.
 - If a report/table is missing or ambiguous, preserve the KRX company card and omit the revenue mix rather than guessing.
 - A displayed revenue mix must expose the DART original-report link and report year/basis.
+- While detail DART is pending, show a visible loading state in the company context; clear it on success, unavailable data, or error. Keep the initial price/industry loading states readable.
 
 ### IDEA LAB expansion / direct-relation guardrail
 - Every candidate company/sector/supply-chain panel starts collapsed. Do not restore the `open` attribute by default.
 - DART business-report and direct-relationship requests fire only after the user expands a candidate context panel.
 - DART/relationship fetch failures must keep the base KRX/sector context usable and must not block the list.
+- A slow direct-relationship response must not hold back a ready DART revenue card, and vice versa. Each source has its own loading/error state.
 - “확인된 직접 관계” requires evidence-backed API rows. Industry/keyword adjacency stays under “산업상 연관 후보” and must never be relabeled as a confirmed customer/supplier.
 - Stock detail and IDEA LAB use the same relationship semantics so the meaning does not change between screens.
