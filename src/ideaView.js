@@ -49,10 +49,11 @@ function bindLazyIdeaContext(host,ideas,bindNav){
         relationshipEvidenceData(symbol,name).catch(()=>null),
       ]);
       if(!wrap.isConnected)return;
+      const shouldStayOpen=details.open;
 
       const html=industryContextHtml(row.context,{
         collapsible:true,
-        open:true,
+        open:shouldStayOpen,
         businessReport:report?.available?report:null,
         directRelations:evidence?.available?evidence.relations:[],
       });
