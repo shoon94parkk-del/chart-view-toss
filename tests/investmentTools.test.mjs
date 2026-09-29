@@ -13,4 +13,5 @@ test('analysis investment tools retain all original Chart View destinations', ()
   assert.equal((markup.match(/data-external-url=/g) || []).length, 12);
   assert.equal((markup.match(/investment-tool-logo/g) || []).length, 12);
   assert.match(markup, /Finviz 외부 사이트 열기/);
+  assert.equal((markup.match(/google\.com\/s2\/favicons/g) || []).length, 10);
 });
