@@ -49,6 +49,7 @@ export function mountResearchCard(host,{symbol,name,onJump,onNotice,candidates=[
  const analyze=async (question,chosenTarget=null)=>{
   if(!question.trim()){input.focus();return;}
   const run=++sequence;lastQuestion=question;lastTarget=chosenTarget;
+  saveState.textContent='질문은 이 기기에서만 처리해요.';
   result.setAttribute('aria-busy','false');
   if(!korean){result.innerHTML='<p class="research-form-error">이 체험판은 국내 종목의 DART 실적을 비교해요. 해외 종목은 상세의 핵심 지표와 가격 차트를 확인해주세요.</p>';return;}
   result.setAttribute('aria-busy','true');result.innerHTML=loadingIndicator('질문에 맞는 공시 비교 자료를 확인하고 있어요');

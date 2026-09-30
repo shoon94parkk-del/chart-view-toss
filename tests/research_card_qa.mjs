@@ -37,6 +37,7 @@ try{
   assert.equal(await page.locator('#research-form input').count(),0);
   await page.locator('.research-analyze').click();
   await page.locator('.research-table').waitFor();
+  assert.equal(await page.locator('#research-save-state').innerText(),'질문은 이 기기에서만 처리해요.','analysis clears the example-submit hint');
   assert.match(await page.locator('.research-answer').innerText(),/2026년 반기 누적/);
   assert.match(await page.locator('.research-table').innerText(),/\+33.3%/);
   const q='하이닉스와 영업이익 비교해줘 <img src=x onerror=alert(1)>';

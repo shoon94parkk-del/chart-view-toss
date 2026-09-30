@@ -32,6 +32,7 @@ try {
     await page.locator('.research-analyze').click();
     await page.locator('.research-table').waitFor({ timeout: 120000 });
     const analysisMs = Date.now() - analysisStart;
+    assert.equal(await page.locator('#research-save-state').innerText(), '질문은 이 기기에서만 처리해요.');
     const headers = await page.locator('.research-table thead th').allTextContents();
     assert.equal(headers.length, 3);
     assert.ok(headers.includes('삼성전자'));
@@ -45,6 +46,7 @@ try {
     assert.deepEqual(errors, []);
     const table = await page.locator('.research-table').innerText();
     await page.locator('#detail-research-card').screenshot({ path: `${output}/${width}-${symbol}.png` });
+    await page.locator('.research-table').screenshot({ path: `${output}/${width}-${symbol}-table.png` });
     evidence.pages.push({ width, symbol, readyMs, analysisMs, headers, table, errors });
     await page.close();
   }

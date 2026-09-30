@@ -207,3 +207,5 @@ Home places the device-local watchlist directly after search and before the mark
 ## 2026-10-01 — DART comparison deployment authorization
 
 The user authorized publishing the reviewed local DART comparison to the existing GitHub/Render website. Integrate the latest main branch before publishing so updated stock names, official icons and share URLs remain intact. Target only chart-view-toss in the Chart View workspace; its feat/apps-in-toss-mvp branch is synchronized from main by the existing workflow. Confirm the deployed commit and live-origin Samsung/SK hynix comparison before reporting completion. This authorization does not submit a new Apps in Toss app version.
+
+Live-origin verification exposed an example-submit hint persisting below completed results. Reset this hint when analysis starts and cover it in local/mobile and live-origin QA.
