@@ -158,3 +158,15 @@ Last updated: 2026-09-22
 - Do not call unrelated companies a sector peer merely because they share a broad KRX industry. Prefer a specific product/industry-stage group, filter by screener trade date, and withhold a strength label below three peers.
 - A company name alone is not industry evidence. Samsung Electronics and SK hynix must share the memory-chip manufacturing comparison group; Dongseong Finetec's disclosed cryogenic insulation belongs in the LNG/shipbuilding materials group.
 - Detail navigation must preserve the originating bottom-nav tab; direct detail links may default to Home. The More body heading must not repeat the topbar `전체`.
+
+### Personal research notes
+- Cards open independently of market/DART API success and preserve detail/back routes.
+- Never transmit card question, notes or date to API/analytics/LLM. A revisit date does not imply notifications.
+- Native account separation and device reset include RESEARCH_KEY. Browser save failure retains input and shows an inline error.
+- Escape user content on render; editing/deleting one ticker preserves other cards.
+- Research-card QA covers create/edit/cancel/reload, source jumps, storage errors and mobile widths.
+- Current single-question comparison supersedes manual-note entry. Preserve old notes when saving an updated question.
+- Compare common report periods, statement basis and currency only; no annual/interim mixing or missing-as-zero math. Do not describe keyword routing as arbitrary question understanding or prediction.
+- Company matching must prefer the longest name/alias at an overlapping text span: 하이닉스 must not also select 이닉스. Keep separate explicit mentions and include real confusable names in QA fixtures.
+- Ambiguous multiple-company input requires visible target selection, not a silent single-stock fallback. Growth-rate differences are percentage points and require valid rates for both companies.
+- Display implemented DART comparison scope before entry, including unsupported forecasts/causal explanations. Question examples fill the input only, clear stale results, and never auto-save or auto-submit.

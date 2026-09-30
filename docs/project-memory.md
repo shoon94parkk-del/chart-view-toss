@@ -1,5 +1,24 @@
 # Chart View Toss project memory
 
+### 2026-09-30 — DART scope disclosed before question entry
+- Detail title is DART 공시 비교. Upfront guidance lists revenue/profit/margin/year-over-year growth; forecasts, price targets and causal explanations are unsupported.
+- Three tappable examples populate the single input without automatic requests or saves and invalidate old results. SK hynix detail uses Samsung as the peer example.
+
+### 2026-09-30 — Hynix/Inics matching regression fixed
+- The live screener contains 이닉스, whose name is embedded in 하이닉스. Match the longest company/alias per overlapping text span, including current-company mentions; distinct mentions still count separately.
+- Growth-rate questions show revenue/profit growth first, both named companies and valid percentage-point differences. Multiple named peers require selection instead of silently omitting the requested comparison.
+- 97 tests/build and mobile QA passed with the confusable company fixture. The exact user question was verified against real local Samsung/SK hynix data. No deployment.
+
+### 2026-09-30 — Single question comparison replaces manual entry
+- Detail research now uses one textarea and Compare action. Broad questions default to financial change; named companies select a peer, and keywords prioritize revenue/profit. This is deterministic report arithmetic, not LLM Q&A.
+- Same interim period or common annual year, matching statement basis/currency; missing values and zero/negative baselines never yield misleading growth rates. Shows source links, scope limits and retry.
+- Old saved questions/notes remain accessible. Questions stay local; only ticker codes are sent to existing APIs. 94 tests/build and responsive card QA passed. Local only; see docs/research-card-prototype.md.
+
+### 2026-09-30 — Research card local prototype
+- Detail lazy-loads one personal question card per ticker, independently of market/DART APIs. Notes, contrary clues and revisit dates stay in device storage; no LLM or scheduled reminders.
+- RESEARCH_KEY participates in native anonymous-account separation and device-data reset. Source buttons scroll to existing detail evidence sections.
+- Local experience: npm run dev:research on 127.0.0.1:5180, with a dedicated API proxy. 89 tests, build and 320/390/430px card QA passed. No deployment. See docs/research-card-prototype.md.
+
 Last updated: 2026-09-22
 
 ## Purpose and isolation

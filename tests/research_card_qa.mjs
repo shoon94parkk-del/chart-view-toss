@@ -1,0 +1,91 @@
+import {chromium} from 'playwright';
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+const base=process.env.QA_BASE_URL||'http://127.0.0.1:5180';
+await fs.mkdir('output/playwright/research-card',{recursive:true});
+const browser=await chromium.launch({headless:true});
+try{
+ for(const width of [320,390,430]){
+  const page=await browser.newPage({viewport:{width,height:844}}),errors=[],requests=[];
+  let failPeer=true;
+  await page.addInitScript(()=>{if(!localStorage.getItem('chartview-toss-research-v1'))localStorage.setItem('chartview-toss-research-v1',JSON.stringify({'005930.KS':{question:'이전 질문',support:'예전 보고서 메모',challenge:'반대 단서',reviewOn:'2026-10-15'}}));});
+  page.on('pageerror',e=>errors.push(e.message));
+  await page.route('**/backend/**',async route=>{
+   requests.push(route.request().url()+(route.request().postData()||''));
+   const u=new URL(route.request().url()),path=u.pathname.replace('/backend','');let body={};
+   if(path==='/api/financial-history'){
+    if(u.searchParams.get('ticker')==='000660.KS'&&failPeer){failPeer=false;return route.fulfill({status:503,body:'{}'});}
+    await new Promise(resolve=>setTimeout(resolve,300));
+    const peer=u.searchParams.get('ticker')==='000660.KS';
+    body={available:true,basis:'연결재무제표',currency:'KRW',annual:[{year:2024,revenue:100e12,operatingProfit:10e12},{year:2025,revenue:120e12,operatingProfit:15e12}],interim:{year:2026,quarter:2,revenue:peer?40e12:80e12,operatingProfit:peer?null:8e12,priorRevenue:peer?30e12:60e12,priorOperatingProfit:3e12},interimSourceUrl:'https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260814001146'};
+   }
+   if(path==='/static/data/screener.json')body={stocks:[{symbol:'005930.KS',name:'삼성전자'},{symbol:'000660.KS',name:'SK하이닉스'},{symbol:'452400.KQ',name:'이닉스'}]};
+   if(path==='/api/quotes')body={results:[{ticker:'005930.KS',name:'삼성전자',price:85000,currency:'KRW',change:1,source:'QA'}]};
+   if(path==='/api/compare')body={stocks:[{ticker:'005930.KS',name:'삼성전자',return:3,data:[{time:'2026-06-29',value:0},{time:'2026-09-29',value:3}]}]};
+   if(path==='/api/personalized-news')body={items:[]};
+   return route.fulfill({contentType:'application/json',body:JSON.stringify(body)});
+  });
+  await page.goto(`${base}/#detail/005930.KS`);
+  await page.locator('[data-detail-jump="detail-research-card"]').click();
+  assert.match(await page.locator('.research-guide').innerText(),/매출액·영업이익·영업이익률·전년 대비 증가율/);
+  assert.match(await page.locator('.research-guide').innerText(),/앞으로의 전망.*지원하지 않아요/);
+  await page.locator('[data-research-example="1"]').click();
+  assert.equal(await page.locator('#research-question').inputValue(),'매출과 영업이익의 전년 대비 증가율을 비교해줘');
+  assert.equal(await page.locator('.research-table').count(),0,'example fills the input without running analysis');
+  await page.locator('#research-question').fill('요즘 어때?');
+  assert.equal(await page.locator('#research-form textarea').count(),1);
+  assert.equal(await page.locator('#research-form input').count(),0);
+  await page.locator('.research-analyze').click();
+  await page.locator('.research-table').waitFor();
+  assert.match(await page.locator('.research-answer').innerText(),/2026년 반기 누적/);
+  assert.match(await page.locator('.research-table').innerText(),/\+33.3%/);
+  const q='하이닉스와 영업이익 비교해줘 <img src=x onerror=alert(1)>';
+  await page.locator('#research-question').fill(q);await page.locator('.research-analyze').click();
+  await page.locator('[data-research-retry]').waitFor();
+  assert.match(await page.locator('.research-answer').innerText(),/비교 회사의 공시 조회에 실패/);
+  assert.equal(await page.locator('#research-question').inputValue(),q);
+  await page.locator('[data-research-retry]').click();await page.locator('.research-table').waitFor();
+  assert.match(await page.locator('.research-table').innerText(),/SK하이닉스/);
+  assert.equal(await page.locator('.research-table tbody tr').first().locator('th').innerText(),'영업이익');
+  assert.match(await page.locator('.research-table tbody tr').first().locator('td').nth(1).innerText(),/확인 불가/);
+  assert.equal(await page.locator('#research-card-body img').count(),0);
+  await page.locator('#research-question').fill('하이닉스랑 비교했을때 매출 및 영업이익 증가율 자체를 비교하면 어때');
+  await page.locator('.research-analyze').click();await page.locator('.research-table').waitFor();
+  assert.equal(await page.locator('.research-table thead th').count(),3);
+  assert.equal(await page.locator('.research-table tbody tr').first().locator('th').innerText(),'매출 증가율');
+  assert.equal(await page.locator('.research-table tbody tr').nth(1).locator('th').innerText(),'영업이익 증가율');
+  assert.match(await page.locator('.research-companies').innerText(),/SK하이닉스 \(000660.KS\)/);
+  assert.ok(!requests.some(r=>r.includes('financial-history?ticker=452400')),'substring company must never be requested');
+  assert.ok(!(await page.locator('.research-answer').innerText()).includes('질문에 비교할 회사 하나만'));
+  await page.locator('#research-question').fill(q);
+  await page.locator('[data-research-save]').click();await page.reload();
+  await page.locator('#research-question').waitFor();assert.equal(await page.locator('#research-question').inputValue(),q);
+  await page.locator('.research-legacy summary').click();
+  assert.match(await page.locator('.research-legacy').innerText(),/예전 보고서 메모/);
+  await page.locator('.research-legacy summary').click();
+  await page.locator('.research-analyze').click();await page.locator('.research-table').waitFor();
+  await page.locator('[data-research-jump="detail-news-section"]').click();
+  assert.equal(await page.evaluate(()=>document.activeElement.id),'detail-news-section');
+  await page.locator('[data-detail-jump="detail-research-card"]').click();
+  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+2),`${width}px overflow`);
+  assert.ok(await page.locator('#research-card-body button').evaluateAll(buttons=>buttons.every(b=>b.getBoundingClientRect().height>=44)));
+  await page.locator('#detail-research-card').screenshot({path:`output/playwright/research-card/${width}-comparison.png`});
+  await page.evaluate(()=>window.__chartviewNavigate('detail','000660.KS','SK하이닉스'));
+  await page.locator('#research-question').waitFor();assert.equal(await page.locator('#research-question').inputValue(),'');
+  await page.locator('[data-research-example="2"]').click();
+  assert.equal(await page.locator('#research-question').inputValue(),'삼성전자와 매출 및 영업이익 증가율을 비교해줘');
+  await page.evaluate(()=>window.__chartviewNavigate('detail','005930.KS','삼성전자'));
+  await page.locator('#research-question').waitFor();assert.equal(await page.locator('#research-question').inputValue(),q);
+  await page.locator('#research-question').fill('이익 늘까?');
+  await page.evaluate(()=>{window.__qaSetItem=Storage.prototype.setItem;Storage.prototype.setItem=function(){throw new DOMException('Full','QuotaExceededError');};});
+  await page.locator('[data-research-save]').click();assert.match(await page.locator('#research-save-state').innerText(),/저장하지 못/);
+  assert.equal(await page.locator('#research-question').inputValue(),'이익 늘까?');
+  await page.evaluate(()=>{Storage.prototype.setItem=window.__qaSetItem;});
+  await page.locator('[data-research-delete]').click();await page.locator('[data-research-delete]').click();
+  assert.match(await page.locator('#research-save-state').innerText(),/삭제했어요/);
+  assert.equal(await page.locator('[data-research-delete]').isVisible(),false);
+  assert.ok(!requests.some(r=>r.includes(encodeURIComponent(q))||r.includes('영업이익 비교')),'raw question never leaves browser');
+  assert.deepEqual(errors,[]);await page.close();
+ }
+ console.log('Single question report comparison QA passed at 320/390/430px, including peer failure/retry, missing data, reload and local save.');
+}finally{await browser.close();}

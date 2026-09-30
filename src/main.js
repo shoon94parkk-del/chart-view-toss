@@ -938,21 +938,32 @@ async function renderDetail(){
      <div class="detail-actions"><button id="detail-watch" class="detail-watch-button" type="button">${iconSvg('heart',18)} <span>${saved?'관심 등록됨':'관심 등록'}</span></button><button id="detail-compare">${iconSvg('chart',18)} <span>비교에 추가</span></button></div>
    </section>
    <section class="detail-price skeleton detail-price-skeleton" id="detail-price">${loadingIndicator('현재가를 확인하고 있어요')}</section>
-   <nav class="detail-jump-nav" aria-label="종목 정보 바로가기"><button type="button" data-detail-jump="detail-price">가격</button><button type="button" data-detail-jump="${/\.(KS|KQ)$/i.test(symbol)?'detail-financial-block':'detail-metrics-section'}">${/\.(KS|KQ)$/i.test(symbol)?'공시 실적':'핵심 지표'}</button><button type="button" data-detail-jump="detail-industry-block">산업</button><button type="button" data-detail-jump="detail-news-section">뉴스</button></nav>
+   <nav class="detail-jump-nav" aria-label="종목 정보 바로가기"><button type="button" data-detail-jump="detail-price">가격</button><button type="button" data-detail-jump="${/\.(KS|KQ)$/i.test(symbol)?'detail-financial-block':'detail-metrics-section'}">${/\.(KS|KQ)$/i.test(symbol)?'공시 실적':'핵심 지표'}</button><button type="button" data-detail-jump="detail-industry-block">산업</button><button type="button" data-detail-jump="detail-news-section">뉴스</button><button type="button" data-detail-jump="detail-research-card">내 질문</button></nav>
    <div class="segmented detail-period-tabs">${[['1mo','1개월'],['3mo','3개월'],['6mo','6개월'],['1y','1년']].map(([p,l])=>`<button data-detail-period="${p}" aria-pressed="${state.detailPeriod===p}" class="${state.detailPeriod===p?'active':''}">${l}</button>`).join('')}</div>
    <section class="detail-chart-card" id="detail-chart-section"><div class="detail-section-head"><div><span>기간 수익률</span><strong id="detail-period-label">선택 기간 흐름</strong></div><small id="detail-chart-status" role="status">불러오는 중</small></div><div class="detail-chart-wrap"><div id="detail-chart" class="detail-chart"></div><div id="detail-chart-loading" class="chart-loading">${chartLoadingPreview('종목 차트를 불러오고 있어요')}</div></div><div id="detail-return-note" class="detail-return-note"></div></section>
+   <section class="research-card" id="detail-research-card" aria-labelledby="research-card-title"><div class="research-card-head"><span>공시로 확인하기 · 체험판</span><h2 id="research-card-title">DART 공시 비교</h2><p>보고서에 나온 실적을 이전 기간이나 다른 회사와 비교해보세요.</p></div><div id="research-card-body">${loadingIndicator('내 조사 카드를 열고 있어요')}</div></section>
    ${/\.(KS|KQ)$/i.test(symbol)?`<section class="detail-block" id="detail-financial-block"><div class="section-head"><div><h2>공시 재무 흐름</h2><p>DART 보고서의 매출액과 영업이익</p></div><span class="detail-context-badge">DART</span></div><div id="detail-financial-history">${loadingIndicator('최근 재무제표를 확인하고 있어요')}</div></section>`:''}
    <section class="detail-block detail-industry-block" id="detail-industry-block"><div class="section-head"><div><h2>회사 · 산업 맥락</h2><p>사업, 관련 기업, 산업 연결을 살펴봐요</p></div><span class="detail-context-badge">KRX</span></div><div id="detail-industry-context" class="detail-industry-context">${loadingIndicator('회사·산업 정보를 불러오고 있어요')}<div class="skeleton detail-context-skeleton"></div></div></section>
    <section class="detail-block" id="detail-metrics-section"><div class="section-head"><h2>핵심 지표</h2><button class="text-button" data-tab="valuation">같은 지표 비교</button></div><div id="detail-metrics" class="detail-metrics">${loadingIndicator('핵심 지표를 불러오고 있어요')}<div class="skeleton metric"></div><div class="skeleton metric"></div><div class="skeleton metric"></div><div class="skeleton metric"></div></div><div id="detail-metric-meta" class="detail-metric-meta"></div></section>
    <section class="detail-block" id="detail-news-section"><div class="section-head"><h2>관련 뉴스</h2><button class="text-button" data-tab="news">뉴스 모두 보기</button></div><div id="detail-news" class="detail-news">${loadingIndicator('관련 뉴스를 불러오고 있어요')}<div class="skeleton news"></div><div class="skeleton news"></div></div></section>
  `,headingName);
  bindNav();
- document.querySelectorAll('[data-detail-jump]').forEach(button=>button.addEventListener('click',()=>{
-   const target=document.getElementById(button.dataset.detailJump);
-   if(!target)return;
+ const jumpToDetail=id=>{
+   const target=document.getElementById(id);
+   if(!target)return false;
    target.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});
    target.setAttribute('tabindex','-1');target.focus({preventScroll:true});
- }));
+   return true;
+ };
+ document.querySelectorAll('[data-detail-jump]').forEach(button=>button.addEventListener('click',()=>jumpToDetail(button.dataset.detailJump)));
+ import('./researchCard.js').then(({mountResearchCard})=>{
+   if(epoch!==viewEpoch)return;
+   mountResearchCard(document.querySelector('#research-card-body'),{symbol,name:knownName||symbol,onJump:jumpToDetail,onNotice:showToast,candidates:[...state.watchlist,...Object.entries(DISPLAY_NAMES).map(([symbol,name])=>({symbol,name}))]});
+ }).catch(()=>{
+   if(epoch!==viewEpoch)return;
+   const host=document.querySelector('#research-card-body');
+   if(host)host.innerHTML='<p>조사 카드를 열지 못했어요. 화면을 다시 열어주세요.</p>';
+ });
  const paintWatchState=()=>{
    const watched=state.watchlist.some(row=>row.symbol===symbol);
    const label=knownName||symbol;
@@ -1205,7 +1216,7 @@ function renderInfo(){
    </section>
    <section class="release-notice"><strong>투자 판단 안내</strong><p>Chart View의 모든 정보는 정보 제공 목적이며 특정 종목의 매수·매도 또는 투자 성과를 보장하거나 권유하지 않아요. 최종 투자 판단은 이용자가 직접 해야 해요.</p></section>
    <div class="policy-links"><button data-external-url="${esc(PUBLIC_SITE_BASE+'/privacy.html')}"><span>개인정보 처리 안내</span>${iconSvg('arrow',18)}</button><button data-external-url="${esc(PUBLIC_SITE_BASE+'/terms.html')}"><span>서비스 이용 안내</span>${iconSvg('arrow',18)}</button><button data-external-url="${esc(PUBLIC_SITE_BASE+'/data-guide.html')}"><span>데이터 기준 전체 보기</span>${iconSvg('arrow',18)}</button><div class="analysis-card"><strong>고객문의 · 박상훈</strong><p>kimtang89@naver.com</p></div></div>
-   <section class="local-data-card"><div><strong>기기 저장 데이터</strong><p>관심종목과 비교 종목은 현재 이 기기에 저장돼요. 토스 익명 식별키로 사용자별 목록을 구분하며, 초기화하면 현재 사용자의 목록과 이용 기록을 삭제합니다.</p></div><button id="clear-local-data" type="button">기기 데이터 초기화</button></section>
+   <section class="local-data-card"><div><strong>기기 저장 데이터</strong><p>관심종목, 비교 종목과 조사 카드는 현재 이 기기에 저장돼요. 토스 익명 식별키로 사용자별 목록을 구분하며, 초기화하면 현재 사용자의 목록, 조사 카드와 이용 기록을 삭제합니다.</p></div><button id="clear-local-data" type="button">기기 데이터 초기화</button></section>
  `,'데이터 안내');
  bindNav();
  const clearButton=document.querySelector('#clear-local-data');
@@ -1226,7 +1237,7 @@ function renderInfo(){
      clearButton.textContent='초기화 완료';
      clearButton.classList.remove('danger');
      haptic('tickWeak');
-     showToast('이 기기의 관심종목·비교종목 저장값을 초기화했어요.');
+     showToast('이 기기의 관심종목·비교종목·조사 카드를 초기화했어요.');
    }catch{
      showToast('기기 저장 데이터를 초기화하지 못했어요.');
    }
@@ -1314,7 +1325,7 @@ applyRuntimeClass();
 window.addEventListener('popstate',()=>{navigationDepth=Math.max(0,navigationDepth-1);closeStockSelector();syncFromLocation();render();requestAnimationFrame(()=>window.scrollTo(0,scrollPositions.get(location.hash||'#home')||0))});
 window.addEventListener('online',()=>render());
 window.addEventListener('offline',()=>render());
-document.addEventListener('chartview:storage-error',()=>showToast('목록을 기기에 저장하지 못했어요. 다시 시도해주세요.'));
+document.addEventListener('chartview:storage-error',()=>showToast('데이터를 기기에 저장하지 못했어요. 다시 시도해주세요.'));
 document.addEventListener('chartview:home-live',(event)=>{
  const rows=Array.isArray(event.detail?.results)?event.detail.results:[];
  rememberLiveQuotes(rows,{priority:30});

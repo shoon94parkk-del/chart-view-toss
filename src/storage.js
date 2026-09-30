@@ -3,7 +3,8 @@ import { isAppsInTossRuntime } from './tossBridge.js';
 
 export const WATCHLIST_KEY = 'chartview-toss-watchlist-v1';
 export const SELECTED_KEY = 'chartview-toss-selected-v1';
-const keys = [WATCHLIST_KEY, SELECTED_KEY];
+export const RESEARCH_KEY = 'chartview-toss-research-v1';
+const keys = [WATCHLIST_KEY, SELECTED_KEY, RESEARCH_KEY];
 const IDENTITY_KEY = 'chartview-toss-identity-v1';
 const USAGE_KEY = 'chartview-toss-usage-v1';
 const WEB_VISITOR_KEY = 'chartview-toss-visitor-v1';

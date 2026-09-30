@@ -180,3 +180,30 @@ Home places the device-local watchlist directly after search and before the mark
 ## 2026-09-30 — 공식 로고를 앱 내부 브랜드 마크와 통일
 
 홍보용으로 새로 생성한 글로시 아이콘은 실제 차트뷰 토스 UI 로고와 달라 사용하지 않는다. 공식 로고는 앱 상단의 `.brand-mark`와 동일한 자산으로 고정한다: `#3182f6 → #6aa8ff` 블루 그라데이션의 둥근 사각형과, `spark` 아이콘의 단순한 흰색 상승선/화살표. favicon, 홈 화면 아이콘, GitHub, 향후 홍보물은 이 형태를 기준으로 통일한다.
+## 2026-09-30 — Local research-card prototype
+
+종목 상세에 종목별 카드 하나를 추가한다. 사용자가 질문, 확인한 내용, 반대 단서·더 확인할 점, 다시 볼 날짜를 작성하고 저장·수정·삭제할 수 있다. 날짜는 메모이며 알림을 보내지 않는다. 카드 모듈은 상세에서 지연 로딩하고 시장/DART 조회와 독립적으로 열린다. 자료 확인 버튼은 상세의 기존 공시·산업·뉴스 영역으로 연결한다.
+
+질문과 메모는 기기에만 저장하며 서버/LLM으로 전송하지 않는다. 기존 Toss 익명 사용자 분리와 데이터 초기화에 RESEARCH_KEY를 포함한다. 웹 체험은 브라우저 저장소를 사용한다. 로컬 전용 Vite 프록시는 기존 API를 조회하며 운영 배포 설정과 백엔드는 변경하지 않는다. 89개 테스트, 빌드, 320/390/430px 카드 QA와 실제 DART 연결 확인을 통과했다. 배포와 AIT 기기 검증은 수행하지 않았다. 실행법과 검증 범위는 docs/research-card-prototype.md에 기록한다.
+
+## 2026-09-30 — Single question report comparison
+
+사용자 체험 피드백에 따라 네 개 메모 입력란을 질문 입력창 하나로 교체한다. 넓은 질문은 최근 매출·영업이익·이익률과 전년 같은 기간의 수치를 비교하며, 질문의 기업명과 키워드로 비교 기업 하나와 항목 순서를 선택한다. 자유 질문을 이해하는 LLM 답변으로 표시하지 않는다. 생산량 인과관계·예측·가격 판단은 공시 비교의 확인 범위 밖임을 결과에 밝힌다.
+
+기업 간 비교는 같은 누적 분기 또는 공통 연간 기간, 같은 연결/별도 기준과 통화만 허용한다. 이전 값이 0/적자이거나 자료가 없으면 증감률을 만들지 않는다. 공시 원문과 계산 기준을 표시하고 실패 시 질문을 유지하며 재시도한다. 질문 원문은 서버에 보내지 않고 종목 코드만 기존 API로 조회한다. 기존 저장 질문과 메모는 보존한다. 94개 테스트와 빌드, 모바일 320/390/430px QA가 통과했다. 로컬 삼성전자 실제 공시 비교 결과를 확인했으며 배포하지 않는다.
+
+## 2026-09-30 — Overlapping company names and growth-rate comparison
+
+실제 스크리너에 상장사 ‘이닉스’가 있어 ‘하이닉스’ 별칭의 일부까지 회사명으로 인식했다. 최소 목업에 이닉스가 없어 이전 QA에서 발견되지 않았다. 이제 같은 텍스트 범위에서 가장 긴 회사명·별칭만 채택하며, 현재 종목 이름도 범위를 보호한다. 질문의 다른 위치에서 별도로 명시한 회사는 유지한다. 실제 여러 회사가 요청되면 회사를 선택하도록 표시하고 단일 회사 실적으로 조용히 대체하지 않는다.
+
+‘증가율·성장률·증감률’ 질문은 매출 증가율과 영업이익 증가율을 먼저 표시한다. 두 회사의 유효한 증가율 차이는 퍼센트 포인트로 설명하고 비교 대상의 종목명·코드를 결과에 표시한다. 자료가 없는 증가율은 차이를 계산하지 않는다. 사용자 질문 원문으로 실제 삼성전자·SK하이닉스 비교를 확인했고, 이닉스 포함 회귀 검사·97개 테스트·빌드·320/390/430px QA를 통과했다. 로컬 체험만 갱신하며 배포하지 않는다.
+
+## 2026-09-30 — Explicit DART scope and usable question examples
+
+질문 기능의 이름을 ‘DART 공시 비교’로 바꾸고 입력 전에 지원 항목을 매출액·영업이익·영업이익률·전년 대비 증가율로 명시한다. 모든 DART 항목이나 미래 전망을 처리하는 것처럼 안내하지 않는다. 전망·목표주가·주가 상승 원인 등 예측·원인 해석은 지원하지 않으며, 확인 가능한 공시 수치만 조회·계산한다고 표시한다.
+
+최근 실적, 전년 대비 증가율, 다른 회사와 증가율 비교 예시 버튼을 제공한다. 예시 클릭은 질문 입력만 채우고 자동 조회·저장하지 않는다. 이전 결과는 지워 질문과 결과의 불일치를 방지한다. SK하이닉스 상세에서는 삼성전자 비교 예시를 제공한다. 기존 보고서 계산과 저장값은 유지하고 로컬 체험에 반영한다.
+
+## 2026-10-01 — DART comparison deployment authorization
+
+The user authorized publishing the reviewed local DART comparison to the existing GitHub/Render website. Integrate the latest main branch before publishing so updated stock names, official icons and share URLs remain intact. Target only chart-view-toss in the Chart View workspace; its feat/apps-in-toss-mvp branch is synchronized from main by the existing workflow. Confirm the deployed commit and live-origin Samsung/SK hynix comparison before reporting completion. This authorization does not submit a new Apps in Toss app version.

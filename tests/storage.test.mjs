@@ -21,7 +21,7 @@ function setup({ native = true, failRead = false, failWrite = false } = {}) {
     },
   });
   const source = readFileSync('src/storage.js','utf8').replace(/^import .*;\r?\n/gm,'').replaceAll('export ', '');
-  vm.runInContext(source + '\nthis.api={initializeStorage,readStored,writeStored,clearStored,WATCHLIST_KEY,SELECTED_KEY};',context);
+  vm.runInContext(source + '\nthis.api={initializeStorage,readStored,writeStored,clearStored,WATCHLIST_KEY,SELECTED_KEY,RESEARCH_KEY};',context);
   return { ...context.api, disk, events, setIdentity: value => {identity=value;}, failWrites: () => {writeFails=true;} };
 }
 test('native storage restores and serializes writes before clear',async()=>{
@@ -67,6 +67,18 @@ test('missing anonymous identity cannot expose saved lists or overwrite them',as
 test('web preview keeps browser-local storage without requiring a bridge',async()=>{
   const s=setup({native:false}); await s.initializeStorage();
   s.writeStored(s.SELECTED_KEY,'["AAPL"]');
+  s.writeStored(s.RESEARCH_KEY,'{"AAPL":{"question":"질문"}}');
   assert.equal(s.readStored(s.SELECTED_KEY),'["AAPL"]');
   await s.clearStored(); assert.equal(s.disk.size,0);
+});
+test('research notes are separated by native account and cleared only for the active user',async()=>{
+  const s=setup();await s.initializeStorage();
+  const card='{"005930.KS":{"question":"내 질문"}}';
+  s.writeStored(s.RESEARCH_KEY,card);
+  s.setIdentity({type:'HASH',hash:'user-B'});await s.initializeStorage();
+  assert.equal(s.readStored(s.RESEARCH_KEY),null);
+  s.writeStored(s.RESEARCH_KEY,'{}');await s.clearStored();
+  s.setIdentity({type:'HASH',hash:'user-A'});await s.initializeStorage();
+  assert.equal(s.readStored(s.RESEARCH_KEY),card);
+  await s.clearStored();assert.equal(s.readStored(s.RESEARCH_KEY),null);
 });
