@@ -175,3 +175,8 @@ Home places the device-local watchlist directly after search and before the mark
 ## 2026-09-30 — 브라우저 파비콘과 홈 화면 아이콘
 
 저장소에는 `chartview-logo.svg`와 `chartview-logo-600.png`가 있었지만 `index.html`에서 favicon·apple-touch-icon·web manifest로 연결하지 않아 브라우저 탭/즐겨찾기/홈 화면에서 기본 아이콘이 보였다. 기존 로고 자산을 그대로 연결하고 `site.webmanifest`를 추가한다. 서비스 UI와 데이터 로직은 변경하지 않는다.
+
+
+## 2026-09-30 — 공식 로고를 앱 내부 브랜드 마크와 통일
+
+홍보용으로 새로 생성한 글로시 아이콘은 실제 차트뷰 토스 UI 로고와 달라 사용하지 않는다. 공식 로고는 앱 상단의 `.brand-mark`와 동일한 자산으로 고정한다: `#3182f6 → #6aa8ff` 블루 그라데이션의 둥근 사각형과, `spark` 아이콘의 단순한 흰색 상승선/화살표. favicon, 홈 화면 아이콘, GitHub, 향후 홍보물은 이 형태를 기준으로 통일한다.
