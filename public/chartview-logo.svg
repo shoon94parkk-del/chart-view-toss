@@ -1,5 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 64 64" role="img" aria-label="차트뷰">
-  <rect width="64" height="64" fill="#191f28"/>
-  <path d="M14 43V29h7v14h-7Zm14 0V18h7v25h-7Zm14 0V24h7v19h-7Z" fill="#fff"/>
-  <path d="M13 48h38" stroke="#5b8def" stroke-width="4" stroke-linecap="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 24 24" role="img" aria-label="차트뷰 토스">
+  <defs>
+    <linearGradient id="brandGradient" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3182f6"/>
+      <stop offset="1" stop-color="#6aa8ff"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="24" height="24" rx="8" fill="url(#brandGradient)"/>
+  <g transform="translate(2.4 2.4) scale(0.8)" fill="none" stroke="#ffffff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 17 8.5 11l4 3.5L21 5"/>
+    <path d="M16 5h5v5"/>
+  </g>
 </svg>
