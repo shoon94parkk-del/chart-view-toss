@@ -55,3 +55,15 @@
 
 ### 이미지 운영 원칙
 실제 종목의 현재가·등락률처럼 빠르게 변하는 값은 홍보 이미지에 고정하지 않습니다. 예시 차트는 `종목 A/B/C` 또는 명확한 샘플 표기로 사용하고, DART 공시·차트·히트맵·스크리너 등 제품 기능을 중심으로 홍보합니다.
+
+
+## Reusable promo variants
+
+고정 주가·등락률을 전면에 쓰지 않고 기능과 사용 흐름을 중심으로 만든 4종 홍보 이미지입니다.
+
+- 밝은 미니멀: `public/marketing/2026-09/chartview-toss-promo-clean.png`
+- 개발자 스토리: `public/marketing/2026-09/chartview-toss-promo-story.png`
+- 다크 금융 대시보드: `public/marketing/2026-09/chartview-toss-promo-dark.png`
+- 부드러운 톤: `public/marketing/2026-09/chartview-toss-promo-soft.png`
+
+운영 사이트에서도 각각 `/marketing/2026-09/<파일명>`으로 접근할 수 있습니다. 채널별 반복 노출을 줄이기 위해 같은 이미지를 연속 사용하지 않고 소재와 톤을 순환합니다.
