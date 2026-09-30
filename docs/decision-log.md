@@ -170,3 +170,8 @@ Home places the device-local watchlist directly after search and before the mark
 ## 2026-09-30 — 모든 공유 링크는 차트뷰 토스 도메인을 기준으로 사용
 
 사용자에게 노출되는 공유 URL은 백엔드 `chart-view-pkv8.onrender.com/share/toss`를 사용하지 않고 서비스 본주소 `https://chart-view-toss.onrender.com`을 기준으로 생성한다. 홈은 본주소, 기능 화면은 동일 도메인의 hash deep link, 종목 상세는 `#detail/{ticker}`를 사용한다. Open Graph 미리보기는 루트 HTML의 공식 홍보 이미지를 공통으로 사용하며, `v=promo-20260930-v2` 쿼리는 메신저 미리보기 캐시 갱신 용도다. API 데이터 주소는 기존 백엔드를 그대로 유지한다.
+
+
+## 2026-09-30 — 브라우저 파비콘과 홈 화면 아이콘
+
+저장소에는 `chartview-logo.svg`와 `chartview-logo-600.png`가 있었지만 `index.html`에서 favicon·apple-touch-icon·web manifest로 연결하지 않아 브라우저 탭/즐겨찾기/홈 화면에서 기본 아이콘이 보였다. 기존 로고 자산을 그대로 연결하고 `site.webmanifest`를 추가한다. 서비스 UI와 데이터 로직은 변경하지 않는다.
