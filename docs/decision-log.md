@@ -254,3 +254,5 @@ Independent review caught two new Home sector cache paths: old Home quotes overw
 - Mobile review regression includes held DART response, 503 and retry, in addition to filing corrections/new periods and typed condition persistence.
 
 Independent chunk-failure review: a failed optional report-review module must not hide a successful financial-history response. Preserve its own explicit error and device-record notice, with a fresh-page recovery button. Mobile regression blocks this chunk, verifies financial data still renders, then reloads and verifies saved-condition recovery.
+
+Live index journey follow-up: Home's market payload and stock heatmap cache were separate, so index detail unnecessarily waited for a fresh quote despite a visible dated Home index quote. Reuse both device cache sources through detailCachedQuote without changing source timestamps or comparison selection. Unit regression checks dated index re-entry and missing prices.

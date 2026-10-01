@@ -1,5 +1,5 @@
 import { resolveRoute } from './routes.js';
-import {indexSeries,quoteHtml} from './detailPresentation.js';
+import {indexSeries,quoteHtml,detailCachedQuote} from './detailPresentation.js';
 import {encodeSharedView,decodeSharedView,homeBriefState,quoteBasisLabel} from './experienceState.js';
 import { recordMetric, diagnosticSummary, clearDiagnostics } from './diagnostics.js';
 import './styles.css';
@@ -888,10 +888,7 @@ function timeAgo(value){
 }
 
 function homeCachedQuote(symbol){
- const cached=readHomeFast('snapshot',6*60*60*1000);
- const rows=cached?.heatmap?.results;
- if(!Array.isArray(rows))return null;
- return rows.find(row=>String(row?.ticker||'').toUpperCase()===String(symbol||'').toUpperCase())||null;
+ return detailCachedQuote(symbol,readHomeFast('snapshot',6*60*60*1000),readHomeFast('market',6*60*60*1000));
 }
 
 function persistLiveQuoteToHomeSnapshot(quote){
