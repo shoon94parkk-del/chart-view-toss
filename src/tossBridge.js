@@ -45,8 +45,14 @@ export async function openExternal(url) {
       return false;
     }
   }
-  const opened = window.open(target.href, '_blank', 'noopener,noreferrer');
-  return Boolean(opened);
+  try {
+    // noopener deliberately returns null even when the browser opens the tab.
+    // It cannot be used as a popup-success signal; report dispatch errors only.
+    window.open(target.href, '_blank', 'noopener,noreferrer');
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 export function syncNativeBackHandler({ isRoot, onBack }) {

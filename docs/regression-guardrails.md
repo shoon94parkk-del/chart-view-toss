@@ -203,3 +203,10 @@ Audit: measured all 17 principal route journeys at 390px on the live site, inclu
 
 ## 2026-10-02 Saved records during degraded data
 Saved investment baselines are device records: show them before network completion and retain them if current filings are unavailable. Pending and unavailable status must not become a current condition result. Null quote replies are terminal unavailable/retry, not an uncaught exception or infinite spinner.
+
+## 2026-10-02 Explicit retry and supported navigation
+- Retry of empty/partial 200 chart data must bypass client cache; ordinary queries remain cached. Preserve displayed data and period during failed refresh.
+- Disclose missing selected companies next to the chart with a retry; no fabricated 0% return.
+- Every detail jump must have a mounted target. DART analysis is offered only for Korean exchange tickers.
+- News transport failure is not a valid empty news result; independent retry must not reload unrelated data.
+- Secure external open with noopener returns null even when a tab opens; never infer an error from that value. Keep opener isolation, HTTPS validation and native failure handling.

@@ -43,6 +43,9 @@ try{
   await page.locator('[name="query"]').fill('삼성');await page.locator('[name="market"]').selectOption('KOSPI');
   await page.locator('[data-stock-detail="005930.KS"]').click();
   await page.locator('#research-question').waitFor().catch(async error=>{console.log({url:page.url(),errors,body:(await page.locator('body').innerText()).slice(0,2200)});throw error;});
+  // Research and quote provenance load independently; await the value under test.
+  await page.waitForFunction(()=>document.querySelector('.detail-closing-reference')?.textContent.includes('84,000원'));
+  await page.locator('#detail-price .quote-provenance summary').click();
   assert.match(await page.locator('.detail-closing-reference').innerText(),/84,000원/);
   assert.match(await page.locator('#detail-price').innerText(),/제공처 최신 시세/);
   await page.locator('.industry-revenue-basis').waitFor();

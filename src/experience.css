@@ -52,7 +52,7 @@
 .chart-refresh-error button{flex:none;min-height:var(--ux-control);border:0;background:#fff;color:#1769c2;border-radius:9px;padding:0 11px;font-weight:800}
 
 /* The long detail page has an in-page route to each evidence layer. */
-.detail-jump-nav{position:sticky;top:0;z-index:12;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:3px;margin:0 0 12px;padding:5px;border:1px solid #e9edf3;border-radius:14px;background:rgba(255,255,255,.96);backdrop-filter:blur(16px);box-shadow:0 5px 16px rgba(25,31,40,.055)}
+.detail-jump-nav{position:sticky;top:0;z-index:12;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:3px;margin:0 0 12px;padding:5px;border:1px solid #e9edf3;border-radius:14px;background:rgba(255,255,255,.96);backdrop-filter:blur(16px);box-shadow:0 5px 16px rgba(25,31,40,.055)}
 .detail-jump-nav button{min-width:0;min-height:var(--ux-control);padding:4px 2px;border:0;border-radius:10px;background:transparent;color:#4e5968;font-size:var(--ux-helper);font-weight:800;white-space:nowrap}
 .detail-jump-nav button:active,.detail-jump-nav button:focus-visible{background:#e8f3ff;color:#1769c2}
 #detail-price,#detail-financial-block,#detail-industry-block,#detail-metrics-section,#detail-news-section{scroll-margin-top:72px}

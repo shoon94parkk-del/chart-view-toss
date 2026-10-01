@@ -561,7 +561,7 @@ function syncChartPeriodControls(){
  if(rangeGuide)rangeGuide.querySelector('summary').textContent=`기간 직접 지정${state.customRange?' · 적용 중':''}`;
 }
 
-function refreshChart({period,range}){
+function refreshChart({period,range,force=false}){
  state.period=period;
  state.customRange=range;
  syncChartPeriodControls();
@@ -574,7 +574,7 @@ function refreshChart({period,range}){
  loading.classList.toggle('is-refresh',Boolean(chartInstance));
  loading.innerHTML=chartLoadingPreview('선택한 기간의 차트를 갱신하고 있어요');
  const status=document.querySelector('#chart-status');if(status)status.textContent='갱신 중';
- void loadChart({retainPrevious:Boolean(chartInstance)});
+ void loadChart({retainPrevious:Boolean(chartInstance),force});
 }
 
 function bindChartControls(){
@@ -599,7 +599,7 @@ function addSelected(symbol,name){
  persist();renderChart();
 }
 
-async function loadChart({retainPrevious=false}={}){
+async function loadChart({retainPrevious=false,force=false}={}){
  const started=performance.now();
  const seq=++chartLoadSeq;
  const requested=[...state.selected];
@@ -609,7 +609,7 @@ async function loadChart({retainPrevious=false}={}){
  const table=document.querySelector('#chart-table-wrap'),guide=document.querySelector('#calculation-guide-body');
  if(!requested.length){document.querySelector('#chart-loading')?.remove();legend.innerHTML='';status.textContent='종목 선택 필요';canvas.innerHTML='<div class="empty"><strong>비교할 종목이 없어요</strong><span>종목 변경에서 최대 6개까지 선택할 수 있어요.</span></div>';table.innerHTML='';guide.innerHTML='<p>종목을 선택하면 계산 기준을 확인할 수 있어요.</p>';return}
  try{
-   const [data,{createChart,ColorType,LineStyle}]=await Promise.all([compareStocks(requested,requestedPeriod,requestedRange||{}),loadChartRuntime()]);
+   const [data,{createChart,ColorType,LineStyle}]=await Promise.all([compareStocks(requested,requestedPeriod,requestedRange||{},{force}),loadChartRuntime()]);
    if(!canvas.isConnected||seq!==chartLoadSeq||requestedPeriod!==state.period||requested.join('|')!==state.selected.join('|'))return;
    const stocks=Array.isArray(data?.stocks)?data.stocks.filter(s=>Array.isArray(s.data)&&s.data.length):[];
    if(!stocks.length)throw new Error('표시할 시세 데이터가 없어요');
@@ -626,6 +626,14 @@ async function loadChart({retainPrevious=false}={}){
    });
    chartInstance.timeScale().fitContent();
    chartDisplayedSelection={period:requestedPeriod,range:requestedRange};
+   document.querySelector('#chart-coverage-notice')?.remove();
+   const missing=requested.filter(ticker=>!stocks.some(stock=>stock.ticker===ticker));
+   if(missing.length){
+     const notice=document.createElement('div');notice.id='chart-coverage-notice';notice.className='chart-refresh-error';notice.setAttribute('role','status');
+     notice.innerHTML=`<span>선택한 ${requested.length}개 중 ${requested.length-missing.length}개 종목을 표시해요. ${missing.map(ticker=>esc(displayName(ticker,comparisonStockName(ticker)||ticker))).join(', ')} 자료를 불러오지 못했어요.</span><button type="button" data-retry-chart-coverage>다시 시도</button>`;
+     document.querySelector('.chart-heading')?.after(notice);
+     notice.querySelector('button').onclick=()=>refreshChart({period:requestedPeriod,range:requestedRange,force:true});
+   }
    document.querySelector('#chart-loading')?.remove();
    requestAnimationFrame(()=>{if(canvas.isConnected&&seq===chartLoadSeq)recordMetric('chart.ready',started);});
    chartResizeObserver=new ResizeObserver(()=>{if(chartInstance&&canvas.clientWidth)chartInstance.applyOptions({width:canvas.clientWidth})});chartResizeObserver.observe(canvas);
@@ -678,7 +686,7 @@ async function loadChart({retainPrevious=false}={}){
      status.textContent='이전 결과 표시 중';
      const note=document.createElement('div');note.id='chart-refresh-error';note.className='chart-refresh-error';note.innerHTML='<span>새 기간을 불러오지 못해 이전 차트를 보여줘요.</span><button type="button">다시 시도</button>';
      document.querySelector('.chart-heading')?.after(note);
-     note.querySelector('button').onclick=()=>refreshChart(failedSelection);
+     note.querySelector('button').onclick=()=>refreshChart({...failedSelection,force:true});
      return;
    }
    status.textContent='오류';
@@ -686,7 +694,7 @@ async function loadChart({retainPrevious=false}={}){
    legend.innerHTML='';legend.classList.remove('chart-legend-loading');legend.removeAttribute('aria-hidden');
    table.innerHTML='';
    guide.innerHTML='<p>데이터를 불러온 뒤 계산 기준을 확인할 수 있어요.</p>';
-   document.querySelector('#retry-chart')?.addEventListener('click',loadChart);
+   document.querySelector('#retry-chart')?.addEventListener('click',()=>loadChart({force:true}));
  }
 }
 
@@ -908,7 +916,7 @@ function persistLiveQuoteToHomeSnapshot(quote){
  if(changed)writeHomeFast('snapshot',{...cached,heatmap:{...(cached.heatmap||{}),results:nextRows,generatedAt:canonical.asOf||cached?.heatmap?.generatedAt}});
 }
 
-async function refreshDetailChart({symbol,epoch,period}){
+async function refreshDetailChart({symbol,epoch,period,force=false}){
  state.detailPeriod=period;
  const seq=++detailChartLoadSeq;
  document.querySelectorAll('[data-detail-period]').forEach(button=>{
@@ -926,7 +934,7 @@ async function refreshDetailChart({symbol,epoch,period}){
  const status=document.querySelector('#detail-chart-status');
  if(status)status.textContent=chartInstance?'갱신 중':'불러오는 중';
  try{
-   const [data,{createChart,ColorType}]=await Promise.all([compareStocks([symbol],period),loadChartRuntime()]);
+   const [data,{createChart,ColorType}]=await Promise.all([compareStocks([symbol],period,{},{force}),loadChartRuntime()]);
    if(seq!==detailChartLoadSeq||epoch!==viewEpoch||state.tab!=='detail'||state.detailSymbol!==symbol)return;
    const stock=data?.stocks?.[0];
    if(!stock?.data?.length)throw new Error('표시할 차트 데이터가 없어요');
@@ -957,13 +965,13 @@ async function refreshDetailChart({symbol,epoch,period}){
      status.textContent='이전 결과 표시 중';
      const note=document.createElement('div');note.id='detail-chart-refresh-error';note.className='chart-refresh-error';note.innerHTML='<span>새 기간을 불러오지 못해 이전 차트를 보여줘요.</span><button type="button">다시 시도</button>';
      document.querySelector('#detail-chart-section')?.appendChild(note);
-     note.querySelector('button').onclick=()=>refreshDetailChart({symbol,epoch,period});
+     note.querySelector('button').onclick=()=>refreshDetailChart({symbol,epoch,period,force:true});
      return;
    }
    status.textContent='오류';
    const canvas=document.querySelector('#detail-chart');
    if(canvas)canvas.innerHTML=`<div class="empty compact"><strong>차트를 불러오지 못했어요</strong><span>${esc(error?.message||'잠시 후 다시 시도해주세요.')}</span><button class="retry" id="retry-detail-chart">다시 시도</button></div>`;
-   document.querySelector('#retry-detail-chart')?.addEventListener('click',()=>refreshDetailChart({symbol,epoch,period}));
+   document.querySelector('#retry-detail-chart')?.addEventListener('click',()=>refreshDetailChart({symbol,epoch,period,force:true}));
  }
 }
 
@@ -973,6 +981,7 @@ async function renderDetail(){
  const epoch=viewEpoch;
  const symbol=state.detailSymbol||state.selected[0]||'005930.KS';
  const isIndex=symbol.startsWith('^');
+ const koreanDetail=/\.(KS|KQ)$/i.test(symbol);
  const saved=state.watchlist.find(x=>x.symbol===symbol);
  let closingQuote=null;
  let knownName=usableStockName(state.detailName,symbol)||usableStockName(saved?.name,symbol)||usableStockName(DISPLAY_NAMES[symbol],symbol);
@@ -983,13 +992,13 @@ async function renderDetail(){
      <div class="detail-actions"><button id="detail-watch" class="detail-watch-button" type="button">${iconSvg('heart',18)} <span>${saved?'관심 등록됨':'관심 등록'}</span></button><button id="detail-compare">${iconSvg('chart',18)} <span>${state.selected.includes(symbol)?'수익률 비교 열기':'수익률 비교에 추가'}</span></button></div>
    </section>
    <section class="detail-price skeleton detail-price-skeleton" id="detail-price">${loadingIndicator('현재가를 확인하고 있어요')}</section>
-   <nav class="detail-jump-nav" aria-label="종목 정보 바로가기"><button type="button" data-detail-jump="detail-price">가격</button><button type="button" data-detail-jump="${/\.(KS|KQ)$/i.test(symbol)?'detail-financial-block':'detail-metrics-section'}">${/\.(KS|KQ)$/i.test(symbol)?'공시 실적':'핵심 지표'}</button><button type="button" data-detail-jump="detail-industry-block">산업</button><button type="button" data-detail-jump="detail-news-section">뉴스</button><button type="button" data-detail-jump="detail-research-card">공시 비교</button></nav>
+   <nav class="detail-jump-nav" aria-label="종목 정보 바로가기"><button type="button" data-detail-jump="detail-price">가격</button><button type="button" data-detail-jump="${koreanDetail?'detail-financial-block':'detail-metrics-section'}">${koreanDetail?'공시 실적':'핵심 지표'}</button>${koreanDetail?'<button type="button" data-detail-jump="detail-industry-block">산업</button>':''}<button type="button" data-detail-jump="detail-news-section">뉴스</button>${koreanDetail?'<button type="button" data-detail-jump="detail-research-card">공시 비교</button>':''}</nav>
    <div class="segmented detail-period-tabs">${[['1mo','1개월'],['3mo','3개월'],['6mo','6개월'],['1y','1년']].map(([p,l])=>`<button data-detail-period="${p}" aria-pressed="${state.detailPeriod===p}" class="${state.detailPeriod===p?'active':''}">${l}</button>`).join('')}</div>
    <section class="detail-chart-card" id="detail-chart-section"><div class="detail-section-head"><div><span>기간 수익률</span><strong id="detail-period-label">선택 기간 흐름</strong></div><small id="detail-chart-status" role="status">불러오는 중</small></div><div class="detail-chart-wrap"><div id="detail-chart" class="detail-chart"></div><div id="detail-chart-loading" class="chart-loading">${chartLoadingPreview('종목 차트를 불러오고 있어요')}</div></div><div id="detail-return-note" class="detail-return-note"></div></section>
 
    ${/\.(KS|KQ)$/i.test(symbol)?`<section class="detail-block" id="detail-financial-block"><div class="section-head"><div><h2>공시 재무 흐름</h2><p>DART 보고서의 실적·현금흐름·재무상태</p></div><span class="detail-context-badge">DART</span></div><div id="detail-financial-history">${loadingIndicator('최근 재무제표를 확인하고 있어요')}</div></section>`:''}
-   <section class="detail-block detail-industry-block" id="detail-industry-block"><div class="section-head"><div><h2>회사 · 산업 맥락</h2><p>사업, 관련 기업, 산업 연결을 살펴봐요</p></div><span class="detail-context-badge">KRX</span></div><div id="detail-industry-context" class="detail-industry-context">${loadingIndicator('회사·산업 정보를 불러오고 있어요')}<div class="skeleton detail-context-skeleton"></div></div></section>
-   <section class="research-card" id="detail-research-card" aria-labelledby="research-card-title"><div class="research-card-head"><span>공시로 확인하기</span><h2 id="research-card-title">DART 공시 비교</h2><p>보고서에 나온 실적을 이전 기간이나 다른 회사와 비교해보세요.</p></div><div id="research-card-body">${loadingIndicator('공시 비교를 열고 있어요')}</div></section>
+   ${koreanDetail?`<section class="detail-block detail-industry-block" id="detail-industry-block"><div class="section-head"><div><h2>회사 · 산업 맥락</h2><p>사업, 관련 기업, 산업 연결을 살펴봐요</p></div><span class="detail-context-badge">KRX</span></div><div id="detail-industry-context" class="detail-industry-context">${loadingIndicator('회사·산업 정보를 불러오고 있어요')}<div class="skeleton detail-context-skeleton"></div></div></section>
+   <section class="research-card" id="detail-research-card" aria-labelledby="research-card-title"><div class="research-card-head"><span>공시로 확인하기</span><h2 id="research-card-title">DART 공시 비교</h2><p>보고서에 나온 실적을 이전 기간이나 다른 회사와 비교해보세요.</p></div><div id="research-card-body">${loadingIndicator('공시 비교를 열고 있어요')}</div></section>`:''}
    <section class="detail-block" id="detail-metrics-section"><div class="section-head"><h2>핵심 지표</h2><button class="text-button" data-tab="valuation">같은 지표 비교</button></div><div id="detail-metrics" class="detail-metrics">${loadingIndicator('핵심 지표를 불러오고 있어요')}<div class="skeleton metric"></div><div class="skeleton metric"></div><div class="skeleton metric"></div><div class="skeleton metric"></div></div><div id="detail-metric-meta" class="detail-metric-meta"></div></section>
    <section class="detail-block" id="detail-news-section"><div class="section-head"><h2>관련 뉴스</h2><button class="text-button" data-stock-news="${esc(symbol)}" data-stock-name="${esc(knownName)}">이 종목 뉴스 더 보기</button></div><div id="detail-news" class="detail-news">${loadingIndicator('관련 뉴스를 불러오고 있어요')}<div class="skeleton news"></div><div class="skeleton news"></div></div></section>
  `,headingName);
@@ -1002,7 +1011,7 @@ async function renderDetail(){
    return true;
  };
  document.querySelectorAll('[data-detail-jump]').forEach(button=>button.addEventListener('click',()=>jumpToDetail(button.dataset.detailJump)));
- if(!isIndex)import('./researchCard.js').then(({mountResearchCard})=>{
+ if(koreanDetail)import('./researchCard.js').then(({mountResearchCard})=>{
    if(epoch!==viewEpoch)return;
    mountResearchCard(document.querySelector('#research-card-body'),{symbol,name:knownName||symbol,onJump:jumpToDetail,onNotice:showToast,candidates:[...state.watchlist,...Object.entries(DISPLAY_NAMES).map(([symbol,name])=>({symbol,name}))],favorites:state.watchlist,draft:researchDrafts.get(symbol),initialPeer:state.sharedDetailSymbol===symbol?state.researchPeer:null,onDraftChange:draft=>{researchDrafts.set(symbol,draft);state.researchPeer=draft.resultPeer||draft.peer||null;},onChoosePeer:callback=>openStockSelector({title:'공시를 비교할 회사',description:'현재 종목과 다른 국내 회사 하나를 선택하세요.',favorites:state.watchlist,nameFor:comparisonStockName,pickLabel:'비교 선택',restoreBack:restoreNativeBack,onPick:(symbol,name)=>callback({symbol,name})})});
  }).catch(()=>{
@@ -1123,7 +1132,6 @@ async function renderDetail(){
    document.querySelector('#detail-chart-section .detail-section-head span').textContent='실제 지수 · 기간 등락률';
    await Promise.all(jobs);return;
  }
- const koreanDetail=/\.(KS|KQ)$/i.test(symbol);
  const industryBasePromise=koreanDetail?Promise.all([
    screenerData().catch(()=>null),
    import('./industryContext.js'),
@@ -1184,10 +1192,11 @@ async function renderDetail(){
    if(!host||!block)return;
    if(industryRes.status!=='fulfilled'||!industryRes.value){
      block.remove();
+     document.querySelector('[data-detail-jump="detail-industry-block"]')?.remove();
      return;
    }
    const html=industryRes.value.viewModule.industryContextHtml(industryRes.value.context,{collapsible:false,...enrichment});
-   if(!html){block.remove();return;}
+   if(!html){block.remove();document.querySelector('[data-detail-jump="detail-industry-block"]')?.remove();return;}
    host.innerHTML=html;
  }));
  if(koreanDetail){
@@ -1235,10 +1244,21 @@ async function renderDetail(){
  document.querySelector('#detail-metric-meta').innerHTML=valuation?`재무 데이터 조회 ${esc(formatKst(valuation.generatedAt))} · 지표별 출처는 밸류에이션 비교에서 확인할 수 있어요.`:'재무 데이터를 불러오지 못했어요. <button class="retry" data-retry-detail>다시 시도</button>';
 
  }));
- jobs.push(settle(resolvedName.then(name=>personalizedNews([symbol],[name])),newsRes=>{
- const news=newsRes.status==='fulfilled'?(newsRes.value?.items||[]).slice(0,4):[];
- document.querySelector('#detail-news').innerHTML=news.length?news.map(row=>newsCard(row)).join(''):'<div class="empty compact"><strong>표시할 관련 뉴스가 없어요</strong><span>직접 또는 업종 관련 근거가 확인된 기사를 표시해요.</span></div>';
- }));
+ const loadDetailNews=()=>{
+   const host=document.querySelector('#detail-news');
+   if(!host||epoch!==viewEpoch)return Promise.resolve();
+   host.innerHTML=loadingIndicator('관련 뉴스를 불러오고 있어요');
+   return settle(resolvedName.catch(()=>knownName||symbol).then(name=>personalizedNews([symbol],[name])),newsRes=>{
+     if(newsRes.status!=='fulfilled'){
+       host.innerHTML='<div class="empty compact"><strong>관련 뉴스를 불러오지 못했어요</strong><span>연결을 확인한 뒤 다시 시도해주세요.</span><button class="retry" type="button" id="retry-detail-news">다시 시도</button></div>';
+       host.querySelector('button').onclick=()=>loadDetailNews();
+       return;
+     }
+     const news=(newsRes.value?.items||[]).slice(0,4);
+     host.innerHTML=news.length?news.map(row=>newsCard(row)).join(''):'<div class="empty compact"><strong>표시할 관련 뉴스가 없어요</strong><span>직접 또는 업종 관련 근거가 확인된 기사를 표시해요.</span></div>';
+   });
+ };
+ jobs.push(loadDetailNews());
  await Promise.all(jobs);
 }
 
