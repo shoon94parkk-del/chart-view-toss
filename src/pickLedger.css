@@ -6,3 +6,33 @@
 .pick-ledger-detail{padding:11px 12px 13px 51px;border-top:1px dashed #edf0f2;background:#fbfcfe}.pick-ledger-detail-grid{display:grid;grid-template-columns:1fr;gap:7px}.pick-ledger-detail-grid section{padding:8px 9px;border:1px solid #edf0f3;border-radius:10px;background:#fff}.pick-ledger-detail-grid section>strong{display:block;margin-bottom:4px;color:#4e5968;font-size:9px;font-weight:900}.pick-ledger-detail-grid p{margin:0;color:#59636f;font-size:10px;line-height:1.5}.pick-ledger-muted{color:#8b95a1!important}.pick-ledger-evidence{display:grid;gap:5px}.pick-ledger-evidence-row{width:100%;padding:7px 8px;border:1px solid #edf0f3;border-radius:9px;background:#fbfcfe;text-align:left;font:inherit}.pick-ledger-evidence-row span,.pick-ledger-evidence-row strong,.pick-ledger-evidence-row small{display:block}.pick-ledger-evidence-row span{color:#9aa4b0;font-size:8px}.pick-ledger-evidence-row strong{margin-top:2px;color:#245cab;font-size:9px}.pick-ledger-evidence-row small{margin-top:2px;color:#6b7684;font-size:9px;line-height:1.4}.pick-ledger-detail-foot{display:flex;justify-content:space-between;gap:8px;margin-top:8px;color:#9aa4b0;font-size:8.5px;font-weight:700}.pick-ledger-detail-foot strong{color:#c33243}.pick-ledger-detail-link{min-height:34px;margin-top:8px;padding:0 10px;border:1px solid #d9e8fb;border-radius:9px;background:#fff;color:#1b64da;font:inherit;font-size:10px;font-weight:800}
 @media(max-width:380px){.pick-ledger-kpis,.pick-ledger-status-kpis{grid-template-columns:1fr 1fr}.pick-ledger-row{padding-left:10px;padding-right:10px}.pick-ledger-prices small{font-size:9px}.pick-ledger-detail{padding-left:12px}}
 @media(max-width:330px){.pick-ledger-status{font-size:8px;padding:4px 5px}.pick-ledger-return{font-size:15px}.pick-ledger-filters{grid-template-columns:1fr}}
+
+
+/* Advisory technical timing signals are intentionally separate from fundamental PICK status. */
+.pick-ledger-tech-alert{display:grid;gap:3px;margin:-1px 0 10px;padding:10px 12px;border:1px solid #ffd7dc;border-radius:13px;background:#fff4f5}
+.pick-ledger-tech-alert[hidden]{display:none!important}
+.pick-ledger-tech-alert strong{color:#c33243;font-size:11px;font-weight:900}
+.pick-ledger-tech-alert span{color:#333d4b;font-size:10px;font-weight:800;line-height:1.4}
+.pick-ledger-tech-alert small{color:#8b5d64;font-size:8.5px;font-weight:700;line-height:1.45}
+.pick-ledger-tech-alert.caution{border-color:#f4dfab;background:#fff9e9}
+.pick-ledger-tech-alert.caution strong{color:#9a6b00}
+.pick-ledger-status-stack{grid-area:status;display:flex;flex-direction:column;align-items:flex-end;gap:4px;min-width:0}
+.pick-ledger-status-stack .pick-ledger-status{grid-area:auto}
+.pick-ledger-tech-status{display:inline-flex;align-items:center;justify-content:center;padding:4px 7px;border-radius:999px;font-size:8.5px;font-weight:900;white-space:nowrap}
+.pick-ledger-tech-status.tech-sell{background:#ffecef;color:#c33243;box-shadow:inset 0 0 0 1px #ffd2d8}
+.pick-ledger-tech-status.tech-caution{background:#fff4cc;color:#8a6412;box-shadow:inset 0 0 0 1px #f5e2a3}
+.pick-ledger-tech-status.tech-improving{background:#e8f7ed;color:#24713d}
+.pick-ledger-item.tech-sell{box-shadow:inset 3px 0 0 #e54855}
+.pick-ledger-item.tech-caution:not(.sell):not(.watch){background:#fffdf8}
+.pick-ledger-tech-detail{display:grid;gap:6px}
+.pick-ledger-tech-line{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.pick-ledger-tech-line strong{color:#4e5968;font-size:9px;font-weight:900}
+.pick-ledger-tech-line span{color:#333d4b;font-size:10px;font-weight:900;font-variant-numeric:tabular-nums}
+.pick-ledger-tech-detail.tech-sell .pick-ledger-tech-line strong,.pick-ledger-tech-detail.tech-sell .pick-ledger-tech-line span{color:#c33243}
+.pick-ledger-tech-detail.tech-caution .pick-ledger-tech-line strong{color:#8a6412}
+.pick-ledger-tech-detail.tech-improving .pick-ledger-tech-line strong{color:#24713d}
+.pick-ledger-tech-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}
+.pick-ledger-tech-metrics span{padding:5px 4px;border-radius:7px;background:#f7f8fa;color:#59636f;font-size:8.5px;font-weight:800;text-align:center;white-space:nowrap}
+.pick-ledger-tech-detail p{margin:0;color:#59636f;font-size:9px;line-height:1.45}
+.pick-ledger-tech-detail small{color:#8b95a1;font-size:8px;font-weight:700;line-height:1.4}
+@media(max-width:350px){.pick-ledger-tech-status{font-size:8px;padding:3px 5px}.pick-ledger-tech-metrics{grid-template-columns:1fr 1fr}}
