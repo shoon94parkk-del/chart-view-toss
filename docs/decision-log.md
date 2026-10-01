@@ -221,3 +221,5 @@ PICK 목록 상단에는 빨간 단기 경고 종목 수를 노출하고, 각 �
 국내 종목 상세에 DART optional quality 계정 기반 순이익, 영업현금흐름, 현금/순이익, 부채비율과 재고/채권/재무상태 원자료를 추가했다. 잔액은 전년 말, 손익과 현금흐름은 전년 같은 누적 기간 비교다. 구현한 조건의 변화와 계정 출처만 표시하고 투자 점수·원인·미래 예측을 만들지 않는다. 반기 재고 증가율을 전년 동기 매출 증가율과 비교하지 않는다.
 기존 한 칸 질문 입력을 현금흐름/재무상태/실적의 질로 확장했다. 관심종목 우선 선택과 사업 분류상 후보를 제공하며 선택만으로 분석하거나 저장하지 않는다. 회사 전체 공시 비교로 사업 구성 차이를 명시한다. 가격 지표는 요청 시 따로 조회하며 DART 표와 구분해 항목별 제공처/기간/조회시각, 결측값/독립 재시도를 표시한다.
 Shared backend financial-history v2를 함께 확장했다. 추가 계정은 기존 전체 재무제표 응답에서 읽으므로 회사당 DART 요청 수는 늘지 않는다. 주요 종목 정적 캐시·Redis·메모리 캐시를 재사용한다.
+
+Deployment reconciliation: the previously live Render branch contained PICK commits 98b7892 and 3c8d9e7 outside main. Merge them into main so the financial-quality release preserves the existing single combined traffic light and matching filter/order behavior. Do not deploy a branch that loses these fixes.
