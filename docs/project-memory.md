@@ -186,3 +186,10 @@ Toss-specific navigation, safe-area, storage, SDK bridge, and release logic belo
 - IDEA LAB requires `avgValue20 >= 1_000_000_000` KRW (20-day average traded value of at least 10억원).
 - Stock selector opens with saved watchlist rows and ranks those rows first in search results. Search-only Home behavior still opens detail; chart/analysis selection still applies comparison symbols.
 - LNG insulation has its own narrow comparison group; weak product overlap alone is never described as a proven customer or supplier relationship.
+
+
+### 2026-10-01 — PICK 단기 기술 경고
+- PICK 관리에서 펀더멘털 `KEEP/WATCH/SELL_REVIEW`와 별도로 technical advisory signal을 표시한다.
+- 빨간 `단기 매도 검토`는 기술점수 급락 + RSI 과열/최근 급등 조합을 우선하며 자동 매도 확정이 아니다.
+- 카드 배지, 상단 경고, 상세의 전일→오늘 점수·RSI·5일/20일 수익률, “단기 경고 우선” 정렬을 제공한다.
+- shared backend 계약은 additive only로 유지하고 기존 PICK 상태 의미는 변경하지 않는다.
