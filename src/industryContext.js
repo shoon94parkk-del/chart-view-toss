@@ -150,7 +150,7 @@ function memoryChipMaker(row){
      !/비메모리|테스트|테스터|프로브|모듈|기판|장비/.test(products));
 }
 
-function comparisonGroup(row){
+export function comparisonGroup(row){
   if(memoryChipMaker(row))return {key:'memory-chip',label:'메모리 반도체 제조',basis:'KRX 주요제품·사업 구분'};
   const cls=classifySupplyChain(row);
   if(cls?.chain==='shipbuilding'&&/보냉|단열판넬|lng.*단열|단열.*lng/.test(norm(row?.mainProducts))){

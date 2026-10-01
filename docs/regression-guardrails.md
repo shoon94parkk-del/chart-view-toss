@@ -170,3 +170,10 @@ Last updated: 2026-09-22
 - Company matching must prefer the longest name/alias at an overlapping text span: 하이닉스 must not also select 이닉스. Keep separate explicit mentions and include real confusable names in QA fixtures.
 - Ambiguous multiple-company input requires visible target selection, not a silent single-stock fallback. Growth-rate differences are percentage points and require valid rates for both companies.
 - Display implemented DART comparison scope before entry, including unsupported forecasts/causal explanations. Question examples fill the input only, clear stale results, and never auto-save or auto-submit.
+
+### Financial quality / comparison expansion (2026-10-01)
+- Optional accounts remain missing without schema v2 data; missing is never zero. A mismatched quality period cannot supply values to the selected DART comparison.
+- Compare net income and operating cash flow cumulatively; balances/debt ratio prior is previous year end. Never compare interim balance growth with year-on-year sales growth.
+- Quality checks state observed facts and source accounts, not recommendations, risk-free claims or inferred causes. Denominators must be positive for debt and cash/income ratios.
+- Selecting a peer prioritizes watchlist and preserves one input, without navigation, auto-analysis or automatic saving. Original question aliases remain available.
+- Price comparison loads on explicit request, remains independent of DART failure, and labels its provider/period/time. No forecast PER is added to same-period DART tables.

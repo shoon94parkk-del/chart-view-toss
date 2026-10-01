@@ -12,6 +12,7 @@ const validDate=value=>{
   if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||Number.isNaN(Date.parse(`${date}T00:00:00Z`))||new Date(`${date}T00:00:00Z`).toISOString().slice(0,10)!==date)throw new Error('다시 볼 날짜를 확인해주세요.');
   return date;
 };
+const validPeer=(value,current)=>value&&typeof value.name==='string'&&value.name.trim()&&/^\d{6}\.(KS|KQ)$/.test(value.symbol)&&value.symbol!==current?{symbol:value.symbol,name:text(value.name,80)}:null;
 
 function readCards(){
   const stored=readStored(RESEARCH_KEY);
@@ -25,6 +26,7 @@ export function readResearchNote(symbol){
   const value=readCards()[ticker(symbol)];
   if(!value||typeof value!=='object'||typeof value.question!=='string'||!value.question.trim())return null;
   return {
+    ...(validPeer(value.peer,ticker(symbol))?{peer:validPeer(value.peer,ticker(symbol))}:{}),
     question:text(value.question,180),
     support:text(value.support,800),
     challenge:text(value.challenge,800),
@@ -40,6 +42,7 @@ export function saveResearchNote(symbol,input,{now=new Date()}={}){
   if(!question)throw new Error('확인하고 싶은 질문을 적어주세요.');
   const previous=readResearchNote(key);
   const note={
+    ...(validPeer(input?.peer,key)?{peer:validPeer(input.peer,key)}:{}),
     question,
     support:text(input?.support,800),
     challenge:text(input?.challenge,800),

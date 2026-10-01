@@ -7,7 +7,8 @@ const browser=await chromium.launch({headless:true});
 try{
  for(const width of [320,390,430]){
   const page=await browser.newPage({viewport:{width,height:844}}),errors=[],requests=[];
-  let failPeer=true;
+  let failPeer=true,failPrices=true;
+  await page.addInitScript(()=>localStorage.setItem('chartview-toss-watchlist-v1',JSON.stringify([{symbol:'000660.KS',name:'SK하이닉스'},{symbol:'033500.KQ',name:'동성화인텍'}])));
   await page.addInitScript(()=>{if(!localStorage.getItem('chartview-toss-research-v1'))localStorage.setItem('chartview-toss-research-v1',JSON.stringify({'005930.KS':{question:'이전 질문',support:'예전 보고서 메모',challenge:'반대 단서',reviewOn:'2026-10-15'}}));});
   page.on('pageerror',e=>errors.push(e.message));
   await page.route('**/backend/**',async route=>{
@@ -18,11 +19,17 @@ try{
     await new Promise(resolve=>setTimeout(resolve,300));
     const peer=u.searchParams.get('ticker')==='000660.KS';
     body={available:true,basis:'연결재무제표',currency:'KRW',annual:[{year:2024,revenue:100e12,operatingProfit:10e12},{year:2025,revenue:120e12,operatingProfit:15e12}],interim:{year:2026,quarter:2,revenue:peer?40e12:80e12,operatingProfit:peer?null:8e12,priorRevenue:peer?30e12:60e12,priorOperatingProfit:3e12},interimSourceUrl:'https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260814001146'};
+    body.quality={interim:{year:2026,quarter:2,current:{netIncome:10e12,operatingCashFlow:peer?12e12:0,inventories:20e12,receivables:peer?null:15e12,assets:100e12,liabilities:50e12,equity:50e12},previous:{netIncome:6e12,operatingCashFlow:9e12,inventories:10e12,receivables:8e12,assets:80e12,liabilities:30e12,equity:50e12},accounts:{receivables:{accountName:'매출채권 및 기타채권',accountId:'ifrs-full_TradeAndOtherCurrentReceivables',statement:'BS'}}}};
    }
    if(path==='/static/data/screener.json')body={stocks:[{symbol:'005930.KS',name:'삼성전자'},{symbol:'000660.KS',name:'SK하이닉스'},{symbol:'452400.KQ',name:'이닉스'}]};
    if(path==='/api/quotes')body={results:[{ticker:'005930.KS',name:'삼성전자',price:85000,currency:'KRW',change:1,source:'QA'}]};
    if(path==='/api/compare')body={stocks:[{ticker:'005930.KS',name:'삼성전자',return:3,data:[{time:'2026-06-29',value:0},{time:'2026-09-29',value:3}]}]};
    if(path==='/api/personalized-news')body={items:[]};
+   if(path==='/api/valuation'){
+    if(u.searchParams.get('tickers')?.includes(',')&&failPrices)return route.fulfill({status:503,body:'{}'});
+    await new Promise(resolve=>setTimeout(resolve,300));
+    body={stocks:['005930.KS','000660.KS'].map(ticker=>({ticker,trailingPE:10,pbr:1.2,generatedAt:'2026-09-29T07:00:00Z',fieldMeta:{trailingPE:{period:'TTM',source:'QA provider'},pbr:{period:'MRQ',source:'QA provider'}}}))};
+   }
    return route.fulfill({contentType:'application/json',body:JSON.stringify(body)});
   });
   await page.goto(`${base}/#detail/005930.KS`);
@@ -58,6 +65,37 @@ try{
   assert.match(await page.locator('.research-companies').innerText(),/SK하이닉스 \(000660.KS\)/);
   assert.ok(!requests.some(r=>r.includes('financial-history?ticker=452400')),'substring company must never be requested');
   assert.ok(!(await page.locator('.research-answer').innerText()).includes('질문에 비교할 회사 하나만'));
+  assert.match(await page.locator('#detail-financial-history').innerText(),/확장 항목 7\/7개 확인/);
+  await page.locator('[data-research-choose-peer]').click();
+  await page.locator('[data-selector-symbol="000660.KS"]').click();
+  assert.match(await page.locator('#research-peer-selection').innerText(),/SK하이닉스.*선택됨/);
+  await page.locator('[data-research-example="3"]').click();
+  assert.equal(await page.locator('.research-table').count(),0,'selecting peer/example never runs a comparison');
+  await page.locator('.research-analyze').click();
+  await page.locator('.research-table').waitFor();
+  assert.equal(await page.locator('.research-table thead th').count(),3);
+  assert.equal(await page.locator('.research-table tbody tr').nth(1).locator('th').innerText(),'영업현금흐름');
+  assert.match(await page.locator('.research-table tbody tr').nth(1).locator('td').first().innerText(),/0원/);
+  assert.match(await page.locator('.research-table tbody tr').nth(2).locator('td').first().innerText(),/0.0%/);
+  await page.locator('.research-quality-details>summary').click();
+  assert.equal(await page.locator('.research-quality-details .financial-quality').count(),2);
+  assert.match(await page.locator('.research-quality-details').innerText(),/확장 항목 6\/7개 확인/);
+  assert.match(await page.locator('.research-quality-details').innerText(),/영업현금흐름은 줄었어요/);
+  assert.ok(!(await page.locator('.research-quality-details').innerText()).includes('재고자산 증가율이 매출 증가율보다'));
+  await page.locator('[data-research-prices]').click();
+  await page.locator('[data-research-price-retry]').waitFor();
+  assert.match(await page.locator('#research-prices').innerText(),/공시 비교는 위에서 계속/);
+  failPrices=false;
+  await page.locator('[data-research-price-retry]').click();
+  await page.locator('#research-prices table').waitFor();
+  assert.match(await page.locator('#research-prices').innerText(),/최근 12개월 실적/);
+  assert.match(await page.locator('#research-prices').innerText(),/QA provider/);
+  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+2));
+  await page.locator('#detail-research-card').screenshot({path:`output/playwright/research-card/${width}-quality.png`});
+  await page.locator('[data-research-save]').click();await page.reload();
+  await page.locator('#research-question').waitFor();
+  assert.match(await page.locator('#research-peer-selection').innerText(),/SK하이닉스.*선택됨/);
+  await page.locator('[data-research-clear-peer]').click();
   await page.locator('#research-question').fill(q);
   await page.locator('[data-research-save]').click();await page.reload();
   await page.locator('#research-question').waitFor();assert.equal(await page.locator('#research-question').inputValue(),q);
@@ -69,7 +107,7 @@ try{
   assert.equal(await page.evaluate(()=>document.activeElement.id),'detail-news-section');
   await page.locator('[data-detail-jump="detail-research-card"]').click();
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+2),`${width}px overflow`);
-  assert.ok(await page.locator('#research-card-body button').evaluateAll(buttons=>buttons.every(b=>b.getBoundingClientRect().height>=44)));
+  assert.ok(await page.locator('#research-card-body button').evaluateAll(buttons=>buttons.filter(b=>b.getBoundingClientRect().width>0).every(b=>b.getBoundingClientRect().height>=44)));
   await page.locator('#detail-research-card').screenshot({path:`output/playwright/research-card/${width}-comparison.png`});
   await page.evaluate(()=>window.__chartviewNavigate('detail','000660.KS','SK하이닉스'));
   await page.locator('#research-question').waitFor();assert.equal(await page.locator('#research-question').inputValue(),'');

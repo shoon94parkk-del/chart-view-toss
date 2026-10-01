@@ -1,4 +1,5 @@
 import './financialHistoryView.css';
+import { financialQualityHtml } from './financialQualityView.js';
 
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const money=(value,currency)=>{
@@ -39,6 +40,7 @@ export function financialHistoryHtml(data){
         const prior=years[index-1];
         return `<div class="financial-year"><b>${esc(row.year)}년</b><div><small>매출액</small><strong>${money(row.revenue,data.currency)}</strong><em class="${prior?changeTone(row.revenue,prior.revenue):''}">${prior?change(row.revenue,prior.revenue):'—'}</em></div><div><small>영업이익</small><strong>${money(row.operatingProfit,data.currency)}</strong><em class="${prior?changeTone(row.operatingProfit,prior.operatingProfit):''}">${prior?change(row.operatingProfit,prior.operatingProfit):'—'}</em></div></div>`;
       }).join('')}</div>${source(data.annualSourceUrl,'사업보고서')}</div>`:''}
+    ${financialQualityHtml(data)}
     <p class="financial-note">OpenDART ${esc(data.basis||'재무제표')} · ${data.currency==='KRW'?'원 단위':'공시 통화'} 값을 보기 쉽게 반올림했어요. 연간은 동일 사업보고서의 3개 연도, 분기·반기는 누적값끼리 비교해요. 공시 정정 시 수치가 바뀔 수 있어요.</p>
   </div>`;
 }

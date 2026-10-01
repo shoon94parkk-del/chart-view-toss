@@ -193,3 +193,6 @@ Toss-specific navigation, safe-area, storage, SDK bridge, and release logic belo
 - 빨간 `단기 매도 검토`는 기술점수 급락 + RSI 과열/최근 급등 조합을 우선하며 자동 매도 확정이 아니다.
 - 카드 배지, 상단 경고, 상세의 전일→오늘 점수·RSI·5일/20일 수익률, “단기 경고 우선” 정렬을 제공한다.
 - shared backend 계약은 additive only로 유지하고 기존 PICK 상태 의미는 변경하지 않는다.
+
+## 2026-10-01 Financial quality and peer comparison
+Detail financial history dynamically renders financialQualityView with source accounts and conservative review facts. The existing question input supports cash, balance and quality views with company selection from watchlist/search or business classification. Financial API quality schema v2 is additive. Separate requested valuation panel uses existing API and never implies DART period equivalence. Tests cover null/zero, ratios, prior-year-end distinction, delayed loads, partial peer fields, retries, chosen peer and mobile overflow.

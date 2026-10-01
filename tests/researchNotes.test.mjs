@@ -32,3 +32,11 @@ test('storage failure leaves previous persisted content intact and is surfaced',
   assert.throws(()=>s.saveResearchNote('AAPL',{question:'수정 질문'}),/storage full/);
   assert.equal(s.readResearchNote('AAPL').question,'기존 질문');
 });
+test('selected domestic comparison company survives save and can be cleared',()=>{
+ const s=setup();s.saveResearchNote('005930.KS',{question:'현금흐름 비교',peer:{symbol:'000660.KS',name:'SK하이닉스'}});
+ assert.equal(s.readResearchNote('005930.KS').peer.symbol,'000660.KS');
+ s.saveResearchNote('005930.KS',{question:'현금흐름 비교',peer:null});assert.equal(s.readResearchNote('005930.KS').peer,undefined);
+ for(const peer of [{symbol:'005930.KS',name:'삼성전자'},{symbol:'AAPL',name:'애플'}]){
+  s.saveResearchNote('005930.KS',{question:'질문',peer});assert.equal(s.readResearchNote('005930.KS').peer,undefined);
+ }
+});

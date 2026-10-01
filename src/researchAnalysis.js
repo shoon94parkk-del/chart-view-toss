@@ -26,7 +26,7 @@ export function questionPlan(question,symbol,candidates=[]){
   if(hit.row.symbol!==symbol)matches.set(hit.row.symbol,hit.row);
  }
  const targets=[...matches.values()];
- const focus=/증가율|성장률|증감률/.test(q)?'growth':/영업이익|이익률|수익성|마진/.test(q)?'profit':/매출|성장/.test(q)?'revenue':'overview';
+ const focus=/실적의질|이익의질|반대근거|위험|주의|대안/.test(q)?'quality':/현금|순이익/.test(q)?'cash':/부채|재고|채권|재무상태|자본|자산/.test(q)?'balance':/증가율|성장률|증감률/.test(q)?'growth':/영업이익|이익률|수익성|마진/.test(q)?'profit':/매출|성장/.test(q)?'revenue':'overview';
  const limits=[];
  if(/생산|판매량|물량|1:1|수주|고객|공급망/.test(q))limits.push('생산량·수주와 실적의 관계는 이 재무제표만으로 확인할 수 없어요. 사업보고서의 사업 설명을 함께 확인하세요.');
  if(/주가|수익률|PER|PBR|밸류|저평가|비싸|싸다|목표가/.test(q))limits.push('여기서는 공시 실적을 비교해요. 주가 수익률과 적정 가격은 별도의 가격·가치 비교가 필요해요.');

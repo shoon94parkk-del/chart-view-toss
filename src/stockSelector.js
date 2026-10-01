@@ -56,6 +56,7 @@ export function openStockSelector({
   nameFor = (symbol) => symbol,
   onApply,
   onPick,
+  pickLabel = '상세 보기',
   restoreBack,
 }) {
   activeClose?.();
@@ -136,7 +137,7 @@ export function openStockSelector({
           const previousFavorite = index > 0 && favoriteSymbols.has(String(visible[index - 1].symbol).toUpperCase());
           return `${query && !isFavorite && (index === 0 || previousFavorite) ? '<div class="selector-group-heading">검색 결과</div>' : ''}<button type="button" class="${chosen ? 'selected' : ''}" data-selector-symbol="${esc(row.symbol)}" data-selector-name="${esc(row.name || row.symbol)}">
             <span><strong>${esc(row.name || row.symbol)}</strong><small>${esc(row.symbol)}${row.market ? ` · ${esc(row.market)}` : ''}</small></span>
-            <b>${searchOnly ? '상세 보기' : chosen ? '선택됨' : isFavorite ? '관심종목' : '선택'}</b>
+            <b>${searchOnly ? esc(pickLabel) : chosen ? '선택됨' : isFavorite ? '관심종목' : '선택'}</b>
           </button>`;
         }).join('')}`
       : `<div class="selector-empty">${query ? '검색 결과가 없어요.' : '관심종목이 없어요. 이름이나 티커로 검색해보세요.'}</div>`;
