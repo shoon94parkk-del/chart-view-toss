@@ -252,3 +252,5 @@ Independent review caught two new Home sector cache paths: old Home quotes overw
 - Locally saved investment conditions mount immediately on re-entry. Their saved baseline and peer name stay visible during current/peer filing lookup. API failure renders 확인 불가 while preserving saved records and retry; no conditions are hidden by available:false.
 - Whole-site measurement includes external CDN JSON filenames as well as backend API/static requests. Warm one-pass samples are separate from provider delay and cold-start evidence.
 - Mobile review regression includes held DART response, 503 and retry, in addition to filing corrections/new periods and typed condition persistence.
+
+Independent chunk-failure review: a failed optional report-review module must not hide a successful financial-history response. Preserve its own explicit error and device-record notice, with a fresh-page recovery button. Mobile regression blocks this chunk, verifies financial data still renders, then reloads and verifies saved-condition recovery.

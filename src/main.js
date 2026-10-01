@@ -1158,6 +1158,9 @@ async function renderDetail(){
    const reviewReady=import('./reportReviewView.js').then(view=>{
      if(epoch===viewEpoch)view.mountReportReview(reviewHost,{symbol,data:{available:false,pending:true},onNotice:showToast});
      return view;
+   }).catch(()=>{
+     if(epoch===viewEpoch){reviewHost.innerHTML='<div class="financial-empty">저장한 투자 근거 화면을 불러오지 못했어요. 저장한 내용은 이 기기에 보관되어 있어요. <button type="button" class="retry" data-reload-review>화면 새로고침</button></div>';reviewHost.querySelector('button').onclick=()=>location.reload();}
+     return null;
    });
    const loadFinancial=()=>{
      const host=document.querySelector('#detail-financial-history');
@@ -1166,7 +1169,7 @@ async function renderDetail(){
        const target=document.querySelector('#detail-financial-history');
        if(!target)return;
        if(result.status!=='fulfilled'){target.innerHTML='<div class="financial-empty">DART 재무제표를 불러오지 못했어요. <button type="button" class="retry" data-retry-financial>다시 시도</button></div>';}
-       else{const [data,view,review]=result.value;target.innerHTML=view.financialHistoryHtml(data);review.mountReportReview(reviewHost,{symbol,data,onNotice:showToast});}
+       else{const [data,view,review]=result.value;target.innerHTML=view.financialHistoryHtml(data);review?.mountReportReview(reviewHost,{symbol,data,onNotice:showToast});}
        target.querySelector('[data-retry-financial]')?.addEventListener('click',loadFinancial);
      });
    };

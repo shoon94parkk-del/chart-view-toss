@@ -59,6 +59,13 @@ try{
   release();financialHold=null;await page.locator('[data-tracked-results][aria-busy="false"]').waitFor();
   assert.match(await page.locator('.tracked-condition').innerText(),/확인 불가/);
   financialFailure=false;await page.locator('[data-retry-financial]').click();await page.locator('[data-review-ack]').waitFor();
+  if(width===390){
+   await page.route('**/reportReviewView-*.js',route=>route.abort());await page.reload();
+   await page.locator('.financial-history').waitFor();await page.locator('[data-reload-review]').waitFor();
+   assert.match(await page.locator('#detail-report-review').innerText(),/이 기기에 보관/);
+   await page.unroute('**/reportReviewView-*.js');await page.locator('[data-reload-review]').click();
+   await page.locator('[data-tracked-results][aria-busy="false"] .tracked-condition').waitFor();
+  }
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+2),'no body overflow');
   await page.evaluate(()=>window.scrollTo(0,0));await page.screenshot({path:`artifacts/investment-review/${width}-detail.png`});
   await page.locator('#detail-financial-quarters').scrollIntoViewIfNeeded();await page.screenshot({path:`artifacts/investment-review/${width}-quarters.png`});
