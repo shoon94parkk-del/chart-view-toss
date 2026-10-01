@@ -109,7 +109,7 @@ export async function renderPickLedger({shell,bindNav,displayName}){
     <section class="pick-ledger-summary" id="pick-ledger-summary">${loadingIndicator('선정 기록을 불러오고 있어요')}<div class="skeleton quote"></div></section>
     <section class="pick-ledger-status-strip" id="pick-ledger-status-strip">${loadingIndicator('점검 상태를 확인하고 있어요')}<div class="skeleton quote"></div></section>
     <section class="pick-ledger-tech-alert" id="pick-ledger-tech-alert" hidden></section>
-    <p class="pick-ledger-policy" id="pick-ledger-policy">펀더멘털 매도검토와 단기 기술 경고는 별도예요. 기술 경고만으로 자동 매도 확정하지 않아요.</p>
+    <p class="pick-ledger-policy" id="pick-ledger-policy">매도검토는 자동 매도 확정이 아니며 가격·차트만으로 판정하지 않아요. 단기 기술 경고는 펀더멘털 매도검토와 별도이며 기술 경고만으로 자동 매도 확정하지 않아요.</p>
     <section class="pick-ledger-toolbar" id="pick-ledger-toolbar" hidden>
       <label class="pick-ledger-search"><span>종목 검색</span><input id="pick-ledger-search" type="search" placeholder="종목명 · 코드" autocomplete="off"></label>
       <div class="pick-ledger-filters">
