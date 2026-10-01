@@ -26,6 +26,15 @@ function stockName(row,displayName){const symbol=symbolOf(row);return row?.name|
 function statusMeta(status){return STATUS[status]||STATUS.PENDING_REVIEW;}
 function technicalMeta(signal){return TECH_STATUS[signal]||TECH_STATUS.TECH_NORMAL;}
 function technicalOrder(row){return technicalMeta(row?.monitor?.technical?.signal).order;}
+function actionStatus(row){
+  const fundamental=row?.monitor?.status||'PENDING_REVIEW';
+  const technical=row?.monitor?.technical?.signal||'TECH_NORMAL';
+  if(fundamental==='SELL_REVIEW'||technical==='TECH_SELL_REVIEW')return 'SELL_REVIEW';
+  if(fundamental==='WATCH'||technical==='TECH_CAUTION')return 'WATCH';
+  if(fundamental==='KEEP')return 'KEEP';
+  if(fundamental==='EXIT')return 'EXIT';
+  return 'PENDING_REVIEW';
+}
 function price(value,row){
   const n=finite(value);if(n===null)return '—';
   const symbol=symbolOf(row),currency=String(row?.currency||'').toUpperCase();
@@ -68,9 +77,8 @@ function evidenceMarkup(pick){
 
 function rowMarkup(row,index,displayName){
   const pick=row?.monitor;
-  const meta=statusMeta(pick?.status);
-  const techMeta=technicalMeta(pick?.technical?.signal);
-  const showTech=techMeta!==TECH_STATUS.TECH_NORMAL;
+  const finalStatus=actionStatus(row);
+  const meta=statusMeta(finalStatus);
   const symbol=symbolOf(row);
   const name=stockName(row,displayName);
   const id=`pick-${String(row?.recommendedDate||'date')}-${String(row?.rank||index)}-${symbol||index}`.replace(/[^a-zA-Z0-9_-]/g,'-');
@@ -80,10 +88,10 @@ function rowMarkup(row,index,displayName){
     ||'추천 당시 투자논리 기록이 없어요.';
   const review=pick?.monitor?.reason||'최신 점검 대기';
   const reviewed=pick?.monitor?.lastReviewedTradeDate||String(pick?.monitor?.lastReviewedAt||'').slice(0,10)||'—';
-  return `<article class="pick-ledger-item ${meta.cls} ${showTech?techMeta.cls:''}">
+  return `<article class="pick-ledger-item ${meta.cls}">
     <button type="button" class="pick-ledger-row" data-pick-expand="${esc(id)}" aria-expanded="false">
       <span class="pick-ledger-stock"><strong>${esc(name)}</strong><small>${esc(symbol||row?.code||'')} · ${esc(row?.recommendedDate||'추천일 미제공')}</small></span>
-      <span class="pick-ledger-status-stack"><span class="pick-ledger-status ${meta.cls}">${meta.icon} ${meta.label}</span>${showTech?`<span class="pick-ledger-tech-status ${techMeta.cls}">${techMeta.icon} ${techMeta.label}</span>`:''}</span>
+      <span class="pick-ledger-status-stack"><span class="pick-ledger-status ${meta.cls}">${meta.icon} ${meta.label}</span></span>
       <span class="pick-ledger-return ${tone(row?.returnPct)}">${pct(row?.returnPct)}</span>
       <span class="pick-ledger-prices"><small>추천 ${esc(price(row?.recommendedPrice,row))}</small><b>→</b><small>점검가 ${esc(price(row?.currentPrice,row))}</small></span>
       <span class="pick-ledger-secondary"><em class="${tone(row?.bestReturnPct)}">최고 ${pct(row?.bestReturnPct)}</em><em>점수 ${finite(row?.score)===null?'—':Math.round(Number(row.score))+'점'}</em></span>
@@ -146,7 +154,7 @@ export async function renderPickLedger({shell,bindNav,displayName}){
     const latest=evaluated.reduce((max,row)=>String(row?.lastUpdatedTradeDate||'')>max?String(row.lastUpdatedTradeDate):max,'');
     const latestPickDate=rows.reduce((max,row)=>String(row?.recommendedDate||'')>max?String(row.recommendedDate):max,'');
     const counts={KEEP:0,WATCH:0,SELL_REVIEW:0,PENDING_REVIEW:0,EXIT:0};
-    rows.forEach((row)=>{const status=row.monitor?.status||'PENDING_REVIEW';counts[status]=(counts[status]||0)+1;});
+    rows.forEach((row)=>{const status=actionStatus(row);counts[status]=(counts[status]||0)+1;});
     const reviewed=rows.filter((row)=>row.monitor?.monitor?.lastReviewedTradeDate).length;
     const techSell=rows.filter((row)=>row.monitor?.technical?.signal==='TECH_SELL_REVIEW');
     const techCaution=rows.filter((row)=>row.monitor?.technical?.signal==='TECH_CAUTION');
@@ -163,7 +171,7 @@ export async function renderPickLedger({shell,bindNav,displayName}){
       <div class="watch"><span>🟡 경계</span><b>${counts.WATCH}</b></div>
       <div class="sell"><span>🔴 매도검토</span><b>${counts.SELL_REVIEW}</b></div>
       <div><span>⚪ 검토 대기</span><b>${counts.PENDING_REVIEW}</b></div>
-    </div><p class="pick-ledger-basis">${monitorResult.ok?esc(`사후점검 ${String(monitorResult.value?.generatedAt||'').slice(0,10)||'기준일 미확인'} 기준 · 검토 완료 ${reviewed}/${rows.length}건`):'사후점검 데이터를 불러오지 못해 성과 기록만 표시 중이에요.'}</p>`;
+    </div><p class="pick-ledger-basis">${monitorResult.ok?esc(`사후점검 ${String(monitorResult.value?.generatedAt||'').slice(0,10)||'기준일 미확인'} 기준 · 신호등은 펀더멘털과 단기 기술신호 중 더 높은 위험도를 반영 · 검토 완료 ${reviewed}/${rows.length}건`):'사후점검 데이터를 불러오지 못해 성과 기록만 표시 중이에요.'}</p>`;
     if(techSell.length){
       techAlert.hidden=false;
       techAlert.innerHTML=`<strong>🔴 단기 매도 검토 ${techSell.length}개</strong><span>${esc(techSell.slice(0,4).map((row)=>stockName(row,displayName)).join(' · '))}${techSell.length>4?' 외 '+(techSell.length-4)+'개':''}</span><small>기술점수 하락과 RSI 과열·최근 급등이 겹친 보조 신호예요.</small>`;
@@ -193,10 +201,10 @@ export async function renderPickLedger({shell,bindNav,displayName}){
       }
       if(perf.value==='win')filtered=filtered.filter((row)=>(finite(row?.returnPct)||0)>0);
       if(perf.value==='loss')filtered=filtered.filter((row)=>(finite(row?.returnPct)||0)<0);
-      if(status.value!=='all')filtered=filtered.filter((row)=>(row.monitor?.status||'PENDING_REVIEW')===status.value);
+      if(status.value!=='all')filtered=filtered.filter((row)=>actionStatus(row)===status.value);
       const latestSort=(a,b)=>dateValue(b?.recommendedDate)-dateValue(a?.recommendedDate)||(Number(a?.rank)||99)-(Number(b?.rank)||99);
       if(sort.value==='technical')filtered.sort((a,b)=>technicalOrder(a)-technicalOrder(b)||latestSort(a,b));
-      else if(sort.value==='status')filtered.sort((a,b)=>statusMeta(a.monitor?.status).order-statusMeta(b.monitor?.status).order||latestSort(a,b));
+      else if(sort.value==='status')filtered.sort((a,b)=>statusMeta(actionStatus(a)).order-statusMeta(actionStatus(b)).order||latestSort(a,b));
       else if(sort.value==='return')filtered.sort((a,b)=>(finite(b?.returnPct)??-Infinity)-(finite(a?.returnPct)??-Infinity)||latestSort(a,b));
       else if(sort.value==='best')filtered.sort((a,b)=>(finite(b?.bestReturnPct)??-Infinity)-(finite(a?.bestReturnPct)??-Infinity)||latestSort(a,b));
       else if(sort.value==='score')filtered.sort((a,b)=>(finite(b?.score)??-Infinity)-(finite(a?.score)??-Infinity)||latestSort(a,b));
