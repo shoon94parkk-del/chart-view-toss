@@ -30,4 +30,5 @@ test('money, source and quote labels distinguish observed price from lookup time
  assert.equal(formatDataSource('Yahoo daily quote cache'),'Yahoo Finance · 일별 저장 자료');
  assert.equal(quoteBasisLabel({priceBasis:'regular_close'}),'정규장 종가');
  assert.equal(quoteBasisLabel({source:'Naver Finance KRX/Koscom'}),'제공처 최신 시세');
+ assert.equal(quoteBasisLabel(null),'시세 확인 필요');
 });

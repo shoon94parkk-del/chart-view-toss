@@ -1153,14 +1153,20 @@ async function renderDetail(){
    };
  }):Promise.resolve(null);
  if(koreanDetail){
+   const reviewHost=document.createElement('div');reviewHost.id='detail-report-review';reviewHost.className='report-review-host';
+   document.querySelector('#detail-financial-history').after(reviewHost);
+   const reviewReady=import('./reportReviewView.js').then(view=>{
+     if(epoch===viewEpoch)view.mountReportReview(reviewHost,{symbol,data:{available:false,pending:true},onNotice:showToast});
+     return view;
+   });
    const loadFinancial=()=>{
      const host=document.querySelector('#detail-financial-history');
      if(host)host.innerHTML=loadingIndicator('최근 재무제표를 확인하고 있어요');
-     return settle(Promise.all([financialHistoryData(symbol).catch(()=>({loadError:true})),import('./financialHistoryView.js')]),result=>{
+     return settle(Promise.all([financialHistoryData(symbol).catch(()=>({loadError:true})),import('./financialHistoryView.js'),reviewReady]),result=>{
        const target=document.querySelector('#detail-financial-history');
        if(!target)return;
        if(result.status!=='fulfilled'){target.innerHTML='<div class="financial-empty">DART 재무제표를 불러오지 못했어요. <button type="button" class="retry" data-retry-financial>다시 시도</button></div>';}
-       else{const [data,view]=result.value;target.innerHTML=view.financialHistoryHtml(data);if(data.available){let host=document.querySelector('#detail-report-review');if(!host){host=document.createElement('div');host.id='detail-report-review';host.className='report-review-host';target.after(host);}import('./reportReviewView.js').then(({mountReportReview})=>{if(epoch===viewEpoch)mountReportReview(host,{symbol,data,onNotice:showToast});}).catch(()=>{if(epoch===viewEpoch)host.textContent='공시 변화 화면을 불러오지 못했어요. 다시 시도해주세요.';});}}
+       else{const [data,view,review]=result.value;target.innerHTML=view.financialHistoryHtml(data);review.mountReportReview(reviewHost,{symbol,data,onNotice:showToast});}
        target.querySelector('[data-retry-financial]')?.addEventListener('click',loadFinancial);
      });
    };

@@ -5,6 +5,13 @@ import {readReview,updateReview} from './reviewStorage.js';
 import {loadingIndicator} from './loadingView.js';
 import {esc,money,sources,bindSources} from './quarterView.js';
 const statusLabels={first:'처음 확인하는 공시',same:'마지막 확인한 공시와 같아요',new:'새 기간의 공시가 있어요',corrected:'같은 기간의 공시 수치·원문이 달라졌어요',incompatible:'재무제표·통화 기준이 달라졌어요',older:'마지막 확인보다 과거 자료예요',unavailable:'공시를 확인할 수 없어요'};
+function conditionHtml(condition,i,observed,{pending=false}={}){
+ const baseline=condition.baseline||{};
+ const same=observed.matched!==null&&observed.label===baseline.label&&JSON.stringify(observed.sourceUrls)===JSON.stringify(baseline.sourceUrls)&&observed.value===baseline.value&&observed.reference===baseline.reference;
+ const status=pending?'공시 확인 중':observed.matched===null?'확인 불가':same?'저장한 비교와 같아요':observed.matched!==baseline.matched?'달라짐':observed.matched?'조건 유지':'조건 미충족 유지';
+ const value=(n,currency=observed.currency)=>n==null?'확인 불가':condition.key==='operatingCashFlow'?money(n,currency):Number(n).toFixed(1)+'%';
+ return `<article class="tracked-condition"><strong>${esc(condition.label)}</strong>${condition.peer?`<p>비교 회사 · ${esc(condition.peer.name)}</p>`:''}<span class="review-status">${status}</span><p>${pending?loadingIndicator('최신 공시와 비교하고 있어요'):`${esc(observed.label||'기간 확인 불가')} · ${observed.matched===null?esc(observed.reason):`현재 조건 ${observed.matched?'충족':'미충족'} · ${value(observed.value)} / ${condition.peer?'비교 회사':'기준'} ${value(observed.reference)}`}`}</p><p>저장 당시 ${esc(baseline.label||'')} · ${value(baseline.value,baseline.currency)} / ${value(baseline.reference,baseline.currency)} · ${baseline.matched?'충족':'미충족'}</p>${sources(pending?baseline.sourceUrls:observed.sourceUrls)}${pending?'':`<button type="button" class="review-remove" data-remove-condition="${i}">근거 삭제</button>`}</article>`;
+}
 export function mountReportReview(host,{symbol,data,onNotice}){
  if(!host)return;
  let run=0;
@@ -13,7 +20,7 @@ export function mountReportReview(host,{symbol,data,onNotice}){
   let saved;try{saved=readReview(symbol);}catch{saved={conditions:[],readError:true};}
   const snapshot=filingSnapshot(data),change=filingChanges(saved.filing,snapshot);
   const previous=change.previous,keys=[['revenue','매출액'],['operatingProfit','영업이익'],['netIncome','순이익'],['operatingCashFlow','영업현금흐름'],['inventories','재고자산'],['receivables','매출채권 등']];
-  host.innerHTML=`<div class="report-review"><h3>공시에서 달라진 점</h3><span class="review-status">${statusLabels[change.kind]}</span>${snapshot?`<p class="review-note">${esc(snapshot.label)} · ${esc(snapshot.basis)} · ${esc(snapshot.currency)}</p>`:''}
+  host.innerHTML=`<div class="report-review"><h3>공시에서 달라진 점</h3><span class="review-status">${data?.pending?'최근 공시 확인 중':statusLabels[change.kind]}</span>${snapshot?`<p class="review-note">${esc(snapshot.label)} · ${esc(snapshot.basis)} · ${esc(snapshot.currency)}</p>`:''}
    ${['incompatible','older'].includes(change.kind)?'<p class="review-note">마지막으로 확인한 수치와 직접 비교하지 않아요. 두 보고서의 기준을 먼저 확인해주세요.</p>':snapshot?`<details class="review-change-details" ${['new','corrected'].includes(change.kind)?'open':''}><summary>${change.kind==='corrected'?'마지막 확인한 수치와 비교':'전년 같은 기간·전년 말과 비교'}</summary>${keys.map(([key,label])=>{
     const a=snapshot.current[key],b=previous?.[key],balance=['inventories','receivables'].includes(key);
     const valid=typeof a==='number'&&typeof b==='number';
@@ -31,18 +38,16 @@ export function mountReportReview(host,{symbol,data,onNotice}){
  const check=async(conditions,force=false)=>{
   const seq=++run,target=host.querySelector('[data-tracked-results]');
   if(!conditions.length){target.textContent='아직 저장한 근거가 없어요. 아래 공시 비교에서 선택해주세요.';return;}
-  target.setAttribute('aria-busy','true');target.innerHTML=loadingIndicator('비교 회사의 공시를 확인하고 있어요');
+  target.setAttribute('aria-busy','true');target.innerHTML=conditions.map((c,i)=>conditionHtml(c,i,{matched:null},{pending:true})).join('');bindSources(target);
   const button=host.querySelector('[data-tracked-check]');button.disabled=true;
+  if(data?.pending)return;
   try{
    const symbols=[symbol,...new Set(conditions.map(c=>c.peer?.symbol).filter(Boolean))];
    const reports=await Promise.all(symbols.map(s=>s===symbol&&!force?Promise.resolve(data):financialHistoryData(s,{force}).catch(()=>({available:false,loadError:true}))));
    if(seq!==run||!host.isConnected)return;
    target.innerHTML=conditions.map((condition,i)=>{
-    const observed=evaluateCondition(condition,[reports[0],condition.peer?reports[symbols.indexOf(condition.peer.symbol)]:null]),baseline=condition.baseline||{};
-    const same=observed.matched!==null&&observed.label===baseline.label&&JSON.stringify(observed.sourceUrls)===JSON.stringify(baseline.sourceUrls)&&observed.value===baseline.value&&observed.reference===baseline.reference;
-    const status=observed.matched===null?'확인 불가':same?'저장한 비교와 같아요':observed.matched!==baseline.matched?'달라짐':observed.matched?'조건 유지':'조건 미충족 유지';
-    const value=(n,currency=observed.currency)=>n==null?'확인 불가':condition.key==='operatingCashFlow'?money(n,currency):Number(n).toFixed(1)+'%';
-    return `<article class="tracked-condition"><strong>${esc(condition.label)}</strong>${condition.peer?`<p>비교 회사 · ${esc(condition.peer.name)}</p>`:''}<span class="review-status">${status}</span><p>${esc(observed.label||'기간 확인 불가')} · ${observed.matched===null?esc(observed.reason):`현재 조건 ${observed.matched?'충족':'미충족'} · ${value(observed.value)} / ${condition.peer?'비교 회사':'기준'} ${value(observed.reference)}`}</p><p>저장 당시 ${esc(baseline.label||'')} · ${value(baseline.value,baseline.currency)} / ${value(baseline.reference,baseline.currency)} · ${baseline.matched?'충족':'미충족'}</p>${sources(observed.sourceUrls)}<button type="button" class="review-remove" data-remove-condition="${i}">근거 삭제</button></article>`;
+    const observed=evaluateCondition(condition,[reports[0],condition.peer?reports[symbols.indexOf(condition.peer.symbol)]:null]);
+    return conditionHtml(condition,i,observed);
    }).join('')+'<p class="review-note">조건 충족은 매수·매도 판단이나 투자 성과를 뜻하지 않아요. 저장 이후의 공시 수치와 비교 기준을 확인하는 기능이에요.</p>';
    bindSources(target);
    target.querySelectorAll('[data-remove-condition]').forEach(b=>b.onclick=()=>{

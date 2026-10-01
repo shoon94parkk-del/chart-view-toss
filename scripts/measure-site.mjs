@@ -8,7 +8,7 @@ const results=[];
 for(const [name,route,selector] of routes){
  const ctx=await browser.newContext({viewport:{width:390,height:844}});const page=await ctx.newPage();const requests=[],errors=[];
  page.on('pageerror',e=>errors.push(e.message));
- page.on('response',async r=>{if(/\/api\/|\/static\/data\//.test(r.url())){const req=r.request();await r.finished().catch(()=>{});const t=req.timing();requests.push({path:new URL(r.url()).pathname,status:r.status(),ms:Math.round(t.responseEnd)});}});
+ page.on('response',async r=>{if(/\/api\/|\/static\/data\/|\/(screener|company_context|heatmap|pick_monitor)\.json/.test(r.url())){const req=r.request();await r.finished().catch(()=>{});const t=req.timing();requests.push({path:new URL(r.url()).pathname,status:r.status(),ms:Math.round(t.responseEnd)});}});
  const start=Date.now();await page.goto(base+'/'+route,{waitUntil:'domcontentloaded',timeout:20000});const dom=Date.now()-start;
  let ready;try{await page.locator(selector).first().waitFor({timeout:12000});ready=Date.now()-start;}catch{ready=null;}
  await page.waitForTimeout(1000);

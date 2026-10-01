@@ -48,6 +48,7 @@ export function revenueMixBasis(report={}){
  return {shareSum,basis,status:verified?(basis.adjustmentAmount?'adjusted':'verified'):shareSum>101?'unverified':'unspecified'};
 }
 export function quoteBasisLabel(quote={}){
+ if(!quote)return '시세 확인 필요';
  if(quote.priceBasis==='regular_close')return '정규장 종가';
  if(quote.sessionType==='after_hours')return '시간외 시세';
  if(quote.sessionType==='regular')return '정규장 시세';
