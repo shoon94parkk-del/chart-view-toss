@@ -1,8 +1,22 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {questionPlan,compareReports,growth,margin,reportObservations,growthComparison} from '../src/researchAnalysis.js';
+import {questionPlan,resolveComparisonTarget,compareReports,growth,margin,reportObservations,growthComparison} from '../src/researchAnalysis.js';
 const companies=[{symbol:'005930.KS',name:'삼성전자'},{symbol:'000660.KS',name:'SK하이닉스'},{symbol:'066570.KS',name:'LG전자'}];
 const data={available:true,basis:'연결재무제표',currency:'KRW',annual:[{year:2024,revenue:100,operatingProfit:10},{year:2025,revenue:120,operatingProfit:6}],interim:{year:2026,quarter:2,revenue:80,operatingProfit:8,priorRevenue:60,priorOperatingProfit:3}};
+test('selected company cannot silently override a company explicitly requested in the question',()=>{
+ const plan=questionPlan('LG전자와 매출 증가율 비교','005930.KS',companies);
+ assert.equal(resolveComparisonTarget(plan,companies[1]).conflict,true);
+ assert.deepEqual(resolveComparisonTarget(plan,companies[2]).target,companies[2]);
+ assert.deepEqual(resolveComparisonTarget(questionPlan('매출 비교','005930.KS',companies),companies[1]).target,companies[1]);
+});
+test('unsupported metrics and future questions do not become revenue answers',()=>{
+ assert.deepEqual(questionPlan('하이닉스와 배당금 증가율 비교','005930.KS',companies).unsupported,['배당']);
+ assert.ok(questionPlan('설비투자와 영업이익 비교','005930.KS',companies).unsupported.includes('설비투자'));
+ assert.equal(questionPlan('내년 매출 전망','005930.KS',companies).forecast,true);
+ assert.equal(questionPlan('영업이익 늘까?','005930.KS',companies).forecast,true);
+ assert.deepEqual(questionPlan('매출이 왜 늘었어?','005930.KS',companies).unsupported,['원인 해석']);
+ assert.deepEqual(questionPlan('영업현금흐름과 순이익 비교','005930.KS',companies).unsupported,[]);
+});
 test('broad questions show overview; company aliases resolve without changing the current stock',()=>{
  assert.equal(questionPlan('요즘 어때?','005930.KS',companies).focus,'overview');
  assert.equal(questionPlan('하이닉스랑 비교해줘','005930.KS',companies).target.symbol,'000660.KS');

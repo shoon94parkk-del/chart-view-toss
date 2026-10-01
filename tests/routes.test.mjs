@@ -11,3 +11,8 @@ test('feature paths and hash re-entry resolve to the same page',()=>{
 test('malformed escapes, unknown routes and empty detail never crash startup',()=>{
   for(const location of [{pathname:'/%ZZ'},{hash:'#detail/%E0%A4'},{pathname:'/unknown'},{hash:'#detail'},{pathname:'/stock/<script>'}]) assert.equal(resolveRoute(location).tab,'home');
 });
+test('stock news direct links retain the stock and plain news clears it',()=>{
+ assert.deepEqual(resolveRoute({hash:'#news/005930.KS'}),{tab:'news',detailSymbol:null,newsSymbol:'005930.KS'});
+ assert.equal(resolveRoute({hash:'#news'}).newsSymbol,null);
+ assert.equal(resolveRoute({hash:'#news/<script>'}).tab,'home');
+});

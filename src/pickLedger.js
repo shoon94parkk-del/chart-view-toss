@@ -31,8 +31,8 @@ function actionStatus(row){
   const technical=row?.monitor?.technical?.signal||'TECH_NORMAL';
   if(fundamental==='SELL_REVIEW'||technical==='TECH_SELL_REVIEW')return 'SELL_REVIEW';
   if(fundamental==='WATCH'||technical==='TECH_CAUTION')return 'WATCH';
-  if(fundamental==='KEEP')return 'KEEP';
   if(fundamental==='EXIT')return 'EXIT';
+  if(fundamental==='KEEP')return 'KEEP';
   return 'PENDING_REVIEW';
 }
 function price(value,row){
@@ -171,7 +171,7 @@ export async function renderPickLedger({shell,bindNav,displayName}){
       <div class="watch"><span>🟡 경계</span><b>${counts.WATCH}</b></div>
       <div class="sell"><span>🔴 매도검토</span><b>${counts.SELL_REVIEW}</b></div>
       <div><span>⚪ 검토 대기</span><b>${counts.PENDING_REVIEW}</b></div>
-    </div><p class="pick-ledger-basis">${monitorResult.ok?esc(`사후점검 ${String(monitorResult.value?.generatedAt||'').slice(0,10)||'기준일 미확인'} 기준 · 신호등은 펀더멘털과 단기 기술신호 중 더 높은 위험도를 반영 · 검토 완료 ${reviewed}/${rows.length}건`):'사후점검 데이터를 불러오지 못해 성과 기록만 표시 중이에요.'}</p>`;
+    </div><p class="pick-ledger-basis">${monitorResult.ok?esc(`사후점검 ${String(monitorResult.value?.generatedAt||'').slice(0,10)||'기준일 미확인'} 기준 · 신호등은 펀더멘털과 단기 기술신호 중 더 높은 위험도를 반영 · 자동 점검 실행 ${reviewed}/${rows.length}건 · 근거 검토 대기는 별도 표시`):'사후점검 데이터를 불러오지 못해 성과 기록만 표시 중이에요.'}</p>`;
     if(techSell.length){
       techAlert.hidden=false;
       techAlert.innerHTML=`<strong>🔴 단기 매도 검토 ${techSell.length}개</strong><span>${esc(techSell.slice(0,4).map((row)=>stockName(row,displayName)).join(' · '))}${techSell.length>4?' 외 '+(techSell.length-4)+'개':''}</span><small>기술점수 하락과 RSI 과열·최근 급등이 겹친 보조 신호예요.</small>`;

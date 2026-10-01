@@ -196,3 +196,6 @@ Toss-specific navigation, safe-area, storage, SDK bridge, and release logic belo
 
 ## 2026-10-01 Financial quality and peer comparison
 Detail financial history dynamically renders financialQualityView with source accounts and conservative review facts. The existing question input supports cash, balance and quality views with company selection from watchlist/search or business classification. Financial API quality schema v2 is additive. Separate requested valuation panel uses existing API and never implies DART period equivalence. Tests cover null/zero, ratios, prior-year-end distinction, delayed loads, partial peer fields, retries, chosen peer and mobile overflow.
+
+## 2026-10-01 Experience continuity and data honesty
+Use experienceState.js for public share conditions and summary/revenue/quote presentation states. Question peer conflicts need explicit target confirmation; unsupported dividend/capex/EPS/segment/forecast requests must not fall back to revenue. Screener form state and unsaved research drafts are visit-local. Draft peer null overrides a saved selection. Stock news route is #news/SYMBOL; switching to plain news clears scope even on the same tab. Share cv includes public conditions only, never raw questions or stored watchlists. Detail facts are above compact comparison; help and optional peer picker are collapsible.

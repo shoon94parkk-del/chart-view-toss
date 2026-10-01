@@ -16,5 +16,7 @@ export function resolveRoute({pathname='/',hash=''}) {
     if(!/^[A-Z0-9^][A-Z0-9.^=\-]{0,29}$/.test(symbol)) return {tab:'home',detailSymbol:null};
     return {tab,detailSymbol:symbol};
   }
+  if(tab==='news'&&parts[1]){const symbol=parts[1].toUpperCase();return /^[A-Z0-9^][A-Z0-9.^=\-]{0,29}$/.test(symbol)?{tab,detailSymbol:null,newsSymbol:symbol}:{tab:'home',detailSymbol:null};}
+  if(tab==='news')return {tab,detailSymbol:null,newsSymbol:null};
   return {tab,detailSymbol:null};
 }

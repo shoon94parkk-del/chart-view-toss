@@ -48,6 +48,18 @@ export function formatMetricPeriod(value) {
   return labels[period] || (/[A-Za-z]/.test(period) ? '공급자 기간 기준 확인 필요' : period);
 }
 
+export function formatDataSource(value){
+ const text=String(value||'출처 미제공');
+ return text.replace(/Yahoo daily quote cache/g,'Yahoo Finance · 일별 저장 자료').replace(/Yahoo Finance earningsTrend · daily GitHub cache/g,'Yahoo Finance 애널리스트 추정 · 일별 저장 자료').replace(/Yahoo Finance Chart \+ Fundamentals Timeseries/g,'Yahoo Finance 가격·재무 시계열');
+}
+export function formatFinancialAmount(value,currency='KRW'){
+ const n=finiteNumber(value);if(n===null)return '확인 불가';
+ const abs=Math.abs(n),f=v=>v.toLocaleString('ko-KR',{maximumFractionDigits:2});
+ if(currency==='KRW')return abs>=1e12?`${f(n/1e12)}조 원`:abs>=1e8?`${f(n/1e8)}억 원`:`${f(n)}원`;
+ if(currency==='USD')return abs>=1e9?`${f(n/1e9)}십억 달러`:abs>=1e6?`${f(n/1e6)}백만 달러`:`${f(n)}달러`;
+ return `${f(n)} ${currency}`;
+}
+
 const MONTHLY_MACRO = new Set(['PCEPI','PCETRIM12M159SFRBDAL','UNRATE']);
 const SLOW_MONTHLY_MACRO = new Set(['M2SL','RSAFS']);
 const WEEKLY_MACRO = new Set(['WALCL','WTREGEN']);

@@ -3,11 +3,11 @@ import { readResearchNote, saveResearchNote, deleteResearchNote } from './resear
 import { financialHistoryData, screenerData, valuationStocks } from './api.js';
 import { loadingIndicator } from './loadingView.js';
 import { openExternal } from './tossBridge.js';
-import { questionPlan, compareReports, reportObservations, growthComparison, number } from './researchAnalysis.js';
+import { questionPlan, resolveComparisonTarget, compareReports, reportObservations, growthComparison, number } from './researchAnalysis.js';
 import { qualitySlice, qualityLabels, qualityObservations } from './financialQuality.js';
 import { qualityCell, qualityReviewHtml } from './financialQualityView.js';
 import { comparisonGroup } from './industryContext.js';
-import { formatKst, formatMetricPeriod } from './dataPresentation.js';
+import { formatKst, formatMetricPeriod, formatDataSource } from './dataPresentation.js';
 
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const money=(v,currency)=>{
@@ -17,11 +17,12 @@ const money=(v,currency)=>{
 };
 const sourceUrl=url=>{try{const u=new URL(url);return u.protocol==='https:'&&u.hostname==='dart.fss.or.kr'?u.href:null;}catch{return null;}};
 
-export function mountResearchCard(host,{symbol,name,onJump,onNotice,candidates=[],favorites=[],onChoosePeer}){
+export function mountResearchCard(host,options){
+ const {symbol,name,onJump,onNotice,candidates=[],favorites=[],onChoosePeer}=options;
  if(!host)return;
- let saved=null,sequence=0,lastQuestion='',lastTarget=null,selectedPeer=null;
+ let saved=null,sequence=0,lastQuestion='',lastTarget=null,lastConfirmed=false,selectedPeer=null;
  try{saved=readResearchNote(symbol);}catch{}
- selectedPeer=saved?.peer||null;
+ selectedPeer=options.initialPeer||(options.draft?options.draft.peer:saved?.peer)||null;
  const korean=/\.(KS|KQ)$/i.test(symbol);
  const examplePeer=symbol==='000660.KS'?'삼성전자':'SK하이닉스';
  const examples=[
@@ -33,29 +34,34 @@ export function mountResearchCard(host,{symbol,name,onJump,onNotice,candidates=[
   {label:'부채·재고 확인',question:'부채비율과 재고, 매출채권은 어떻게 달라졌어?'},
  ];
  host.innerHTML=`<form class="research-form research-ask" id="research-form">
-  <div class="research-guide" id="research-guide"><strong>비교할 수 있는 항목</strong><p>국내 종목의 DART 공시에서 확인한 매출액·영업이익·영업이익률·전년 대비 증가율을 비교해요. 순이익·영업현금흐름·부채·재고·매출채권도 함께 볼 수 있어요.</p><p class="research-guide-limit">앞으로의 전망, 목표주가, 주가 상승 이유 같은 예측·원인 해석은 지원하지 않아요. 공시 자료가 없으면 확인 불가로 표시해요.</p></div>
+  <details class="research-guide" id="research-guide"><summary>지원 항목과 이용 방법</summary><strong>비교할 수 있는 항목</strong><p>국내 종목의 DART 공시에서 확인한 매출액·영업이익·영업이익률·전년 대비 증가율을 비교해요. 순이익·영업현금흐름·부채·재고·매출채권도 함께 볼 수 있어요.</p><p class="research-guide-limit">앞으로의 전망, 목표주가, 주가 상승 이유 같은 예측·원인 해석은 지원하지 않아요. 공시 자료가 없으면 확인 불가로 표시해요.</p></details>
   ${korean?`<div class="research-examples" aria-label="질문 예시"><span>질문 예시 · 누르면 입력돼요</span>${examples.map((row,index)=>`<button type="button" data-research-example="${index}">${esc(row.label)}</button>`).join('')}</div>`:''}
   <label for="research-question">${esc(name||symbol)}의 어떤 실적을 비교할까요?</label>
-  <textarea id="research-question" name="question" maxlength="180" rows="3" required aria-describedby="research-guide research-help" placeholder="예: 매출과 영업이익의 전년 대비 증가율을 비교해줘">${esc(saved?.question||'')}</textarea>
+  <textarea id="research-question" name="question" maxlength="180" rows="2" required aria-describedby="research-help" placeholder="예: 하이닉스와 매출·영업이익 증가율을 비교해줘">${esc(options.draft?.question??saved?.question??'')}</textarea>
   <p class="research-form-help" id="research-help">종목명과 항목을 찾아 공시 수치를 조회·계산하는 기능이에요. 다른 회사 하나의 이름을 함께 적으면 같은 기간의 실적을 나란히 비교해요.</p>
-  ${korean?`<div class="research-peer-picker"><strong>비교할 회사 · 선택 사항</strong><div id="research-peer-selection" role="status">${selectedPeer?`${esc(selectedPeer.name)} (${esc(selectedPeer.symbol)}) 선택됨`:'선택하지 않으면 이전 실적과 비교해요.'}</div><div id="research-peer-options"></div>${onChoosePeer?'<button type="button" data-research-choose-peer>관심종목·검색에서 선택</button>':''}<button type="button" data-research-clear-peer ${selectedPeer?'':'hidden'}>회사 선택 해제</button><small>산업 분류가 같아도 사업 구성은 달라요. 회사 전체 공시를 비교해요.</small></div>`:''}
+  ${korean?`<details class="research-peer-picker" ${selectedPeer?'open':''}><summary>비교할 회사 선택 · 선택 사항</summary><div id="research-peer-selection" role="status">${selectedPeer?`${esc(selectedPeer.name)} (${esc(selectedPeer.symbol)}) 선택됨`:'선택하지 않으면 이전 실적과 비교해요.'}</div><div id="research-peer-options"></div>${onChoosePeer?'<button type="button" data-research-choose-peer>관심종목·검색에서 선택</button>':''}<button type="button" data-research-clear-peer ${selectedPeer?'':'hidden'}>회사 선택 해제</button><small>산업 분류가 같아도 사업 구성은 달라요. 회사 전체 공시를 비교해요.</small></details>`:''}
   <button type="submit" class="research-analyze">비교 분석하기</button>
  </form><div id="research-result" aria-live="polite"></div>
  <div class="research-foot"><span id="research-save-state" role="status">${saved?'저장한 질문을 불러왔어요.':'질문은 이 기기에서만 처리해요.'}</span><div><button type="button" data-research-save>질문 저장</button><button type="button" data-research-delete ${saved?'':'hidden'}>저장한 질문 삭제</button></div></div>
  ${saved&&(saved.support||saved.challenge||saved.reviewOn)?`<details class="research-legacy"><summary>이전에 적은 메모</summary><p>${esc(saved.support)}</p><p>${esc(saved.challenge)}</p>${saved.reviewOn?`<p>다시 볼 날짜 ${esc(saved.reviewOn)}</p>`:''}</details>`:''}`;
  const form=host.querySelector('form'),input=host.querySelector('textarea'),result=host.querySelector('#research-result'),saveState=host.querySelector('#research-save-state');
+ const updateDraft=()=>options.onDraftChange?.({question:input.value,peer:selectedPeer});
+ updateDraft();
+ input.addEventListener('input',()=>{sequence++;result.innerHTML='';result.setAttribute('aria-busy','false');updateDraft();saveState.textContent='작성 중 · 이 화면을 떠나도 이번 방문 동안 유지돼요. 다음 방문에도 보려면 저장하세요.';});
  const choosePeer=row=>{
   if(!row||row.symbol===symbol||!/\.(KS|KQ)$/i.test(row.symbol)){onNotice?.('현재 종목과 다른 국내 회사를 선택해주세요.');return;}
   selectedPeer=row;sequence++;result.innerHTML='';result.setAttribute('aria-busy','false');
   host.querySelector('#research-peer-selection').textContent=`${row.name} (${row.symbol}) 선택됨`;
   host.querySelector('[data-research-clear-peer]').hidden=false;
   saveState.textContent='비교할 회사를 선택했어요. 비교 분석하기를 눌러주세요.';
+  updateDraft();
  };
  host.querySelector('[data-research-choose-peer]')?.addEventListener('click',()=>onChoosePeer(choosePeer));
  host.querySelector('[data-research-clear-peer]')?.addEventListener('click',()=>{
   selectedPeer=null;sequence++;result.innerHTML='';result.setAttribute('aria-busy','false');
   host.querySelector('#research-peer-selection').textContent='선택하지 않으면 이전 실적과 비교해요.';
   host.querySelector('[data-research-clear-peer]').hidden=true;
+  updateDraft();
  });
  const peerButtons=(rows,label)=>rows.length?`<span>${esc(label)}</span>${rows.map(row=>`<button type="button" data-peer-symbol="${esc(row.symbol)}" data-peer-name="${esc(row.name)}">${esc(row.name)}</button>`).join('')}`:'';
  const paintPeers=stocks=>{
@@ -74,15 +80,16 @@ export function mountResearchCard(host,{symbol,name,onJump,onNotice,candidates=[
   sequence++;result.innerHTML='';result.setAttribute('aria-busy','false');
   saveState.textContent='예시를 입력했어요. 비교 분석하기를 눌러주세요.';
   input.focus({preventScroll:true});
+  updateDraft();
  });
  const bindResults=()=>{
-  result.querySelector('[data-research-retry]')?.addEventListener('click',()=>analyze(lastQuestion,lastTarget));
+  result.querySelector('[data-research-retry]')?.addEventListener('click',()=>analyze(lastQuestion,lastTarget,lastConfirmed));
   result.querySelectorAll('[data-research-jump]').forEach(b=>b.onclick=()=>{if(!onJump?.(b.dataset.researchJump))onNotice?.('해당 자료를 아직 표시할 수 없어요.');});
   result.querySelectorAll('[data-research-source]').forEach(b=>b.onclick=()=>openExternal(b.dataset.researchSource));
  };
- const analyze=async (question,chosenTarget=null)=>{
+ const analyze=async (question,chosenTarget=null,confirmed=false)=>{
   if(!question.trim()){input.focus();return;}
-  const run=++sequence;lastQuestion=question;lastTarget=chosenTarget;
+  const run=++sequence;lastQuestion=question;lastTarget=chosenTarget;lastConfirmed=confirmed;
   saveState.textContent='질문은 이 기기에서만 처리해요.';
   result.setAttribute('aria-busy','false');
   if(!korean){result.innerHTML='<p class="research-form-error">이 체험판은 국내 종목의 DART 실적을 비교해요. 해외 종목은 상세의 핵심 지표와 가격 차트를 확인해주세요.</p>';return;}
@@ -91,10 +98,18 @@ export function mountResearchCard(host,{symbol,name,onJump,onNotice,candidates=[
    const universe=await screenerData().catch(()=>({stocks:[]}));
    if(run!==sequence||!host.isConnected)return;
    const plan=questionPlan(question,symbol,[...candidates,...(universe.stocks||[])]);
-   if(chosenTarget){plan.target=chosenTarget;plan.limits=plan.limits.filter(text=>!text.startsWith('다른 회사 하나와 비교'));}
+   if(plan.unsupported.length||plan.forecast){
+    result.innerHTML=`<div class="research-answer"><h3>이 질문은 현재 비교 범위 밖이에요</h3><p>${plan.unsupported.length?`${esc(plan.unsupported.join('·'))} 항목은 이 공시 비교에서 지원하지 않아요. `:''}${plan.forecast?'미래 전망과 목표주가는 과거 공시로 계산할 수 없어요. ':''}매출·영업이익·순이익·영업현금흐름·재무상태의 이미 발표한 수치를 비교할 수 있어요.</p><p>위 질문 예시를 선택하거나 지원 항목으로 질문을 수정해주세요.</p></div>`;return;
+   }
+   const resolved=resolveComparisonTarget(plan,chosenTarget);
+   if(resolved.conflict&&!confirmed){
+    result.innerHTML=`<div class="research-answer"><h3>질문과 선택한 회사가 달라요</h3><p>어느 회사와 비교할지 확정해주세요.</p>${resolved.choices.map((row,i)=>`<button type="button" data-research-conflict="${i}">${esc(row.name)} (${esc(row.symbol)})</button>`).join('')}</div>`;
+    result.querySelectorAll('[data-research-conflict]').forEach(button=>button.onclick=()=>{const row=resolved.choices[Number(button.dataset.researchConflict)];choosePeer(row);analyze(question,row,true);});return;
+   }
+   if(chosenTarget){plan.target=chosenTarget;plan.limits=plan.limits.filter(text=>!text.startsWith('다른 회사 하나와 비교')&&!text.startsWith('다른 회사의 정식'));}
    if(plan.targets.length>1&&!chosenTarget){
     result.innerHTML=`<div class="research-answer"><h3>비교할 회사를 선택해주세요</h3><p>여러 회사가 확인돼요. 비교할 회사 하나를 선택하면 같은 기간의 공시 수치를 보여드려요.</p>${plan.targets.map((row,index)=>`<button type="button" data-research-target="${index}">${esc(row.name)}</button>`).join('')}</div>`;
-    result.querySelectorAll('[data-research-target]').forEach(button=>button.onclick=()=>analyze(question,plan.targets[Number(button.dataset.researchTarget)]));
+    result.querySelectorAll('[data-research-target]').forEach(button=>button.onclick=()=>{const row=plan.targets[Number(button.dataset.researchTarget)];choosePeer(row);analyze(question,row,true);});
     return;
    }
    if(plan.target&&!/\.(KS|KQ)$/i.test(plan.target.symbol)){
@@ -103,6 +118,7 @@ export function mountResearchCard(host,{symbol,name,onJump,onNotice,candidates=[
    }
    const companies=[{symbol,name:name||symbol},...(plan.target?[plan.target]:[])];
    lastTarget=plan.target;
+   options.onDraftChange?.({question:input.value,peer:selectedPeer,resultPeer:plan.target});
    const reports=await Promise.all(companies.map(row=>financialHistoryData(row.symbol).catch(()=>({loadError:true}))));
    if(run!==sequence||!host.isConnected)return;
    const comparison=compareReports(reports[0],reports[1]||null);
@@ -142,7 +158,7 @@ export function mountResearchCard(host,{symbol,name,onJump,onNotice,candidates=[
       if(run!==sequence||!host.isConnected)return;
       const rows=companies.map(company=>(data.stocks||[]).find(row=>row.ticker===company.symbol));
       if(!rows.some(Boolean))throw new Error('empty');
-      prices.innerHTML=`<p>가격 지표는 별도 제공처 자료예요. 아래 항목별 기준기간·조회시각을 확인하세요. DART 비교 기간과 다를 수 있고, 낮은 배수가 저평가를 뜻하지는 않아요.</p><table class="research-table"><caption>별도 출처의 가격 지표</caption><thead><tr><th>지표</th>${companies.map(row=>`<th>${esc(row.name)}</th>`).join('')}</tr></thead><tbody>${[['trailingPE','실적 PER'],['pbr','PBR']].map(([key,label])=>`<tr><th scope="row">${label}</th>${rows.map(row=>`<td><strong>${number(row?.[key])===null?'확인 불가':number(row[key]).toFixed(2)+'배'}</strong><small>${esc(formatMetricPeriod(row?.fieldMeta?.[key]?.period))}</small><small>${esc(row?.fieldMeta?.[key]?.source||row?.dataSource||'출처 미제공')}</small><small>${esc(row?.generatedAt?formatKst(row.generatedAt)+' KST 조회':'조회시각 미제공')}</small></td>`).join('')}</tr>`).join('')}</tbody></table>`;
+      prices.innerHTML=`<p>가격 지표는 별도 제공처 자료예요. 아래 항목별 기준기간·조회시각을 확인하세요. DART 비교 기간과 다를 수 있고, 낮은 배수가 저평가를 뜻하지는 않아요.</p><table class="research-table"><caption>별도 출처의 가격 지표</caption><thead><tr><th>지표</th>${companies.map(row=>`<th>${esc(row.name)}</th>`).join('')}</tr></thead><tbody>${[['trailingPE','실적 PER'],['pbr','PBR']].map(([key,label])=>`<tr><th scope="row">${label}</th>${rows.map(row=>`<td><strong>${number(row?.[key])===null?'확인 불가':number(row[key]).toFixed(2)+'배'}</strong><small>${esc(formatMetricPeriod(row?.fieldMeta?.[key]?.period))}</small><small>${esc(formatDataSource(row?.fieldMeta?.[key]?.source||row?.dataSource||'출처 미제공'))}</small><small>${esc(row?.generatedAt?formatKst(row.generatedAt)+' KST 조회':'조회시각 미제공')}</small></td>`).join('')}</tr>`).join('')}</tbody></table>`;
      }catch{if(run===sequence&&host.isConnected){prices.innerHTML='<p class="research-form-error">가격 지표를 불러오지 못했어요. 공시 비교는 위에서 계속 볼 수 있어요.</p><button type="button" data-research-price-retry>가격 지표 다시 시도</button>';prices.querySelector('button').onclick=loadPrices;}}
      finally{if(run===sequence&&host.isConnected)prices.setAttribute('aria-busy','false');}
     };

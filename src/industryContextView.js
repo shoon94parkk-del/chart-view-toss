@@ -1,4 +1,5 @@
 import './industryContextView.css';
+import {revenueMixBasis} from './experienceState.js';
 
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const pct=v=>Number.isFinite(Number(v))?`${Number(v)>0?'+':''}${Number(v).toFixed(2)}%`:'—';
@@ -22,6 +23,8 @@ function reportRevenueHtml(report){
   const items=report.items.slice(0,4);
   const top=report.topItem||items[0];
   const maxShare=Math.max(...items.map(x=>Number(x?.share)||0),1);
+  const mix=revenueMixBasis(report);
+  const basisText=mix.status==='adjusted'||mix.status==='verified'?`<div class="industry-revenue-basis"><strong>비중의 분모: ${esc(mix.basis.denominator||'공시 매출 합계')}</strong><span>매출 합계 ${esc(revenueAmount(mix.basis.totalAmount,report.unit))}</span><span>부문 합계 ${esc(revenueAmount(mix.basis.positiveSegmentTotal,report.unit))} · 연결 조정 ${esc(revenueAmount(mix.basis.adjustmentAmount,report.unit))}</span><span>전체 부문 비중 합계 ${mix.shareSum.toFixed(1)}%${mix.status==='adjusted'?' · 내부거래 등 연결 조정으로 100%를 넘을 수 있어요.':''}</span></div>`:mix.status==='unverified'?`<div class="industry-revenue-basis needs-check" role="status"><strong>비중 합계 ${mix.shareSum.toFixed(1)}% · 조정 기준 확인 필요</strong><span>연결 조정의 분모와 금액이 검증되지 않아 비중을 100%로 다시 맞추지 않았어요. 공시 원문에서 확인해주세요.</span></div>`:'';
   const sourceLabel=[report.source,report.reportYear?String(report.reportYear):'',report.basis].filter(Boolean).join(' · ');
   return `<section class="industry-report">
     <div class="industry-report-head">
@@ -36,7 +39,7 @@ function reportRevenueHtml(report){
         <div class="industry-revenue-bar"><i style="width:${Math.max(3,Math.min(100,(Number(item.share)||0)/maxShare*100))}%"></i></div>
         ${Number.isFinite(Number(item.revenue))?`<small>${esc(revenueAmount(item.revenue,report.unit||''))}</small>`:''}
       </div>`).join('')}</div>
-    <p class="industry-caption">${esc(sourceLabel||'DART 사업보고서')} · 공시 표에서 직접 확인한 값만 표시해요.${report.hasConsolidationAdjustment?' 연결조정을 반영한 매출을 기준으로 계산해 부문 비중의 합은 100%를 넘을 수 있어요.':''}</p>
+    ${basisText}<p class="industry-caption">${esc(sourceLabel||'DART 사업보고서')} · 공시 표에서 직접 확인한 값만 표시해요.${report.hasConsolidationAdjustment?' 연결조정을 반영한 매출을 기준으로 계산해 부문 비중의 합은 100%를 넘을 수 있어요.':''}</p>
   </section>`;
 }
 

@@ -1,4 +1,5 @@
 import { resolveRoute } from './routes.js';
+import {encodeSharedView,decodeSharedView,homeBriefState,quoteBasisLabel} from './experienceState.js';
 import { recordMetric, diagnosticSummary, clearDiagnostics } from './diagnostics.js';
 import './styles.css';
 import './homeExtras.css';
@@ -18,7 +19,7 @@ import { readHomeFast, writeHomeFast } from './homeFastCache.js';
 import { rememberLiveQuotes, getLiveQuote, mergeRowsWithLive } from './liveQuoteStore.js';
 import { seedWatchQuoteCache, saveWatchQuoteCache } from './watchQuoteCache.js';
 import { loadingIndicator, chartLoadingPreview } from './loadingView.js';
-import { formatKst, formatChartDate, formatMetricPeriod, formatCurrencyPrice, formatMacroValue, formatMacroChange, macroFreshness, observationLabel, macroCategory, macroPublicationLabel, macroSourceUrl, changeBasisLabel, relationBasisLabel, newsRelation, translatedTag, titleLanguage } from './dataPresentation.js';
+import { formatKst, formatDataSource, formatFinancialAmount, formatChartDate, formatMetricPeriod, formatCurrencyPrice, formatMacroValue, formatMacroChange, macroFreshness, observationLabel, macroCategory, macroPublicationLabel, macroSourceUrl, changeBasisLabel, relationBasisLabel, newsRelation, translatedTag, titleLanguage } from './dataPresentation.js';
 
 const WATCHLIST_KEY='chartview-toss-watchlist-v1';
 const SELECTED_KEY='chartview-toss-selected-v1';
@@ -48,9 +49,11 @@ const fmtPrice=(value)=>{const n=finiteNumber(value);if(n===null)return '-';if(M
 const fmtChange=(value)=>{const n=finiteNumber(value);if(n===null)return '-';return `${n>0?'+':''}${n.toFixed(2)}%`};
 const state={tab:'home',watchlist:load(WATCHLIST_KEY,[]),selected:load(SELECTED_KEY,DEFAULTS.map(x=>x.symbol)),period:'1mo',customRange:null,detailSymbol:null,detailName:'',detailOrigin:'home',valuationMetric:'forwardPE',watchSort:'manual',newsSort:'major',detailPeriod:'3mo'};
 const resolvedNames=new Map();
+const researchDrafts=new Map();
+state.screener={filters:{},count:30,activePreset:''};state.newsSymbol=null;state.researchPeer=null;
 function comparisonStockName(symbol){
  const saved=state.watchlist.find(row=>row.symbol===symbol)?.name;
- return usableStockName(resolvedNames.get(symbol),symbol)
+ return usableStockName(DISPLAY_NAMES[symbol],symbol)||usableStockName(resolvedNames.get(symbol),symbol)
   ||usableStockName(saved,symbol)
   ||usableStockName(DISPLAY_NAMES[symbol],symbol)
   ||'';
@@ -180,7 +183,7 @@ function shell(content,title='차트뷰'){
  const leading=secondary?`<button class="icon-button back-button" aria-label="뒤로가기" data-back>${iconSvg('back',22)}</button>`:`<span class="brand-mark">${iconSvg('spark',18)}</span>`;
  const offline=typeof navigator!=='undefined'&&navigator.onLine===false;
  const topAction=state.tab==='detail'?'':`<button class="icon-button" aria-label="관심종목" data-tab="watch">${iconSvg('heart',22)}</button>`;
- return `<main class="app-shell">${offline?'<div class="network-banner" role="status">인터넷 연결이 끊어졌어요. 연결되면 다시 시도해주세요.</div>':''}<header class="topbar"><div class="brand-lockup">${leading}<h1${state.tab==='detail'?' id="detail-top-title"':''}>${esc(title)}</h1></div><div class="topbar-actions"><button class="icon-button" data-share-current type="button" aria-label="현재 화면 공유">${iconSvg('share',21)}</button>${topAction}</div></header><section class="content"><div class="ait-share-row"><button type="button" data-share-current>${iconSvg('share',17)} 현재 화면 공유</button></div>${content}${state.tab==='info'?'':dataDisclosure()}</section><nav class="bottom-nav" aria-label="주요 메뉴">${[['home','홈'],['chart','차트'],['watch','관심'],['more','전체']].map(([id,label])=>`<button data-tab="${id}" class="${navTab===id?'active':''}"><i>${iconSvg(id,22)}</i><span>${label}</span></button>`).join('')}</nav></main>`;
+ return `<main class="app-shell">${offline?'<div class="network-banner" role="status">인터넷 연결이 끊어졌어요. 연결되면 다시 시도해주세요.</div>':''}<header class="topbar"><div class="brand-lockup">${leading}<h1${state.tab==='detail'?' id="detail-top-title"':''}>${esc(title)}</h1></div><div class="topbar-actions"><button class="icon-button" data-share-current type="button" aria-label="현재 화면 공유">${iconSvg('share',21)}</button>${topAction}</div></header><section class="content"><div class="ait-share-row"><button type="button" data-share-current>${iconSvg('share',17)} 현재 화면 공유</button></div>${content}${state.tab==='info'?'':dataDisclosure()}</section><nav class="bottom-nav" aria-label="주요 메뉴">${[['home','홈'],['chart','차트'],['watch','관심'],['more','전체']].map(([id,label])=>`<button data-tab="${id}" class="${navTab===id?'active':''}" ${navTab===id?'aria-current="page"':''}><i>${iconSvg(id,22)}</i><span>${label}</span></button>`).join('')}</nav></main>`;
 }
 function shareDetails(){
  const tab=state.tab;
@@ -188,7 +191,10 @@ function shareDetails(){
  const name=tab==='detail'?(usableStockName(state.detailName,symbol)||resolvedNames.get(symbol)||symbol):'';
  const url=new URL(PUBLIC_SITE_BASE);
  url.searchParams.set('v',SHARE_PREVIEW_VERSION);
+ const shared=encodeSharedView({...state,researchPeer:researchDrafts.get(symbol)?.resultPeer||researchDrafts.get(symbol)?.peer||state.researchPeer});
+ if(shared)url.searchParams.set('cv',shared);
  if(tab==='detail'&&symbol)url.hash=`detail/${encodeURIComponent(symbol)}`;
+ else if(tab==='news'&&state.newsSymbol)url.hash=`news/${encodeURIComponent(state.newsSymbol)}`;
  else if(tab!=='home')url.hash=tab;
  const titleByTab={home:'차트뷰',chart:'수익률 비교 | 차트뷰',watch:'관심종목 | 차트뷰',valuation:'밸류에이션 | 차트뷰',macro:'경제 지표 | 차트뷰',discover:'시장 스크리너 | 차트뷰',heatmap:'시장 히트맵 | 차트뷰',consensus:'실적 전망 | 차트뷰',bands:'역사적 밸류에이션 | 차트뷰',ideas:'투자 아이디어 LAB | 차트뷰',picks:'PICK 관리 | 차트뷰',news:'관심종목 뉴스 | 차트뷰',more:'차트뷰',info:'데이터 안내 | 차트뷰',tools:'투자 도구 | 차트뷰'};
  return {url:url.toString(),title:tab==='detail'?`${name} (${symbol}) | 차트뷰`:titleByTab[tab]||'차트뷰',text:tab==='detail'?`${name} 종목의 차트와 기업 정보를 확인해보세요.`:'차트뷰에서 시장 데이터와 종목 정보를 확인해보세요.'};
@@ -212,18 +218,22 @@ function esc(v=''){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt
 
 function navigate(tab,detailSymbol=null,detailName=''){
  if(tab==='picks'&&!SHOW_SPOTLIGHT)tab='home';
- if(tab===state.tab&&(!detailSymbol||detailSymbol===state.detailSymbol)){
+ if(tab===state.tab&&(tab==='detail'?(!detailSymbol||detailSymbol===state.detailSymbol):tab==='news'?(detailSymbol||null)===state.newsSymbol:true)){
    if(detailSymbol&&detailName)state.detailName=detailName;
    window.scrollTo(0,0);
    return;
  }
  scrollPositions.set(location.hash||'#home',window.scrollY);
  closeStockSelector();
+ state.sharedDetailSymbol=null;
  if(tab==='detail')state.detailOrigin=state.tab==='detail'?state.detailOrigin:['home','chart','watch'].includes(state.tab)?state.tab:'more';
+ if(tab==='detail'&&state.tab==='discover')state.returnFocusSymbol=detailSymbol;
  state.tab=tab;
  if(detailSymbol){state.detailSymbol=detailSymbol;state.detailName=detailName||'';}
  const hash=detailSymbol?`#${tab}/${encodeURIComponent(detailSymbol)}`:`#${tab}`;
- history.pushState({tab,detailSymbol:state.detailSymbol,detailName:state.detailName,detailOrigin:state.detailOrigin},'',hash);
+ const nextUrl=new URL(location.href);nextUrl.searchParams.delete('cv');nextUrl.hash=hash;
+ history.pushState({tab,detailSymbol:state.detailSymbol,detailName:state.detailName,detailOrigin:state.detailOrigin},'',nextUrl);
+ if(tab==='news')state.newsSymbol=detailSymbol||null;
  navigationDepth+=1;
  haptic('tickWeak');
  render();
@@ -233,6 +243,7 @@ window.__chartviewNavigate=(tab,detailSymbol=null,detailName='')=>navigate(tab,d
 function bindNav(){
  document.querySelectorAll('[data-share-current]').forEach(button=>button.onclick=shareCurrent);
  document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>navigate(b.dataset.tab));
+ document.querySelectorAll('[data-stock-news]').forEach(b=>b.onclick=()=>navigate('news',b.dataset.stockNews,b.dataset.stockName||''));
  document.querySelectorAll('[data-go-chart]').forEach(b=>b.onclick=()=>navigate('chart'));
  document.querySelectorAll('[data-stock-detail]').forEach(b=>b.onclick=()=>navigate('detail',b.dataset.stockDetail,b.dataset.stockName||''));
  document.querySelectorAll('[data-retry-detail]').forEach(b=>b.onclick=renderDetail);
@@ -389,19 +400,24 @@ function paintHomeWatch(quotes,hasWatch,{pending=false,failed=false}={}){
  }).join('');
 }
 
-function paintHomeBrief(home){
+function paintHomeBrief(home,options={}){
  const macro=home?.macro?.summary||{};
  const staleVix=(home?.macro?.results||[]).find(row=>(row.original_symbol||row.symbol)==='^VIX'&&macroFreshness(row).stale);
  const brief=document.querySelector('#brief-card');
  if(!brief)return false;
  brief.classList.remove('skeleton','brief');
  if(macro.text){
+   brief.dataset.state='ready';
    const level=macro.level||'yellow';
    const label=level==='red'?'위험 신호 많음':level==='green'?'안정 신호 많음':'신호 혼재';
    brief.innerHTML=`<div class="brief-icon ${esc(level)}">${iconSvg('spark',22)}</div><div class="brief-copy"><span>시장 지표 요약 <b class="status-badge ${esc(level)}">${label}</b></span><strong>${esc(String(macro.text).slice(0,105))}</strong><small>${staleVix?'VIX 관측일이 오래되어 시장 요약 해석에 주의가 필요해요. ':''}최근 원자료 ${esc(macro.latestBasisDate||'-')} · 투자 행동을 권유하는 신호가 아니에요.</small></div><button data-tab="macro" aria-label="경제 지표 보기">${iconSvg('arrow',20)}</button>`;
+   if(options.failed)brief.querySelector('.brief-copy small').insertAdjacentText('afterbegin','새 요약 조회에 실패했어요. 이전 요약을 표시해요. ');
    return true;
  }
- brief.innerHTML=`<div class="brief-icon yellow">${iconSvg('spark',22)}</div><div class="brief-copy"><span>시장 지표 요약</span><strong>요약 데이터를 확인하고 있어요.</strong><small>경제지표 화면에서 개별 관측일을 확인할 수 있어요.</small></div>`;
+ const summary=homeBriefState(home,options);
+ brief.dataset.state=summary.status;
+ brief.innerHTML=summary.status==='loading'?loadingIndicator(summary.text):`<div class="brief-copy"><span>시장 지표 요약</span><strong>${esc(summary.text)}</strong><small>경제지표 화면에서 개별 관측일을 확인할 수 있어요.</small><button type="button" data-retry-brief>요약 다시 확인</button><button type="button" data-tab="macro">경제지표 보기</button></div>`;
+ brief.querySelector('[data-retry-brief]')?.addEventListener('click',async()=>{const epoch=viewEpoch;paintHomeBrief(null,{pending:true});try{const home=await homeSnapshot({force:true});if(epoch!==viewEpoch)return;writeHomeFast('snapshot',home);paintHomeBrief(home);}catch{if(epoch===viewEpoch)paintHomeBrief(null,{failed:true});}bindNav();});
  return false;
 }
 
@@ -474,7 +490,7 @@ async function renderHome(){
    writeHomeFast('snapshot',{...home,heatmap:{...(home.heatmap||{}),results:mergeRowsWithLive(home?.heatmap?.results||[])}});
    paintHomeBrief(home);
    paintHomeWatch(watchSymbols.map(symbol=>getLiveQuote(symbol)).filter(Boolean),hasWatch,{pending:!watchLoaded});
- }else if(!cachedSnapshot)paintHomeBrief(null);
+ }else paintHomeBrief(cachedSnapshot,{failed:true});
  }));
  if(watchSymbols.length){
   jobs.push(settle(personalizedNews(watchSymbols,watchNames),result=>{
@@ -768,7 +784,7 @@ async function renderValuation(){
      const maxAbs=Math.max(...valid.map(Math.abs),1);
      document.querySelector('#valuation-list').innerHTML=rows.map((s,i)=>{
        const value=Number(s[def.key]);const meta=s.fieldMeta?.[def.key]||{};const pct=Number.isFinite(value)?Math.min(100,Math.max(4,Math.abs(value)/maxAbs*100)):0;
-       return `<button class="valuation-compare-row" data-stock-detail="${esc(s.ticker)}"><span class="stock-logo tone-${i%4}">${esc(displayName(s.ticker,s.name).slice(0,1))}</span><span class="valuation-row-copy"><strong>${esc(displayName(s.ticker,s.name))}</strong><small>${esc(s.ticker)} · ${esc(meta.period||'기준기간 미제공')}</small><span class="metric-bar"><i style="width:${pct}%"></i></span><em>${esc(meta.source||s.dataSource||'출처 확인 필요')}</em></span><span class="valuation-row-value"><strong>${Number.isFinite(value)?esc(value.toLocaleString('ko-KR',{maximumFractionDigits:2})+def.suffix):'-'}</strong><small>${s.generatedAt?esc(formatKst(s.generatedAt)):'조회시각 -'}</small>${iconSvg('arrow',17)}</span></button>`;
+       return `<button class="valuation-compare-row" data-stock-detail="${esc(s.ticker)}"><span class="stock-logo tone-${i%4}">${esc(displayName(s.ticker,s.name).slice(0,1))}</span><span class="valuation-row-copy"><strong>${esc(displayName(s.ticker,s.name))}</strong><small>${esc(s.ticker)} · ${esc(formatMetricPeriod(meta.period))}</small><span class="metric-bar"><i style="width:${pct}%"></i></span><em>${esc(formatDataSource(meta.source||s.dataSource||'출처 확인 필요'))}</em></span><span class="valuation-row-value"><strong>${Number.isFinite(value)?esc(value.toLocaleString('ko-KR',{maximumFractionDigits:2})+def.suffix):'-'}</strong><small>${s.generatedAt?esc(formatKst(s.generatedAt)):'조회시각 -'}</small>${iconSvg('arrow',17)}</span></button>`;
      }).join('');
      bindNav();
    };
@@ -832,7 +848,7 @@ async function renderMacro(){
  }catch(e){
    if(epoch!==viewEpoch)return;
    document.querySelector('#macro-freshness').classList.remove('skeleton');document.querySelector('#macro-freshness').innerHTML='<div><strong>갱신 정보를 확인하지 못했어요</strong><span>개별 데이터 로딩 상태를 확인해주세요.</span></div>';
-   document.querySelector('#macro-summary').classList.remove('skeleton');document.querySelector('#macro-summary').innerHTML='<div class="macro-summary-copy"><strong>경제 지표 연결을 확인하고 있어요.</strong><small>잠시 후 다시 시도해주세요.</small></div>';
+   document.querySelector('#macro-summary').classList.remove('skeleton');document.querySelector('#macro-summary').innerHTML='<div class="macro-summary-copy"><strong>경제 지표 연결에 실패했어요.</strong><small>잠시 후 다시 시도해주세요.</small></div>';
    document.querySelector('#macro-groups').innerHTML=`<div class="empty"><strong>경제 지표를 불러오지 못했어요</strong><span>${esc(e.message)}</span><button class="retry" id="retry-macro">다시 시도</button></div>`;
    document.querySelector('#retry-macro')?.addEventListener('click',renderMacro);
  }
@@ -930,22 +946,24 @@ async function renderDetail(){
  const epoch=viewEpoch;
  const symbol=state.detailSymbol||state.selected[0]||'005930.KS';
  const saved=state.watchlist.find(x=>x.symbol===symbol);
+ let closingQuote=null;
  let knownName=usableStockName(state.detailName,symbol)||usableStockName(saved?.name,symbol)||usableStockName(DISPLAY_NAMES[symbol],symbol);
  const headingName=knownName||'종목명 확인 중';
  document.querySelector('#app').innerHTML=shell(`
    <section class="detail-compact-head">
      <div class="detail-brand"><span class="detail-logo" id="detail-logo">${knownName?esc(knownName.slice(0,1)):'?'}</span><div><span>${esc(symbol)}</span><h2 id="detail-name" class="${knownName?'':'identity-loading'}">${esc(headingName)}</h2></div></div>
-     <div class="detail-actions"><button id="detail-watch" class="detail-watch-button" type="button">${iconSvg('heart',18)} <span>${saved?'관심 등록됨':'관심 등록'}</span></button><button id="detail-compare">${iconSvg('chart',18)} <span>비교에 추가</span></button></div>
+     <div class="detail-actions"><button id="detail-watch" class="detail-watch-button" type="button">${iconSvg('heart',18)} <span>${saved?'관심 등록됨':'관심 등록'}</span></button><button id="detail-compare">${iconSvg('chart',18)} <span>${state.selected.includes(symbol)?'수익률 비교 열기':'수익률 비교에 추가'}</span></button></div>
    </section>
    <section class="detail-price skeleton detail-price-skeleton" id="detail-price">${loadingIndicator('현재가를 확인하고 있어요')}</section>
-   <nav class="detail-jump-nav" aria-label="종목 정보 바로가기"><button type="button" data-detail-jump="detail-price">가격</button><button type="button" data-detail-jump="${/\.(KS|KQ)$/i.test(symbol)?'detail-financial-block':'detail-metrics-section'}">${/\.(KS|KQ)$/i.test(symbol)?'공시 실적':'핵심 지표'}</button><button type="button" data-detail-jump="detail-industry-block">산업</button><button type="button" data-detail-jump="detail-news-section">뉴스</button><button type="button" data-detail-jump="detail-research-card">내 질문</button></nav>
+   <nav class="detail-jump-nav" aria-label="종목 정보 바로가기"><button type="button" data-detail-jump="detail-price">가격</button><button type="button" data-detail-jump="${/\.(KS|KQ)$/i.test(symbol)?'detail-financial-block':'detail-metrics-section'}">${/\.(KS|KQ)$/i.test(symbol)?'공시 실적':'핵심 지표'}</button><button type="button" data-detail-jump="detail-industry-block">산업</button><button type="button" data-detail-jump="detail-news-section">뉴스</button><button type="button" data-detail-jump="detail-research-card">공시 비교</button></nav>
    <div class="segmented detail-period-tabs">${[['1mo','1개월'],['3mo','3개월'],['6mo','6개월'],['1y','1년']].map(([p,l])=>`<button data-detail-period="${p}" aria-pressed="${state.detailPeriod===p}" class="${state.detailPeriod===p?'active':''}">${l}</button>`).join('')}</div>
    <section class="detail-chart-card" id="detail-chart-section"><div class="detail-section-head"><div><span>기간 수익률</span><strong id="detail-period-label">선택 기간 흐름</strong></div><small id="detail-chart-status" role="status">불러오는 중</small></div><div class="detail-chart-wrap"><div id="detail-chart" class="detail-chart"></div><div id="detail-chart-loading" class="chart-loading">${chartLoadingPreview('종목 차트를 불러오고 있어요')}</div></div><div id="detail-return-note" class="detail-return-note"></div></section>
-   <section class="research-card" id="detail-research-card" aria-labelledby="research-card-title"><div class="research-card-head"><span>공시로 확인하기 · 체험판</span><h2 id="research-card-title">DART 공시 비교</h2><p>보고서에 나온 실적을 이전 기간이나 다른 회사와 비교해보세요.</p></div><div id="research-card-body">${loadingIndicator('내 조사 카드를 열고 있어요')}</div></section>
-   ${/\.(KS|KQ)$/i.test(symbol)?`<section class="detail-block" id="detail-financial-block"><div class="section-head"><div><h2>공시 재무 흐름</h2><p>DART 보고서의 매출액과 영업이익</p></div><span class="detail-context-badge">DART</span></div><div id="detail-financial-history">${loadingIndicator('최근 재무제표를 확인하고 있어요')}</div></section>`:''}
+
+   ${/\.(KS|KQ)$/i.test(symbol)?`<section class="detail-block" id="detail-financial-block"><div class="section-head"><div><h2>공시 재무 흐름</h2><p>DART 보고서의 실적·현금흐름·재무상태</p></div><span class="detail-context-badge">DART</span></div><div id="detail-financial-history">${loadingIndicator('최근 재무제표를 확인하고 있어요')}</div></section>`:''}
    <section class="detail-block detail-industry-block" id="detail-industry-block"><div class="section-head"><div><h2>회사 · 산업 맥락</h2><p>사업, 관련 기업, 산업 연결을 살펴봐요</p></div><span class="detail-context-badge">KRX</span></div><div id="detail-industry-context" class="detail-industry-context">${loadingIndicator('회사·산업 정보를 불러오고 있어요')}<div class="skeleton detail-context-skeleton"></div></div></section>
+   <section class="research-card" id="detail-research-card" aria-labelledby="research-card-title"><div class="research-card-head"><span>공시로 확인하기</span><h2 id="research-card-title">DART 공시 비교</h2><p>보고서에 나온 실적을 이전 기간이나 다른 회사와 비교해보세요.</p></div><div id="research-card-body">${loadingIndicator('공시 비교를 열고 있어요')}</div></section>
    <section class="detail-block" id="detail-metrics-section"><div class="section-head"><h2>핵심 지표</h2><button class="text-button" data-tab="valuation">같은 지표 비교</button></div><div id="detail-metrics" class="detail-metrics">${loadingIndicator('핵심 지표를 불러오고 있어요')}<div class="skeleton metric"></div><div class="skeleton metric"></div><div class="skeleton metric"></div><div class="skeleton metric"></div></div><div id="detail-metric-meta" class="detail-metric-meta"></div></section>
-   <section class="detail-block" id="detail-news-section"><div class="section-head"><h2>관련 뉴스</h2><button class="text-button" data-tab="news">뉴스 모두 보기</button></div><div id="detail-news" class="detail-news">${loadingIndicator('관련 뉴스를 불러오고 있어요')}<div class="skeleton news"></div><div class="skeleton news"></div></div></section>
+   <section class="detail-block" id="detail-news-section"><div class="section-head"><h2>관련 뉴스</h2><button class="text-button" data-stock-news="${esc(symbol)}" data-stock-name="${esc(knownName)}">이 종목 뉴스 더 보기</button></div><div id="detail-news" class="detail-news">${loadingIndicator('관련 뉴스를 불러오고 있어요')}<div class="skeleton news"></div><div class="skeleton news"></div></div></section>
  `,headingName);
  bindNav();
  const jumpToDetail=id=>{
@@ -958,7 +976,7 @@ async function renderDetail(){
  document.querySelectorAll('[data-detail-jump]').forEach(button=>button.addEventListener('click',()=>jumpToDetail(button.dataset.detailJump)));
  import('./researchCard.js').then(({mountResearchCard})=>{
    if(epoch!==viewEpoch)return;
-   mountResearchCard(document.querySelector('#research-card-body'),{symbol,name:knownName||symbol,onJump:jumpToDetail,onNotice:showToast,candidates:[...state.watchlist,...Object.entries(DISPLAY_NAMES).map(([symbol,name])=>({symbol,name}))],favorites:state.watchlist,onChoosePeer:callback=>openStockSelector({title:'공시를 비교할 회사',description:'현재 종목과 다른 국내 회사 하나를 선택하세요.',favorites:state.watchlist,nameFor:comparisonStockName,pickLabel:'비교 선택',restoreBack:restoreNativeBack,onPick:(symbol,name)=>callback({symbol,name})})});
+   mountResearchCard(document.querySelector('#research-card-body'),{symbol,name:knownName||symbol,onJump:jumpToDetail,onNotice:showToast,candidates:[...state.watchlist,...Object.entries(DISPLAY_NAMES).map(([symbol,name])=>({symbol,name}))],favorites:state.watchlist,draft:researchDrafts.get(symbol),initialPeer:state.sharedDetailSymbol===symbol?state.researchPeer:null,onDraftChange:draft=>{researchDrafts.set(symbol,draft);state.researchPeer=draft.resultPeer||draft.peer||null;},onChoosePeer:callback=>openStockSelector({title:'공시를 비교할 회사',description:'현재 종목과 다른 국내 회사 하나를 선택하세요.',favorites:state.watchlist,nameFor:comparisonStockName,pickLabel:'비교 선택',restoreBack:restoreNativeBack,onPick:(symbol,name)=>callback({symbol,name})})});
  }).catch(()=>{
    if(epoch!==viewEpoch)return;
    const host=document.querySelector('#research-card-body');
@@ -1034,8 +1052,9 @@ async function renderDetail(){
    const priceBox=document.querySelector('#detail-price');
    if(!priceBox)return;
    priceBox.classList.remove('skeleton','detail-price-skeleton');
-   priceBox.innerHTML=`<div><span>현재가${current?.asOf?' · '+esc(formatKst(current.asOf)):''}</span><strong>${current?.price!=null?esc(formatCurrencyPrice(current.price,current.currency)):'-'}</strong>${current?.currency&&current.currency!=='KRW'?`<small>${esc(currencyLabel(current.currency))}</small>`:''}</div><div class="detail-return ${dayChange>0?'up':dayChange<0?'down':'flat'}"><span>전 거래일 대비</span><strong>${Number.isFinite(dayChange)?esc(fmtChange(dayChange)):'-'}</strong><small>${current?.source?esc(current.source):'시세 출처 확인 필요'}</small></div>${failed?'<button class="retry" data-retry-detail>시세 다시 시도</button>':''}`;
+   priceBox.innerHTML=`<div><span>${esc(quoteBasisLabel(current))}${current?.asOf?' · '+esc(formatKst(current.asOf))+' KST 기준':''}</span><strong>${current?.price!=null?esc(formatCurrencyPrice(current.price,current.currency)):'-'}</strong>${current?.currency&&current.currency!=='KRW'?`<small>${esc(currencyLabel(current.currency))}</small>`:''}</div><div class="detail-return ${dayChange>0?'up':dayChange<0?'down':'flat'}"><span>전 거래일 대비</span><strong>${Number.isFinite(dayChange)?esc(fmtChange(dayChange)):'-'}</strong><small>${current?.source?esc(current.source):'시세 출처 확인 필요'}</small><small>조회 ${esc(formatKst(new Date().toISOString()))} KST · 정규장 종가와 다를 수 있어요</small></div>${closingQuote?`<div class="detail-closing-reference">스크리너 장마감 수집 종가 · ${esc(closingQuote.date)} · ${esc(formatCurrencyPrice(closingQuote.price,'KRW'))}<small>가격을 비교할 때 각 기준 시점을 확인해주세요.</small></div>`:''}${failed?'<button class="retry" data-retry-detail>시세 다시 시도</button>':''}`;
  };
+ void screenerData().then(data=>{if(epoch!==viewEpoch)return;const row=(data.stocks||[]).find(row=>row.symbol===symbol);if(row?.price!=null){closingQuote={price:row.price,date:row.date||data.tradeDate||data.updated||'기준일 미제공'};const quote=getLiveQuote(symbol);if(quote)paintDetailQuote(quote);}}).catch(()=>{});
  if(saved)seedWatchQuoteCache(state.watchlist.map(x=>x.symbol));
  const cachedQuote=getLiveQuote(symbol)||homeCachedQuote(symbol);
  if(cachedQuote){
@@ -1180,11 +1199,11 @@ function newsCard(row){
 async function renderNews(){
  cleanupChart();
  const epoch=viewEpoch;
- const tickers=state.watchlist.slice(0,20).map(x=>x.symbol);
- const names=state.watchlist.slice(0,20).map(x=>displayName(x.symbol,x.name));
+ const tickers=state.newsSymbol?[state.newsSymbol]:state.watchlist.slice(0,20).map(x=>x.symbol);
+ const names=state.newsSymbol?[displayName(state.newsSymbol,resolvedNames.get(state.newsSymbol))]:state.watchlist.slice(0,20).map(x=>displayName(x.symbol,x.name));
  document.querySelector('#app').innerHTML=shell(`
-   <section class="task-head"><div><h2>관심종목 뉴스</h2><p>기사의 관련 근거와 정렬 기준을 함께 표시해요.</p></div></section>
-   <div class="news-toolbar"><div class="news-filter-strip">${state.watchlist.slice(0,8).map((x,i)=>`<span class="tone-bg-${i%3}">${esc(displayName(x.symbol,x.name))}</span>`).join('')}</div><div class="sort-toggle">${[['major','주요순'],['latest','최신순']].map(([k,l])=>`<button data-news-sort="${k}" class="${state.newsSort===k?'active':''}" aria-pressed="${state.newsSort===k}">${l}</button>`).join('')}</div></div>
+   <section class="task-head"><div><h2>${state.newsSymbol?esc(names[0])+' 뉴스':'관심종목 뉴스'}</h2><p>기사의 관련 근거와 정렬 기준을 함께 표시해요.</p></div>${state.newsSymbol?'<button class="text-button" data-tab="news">관심종목 뉴스</button>':''}</section>
+   <div class="news-toolbar"><div class="news-filter-strip">${(state.newsSymbol?[{symbol:state.newsSymbol,name:names[0]}]:state.watchlist.slice(0,8)).map((x,i)=>`<span class="tone-bg-${i%3}">${esc(displayName(x.symbol,x.name))}</span>`).join('')}</div><div class="sort-toggle">${[['major','주요순'],['latest','최신순']].map(([k,l])=>`<button data-news-sort="${k}" class="${state.newsSort===k?'active':''}" aria-pressed="${state.newsSort===k}">${l}</button>`).join('')}</div></div>
    <p class="sort-explain" id="news-sort-explain">${state.newsSort==='major'?'주요순은 제공된 관련성·최신성 점수를 함께 사용해요.':'최신순은 기사 게시시각 기준이에요.'}</p>
    <div id="news-list" class="news-list">${loadingIndicator('관심종목 뉴스를 불러오고 있어요')}<div class="skeleton news-large"></div><div class="skeleton news-large"></div></div>
  `,'맞춤 뉴스');
@@ -1231,7 +1250,7 @@ function renderInfo(){
    try{
      await clearStored();
      clearDiagnostics();
-     state.watchlist=[];
+     state.watchlist=[];researchDrafts.clear();state.screener={filters:{},count:30,activePreset:''};state.researchPeer=null;
      state.selected=DEFAULTS.map(x=>x.symbol);
      clearButton.dataset.confirmed='false';
      clearButton.textContent='초기화 완료';
@@ -1316,6 +1335,9 @@ function render(){
 function syncFromLocation(){
  const route=resolveRoute(location);
  Object.assign(state,route);
+ const shared=decodeSharedView(new URLSearchParams(location.search).get('cv'));
+ if(shared?.tab===route.tab&&(!shared.detailSymbol||shared.detailSymbol===route.detailSymbol)){Object.assign(state,shared);state.sharedDetailSymbol=shared.detailSymbol||null;}
+ if(route.tab!=='detail')state.researchPeer=null;
  state.detailName=route.tab==='detail'?(history.state?.detailName||''):'';
  state.detailOrigin=route.tab==='detail'&&['home','chart','watch','more'].includes(history.state?.detailOrigin)?history.state.detailOrigin:'home';
  if(route.tab==='detail'&&!state.detailName)state.detailName=resolvedNames.get(route.detailSymbol)||'';

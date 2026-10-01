@@ -1,7 +1,7 @@
 # Chart View Apps in Toss architecture
 
 ## Isolation rule
-The production web repository `shoon94parkk-del/chart_View` is not modified by this project.
+Toss UI lives in this repository. Shared backend changes in `shoon94parkk-del/chart_View` are coordinated and additive; its separate web UI is preserved.
 
 ## MVP
 - Apps in Toss client lives in this repository.
@@ -10,10 +10,10 @@ The production web repository `shoon94parkk-del/chart_View` is not modified by t
 - Device-local watchlist is isolated under `chartview-toss-*` keys.
 - Toss-specific navigation, safe-area and lifecycle behavior belongs here.
 
-## Next
-1. Confirm Apps in Toss console app name/origin.
-2. Add the final Toss framework configuration generated for that app.
-3. Replace MVP JSON chart diagnostics with the production chart renderer.
-4. Port valuation, macro, screener and personalized-news views.
-5. Add Toss bridge navigation/back-button behavior.
-6. Run sandbox/QR validation and submission checklist.
+## Current implementation
+- Lightweight Charts, valuation, macro, screener, personalized news and analysis tools are implemented.
+- Apps in Toss bridge provides account storage, native back handling and safe areas.
+- DART reports and financial history load independently of quotes/charts with checked-in and server caches.
+- `experienceState.js` validates public share conditions (`cv` query); device notes and watchlists are excluded. Hash routes still work without conditions.
+- Screener filters, paging, analysis periods and research drafts survive navigation within the visit. Explicit question save remains device-local.
+- Actual Android/iOS Sandbox validation and submission gates remain in `P0_RELEASE_GATE.md`.

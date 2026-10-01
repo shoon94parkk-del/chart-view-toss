@@ -33,7 +33,13 @@ export function questionPlan(question,symbol,candidates=[]){
  if(/앞으로|내년|전망|예측|지속|늘까|오를|살까|매수/.test(q))limits.push('이 결과는 이미 발표한 실적의 변화예요. 미래 실적이나 주가를 예측하지 않아요.');
  if(targets.length>1)limits.push('다른 회사 하나와 비교할 수 있어요. 질문에 비교할 회사 하나만 남겨주세요.');
  if(!targets.length&&/비교|VS|차이|대비|보다/.test(q))limits.push('다른 회사의 정식 종목명을 적으면 기업 간 비교를 할 수 있어요. 지금은 이 회사의 이전 실적과 비교해요.');
- return {focus,target:targets.length===1?targets[0]:null,targets,limits};
+ const unsupported=[[/배당/,'배당'],[/설비투자|CAPEX/,'설비투자'],[/EPS|주당순이익/,'주당순이익'],[/생산량|판매량|물량/,'생산·판매량'],[/수주/,'수주'],[/사업부|부문별/,'사업부별 실적'],[/왜|이유|원인/,'원인 해석']].filter(([pattern])=>pattern.test(q)).map(([,label])=>label);
+ const forecast=/앞으로|내년|전망|예측|목표가|목표주가|오를|늘까|증가할까|좋아질까|살까|매수/.test(q);
+ return {focus,target:targets.length===1?targets[0]:null,targets,limits,unsupported,forecast};
+}
+export function resolveComparisonTarget(plan,chosenTarget){
+ const conflict=!!chosenTarget&&plan.targets.some(row=>row.symbol!==chosenTarget.symbol);
+ return {conflict,target:conflict?null:chosenTarget||plan.target,choices:[...new Map([...(chosenTarget?[chosenTarget]:[]),...plan.targets].map(row=>[row.symbol,row])).values()]};
 }
 export function growth(current,previous){
  const c=number(current),p=number(previous);

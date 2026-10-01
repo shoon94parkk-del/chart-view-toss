@@ -34,6 +34,7 @@ try{
   });
   await page.goto(`${base}/#detail/005930.KS`);
   await page.locator('[data-detail-jump="detail-research-card"]').click();
+  await page.locator('.research-guide>summary').click();
   assert.match(await page.locator('.research-guide').innerText(),/매출액·영업이익·영업이익률·전년 대비 증가율/);
   assert.match(await page.locator('.research-guide').innerText(),/앞으로의 전망.*지원하지 않아요/);
   await page.locator('[data-research-example="1"]').click();
@@ -66,6 +67,7 @@ try{
   assert.ok(!requests.some(r=>r.includes('financial-history?ticker=452400')),'substring company must never be requested');
   assert.ok(!(await page.locator('.research-answer').innerText()).includes('질문에 비교할 회사 하나만'));
   assert.match(await page.locator('#detail-financial-history').innerText(),/확장 항목 7\/7개 확인/);
+  await page.locator('.research-peer-picker>summary').click();
   await page.locator('[data-research-choose-peer]').click();
   await page.locator('[data-selector-symbol="000660.KS"]').click();
   assert.match(await page.locator('#research-peer-selection').innerText(),/SK하이닉스.*선택됨/);

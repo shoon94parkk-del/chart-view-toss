@@ -36,13 +36,13 @@
 .research-form-error{margin:0;color:#b93842;font-size:13px;line-height:1.5}
 .research-form-actions{display:grid;grid-template-columns:1fr 2fr;gap:8px;margin-top:8px}
 .research-form-actions button[type=submit]{background:#3182f6;color:#fff;font-size:15px}
-.research-ask .research-analyze{background:#3182f6;color:#fff;font-size:15px}
+.research-ask .research-analyze{background:#1769c2;color:#fff;font-size:15px}
 .research-guide{padding:14px;border-radius:13px;background:#f4f8ff;font-size:13px;line-height:1.65;color:#333d4b}
 .research-guide strong{font-size:14px;color:#1769c2}
 .research-guide p{margin:7px 0 0}
 .research-guide .research-guide-limit{margin-top:10px;padding-top:10px;border-top:1px solid #dce8fa;font-size:12px;color:#4e5968}
-.research-examples{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0}
-.research-examples>span{flex-basis:100%;font-size:12px;color:#6b7684}
+.research-examples{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:6px 0}
+.research-examples>span{grid-column:1/-1;font-size:12px;color:#5b6573}
 .research-examples button{background:#e8f3ff;color:#1769c2;font-size:12px;max-width:100%;text-align:left}
 #research-result:empty{display:none}
 #research-result{margin-top:20px;scroll-margin-top:75px}
@@ -76,3 +76,5 @@
 .research-quality-details{margin-top:18px}.research-quality-details>summary{min-height:44px;display:flex;align-items:center;font-size:13px;color:#1769c2;font-weight:700;cursor:pointer}
 .research-price-comparison{margin-top:14px}.research-price-comparison p{font-size:12px;line-height:1.7;color:#6b7684}
 .research-price-comparison td small{overflow-wrap:anywhere}
+
+.research-guide summary,.research-peer-picker summary{min-height:44px;display:flex;align-items:center;cursor:pointer;font-size:13px;font-weight:700;color:#1769c2}.research-guide>strong{display:block;margin-top:10px}.research-peer-picker[open]>summary{margin-bottom:8px}.research-examples{grid-template-columns:repeat(2,minmax(0,1fr))}.research-card-head{margin-bottom:12px}.research-form-help{font-size:12px;color:#4e5968}

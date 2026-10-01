@@ -177,3 +177,13 @@ Last updated: 2026-09-22
 - Quality checks state observed facts and source accounts, not recommendations, risk-free claims or inferred causes. Denominators must be positive for debt and cash/income ratios.
 - Selecting a peer prioritizes watchlist and preserves one input, without navigation, auto-analysis or automatic saving. Original question aliases remain available.
 - Price comparison loads on explicit request, remains independent of DART failure, and labels its provider/period/time. No forecast PER is added to same-period DART tables.
+
+### Whole-site experience corrections (2026-10-01)
+- Never silently override an explicitly named question company with a selected peer. Stop unsupported items/forecasts without a substitute financial table.
+- Screener input blur/change must not remove a row before its click fires. Keep filters, page count, preset and returning row focus on detail/back.
+- Public share cv restores public conditions only. Validate bounded symbols/dates/options; exclude device notes and private watchlists.
+- Detail news retains its symbol until the user explicitly returns to watchlist news. Plain same-tab navigation must clear stock scope.
+- Missing/failed market summary is terminal with retry, not an indefinite spinner. Retry bypasses the cached response.
+- Verified revenueBasis must reconcile positive segment total + signed adjustment to report total. Keep reported shares, disclose >100% and mark missing metadata unverified.
+- Quote asOf is observation time; lookup time and screener collected close are separately labeled. Preserve data sources and raw financial amounts.
+- Bottom navigation exposes aria-current; helper text stays legible and macro source controls are at least 44px. PICK check execution must not imply completed evidence review.

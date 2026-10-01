@@ -199,6 +199,7 @@ export function openStockSelector({
     }
     const matchedFavorites = favoriteRows.filter(row => `${row.name} ${row.symbol}`.toLowerCase().includes(query.toLowerCase()));
     paintResults(matchedFavorites, query);
+    if(!matchedFavorites.length)resultEl.querySelector('.selector-empty')?.remove();
     resultEl.insertAdjacentHTML('beforeend', loadingIndicator('종목을 검색하고 있어요'));
     timer = setTimeout(async () => {
       try {

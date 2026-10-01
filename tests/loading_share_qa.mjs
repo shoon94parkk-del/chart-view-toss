@@ -47,11 +47,11 @@ try{
  await page.locator('#chart-loading').waitFor({state:'detached',timeout:12000});
  assert.equal(await page.locator('[data-period="3mo"]').getAttribute('aria-pressed'),'true');
  await page.locator('.topbar [data-share-current]').click();
- assert.equal(await page.evaluate(()=>navigator.clipboard.readText()),'https://chart-view-toss.onrender.com/?v=promo-20260930-v2#chart');
+ {const link=new URL(await page.evaluate(()=>navigator.clipboard.readText()));assert.equal(link.origin,'https://chart-view-toss.onrender.com');assert.equal(link.hash,'#chart');const conditions=JSON.parse(link.searchParams.get('cv'));assert.equal(conditions.period,'3mo');assert.ok(conditions.selected.includes('005930.KS'));assert.equal(conditions.question,undefined);}
  await page.evaluate(()=>document.documentElement.dataset.aitRuntime='true');
  assert.equal(await page.locator('.ait-share-row [data-share-current]').isVisible(),true);
  await page.locator('.ait-share-row [data-share-current]').click();
- assert.equal(await page.evaluate(()=>navigator.clipboard.readText()),'https://chart-view-toss.onrender.com/?v=promo-20260930-v2#chart');
+ {const link=new URL(await page.evaluate(()=>navigator.clipboard.readText()));assert.equal(link.origin,'https://chart-view-toss.onrender.com');assert.equal(link.hash,'#chart');const conditions=JSON.parse(link.searchParams.get('cv'));assert.equal(conditions.period,'3mo');assert.ok(conditions.selected.includes('005930.KS'));assert.equal(conditions.question,undefined);}
  await page.evaluate(()=>document.documentElement.dataset.aitRuntime='false');
 
  await page.goto(`${base}/#detail/066570.KS`,{waitUntil:'domcontentloaded'});
@@ -70,7 +70,7 @@ try{
  await page.locator('#detail-chart-loading').waitFor({state:'detached',timeout:12000});
  assert.equal(await page.locator('[data-detail-period="6mo"]').getAttribute('aria-pressed'),'true');
  await page.locator('.topbar [data-share-current]').click();
- assert.equal(await page.evaluate(()=>navigator.clipboard.readText()),'https://chart-view-toss.onrender.com/?v=promo-20260930-v2#detail/066570.KS');
+ {const link=new URL(await page.evaluate(()=>navigator.clipboard.readText()));assert.equal(link.hash,'#detail/066570.KS');const conditions=JSON.parse(link.searchParams.get('cv'));assert.equal(conditions.detailSymbol,'066570.KS');assert.equal(conditions.detailPeriod,'6mo');}
  failCompare=true;
  await page.goto(`${base}/#detail/AAPL`,{waitUntil:'domcontentloaded'});
  await page.locator('#detail-chart-loading').waitFor({state:'detached',timeout:20000});
