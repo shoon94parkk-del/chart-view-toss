@@ -28,7 +28,7 @@ const labelPct=value=>{
   const n=finiteNumber(value);
   return n===null?null:`${n>0?'+':''}${n.toFixed(1)}%`;
 };
-const candidate=(row,reasons,score,rows)=>({
+const candidate=(row,reasons,score,context)=>({
   symbol:row.symbol,
   name:row.name||row.symbol,
   market:row.market||'',
@@ -42,7 +42,7 @@ const candidate=(row,reasons,score,rows)=>({
   distance52HighPct:num(row,'distance52HighPct'),
   reasons:reasons.filter(Boolean).slice(0,4),
   score:Number.isFinite(score)?score:0,
-  context:companyContext(row,rows),
+  context,
 });
 const defs=[
   {
@@ -143,9 +143,15 @@ const defs=[
 
 export function buildInvestmentIdeas(data,{limit=4,perIdea=4}={}){
   const rows=(Array.isArray(data?.stocks)?data.stocks:[]).filter(row=>row?.symbol&&row?.name&&(num(row,'avgValue20')??0)>=MIN_AVG_VALUE_20);
-  return defs.map(def=>{
-    const candidates=rows.filter(def.match).map(row=>candidate(row,def.reasons(row),def.score(row),rows)).sort((a,b)=>b.score-a.score).slice(0,perIdea);
-    if(!candidates.length)return null;
+  const contexts=new Map();
+  const contextFor=row=>{if(!contexts.has(row))contexts.set(row,companyContext(row,rows));return contexts.get(row);};
+  // Rank inexpensive technical facts first. Industry scans are only needed for
+  // the winners actually displayed, and shared across their idea cards.
+  return defs.map(def=>({def,winners:rows.filter(def.match).map(row=>{
+    const raw=def.score(row);return {row,score:Number.isFinite(raw)?raw:0};
+  }).sort((a,b)=>b.score-a.score).slice(0,perIdea)}))
+  .filter(item=>item.winners.length).slice(0,limit).map(({def,winners})=>{
+    const candidates=winners.map(({row,score})=>candidate(row,def.reasons(row),score,contextFor(row)));
     return {
       id:def.id,
       icon:def.icon,
@@ -156,7 +162,7 @@ export function buildInvestmentIdeas(data,{limit=4,perIdea=4}={}){
       candidates,
       strength:candidates.length>=3?'후보 다수':candidates.length===2?'후보 2개':'후보 1개',
     };
-  }).filter(Boolean).slice(0,limit);
+  });
 }
 
 export function ideaCoverage(data){

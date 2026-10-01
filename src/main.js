@@ -1089,7 +1089,7 @@ async function renderDetail(){
    priceBox.querySelector('.quote-provenance').open=Boolean(provenanceOpen);
    if(provenanceFocused)priceBox.querySelector('.quote-provenance summary').focus({preventScroll:true});
  };
- if(!isIndex)void screenerData().then(data=>{if(epoch!==viewEpoch)return;const row=(data.stocks||[]).find(row=>row.symbol===symbol);if(row?.price!=null){closingQuote={price:row.price,date:row.date||data.tradeDate||data.updated||'기준일 미제공'};const quote=getLiveQuote(symbol);if(quote)paintDetailQuote(quote);}}).catch(()=>{});
+ if(!isIndex&&/\.(KS|KQ)$/i.test(symbol))void screenerData().then(data=>{if(epoch!==viewEpoch)return;const row=(data.stocks||[]).find(row=>row.symbol===symbol);if(row?.price!=null){closingQuote={price:row.price,date:row.date||data.tradeDate||data.updated||'기준일 미제공'};const quote=getLiveQuote(symbol);if(quote)paintDetailQuote(quote);}}).catch(()=>{});
  if(saved)seedWatchQuoteCache(state.watchlist.map(x=>x.symbol));
  const cachedQuote=getLiveQuote(symbol)||homeCachedQuote(symbol);
  if(cachedQuote){
@@ -1125,7 +1125,8 @@ async function renderDetail(){
    document.querySelector('#detail-chart-section .detail-section-head span').textContent='실제 지수 · 기간 등락률';
    await Promise.all(jobs);return;
  }
- const industryBasePromise=Promise.all([
+ const koreanDetail=/\.(KS|KQ)$/i.test(symbol);
+ const industryBasePromise=koreanDetail?Promise.all([
    screenerData().catch(()=>null),
    import('./industryContext.js'),
    import('./industryContextView.js'),
@@ -1150,8 +1151,7 @@ async function renderDetail(){
      context:industryModule.companyContext(current,rows),
      viewModule,
    };
- });
- const koreanDetail=/\.(KS|KQ)$/i.test(symbol);
+ }):Promise.resolve(null);
  if(koreanDetail){
    const loadFinancial=()=>{
      const host=document.querySelector('#detail-financial-history');

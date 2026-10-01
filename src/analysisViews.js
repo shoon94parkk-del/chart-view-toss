@@ -3,24 +3,17 @@ import { SCREENER_PRESETS, screenerPreset, screenerMatchReasons, filterScreener,
 import { formatKst,formatFinancialAmount,formatDataSource } from './dataPresentation.js';
 import { renderSharedHeatmap } from './heatmapView.js';
 import { loadChartRuntime } from './chartRuntime.js';
-import { rememberLiveQuotes, mergeRowsWithLive } from './liveQuoteStore.js';
 import { readHomeFast, writeHomeFast } from './homeFastCache.js';
 import { seedWatchQuoteCache } from './watchQuoteCache.js';
 import { loadingIndicator } from './loadingView.js';
 import { investmentToolsMarkup, bindInvestmentToolLogos } from './investmentTools.js';
+import {alignHeatmapQuotes} from './heatmapAlignment.js';
 
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const number=(v,suffix='')=>finiteNumber(v)===null?'—':Number(v).toLocaleString('ko-KR',{maximumFractionDigits:2})+suffix;
 const pct=v=>finiteNumber(v)===null?'—':`${Number(v)>0?'+':''}${number(v,'%')}`;
 const empty=text=>`<div class="empty"><strong>${esc(text)}</strong></div>`;
-const alignFullHeatmapWithHome=(full,home)=>{
- rememberLiveQuotes(full?.results||[],{priority:10});
- rememberLiveQuotes(home?.heatmap?.results||[],{priority:20});
- return {
-  ...full,
-  results:mergeRowsWithLive(full?.results||[]),
- };
-};
+const alignFullHeatmapWithHome=alignHeatmapQuotes;
 export const ANALYSIS_ROUTES=new Set(['discover','heatmap','consensus','bands','tools']);
 export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareSheet}){
  let disposed=false,chart,observer;
@@ -81,14 +74,21 @@ export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareS
     form.onreset=e=>{e.preventDefault();activePreset='';for(const input of form.querySelectorAll('input,select'))input.value=input.name==='sort'?'name':'';count=30;syncPresetUi();paint();};
     syncPresetUi();paint();
    }else if(tab==='heatmap'){
+    const {mountSectorHeatmap}=await import('./sectorHeatmapView.js');if(!current())return;
     seedWatchQuoteCache(state.watchlist.map(x=>x.symbol));
     let latestHome=readHomeFast('snapshot',6*60*60*1000);
     let shownFull=readHomeFast('full-heatmap',6*60*60*1000);
+    let sectorView=null;
     const paintFull=(full,{save=false}={})=>{
       if(!current()||!full?.results?.length)return;
       shownFull=full;
       const payload=alignFullHeatmapWithHome(full,latestHome);
-      host.innerHTML=`<div class="shared-heatmap-analysis">${renderSharedHeatmap(payload,{scope:'full'})}</div>`;
+      if(!sectorView){
+       host.innerHTML='<div class="shared-heatmap-analysis"></div><section class="section sector-heatmap-section"><div class="section-head"><h2>섹터별 등락 히트맵</h2></div><div data-full-sectors></div></section>';
+       sectorView=mountSectorHeatmap(host.querySelector('[data-full-sectors]'),{onStock:symbol=>window.__chartviewNavigate?.('detail',symbol),retry:()=>void refreshFull(true)});
+      }
+      host.querySelector('.shared-heatmap-analysis').innerHTML=renderSharedHeatmap(payload,{scope:'full'});
+      sectorView.update(payload);
       if(save)writeHomeFast('full-heatmap',payload);
       bindNav();
     };
@@ -98,21 +98,20 @@ export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareS
       latestHome=home;
       if(shownFull)paintFull(shownFull,{save:true});
     }).catch(()=>{});
-    let full;
-    try{full=await fullHeatmap({force:true});}
-    catch(error){if(!shownFull)throw error;host.insertAdjacentHTML('beforeend','<p class="muted-copy">새 히트맵을 확인하지 못했어요. 표시된 업데이트 시각을 확인해주세요.</p>');return;}
-    if(!current())return;
-    if(!full?.results?.length){if(!shownFull)host.innerHTML=empty('전체 히트맵 데이터가 아직 준비되지 않았어요.');return;}
-    paintFull(full,{save:true});
-    if(full?.complete===false||full?.refreshing){
-      setTimeout(async()=>{
-        if(!current())return;
-        try{
-          const nextFull=await fullHeatmap({force:true});
-          if(current())paintFull(nextFull,{save:true});
-        }catch{}
-      },1800);
+    async function refreshFull(force=false){
+      sectorView?.loading();
+      try{
+        let full=await fullHeatmap({force});if(!current())return;
+        if(!full?.results?.length)throw new Error('전체 히트맵 데이터를 아직 확인하지 못했어요.');
+        paintFull(full,{save:true});
+        for(let i=0;full?.refreshing&&i<20&&current();i++){
+          await new Promise(resolve=>setTimeout(resolve,3000));if(!current())return;
+          full=await fullHeatmap({force:true});if(!full?.results?.length)throw new Error('집계 시세를 확인하지 못했어요.');if(current())paintFull(full,{save:true});
+        }
+        if(full?.refreshing&&current())sectorView?.error();
+      }catch(error){if(!current())return;if(sectorView)sectorView.error();else fail(error,()=>void load());}
     }
+    await refreshFull();
    }else if(tab==='consensus'){
     const symbols=[...state.selected];
     if(!symbols.length){host.innerHTML=empty('종목 변경에서 조회할 종목을 선택해주세요.');return;}

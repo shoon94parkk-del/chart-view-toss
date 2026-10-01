@@ -6,6 +6,7 @@ import { mergeLiveRows } from './liveHomeSync.js';
 import { rememberLiveQuotes, getLiveQuote, mergeRowsWithLive } from './liveQuoteStore.js';
 import { SHOW_SPOTLIGHT } from './releaseScope.js';
 import { loadingIndicator } from './loadingView.js';
+import { attachLazySectors } from './sectorHeatmapLoader.js';
 
 const STOCK_META = HOME_STOCK_META;
 
@@ -180,7 +181,12 @@ function createSections(marketSection) {
   } else {
     marketSection.insertAdjacentElement('afterend', heatmap);
   }
-  return { picks, heatmap };
+  const sectors=document.createElement('section');
+  sectors.className='section home-extra-section sector-heatmap-section home-primary';
+  sectors.innerHTML='<div class="section-head"><h2>섹터별 등락 히트맵</h2></div><p class="home-extra-caption">한국장·미국장 업종의 흐름과 구성 종목을 확인해요.</p><div data-home-sectors></div>';
+  heatmap.insertAdjacentElement('afterend',sectors);
+  attachLazySectors(sectors.querySelector('[data-home-sectors]'),symbol=>navigate('detail',symbol));
+  return { picks, heatmap, sectors };
 }
 
 function paintPicks(host, payload) {

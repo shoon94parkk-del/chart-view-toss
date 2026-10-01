@@ -7,7 +7,7 @@ const api=readFileSync(new URL('../src/api.js',import.meta.url),'utf8');
 const view=readFileSync(new URL('../src/industryContextView.js',import.meta.url),'utf8');
 
 test('detail loads DART revenue only after the base industry context can render',()=>{
- assert.match(main,/const industryBasePromise=Promise\.all/);
+ assert.match(main,/const industryBasePromise=koreanDetail\?Promise\.all/);
  assert.match(main,/jobs\.push\(settle\(industryBasePromise/);
  assert.match(main,/resolvedName\.then\(name=>businessReportData\(symbol,name\)\)\.catch/);
  assert.match(main,/report\?\.available/);

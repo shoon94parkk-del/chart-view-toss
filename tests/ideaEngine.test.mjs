@@ -37,3 +37,11 @@ test('idea candidates require at least 10억원 in 20-day average traded value',
  assert.ok(ideas.length);
  assert.ok(ideas.every(idea=>idea.candidates.every(row=>row.symbol==='OK.KS')));
 });
+
+test('classification work is bounded by visible winners while ranking is preserved',()=>{
+ let reads=0;
+ const stocks=Array.from({length:300},(_,i)=>({symbol:`T${i}.KS`,name:`T${i}`,industry:'테스트 산업',date:'2026-10-01',avgValue20:2e9,volumeRatio:2+i/100,change1d:1,ret5:1,get mainProducts(){reads++;return '';}}));
+ const ideas=buildInvestmentIdeas({stocks},{limit:1,perIdea:4});
+ assert.deepEqual(ideas[0].candidates.map(row=>row.symbol),['T299.KS','T298.KS','T297.KS','T296.KS']);
+ assert.ok(reads<stocks.length*30,`unnecessary industry reads: ${reads}`);
+});
