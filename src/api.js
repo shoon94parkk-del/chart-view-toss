@@ -41,7 +41,8 @@ export const personalizedNews=(tickers=[],names=[])=>api(`/api/personalized-news
 export const screenerData=()=>staticData('screener.json',()=>api('/static/data/screener.json',{ttlMs:60000}));
 export const companyContextData=()=>staticData('company_context.json',()=>api('/static/data/company_context.json',{ttlMs:3600000}));
 export const businessReportData=(ticker,name='')=>api(`/api/business-report?ticker=${encodeURIComponent(ticker)}&name=${encodeURIComponent(name)}`,{ttlMs:300000,timeoutMs:45000,retries:0});
-export const financialHistoryData=ticker=>api(`/api/financial-history?ticker=${encodeURIComponent(ticker)}`,{ttlMs:300000,timeoutMs:35000,retries:0});
+export const financialHistoryData=(ticker,{force=false}={})=>api(`/api/financial-history?ticker=${encodeURIComponent(ticker)}`,{ttlMs:300000,timeoutMs:35000,retries:0,force});
+export const financialQuartersData=(ticker,{refresh=false}={})=>api(`/api/financial-quarters?ticker=${encodeURIComponent(ticker)}${refresh?'&refresh=true':''}`,{ttlMs:0,force:true,timeoutMs:8000,retries:0});
 export const relationshipEvidenceData=(ticker,name='')=>api(`/api/relationship-evidence?ticker=${encodeURIComponent(ticker)}&name=${encodeURIComponent(name)}`,{ttlMs:21600000,timeoutMs:18000,retries:0});
 export const heatmapData=()=>staticData('heatmap.json',()=>api('/static/data/heatmap.json',{ttlMs:60000}));
 export const consensusData=ticker=>api(`/api/consensus?ticker=${encodeURIComponent(ticker)}`,{ttlMs:300000});

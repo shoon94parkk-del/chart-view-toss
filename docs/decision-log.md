@@ -231,3 +231,12 @@ Validation commands: npm run build; node tests/experience_audit_qa.mjs; node tes
 ## 2026-10-01 — Selection and navigation usability, 0.9.8
 
 The user requested another round of discomfort fixes. Improve the existing search/selection flow with clear/retry controls, keyboard modal containment, focus and scroll continuity, readable mobile input and explicit chip removal. Market cards now distinguish pending from settled missing observations; retries keep valid dated data and bypass empty response caches. Primary live refresh preserves optional observations. Browser forward/back uses visit-scoped history indices so app back returns to the actual prior feature. Preserve existing native-root exit, public URLs, DART calculations, local storage and PICK semantics. Deploy the existing Render website only.
+
+## 2026-10-02 · 0.10.0 공시 검토와 지수 상세
+- 사용자 승인: 시세 카드 축소, 홈 지수 직접 차트, 8분기/TTM → 새 공시 변화 → 투자 근거 추적 구현 및 기존 Render 사이트 반영.
+- 시세 가격/전일 등락을 한 행에 표시하고 관측시각·출처·스크리너 종가는 펼침 영역에 보존한다. 5초 시세 갱신은 펼침·포커스를 유지한다.
+- 홈 네 지수는 detail route에서 기존 chart point의 실제 price를 표시한다. 선택 비교 종목은 바꾸지 않으며 기업용 DART·산업·밸류에이션 요청을 하지 않는다.
+- /api/financial-quarters는 독립 로딩/재시도/캐시 갱신이다. 최신 8분기, 각 3개월 값, 연속 네 분기 TTM, Q4 차감 원문을 표시한다. 이미 표시한 자료를 유지하면서 갱신을 polling한다.
+- REVIEW_KEY는 native account scoped 기기 저장소이며 reset 대상이다. 확인 완료는 명시적이다. 저장 조건은 기존 공시 비교 결과에서 최대 3개 선택한다. 개인 snapshot/조건은 공개 공유에 포함하지 않는다.
+- 새 기간은 전년 동기/전년 말 비교, 정정은 같은 기간에만 비교한다. 이전 비교값 정정도 감지한다. 과거 receipt·기간·다른 통화/재무제표는 정상 확인으로 쓰지 않는다.
+- QA: 새 기능 320/390/430px, 순수 계산/저장 격리 테스트, 기존 financial/mobile/research 회귀 검증. exact release proof는 artifacts 및 운영 asset/revision/browser 확인으로 남긴다.

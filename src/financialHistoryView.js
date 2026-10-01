@@ -4,7 +4,7 @@ import { financialQualityHtml } from './financialQualityView.js';
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const money=(value,currency)=>{
   const n=Number(value);
-  if(!Number.isFinite(n))return '—';
+  if(value===null||value===undefined||!Number.isFinite(n))return '확인 불가';
   if(currency!=='KRW')return `${n.toLocaleString('ko-KR')} ${esc(currency||'')}`;
   const abs=Math.abs(n);
   return abs>=1e12?`${(n/1e12).toLocaleString('ko-KR',{maximumFractionDigits:2})}조 원`:
@@ -13,7 +13,7 @@ const money=(value,currency)=>{
     `${n.toLocaleString('ko-KR')}원`;
 };
 const change=(current,previous)=>{
-  if(!Number.isFinite(Number(current))||!Number.isFinite(Number(previous))||previous===null)return '비교 자료 없음';
+  if(current==null||previous==null||!Number.isFinite(Number(current))||!Number.isFinite(Number(previous)))return '비교 자료 없음';
   if(Number(previous)>0&&Number(current)<0)return '적자전환';
   if(Number(previous)<=0){
     if(Number(previous)<0&&Number(current)>0)return '흑자전환';

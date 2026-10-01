@@ -1,4 +1,5 @@
 import { resolveRoute } from './routes.js';
+import {indexSeries,quoteHtml} from './detailPresentation.js';
 import {encodeSharedView,decodeSharedView,homeBriefState,quoteBasisLabel} from './experienceState.js';
 import { recordMetric, diagnosticSummary, clearDiagnostics } from './diagnostics.js';
 import './styles.css';
@@ -301,7 +302,7 @@ function formatHomeMarketChange(item,row){
 function marketCard(item,row,index,{extra=false,pending=false}={}){
  const change=formatHomeMarketChange(item,row);
  const cardTag=extra?'div':'button';
- const action=extra?'':' data-go-chart';
+ const action=extra?'':` data-stock-detail="${esc(item.symbol)}" data-stock-name="${esc(DISPLAY_NAMES[item.symbol]||item.label)}"`;
  const missing=finiteNumber(row?.price)===null;
  const loading=missing&&pending;
  return `<${cardTag} class="quote-card market-${index}${extra?' market-extra-card':''}${missing?' market-missing':''}${loading?' market-card-loading':''}"${action}>
@@ -931,6 +932,8 @@ async function refreshDetailChart({symbol,epoch,period}){
    if(seq!==detailChartLoadSeq||epoch!==viewEpoch||state.tab!=='detail'||state.detailSymbol!==symbol)return;
    const stock=data?.stocks?.[0];
    if(!stock?.data?.length)throw new Error('표시할 차트 데이터가 없어요');
+   const points=symbol.startsWith('^')?indexSeries(stock):stock.data;
+   if(!points)throw new Error('지수 값 자료가 없어 차트를 표시할 수 없어요');
    const canvas=document.querySelector('#detail-chart');
    if(!canvas)return;
    chartResizeObserver?.disconnect();chartResizeObserver=null;
@@ -938,14 +941,15 @@ async function refreshDetailChart({symbol,epoch,period}){
    canvas.innerHTML='';
    chartInstance=createChart(canvas,{localization:{locale:'ko-KR'},handleScale:{pinch:false},width:canvas.clientWidth||320,height:220,layout:{background:{type:ColorType.Solid,color:'#ffffff'},textColor:'#8b95a1',fontFamily:'Pretendard, -apple-system, sans-serif'},grid:{vertLines:{color:'#f7f8fa'},horzLines:{color:'#f2f4f6'}},rightPriceScale:{borderVisible:false},timeScale:{borderVisible:false},crosshair:{vertLine:{color:'#d1d6db'},horzLine:{color:'#d1d6db'}}});
    const line=chartInstance.addAreaSeries({lineColor:'#3182f6',topColor:'rgba(49,130,246,.18)',bottomColor:'rgba(49,130,246,.01)',lineWidth:2,priceLineVisible:false,lastValueVisible:false});
-   line.setData(stock.data);chartInstance.timeScale().fitContent();
+   line.setData(points);chartInstance.timeScale().fitContent();
+   if(symbol.startsWith('^'))chartInstance.applyOptions({localization:{priceFormatter:value=>value.toLocaleString('ko-KR',{maximumFractionDigits:2})+' pt'}});
    chartResizeObserver=new ResizeObserver(()=>{if(chartInstance&&canvas.clientWidth)chartInstance.applyOptions({width:canvas.clientWidth})});chartResizeObserver.observe(canvas);
    detailDisplayedPeriod=period;
    document.querySelector('#detail-chart-loading')?.remove();
-   document.querySelector('#detail-period-label').textContent=({'1mo':'1개월','3mo':'3개월','6mo':'6개월','1y':'1년'}[period]||period)+' 수익률';
+   document.querySelector('#detail-period-label').textContent=({'1mo':'1개월','3mo':'3개월','6mo':'6개월','1y':'1년'}[period]||period)+(symbol.startsWith('^')?' 지수 흐름 · pt':' 수익률');
    const periodReturn=finiteNumber(stock.return);
    status.textContent=periodReturn===null?'조회 완료':`${periodReturn>=0?'+':''}${periodReturn.toFixed(2)}%`;
-   document.querySelector('#detail-return-note').innerHTML=`<span>${esc(stock.startDate||'-')} → ${esc(stock.endDate||'-')}</span><span>${esc(currencyLabel(stock.currency))} 기준 · ${stock.priceBasis==='adjusted_close'?'조정종가 우선':'종가 기준'}</span>`;
+   document.querySelector('#detail-return-note').innerHTML=`<span>${esc(stock.startDate||'-')} → ${esc(stock.endDate||'-')}</span><span>${symbol.startsWith('^')?'지수 pt · Yahoo Chart':esc(currencyLabel(stock.currency))+' 기준 · '+(stock.priceBasis==='adjusted_close'?'조정종가 우선':'종가 기준')}</span>`;
  }catch(error){
    if(seq!==detailChartLoadSeq||epoch!==viewEpoch||state.tab!=='detail'||state.detailSymbol!==symbol)return;
    document.querySelector('#detail-chart-loading')?.remove();
@@ -970,6 +974,7 @@ async function renderDetail(){
  detailDisplayedPeriod=null;
  const epoch=viewEpoch;
  const symbol=state.detailSymbol||state.selected[0]||'005930.KS';
+ const isIndex=symbol.startsWith('^');
  const saved=state.watchlist.find(x=>x.symbol===symbol);
  let closingQuote=null;
  let knownName=usableStockName(state.detailName,symbol)||usableStockName(saved?.name,symbol)||usableStockName(DISPLAY_NAMES[symbol],symbol);
@@ -999,7 +1004,7 @@ async function renderDetail(){
    return true;
  };
  document.querySelectorAll('[data-detail-jump]').forEach(button=>button.addEventListener('click',()=>jumpToDetail(button.dataset.detailJump)));
- import('./researchCard.js').then(({mountResearchCard})=>{
+ if(!isIndex)import('./researchCard.js').then(({mountResearchCard})=>{
    if(epoch!==viewEpoch)return;
    mountResearchCard(document.querySelector('#research-card-body'),{symbol,name:knownName||symbol,onJump:jumpToDetail,onNotice:showToast,candidates:[...state.watchlist,...Object.entries(DISPLAY_NAMES).map(([symbol,name])=>({symbol,name}))],favorites:state.watchlist,draft:researchDrafts.get(symbol),initialPeer:state.sharedDetailSymbol===symbol?state.researchPeer:null,onDraftChange:draft=>{researchDrafts.set(symbol,draft);state.researchPeer=draft.resultPeer||draft.peer||null;},onChoosePeer:callback=>openStockSelector({title:'공시를 비교할 회사',description:'현재 종목과 다른 국내 회사 하나를 선택하세요.',favorites:state.watchlist,nameFor:comparisonStockName,pickLabel:'비교 선택',restoreBack:restoreNativeBack,onPick:(symbol,name)=>callback({symbol,name})})});
  }).catch(()=>{
@@ -1076,10 +1081,15 @@ async function renderDetail(){
    const dayChange=finiteNumber(current?.change);
    const priceBox=document.querySelector('#detail-price');
    if(!priceBox)return;
+   const provenanceOpen=priceBox.querySelector('.quote-provenance')?.open;
+   const provenanceFocused=priceBox.querySelector('.quote-provenance summary')===document.activeElement;
    priceBox.classList.remove('skeleton','detail-price-skeleton');
-   priceBox.innerHTML=`<div><span>${esc(quoteBasisLabel(current))}${current?.asOf?' · '+esc(formatKst(current.asOf))+' 기준':''}</span><strong>${current?.price!=null?esc(formatCurrencyPrice(current.price,current.currency)):'-'}</strong>${current?.currency&&current.currency!=='KRW'?`<small>${esc(currencyLabel(current.currency))}</small>`:''}</div><div class="detail-return ${dayChange>0?'up':dayChange<0?'down':'flat'}"><span>전 거래일 대비</span><strong>${Number.isFinite(dayChange)?esc(fmtChange(dayChange)):'-'}</strong><small>${current?.source?esc(current.source):'시세 출처 확인 필요'}</small><small>조회 ${esc(formatKst(new Date().toISOString()))} · 정규장 종가와 다를 수 있어요</small></div>${closingQuote?`<div class="detail-closing-reference">스크리너 장마감 수집 종가 · ${esc(closingQuote.date)} · ${esc(formatCurrencyPrice(closingQuote.price,'KRW'))}<small>가격을 비교할 때 각 기준 시점을 확인해주세요.</small></div>`:''}${failed?'<button class="retry" data-retry-detail>시세 다시 시도</button>':''}`;
+   priceBox.classList.add('quote-compact');
+   priceBox.innerHTML=quoteHtml(current,closingQuote?{...closingQuote,priceLabel:formatCurrencyPrice(closingQuote.price,'KRW')}:null,{basis:quoteBasisLabel(current),price:current?.price!=null?(isIndex?Number(current.price).toLocaleString('ko-KR',{maximumFractionDigits:2})+' pt':formatCurrencyPrice(current.price,current.currency)):'확인 불가',change:dayChange===null?'확인 불가':fmtChange(dayChange),asOf:current?.asOf?formatKst(current.asOf):'',queriedAt:formatKst(new Date().toISOString())})+(failed?'<button class="retry" data-retry-detail>시세 다시 시도</button>':'');
+   priceBox.querySelector('.quote-provenance').open=Boolean(provenanceOpen);
+   if(provenanceFocused)priceBox.querySelector('.quote-provenance summary').focus({preventScroll:true});
  };
- void screenerData().then(data=>{if(epoch!==viewEpoch)return;const row=(data.stocks||[]).find(row=>row.symbol===symbol);if(row?.price!=null){closingQuote={price:row.price,date:row.date||data.tradeDate||data.updated||'기준일 미제공'};const quote=getLiveQuote(symbol);if(quote)paintDetailQuote(quote);}}).catch(()=>{});
+ if(!isIndex)void screenerData().then(data=>{if(epoch!==viewEpoch)return;const row=(data.stocks||[]).find(row=>row.symbol===symbol);if(row?.price!=null){closingQuote={price:row.price,date:row.date||data.tradeDate||data.updated||'기준일 미제공'};const quote=getLiveQuote(symbol);if(quote)paintDetailQuote(quote);}}).catch(()=>{});
  if(saved)seedWatchQuoteCache(state.watchlist.map(x=>x.symbol));
  const cachedQuote=getLiveQuote(symbol)||homeCachedQuote(symbol);
  if(cachedQuote){
@@ -1098,6 +1108,7 @@ async function renderDetail(){
        persistLiveQuoteToHomeSnapshot(canonical);
        paintDetailQuote(canonical);
      }
+     else if(!getLiveQuote(symbol))paintDetailQuote(null,{failed:true});
    }catch{
      if(!getLiveQuote(symbol))paintDetailQuote(null,{failed:true});
    }finally{
@@ -1108,6 +1119,12 @@ async function renderDetail(){
  };
  jobs.push(pullDetailLive());
  jobs.push(refreshDetailChart({symbol,epoch,period:state.detailPeriod}));
+ if(isIndex){
+   document.querySelector('.detail-jump-nav')?.remove();
+   for(const id of ['detail-industry-block','detail-research-card','detail-metrics-section','detail-news-section'])document.getElementById(id)?.remove();
+   document.querySelector('#detail-chart-section .detail-section-head span').textContent='실제 지수 · 기간 등락률';
+   await Promise.all(jobs);return;
+ }
  const industryBasePromise=Promise.all([
    screenerData().catch(()=>null),
    import('./industryContext.js'),
@@ -1143,11 +1160,15 @@ async function renderDetail(){
        const target=document.querySelector('#detail-financial-history');
        if(!target)return;
        if(result.status!=='fulfilled'){target.innerHTML='<div class="financial-empty">DART 재무제표를 불러오지 못했어요. <button type="button" class="retry" data-retry-financial>다시 시도</button></div>';}
-       else{const [data,view]=result.value;target.innerHTML=view.financialHistoryHtml(data);}
+       else{const [data,view]=result.value;target.innerHTML=view.financialHistoryHtml(data);if(data.available){let host=document.querySelector('#detail-report-review');if(!host){host=document.createElement('div');host.id='detail-report-review';host.className='report-review-host';target.after(host);}import('./reportReviewView.js').then(({mountReportReview})=>{if(epoch===viewEpoch)mountReportReview(host,{symbol,data,onNotice:showToast});}).catch(()=>{if(epoch===viewEpoch)host.textContent='공시 변화 화면을 불러오지 못했어요. 다시 시도해주세요.';});}}
        target.querySelector('[data-retry-financial]')?.addEventListener('click',loadFinancial);
      });
    };
    jobs.push(loadFinancial());
+   const quarters=document.createElement('div');quarters.id='detail-financial-quarters';quarters.className='financial-quarters';
+   document.querySelector('#detail-financial-history').before(quarters);
+   quarters.innerHTML=loadingIndicator('분기 실적 화면을 준비하고 있어요');
+   import('./quarterView.js').then(({mountQuarters})=>{if(epoch===viewEpoch)mountQuarters(quarters,symbol);}).catch(()=>{if(epoch===viewEpoch)quarters.textContent='분기 실적 화면을 불러오지 못했어요. 화면을 다시 열어주세요.';});
  }
  const enrichment={report:null,reportState:koreanDetail?'loading':'idle',directRelations:[],relationsState:koreanDetail?'loading':'idle'};
  jobs.push(settle(industryBasePromise,industryRes=>{

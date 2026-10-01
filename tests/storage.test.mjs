@@ -21,7 +21,7 @@ function setup({ native = true, failRead = false, failWrite = false } = {}) {
     },
   });
   const source = readFileSync('src/storage.js','utf8').replace(/^import .*;\r?\n/gm,'').replaceAll('export ', '');
-  vm.runInContext(source + '\nthis.api={initializeStorage,readStored,writeStored,clearStored,WATCHLIST_KEY,SELECTED_KEY,RESEARCH_KEY};',context);
+  vm.runInContext(source + '\nthis.api={initializeStorage,readStored,writeStored,clearStored,WATCHLIST_KEY,SELECTED_KEY,RESEARCH_KEY,REVIEW_KEY};',context);
   return { ...context.api, disk, events, setIdentity: value => {identity=value;}, failWrites: () => {writeFails=true;} };
 }
 test('native storage restores and serializes writes before clear',async()=>{
@@ -32,6 +32,16 @@ test('native storage restores and serializes writes before clear',async()=>{
   await s.clearStored();
   assert.deepEqual([...s.disk.keys()],['chartview-toss-identity-v1']);
   assert.equal(s.readStored(s.WATCHLIST_KEY),null);
+});
+test('reviewed filings and investment conditions are isolated by native account and reset',async()=>{
+ const s=setup();await s.initializeStorage();
+ s.writeStored(s.REVIEW_KEY,'{"005930.KS":{"conditions":[{"key":"margin"}]}}');
+ s.setIdentity({type:'HASH',hash:'user-B'});await s.initializeStorage();
+ assert.equal(s.readStored(s.REVIEW_KEY),null);
+ s.writeStored(s.REVIEW_KEY,'{}');await s.clearStored();
+ s.setIdentity({type:'HASH',hash:'user-A'});await s.initializeStorage();
+ assert.match(s.readStored(s.REVIEW_KEY),/margin/);await s.clearStored();
+ assert.equal(s.readStored(s.REVIEW_KEY),null);
 });
 test('failed native read cannot overwrite existing watchlist',async()=>{
   const s=setup({failRead:true});
@@ -68,6 +78,7 @@ test('web preview keeps browser-local storage without requiring a bridge',async(
   const s=setup({native:false}); await s.initializeStorage();
   s.writeStored(s.SELECTED_KEY,'["AAPL"]');
   s.writeStored(s.RESEARCH_KEY,'{"AAPL":{"question":"질문"}}');
+  s.writeStored(s.REVIEW_KEY,'{"005930.KS":{"conditions":[]}}');
   assert.equal(s.readStored(s.SELECTED_KEY),'["AAPL"]');
   await s.clearStored(); assert.equal(s.disk.size,0);
 });

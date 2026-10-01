@@ -190,3 +190,9 @@ Last updated: 2026-09-22
 - Selector repaint must preserve list position, selected-row focus and pending/error search status. Modal close must release inert state and keyboard handler, then restore calling focus without scrolling. Clear/close invalidates stale searches.
 - Missing market rows after a settled request are not loading. Explicit retry bypasses cached empty quotes; primary live refresh must retain separately fetched optional indicators with their original observation times.
 - App back after browser forward must restore the previous feature. History depth belongs to the current visit; do not replace the initial route or treat a deep link as an owned previous page.
+
+## 2026-10-02 공시 투자 검토
+- 지수 상세는 실제 point.price를 사용하며 현재 시세로 과거 값을 역산하지 않는다. 지수 클릭은 비교 선택을 바꾸지 않는다.
+- 분기 캐시 refreshing:true이면 기존 차트를 보여주면서 제한된 polling을 지속한다. 실패 시 유효한 기존 자료를 빈 화면으로 바꾸지 않는다.
+- 공시 snapshot 동일성에는 현재/이전 수치가 모두 들어간다. 같은 기간의 작은 receipt 번호는 과거 자료다.
+- REVIEW_KEY를 저장소 initialize/reset 계정 키에서 빼지 않는다. 공유 상태에 개인 확인기록/조건을 추가하지 않는다.

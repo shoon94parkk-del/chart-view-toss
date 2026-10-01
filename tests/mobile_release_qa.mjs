@@ -279,7 +279,7 @@ try{
       await page.waitForSelector('#detail-price strong');
       const detailPrice=await page.locator('#detail-price').innerText();
       if((detailPrice.match(/원/g)||[]).length!==1||!detailPrice.includes('84,200원')) throw new Error(`KRW detail price should show its unit exactly once: ${detailPrice}`);
-      const priceStyle=await page.locator('#detail-price>div:first-child strong').evaluate(node=>getComputedStyle(node).whiteSpace);
+      const priceStyle=await page.locator('.quote-main>div:first-child strong').evaluate(node=>getComputedStyle(node).whiteSpace);
       if(priceStyle!=='nowrap') throw new Error(`detail price should not wrap on mobile: ${priceStyle}`);
       const periodText=await page.locator('#detail-metrics').innerText();
       if(periodText.includes('FY+1 추정')||!periodText.includes('다음 회계연도 예상')) throw new Error(`valuation period label not translated: ${periodText}`);

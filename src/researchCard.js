@@ -8,6 +8,9 @@ import { qualitySlice, qualityLabels, qualityObservations } from './financialQua
 import { qualityCell, qualityReviewHtml } from './financialQualityView.js';
 import { comparisonGroup } from './industryContext.js';
 import { formatKst, formatMetricPeriod, formatDataSource } from './dataPresentation.js';
+import {conditionChoices} from './investmentReview.js';
+import {saveCondition} from './reviewStorage.js';
+import './investmentReview.css';
 
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const money=(v,currency)=>{
@@ -163,6 +166,10 @@ export function mountResearchCard(host,options){
      finally{if(run===sequence&&host.isConnected)prices.setAttribute('aria-busy','false');}
     };
     result.querySelector('[data-research-prices]').onclick=loadPrices;
+    const choices=conditionChoices(companies,reports),track=document.createElement('div');track.className='research-track-options';
+    track.innerHTML=`<strong>이 비교를 투자 근거로 계속 확인하기</strong><p>공시가 바뀌었을 때 다시 확인할 조건을 고르세요. 현재 충족 여부와 수치도 함께 저장해요.</p>${choices.map((c,i)=>`<button type="button" data-track-condition="${i}" ${c.baseline.matched===null?'disabled':''}>${esc(c.label)} · ${c.baseline.matched===null?'확인 불가':c.baseline.matched?'현재 충족':'현재 미충족'}</button>`).join('')}<span role="status" data-track-status></span>`;
+    result.querySelector('.research-answer').appendChild(track);
+    track.querySelectorAll('[data-track-condition]').forEach(b=>b.onclick=()=>{try{saveCondition(symbol,choices[Number(b.dataset.trackCondition)]);track.querySelector('[data-track-status]').textContent='근거를 저장했어요. 공시 실적의 내 투자 근거에서 다시 확인할 수 있어요.';document.dispatchEvent(new Event('chartview:review-changed'));b.textContent='저장됨 · '+choices[Number(b.dataset.trackCondition)].label;}catch(error){track.querySelector('[data-track-status]').textContent=error.message||'근거를 저장하지 못했어요.';}});
    }
    bindResults();
   }catch{
