@@ -78,15 +78,13 @@ export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareS
     seedWatchQuoteCache(state.watchlist.map(x=>x.symbol));
     let latestHome=readHomeFast('snapshot',6*60*60*1000);
     let shownFull=readHomeFast('full-heatmap',6*60*60*1000);
-    let sectorView=null;
+    host.innerHTML=`<div class="shared-heatmap-analysis">${loadingIndicator('전체 히트맵 데이터를 불러오고 있어요')}</div><section class="section sector-heatmap-section"><div class="section-head"><h2>섹터별 등락 히트맵</h2></div><div data-full-sectors></div></section>`;
+    const sectorView=mountSectorHeatmap(host.querySelector('[data-full-sectors]'),{onStock:symbol=>window.__chartviewNavigate?.('detail',symbol),retry:()=>void refreshFull(true)});
+    sectorView.loading();
     const paintFull=(full,{save=false}={})=>{
       if(!current()||!full?.results?.length)return;
       shownFull=full;
       const payload=alignFullHeatmapWithHome(full,latestHome);
-      if(!sectorView){
-       host.innerHTML='<div class="shared-heatmap-analysis"></div><section class="section sector-heatmap-section"><div class="section-head"><h2>섹터별 등락 히트맵</h2></div><div data-full-sectors></div></section>';
-       sectorView=mountSectorHeatmap(host.querySelector('[data-full-sectors]'),{onStock:symbol=>window.__chartviewNavigate?.('detail',symbol),retry:()=>void refreshFull(true)});
-      }
       host.querySelector('.shared-heatmap-analysis').innerHTML=renderSharedHeatmap(payload,{scope:'full'});
       sectorView.update(payload);
       if(save)writeHomeFast('full-heatmap',payload);
@@ -109,7 +107,17 @@ export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareS
           full=await fullHeatmap({force:true});if(!full?.results?.length)throw new Error('집계 시세를 확인하지 못했어요.');if(current())paintFull(full,{save:true});
         }
         if(full?.refreshing&&current())sectorView?.error();
-      }catch(error){if(!current())return;if(sectorView)sectorView.error();else fail(error,()=>void load());}
+      }catch(error){
+        if(!current())return;
+        sectorView.error();
+        if(!shownFull){
+          const fullHost=host.querySelector('.shared-heatmap-analysis');
+          if(fullHost){
+            fullHost.innerHTML=`${empty(error.message||'전체 히트맵 데이터를 불러오지 못했어요.')}<button class="retry" data-full-heatmap-retry>다시 시도</button>`;
+            fullHost.querySelector('[data-full-heatmap-retry]')?.addEventListener('click',()=>void refreshFull(true));
+          }
+        }
+      }
     }
     await refreshFull();
    }else if(tab==='consensus'){
