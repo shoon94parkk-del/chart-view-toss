@@ -209,3 +209,10 @@ Home places the device-local watchlist directly after search and before the mark
 The user authorized publishing the reviewed local DART comparison to the existing GitHub/Render website. Integrate the latest main branch before publishing so updated stock names, official icons and share URLs remain intact. Target only chart-view-toss in the Chart View workspace; its feat/apps-in-toss-mvp branch is synchronized from main by the existing workflow. Confirm the deployed commit and live-origin Samsung/SK hynix comparison before reporting completion. This authorization does not submit a new Apps in Toss app version.
 
 Live-origin verification exposed an example-submit hint persisting below completed results. Reset this hint when analysis starts and cover it in local/mobile and live-origin QA.
+
+
+## 2026-10-01 — PICK 단기 기술 경고를 펀더멘털 상태와 분리 표시
+
+PICK 관리 화면은 shared backend의 `pick_monitor.json`에 추가된 advisory technical 필드를 읽어 `TECH_SELL_REVIEW`, `TECH_CAUTION`, `TECH_IMPROVING`을 별도 배지로 표시한다. `TECH_SELL_REVIEW`은 “🔴 단기 매도 검토”이며 기술점수 하락과 RSI 과열·최근 급등이 겹친 보조 타이밍 신호다. 기존 `SELL_REVIEW`는 추천 이후 펀더멘털 훼손 근거에만 사용하는 상태로 유지하며, 기술 신호만으로 자동 매도/EXIT를 만들지 않는다.
+
+PICK 목록 상단에는 빨간 단기 경고 종목 수를 노출하고, 각 카드에는 기술 배지를 추가한다. 상세 펼침에는 전일 기술점수→오늘 점수, 일간 변화, RSI14, 5일·20일·당일 수익률과 경고 이유를 표시한다. 정렬에는 “단기 경고 우선”을 추가한다.
