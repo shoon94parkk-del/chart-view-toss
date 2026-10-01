@@ -61,6 +61,9 @@ export function openStockSelector({
 }) {
   activeClose?.();
 
+  const returnFocus = document.activeElement;
+  const app = document.querySelector('#app');
+  const wasInert = app?.inert;
   const draft = new Set(initial);
   const searchOnly = typeof onPick === 'function';
   const favoriteRows = prioritizeStocks(favorites.filter(row => row?.symbol).map(row => ({
@@ -83,7 +86,8 @@ export function openStockSelector({
       </header>
       <div class="selector-search">
         <span aria-hidden="true">⌕</span>
-        <input id="selector-search-input" autocomplete="off" placeholder="종목명 · 코드 · 티커 검색">
+        <input id="selector-search-input" autocomplete="off" aria-label="종목명, 코드 또는 티커 검색" enterkeyhint="search" placeholder="종목명 · 코드 · 티커 검색">
+        <button type="button" data-selector-clear aria-label="검색어 지우기" hidden>×</button>
       </div>
       <div class="selector-selected" id="selector-selected"></div>
       <div class="selector-message" id="selector-message" aria-live="polite"></div>
@@ -97,6 +101,7 @@ export function openStockSelector({
     </section>`;
 
   document.body.appendChild(overlay);
+  if (app) app.inert = true;
   overlay.querySelector('.selector-sheet').classList.toggle('search-only', searchOnly);
   document.body.classList.add('sheet-open');
 
@@ -105,29 +110,37 @@ export function openStockSelector({
   const messageEl = overlay.querySelector('#selector-message');
   const input = overlay.querySelector('#selector-search-input');
   const apply = overlay.querySelector('.selector-apply');
+  const clear = overlay.querySelector('[data-selector-clear]');
 
   const renderSelected = () => {
     if (searchOnly) return;
     selectedEl.innerHTML = draft.size
       ? [...draft].map((symbol) => {
           const name = resolvedSelectorName(names.get(symbol), symbol);
-          return `<button type="button" data-selected-remove="${esc(symbol)}"><span>${esc(name || '종목명 확인 중')}</span><small>${esc(symbol)}</small><b>×</b></button>`;
+          return `<button type="button" data-selected-remove="${esc(symbol)}" aria-label="${esc(name || symbol)} 선택 해제"><span>${esc(name || '종목명 확인 중')}</span><small>${esc(symbol)}</small><b aria-hidden="true">×</b></button>`;
         }).join('')
       : '<span class="selector-none">선택한 종목이 없어요.</span>';
     apply.textContent = draft.size ? `${draft.size}개 종목 적용` : '선택 없이 적용';
     selectedEl.querySelectorAll('[data-selected-remove]').forEach((button) => {
       button.onclick = () => {
+        const next = button.nextElementSibling || button.previousElementSibling;
+        const nextSymbol = next?.dataset.selectedRemove;
         draft.delete(button.dataset.selectedRemove);
+        messageEl.textContent = '';
         haptic('tickWeak');
         renderSelected();
         paintResults(lastRows);
+        ([...selectedEl.querySelectorAll('button')].find(el => el.dataset.selectedRemove === nextSymbol) || input).focus({preventScroll:true});
       };
     });
   };
 
   let lastRows = [];
   let currentQuery = '';
+  let searchState = 'idle';
   const paintResults = (rows, query = currentQuery) => {
+    const scrollTop = resultEl.scrollTop;
+    const focusSymbol = resultEl.contains(document.activeElement) ? document.activeElement.dataset.selectorSymbol : null;
     lastRows = prioritizeStocks(rows, favoriteRows);
     const visible = query ? lastRows : favoriteRows;
     resultEl.innerHTML = visible.length
@@ -135,12 +148,17 @@ export function openStockSelector({
           const chosen = !searchOnly && draft.has(row.symbol);
           const isFavorite = favoriteSymbols.has(String(row.symbol).toUpperCase());
           const previousFavorite = index > 0 && favoriteSymbols.has(String(visible[index - 1].symbol).toUpperCase());
-          return `${query && !isFavorite && (index === 0 || previousFavorite) ? '<div class="selector-group-heading">검색 결과</div>' : ''}<button type="button" class="${chosen ? 'selected' : ''}" data-selector-symbol="${esc(row.symbol)}" data-selector-name="${esc(row.name || row.symbol)}">
+          return `${query && !isFavorite && (index === 0 || previousFavorite) ? '<div class="selector-group-heading">검색 결과</div>' : ''}<button type="button" class="${chosen ? 'selected' : ''}" ${searchOnly ? '' : `aria-pressed="${chosen}"`} data-selector-symbol="${esc(row.symbol)}" data-selector-name="${esc(row.name || row.symbol)}">
             <span><strong>${esc(row.name || row.symbol)}</strong><small>${esc(row.symbol)}${row.market ? ` · ${esc(row.market)}` : ''}</small></span>
             <b>${searchOnly ? esc(pickLabel) : chosen ? '선택됨' : isFavorite ? '관심종목' : '선택'}</b>
           </button>`;
         }).join('')}`
-      : `<div class="selector-empty">${query ? '검색 결과가 없어요.' : '관심종목이 없어요. 이름이나 티커로 검색해보세요.'}</div>`;
+      : searchState === 'idle' ? `<div class="selector-empty">${query ? '검색 결과가 없어요. 이름·6자리 코드·영문 티커를 확인해보세요.' : '관심종목이 없어요. 이름이나 티커로 검색해보세요.'}</div>` : '';
+    if (searchState === 'loading') resultEl.insertAdjacentHTML('beforeend', loadingIndicator('종목을 검색하고 있어요'));
+    if (searchState === 'error') {
+      resultEl.insertAdjacentHTML('beforeend', '<div class="selector-empty" role="status">검색을 완료하지 못했어요. 관심종목은 계속 선택할 수 있어요.<button type="button" class="selector-retry" data-selector-retry>검색 다시 시도</button></div>');
+      resultEl.querySelector('[data-selector-retry]').onclick = () => searchQuery(true);
+    }
 
     resultEl.querySelectorAll('[data-selector-symbol]').forEach((button) => {
       button.onclick = () => {
@@ -151,6 +169,7 @@ export function openStockSelector({
           onPick(symbol, name);
           return;
         }
+        let added = false;
         if (draft.has(symbol)) {
           draft.delete(symbol);
           messageEl.textContent = '';
@@ -160,14 +179,18 @@ export function openStockSelector({
           return;
         } else {
           draft.add(symbol);
+          added = true;
           names.set(symbol, button.dataset.selectorName || symbol);
           messageEl.textContent = '';
         }
         haptic('tickWeak');
         renderSelected();
+        if (added) selectedEl.lastElementChild?.scrollIntoView({block:'nearest',inline:'nearest'});
         paintResults(lastRows);
       };
     });
+    resultEl.scrollTop = scrollTop;
+    if (focusSymbol) [...resultEl.querySelectorAll('[data-selector-symbol]')].find(el => el.dataset.selectorSymbol === focusSymbol)?.focus({preventScroll:true});
   };
 
   let timer = null;
@@ -188,41 +211,60 @@ export function openStockSelector({
     }
   }));
 
-  input.addEventListener('input', () => {
+  const searchQuery = (immediate = false) => {
     clearTimeout(timer);
     const query = input.value.trim();
     currentQuery = query;
+    clear.hidden = !input.value;
+    resultEl.scrollTop = 0;
     const seq = ++querySeq;
     if (!query) {
+      searchState = 'idle';
       paintResults(favoriteRows, '');
       return;
     }
+    searchState = 'loading';
     const matchedFavorites = favoriteRows.filter(row => `${row.name} ${row.symbol}`.toLowerCase().includes(query.toLowerCase()));
     paintResults(matchedFavorites, query);
-    if(!matchedFavorites.length)resultEl.querySelector('.selector-empty')?.remove();
-    resultEl.insertAdjacentHTML('beforeend', loadingIndicator('종목을 검색하고 있어요'));
     timer = setTimeout(async () => {
       try {
         const data = await searchStocks(query);
         if (seq !== querySeq || !overlay.isConnected) return;
+        searchState = 'idle';
         paintResults([...matchedFavorites, ...(data?.results || []).slice(0, 12)], query);
       } catch (error) {
         if (seq !== querySeq || !overlay.isConnected) return;
+        searchState = 'error';
         paintResults(matchedFavorites, query);
-        resultEl.insertAdjacentHTML('beforeend', `<div class="selector-empty">추가 검색을 완료하지 못했어요.<small>${esc(error?.message || '')}</small></div>`);
       }
-    }, 180);
-  });
+    }, immediate ? 0 : 180);
+  };
+  input.addEventListener('input', () => searchQuery());
+  clear.onclick = () => { input.value = ''; searchQuery(); input.focus({preventScroll:true}); };
 
   const close = () => {
     if (!overlay.isConnected) return;
     ++querySeq;
     clearTimeout(timer);
     overlay.remove();
+    document.removeEventListener('keydown', onKeyDown, true);
+    if (app) app.inert = wasInert;
     document.body.classList.remove('sheet-open');
     activeClose = null;
     restoreBack?.();
+    if (returnFocus?.isConnected) returnFocus.focus({preventScroll:true});
   };
+  const onKeyDown = event => {
+    if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); close(); return; }
+    if (event.key !== 'Tab') return;
+    const controls = [...overlay.querySelectorAll('button,input')].filter(el => !el.disabled && !el.hidden && el.getClientRects().length);
+    const index = controls.indexOf(document.activeElement);
+    if (index < 0 || (!event.shiftKey && index === controls.length - 1) || (event.shiftKey && index === 0)) {
+      event.preventDefault();
+      (event.shiftKey ? controls.at(-1) : controls[0])?.focus();
+    }
+  };
+  document.addEventListener('keydown', onKeyDown, true);
   activeClose = close;
 
   overlay.querySelector('.selector-close').onclick = close;
@@ -239,5 +281,5 @@ export function openStockSelector({
 
   renderSelected();
   syncNativeBackHandler({ isRoot: false, onBack: close });
-  requestAnimationFrame(() => input.focus());
+  requestAnimationFrame(() => { if (overlay.isConnected) input.focus(); });
 }

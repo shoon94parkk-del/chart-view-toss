@@ -187,3 +187,6 @@ Last updated: 2026-09-22
 - Verified revenueBasis must reconcile positive segment total + signed adjustment to report total. Keep reported shares, disclose >100% and mark missing metadata unverified.
 - Quote asOf is observation time; lookup time and screener collected close are separately labeled. Preserve data sources and raw financial amounts.
 - Bottom navigation exposes aria-current; helper text stays legible and macro source controls are at least 44px. PICK check execution must not imply completed evidence review.
+- Selector repaint must preserve list position, selected-row focus and pending/error search status. Modal close must release inert state and keyboard handler, then restore calling focus without scrolling. Clear/close invalidates stale searches.
+- Missing market rows after a settled request are not loading. Explicit retry bypasses cached empty quotes; primary live refresh must retain separately fetched optional indicators with their original observation times.
+- App back after browser forward must restore the previous feature. History depth belongs to the current visit; do not replace the initial route or treat a deep link as an owned previous page.

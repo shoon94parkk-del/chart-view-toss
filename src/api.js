@@ -15,7 +15,7 @@ export const api=async(path,options={})=>{
 };
 export const clearApiCache=()=>request.clear();
 const list=tickers=>encodeURIComponent([...new Set(tickers)].join(','));
-export const quoteSnapshots=tickers=>api(`/api/quotes?tickers=${list(tickers)}`,{ttlMs:15000});
+export const quoteSnapshots=(tickers,{force=false}={})=>api(`/api/quotes?tickers=${list(tickers)}`,{ttlMs:15000,force});
 export const quoteSnapshotsLive=tickers=>api(`/api/quotes?tickers=${list(tickers)}&fresh=true`,{ttlMs:0,force:true,timeoutMs:5000,retries:0});
 export const compareStocks=(tickers,period='1mo',range={})=>api(`/api/compare?tickers=${list(tickers)}&period=${encodeURIComponent(period)}${range.start&&range.end?`&start=${encodeURIComponent(range.start)}&end=${encodeURIComponent(range.end)}`:''}`,{ttlMs:60000,timeoutMs:8000,retries:0});
 export const searchStocks=query=>api(`/api/search?q=${encodeURIComponent(query)}`,{timeoutMs:8000,retries:0,ttlMs:60000});

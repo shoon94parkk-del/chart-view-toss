@@ -9,6 +9,7 @@ import { SHOW_SPOTLIGHT } from './releaseScope.js';
 import { ANALYSIS_ROUTES, renderAnalysis } from './analysisViews.js';
 import packageInfo from '../package.json';
 import { finiteNumber } from './analysisData.js';
+import { marketNowLive } from './api.js';
 import { loadChartRuntime } from './chartRuntime.js';
 import { API_BASE, quoteSnapshots, quoteSnapshotsLive, compareStocks, marketNow, homeSnapshot, searchStocks, valuationStocks, macroData, homeInsights, personalizedNews, screenerData, companyContextData, businessReportData, financialHistoryData, relationshipEvidenceData } from './api.js';
 import { applyRuntimeClass, haptic, openExternal, syncNativeBackHandler, closeMiniApp, isAppsInTossRuntime } from './tossBridge.js';
@@ -85,9 +86,12 @@ let toastTimer=null;
 let homeMarketExpanded=false;
 let homeMarketPayload=null;
 let homeMarketExtraPromise=null;
+let homeMarketExtrasPending=false;
+let homeMarketRetryPending=false;
 const scrollPositions=new Map();
 // A feature deep link has no app-owned history entry to return to.
 let navigationDepth=0;
+const navigationSession=`${Date.now()}-${Math.random().toString(36).slice(2)}`;
 function goBack(){
  if(navigationDepth>0) history.back();
  else if(isAppsInTossRuntime()) closeMiniApp();
@@ -232,9 +236,9 @@ function navigate(tab,detailSymbol=null,detailName=''){
  if(detailSymbol){state.detailSymbol=detailSymbol;state.detailName=detailName||'';}
  const hash=detailSymbol?`#${tab}/${encodeURIComponent(detailSymbol)}`:`#${tab}`;
  const nextUrl=new URL(location.href);nextUrl.searchParams.delete('cv');nextUrl.hash=hash;
- history.pushState({tab,detailSymbol:state.detailSymbol,detailName:state.detailName,detailOrigin:state.detailOrigin},'',nextUrl);
- if(tab==='news')state.newsSymbol=detailSymbol||null;
  navigationDepth+=1;
+ history.pushState({tab,detailSymbol:state.detailSymbol,detailName:state.detailName,detailOrigin:state.detailOrigin,cvNavigation:{session:navigationSession,depth:navigationDepth}},'',nextUrl);
+ if(tab==='news')state.newsSymbol=detailSymbol||null;
  haptic('tickWeak');
  render();
  window.scrollTo(0,0);
@@ -294,32 +298,43 @@ function formatHomeMarketChange(item,row){
  }
  return {text:fmtChange(change),cls:change>0?'up':change<0?'down':'flat'};
 }
-function marketCard(item,row,index,{extra=false}={}){
+function marketCard(item,row,index,{extra=false,pending=false}={}){
  const change=formatHomeMarketChange(item,row);
  const cardTag=extra?'div':'button';
  const action=extra?'':' data-go-chart';
- const loading=!row;
- return `<${cardTag} class="quote-card market-${index}${extra?' market-extra-card':''}${loading?' market-card-loading':''}"${action}>
+ const missing=finiteNumber(row?.price)===null;
+ const loading=missing&&pending;
+ return `<${cardTag} class="quote-card market-${index}${extra?' market-extra-card':''}${missing?' market-missing':''}${loading?' market-card-loading':''}"${action}>
    <div class="quote-top"><span class="market-pill">${esc(item.pill)}</span><small>${esc(item.label)}</small></div>
    <strong>${loading?'—':esc(formatHomeMarketValue(item,row))}</strong>
-   <em class="${loading?'flat':change.cls}">${loading?'불러오는 중':esc(change.text)}</em>
-   <span class="quote-asof">${loading?'':esc(formatKst(row?.asOf))}</span>
+   <em class="${missing?'flat':change.cls}">${missing?(loading?'확인 중':'자료 없음'):esc(change.text)}</em>
+   <span class="quote-asof">${missing?'':esc(formatKst(row?.asOf))}</span>
  </${cardTag}>`;
 }
 function paintHomeMarket(market,{allowError=true}={}){
  const host=document.querySelector('#market-card');
  if(!host)return false;
- if(market)homeMarketPayload=market;
+ if(market){
+   // Primary live refreshes omit optional indicators; retain their dated observations.
+   const incoming=Array.isArray(market.results)?market.results:[];
+   const included=new Set(incoming.map(row=>String(row.ticker||'').toUpperCase()));
+   const extras=(homeMarketPayload?.results||[]).filter(row=>HOME_MARKET_EXTRA.some(item=>item.symbol===String(row.ticker||'').toUpperCase())&&!included.has(String(row.ticker||'').toUpperCase()));
+   homeMarketPayload={...market,results:[...incoming,...extras]};
+ }
  const rows=Array.isArray(homeMarketPayload?.results)?homeMarketPayload.results:[];
  const byTicker=new Map(rows.map(row=>[String(row.ticker||'').toUpperCase(),row]));
- const primary=HOME_MARKET_PRIMARY.map(item=>({item,row:byTicker.get(item.symbol)})).filter(x=>x.row);
+ const primary=HOME_MARKET_PRIMARY.map(item=>({item,row:byTicker.get(item.symbol)})).filter(x=>finiteNumber(x.row?.price)!==null);
  const time=document.querySelector('#market-time');
  const toggle=document.querySelector('#market-expand');
  if(primary.length){
    if(time)time.textContent='각 지표의 실제 기준 시각';
-   const primaryGrid=`<div class="market-grid">${HOME_MARKET_PRIMARY.map((item,i)=>marketCard(item,byTicker.get(item.symbol),i)).join('')}</div>`;
-   const extraGrid=homeMarketExpanded?`<div class="market-extra-wrap"><div class="market-extra-grid">${HOME_MARKET_EXTRA.map((item,i)=>marketCard(item,byTicker.get(item.symbol),i+4,{extra:true})).join('')}</div><p class="market-extra-note">미 10년물·VIX·WTI·원/달러 · 직전 종가 대비</p></div>`:'';
-   host.innerHTML=primaryGrid+extraGrid;
+   const primaryGrid=`<div class="market-grid">${HOME_MARKET_PRIMARY.map((item,i)=>marketCard(item,byTicker.get(item.symbol),i,{pending:homeMarketRetryPending})).join('')}</div>`;
+   const partialNote=primary.length<HOME_MARKET_PRIMARY.length?`<div class="market-partial-note" role="status">${homeMarketRetryPending?loadingIndicator('누락된 시장 지표를 다시 확인하고 있어요'):'일부 시장 지표가 제공되지 않았어요.'}<button type="button" data-retry-market-missing ${homeMarketRetryPending?'disabled':''}>시장 지표 다시 확인</button></div>`:'';
+   const extraMissing=HOME_MARKET_EXTRA.some(item=>finiteNumber(byTicker.get(item.symbol)?.price)===null);
+   const extraGrid=homeMarketExpanded?`<div class="market-extra-wrap"><div class="market-extra-grid">${HOME_MARKET_EXTRA.map((item,i)=>marketCard(item,byTicker.get(item.symbol),i+4,{extra:true,pending:homeMarketExtrasPending})).join('')}</div><p class="market-extra-note">미 10년물·VIX·WTI·원/달러 · 직전 종가 대비</p>${homeMarketExtrasPending?loadingIndicator('보조 시장 지표를 확인하고 있어요'):extraMissing?'<div class="market-partial-note" role="status">일부 보조 지표를 확인하지 못했어요.<button type="button" data-retry-market-extra>보조 지표 다시 확인</button></div>':''}</div>`:'';
+   host.innerHTML=primaryGrid+partialNote+extraGrid;
+   host.querySelector('[data-retry-market-missing]')?.addEventListener('click',retryHomeMarket);
+   host.querySelector('[data-retry-market-extra]')?.addEventListener('click',()=>ensureHomeMarketExtras({force:true}));
    if(toggle){
      toggle.hidden=false;
      toggle.setAttribute('aria-expanded',String(homeMarketExpanded));
@@ -332,7 +347,7 @@ function paintHomeMarket(market,{allowError=true}={}){
  if(!allowError)return false;
  if(time)time.textContent='연결 확인 필요';
  host.innerHTML='<div class="market-error"><div><strong>시장 정보를 불러오지 못했어요</strong><span>다른 기능은 계속 사용할 수 있어요.</span></div><button id="retry-market">다시 시도</button></div>';
- document.querySelector('#retry-market')?.addEventListener('click',renderHome);
+ document.querySelector('#retry-market')?.addEventListener('click',retryHomeMarket);
  return false;
 }
 function mergeHomeMarketRows(extraRows){
@@ -342,26 +357,36 @@ function mergeHomeMarketRows(extraRows){
  homeMarketPayload={...(homeMarketPayload||{}),results:[...map.values()]};
  return homeMarketPayload;
 }
-async function ensureHomeMarketExtras(){
- const missing=HOME_MARKET_EXTRA.map(x=>x.symbol).filter(symbol=>!homeMarketPayload?.results?.some(row=>String(row?.ticker||'').toUpperCase()===symbol));
+async function retryHomeMarket(){
+ if(homeMarketRetryPending)return;
+ homeMarketRetryPending=true;
+ const epoch=viewEpoch;
+ const host=document.querySelector('#market-card');
+ if(!paintHomeMarket(homeMarketPayload,{allowError:false})&&host)host.innerHTML=loadingIndicator('시장 지표를 다시 확인하고 있어요');
+ try{
+   const payload=await marketNowLive();
+   if(epoch!==viewEpoch)return;
+   if(payload?.results?.length){mergeHomeMarketRows(payload.results);writeHomeFast('market',homeMarketPayload);}
+ }catch{/* Retain available observations and a retry action. */}
+ finally{homeMarketRetryPending=false;if(state.tab==='home')paintHomeMarket(homeMarketPayload,{allowError:true});}
+}
+async function ensureHomeMarketExtras({force=false}={}){
+ const missing=HOME_MARKET_EXTRA.map(x=>x.symbol).filter(symbol=>!homeMarketPayload?.results?.some(row=>String(row?.ticker||'').toUpperCase()===symbol&&finiteNumber(row.price)!==null));
  if(!missing.length){paintHomeMarket(homeMarketPayload,{allowError:false});return;}
- const cached=readHomeFast('market-extra',30*60*1000);
+ const cached=force?null:readHomeFast('market-extra',30*60*1000);
  if(cached?.results?.length){
    mergeHomeMarketRows(cached.results);
    paintHomeMarket(homeMarketPayload,{allowError:false});
  }
  if(homeMarketExtraPromise)return homeMarketExtraPromise;
- homeMarketExtraPromise=quoteSnapshots(HOME_MARKET_EXTRA.map(x=>x.symbol))
+ homeMarketExtrasPending=true;
+ paintHomeMarket(homeMarketPayload,{allowError:false});
+ homeMarketExtraPromise=quoteSnapshots(HOME_MARKET_EXTRA.map(x=>x.symbol),{force})
    .then(payload=>{
      if(payload?.results?.length){writeHomeFast('market-extra',payload);mergeHomeMarketRows(payload.results);}
-     paintHomeMarket(homeMarketPayload,{allowError:false});
    })
-   .catch(()=>{
-     paintHomeMarket(homeMarketPayload,{allowError:false});
-     const note=document.querySelector('.market-extra-note');
-     if(note)note.textContent='일부 보조 시장지표를 불러오지 못했어요. 잠시 후 다시 확인해주세요.';
-   })
-   .finally(()=>{homeMarketExtraPromise=null;});
+   .catch(()=>{})
+   .finally(()=>{homeMarketExtraPromise=null;homeMarketExtrasPending=false;paintHomeMarket(homeMarketPayload,{allowError:false});});
  return homeMarketExtraPromise;
 }
 function bindHomeMarketToggle(){
@@ -1344,7 +1369,7 @@ function syncFromLocation(){
 }
 
 applyRuntimeClass();
-window.addEventListener('popstate',()=>{navigationDepth=Math.max(0,navigationDepth-1);closeStockSelector();syncFromLocation();render();requestAnimationFrame(()=>window.scrollTo(0,scrollPositions.get(location.hash||'#home')||0))});
+window.addEventListener('popstate',event=>{navigationDepth=event.state?.cvNavigation?.session===navigationSession?event.state.cvNavigation.depth:0;closeStockSelector();syncFromLocation();render();requestAnimationFrame(()=>window.scrollTo(0,scrollPositions.get(location.hash||'#home')||0))});
 window.addEventListener('online',()=>render());
 window.addEventListener('offline',()=>render());
 document.addEventListener('chartview:storage-error',()=>showToast('데이터를 기기에 저장하지 못했어요. 다시 시도해주세요.'));

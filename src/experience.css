@@ -77,3 +77,6 @@
 }
 
 @media(prefers-reduced-motion:reduce){.chart-legend-loading span{animation:none}}
+.market-partial-note{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;margin-top:10px;color:#4e5968;font-size:12px;line-height:1.6}
+.market-partial-note button{min-height:44px;padding:8px 12px;border:0;border-radius:12px;background:#e8f3ff;color:#1769c2;font-weight:700}
+.market-partial-note button:disabled{opacity:.65}
