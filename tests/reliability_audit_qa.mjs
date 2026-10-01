@@ -10,7 +10,7 @@ try{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  let mode='empty',calls=0,newsMode='failure',newsCalls=0,identityFails=false;
  const mock=async route=>{
-  const url=new URL(route.request().url()),path=url.pathname.replace(/^\/backend/,'');let body={};
+  const url=new URL(route.request().url()),path=url.pathname.replace(/^\/backend/,'').replace(/^.*\/static\/data\//,'/static/data/');let body={};
   if(path==='/api/compare'){
    calls++;const tickers=(url.searchParams.get('tickers')||'').split(',');
    body={stocks:mode==='empty'?[]:tickers.filter((_,i)=>mode!=='partial'||i===0).map(ticker=>({ticker,name:ticker==='005930.KS'?'삼성전자':'SK하이닉스',return:2,currency:'KRW',startDate:'2026-09-01',endDate:'2026-09-30',data:[{time:'2026-09-01',value:0,price:100},{time:'2026-09-30',value:2,price:102}]})),errors:mode==='ready'?[]:[{ticker:'000660.KS',error:'provider temporarily unavailable'}]};
@@ -30,6 +30,7 @@ try{
   await route.fulfill({contentType:'application/json',body:JSON.stringify(body)});
  };
  await page.route('https://chart-view-pkv8.onrender.com/**',mock);await page.route('**/backend/**',mock);
+ await page.route('https://raw.githubusercontent.com/shoon94parkk-del/chart_View/**',mock);
  await page.addInitScript(()=>localStorage.setItem('chartview-toss-selected-v1',JSON.stringify(['005930.KS','000660.KS'])));
  await page.goto(base+'/#chart');await page.locator('#retry-chart').waitFor();
  const failedCalls=calls;mode='ready';await page.locator('#retry-chart').click();
