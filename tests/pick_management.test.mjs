@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
 const ledger=readFileSync(new URL('../src/pickLedger.js',import.meta.url),'utf8');
+const ledgerCss=readFileSync(new URL('../src/pickLedger.css',import.meta.url),'utf8');
 const api=readFileSync(new URL('../src/api.js',import.meta.url),'utf8');
 const main=readFileSync(new URL('../src/main.js',import.meta.url),'utf8');
 const home=readFileSync(new URL('../src/homeExtras.js',import.meta.url),'utf8');
@@ -39,4 +40,14 @@ test('PICK monitoring failure does not blank recommendation performance',()=>{
 
 test('PICK management does not expose screener rank badges',()=>{
   assert.ok(!ledger.includes('pick-ledger-rank'));
+});
+
+
+test('PICK technical timing alerts stay advisory and visibly separate from fundamental status',()=>{
+  for(const token of ['TECH_SELL_REVIEW','TECH_CAUTION','단기 매도 검토','기술 경고','단기 기술 신호','펀더멘털 점검 상태와 별도인 단기 기술 신호예요.','단기 경고 우선']){
+    assert.ok(ledger.includes(token),`missing technical alert token: ${token}`);
+  }
+  assert.ok(ledger.includes('기술 경고만으로 자동 매도 확정하지 않아요.'));
+  assert.match(ledgerCss,/pick-ledger-tech-status\.tech-sell/);
+  assert.match(ledgerCss,/pick-ledger-tech-alert/);
 });
