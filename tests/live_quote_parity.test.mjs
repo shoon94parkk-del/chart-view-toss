@@ -66,7 +66,7 @@ test('detail uses Home quote immediately and fresh-polls one symbol',async()=>{
     fs.readFile(new URL('../src/api.js',import.meta.url),'utf8'),
   ]);
   assert.ok(api.includes("fresh=true"));
-  assert.ok(main.includes("getLiveQuote(symbol)||homeCachedQuote(symbol)"));
+  assert.ok(main.includes("resolveLiveQuote(symbol,homeCachedQuote(symbol))"));
   assert.ok(main.includes("quoteSnapshotsLive([symbol])"));
   assert.ok(main.includes("detailLiveTimer=setTimeout(pullDetailLive,5_000)"));
   assert.ok(main.includes("persistLiveQuoteToHomeSnapshot(quote)"));

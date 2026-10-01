@@ -46,6 +46,11 @@ export function getLiveQuote(symbol){
   return row?{...row}:null;
 }
 
+export function resolveLiveQuote(symbol,cached){
+  if(cached)rememberLiveQuotes([cached],{priority:20});
+  return getLiveQuote(symbol);
+}
+
 export function mergeRowsWithLive(rows=[]){
   return (Array.isArray(rows)?rows:[]).map(row=>{
     const live=getLiveQuote(row?.ticker);

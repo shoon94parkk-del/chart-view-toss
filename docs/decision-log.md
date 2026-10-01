@@ -256,3 +256,5 @@ Independent review caught two new Home sector cache paths: old Home quotes overw
 Independent chunk-failure review: a failed optional report-review module must not hide a successful financial-history response. Preserve its own explicit error and device-record notice, with a fresh-page recovery button. Mobile regression blocks this chunk, verifies financial data still renders, then reloads and verifies saved-condition recovery.
 
 Live index journey follow-up: Home's market payload and stock heatmap cache were separate, so index detail unnecessarily waited for a fresh quote despite a visible dated Home index quote. Reuse both device cache sources through detailCachedQuote without changing source timestamps or comparison selection. Unit regression checks dated index re-entry and missing prices.
+
+- 2026-10-02: Resolve Home and detail index quotes through the timestamp-guarded live store before rendering. A newer Home observation replaces an older detail observation; older device cache cannot roll back current prices. Both directions have regressions.

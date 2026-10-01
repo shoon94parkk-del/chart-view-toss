@@ -13,6 +13,7 @@ for(const [name,route,selector] of routes){
  let ready;try{await page.locator(selector).first().waitFor({timeout:12000});ready=Date.now()-start;}catch{ready=null;}
  await page.waitForTimeout(1000);
  const info=await page.evaluate(()=>({paint:performance.getEntriesByType('paint').map(x=>({name:x.name,ms:Math.round(x.startTime)})),overflow:document.documentElement.scrollWidth>innerWidth,loaders:[...document.querySelectorAll('.loading-indicator')].map(el=>el.textContent?.trim()).filter(Boolean)}));
- const result={name,domMs:dom,readyMs:ready,...info,requests,errors};results.push(result);await fs.mkdir('artifacts/performance',{recursive:true});await fs.writeFile(out,JSON.stringify({base,measuredAt:new Date().toISOString(),results},null,2));console.log(JSON.stringify(result));await ctx.close();
+ const readyText=ready===null?null:(await page.locator(selector).first().textContent())?.trim().slice(0,140);
+ const result={name,domMs:dom,readyMs:ready,readyText,...info,requests,errors};results.push(result);await fs.mkdir('artifacts/performance',{recursive:true});await fs.writeFile(out,JSON.stringify({base,measuredAt:new Date().toISOString(),results},null,2));console.log(JSON.stringify(result));await ctx.close();
 }
 await browser.close();await fs.mkdir('artifacts/performance',{recursive:true});await fs.writeFile(out,JSON.stringify({base,measuredAt:new Date().toISOString(),results},null,2));

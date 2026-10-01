@@ -18,7 +18,7 @@ import { openStockSelector, closeStockSelector, formatSelectedStockLabel } from 
 import { initializeStorage, readStored, writeStored, clearStored, getActivityVisitorId } from './storage.js';
 import { startHomeLiveSync, setLiveSurface } from './liveHomeSync.js';
 import { readHomeFast, writeHomeFast } from './homeFastCache.js';
-import { rememberLiveQuotes, getLiveQuote, mergeRowsWithLive } from './liveQuoteStore.js';
+import { rememberLiveQuotes, getLiveQuote, mergeRowsWithLive, resolveLiveQuote } from './liveQuoteStore.js';
 import { seedWatchQuoteCache, saveWatchQuoteCache } from './watchQuoteCache.js';
 import { loadingIndicator, chartLoadingPreview } from './loadingView.js';
 import { formatKst, formatDataSource, formatFinancialAmount, formatChartDate, formatMetricPeriod, formatCurrencyPrice, formatMacroValue, formatMacroChange, macroFreshness, observationLabel, macroCategory, macroPublicationLabel, macroSourceUrl, changeBasisLabel, relationBasisLabel, newsRelation, translatedTag, titleLanguage } from './dataPresentation.js';
@@ -318,6 +318,7 @@ function paintHomeMarket(market,{allowError=true}={}){
  if(market){
    // Primary live refreshes omit optional indicators; retain their dated observations.
    const incoming=Array.isArray(market.results)?market.results:[];
+   rememberLiveQuotes(incoming,{priority:20});
    const included=new Set(incoming.map(row=>String(row.ticker||'').toUpperCase()));
    const extras=(homeMarketPayload?.results||[]).filter(row=>HOME_MARKET_EXTRA.some(item=>item.symbol===String(row.ticker||'').toUpperCase())&&!included.has(String(row.ticker||'').toUpperCase()));
    homeMarketPayload={...market,results:[...incoming,...extras]};
@@ -1088,7 +1089,7 @@ async function renderDetail(){
  };
  if(!isIndex&&/\.(KS|KQ)$/i.test(symbol))void screenerData().then(data=>{if(epoch!==viewEpoch)return;const row=(data.stocks||[]).find(row=>row.symbol===symbol);if(row?.price!=null){closingQuote={price:row.price,date:row.date||data.tradeDate||data.updated||'기준일 미제공'};const quote=getLiveQuote(symbol);if(quote)paintDetailQuote(quote);}}).catch(()=>{});
  if(saved)seedWatchQuoteCache(state.watchlist.map(x=>x.symbol));
- const cachedQuote=getLiveQuote(symbol)||homeCachedQuote(symbol);
+ const cachedQuote=resolveLiveQuote(symbol,homeCachedQuote(symbol));
  if(cachedQuote){
    rememberLiveQuotes([cachedQuote],{priority:40});
    paintDetailQuote(cachedQuote);
