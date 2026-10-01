@@ -55,3 +55,6 @@ node scripts/build-data-cdn.mjs /path/to/chart_View/static/data
 - https://finnhub.io/terms-of-service
 - https://fred.stlouisfed.org/legal/terms/
 - https://developers.naver.com/notice/article/32973
+
+## 2026-10-02 웹 운영 성능 보완
+기존 공개 chart_View/main/static/data 저장 자료를 GitHub raw 경로로 직접 읽도록 Toss 웹 Render 빌드의 VITE_CHARTVIEW_STATIC_DATA_BASE를 설정한다. 별도 업로드나 호스팅 생성 없이 이미 공개된 같은 파일을 읽는다. 2504종목·기준일·갱신시각 일치와 CORS=*를 확인했다. GitHub edge max-age=300이므로 저장소 반영 후 최대 약 5분의 캐시 지연 가능성이 있다. 2.5초 지연/잘못된 JSON은 기존 API로 대체한다. 실시간 시세·차트·공시 API와 데이터 사용권/실기기 출시 게이트는 별도다.

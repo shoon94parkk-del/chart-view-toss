@@ -1,7 +1,8 @@
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export function detailCachedQuote(symbol,snapshot,market){
  const rows=[...(market?.results||[]),...(snapshot?.heatmap?.results||[])];
- return rows.find(row=>String(row?.ticker||'').toUpperCase()===String(symbol||'').toUpperCase()&&row.price!=null)||null;
+ const row=rows.find(row=>String(row?.ticker||'').toUpperCase()===String(symbol||'').toUpperCase()&&row.price!=null)||null;
+ return row&&!row.currency&&/\.(KS|KQ)$/i.test(symbol)?{...row,currency:'KRW'}:row;
 }
 export function indexSeries(stock){
  const points=stock?.data;
