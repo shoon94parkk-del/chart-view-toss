@@ -1,4 +1,4 @@
-import { loadExportItemDetail, loadExportMomentumSnapshot } from './exportMomentumData.js';
+import { loadExportItemDetail, loadExportMomentumSnapshot, loadSemiconductorCountryMatrix } from './exportMomentumData.js';
 import {
   balanceTone,
   chartExtent,
@@ -368,6 +368,60 @@ function semiconductorBreakdown(detail){
   `;
 }
 
+function renderSemiconductorCountryMatrix(matrix){
+  const segmentCard=(segment)=>{
+    const max=Math.max(...segment.countries.map(row=>row.exportsUsdBillion||0),1);
+    return `
+      <article class="export-semi-country-card">
+        <div class="export-semi-country-head">
+          <div><span>HS ${esc(segment.code)}</span><strong>${esc(segment.name)}</strong></div>
+          <em>${segment.coveredSharePct===null?'-':esc(segment.coveredSharePct.toFixed(1)+'%')} 커버</em>
+        </div>
+        <div class="export-semi-country-summary">
+          <span>최대 시장 <b>${esc(segment.leaderCountry||'-')}</b></span>
+          <span>증가 기여 <b>${esc(segment.growthLeaderCountry||'-')}</b></span>
+          <span>감소 기여 <b>${esc(segment.declineLeaderCountry||'-')}</b></span>
+        </div>
+        <div class="export-semi-country-rows">
+          ${segment.countries.map(row=>`
+            <div class="export-semi-country-row">
+              <div class="export-semi-country-line">
+                <strong>${esc(row.name)}</strong>
+                <span>${esc(formatUsdBillion(row.exportsUsdBillion,{digits:1}))}</span>
+              </div>
+              <div class="export-semi-country-track"><i style="width:${Math.max(2,(row.exportsUsdBillion/max)*100).toFixed(1)}%"></i></div>
+              <div class="export-semi-country-metrics">
+                <span>비중 ${row.sharePct===null?'-':esc(row.sharePct.toFixed(1)+'%')}</span>
+                <span class="${yoyTone(row.exportYoY)}">YoY ${esc(formatSignedPct(row.exportYoY))}</span>
+                <span class="${yoyTone(row.deltaUsdBillion)}">증감 ${esc(formatUsdBillion(row.deltaUsdBillion,{digits:1}))}</span>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </article>
+    `;
+  };
+  return `
+    <div class="export-semi-country-section">
+      <div class="export-detail-country-head">
+        <strong>세부 품목 × 국가</strong>
+        <small>${esc(monthLabel(matrix.period))} · 중국·홍콩·베트남·대만·미국·일본</small>
+      </div>
+      <div class="export-semi-country-note">
+        <strong>어느 시장이 증가를 끌고 있나</strong>
+        <span>막대는 해당 세부 품목의 국가별 수출액입니다. 비중은 그 품목의 전세계 총수출 대비이며, ‘증감’은 전년동월 대비 수출액 차이입니다.</span>
+      </div>
+      <div class="export-semi-country-grid">${matrix.segments.map(segmentCard).join('')}</div>
+      <p class="export-chart-note">관세청 품목별 국가별 API는 국가코드가 필수라 6개 지정시장을 비교합니다. 전세계 국가 순위가 아니며, 수출은 최종목적국 기준입니다.</p>
+    </div>
+  `;
+}
+
+function semiconductorCountryPlaceholder(detail){
+  if(detail.key!=='semiconductor')return '';
+  return '<div id="export-semi-country-matrix" class="export-semi-country-section export-semi-country-loading" role="status"><span></span><strong>DRAM·Flash·MCP·DRAM 모듈의 국가별 수출을 분석하고 있어요.</strong><small>반도체 상세과 별도로 불러와 다른 그래프 로딩을 막지 않습니다.</small></div>';
+}
+
 function renderItemDetail(detail){
   const latest=detail.history.at(-1)||{};
   const maxCountry=Math.max(...detail.countries.map(row=>row.exportsUsdBillion||0),1);
@@ -394,6 +448,7 @@ function renderItemDetail(detail){
       ${detailMetricBars(detail.history,'unitValueUsdPerKg','kg당 평균 신고금액','$ / kg',value=>formatUnitValue(value))}
     </div>
     ${semiconductorBreakdown(detail)}
+    ${semiconductorCountryPlaceholder(detail)}
     <div class="export-detail-country">
       <div class="export-detail-country-head"><strong>주요 5개 국가 × ${esc(detail.name)}</strong><small>전세계 순위가 아닌 지정 시장 비교</small></div>
       ${detail.countries.map(row=>`
@@ -556,6 +611,17 @@ export function renderExportMomentumView({shell,bindNav}){
         panel.hidden=true;
         panel.innerHTML='';
       });
+      if(detail.key==='semiconductor'){
+        const countryHost=panel.querySelector('#export-semi-country-matrix');
+        void loadSemiconductorCountryMatrix().then(matrix=>{
+          if(token!==detailSeq||!countryHost?.isConnected)return;
+          countryHost.outerHTML=renderSemiconductorCountryMatrix(matrix);
+        }).catch(error=>{
+          if(token!==detailSeq||!countryHost?.isConnected)return;
+          countryHost.innerHTML=`<strong>국가별 세부 분석을 불러오지 못했어요.</strong><small>${esc(error?.message||'잠시 후 다시 시도해주세요.')}</small>`;
+          countryHost.classList.add('is-error');
+        });
+      }
     }catch(error){
       if(token!==detailSeq||!panel.isConnected)return;
       panel.innerHTML=`<div class="export-detail-error"><strong>품목 상세를 불러오지 못했어요.</strong><p>${esc(error?.message||'잠시 후 다시 시도해주세요.')}</p><button type="button" data-export-detail-close>닫기</button></div>`;
