@@ -210,3 +210,9 @@ Saved investment baselines are device records: show them before network completi
 - Every detail jump must have a mounted target. DART analysis is offered only for Korean exchange tickers.
 - News transport failure is not a valid empty news result; independent retry must not reload unrelated data.
 - Secure external open with noopener returns null even when a tab opens; never infer an error from that value. Keep opener isolation, HTTPS validation and native failure handling.
+
+## Export momentum
+- `#exports` must stay lazy-loaded. Do not add export snapshot/API requests to Home first paint, home bootstrap, quote polling, heatmap refresh or DART flows.
+- Preserve explicit source/basis/published-date disclosure. Missing official values stay missing; never infer an export amount from a percentage.
+- 10-day, 20-day and full-month checkpoints are cumulative within the same month and must not be presented as separate period totals.
+- Export growth labels are descriptive statistics, not stock recommendations or buy/sell signals.
