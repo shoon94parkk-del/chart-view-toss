@@ -169,7 +169,7 @@ async function installMocks(page, mode='ok') {
       meta:{cacheStatus:'fresh'},
     });
     if(path==='/api/export-momentum/item-detail') return json(route,{
-      schemaVersion:1,key:url.searchParams.get('key')||'semiconductor',name:'반도체',note:'HS 8541+8542 합산',period:'2026-08',
+      schemaVersion:2,key:url.searchParams.get('key')||'semiconductor',name:'반도체',note:'HS 8541+8542 합산',period:'2026-08',
       history:Array.from({length:12},(_,i)=>({
         period:`2025-${String(i+9).padStart(2,'0')}`.replace('13','01').replace('14','02').replace('15','03').replace('16','04').replace('17','05').replace('18','06').replace('19','07').replace('20','08'),
         exportsUsdBillion:9+i*0.45,exportYoY:5+i,
@@ -190,6 +190,14 @@ async function installMocks(page, mode='ok') {
           unitValueYoY:10,
         })),
       },
+      semiconductorBreakdown:[
+        {key:'memory-total',name:'메모리 IC',code:'854232',group:'memory',note:'HS 854232 메모리 전체',period:'2026-08',exportsUsdBillion:9.8,exportYoY:24.1,exportWeightKg:3300000,exportWeightYoY:5.2,unitValueUsdPerKg:2969.7,unitValueYoY:18.0,history:Array.from({length:12},(_,i)=>({period:`2026-${String(i+1).padStart(2,'0')}`,exportsUsdBillion:7+i*.25,exportYoY:10+i,exportWeightKg:3000000+i*25000,exportWeightYoY:2+i*.3,unitValueUsdPerKg:2300+i*55,unitValueYoY:8+i*.4}))},
+        {key:'dram',name:'DRAM',code:'8542321010',group:'memory',note:'HSK 8542321010 · HBM은 별도 HSK 코드가 없어 독립 집계 불가',period:'2026-08',exportsUsdBillion:6.1,exportYoY:31.0,exportWeightKg:1900000,exportWeightYoY:4.0,unitValueUsdPerKg:3210.5,unitValueYoY:26.0,history:Array.from({length:12},(_,i)=>({period:`2026-${String(i+1).padStart(2,'0')}`,exportsUsdBillion:4+i*.2,exportYoY:12+i}))},
+        {key:'flash',name:'Flash memory',code:'8542321030',group:'memory',note:'HSK 8542321030 · NAND/NOR 등을 포함하는 Flash memory 분류',period:'2026-08',exportsUsdBillion:2.7,exportYoY:13.2,exportWeightKg:1200000,exportWeightYoY:3.0,unitValueUsdPerKg:2250,unitValueYoY:9.9,history:Array.from({length:12},(_,i)=>({period:`2026-${String(i+1).padStart(2,'0')}`,exportsUsdBillion:2+i*.08,exportYoY:5+i*.5}))},
+        {key:'sram',name:'SRAM',code:'8542321020',group:'memory',note:'HSK 8542321020',period:'2026-08',exportsUsdBillion:.2,exportYoY:2.0,exportWeightKg:80000,exportWeightYoY:1.0,unitValueUsdPerKg:2500,unitValueYoY:1.0,history:[]},
+        {key:'processor-controller',name:'프로세서·컨트롤러',code:'854231',group:'logic',note:'HS 854231',period:'2026-08',exportsUsdBillion:2.4,exportYoY:11.0,exportWeightKg:500000,exportWeightYoY:3.2,unitValueUsdPerKg:4800,unitValueYoY:7.5,history:[]},
+        {key:'other-ic',name:'기타 IC',code:'854239',group:'logic',note:'HS 854239',period:'2026-08',exportsUsdBillion:1.2,exportYoY:5.5,exportWeightKg:240000,exportWeightYoY:1.1,unitValueUsdPerKg:5000,unitValueYoY:4.3,history:[]},
+      ],
       countries:[
         {name:'미국',code:'US',exportsUsdBillion:3.1,sharePct:21.8},
         {name:'중국',code:'CN',exportsUsdBillion:2.8,sharePct:19.7},
@@ -328,11 +336,12 @@ try{
     await page.goto(`${BASE}/#${tab}`,{waitUntil:'networkidle'});
     await page.waitForTimeout(120);
     if(tab==='exports'){
-      await page.waitForSelector('.export-amount-plot');
-      if(await page.locator('.export-amount-column').count()!==12) throw new Error('export amount chart must show 12 official monthly observations');
-      if(await page.locator('.export-yoy-column').count()!==12) throw new Error('export YoY chart must show 12 official monthly observations');
+      await page.waitForSelector('.export-combo-plot');
+      if(await page.locator('.export-combo-column').count()!==12) throw new Error('export dual-axis chart must show 12 official monthly observations');
+      if(await page.locator('.export-combo-dot').count()!==12) throw new Error('export dual-axis YoY overlay must show 12 points');
+      if(await page.locator('.export-combo-line polyline').count()!==1) throw new Error('export dual-axis YoY line missing');
       const chartText=await page.locator('.export-section').filter({hasText:'월별 수출액과 증가율'}).innerText();
-      if(!chartText.includes('Y축 · 억달러')||!chartText.includes('Y축 · %')) throw new Error(`export chart units must be explicit: ${chartText}`);
+      for(const label of ['수출액 · 왼쪽축','YoY · 오른쪽축','이중 Y축']) if(!chartText.includes(label)) throw new Error(`export dual-axis label missing: ${label}`);
       if(await page.locator('.export-driver-card').count()<5) throw new Error('export value-volume-unit-value cards are missing major HS groups');
       const itemText=await page.locator('.export-driver-card').first().innerText();
       for(const label of ['수출액','물량 · 순중량','kg당 신고금액','수입','무역수지']) if(!itemText.includes(label)) throw new Error(`export decomposition metric missing: ${label}`);
@@ -344,6 +353,10 @@ try{
       await page.waitForSelector('#export-item-detail .export-detail-chart');
       if(await page.locator('#export-item-detail .export-detail-chart').count()!==3) throw new Error('export item detail must show amount, volume and unit-value history');
       if(await page.locator('#export-item-detail .export-detail-bar').count()!==36) throw new Error('export item detail must keep all 12 months across three charts');
+      if(await page.locator('#export-item-detail .export-detail-y-axis').count()!==3) throw new Error('export item detail charts must expose three Y axes');
+      if(await page.locator('#export-item-detail .export-semi-card').count()<6) throw new Error('semiconductor HSK breakdown cards missing');
+      const semiText=await page.locator('#export-item-detail .export-semi-section').innerText();
+      for(const label of ['DRAM','Flash memory','SRAM','HBM은 별도 수출코드가 없습니다.','NAND']) if(!semiText.includes(label)) throw new Error(`semiconductor detail label missing: ${label}`);
       if(await page.locator('#export-item-detail .export-detail-country-row').count()!==5) throw new Error('export item country breakdown must show five configured markets');
       if(await page.locator('#export-item-detail .export-momentum-summary>div').count()!==3) throw new Error('export item momentum summary must show amount, volume and unit-value metrics');
       if(await page.locator('#export-item-detail .export-phase-strip .phase').count()!==12) throw new Error('export item phase history must show 12 months');
