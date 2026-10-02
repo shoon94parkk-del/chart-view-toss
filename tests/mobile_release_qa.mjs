@@ -237,7 +237,7 @@ async function installMocks(page, mode='ok') {
       meta:{scope:'CN, HK, VN, TW, US, JP configured semiconductor markets; not a global ranking',cacheStatus:'fresh'},
     });
     if(path==='/api/export-momentum/provisional') return json(route,{
-      schemaVersion:1,status:'official_preliminary_api',period:'2026-09',periodLabel:'2026년 9월',latestStage:30,latestStageLabel:'월 전체',
+      schemaVersion:2,status:'official_preliminary_api',period:'2026-09',periodLabel:'2026년 9월',latestStage:30,latestStageLabel:'월 전체',
       checkpoints:[
         {stage:10,label:'1~10일',periodRaw:'01~10',
           total:{exportsUsdBillion:34.9,exportYoY:18.2,exportMoM:12.3,deltaYoYUsdBillion:5.4},
@@ -264,6 +264,24 @@ async function installMocks(page, mode='ok') {
         {key:'precision',name:'정밀기기',exportsUsdBillion:1.9,exportYoY:8,exportMoM:3,deltaYoYUsdBillion:.1},
         {key:'appliances',name:'가전제품',exportsUsdBillion:1.2,exportYoY:4,exportMoM:-1,deltaYoYUsdBillion:.05},
       ],
+      landingProjection:{
+        status:'final-review',stage:20,stageLabel:'1~20일',message:'월말 잠정치가 발표되어 당시 체크포인트 추정과 실제 마감값을 비교합니다.',
+        total:{
+          currentUsdBillion:71.4,estimateUsdBillion:112.8,rangeLowUsdBillion:104.2,rangeHighUsdBillion:123.7,
+          medianCompletionPct:63.3,completionQ25Pct:57.7,completionQ75Pct:68.5,
+          projectedYoY:71.0,rangeYoYLow:58.0,rangeYoYHigh:87.5,historySampleCount:60,
+          actualUsdBillion:120.94,actualErrorPct:-6.7,
+          backtest:{sampleCount:24,medianAbsErrorPct:6.1,rangeHitPct:70.8},
+        },
+        semiconductor:{
+          currentUsdBillion:34.13,estimateUsdBillion:55.8,rangeLowUsdBillion:50.2,rangeHighUsdBillion:62.7,
+          medianCompletionPct:61.2,completionQ25Pct:54.4,completionQ75Pct:68.0,
+          projectedYoY:235.0,rangeYoYLow:201.0,rangeYoYHigh:277.0,historySampleCount:60,
+          actualUsdBillion:60.5,actualErrorPct:-7.8,
+          backtest:{sampleCount:24,medianAbsErrorPct:7.3,rangeHitPct:75.0},
+        },
+        model:{historyWindowMonths:60,range:'completion ratio 25th–75th percentile',backtestWindowMonths:24,minimumHistorySamples:12},
+      },
       meta:{classification:'Korea Customs 10 major export product categories; not HS monthly classification',cacheStatus:'fresh'},
       source:{name:'관세청 수출 주요품목별 10일 단위 잠정치 통계',url:'https://www.data.go.kr/data/15157908/openapi.do'},
     });
@@ -443,6 +461,10 @@ try{
       if(await page.locator('.export-provisional-item').count()!==10) throw new Error('10-day radar must show ten official product groups');
       const provisionalText=await page.locator('#export-provisional-radar').innerText();
       for(const label of ['10일 단위 잠정 수출 레이더','1~10일','1~20일','월 전체','전년 같은 구간','전월 같은 구간','증가율 가속','증가액 기여','반도체','컴퓨터주변기기']) if(!provisionalText.includes(label)) throw new Error(`10-day radar label missing: ${label}`);
+
+      if(await page.locator('.export-landing-card').count()!==2) throw new Error('month-end landing must show total and semiconductor cards');
+      const landingText=await page.locator('.export-landing').innerText();
+      for(const label of ['월말 착지 범위','추정 vs 실제 마감','전체 수출','반도체','당시 월말 중앙 추정','실제 마감','추정 오차','과거 완성률 중앙값','최근 백테스트','중앙 절대오차','범위 적중']) if(!landingText.includes(label)) throw new Error(`month-end landing label missing: ${label}`);
 
       if(await page.locator('.export-combo-column').count()!==12) throw new Error('export dual-axis chart must show 12 official monthly observations');
       if(await page.locator('.export-combo-dot').count()!==12) throw new Error('export dual-axis YoY overlay must show 12 points');
