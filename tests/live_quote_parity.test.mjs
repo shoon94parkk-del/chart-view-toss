@@ -139,3 +139,30 @@ test('watch quote cache restores the same symbols across list ordering without r
     if(previous===undefined)delete globalThis.localStorage;else globalThis.localStorage=previous;
   }
 });
+
+
+test('regular-close provenance survives live overlay across surfaces',()=>{
+  clearLiveQuotes();
+  rememberLiveQuotes([{
+    ticker:'005930.KS',
+    price:276000,
+    change:2.22,
+    asOf:'2026-10-02T15:30:00+09:00',
+    source:'Naver Finance KRX/Koscom',
+    marketStatus:'CLOSE',
+    sessionType:'regular',
+    priceBasis:'regular_close',
+  }],{priority:50});
+  const [row]=mergeRowsWithLive([{ticker:'005930.KS',price:275500,change:2.0}]);
+  assert.equal(row.price,276000);
+  assert.equal(row.marketStatus,'CLOSE');
+  assert.equal(row.sessionType,'regular');
+  assert.equal(row.priceBasis,'regular_close');
+});
+
+test('Korean detail stops 5-second refresh after provider reports regular market close',async()=>{
+  const fs=await import('node:fs/promises');
+  const main=await fs.readFile(new URL('../src/main.js',import.meta.url),'utf8');
+  assert.ok(main.includes("const koreanClosed=koreanDetail&&String(canonical?.marketStatus||'').toUpperCase()==='CLOSE'"));
+  assert.ok(main.includes("&&!koreanClosed"));
+});

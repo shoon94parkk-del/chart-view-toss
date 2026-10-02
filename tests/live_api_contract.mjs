@@ -24,6 +24,17 @@ assert(Array.isArray(quotes.results) && quotes.results.length >= 1, 'quote resul
 assert(quotes.dataContract?.currency, 'quote currency contract missing');
 assert(quotes.results.every((row) => row.price == null || Number.isFinite(Number(row.price))), 'invalid quote price');
 
+const samsungQuote = quotes.results.find((row) => String(row.ticker || '').toUpperCase() === '005930.KS');
+assert(samsungQuote, 'Samsung quote missing from live quote contract');
+if (String(samsungQuote.marketStatus || '').toUpperCase() === 'CLOSE') {
+  assert(samsungQuote.priceBasis === 'regular_close', 'closed Korean market must expose regular_close price basis');
+  assert(samsungQuote.sessionType === 'regular', 'closed Korean quote must stay on regular session');
+}
+if (String(samsungQuote.marketStatus || '').toUpperCase() === 'OPEN') {
+  assert(samsungQuote.priceBasis === 'regular_live', 'open Korean market must expose regular_live price basis');
+  assert(samsungQuote.sessionType === 'regular', 'open Korean quote must identify regular session');
+}
+
 const compare = await get('/api/compare?tickers=AAPL%2C005930.KS&period=1mo');
 assert(Array.isArray(compare.stocks) && compare.stocks.length >= 1, 'compare stocks missing');
 assert(compare.comparisonBasis?.currencyMode?.includes('no FX conversion'), 'compare currency basis missing');

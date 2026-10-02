@@ -100,3 +100,7 @@
 .shared-heatmap-analysis .full-heatmap-board .market-us .home-heatmap-cell.is-micro .home-heatmap-change{
   font-size:6px;margin-top:1px
 }
+
+
+.home-pick-head-actions{display:flex;align-items:center;gap:10px}.home-pick-head-actions .text-button{font-size:11px;white-space:nowrap}
+@media(max-width:360px){.home-pick-head-actions{gap:7px}.home-pick-head-actions .text-button{font-size:10px}}

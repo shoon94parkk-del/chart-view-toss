@@ -460,12 +460,6 @@ async function renderHome(){
    <section class="section watch-section home-primary">${sectionTitle('내 관심종목','<button class="text-button" data-tab="watch">'+(hasWatch?'관리':'추가')+'</button>')}<div id="home-watchlist" class="watch-card">${hasWatch?loadingIndicator('관심종목 시세를 확인하고 있어요')+'<div class="skeleton watch"></div><div class="skeleton watch"></div>':'<div class="home-empty-watch"><strong>관심종목을 추가해보세요</strong><span>저장한 종목의 가격과 주요 뉴스를 홈에서 바로 볼 수 있어요.</span><button type="button" data-tab="watch">관심종목 추가</button></div>'}</div></section>
    <section class="market-section home-primary"><div class="section-head market-head"><h2>주요 시장</h2><div class="market-head-actions"><span id="market-time">기준 시각 확인 중</span><button type="button" id="market-expand" class="market-expand" aria-expanded="false" hidden>지표 더 보기 <span>⌄</span></button></div></div><div id="market-card">${loadingIndicator('주요 시장을 확인하고 있어요')}<div class="market-grid"><div class="skeleton quote"></div><div class="skeleton quote"></div><div class="skeleton quote"></div><div class="skeleton quote"></div></div></div></section>
    <section id="brief-card" class="brief-card compact-brief skeleton brief">${loadingIndicator('시장 요약을 확인하고 있어요')}</section>
-   <section class="tool-section compact-tools">${sectionTitle('분석 도구','<span class="section-caption">필요할 때 바로 열기</span>')}<div class="tool-row">
-     <button data-tab="chart"><span class="mini-icon blue">${iconSvg('chart',20)}</span><small>차트</small></button>
-     <button data-tab="valuation"><span class="mini-icon purple">${iconSvg('value',20)}</span><small>밸류에이션</small></button>
-     <button data-tab="macro"><span class="mini-icon green">${iconSvg('macro',20)}</span><small>경제지표</small></button>
-     <button data-tab="news"><span class="mini-icon coral">${iconSvg('news',20)}</span><small>뉴스</small></button>
-   </div></section>
    <section class="section quick-section">${sectionTitle('빠른 비교','<button class="text-button" data-go-chart>종목 변경</button>')}<div class="ticker-strip">${state.selected.map((x,i)=>`<button data-go-chart><span class="ticker-orb tone-${i%4}">${esc(displayName(x).slice(0,1))}</span><span><strong>${esc(displayName(x))}</strong><small>${esc(x)}</small></span><b>${iconSvg('arrow',16)}</b></button>`).join('')||'<span class="muted-copy">비교 종목을 선택해주세요.</span>'}</div></section>
    <section class="section home-news-section" id="home-news-section">${sectionTitle('관심종목 뉴스','<button class="text-button" data-tab="news">뉴스 모두 보기</button>')}<div id="home-news">${loadingIndicator('관련 뉴스를 확인하고 있어요')}<div class="skeleton news"></div></div></section>
  `);
@@ -990,7 +984,7 @@ async function renderDetail(){
  document.querySelector('#app').innerHTML=shell(`
    <section class="detail-compact-head">
      <div class="detail-brand"><span class="detail-logo" id="detail-logo">${knownName?esc(knownName.slice(0,1)):'?'}</span><div><span>${esc(symbol)}</span><h2 id="detail-name" class="${knownName?'':'identity-loading'}">${esc(headingName)}</h2></div></div>
-     <div class="detail-actions"><button id="detail-watch" class="detail-watch-button" type="button">${iconSvg('heart',18)} <span>${saved?'관심 등록됨':'관심 등록'}</span></button><button id="detail-compare">${iconSvg('chart',18)} <span>${state.selected.includes(symbol)?'수익률 비교 열기':'수익률 비교에 추가'}</span></button></div>
+     <div class="detail-actions"><button id="detail-change" type="button">${iconSvg('search',18)} <span>다른 종목</span></button><button id="detail-watch" class="detail-watch-button" type="button">${iconSvg('heart',18)} <span>${saved?'관심 등록됨':'관심 등록'}</span></button><button id="detail-compare">${iconSvg('chart',18)} <span>${state.selected.includes(symbol)?'비교 열기':'비교 추가'}</span></button></div>
    </section>
    <section class="detail-price skeleton detail-price-skeleton" id="detail-price">${loadingIndicator('현재가를 확인하고 있어요')}</section>
    <nav class="detail-jump-nav" aria-label="종목 정보 바로가기"><button type="button" data-detail-jump="detail-price">가격</button><button type="button" data-detail-jump="${koreanDetail?'detail-financial-block':'detail-metrics-section'}">${koreanDetail?'공시 실적':'핵심 지표'}</button>${koreanDetail?'<button type="button" data-detail-jump="detail-industry-block">산업</button>':''}<button type="button" data-detail-jump="detail-news-section">뉴스</button>${koreanDetail?'<button type="button" data-detail-jump="detail-research-card">공시 비교</button>':''}</nav>
@@ -1072,6 +1066,15 @@ async function renderDetail(){
      haptic('tickWeak');paintWatchState();showToast(`${knownName||symbol} 관심종목에 저장했어요.`);
    }
  };
+ document.querySelector('#detail-change')?.addEventListener('click',()=>openStockSelector({
+   title:'다른 종목 보기',
+   description:'종목명이나 티커를 검색하면 바로 상세 화면으로 이동해요.',
+   initial:[],
+   favorites:state.watchlist,
+   nameFor:(nextSymbol)=>comparisonStockName(nextSymbol)||displayName(nextSymbol),
+   restoreBack:restoreNativeBack,
+   onPick:(nextSymbol,nextName)=>navigate('detail',nextSymbol,nextName),
+ }));
  document.querySelector('#detail-watch')?.addEventListener('click',toggleDetailWatch);
  document.querySelector('#detail-compare')?.addEventListener('click',()=>{
    if(state.selected.includes(symbol)){showToast('이미 비교 종목에 포함돼 있어요.');navigate('chart');return}
@@ -1132,7 +1135,9 @@ async function renderDetail(){
    }catch{
      if(!getLiveQuote(symbol))paintDetailQuote(null,{failed:true});
    }finally{
-     if(epoch===viewEpoch&&state.tab==='detail'&&state.detailSymbol===symbol){
+     const canonical=getLiveQuote(symbol);
+     const koreanClosed=koreanDetail&&String(canonical?.marketStatus||'').toUpperCase()==='CLOSE';
+     if(epoch===viewEpoch&&state.tab==='detail'&&state.detailSymbol===symbol&&!koreanClosed){
        detailLiveTimer=setTimeout(pullDetailLive,5_000);
      }
    }
@@ -1319,6 +1324,7 @@ function renderInfo(){
  const epoch=viewEpoch;
  document.querySelector('#app').innerHTML=shell(`
    <section class="page-intro rich-intro subpage-hero info-hero"><span class="page-kicker">DATA & SERVICE</span><h2>숫자를 보기 전에<br><em>기준부터</em> 확인하세요</h2><p>Chart View가 데이터를 보여주는 방식과 이용 시 알아둘 내용을 정리했어요.</p></section>
+   <section class="independence-note"><strong>독립 서비스 안내</strong><p>Chart View는 토스·토스증권의 공식 서비스가 아닌 개인 프로젝트입니다. 화면 구성과 데이터 해석은 Chart View가 독립적으로 제공합니다.</p></section>
    <section class="info-stack">
      <article class="info-card"><span class="info-icon blue">${iconSvg('chart',21)}</span><div><strong>시세·차트 데이터</strong><p>시장 데이터는 외부 데이터 제공처와 Chart View 백엔드를 통해 표시돼요. 거래소 실시간 체결값과 차이가 있거나 갱신이 지연될 수 있어요.</p></div></article>
      <article class="info-card"><span class="info-icon purple">${iconSvg('value',21)}</span><div><strong>재무·밸류에이션</strong><p>종목 상세의 매출액·영업이익 흐름은 DART 공시 재무제표를 사용해요. PER, PBR, ROE 등 비교 지표는 제공처의 최신 가용 데이터를 사용하므로 기준 시점과 회계 기준이 다를 수 있어요.</p></div></article>
@@ -1355,6 +1361,19 @@ function renderInfo(){
  });
 }
 
+function renderNotFound(){
+ cleanupChart();
+ document.querySelector('#app').innerHTML=shell(`
+   <section class="not-found-card">
+     <span class="page-kicker">PAGE NOT FOUND</span>
+     <h2>이 주소의 화면을 찾을 수 없어요.</h2>
+     <p>링크가 잘못되었거나 더 이상 사용하지 않는 화면일 수 있어요.</p>
+     <div><button type="button" class="retry" data-tab="home">홈으로</button><button type="button" class="neutral-action" data-tab="more">전체 메뉴</button></div>
+   </section>
+ `,'페이지 없음');
+ bindNav();
+}
+
 function renderMore(){
  cleanupChart();
  const epoch=viewEpoch;
@@ -1376,14 +1395,13 @@ function renderMore(){
      <button class="feature-row" data-tab="news"><span class="feature-icon coral">${iconSvg('news',22)}</span><span><strong>관심종목 뉴스</strong><small>직접 관련 기사와 업종 기사 구분</small></span><b>${iconSvg('arrow',19)}</b></button>
      <button class="feature-row" data-tab="macro"><span class="feature-icon green">${iconSvg('macro',22)}</span><span><strong>경제 지표</strong><small>관측일·단위·변화 기준 확인</small></span><b>${iconSvg('arrow',19)}</b></button>
      <button class="feature-row" data-tab="exports"><span class="feature-icon blue">${iconSvg('macro',22)}</span><span><strong>수출 모멘텀</strong><small>수출 실적·품목·지역 흐름을 그래프로 확인</small></span><b>${iconSvg('arrow',19)}</b></button>
-     <button class="feature-row" data-tab="tools"><span class="feature-icon slate">${iconSvg('tools',22)}</span><span><strong>투자 도구</strong><small>DART·KRX·FRED 원자료로 이동</small></span><b>${iconSvg('arrow',19)}</b></button>
    </div></section>
    <section class="menu-group"><h3>이용 및 지원</h3><div class="feature-menu">
      <button class="feature-row" data-tab="watch"><span class="feature-icon slate">${iconSvg('star',22)}</span><span><strong>관심종목 관리</strong><small>현재 기기에 저장된 종목 관리</small></span><b>${iconSvg('arrow',19)}</b></button>
      <button class="feature-row" data-tab="info"><span class="feature-icon blue">${iconSvg('spark',22)}</span><span><strong>데이터 및 이용 안내</strong><small>기준·지연·개인정보·지원 안내</small></span><b>${iconSvg('arrow',19)}</b></button>
      <div class="feature-row"><span><strong>고객문의</strong><small>박상훈 · kimtang89@naver.com</small></span></div>
    </div></section>
-   <div class="version-card"><span class="brand-mark">${iconSvg('spark',16)}</span><div><strong>Chart View</strong><small>버전 ${esc(packageInfo.version)}</small></div></div>
+   <div class="version-card"><span class="brand-mark">${iconSvg('spark',16)}</span><div><strong>Chart View</strong><small>개인 프로젝트 · 토스/토스증권 공식 서비스 아님 · 버전 ${esc(packageInfo.version)}</small></div></div>
  `,'전체');
  bindNav();
 }
@@ -1429,6 +1447,7 @@ function render(){
  if(state.tab==='detail')return renderDetail();
  if(state.tab==='info')return renderInfo();
  if(state.tab==='more')return renderMore();
+ if(state.tab==='notfound')return renderNotFound();
  return renderHome();
 }
 

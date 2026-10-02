@@ -1,4 +1,4 @@
-import { screenerData, companyContextData, businessReportData, relationshipEvidenceData } from './api.js';
+import { screenerData, companyContextData, businessReportData, relationshipEvidenceData, pickMonitor } from './api.js';
 import { buildInvestmentIdeas, ideaCoverage } from './ideaEngine.js';
 import { industryContextHtml } from './industryContextView.js';
 import { loadingIndicator } from './loadingView.js';
@@ -7,6 +7,35 @@ const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const pct=v=>Number.isFinite(Number(v))?`${Number(v)>0?'+':''}${Number(v).toFixed(2)}%`:'—';
 const price=v=>Number.isFinite(Number(v))?Number(v).toLocaleString('ko-KR',{maximumFractionDigits:2}):'—';
 
+const monitorSeverity=(pick)=>{
+  const technical=String(pick?.technical?.signal||'');
+  const fundamental=String(pick?.status||'');
+  if(fundamental==='SELL_REVIEW'||technical==='TECH_SELL_REVIEW')return 3;
+  if(fundamental==='WATCH'||technical==='TECH_CAUTION')return 2;
+  if(fundamental==='KEEP')return 1;
+  return 0;
+};
+const monitorSummary=(pick)=>{
+  if(!pick)return null;
+  const severity=monitorSeverity(pick);
+  if(severity===3)return {label:pick?.technical?.signal==='TECH_SELL_REVIEW'?'사후점검 · 단기 매도 검토':'사후점검 · 매도 검토',cls:'sell',note:(pick?.technical?.reasons||[]).slice(0,2).join(' · ')||pick?.monitor?.reason||'사후점검에서 주의 신호가 확인됐어요.'};
+  if(severity===2)return {label:'사후점검 · 경계',cls:'watch',note:(pick?.technical?.reasons||[]).slice(0,2).join(' · ')||pick?.monitor?.reason||'사후점검에서 경계 신호가 확인됐어요.'};
+  if(severity===1)return {label:'사후점검 · 유지',cls:'keep',note:pick?.monitor?.reason||''};
+  return {label:'사후점검 · 검토 대기',cls:'pending',note:pick?.monitor?.reason||''};
+};
+const latestMonitorBySymbol=(payload)=>{
+  const result=new Map();
+  for(const pick of Array.isArray(payload?.picks)?payload.picks:[]){
+    const symbol=String(pick?.symbol||'').toUpperCase();
+    if(!symbol)continue;
+    const current=result.get(symbol);
+    const pickDate=String(pick?.technical?.tradeDate||pick?.monitor?.lastReviewedTradeDate||pick?.pickDate||'');
+    const currentDate=String(current?.technical?.tradeDate||current?.monitor?.lastReviewedTradeDate||current?.pickDate||'');
+    const severity=monitorSeverity(pick),currentSeverity=monitorSeverity(current);
+    if(!current||severity>currentSeverity||(severity===currentSeverity&&pickDate>currentDate))result.set(symbol,pick);
+  }
+  return result;
+};
 function candidateRow(row){
   const change=Number(row.change1d);
   return `<article class="idea-candidate-wrap" data-idea-symbol="${esc(row.symbol)}" data-idea-name="${esc(row.name)}">
@@ -14,6 +43,7 @@ function candidateRow(row){
       <span class="idea-candidate-main"><strong>${esc(row.name)}</strong><small>${esc(row.symbol)}${row.market?' · '+esc(row.market):''}${row.context?.industry?' · '+esc(row.context.industry):''}</small></span>
       <span class="idea-candidate-price"><strong>${price(row.price)}</strong><em class="${change>0?'up':change<0?'down':'flat'}">${pct(row.change1d)}</em></span>
       <span class="idea-reasons">${row.reasons.map(reason=>`<i>${esc(reason)}</i>`).join('')}</span>
+      ${row.monitorStatus?`<span class="idea-monitor-status ${esc(row.monitorStatus.cls)}"><b>${esc(row.monitorStatus.label)}</b>${row.monitorStatus.note?`<small>${esc(row.monitorStatus.note)}</small>`:''}</span>`:''}
     </button>
     ${industryContextHtml(row.context,{collapsible:true,open:false})}
   </article>`;
@@ -91,9 +121,10 @@ export async function renderIdeaView({shell,bindNav}){
   bindNav();
   const host=document.querySelector('#idea-body');
   try{
-    const [data,companyMeta]=await Promise.all([
+    const [data,companyMeta,monitorPayload]=await Promise.all([
       screenerData(),
       companyContextData().catch(()=>null),
+      pickMonitor().catch(()=>null),
     ]);
     const metaBySymbol=new Map((companyMeta?.companies||[]).map(row=>[String(row.symbol||'').toUpperCase(),row]));
     const enrichedData={
@@ -104,7 +135,8 @@ export async function renderIdeaView({shell,bindNav}){
         return {...row,industry:meta.industry||row.industry||'',mainProducts:meta.mainProducts||row.mainProducts||''};
       }),
     };
-    const ideas=buildInvestmentIdeas(enrichedData,{limit:4,perIdea:4});
+    const monitorBySymbol=latestMonitorBySymbol(monitorPayload);
+    const ideas=buildInvestmentIdeas(enrichedData,{limit:4,perIdea:4}).map(idea=>({...idea,candidates:idea.candidates.map(row=>({...row,monitorStatus:monitorSummary(monitorBySymbol.get(String(row.symbol||'').toUpperCase()))}))}));
     const coverage=ideaCoverage(enrichedData);
     const companyCoverage=(enrichedData?.stocks||[]).filter(row=>row?.industry||row?.mainProducts).length;
     if(!host?.isConnected)return;
@@ -118,7 +150,7 @@ export async function renderIdeaView({shell,bindNav}){
       <div class="idea-results-head"><strong>확인할 종목 ${candidateCount}개</strong><span>${esc(coverage.tradeDate||'거래일 확인 중')} 종가 기준</span></div>
       <p class="idea-meta">${ideas.length}개 관찰 패턴 · 20일 평균 거래대금 10억원 이상 · 수집 ${coverage.total.toLocaleString()}개 · 회사정보 ${companyCoverage.toLocaleString()}개</p>
       <div class="idea-card-list">${ideas.map(ideaCard).join('')}</div>
-      <section class="idea-next"><strong>현재 분석 방식</strong><span>DART 사업보고서로 매출 1위 사업·제품 비중을 확인하고, 거래 단서는 단일 기업 기사에서 두 회사의 구체적 계약·납품 표현이 있을 때만 표시해요. 원문과 공시를 함께 확인해주세요.</span></section>
+      <section class="idea-next"><strong>현재 분석 방식</strong><span>아이디어 패턴과 추천 사후점검은 다른 차원의 정보예요. 과거 선정 이력이 있는 종목은 사후점검 상태를 같은 카드에 함께 표시해 모순처럼 보이지 않게 했어요. DART 사업보고서·원문 근거도 함께 확인해주세요.</span></section>
     `;
     bindNav();
     bindLazyIdeaContext(host,ideas,bindNav);

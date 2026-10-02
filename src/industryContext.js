@@ -163,10 +163,10 @@ export function comparisonGroup(row){
 
 function sectorTone({peerCount,upRatio,avgChange}){
   if(peerCount<3)return {label:'표본 부족',tone:'neutral'};
-  if(upRatio>=0.65&&avgChange>=2)return {label:'강함',tone:'strong'};
-  if(upRatio>=0.55&&avgChange>0)return {label:'양호',tone:'good'};
-  if(upRatio<0.4&&avgChange<0)return {label:'약함',tone:'weak'};
-  return {label:'혼조',tone:'mixed'};
+  if(upRatio>=0.65&&avgChange>=2)return {label:'비교군 강세',tone:'strong'};
+  if(upRatio>=0.55&&avgChange>0)return {label:'비교군 양호',tone:'good'};
+  if(upRatio<0.4&&avgChange<0)return {label:'비교군 약세',tone:'weak'};
+  return {label:'비교군 혼조',tone:'mixed'};
 }
 
 export function buildSectorContext(row,rows){

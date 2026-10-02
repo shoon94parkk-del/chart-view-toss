@@ -43,7 +43,18 @@ try{
     assert.equal(await page.locator('[name=signal]').inputValue(),'goldenCross2060');
     await page.getByRole('button',{name:'초기화',exact:true}).click();assert.equal(await page.locator('.analysis-stock').count(),30);
    }
-   if(tab==='consensus'){await page.waitForSelector('.analysis-metrics');await page.selectOption('#consensus-period','+1y');assert.match(await page.locator('#analysis-body').innerText(),/제공되지/);}
+   if(tab==='consensus'){
+    await page.waitForSelector('.analysis-metrics');
+    const optionText=await page.locator('#consensus-period option[value="0y"]').innerText();
+    assert.match(optionText,/현재 회계연도 · 연간/);
+    const consensusText=await page.locator('#analysis-body').innerText();
+    assert.match(consensusText,/회계연도 전체 추정치/);
+    assert.match(consensusText,/연간 EPS 평균 추정/);
+    assert.match(consensusText,/연간 매출 평균 추정/);
+    assert.match(consensusText,/회계연도 전체 컨센서스/);
+    await page.selectOption('#consensus-period','+1y');
+    assert.match(await page.locator('#analysis-body').innerText(),/제공되지/);
+   }
    if(tab==='bands'){await page.waitForSelector('#band-chart canvas');await page.selectOption('#band-metric','pbr');assert.match(await page.locator('#analysis-body').innerText(),/제공되지/);}
    if(tab==='tools'){
     assert.equal(await page.locator('.investment-tool-card').count(),12);

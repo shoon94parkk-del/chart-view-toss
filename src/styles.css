@@ -12,7 +12,7 @@ button,input{font:inherit}
 button{cursor:pointer;-webkit-tap-highlight-color:transparent}
 button:active{transform:scale(.985)}
 svg{display:block}
-.app-shell{max-width:600px;margin:auto;min-height:100vh;padding:env(safe-area-inset-top) 20px calc(86px + env(safe-area-inset-bottom));background:#fff}
+.app-shell{max-width:600px;margin:auto;min-height:100vh;padding:env(safe-area-inset-top) 20px calc(112px + env(safe-area-inset-bottom));background:#fff}
 .topbar{height:62px;display:flex;align-items:center;justify-content:space-between;position:relative;z-index:3}
 .topbar-actions{display:flex;align-items:center;gap:6px;flex:none}
 .ait-share-row{display:none}html[data-ait-runtime="true"] .ait-share-row{display:flex;justify-content:flex-end;margin:0 0 8px}.ait-share-row button{border:0;background:#f2f6fd;color:#1769c2;border-radius:999px;padding:8px 12px;font-size:11px;font-weight:800;display:flex;align-items:center;gap:5px}
@@ -23,7 +23,7 @@ svg{display:block}
 .brand-mark{width:30px;height:30px;border-radius:10px;background:linear-gradient(145deg,#3182f6,#6aa8ff);display:grid;place-items:center;color:#fff;box-shadow:0 6px 18px rgba(49,130,246,.22)}
 .icon-button{width:40px;height:40px;border:0;background:#f7f8fa;border-radius:50%;display:grid;place-items:center;color:#4e5968;transition:.18s ease}
 .icon-button:active{background:#eef1f4}
-.content{min-height:calc(100vh - 148px)}
+.content{min-height:calc(100vh - 148px);padding-bottom:12px;scroll-padding-bottom:calc(96px + env(safe-area-inset-bottom))}
 
 .hero{padding:18px 0 18px}
 .hero-copy{padding:4px 2px 18px}
@@ -144,8 +144,8 @@ svg{display:block}
 .detail-brand{display:flex;align-items:center;gap:13px}
 .detail-logo{width:54px;height:54px;border-radius:18px;background:linear-gradient(145deg,#e8f3ff,#f4f8ff);color:#1769c2;font-size:21px;font-weight:900;display:grid;place-items:center;box-shadow:inset 0 0 0 1px #dfeeff}
 .detail-brand span+div>span{font-size:11px;color:#5b6573}.detail-brand h2{font-size:25px;letter-spacing:-.7px;margin:3px 0 0}
-.detail-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:18px}
-.detail-actions button{height:46px;border:0;border-radius:14px;background:#f2f4f6;color:#4e5968;font-weight:800;display:flex;gap:7px;align-items:center;justify-content:center}
+.detail-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:18px}
+.detail-actions button{height:46px;border:0;border-radius:14px;background:#f2f4f6;color:#4e5968;font-weight:800;display:flex;gap:6px;align-items:center;justify-content:center;min-width:0;font-size:12px}
 .detail-actions button:last-child{background:#e8f3ff;color:#1769c2}
 .detail-actions .detail-watch-button.is-watched{background:#fff0f1;color:#f04452}
 .detail-actions .detail-watch-button.is-watched svg{fill:currentColor}
@@ -423,3 +423,20 @@ input::placeholder,textarea::placeholder {
 .detail-price{flex-wrap:wrap}.detail-closing-reference{flex-basis:100%;border-top:1px solid #ffffff35;padding-top:10px;font-size:12px;line-height:1.6;color:#fff}.detail-closing-reference small{display:block;color:#edf3fc!important;font-size:12px!important}
 .bottom-nav button.active{color:#1769c2}.detail-price>div>span,.detail-price>div>small{color:#edf3fc}
 .macro-tile .source-row button{min-height:44px}.brief>button{min-width:44px;min-height:44px}
+
+
+/* Trust + responsive audit pass */
+.independence-note{margin:4px 0 18px;padding:13px 14px;border:1px solid #dce8f7;border-radius:15px;background:#f7fbff}
+.independence-note strong{display:block;color:#1769c2;font-size:11px}.independence-note p{margin:5px 0 0;color:#5b6573;font-size:11px;line-height:1.55}
+.not-found-card{min-height:55vh;display:grid;align-content:center;justify-items:start;gap:10px}
+.not-found-card h2{margin:0;font-size:25px}.not-found-card p{margin:0;max-width:390px;color:#6b7684;font-size:13px;line-height:1.55}
+.not-found-card>div{display:flex;gap:8px;margin-top:4px}.neutral-action{border:0;border-radius:12px;padding:10px 14px;background:#f2f4f6;color:#4e5968;font-weight:800}
+@media(min-width:900px){
+  html:not([data-ait-runtime="true"]) body{background:#f2f4f6}
+  html:not([data-ait-runtime="true"]) .app-shell{max-width:760px;padding-left:28px;padding-right:28px}
+  html:not([data-ait-runtime="true"]) .bottom-nav{width:min(760px,100%)}
+}
+@media(max-width:360px){
+  .detail-actions{gap:6px}
+  .detail-actions button{font-size:11px;padding:0 5px}
+}

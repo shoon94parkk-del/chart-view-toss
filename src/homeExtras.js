@@ -163,7 +163,7 @@ function createSections(marketSection) {
     picks.className = 'section home-extra-section home-pick-section home-primary';
     picks.id = 'home-top-picks-section';
     picks.innerHTML =
-      '<div class="section-head"><h2>최근 주목받는 종목</h2><button type="button" class="text-button" data-home-extra-route="picks">선정 기록 보기</button></div>' +
+      '<div class="section-head"><h2>최근 주목받는 종목</h2><div class="home-pick-head-actions"><button type="button" class="text-button" data-home-extra-route="ideas">아이디어 LAB</button><button type="button" class="text-button" data-home-extra-route="picks">선정 기록</button></div></div>' +
       `<div id="home-top-picks" class="home-pick-list">${loadingIndicator('최근 선정 종목을 불러오고 있어요')}<div class="skeleton home-extra-skeleton"></div></div>`;
   }
 
@@ -176,8 +176,9 @@ function createSections(marketSection) {
     `<div id="home-daily-heatmap">${loadingIndicator('오늘 등락 히트맵을 불러오고 있어요')}<div class="skeleton home-heatmap-skeleton"></div></div>`;
 
   if (picks) {
-    marketSection.insertAdjacentElement('afterend', picks);
-    picks.insertAdjacentElement('afterend', heatmap);
+    // Surface Chart View's differentiator before generic market cards.
+    marketSection.insertAdjacentElement('beforebegin', picks);
+    marketSection.insertAdjacentElement('afterend', heatmap);
   } else {
     marketSection.insertAdjacentElement('afterend', heatmap);
   }

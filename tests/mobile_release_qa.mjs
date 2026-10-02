@@ -112,6 +112,14 @@ async function installMocks(page, mode='ok') {
       {rank:2,symbol:'000660.KS',name:'SK하이닉스',recommendedDate:'2026-09-18',recommendedPrice:300000,currentPrice:294000,returnPct:-2,bestReturnPct:3.4,score:81,grade:'B+',statusLabel:'성과 추적 중',reason:'중기 모멘텀 조건을 충족했습니다.',lastUpdatedTradeDate:'2026-09-20'},
       {rank:3,symbol:'NVDA',name:'엔비디아',recommendedDate:'2026-09-17',recommendedPrice:180,currentPrice:190.8,returnPct:6,bestReturnPct:9.1,score:79,grade:'B+',statusLabel:'성과 추적 중',reason:'가격 추세와 거래량이 개선되었습니다.',lastUpdatedTradeDate:'2026-09-20'}
     ]});
+    if(path==='/static/data/pick_monitor.json') return json(route,{
+      generatedAt:'2026-10-02T09:00:00+09:00',
+      picks:[{
+        pickId:'2026-09-18:005930',symbol:'005930.KS',code:'005930',name:'삼성전자',pickDate:'2026-09-18',status:'KEEP',
+        monitor:{lastReviewedTradeDate:'2026-10-02',reason:'펀더멘털 근거는 유지되지만 단기 가격 과열을 함께 확인하세요.'},
+        technical:{tradeDate:'2026-10-02',signal:'TECH_SELL_REVIEW',signalLabel:'단기 매도 검토',rsi14:81.7,ret20:39.9,reasons:['RSI 81.7 과열권','20일 수익률 +39.9% 급등']},
+      }],
+    });
     if(path==='/api/heatmap/full') return json(route,{
       generatedAt:'2026-09-21T03:02:00Z',
       results:fullHeatmapRows.map(row=>row.ticker==='NVDA'?{...row,change:99.99}:row.ticker==='005930.KS'?{...row,change:-88.88}:row),
@@ -360,6 +368,10 @@ try{
         await page.waitForSelector('#market-card .quote-card');
         const homePriority=await page.evaluate(()=>({watch:document.querySelector('.watch-section.home-primary')?.getBoundingClientRect().top,market:document.querySelector('.market-section.home-primary')?.getBoundingClientRect().top}));
         if(!(homePriority.watch<homePriority.market&&homePriority.watch<820)) throw new Error(`${width}px Home must surface the watchlist before market cards: ${JSON.stringify(homePriority)}`);
+        await page.waitForSelector('#home-top-picks-section');
+        const pickMarketOrder=await page.evaluate(()=>({pick:document.querySelector('#home-top-picks-section')?.getBoundingClientRect().top,market:document.querySelector('.market-section.home-primary')?.getBoundingClientRect().top}));
+        if(!(pickMarketOrder.pick<pickMarketOrder.market)) throw new Error(`${width}px tracked picks must appear before generic market cards: ${JSON.stringify(pickMarketOrder)}`);
+        if(await page.locator('.compact-tools').count()) throw new Error(`${width}px duplicate Home analysis shortcuts should be removed`);
         const initialMarketCards=await page.locator('#market-card .quote-card').count();
         if(initialMarketCards!==4) throw new Error(`${width}px Home market should stay compact before expand: ${initialMarketCards}`);
         const marketButton=page.locator('#market-expand');
@@ -528,6 +540,10 @@ try{
       await page.waitForSelector('#detail-price strong');
       const detailPrice=await page.locator('#detail-price').innerText();
       if((detailPrice.match(/원/g)||[]).length!==1||!detailPrice.includes('84,200원')) throw new Error(`KRW detail price should show its unit exactly once: ${detailPrice}`);
+      const changeStock=page.locator('#detail-change');
+      if(await changeStock.count()!==1||!(await changeStock.innerText()).includes('다른 종목')) throw new Error('detail direct stock switch missing');
+      const changeStockBox=await changeStock.boundingBox();
+      if(!changeStockBox||changeStockBox.height<44) throw new Error('detail direct stock switch target is too small');
       const priceStyle=await page.locator('.quote-main>div:first-child strong').evaluate(node=>getComputedStyle(node).whiteSpace);
       if(priceStyle!=='nowrap') throw new Error(`detail price should not wrap on mobile: ${priceStyle}`);
       const periodText=await page.locator('#detail-metrics').innerText();
@@ -554,6 +570,17 @@ try{
       if(!(await page.locator('[data-tab="picks"]').innerText()).includes('최근 주목받는 종목')) throw new Error('Spotlight entry missing from menu');
       const groups=await page.locator('.menu-group>h3').allInnerTexts();
       if(!groups.includes('종목 찾기')||!groups.includes('종목 비교하기')||!groups.includes('근거와 시장 환경 확인')) throw new Error(`task-based menu groups missing: ${groups}`);
+      if(await page.locator('.feature-menu [data-tab="tools"]').count()) throw new Error('redundant external investment-tools row should not remain in More');
+      const versionText=await page.locator('.version-card').innerText();
+      if(!versionText.includes('토스/토스증권 공식 서비스 아님')) throw new Error('independent-service notice missing from More');
+      const infoRow=page.locator('.feature-menu [data-tab="info"]');
+      await infoRow.scrollIntoViewIfNeeded();
+      const [infoBox,navBox]=await Promise.all([infoRow.boundingBox(),page.locator('.bottom-nav').boundingBox()]);
+      if(!infoBox||!navBox||infoBox.y+infoBox.height>navBox.y-2) throw new Error(`data guide row is obscured by bottom nav: ${JSON.stringify({infoBox,navBox})}`);
+    }
+    if(tab==='info'){
+      const infoText=await page.locator('body').innerText();
+      if(!infoText.includes('토스·토스증권의 공식 서비스가 아닌 개인 프로젝트')) throw new Error('independent-service disclosure missing from data guide');
     }
     if(tab==='picks'){
       await page.waitForSelector('.pick-ledger-item');
@@ -613,6 +640,10 @@ try{
   await ideaPage.goto(`${BASE}/#ideas`,{waitUntil:'networkidle'});
   await ideaPage.locator('.idea-card .idea-candidate').first().waitFor();
   if(await ideaPage.locator('#idea-body').getAttribute('aria-busy')!=='false') throw new Error('idea results did not leave the loading state');
+  const monitorBadge=ideaPage.locator('[data-idea-symbol="005930.KS"] .idea-monitor-status.sell').first();
+  await monitorBadge.waitFor();
+  const monitorText=await monitorBadge.innerText();
+  if(!monitorText.includes('사후점검 · 단기 매도 검토')||!monitorText.includes('RSI 81.7')) throw new Error(`idea/pick monitor conflict was not reconciled: ${monitorText}`);
   if(await ideaPage.locator('.idea-guide').evaluate(node=>node.open)) throw new Error('idea methodology should start collapsed');
   const firstIdea=await ideaPage.locator('.idea-card .idea-candidate').first().boundingBox();
   if(!firstIdea||firstIdea.y>=844) throw new Error(`the first idea candidate is below the first viewport: ${JSON.stringify(firstIdea)}`);
@@ -640,6 +671,30 @@ try{
   await page.waitForSelector('.pick-ledger-item');
   if(!(await page.locator('h2').first().innerText()).includes('최근 주목받는 종목')) throw new Error('PICK path entry did not restore spotlight');
   await context.close();
+
+  const auditContext=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:1});
+  const notFoundPage=await auditContext.newPage();await seed(notFoundPage);await installMocks(notFoundPage);
+  await notFoundPage.goto(`${BASE}/#definitely-missing`,{waitUntil:'networkidle'});
+  await notFoundPage.waitForSelector('.not-found-card');
+  if(!(await notFoundPage.locator('.not-found-card').innerText()).includes('이 주소의 화면을 찾을 수 없어요')) throw new Error('unknown route did not show not-found guidance');
+  await notFoundPage.close();
+
+  const shortMenu=await auditContext.newPage();await seed(shortMenu);await installMocks(shortMenu);
+  await shortMenu.setViewportSize({width:360,height:560});
+  await shortMenu.goto(`${BASE}/#more`,{waitUntil:'networkidle'});
+  const shortInfo=shortMenu.locator('.feature-menu [data-tab="info"]');
+  await shortInfo.scrollIntoViewIfNeeded();
+  const [shortInfoBox,shortNavBox]=await Promise.all([shortInfo.boundingBox(),shortMenu.locator('.bottom-nav').boundingBox()]);
+  if(!shortInfoBox||!shortNavBox||shortInfoBox.y+shortInfoBox.height>shortNavBox.y-2) throw new Error(`short viewport data guide is obscured: ${JSON.stringify({shortInfoBox,shortNavBox})}`);
+  await shortMenu.close();
+  await auditContext.close();
+
+  const desktopContext=await browser.newContext({viewport:{width:1440,height:900},deviceScaleFactor:1});
+  const desktopPage=await desktopContext.newPage();await seed(desktopPage);await installMocks(desktopPage);
+  await desktopPage.goto(`${BASE}/#more`,{waitUntil:'networkidle'});
+  const desktopShell=await desktopPage.locator('.app-shell').boundingBox();
+  if(!desktopShell||desktopShell.width<=600||desktopShell.width>780) throw new Error(`desktop web shell did not widen appropriately: ${JSON.stringify(desktopShell)}`);
+  await desktopContext.close();
 
   const errorContext=await browser.newContext({viewport:{width:390,height:844}});
   const errorPage=await errorContext.newPage();await seed(errorPage);await installMocks(errorPage,'server-error');
