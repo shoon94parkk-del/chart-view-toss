@@ -35,7 +35,7 @@ assert(macro.dataContract?.observedAt, 'macro observation contract missing');
 assert(macro.results.some((row) => row.unit && row.observedAt), 'macro unit/observation metadata missing');
 
 const exportsSnapshot = await get('/api/export-momentum', 45000);
-assert(Number(exportsSnapshot.schemaVersion) >= 3, 'export schema v3 missing');
+assert(Number(exportsSnapshot.schemaVersion) >= 4, 'export schema v4 missing');
 assert(Array.isArray(exportsSnapshot.items) && exportsSnapshot.items.length >= 1, 'export item rows missing');
 assert(exportsSnapshot.itemPeriod, 'export item period missing');
 assert(
@@ -45,6 +45,13 @@ assert(
 assert(
   exportsSnapshot.items.some((row) => Number(row.unitValueUsdPerKg) > 0 && Number.isFinite(Number(row.unitValueYoY))),
   'derived export unit value is missing'
+);
+
+assert(exportsSnapshot.breadth?.level === 'HS2', 'export HS2 breadth missing');
+assert(Number(exportsSnapshot.breadth?.comparableCount) > 20, 'export breadth comparable universe too small');
+assert(
+  Array.isArray(exportsSnapshot.breadth?.topPositive) && Array.isArray(exportsSnapshot.breadth?.topNegative),
+  'export breadth movers missing'
 );
 
 const exportDetail = await get('/api/export-momentum/item-detail?key=semiconductor', 60000);
@@ -63,6 +70,11 @@ assert(
   'export item detail country breakdown missing'
 );
 
+assert(Number.isFinite(Number(exportDetail.momentum?.exports?.avg3mYoY)), 'export 3-month amount momentum missing');
+assert(Number.isFinite(Number(exportDetail.momentum?.volume?.avg3mYoY)), 'export 3-month volume momentum missing');
+assert(Number.isFinite(Number(exportDetail.momentum?.unitValue?.avg3mYoY)), 'export 3-month unit-value momentum missing');
+assert(Array.isArray(exportDetail.momentum?.phaseHistory) && exportDetail.momentum.phaseHistory.length === 12, 'export phase history missing');
+
 console.log('Live backend contract smoke passed', {
   base: BASE,
   quoteCount: quotes.results.length,
@@ -70,6 +82,8 @@ console.log('Live backend contract smoke passed', {
   macroCount: macro.results.length,
   exportItemCount: exportsSnapshot.items.length,
   exportItemPeriod: exportsSnapshot.itemPeriod,
+  exportBreadthCount: exportsSnapshot.breadth.comparableCount,
+  exportBreadthRising: exportsSnapshot.breadth.risingCount,
   exportDetailMonths: exportDetail.history.length,
   exportDetailCountries: exportDetail.countries.length,
 });
