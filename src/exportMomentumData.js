@@ -1,18 +1,18 @@
+import { api } from './api.js';
 import { normalizeExportSnapshot } from './exportMomentumModel.js';
 
-const SNAPSHOT_URL='/data/export-momentum.json';
-
 export async function loadExportMomentumSnapshot({force=false}={}){
-  const response=await fetch(SNAPSHOT_URL,{
-    headers:{Accept:'application/json'},
-    cache:force?'reload':'no-cache',
+  const raw=await api('/api/export-momentum',{
+    ttlMs:300000,
+    timeoutMs:30000,
+    retries:0,
+    force,
   });
-  if(!response.ok)throw new Error('수출 데이터를 불러오지 못했어요.');
-  const payload=normalizeExportSnapshot(await response.json());
+  const payload=normalizeExportSnapshot(raw);
   if(!payload.period||payload.summary.exportsUsdBillion===null){
-    throw new Error('표시할 수출 데이터가 아직 준비되지 않았어요.');
+    throw new Error('관세청 수출 데이터가 아직 준비되지 않았어요.');
   }
   return payload;
 }
 
-export const exportMomentumSnapshotUrl=SNAPSHOT_URL;
+export const exportMomentumApiPath='/api/export-momentum';
