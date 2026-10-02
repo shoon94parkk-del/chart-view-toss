@@ -236,6 +236,37 @@ async function installMocks(page, mode='ok') {
       ],
       meta:{scope:'CN, HK, VN, TW, US, JP configured semiconductor markets; not a global ranking',cacheStatus:'fresh'},
     });
+    if(path==='/api/export-momentum/provisional') return json(route,{
+      schemaVersion:1,status:'official_preliminary_api',period:'2026-09',periodLabel:'2026년 9월',latestStage:30,latestStageLabel:'월 전체',
+      checkpoints:[
+        {stage:10,label:'1~10일',periodRaw:'01~10',
+          total:{exportsUsdBillion:34.9,exportYoY:18.2,exportMoM:12.3,deltaYoYUsdBillion:5.4},
+          semiconductor:{exportsUsdBillion:16.48,exportYoY:270.1,exportMoM:65.6,deltaYoYUsdBillion:12.03},
+          semiconductorSharePct:47.1,semiconductorContributionPct:222.8,semiconductorYoYAccelerationPp:null,totalYoYAccelerationPp:null},
+        {stage:20,label:'1~20일',periodRaw:'01~20',
+          total:{exportsUsdBillion:71.4,exportYoY:21.5,exportMoM:14.2,deltaYoYUsdBillion:12.6},
+          semiconductor:{exportsUsdBillion:34.13,exportYoY:210.0,exportMoM:31.1,deltaYoYUsdBillion:23.12},
+          semiconductorSharePct:47.8,semiconductorContributionPct:183.5,semiconductorYoYAccelerationPp:-60.1,totalYoYAccelerationPp:3.3},
+        {stage:30,label:'월 전체',periodRaw:'01~30',
+          total:{exportsUsdBillion:120.94,exportYoY:83.5,exportMoM:40.0,deltaYoYUsdBillion:55.0},
+          semiconductor:{exportsUsdBillion:60.5,exportYoY:200.0,exportMoM:29.2,deltaYoYUsdBillion:40.3},
+          semiconductorSharePct:50.0,semiconductorContributionPct:73.3,semiconductorYoYAccelerationPp:-10.0,totalYoYAccelerationPp:62.0},
+      ],
+      items:[
+        {key:'semiconductor',name:'반도체',exportsUsdBillion:60.5,exportYoY:200,exportMoM:29.2,deltaYoYUsdBillion:40.3},
+        {key:'passenger-car',name:'승용차',exportsUsdBillion:6.1,exportYoY:-5,exportMoM:4.0,deltaYoYUsdBillion:-.3},
+        {key:'petroleum',name:'석유제품',exportsUsdBillion:5.2,exportYoY:15,exportMoM:8,deltaYoYUsdBillion:.7},
+        {key:'steel',name:'철강제품',exportsUsdBillion:4.4,exportYoY:3,exportMoM:1,deltaYoYUsdBillion:.1},
+        {key:'wireless',name:'무선통신기기',exportsUsdBillion:3.8,exportYoY:12,exportMoM:5,deltaYoYUsdBillion:.4},
+        {key:'ships',name:'선박',exportsUsdBillion:3.2,exportYoY:30,exportMoM:18,deltaYoYUsdBillion:.8},
+        {key:'auto-parts',name:'자동차부품',exportsUsdBillion:2.7,exportYoY:7,exportMoM:2,deltaYoYUsdBillion:.2},
+        {key:'computer-peripherals',name:'컴퓨터주변기기',exportsUsdBillion:2.4,exportYoY:25,exportMoM:15,deltaYoYUsdBillion:.5},
+        {key:'precision',name:'정밀기기',exportsUsdBillion:1.9,exportYoY:8,exportMoM:3,deltaYoYUsdBillion:.1},
+        {key:'appliances',name:'가전제품',exportsUsdBillion:1.2,exportYoY:4,exportMoM:-1,deltaYoYUsdBillion:.05},
+      ],
+      meta:{classification:'Korea Customs 10 major export product categories; not HS monthly classification',cacheStatus:'fresh'},
+      source:{name:'관세청 수출 주요품목별 10일 단위 잠정치 통계',url:'https://www.data.go.kr/data/15157908/openapi.do'},
+    });
     if(path==='/api/export-momentum/item-detail') return json(route,{
       schemaVersion:2,key:url.searchParams.get('key')||'semiconductor',name:'반도체',note:'HS 8541+8542 합산',period:'2026-08',
       history:Array.from({length:12},(_,i)=>({
@@ -407,6 +438,12 @@ try{
     await page.waitForTimeout(120);
     if(tab==='exports'){
       await page.waitForSelector('.export-combo-plot');
+      await page.waitForSelector('.export-provisional-hero');
+      if(await page.locator('.export-provisional-stage').count()!==3) throw new Error('10-day radar must show 10d 20d and month-end checkpoints');
+      if(await page.locator('.export-provisional-item').count()!==10) throw new Error('10-day radar must show ten official product groups');
+      const provisionalText=await page.locator('#export-provisional-radar').innerText();
+      for(const label of ['10일 단위 잠정 수출 레이더','1~10일','1~20일','월 전체','전년 같은 구간','전월 같은 구간','증가율 가속','증가액 기여','반도체','컴퓨터주변기기']) if(!provisionalText.includes(label)) throw new Error(`10-day radar label missing: ${label}`);
+
       if(await page.locator('.export-combo-column').count()!==12) throw new Error('export dual-axis chart must show 12 official monthly observations');
       if(await page.locator('.export-combo-dot').count()!==12) throw new Error('export dual-axis YoY overlay must show 12 points');
       if(await page.locator('.export-combo-line polyline').count()!==1) throw new Error('export dual-axis YoY line missing');
