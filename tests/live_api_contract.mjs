@@ -89,7 +89,7 @@ for (const key of ['dram','flash','mcp-memory','dram-module']) {
 assert(String(semiconductorCountries.meta?.scope || '').includes('not a global ranking'), 'semiconductor country scope warning missing');
 
 const provisional = await get('/api/export-momentum/provisional', 90000);
-assert(Number(provisional.schemaVersion) >= 1, 'provisional export schema missing');
+assert(Number(provisional.schemaVersion) >= 2, 'provisional export schema v2 missing');
 assert(provisional.status === 'official_preliminary_api', 'provisional export status mismatch');
 assert(/^\d{4}-\d{2}$/.test(String(provisional.period || '')), 'provisional export period missing');
 assert([10,20,30].includes(Number(provisional.latestStage)), 'provisional latest stage invalid');
@@ -103,6 +103,23 @@ assert(Number(provisionalLatest?.semiconductorSharePct) > 0, 'provisional semico
 assert(Array.isArray(provisional.items) && provisional.items.length >= 8, 'provisional major export products missing');
 assert(provisional.items.some((row) => row.key === 'semiconductor' && Number(row.exportsUsdBillion) > 0), 'provisional semiconductor item row missing');
 assert(String(provisional.meta?.classification || '').includes('not HS monthly classification'), 'provisional classification scope warning missing');
+
+const landing = provisional.landingProjection;
+assert(landing && ['open','final-review','final'].includes(String(landing.status || '')), 'month-end landing projection missing');
+if (landing.status === 'open' || landing.status === 'final-review') {
+  for (const [name,metric] of [['total',landing.total],['semiconductor',landing.semiconductor]]) {
+    assert(metric && Number(metric.estimateUsdBillion) > 0, `landing ${name} estimate missing`);
+    assert(Number(metric.rangeLowUsdBillion) > 0 && Number(metric.rangeHighUsdBillion) >= Number(metric.rangeLowUsdBillion), `landing ${name} range invalid`);
+    assert(Number(metric.historySampleCount) >= 12, `landing ${name} history sample too small`);
+    assert(Number(metric.backtest?.sampleCount) > 0, `landing ${name} backtest sample missing`);
+    assert(Number.isFinite(Number(metric.backtest?.medianAbsErrorPct)), `landing ${name} backtest error missing`);
+    assert(Number.isFinite(Number(metric.backtest?.rangeHitPct)), `landing ${name} range hit rate missing`);
+  }
+}
+if (landing.status === 'final-review') {
+  assert(Number(landing.total?.actualUsdBillion) > 0, 'landing total actual close missing');
+  assert(Number(landing.semiconductor?.actualUsdBillion) > 0, 'landing semiconductor actual close missing');
+}
 
 const exportDetail = await get('/api/export-momentum/item-detail?key=semiconductor', 60000);
 assert(exportDetail.key === 'semiconductor', 'export item detail key mismatch');
@@ -149,6 +166,14 @@ console.log('Live backend contract smoke passed', {
   provisionalSemiconductorExports: provisionalLatest.semiconductor.exportsUsdBillion,
   provisionalSemiconductorYoY: provisionalLatest.semiconductor.exportYoY,
   provisionalSemiconductorShare: provisionalLatest.semiconductorSharePct,
+  landingStatus: landing.status,
+  landingStage: landing.stageLabel,
+  landingTotalEstimate: landing.total?.estimateUsdBillion,
+  landingTotalActual: landing.total?.actualUsdBillion,
+  landingTotalBacktestError: landing.total?.backtest?.medianAbsErrorPct,
+  landingSemiEstimate: landing.semiconductor?.estimateUsdBillion,
+  landingSemiActual: landing.semiconductor?.actualUsdBillion,
+  landingSemiBacktestError: landing.semiconductor?.backtest?.medianAbsErrorPct,
   exportBreadthCount: exportsSnapshot.breadth.comparableCount,
   exportBreadthRising: exportsSnapshot.breadth.risingCount,
   exportDetailMonths: exportDetail.history.length,
