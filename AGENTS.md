@@ -3,21 +3,24 @@
 This repository is the Apps in Toss client for Chart View. Do not rely on chat memory alone.
 
 ## Read before editing
-1. `docs/project-memory.md`
-2. `docs/regression-guardrails.md`
-3. `docs/decision-log.md`
-4. `docs/ARCHITECTURE.md`
-5. `docs/P0_RELEASE_GATE.md`
-6. Tests closest to the changed area
+1. `docs/no-repeat-regression-policy.md`
+2. `docs/project-memory.md`
+3. `docs/regression-guardrails.md`
+4. `docs/decision-log.md`
+5. `docs/ARCHITECTURE.md`
+6. `docs/P0_RELEASE_GATE.md`
+7. Tests closest to the changed area
 
 ## Required workflow
-1. Search prior commits/docs/tests for the same behavior before editing.
-2. Keep Toss-specific UI isolated in this repository. Do not rewrite the Web Chart View UI from here.
-3. Preserve the shared backend API contract unless the web backend change is explicitly coordinated.
-4. Add/update a regression test for every behavioral fix.
-5. Run `npm test`; for release-sensitive work also run `npm run build` and the relevant mobile QA.
-6. Do not call Apps in Toss release complete from web preview alone; real Android/iOS Sandbox/QR validation remains a gate.
-7. Update `docs/decision-log.md` and, when relevant, project memory/guardrails.
+1. Search prior commits/docs/tests for the same behavior before editing and classify the task as new behavior, new bug, or regression.
+2. If it is a regression, restore the known-good contract first. Do not redesign an already-solved subsystem from scratch.
+3. For performance/cache/quote work, compare against the recorded same-harness baseline before and after. Never weaken data-freshness guarantees merely to improve first paint.
+4. Keep Toss-specific UI isolated in this repository. Do not rewrite the Web Chart View UI from here.
+5. Preserve the shared backend API contract unless the web backend change is explicitly coordinated.
+6. Add/update a regression test for every behavioral fix. A repeated bug without a new/strengthened regression test is not complete.
+7. Run `npm test`; for release-sensitive work also run `npm run build` and the relevant mobile QA.
+8. Do not call Apps in Toss release complete from web preview alone; real Android/iOS Sandbox/QR validation remains a gate.
+9. Update `docs/decision-log.md` and, when relevant, project memory/guardrails.
 
 ## Current production contract
 - Toss preview: https://chart-view-toss.onrender.com
