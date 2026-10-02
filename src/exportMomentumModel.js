@@ -68,6 +68,30 @@ export function normalizeExportSnapshot(raw={}){
     }))
     .filter(row=>row.period&&row.exportsUsdBillion!==null);
 
+  const normalizeMover=(row={})=>({
+    code:text(row?.code),
+    name:text(row?.name),
+    exportsUsdBillion:finite(row?.exportsUsdBillion),
+    priorExportsUsdBillion:finite(row?.priorExportsUsdBillion),
+    deltaUsdBillion:finite(row?.deltaUsdBillion),
+    exportYoY:finite(row?.exportYoY),
+    sharePct:finite(row?.sharePct),
+  });
+  const rawBreadth=raw.breadth&&typeof raw.breadth==='object'?raw.breadth:null;
+  const breadth=rawBreadth?{
+    period:text(rawBreadth.period),
+    level:text(rawBreadth.level)||'HS2',
+    comparableCount:finite(rawBreadth.comparableCount),
+    risingCount:finite(rawBreadth.risingCount),
+    fallingCount:finite(rawBreadth.fallingCount),
+    flatCount:finite(rawBreadth.flatCount),
+    risingBreadthPct:finite(rawBreadth.risingBreadthPct),
+    risingExportSharePct:finite(rawBreadth.risingExportSharePct),
+    netChangeUsdBillion:finite(rawBreadth.netChangeUsdBillion),
+    topPositive:(Array.isArray(rawBreadth.topPositive)?rawBreadth.topPositive:[]).map(normalizeMover).filter(row=>row.code),
+    topNegative:(Array.isArray(rawBreadth.topNegative)?rawBreadth.topNegative:[]).map(normalizeMover).filter(row=>row.code),
+  }:null;
+
   const sources=(Array.isArray(raw.sources)?raw.sources:[])
     .map(row=>({name:text(row?.name),url:text(row?.url),role:text(row?.role)}))
     .filter(row=>row.name&&/^https:\/\//.test(row.url));
@@ -86,6 +110,7 @@ export function normalizeExportSnapshot(raw={}){
     summary,
     checkpoints,
     items,
+    breadth,
     regions,
     history,
     sources,
@@ -221,6 +246,26 @@ export function normalizeExportItemDetail(raw={}){
     tradeBalanceUsdBillion:finite(row?.tradeBalanceUsdBillion),
   })).filter(row=>row.period&&row.exportsUsdBillion!==null);
 
+  const normalizeMomentumMetric=(metric={})=>({
+    avg3mYoY:finite(metric?.avg3mYoY),
+    previous3mYoY:finite(metric?.previous3mYoY),
+    accelerationPp:finite(metric?.accelerationPp),
+    label:text(metric?.label),
+  });
+  const rawMomentum=raw.momentum&&typeof raw.momentum==='object'?raw.momentum:{};
+  const momentum={
+    exports:normalizeMomentumMetric(rawMomentum.exports),
+    volume:normalizeMomentumMetric(rawMomentum.volume),
+    unitValue:normalizeMomentumMetric(rawMomentum.unitValue),
+    latestPhase:text(rawMomentum.latestPhase),
+    phaseHistory:(Array.isArray(rawMomentum.phaseHistory)?rawMomentum.phaseHistory:[]).map(row=>({
+      period:text(row?.period),
+      phase:text(row?.phase),
+      volumeYoY:finite(row?.volumeYoY),
+      unitValueYoY:finite(row?.unitValueYoY),
+    })).filter(row=>row.period),
+  };
+
   const countries=(Array.isArray(raw.countries)?raw.countries:[]).map(row=>({
     name:text(row?.name),
     code:text(row?.code),
@@ -235,9 +280,16 @@ export function normalizeExportItemDetail(raw={}){
     note:text(raw.note),
     period:text(raw.period),
     history,
+    momentum,
     countries,
     meta:raw.meta&&typeof raw.meta==='object'?raw.meta:{},
   };
+}
+
+export function formatPp(value,{digits=1}={}){
+  const number=finite(value);
+  if(number===null)return '-';
+  return `${number>0?'+':''}${number.toFixed(digits)}%p`;
 }
 
 export function balanceTone(value){
