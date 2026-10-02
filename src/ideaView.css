@@ -89,3 +89,12 @@
 .idea-reasons i{font-size:11px}
 @media(max-width:360px){.idea-hero h2{font-size:23px}.idea-results-head{align-items:flex-start;flex-direction:column;gap:2px}}
 
+
+
+/* Trust pass: keep idea pattern and prior pick-monitor state visible together. */
+.idea-monitor-status{grid-column:1/-1;display:grid;gap:3px;margin-top:2px;padding:8px 9px;border-radius:10px;border:1px solid #edf0f2;background:#fff}
+.idea-monitor-status b{font-size:10px;color:#4e5968}.idea-monitor-status small{font-size:9px;line-height:1.45;color:#8b95a1}
+.idea-monitor-status.sell{border-color:#ffd8dc;background:#fff5f6}.idea-monitor-status.sell b{color:#c93445}
+.idea-monitor-status.watch{border-color:#ffe1ad;background:#fff9ee}.idea-monitor-status.watch b{color:#aa6900}
+.idea-monitor-status.keep{border-color:#caedda;background:#f3fbf7}.idea-monitor-status.keep b{color:#087a45}
+.idea-monitor-status.pending{background:#f7f8fa}.idea-monitor-status.pending b{color:#6b7684}
