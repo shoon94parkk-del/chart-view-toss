@@ -263,3 +263,12 @@ Live index journey follow-up: Home's market payload and stock heatmap cache were
 
 ## 2026-10-02 Whole-site reliability follow-up
 Explicit chart retries bypass cached empty/partial HTTP200 results while ordinary period loads retain caching. Partial charts disclose missing selected names and offer an independent retry without inventing returns. Domestic-only DART comparison and industry jumps match actual mounted targets; missing Korean context removes its jump too. Detail news has independent failure/loading/retry distinct from a valid empty response, with ticker fallback if identity search fails. Web external opening keeps noopener/noreferrer but does not misread its deliberate null return as failure. Native URL error handling and HTTPS validation are unchanged. Browser regression reliability_audit_qa.mjs covers 320/390/430px, response recovery, preserved period, complete coverage, supported routes, news-only retry and secure popup without false toast. See RELIABILITY_UX_AUDIT_2026-10-02.md for production evidence.
+
+
+## 2026-10-02 — 이미 해결한 성능/캐시 문제의 재작업 금지
+
+**관찰된 문제:** 홈↔상세 시세 정합성, 상세 첫 가격 표시, valuation/valuation-band 캐시처럼 과거에 이미 개선했던 영역이 후속 변경으로 다시 느려지거나 깨졌고, 이를 새 문제처럼 다시 최적화하는 작업이 반복됐다.
+
+**결정:** 대화 기억이 아니라 저장소 기록을 우선한다. 성능·시세·캐시·히트맵·valuation·로딩 관련 변경 전에는 `docs/no-repeat-regression-policy.md`를 반드시 확인하고, 작업을 새 기능/새 버그/기존 수정의 회귀 중 하나로 먼저 분류한다. 회귀라면 기존 known-good 계약을 복원하는 것이 우선이며, 같은 문제를 새 구조로 처음부터 다시 구현하지 않는다.
+
+**보호:** `AGENTS.md`가 no-repeat 정책을 최우선 읽기 문서로 지정한다. `docs/regression-guardrails.md`에 현재 quote/heatmap/detail/valuation 성능 계약과 동일 측정 방식 기준값을 기록한다. 반복된 문제는 회귀 테스트를 새로 추가하거나 강화하지 않으면 완료로 보지 않는다.
