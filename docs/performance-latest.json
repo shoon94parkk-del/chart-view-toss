@@ -1,0 +1,610 @@
+{
+  "base": "https://chart-view-toss.onrender.com",
+  "measuredAt": "2026-10-02T01:12:27.569Z",
+  "results": [
+    {
+      "name": "home",
+      "domMs": 369,
+      "readyMs": 614,
+      "readyText": "6,963.21",
+      "paint": [
+        {
+          "name": "first-paint",
+          "ms": 424
+        },
+        {
+          "name": "first-contentful-paint",
+          "ms": 424
+        }
+      ],
+      "overflow": false,
+      "loaders": [],
+      "requests": [
+        {
+          "path": "/api/market-now",
+          "status": 200,
+          "ms": 204
+        },
+        {
+          "path": "/api/home-snapshot",
+          "status": 200,
+          "ms": 216
+        },
+        {
+          "path": "/api/home-bootstrap",
+          "status": 200,
+          "ms": 363
+        },
+        {
+          "path": "/api/activity",
+          "status": 200,
+          "ms": 380
+        }
+      ],
+      "errors": []
+    },
+    {
+      "name": "detail",
+      "domMs": 142,
+      "readyMs": 3634,
+      "readyText": "276,000원",
+      "paint": [
+        {
+          "name": "first-paint",
+          "ms": 196
+        },
+        {
+          "name": "first-contentful-paint",
+          "ms": 196
+        }
+      ],
+      "overflow": false,
+      "loaders": [],
+      "requests": [
+        {
+          "path": "/shoon94parkk-del/chart_View/main/static/data/screener.json",
+          "status": 200,
+          "ms": 332
+        },
+        {
+          "path": "/api/valuation",
+          "status": 200,
+          "ms": 1506
+        },
+        {
+          "path": "/api/personalized-news",
+          "status": 200,
+          "ms": 1707
+        },
+        {
+          "path": "/api/business-report",
+          "status": 200,
+          "ms": 2102
+        },
+        {
+          "path": "/api/compare",
+          "status": 200,
+          "ms": 2109
+        },
+        {
+          "path": "/api/financial-history",
+          "status": 200,
+          "ms": 2812
+        },
+        {
+          "path": "/api/financial-quarters",
+          "status": 200,
+          "ms": 2720
+        },
+        {
+          "path": "/api/quotes",
+          "status": 200,
+          "ms": 3106
+        },
+        {
+          "path": "/api/activity",
+          "status": 200,
+          "ms": 3206
+        }
+      ],
+      "errors": []
+    },
+    {
+      "name": "US-detail",
+      "domMs": 111,
+      "readyMs": 4957,
+      "readyText": "$230.86",
+      "paint": [
+        {
+          "name": "first-paint",
+          "ms": 156
+        },
+        {
+          "name": "first-contentful-paint",
+          "ms": 156
+        }
+      ],
+      "overflow": false,
+      "loaders": [
+        "관련 뉴스를 불러오고 있어요"
+      ],
+      "requests": [
+        {
+          "path": "/api/valuation",
+          "status": 200,
+          "ms": 573
+        },
+        {
+          "path": "/api/compare",
+          "status": 200,
+          "ms": 751
+        },
+        {
+          "path": "/api/activity",
+          "status": 200,
+          "ms": 1941
+        },
+        {
+          "path": "/api/quotes",
+          "status": 200,
+          "ms": 4456
+        }
+      ],
+      "errors": []
+    },
+    {
+      "name": "index",
+      "domMs": 89,
+      "readyMs": 3931,
+      "readyText": "6,974.03 pt",
+      "paint": [
+        {
+          "name": "first-paint",
+          "ms": 132
+        },
+        {
+          "name": "first-contentful-paint",
+          "ms": 132
+        }
+      ],
+      "overflow": false,
+      "loaders": [],
+      "requests": [
+        {
+          "path": "/api/compare",
+          "status": 200,
+          "ms": 779
+        },
+        {
+          "path": "/api/activity",
+          "status": 200,
+          "ms": 1149
+        },
+        {
+          "path": "/api/quotes",
+          "status": 200,
+          "ms": 3774
+        }
+      ],
+      "errors": []
+    },
+    {
+      "name": "chart",
+      "domMs": 113,
+      "readyMs": 437,
+      "readyText": "",
+      "paint": [
+        {
+          "name": "first-paint",
+          "ms": 152
+        },
+        {
+          "name": "first-contentful-paint",
+          "ms": 152
+        }
+      ],
+      "overflow": false,
+      "loaders": [],
+      "requests": [
+        {
+          "path": "/api/compare",
+          "status": 200,
+          "ms": 276
+        },
+        {
+          "path": "/api/activity",
+          "status": 200,
+          "ms": 974
+        }
+      ],
+      "errors": []
+    },
+    {
+      "name": "heatmap",
+      "domMs": 117,
+      "readyMs": 962,
+      "readyText": "삼성전자-0.18%",
+      "paint": [
+        {
+          "name": "first-paint",
+          "ms": 140
+        },
+        {
+          "name": "first-contentful-paint",
+          "ms": 140
+        }
+      ],
+      "overflow": false,
+      "loaders": [],
+      "requests": [
+        {
+          "path": "/api/heatmap/full",
+          "status": 200,
+          "ms": 583
+        },
+        {
+          "path": "/api/activity",
+          "status": 200,
+          "ms": 1270
+        },
+        {
+          "path": "/api/home-snapshot",
+          "status": 200,
+          "ms": 1193
+        }
+      ],
+      "errors": []
+    },
+    {
+      "name": "discover",
+      "domMs": 99,
+      "readyMs": 274,
+      "readyText": "3S060310.KQ · KOSDAQ · 2026-10-01기준 종가 1,111원+3.06%RSI 48.7 · 거래량 0.78배 · 20일 -3.14%RSI 48.7거래량 0.8배",
+      "paint": [
+        {
+          "name": "first-paint",
+          "ms": 124
+        },
+        {
+          "name": "first-contentful-paint",
+          "ms": 124
+        }
+      ],
+      "overflow": false,
+      "loaders": [],
+      "requests": [
+        {
+          "path": "/shoon94parkk-del/chart_View/main/static/data/screener.json",
+          "status": 200,
+          "ms": 47
+        },
+        {
+          "path": "/api/activity",
+          "status": 200,
+          "ms": 690
+        }
+      ],
+      "errors": []
+    },
+    {
+      "name": "macro",
+      "domMs": 136,
+      "readyMs": 952,
+      "readyText": "T10Y2Y최근 관측장단기 금리차 (10Y-2Y)0.41%p+4bp2026.05.082026.09.3010년-2년 미국 국채 금리차입니다.2026-09-30 관측이전 관측 대비FRED mirror · Equibles CSV원본 시리즈",
+      "paint": [
+        {
+          "name": "first-paint",
+          "ms": 164
+        },
+        {
+          "name": "first-contentful-paint",
+          "ms": 164
+        }
+      ],
+      "overflow": false,
+      "loaders": [],
+      "requests": [
+        {
+          "path": "/api/macro",
+          "status": 200,
+          "ms": 564
+        },
+        {
+          "path": "/api/activity",
+          "status": 200,
+          "ms": 852
+        }
+      ],
+      "errors": []
+    },
+    {
+      "name": "news",
+      "domMs": 108,
+      "readyMs": 920,
+      "readyText": "직접 관련삼성전자news1.kr · 11분 전삼성證 \"삼성전자, 3분기 영업익 100조 돌파…내년 HBM 가격 80%↑\"한국어기사 제목·요약에 기업명 확인실적전략",
+      "paint": [
+        {
+          "name": "first-paint",
+          "ms": 136
+        },
+        {
+          "name": "first-contentful-paint",
+          "ms": 136
+        }
+      ],
+      "overflow": false,
+      "loaders": [],
+      "requests": [
+        {
+          "path": "/api/personalized-news",
+          "status": 200,
+          "ms": 402
+        },
+        {
+          "path": "/api/activity",
+          "status": 200,
+          "ms": 1103
+        }
+      ],
+      "errors": []
+    },
+    {
+      "name": "tools",
+      "domMs": 116,
+      "readyMs": 158,
+      "readyText": "FZFinviz미국 주식 스크리너↗",
+      "paint": [
+        {
+          "name": "first-paint",
+          "ms": 152
+        },
+        {
+          "name": "first-contentful-paint",
+          "ms": 152
+        }
+      ],
+      "overflow": false,
+      "loaders": [],
+      "requests": [
+        {
+          "path": "/api/activity",
+          "status": 200,
+          "ms": 420
+        }
+      ],
+      "errors": []
+    },
+    {
+      "name": "watch",
+      "domMs": 94,
+      "readyMs": 128,
+      "readyText": "아직 관심종목이 없어요‘종목 추가’에서 저장하면 홈과 뉴스에도 바로 반영돼요.종목 추가",
+      "paint": [
+        {
+          "name": "first-paint",
+          "ms": 120
+        },
+        {
+          "name": "first-contentful-paint",
+          "ms": 120
+        }
+      ],
+      "overflow": false,
+      "loaders": [],
+      "requests": [
+        {
+          "path": "/api/activity",
+          "status": 200,
+          "ms": 732
+        }
+      ],
+      "errors": []
+    },
+    {
+      "name": "valuation",
+      "domMs": 133,
+      "readyMs": 1450,
+      "readyText": "삼삼성전자005930.KS · 공급자 기간 기준 확인 필요Yahoo Finance · 일별 저장 자료3.79배10. 02. 10:11 KST",
+      "paint": [
+        {
+          "name": "first-paint",
+          "ms": 164
+        },
+        {
+          "name": "first-contentful-paint",
+          "ms": 164
+        }
+      ],
+      "overflow": false,
+      "loaders": [],
+      "requests": [
+        {
+          "path": "/api/quotes",
+          "status": 200,
+          "ms": 1043
+        },
+        {
+          "path": "/api/valuation",
+          "status": 200,
+          "ms": 1253
+        },
+        {
+          "path": "/api/activity",
+          "status": 200,
+          "ms": 2137
+        }
+      ],
+      "errors": []
+    },
+    {
+      "name": "consensus",
+      "domMs": 106,
+      "readyMs": 1421,
+      "readyText": "EPS 평균 추정47,993.56EPS 범위40,609 ~ 60,367참여 애널리스트32명매출 평균 추정724.57조 원원값 724,570,746,220,000 KRWEPS 30일 변경-1.41%30일 상향 / 하향 건수5 / 7",
+      "paint": [
+        {
+          "name": "first-paint",
+          "ms": 136
+        },
+        {
+          "name": "first-contentful-paint",
+          "ms": 136
+        }
+      ],
+      "overflow": false,
+      "loaders": [],
+      "requests": [
+        {
+          "path": "/api/consensus",
+          "status": 200,
+          "ms": 1088
+        },
+        {
+          "path": "/api/consensus",
+          "status": 200,
+          "ms": 1294
+        },
+        {
+          "path": "/api/consensus",
+          "status": 200,
+          "ms": 1386
+        },
+        {
+          "path": "/api/activity",
+          "status": 200,
+          "ms": 1765
+        }
+      ],
+      "errors": []
+    },
+    {
+      "name": "bands",
+      "domMs": 122,
+      "readyMs": 4446,
+      "readyText": "",
+      "paint": [
+        {
+          "name": "first-paint",
+          "ms": 152
+        },
+        {
+          "name": "first-contentful-paint",
+          "ms": 152
+        }
+      ],
+      "overflow": false,
+      "loaders": [],
+      "requests": [
+        {
+          "path": "/api/activity",
+          "status": 200,
+          "ms": 699
+        },
+        {
+          "path": "/api/valuation-band",
+          "status": 200,
+          "ms": 4108
+        }
+      ],
+      "errors": []
+    },
+    {
+      "name": "more",
+      "domMs": 143,
+      "readyMs": 185,
+      "readyText": "시장 스크리너조건으로 종목 찾기",
+      "paint": [
+        {
+          "name": "first-paint",
+          "ms": 180
+        },
+        {
+          "name": "first-contentful-paint",
+          "ms": 180
+        }
+      ],
+      "overflow": false,
+      "loaders": [],
+      "requests": [
+        {
+          "path": "/api/activity",
+          "status": 200,
+          "ms": 871
+        }
+      ],
+      "errors": []
+    },
+    {
+      "name": "picks",
+      "domMs": 87,
+      "readyMs": 1904,
+      "readyText": "코스텍시스355150.KQ · 2026-10-01\n      ⚪ 검토 대기\n      0.00%\n      추천 22,850원→점검가 22,850원\n      최고 0.00%점수 90점\n      ⌄\n    \n    \n      \n        추천 ",
+      "paint": [
+        {
+          "name": "first-paint",
+          "ms": 96
+        },
+        {
+          "name": "first-contentful-paint",
+          "ms": 96
+        }
+      ],
+      "overflow": false,
+      "loaders": [],
+      "requests": [
+        {
+          "path": "/api/home-bootstrap",
+          "status": 200,
+          "ms": 153
+        },
+        {
+          "path": "/api/activity",
+          "status": 200,
+          "ms": 829
+        },
+        {
+          "path": "/static/data/pick_monitor.json",
+          "status": 200,
+          "ms": 1347
+        }
+      ],
+      "errors": []
+    },
+    {
+      "name": "ideas",
+      "domMs": 116,
+      "readyMs": 608,
+      "readyText": "🔥후보 다수거래량이 붙은 상승 종목\n    20일 평균 대비 거래량이 크게 늘면서 당일 주가도 오른 종목을 모았어요.\n    \n    \n      윈팩097800.KQ · KOSDAQ · 반도체 제조업\n      3,825+26.03%\n      거",
+      "paint": [
+        {
+          "name": "first-paint",
+          "ms": 128
+        },
+        {
+          "name": "first-contentful-paint",
+          "ms": 128
+        }
+      ],
+      "overflow": false,
+      "loaders": [],
+      "requests": [
+        {
+          "path": "/shoon94parkk-del/chart_View/main/static/data/screener.json",
+          "status": 200,
+          "ms": 43
+        },
+        {
+          "path": "/shoon94parkk-del/chart_View/main/static/data/company_context.json",
+          "status": 200,
+          "ms": 175
+        },
+        {
+          "path": "/api/activity",
+          "status": 200,
+          "ms": 672
+        }
+      ],
+      "errors": []
+    }
+  ]
+}
