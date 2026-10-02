@@ -4,8 +4,11 @@ import {
   chartExtent,
   chartPct,
   checkpointProgress,
+  exportDriverLabel,
   formatSignedPct,
+  formatUnitValue,
   formatUsdBillion,
+  formatWeightKg,
   normalizeExportSnapshot,
   semiconductorShare,
   tradeBalanceLabel,
@@ -21,7 +24,7 @@ const fixture={
     {label:'1~20일',exportsUsdBillion:71.409,exportYoY:78.3},
     {label:'월 전체',exportsUsdBillion:120.94,exportYoY:83.5},
   ],
-  items:[{name:'반도체',exportsUsdBillion:60.3,exportYoY:262.8}],
+  items:[{name:'반도체',exportsUsdBillion:60.3,exportYoY:262.8,exportWeightKg:12000000,exportWeightYoY:15,unitValueUsdPerKg:5025,unitValueYoY:215}],
 };
 
 test('export snapshot normalizes official numeric fields without inventing missing values',()=>{
@@ -37,6 +40,13 @@ test('display helpers preserve Korean export units and signed growth',()=>{
   assert.equal(formatUsdBillion(60.3),'603억달러');
   assert.equal(formatSignedPct(83.5),'+83.5%');
   assert.equal(formatSignedPct(-5),'-5.0%');
+});
+
+test('weight and implied unit value helpers stay explicit about their units',()=>{
+  assert.equal(formatWeightKg(12_500_000),'1.3만톤');
+  assert.equal(formatUnitValue(12.34),'$12.3/kg');
+  assert.equal(exportDriverLabel({exportWeightYoY:8,unitValueYoY:12}),'물량·단가 동반 증가');
+  assert.equal(exportDriverLabel({exportWeightYoY:-5,unitValueYoY:20}),'단가 주도');
 });
 
 test('checkpoint progress follows calendar coverage rather than future export totals',()=>{
