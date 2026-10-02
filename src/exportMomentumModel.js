@@ -189,13 +189,14 @@ export function zeroPct(extent){
 }
 
 export function exportDriverLabel(row={}){
+  const amount=finite(row.exportYoY);
   const weight=finite(row.exportWeightYoY);
   const unit=finite(row.unitValueYoY);
   if(weight===null||unit===null)return '금액 기준';
   if(weight>0&&unit>0)return '물량·단가 동반 증가';
-  if(weight>0&&unit<=0)return '물량 주도';
-  if(weight<=0&&unit>0)return '단가 주도';
   if(weight<0&&unit<0)return '물량·단가 동반 감소';
+  if(weight>0&&unit<=0)return amount!==null&&amount>=0?'물량 증가 영향 우세':'단가 하락 영향 우세';
+  if(weight<=0&&unit>0)return amount!==null&&amount>=0?'단가 상승 영향 우세':'물량 감소 영향 우세';
   return '물량·단가 혼조';
 }
 
