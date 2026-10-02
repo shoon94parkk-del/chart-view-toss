@@ -231,3 +231,9 @@ Saved investment baselines are device records: show them before network completi
 - Missing official values remain missing; never convert null to zero or estimate undisclosed amounts.
 - Graphs must have text labels/aria descriptions and no horizontal overflow at supported mobile widths.
 - Optional history must not render a fake 12-month chart until at least two official monthly observations exist.
+
+## Export momentum live API
+- Export route must call the shared backend only after the user enters `#exports`; never warm it from Home.
+- A lagged `itemPeriod` may not be divided by the headline month total to produce a semiconductor share.
+- Show `itemPeriod` and `regionPeriod` when they differ from the headline `period`.
+- Do not restore static 10-day/20-day bars unless an official preliminary-data source is actually connected.
