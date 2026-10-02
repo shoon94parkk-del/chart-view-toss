@@ -1,6 +1,6 @@
 const quotes=new Map();
 const priorities=new Map();
-const QUOTE_FIELDS=['price','change','dayChange','asOf','currency','source','stale','sessionDate','previousSessionDate','previousClose','quoteBasis'];
+const QUOTE_FIELDS=['price','change','dayChange','asOf','currency','source','stale','sessionDate','previousSessionDate','previousClose','quoteBasis','priceBasis','sessionType','marketStatus','delayTime'];
 
 const key=value=>String(value||'').trim().toUpperCase();
 
