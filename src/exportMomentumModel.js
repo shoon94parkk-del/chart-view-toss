@@ -336,6 +336,43 @@ export function normalizeExportItemDetail(raw={}){
   };
 }
 
+export function normalizeSemiconductorCountryMatrix(raw={}){
+  const markets=(Array.isArray(raw.markets)?raw.markets:[]).map(row=>({
+    name:text(row?.name),
+    code:text(row?.code),
+  })).filter(row=>row.name&&row.code);
+
+  const segments=(Array.isArray(raw.segments)?raw.segments:[]).map(row=>({
+    key:text(row?.key),
+    name:text(row?.name),
+    code:text(row?.code),
+    period:text(row?.period),
+    exportsUsdBillion:finite(row?.exportsUsdBillion),
+    coveredSharePct:finite(row?.coveredSharePct),
+    leaderCountry:text(row?.leaderCountry),
+    growthLeaderCountry:text(row?.growthLeaderCountry),
+    declineLeaderCountry:text(row?.declineLeaderCountry),
+    countries:(Array.isArray(row?.countries)?row.countries:[]).map(country=>({
+      name:text(country?.name),
+      code:text(country?.code),
+      exportsUsdBillion:finite(country?.exportsUsdBillion),
+      priorExportsUsdBillion:finite(country?.priorExportsUsdBillion),
+      exportYoY:finite(country?.exportYoY),
+      deltaUsdBillion:finite(country?.deltaUsdBillion),
+      sharePct:finite(country?.sharePct),
+    })).filter(country=>country.name&&country.code&&country.exportsUsdBillion!==null),
+  })).filter(row=>row.key&&row.name);
+
+  return {
+    schemaVersion:Number(raw.schemaVersion)||1,
+    period:text(raw.period),
+    markets,
+    segments,
+    meta:raw.meta&&typeof raw.meta==='object'?raw.meta:{},
+  };
+}
+
+
 export function formatPp(value,{digits=1}={}){
   const number=finite(value);
   if(number===null)return '-';
