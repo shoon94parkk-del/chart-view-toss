@@ -133,7 +133,7 @@ async function installMocks(page, mode='ok') {
     if(path==='/api/valuation') return json(route,{stocks:valuationStocks});
     if(path==='/api/macro') return json(route,{generatedAt:'2026-09-21T03:04:00Z',freshCount:4,staleCount:0,summary:{level:'yellow',text:'현재 집계에서는 긍정·부정 신호가 함께 나타납니다.',notice:'시장 환경을 설명하기 위한 요약이며 투자 행동을 권유하지 않습니다.'},results:macroRows});
     if(path==='/api/export-momentum') return json(route,{
-      schemaVersion:4,status:'official_api',period:'2026-09',periodLabel:'2026년 9월',basis:'관세청 통관기준 월간 실적',
+      schemaVersion:6,status:'official_api',period:'2026-09',periodLabel:'2026년 9월',basis:'관세청 통관기준 월간 실적',
       updatedAt:'2026-10-02T14:00:00+09:00',itemPeriod:'2026-08',regionPeriod:'2026-08',
       summary:{exportsUsdBillion:65.9,importsUsdBillion:58.2,balanceUsdBillion:7.7,exportYoY:7.2,importYoY:2.3,cumulativeExportsUsdBillion:540.1,cumulativeBalanceUsdBillion:52.4},
       history:Array.from({length:12},(_,i)=>({period:`${i<3?'2025':'2026'}-${String(((i+9)%12)+1).padStart(2,'0')}`,exportsUsdBillion:55+i,exportYoY:(i-4)*1.8})),
@@ -145,6 +145,16 @@ async function installMocks(page, mode='ok') {
         {key:'cosmetics',name:'화장품',exportsUsdBillion:1.0,exportYoY:11.3,exportWeightKg:21000000,exportWeightYoY:2.3,unitValueUsdPerKg:47.6,unitValueYoY:8.8,importsUsdBillion:0.22,importYoY:6.2,importWeightKg:6500000,tradeBalanceUsdBillion:0.78,note:'HS 3304 기준'},
         {key:'ships',name:'선박',exportsUsdBillion:2.9,exportYoY:8.7,exportWeightKg:89000000,exportWeightYoY:-4.0,unitValueUsdPerKg:32.6,unitValueYoY:13.2,importsUsdBillion:0.4,importYoY:3.1,importWeightKg:12000000,tradeBalanceUsdBillion:2.5,note:'HS 89 기준'},
         {key:'steel',name:'철강',exportsUsdBillion:3.6,exportYoY:-1.5,exportWeightKg:4300000000,exportWeightYoY:3.5,unitValueUsdPerKg:0.84,unitValueYoY:-4.8,importsUsdBillion:2.8,importYoY:4.0,importWeightKg:3500000000,tradeBalanceUsdBillion:0.8,note:'HS 72 기준'},
+      ],
+      semiconductorBreakdown:[
+        {key:'memory-total',name:'메모리 IC',code:'854232',group:'memory',note:'HS 854232 메모리 전체',period:'2026-08',exportsUsdBillion:20.5,exportYoY:120.0,exportMoM:12.0,exportWeightKg:3800000,exportWeightYoY:9.0,exportWeightMoM:3.0,unitValueUsdPerKg:5394.7,unitValueYoY:101.0,unitValueMoM:8.7},
+        {key:'dram',name:'DRAM',code:'8542321010',group:'memory',note:'HSK 8542321010 · HBM은 별도 HSK 코드가 없어 독립 집계 불가',period:'2026-08',exportsUsdBillion:11.4,exportYoY:180.0,exportMoM:6.5,exportWeightKg:1700000,exportWeightYoY:30.0,exportWeightMoM:8.0,unitValueUsdPerKg:6705.9,unitValueYoY:115.0,unitValueMoM:-1.4},
+        {key:'flash',name:'Flash memory',code:'8542321030',group:'memory',note:'HSK 8542321030 · NAND/NOR 등을 포함하는 Flash memory 분류',period:'2026-08',exportsUsdBillion:3.8,exportYoY:80.0,exportMoM:15.2,exportWeightKg:800000,exportWeightYoY:12.0,exportWeightMoM:6.0,unitValueUsdPerKg:4750,unitValueYoY:60.7,unitValueMoM:8.7},
+        {key:'sram',name:'SRAM',code:'8542321020',group:'memory',note:'HSK 8542321020',period:'2026-08',exportsUsdBillion:.3,exportYoY:5.0,exportMoM:1.0,exportWeightKg:70000,exportWeightYoY:2.0,exportWeightMoM:1.0,unitValueUsdPerKg:4285.7,unitValueYoY:3.0,unitValueMoM:0.1},
+        {key:'mcp-memory',name:'MCP',code:'8542323000',group:'memory',note:'HSK 8542323000 · 복합구조칩 메모리(Multichip integrated circuits)',period:'2026-08',exportsUsdBillion:7.1,exportYoY:90.0,exportMoM:22.8,exportWeightKg:650000,exportWeightYoY:20.0,exportWeightMoM:10.0,unitValueUsdPerKg:10923.1,unitValueYoY:58.3,unitValueMoM:11.6},
+        {key:'dram-module',name:'DRAM 모듈',code:'8473304060',group:'module',note:'HSK 8473304060 · DRAM modules',period:'2026-08',exportsUsdBillion:4.0,exportYoY:140.0,exportMoM:35.0,exportWeightKg:500000,exportWeightYoY:15.0,exportWeightMoM:5.0,unitValueUsdPerKg:8000,unitValueYoY:108.7,unitValueMoM:28.6},
+        {key:'processor-controller',name:'프로세서·컨트롤러',code:'854231',group:'logic',note:'HS 854231',period:'2026-08',exportsUsdBillion:2.4,exportYoY:11.0,exportMoM:2.0,exportWeightKg:500000,exportWeightYoY:3.2,exportWeightMoM:1.0,unitValueUsdPerKg:4800,unitValueYoY:7.5,unitValueMoM:1.0},
+        {key:'other-ic',name:'기타 IC',code:'854239',group:'logic',note:'HS 854239',period:'2026-08',exportsUsdBillion:1.2,exportYoY:5.5,exportMoM:-1.0,exportWeightKg:240000,exportWeightYoY:1.1,exportWeightMoM:0.5,unitValueUsdPerKg:5000,unitValueYoY:4.3,unitValueMoM:-1.5},
       ],
       breadth:{
         period:'2026-08',level:'HS2',comparableCount:80,risingCount:52,fallingCount:26,flatCount:2,
@@ -191,11 +201,13 @@ async function installMocks(page, mode='ok') {
         })),
       },
       semiconductorBreakdown:[
-        {key:'memory-total',name:'메모리 IC',code:'854232',group:'memory',note:'HS 854232 메모리 전체',period:'2026-08',exportsUsdBillion:9.8,exportYoY:24.1,exportWeightKg:3300000,exportWeightYoY:5.2,unitValueUsdPerKg:2969.7,unitValueYoY:18.0,history:Array.from({length:12},(_,i)=>({period:`2026-${String(i+1).padStart(2,'0')}`,exportsUsdBillion:7+i*.25,exportYoY:10+i,exportWeightKg:3000000+i*25000,exportWeightYoY:2+i*.3,unitValueUsdPerKg:2300+i*55,unitValueYoY:8+i*.4}))},
-        {key:'dram',name:'DRAM',code:'8542321010',group:'memory',note:'HSK 8542321010 · HBM은 별도 HSK 코드가 없어 독립 집계 불가',period:'2026-08',exportsUsdBillion:6.1,exportYoY:31.0,exportWeightKg:1900000,exportWeightYoY:4.0,unitValueUsdPerKg:3210.5,unitValueYoY:26.0,history:Array.from({length:12},(_,i)=>({period:`2026-${String(i+1).padStart(2,'0')}`,exportsUsdBillion:4+i*.2,exportYoY:12+i}))},
-        {key:'flash',name:'Flash memory',code:'8542321030',group:'memory',note:'HSK 8542321030 · NAND/NOR 등을 포함하는 Flash memory 분류',period:'2026-08',exportsUsdBillion:2.7,exportYoY:13.2,exportWeightKg:1200000,exportWeightYoY:3.0,unitValueUsdPerKg:2250,unitValueYoY:9.9,history:Array.from({length:12},(_,i)=>({period:`2026-${String(i+1).padStart(2,'0')}`,exportsUsdBillion:2+i*.08,exportYoY:5+i*.5}))},
-        {key:'sram',name:'SRAM',code:'8542321020',group:'memory',note:'HSK 8542321020',period:'2026-08',exportsUsdBillion:.2,exportYoY:2.0,exportWeightKg:80000,exportWeightYoY:1.0,unitValueUsdPerKg:2500,unitValueYoY:1.0,history:[]},
-        {key:'processor-controller',name:'프로세서·컨트롤러',code:'854231',group:'logic',note:'HS 854231',period:'2026-08',exportsUsdBillion:2.4,exportYoY:11.0,exportWeightKg:500000,exportWeightYoY:3.2,unitValueUsdPerKg:4800,unitValueYoY:7.5,history:[]},
+        {key:'memory-total',name:'메모리 IC',code:'854232',group:'memory',note:'HS 854232 메모리 전체',period:'2026-08',exportsUsdBillion:9.8,exportYoY:24.1,exportMoM:12.0,exportWeightKg:3300000,exportWeightYoY:5.2,exportWeightMoM:3.0,unitValueUsdPerKg:2969.7,unitValueYoY:18.0,unitValueMoM:8.0,history:Array.from({length:12},(_,i)=>({period:`2026-${String(i+1).padStart(2,'0')}`,exportsUsdBillion:7+i*.25,exportYoY:10+i,exportWeightKg:3000000+i*25000,exportWeightYoY:2+i*.3,unitValueUsdPerKg:2300+i*55,unitValueYoY:8+i*.4}))},
+        {key:'dram',name:'DRAM',code:'8542321010',group:'memory',note:'HSK 8542321010 · HBM은 별도 HSK 코드가 없어 독립 집계 불가',period:'2026-08',exportsUsdBillion:6.1,exportYoY:31.0,exportMoM:6.6,exportWeightKg:1900000,exportWeightYoY:4.0,exportWeightMoM:8.0,unitValueUsdPerKg:3210.5,unitValueYoY:26.0,unitValueMoM:-4.0,history:Array.from({length:12},(_,i)=>({period:`2026-${String(i+1).padStart(2,'0')}`,exportsUsdBillion:4+i*.2,exportYoY:12+i}))},
+        {key:'flash',name:'Flash memory',code:'8542321030',group:'memory',note:'HSK 8542321030 · NAND/NOR 등을 포함하는 Flash memory 분류',period:'2026-08',exportsUsdBillion:2.7,exportYoY:13.2,exportMoM:15.2,exportWeightKg:1200000,exportWeightYoY:3.0,exportWeightMoM:6.0,unitValueUsdPerKg:2250,unitValueYoY:9.9,unitValueMoM:8.7,history:Array.from({length:12},(_,i)=>({period:`2026-${String(i+1).padStart(2,'0')}`,exportsUsdBillion:2+i*.08,exportYoY:5+i*.5}))},
+        {key:'sram',name:'SRAM',code:'8542321020',group:'memory',note:'HSK 8542321020',period:'2026-08',exportsUsdBillion:.2,exportYoY:2.0,exportMoM:1.0,exportWeightKg:80000,exportWeightYoY:1.0,exportWeightMoM:.5,unitValueUsdPerKg:2500,unitValueYoY:1.0,unitValueMoM:.5,history:[]},
+        {key:'mcp-memory',name:'MCP',code:'8542323000',group:'memory',note:'HSK 8542323000 · 복합구조칩 메모리(Multichip integrated circuits)',period:'2026-08',exportsUsdBillion:7.1,exportYoY:90.0,exportMoM:22.8,exportWeightKg:650000,exportWeightYoY:20.0,exportWeightMoM:10.0,unitValueUsdPerKg:10923.1,unitValueYoY:58.3,unitValueMoM:11.6,history:[]},
+        {key:'dram-module',name:'DRAM 모듈',code:'8473304060',group:'module',note:'HSK 8473304060 · DRAM modules',period:'2026-08',exportsUsdBillion:4.0,exportYoY:140.0,exportMoM:35.0,exportWeightKg:500000,exportWeightYoY:15.0,exportWeightMoM:5.0,unitValueUsdPerKg:8000,unitValueYoY:108.7,unitValueMoM:28.6,history:[]},
+        {key:'processor-controller',name:'프로세서·컨트롤러',code:'854231',group:'logic',note:'HS 854231',period:'2026-08',exportsUsdBillion:2.4,exportYoY:11.0,exportMoM:2.0,exportWeightKg:500000,exportWeightYoY:3.2,exportWeightMoM:1.0,unitValueUsdPerKg:4800,unitValueYoY:7.5,unitValueMoM:1.0,history:[]},
         {key:'other-ic',name:'기타 IC',code:'854239',group:'logic',note:'HS 854239',period:'2026-08',exportsUsdBillion:1.2,exportYoY:5.5,exportWeightKg:240000,exportWeightYoY:1.1,unitValueUsdPerKg:5000,unitValueYoY:4.3,history:[]},
       ],
       countries:[
@@ -342,6 +354,10 @@ try{
       if(await page.locator('.export-combo-line polyline').count()!==1) throw new Error('export dual-axis YoY line missing');
       const chartText=await page.locator('.export-section').filter({hasText:'월별 수출액과 증가율'}).innerText();
       for(const label of ['수출액 · 왼쪽축','YoY · 오른쪽축','이중 Y축']) if(!chartText.includes(label)) throw new Error(`export dual-axis label missing: ${label}`);
+      if(await page.locator('.export-semi-report-card').count()!==5) throw new Error('semiconductor report must show five core segments');
+      const semiReportText=await page.locator('.export-semi-report').innerText();
+      for(const label of ['메모리 IC','DRAM','Flash memory','MCP','DRAM 모듈','YoY','MoM','kg당 평균 신고금액']) if(!semiReportText.includes(label)) throw new Error(`semiconductor report label missing: ${label}`);
+      if(await page.locator('.export-semi-report-row').count()!==5) throw new Error('semiconductor report comparison chart must show five rows');
       if(await page.locator('.export-driver-card').count()<5) throw new Error('export value-volume-unit-value cards are missing major HS groups');
       const itemText=await page.locator('.export-driver-card').first().innerText();
       for(const label of ['수출액','물량 · 순중량','kg당 신고금액','수입','무역수지']) if(!itemText.includes(label)) throw new Error(`export decomposition metric missing: ${label}`);
@@ -354,9 +370,9 @@ try{
       if(await page.locator('#export-item-detail .export-detail-chart').count()!==3) throw new Error('export item detail must show amount, volume and unit-value history');
       if(await page.locator('#export-item-detail .export-detail-bar').count()!==36) throw new Error('export item detail must keep all 12 months across three charts');
       if(await page.locator('#export-item-detail .export-detail-y-axis').count()!==3) throw new Error('export item detail charts must expose three Y axes');
-      if(await page.locator('#export-item-detail .export-semi-card').count()<6) throw new Error('semiconductor HSK breakdown cards missing');
+      if(await page.locator('#export-item-detail .export-semi-card').count()<8) throw new Error('semiconductor HSK breakdown cards missing');
       const semiText=await page.locator('#export-item-detail .export-semi-section').innerText();
-      for(const label of ['DRAM','Flash memory','SRAM','HBM은 별도 수출코드가 없습니다.','NAND']) if(!semiText.includes(label)) throw new Error(`semiconductor detail label missing: ${label}`);
+      for(const label of ['DRAM','Flash memory','SRAM','MCP','DRAM 모듈','HBM은 별도 수출코드가 없습니다.','NAND']) if(!semiText.includes(label)) throw new Error(`semiconductor detail label missing: ${label}`);
       if(await page.locator('#export-item-detail .export-detail-country-row').count()!==5) throw new Error('export item country breakdown must show five configured markets');
       if(await page.locator('#export-item-detail .export-momentum-summary>div').count()!==3) throw new Error('export item momentum summary must show amount, volume and unit-value metrics');
       if(await page.locator('#export-item-detail .export-phase-strip .phase').count()!==12) throw new Error('export item phase history must show 12 months');
