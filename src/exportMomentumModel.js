@@ -297,10 +297,13 @@ export function normalizeExportItemDetail(raw={}){
     period:text(row?.period),
     exportsUsdBillion:finite(row?.exportsUsdBillion),
     exportYoY:finite(row?.exportYoY),
+    exportMoM:finite(row?.exportMoM),
     exportWeightKg:finite(row?.exportWeightKg),
     exportWeightYoY:finite(row?.exportWeightYoY),
+    exportWeightMoM:finite(row?.exportWeightMoM),
     unitValueUsdPerKg:finite(row?.unitValueUsdPerKg),
     unitValueYoY:finite(row?.unitValueYoY),
+    unitValueMoM:finite(row?.unitValueMoM),
     history:(Array.isArray(row?.history)?row.history:[]).map(point=>({
       period:text(point?.period),
       exportsUsdBillion:finite(point?.exportsUsdBillion),
