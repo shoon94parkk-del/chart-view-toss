@@ -4,6 +4,7 @@ import {
   formatSignedPct,
   formatUsdBillion,
   semiconductorShare,
+  tradeBalanceLabel,
   yoyLabel,
   yoyTone,
 } from './exportMomentumModel.js';
@@ -47,7 +48,7 @@ function summary(snapshot){
       </div>
       <div class="export-summary-grid">
         <div><span>수입</span><strong>${esc(formatUsdBillion(data.importsUsdBillion))}</strong><small>${esc(formatSignedPct(data.importYoY))} YoY</small></div>
-        <div><span>무역수지</span><strong>${esc(formatUsdBillion(data.balanceUsdBillion))}</strong><small>흑자</small></div>
+        <div><span>무역수지</span><strong>${esc(formatUsdBillion(data.balanceUsdBillion))}</strong><small>${esc(tradeBalanceLabel(data.balanceUsdBillion))}</small></div>
         <div><span>1~9월 누적 수출</span><strong>${esc(formatUsdBillion(data.cumulativeExportsUsdBillion))}</strong><small>누적 기준</small></div>
         <div><span>반도체 비중</span><strong>${semiShare===null?'-':semiShare.toFixed(1)+'%'}</strong><small>당월 총수출 대비</small></div>
       </div>
@@ -67,7 +68,7 @@ function checkpoints(snapshot){
             <div><strong>${esc(row.label)}</strong><span>${esc(row.endDate)}</span></div>
             <b>${esc(formatUsdBillion(row.exportsUsdBillion,{digits:1}))}</b>
             <em class="${yoyTone(row.exportYoY)}">${esc(formatSignedPct(row.exportYoY))}</em>
-            <div class="export-progress" aria-label="${esc(row.label)} 월 전체 대비 진행"><i style="width:${Number.isFinite(row.progress)?row.progress.toFixed(1):0}%"></i></div>
+            <div class="export-progress" aria-label="${esc(row.label)} 월 기간 진행"><i style="width:${Number.isFinite(row.progress)?row.progress.toFixed(1):0}%"></i></div>
             ${row.semiconductorUsdBillion!==null?`<small>반도체 ${esc(formatUsdBillion(row.semiconductorUsdBillion,{digits:1}))}</small>`:''}
           </article>
         `).join('')}
