@@ -117,77 +117,8 @@ export function formatWeightKg(value,{digits=1}={}){
 export function formatUnitValue(value,{digits=1}={}){
   const number=finite(value);
   if(number===null)return '-';
-  return '
-  const number=finite(value);
-  if(number===null||number===0)return 'flat';
-  return number>0?'up':'down';
-}
-
-export function yoyLabel(value){
-  const number=finite(value);
-  if(number===null)return '증감률 미제공';
-  if(number>=50)return '전년비 급증';
-  if(number>=10)return '전년비 강세';
-  if(number>0)return '전년비 증가';
-  if(number<=-10)return '전년비 감소';
-  return '전년비 약세';
-}
-
-export function semiconductorShare(snapshot){
-  if(snapshot?.itemPeriod&&snapshot?.period&&snapshot.itemPeriod!==snapshot.period)return null;
-  const total=finite(snapshot?.summary?.exportsUsdBillion);
-  const semiconductor=(snapshot?.items||[]).find(row=>row.name==='반도체');
-  const semi=finite(semiconductor?.exportsUsdBillion);
-  if(total===null||semi===null||total<=0)return null;
-  return semi/total*100;
-}
-
-export function tradeBalanceLabel(value){
-  const number=finite(value);
-  if(number===null)return '수지 미제공';
-  if(number>0)return '흑자';
-  if(number<0)return '적자';
-  return '균형';
-}
-
-export function checkpointProgress(snapshot){
-  const checkpoints=Array.isArray(snapshot?.checkpoints)?snapshot.checkpoints:[];
-  return checkpoints.map((row,index)=>{
-    const match=/^(\d{4})-(\d{2})-(\d{2})$/.exec(row.endDate||'');
-    let progress=null;
-    if(match){
-      const year=Number(match[1]),month=Number(match[2]),day=Number(match[3]);
-      const daysInMonth=new Date(Date.UTC(year,month,0)).getUTCDate();
-      if(day>=1&&day<=daysInMonth)progress=day/daysInMonth*100;
-    }
-    if(progress===null&&checkpoints.length)progress=(index+1)/checkpoints.length*100;
-    return {...row,progress:Math.max(0,Math.min(100,progress))};
-  });
-}
-
-
-export function chartExtent(values=[]){
-  const usable=values.map(finite).filter(value=>value!==null);
-  if(!usable.length)return {min:0,max:1,span:1};
-  const min=Math.min(0,...usable);
-  const max=Math.max(0,...usable);
-  const span=Math.max(1,max-min);
-  return {min,max,span};
-}
-
-export function chartPct(value,extent){
-  const number=finite(value);
-  if(number===null)return 0;
-  return Math.max(0,Math.min(100,(number-extent.min)/extent.span*100));
-}
-
-export function zeroPct(extent){
-  return Math.max(0,Math.min(100,(0-extent.min)/extent.span*100));
-}
-+number.toLocaleString('en-US',{
-    maximumFractionDigits:digits,
-    minimumFractionDigits:number<10?Math.min(2,digits):0,
-  })+'/kg';
+  const currency=String.fromCharCode(36);
+  return currency+number.toLocaleString('en-US',{maximumFractionDigits:digits,minimumFractionDigits:number<10?Math.min(2,digits):0})+'/kg';
 }
 
 export function exportDriverLabel(row={}){
