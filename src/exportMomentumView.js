@@ -23,6 +23,16 @@ const dateLabel=(value)=>{
   return new Intl.DateTimeFormat('ko-KR',{timeZone:'Asia/Seoul',year:'numeric',month:'numeric',day:'numeric'}).format(date);
 };
 
+const monthLabel=(period)=>{
+  const match=/^(\d{4})-(\d{2})$/.exec(period||'');
+  return match?`${Number(match[2])}월`:period||'-';
+};
+
+const cumulativeLabel=(period)=>{
+  const match=/^(\d{4})-(\d{2})$/.exec(period||'');
+  return match?`1~${Number(match[2])}월 누적 수출`:'연간 누적 수출';
+};
+
 function loading(){
   return `<section class="export-loading" role="status"><span></span><strong>최신 수출 스냅샷을 확인하고 있어요.</strong></section>`;
 }
@@ -34,16 +44,20 @@ function errorView(message){
 function summary(snapshot){
   const data=snapshot.summary;
   const semiShare=semiconductorShare(snapshot);
+  const apiBacked=snapshot.status==='official_api';
+  const itemLag=snapshot.itemPeriod&&snapshot.itemPeriod!==snapshot.period;
+  const regionLag=snapshot.regionPeriod&&snapshot.regionPeriod!==snapshot.period;
   return `
     <section class="export-hero">
       <div class="export-hero-top">
         <div>
           <span class="export-kicker">대한민국 수출 · ${esc(snapshot.basis)}</span>
           <h2>${esc(snapshot.periodLabel)}</h2>
-          <p>관세청·산업통상부 공식 발표를 같은 형식으로 누적해 흐름을 비교합니다.</p>
+          <p>${apiBacked?'관세청 공공데이터를 서버에서 수집·캐시해 월별 흐름을 비교합니다.':'공식 발표 스냅샷으로 수출 흐름을 확인합니다.'}</p>
         </div>
-        <span class="export-status">공식 잠정치</span>
+        <span class="export-status">${apiBacked?'관세청 API':'공식 스냅샷'}</span>
       </div>
+      ${itemLag||regionLag?`<div class="export-period-split"><strong>기준월 안내</strong><span>총괄 ${esc(monthLabel(snapshot.period))}</span>${snapshot.itemPeriod?`<span>품목 ${esc(monthLabel(snapshot.itemPeriod))}</span>`:''}${snapshot.regionPeriod?`<span>국가 ${esc(monthLabel(snapshot.regionPeriod))}</span>`:''}</div>`:''}
       <div class="export-main-number">
         <span>총수출</span>
         <strong>${esc(formatUsdBillion(data.exportsUsdBillion))}</strong>
@@ -52,8 +66,10 @@ function summary(snapshot){
       <div class="export-summary-grid">
         <div><span>수입</span><strong>${esc(formatUsdBillion(data.importsUsdBillion))}</strong><small>${esc(formatSignedPct(data.importYoY))} YoY</small></div>
         <div><span>무역수지</span><strong>${esc(formatUsdBillion(data.balanceUsdBillion))}</strong><small>${esc(tradeBalanceLabel(data.balanceUsdBillion))}</small></div>
-        <div><span>1~9월 누적 수출</span><strong>${esc(formatUsdBillion(data.cumulativeExportsUsdBillion))}</strong><small>누적 기준</small></div>
-        <div><span>반도체 비중</span><strong>${semiShare===null?'-':semiShare.toFixed(1)+'%'}</strong><small>당월 총수출 대비</small></div>
+        <div><span>${esc(cumulativeLabel(snapshot.period))}</span><strong>${esc(formatUsdBillion(data.cumulativeExportsUsdBillion))}</strong><small>해당 연도 누적</small></div>
+        ${semiShare!==null
+          ?`<div><span>반도체 비중</span><strong>${semiShare.toFixed(1)}%</strong><small>당월 총수출 대비</small></div>`
+          :`<div><span>품목 상세</span><strong>${esc(monthLabel(snapshot.itemPeriod))}</strong><small>${itemLag?'총괄보다 후행':'HS 기준'}</small></div>`}
       </div>
     </section>
   `;
@@ -92,7 +108,7 @@ function items(snapshot){
   const maxAbs=Math.max(...snapshot.items.map(row=>Math.abs(row.exportYoY||0)),1);
   return `
     <section class="export-section">
-      <div class="export-section-head"><div><span>품목별</span><h3>어떤 품목이 움직였나</h3></div><small>전년 동월 대비</small></div>
+      <div class="export-section-head"><div><span>품목별</span><h3>어떤 품목이 움직였나</h3></div><small>${esc(monthLabel(snapshot.itemPeriod||snapshot.period))} 기준 · 전년 동월 대비</small></div>
       <div class="export-chart-card">
         <div class="export-diverging-chart" role="img" aria-label="주요 수출 품목 전년 동월 대비 증감률 그래프">
           ${snapshot.items.map(row=>{
@@ -120,9 +136,9 @@ function regions(snapshot){
   const max=Math.max(...snapshot.regions.map(row=>Math.max(0,row.exportYoY||0)),1);
   return `
     <section class="export-section">
-      <div class="export-section-head"><div><span>지역별</span><h3>어디로 수출이 늘었나</h3></div><small>전년 동월 대비</small></div>
+      <div class="export-section-head"><div><span>국가별</span><h3>어디로 수출이 늘었나</h3></div><small>${esc(monthLabel(snapshot.regionPeriod||snapshot.period))} 기준 · 전년 동월 대비</small></div>
       <div class="export-chart-card">
-        <div class="export-horizontal-chart" role="img" aria-label="주요 수출 지역 전년 동월 대비 증가율 그래프">
+        <div class="export-horizontal-chart" role="img" aria-label="주요 수출 국가 전년 동월 대비 증가율 그래프">
           ${snapshot.regions.map(row=>`
             <div class="export-horizontal-row" aria-label="${esc(row.name)} ${esc(formatSignedPct(row.exportYoY,{digits:0}))}">
               <div><strong>${esc(row.name)}</strong><span class="${yoyTone(row.exportYoY)}">${esc(formatSignedPct(row.exportYoY,{digits:0}))}</span></div>
@@ -179,13 +195,18 @@ function facts(snapshot){
 }
 
 function sources(snapshot){
+  const apiBacked=snapshot.status==='official_api';
+  const dates=[
+    snapshot.publishedAt?`발표일 ${dateLabel(snapshot.publishedAt)}`:'',
+    snapshot.updatedAt?`데이터 갱신 ${dateLabel(snapshot.updatedAt)}`:'',
+  ].filter(Boolean).join(' · ');
   return `
     <section class="export-source">
-      <div><strong>데이터 기준</strong><p>현재 버전은 API 연결 전 단계로, 공식 발표 수치를 정규화한 정적 스냅샷을 사용합니다. 향후 같은 데이터 계약에 관세청 API를 연결하면 화면 구조는 그대로 유지됩니다.</p></div>
+      <div><strong>데이터 기준</strong><p>${apiBacked?'관세청 공공데이터 API를 차트뷰 서버에서 수집·캐시해 표시합니다. 인증키는 서버에서만 사용하며 브라우저에는 전달하지 않습니다. 총괄과 HS 상세의 최신 기준월이 다르면 각각의 기준월을 따로 표시합니다.':'공식 발표 수치를 저장한 스냅샷입니다.'}</p></div>
       <div class="export-source-links">
         ${snapshot.sources.map(source=>`<button type="button" data-external-url="${esc(source.url)}"><span>${esc(source.name)}</span><small>${esc(source.role)}</small></button>`).join('')}
       </div>
-      <small>발표일 ${esc(dateLabel(snapshot.publishedAt))} · 스냅샷 갱신 ${esc(dateLabel(snapshot.updatedAt))}</small>
+      ${dates?`<small>${esc(dates)}</small>`:''}
     </section>
   `;
 }
