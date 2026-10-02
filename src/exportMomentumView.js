@@ -234,16 +234,26 @@ function items(snapshot){
 function detailMetricBars(history,field,title,unit,formatter){
   const rows=history.filter(row=>Number.isFinite(row[field]));
   if(!rows.length)return '';
-  const max=Math.max(...rows.map(row=>Math.max(0,row[field])),1);
+  const maxRaw=Math.max(...rows.map(row=>Math.max(0,row[field])),1);
+  const max=maxRaw;
+  const mid=max/2;
   return `
     <div class="export-detail-chart">
       <div class="export-detail-chart-head"><strong>${esc(title)}</strong><span>${esc(unit)}</span></div>
-      <div class="export-detail-bars" role="img" aria-label="${esc(title)} 최근 12개월 추이">
-        ${history.map(row=>{
-          const value=Number(row[field]);
-          const height=Number.isFinite(value)?Math.max(3,Math.min(100,value/max*100)):0;
-          return `<div class="export-detail-bar" aria-label="${esc(row.period)} ${esc(formatter(row[field]))}"><i style="height:${height.toFixed(1)}%"></i><small>${esc(row.period.slice(5))}</small></div>`;
-        }).join('')}
+      <div class="export-detail-axis-layout">
+        <div class="export-detail-y-axis">
+          <span>${esc(formatter(max))}</span>
+          <span>${esc(formatter(mid))}</span>
+          <span>${esc(formatter(0))}</span>
+        </div>
+        <div class="export-detail-bars" role="img" aria-label="${esc(title)} 최근 12개월 추이">
+          <i class="grid g-top"></i><i class="grid g-mid"></i><i class="grid g-bottom"></i>
+          ${history.map(row=>{
+            const value=Number(row[field]);
+            const height=Number.isFinite(value)?Math.max(3,Math.min(100,value/max*100)):0;
+            return `<div class="export-detail-bar" aria-label="${esc(row.period)} ${esc(formatter(row[field]))}"><i class="bar" style="height:${height.toFixed(1)}%"></i><small>${esc(row.period.slice(5))}</small></div>`;
+          }).join('')}
+        </div>
       </div>
     </div>
   `;
@@ -251,6 +261,35 @@ function detailMetricBars(history,field,title,unit,formatter){
 
 function momentumCard(label,metric){
   return `<div><span>${esc(label)}</span><strong>${esc(formatSignedPct(metric?.avg3mYoY))}</strong><small>${esc(metric?.label||'데이터 부족')}</small><em class="${yoyTone(metric?.accelerationPp)}">직전 3개월 대비 ${esc(formatPp(metric?.accelerationPp))}</em></div>`;
+}
+
+function semiconductorBreakdown(detail){
+  const rows=detail.semiconductorBreakdown||[];
+  if(detail.key!=='semiconductor'||!rows.length)return '';
+  const memory=rows.filter(row=>row.group==='memory');
+  const logic=rows.filter(row=>row.group==='logic');
+  const card=row=>`
+    <article class="export-semi-card">
+      <div class="export-semi-head">
+        <div><span>HS ${esc(row.code)}</span><strong>${esc(row.name)}</strong></div>
+        <em class="${yoyTone(row.exportYoY)}">${esc(formatSignedPct(row.exportYoY))}</em>
+      </div>
+      <div class="export-semi-main">${esc(formatUsdBillion(row.exportsUsdBillion,{digits:1}))}</div>
+      <div class="export-semi-meta"><span>물량 ${esc(formatSignedPct(row.exportWeightYoY))}</span><span>단위가치 ${esc(formatSignedPct(row.unitValueYoY))}</span></div>
+      <small>${esc(row.note)}</small>
+    </article>
+  `;
+  return `
+    <div class="export-semi-section">
+      <div class="export-detail-country-head"><strong>반도체 세부 HSK</strong><small>2026 관세청 품목분류 기준</small></div>
+      <div class="export-semi-notice">
+        <strong>HBM은 별도 수출코드가 없습니다.</strong>
+        <span>HBM을 독립 수출액으로 만들지 않습니다. DRAM·복합구조 메모리 등의 신고 분류에 포함될 수 있습니다. Flash memory도 NAND만이 아니라 NOR 등을 함께 포함합니다.</span>
+      </div>
+      ${memory.length?`<div class="export-semi-group"><h5>메모리</h5><div class="export-semi-grid">${memory.map(card).join('')}</div></div>`:''}
+      ${logic.length?`<div class="export-semi-group"><h5>기타 IC</h5><div class="export-semi-grid">${logic.map(card).join('')}</div></div>`:''}
+    </div>
+  `;
 }
 
 function renderItemDetail(detail){
@@ -278,6 +317,7 @@ function renderItemDetail(detail){
       ${detailMetricBars(detail.history,'exportWeightKg','수출 물량 추이','순중량',value=>formatWeightKg(value))}
       ${detailMetricBars(detail.history,'unitValueUsdPerKg','kg당 평균 신고금액','$ / kg',value=>formatUnitValue(value))}
     </div>
+    ${semiconductorBreakdown(detail)}
     <div class="export-detail-country">
       <div class="export-detail-country-head"><strong>주요 5개 국가 × ${esc(detail.name)}</strong><small>전세계 순위가 아닌 지정 시장 비교</small></div>
       ${detail.countries.map(row=>`
@@ -326,53 +366,53 @@ function history(snapshot){
   let yoyMin=Math.floor(rawMin/10)*10;
   let yoyMax=Math.ceil(rawMax/10)*10;
   if(yoyMax===yoyMin)yoyMax=yoyMin+10;
+  const yoyMid=(yoyMax+yoyMin)/2;
   const yoySpan=yoyMax-yoyMin;
-  const yoyPos=value=>Math.max(0,Math.min(100,((Number(value)-yoyMin)/yoySpan)*100));
-  const zero=yoyPos(0);
+  const yoyPct=value=>Math.max(0,Math.min(100,((Number(value)-yoyMin)/yoySpan)*100));
+  const linePoints=rows.map((row,index)=>{
+    const x=((index+0.5)/rows.length*1200).toFixed(1);
+    const y=(100-yoyPct(row.exportYoY)).toFixed(1);
+    return `${x},${y}`;
+  }).join(' ');
 
   return `
     <section class="export-section">
-      <div class="export-section-head"><div><span>최근 추이</span><h3>월별 수출액과 증가율</h3></div><small>최근 12개월 · 단위 분리</small></div>
-
-      <div class="export-chart-card export-history-card">
-        <div class="export-chart-title"><strong>월별 수출액</strong><span>Y축 · 억달러</span></div>
-        <div class="export-axis-layout">
-          <div class="export-y-axis amount-axis">
+      <div class="export-section-head"><div><span>최근 추이</span><h3>월별 수출액과 증가율</h3></div><small>최근 12개월 · 이중 Y축</small></div>
+      <div class="export-chart-card export-history-card export-combo-card">
+        <div class="export-combo-legend">
+          <span><i class="bar"></i>수출액 · 왼쪽축</span>
+          <span><i class="line"></i>YoY · 오른쪽축</span>
+        </div>
+        <div class="export-combo-layout">
+          <div class="export-combo-axis left-axis">
             <span>${esc(amountAxisLabel(amountTop))}</span>
             <span>${esc(amountAxisLabel(amountMid))}</span>
             <span>0</span>
           </div>
-          <div class="export-amount-plot" role="img" aria-label="최근 12개월 수출액, 단위 억달러">
+          <div class="export-combo-plot" role="img" aria-label="최근 12개월 수출액은 막대와 왼쪽 억달러 축, 전년동월 증가율은 선과 오른쪽 퍼센트 축">
             <i class="grid g-top"></i><i class="grid g-mid"></i><i class="grid g-bottom"></i>
-            ${rows.map(row=>`
-              <div class="export-amount-column" aria-label="${esc(row.period)} 수출 ${esc(formatUsdBillion(row.exportsUsdBillion,{digits:1}))}">
-                <i style="height:${Math.max(3,(row.exportsUsdBillion/amountTop)*100).toFixed(1)}%"></i>
-                <small>${esc(row.period.slice(5))}월</small>
-              </div>
+            <div class="export-combo-bars">
+              ${rows.map(row=>`
+                <div class="export-combo-column" aria-label="${esc(row.period)} 수출 ${esc(formatUsdBillion(row.exportsUsdBillion,{digits:1}))}, 전년 대비 ${esc(formatSignedPct(row.exportYoY))}">
+                  <i class="bar" style="height:${Math.max(3,(row.exportsUsdBillion/amountTop)*100).toFixed(1)}%"></i>
+                  <small>${esc(row.period.slice(5))}월</small>
+                </div>
+              `).join('')}
+            </div>
+            <svg class="export-combo-line" viewBox="0 0 1200 100" preserveAspectRatio="none" aria-hidden="true">
+              <polyline points="${linePoints}"></polyline>
+            </svg>
+            ${rows.map((row,index)=>`
+              <span class="export-combo-dot ${yoyTone(row.exportYoY)}" style="left:${((index+0.5)/rows.length*100).toFixed(2)}%;bottom:${yoyPct(row.exportYoY).toFixed(1)}%" title="${esc(row.period+' '+formatSignedPct(row.exportYoY))}"></span>
             `).join('')}
           </div>
-        </div>
-      </div>
-
-      <div class="export-chart-card export-history-card export-yoy-card">
-        <div class="export-chart-title"><strong>전년 동월 대비 증가율</strong><span>Y축 · %</span></div>
-        <div class="export-axis-layout">
-          <div class="export-y-axis yoy-axis">
+          <div class="export-combo-axis right-axis">
             <span>${esc(pctAxisLabel(yoyMax))}</span>
-            <span>0%</span>
+            <span>${esc(pctAxisLabel(yoyMid))}</span>
             <span>${esc(pctAxisLabel(yoyMin))}</span>
           </div>
-          <div class="export-yoy-plot" style="--zero:${zero.toFixed(1)}%" role="img" aria-label="최근 12개월 수출 전년 동월 대비 증가율, 단위 퍼센트">
-            <i class="grid g-top"></i><i class="grid g-zero" style="bottom:${zero.toFixed(1)}%"></i><i class="grid g-bottom"></i>
-            ${rows.map(row=>`
-              <div class="export-yoy-column" aria-label="${esc(row.period)} 전년 대비 ${esc(formatSignedPct(row.exportYoY))}">
-                <span class="export-yoy-dot ${yoyTone(row.exportYoY)}" style="bottom:${yoyPos(row.exportYoY).toFixed(1)}%"></span>
-                <small>${esc(row.period.slice(5))}월</small>
-              </div>
-            `).join('')}
-          </div>
         </div>
-        <p class="export-chart-note">위 그래프는 금액(억달러), 아래 그래프는 전년 동월 대비 증감률(%)입니다. 서로 다른 단위를 한 축에 겹치지 않습니다.</p>
+        <p class="export-chart-note">막대는 왼쪽 Y축의 수출액(억달러), 선·점은 오른쪽 보조 Y축의 전년동월 대비 증가율(%)입니다.</p>
       </div>
     </section>
   `;

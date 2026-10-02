@@ -165,3 +165,32 @@ test('item detail momentum preserves 3-month averages acceleration and phases',(
   assert.equal(detail.momentum.phaseHistory.length,1);
   assert.equal(formatPp(8),'+8.0%p');
 });
+
+
+test('semiconductor detail keeps official HSK subgroup labels without inventing HBM or NAND-only data',()=>{
+  const detail=normalizeExportItemDetail({
+    key:'semiconductor',
+    name:'반도체',
+    period:'2026-08',
+    history:[{period:'2026-08',exportsUsdBillion:14}],
+    semiconductorBreakdown:[
+      {
+        key:'dram',name:'DRAM',code:'8542321010',group:'memory',
+        note:'HSK 8542321010 · HBM은 별도 HSK 코드가 없어 독립 집계 불가',
+        period:'2026-08',exportsUsdBillion:8,exportYoY:25,
+        history:[{period:'2026-08',exportsUsdBillion:8,exportYoY:25}],
+      },
+      {
+        key:'flash',name:'Flash memory',code:'8542321030',group:'memory',
+        note:'HSK 8542321030 · NAND/NOR 등을 포함하는 Flash memory 분류',
+        period:'2026-08',exportsUsdBillion:3,exportYoY:8,
+        history:[{period:'2026-08',exportsUsdBillion:3,exportYoY:8}],
+      },
+    ],
+  });
+  assert.equal(detail.semiconductorBreakdown.length,2);
+  assert.equal(detail.semiconductorBreakdown[0].code,'8542321010');
+  assert.ok(detail.semiconductorBreakdown[0].note.includes('HBM'));
+  assert.equal(detail.semiconductorBreakdown[1].name,'Flash memory');
+  assert.ok(detail.semiconductorBreakdown[1].note.includes('NAND/NOR'));
+});

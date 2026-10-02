@@ -35,7 +35,7 @@ assert(macro.dataContract?.observedAt, 'macro observation contract missing');
 assert(macro.results.some((row) => row.unit && row.observedAt), 'macro unit/observation metadata missing');
 
 const exportsSnapshot = await get('/api/export-momentum', 45000);
-assert(Number(exportsSnapshot.schemaVersion) >= 4, 'export schema v4 missing');
+assert(Number(exportsSnapshot.schemaVersion) >= 5, 'export schema v5 missing');
 assert(Array.isArray(exportsSnapshot.items) && exportsSnapshot.items.length >= 1, 'export item rows missing');
 assert(exportsSnapshot.itemPeriod, 'export item period missing');
 assert(
@@ -54,8 +54,14 @@ assert(
   'export breadth movers missing'
 );
 
+assert(
+  Array.isArray(exportsSnapshot.semiconductorBreakdown) && exportsSnapshot.semiconductorBreakdown.length >= 4,
+  'cached semiconductor HSK breakdown missing from export snapshot'
+);
+
 const exportDetail = await get('/api/export-momentum/item-detail?key=semiconductor', 60000);
 assert(exportDetail.key === 'semiconductor', 'export item detail key mismatch');
+assert(Number(exportDetail.schemaVersion) >= 2, 'export item detail schema v2 missing');
 assert(Array.isArray(exportDetail.history) && exportDetail.history.length === 12, 'export item detail must keep 12 months');
 assert(
   exportDetail.history.every((row) => row.period && Number(row.exportsUsdBillion) >= 0),
@@ -75,6 +81,16 @@ assert(Number.isFinite(Number(exportDetail.momentum?.volume?.avg3mYoY)), 'export
 assert(Number.isFinite(Number(exportDetail.momentum?.unitValue?.avg3mYoY)), 'export 3-month unit-value momentum missing');
 assert(Array.isArray(exportDetail.momentum?.phaseHistory) && exportDetail.momentum.phaseHistory.length === 12, 'export phase history missing');
 
+assert(Array.isArray(exportDetail.semiconductorBreakdown) && exportDetail.semiconductorBreakdown.length >= 4, 'semiconductor HSK breakdown missing');
+const dram = exportDetail.semiconductorBreakdown.find((row) => row.code === '8542321010');
+const flash = exportDetail.semiconductorBreakdown.find((row) => row.code === '8542321030');
+const sram = exportDetail.semiconductorBreakdown.find((row) => row.code === '8542321020');
+assert(dram && Number(dram.exportsUsdBillion) > 0, 'official DRAM HSK value missing');
+assert(flash && Number(flash.exportsUsdBillion) > 0, 'official Flash memory HSK value missing');
+assert(sram && Number(sram.exportsUsdBillion) >= 0, 'official SRAM HSK value missing');
+assert(String(dram.note || '').includes('HBM'), 'HBM classification limitation missing');
+assert(String(flash.note || '').includes('NAND'), 'Flash/NAND scope note missing');
+
 console.log('Live backend contract smoke passed', {
   base: BASE,
   quoteCount: quotes.results.length,
@@ -86,4 +102,7 @@ console.log('Live backend contract smoke passed', {
   exportBreadthRising: exportsSnapshot.breadth.risingCount,
   exportDetailMonths: exportDetail.history.length,
   exportDetailCountries: exportDetail.countries.length,
+  semiconductorSegments: exportDetail.semiconductorBreakdown.length,
+  dramExports: dram.exportsUsdBillion,
+  flashExports: flash.exportsUsdBillion,
 });

@@ -266,6 +266,30 @@ export function normalizeExportItemDetail(raw={}){
     })).filter(row=>row.period),
   };
 
+  const semiconductorBreakdown=(Array.isArray(raw.semiconductorBreakdown)?raw.semiconductorBreakdown:[]).map(row=>({
+    key:text(row?.key),
+    name:text(row?.name),
+    code:text(row?.code),
+    group:text(row?.group),
+    note:text(row?.note),
+    period:text(row?.period),
+    exportsUsdBillion:finite(row?.exportsUsdBillion),
+    exportYoY:finite(row?.exportYoY),
+    exportWeightKg:finite(row?.exportWeightKg),
+    exportWeightYoY:finite(row?.exportWeightYoY),
+    unitValueUsdPerKg:finite(row?.unitValueUsdPerKg),
+    unitValueYoY:finite(row?.unitValueYoY),
+    history:(Array.isArray(row?.history)?row.history:[]).map(point=>({
+      period:text(point?.period),
+      exportsUsdBillion:finite(point?.exportsUsdBillion),
+      exportYoY:finite(point?.exportYoY),
+      exportWeightKg:finite(point?.exportWeightKg),
+      exportWeightYoY:finite(point?.exportWeightYoY),
+      unitValueUsdPerKg:finite(point?.unitValueUsdPerKg),
+      unitValueYoY:finite(point?.unitValueYoY),
+    })).filter(point=>point.period&&point.exportsUsdBillion!==null),
+  })).filter(row=>row.key&&row.name);
+
   const countries=(Array.isArray(raw.countries)?raw.countries:[]).map(row=>({
     name:text(row?.name),
     code:text(row?.code),
@@ -281,6 +305,7 @@ export function normalizeExportItemDetail(raw={}){
     period:text(raw.period),
     history,
     momentum,
+    semiconductorBreakdown,
     countries,
     meta:raw.meta&&typeof raw.meta==='object'?raw.meta:{},
   };
