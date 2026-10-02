@@ -38,3 +38,44 @@
 .export-period-split strong{font-size:10px;color:#4e5968;margin-right:2px}.export-period-split span{padding:4px 7px;border-radius:999px;background:#fff;color:#6b7684;font-size:9px;border:1px solid #e7edf5}
 .export-section-head>small{white-space:normal;text-align:right;line-height:1.35;max-width:46%}
 @media(max-width:360px){.export-section-head{align-items:flex-start}.export-section-head>small{max-width:44%;font-size:9px}}
+
+
+/* Export V2: explicit chart units + value/volume/unit-value decomposition */
+.export-chart-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.export-chart-title strong{font-size:13px;color:#191f28}.export-chart-title span{font-size:10px;font-weight:800;color:#6b7684;background:#f2f4f6;border-radius:999px;padding:5px 8px}
+.export-yoy-card{margin-top:10px}
+.export-axis-layout{display:grid;grid-template-columns:46px minmax(0,1fr);gap:8px;min-width:0}
+.export-y-axis{height:208px;display:flex;flex-direction:column;justify-content:space-between;padding:1px 0 22px;text-align:right;color:#8b95a1;font-size:9px;line-height:1;white-space:nowrap}
+.export-amount-plot,.export-yoy-plot{height:208px;position:relative;display:grid;grid-template-columns:repeat(12,minmax(12px,1fr));gap:4px;padding:0 2px 22px;min-width:0}
+.export-amount-plot .grid,.export-yoy-plot .grid{position:absolute;left:0;right:0;border-top:1px dashed #edf0f2;pointer-events:none}
+.export-amount-plot .g-top,.export-yoy-plot .g-top{top:0}.export-amount-plot .g-mid{top:50%}.export-amount-plot .g-bottom,.export-yoy-plot .g-bottom{bottom:22px}
+.export-yoy-plot .g-zero{border-top-color:#c7d0da;z-index:1}
+.export-amount-column,.export-yoy-column{height:100%;position:relative;display:flex;align-items:flex-end;justify-content:center;min-width:0;z-index:2}
+.export-amount-column>i{display:block;width:68%;min-width:5px;background:linear-gradient(180deg,#85b7fa,#3182f6);border-radius:6px 6px 2px 2px}
+.export-amount-column>small,.export-yoy-column>small{position:absolute;bottom:-19px;color:#8b95a1;font-size:7.5px;white-space:nowrap}
+.export-yoy-dot{position:absolute;width:8px;height:8px;border-radius:50%;transform:translateY(50%);border:2px solid #fff;box-sizing:content-box;z-index:3;box-shadow:0 1px 4px rgba(25,31,40,.12)}
+.export-yoy-dot.up{background:#e64a61}.export-yoy-dot.down{background:#3182f6}.export-yoy-dot.flat{background:#8b95a1}
+
+.export-item-driver-note{display:grid;gap:4px;padding:12px 13px;margin-bottom:10px;border-radius:15px;background:#f7f9fc;border:1px solid #edf0f2}
+.export-item-driver-note strong{font-size:11px;color:#333d4b}.export-item-driver-note span{font-size:9px;line-height:1.5;color:#8b95a1}
+.export-driver-list{display:grid;gap:10px}
+.export-driver-card{padding:15px;border:1px solid #edf0f2;border-radius:19px;background:#fff;box-shadow:0 6px 18px rgba(25,31,40,.025)}
+.export-driver-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.export-driver-head>div{min-width:0}.export-driver-head strong{display:block;font-size:15px}.export-driver-head small{display:block;margin-top:4px;color:#8b95a1;font-size:9px;line-height:1.35}
+.export-driver-tag{flex:none;max-width:48%;padding:5px 7px;border-radius:999px;background:#eef6ff;color:#1769c2;font-size:9px;font-weight:800;text-align:center}
+.export-driver-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:13px}
+.export-driver-grid>div{padding:10px 8px;border-radius:13px;background:#f8fafc;min-width:0}
+.export-driver-grid span{display:block;color:#8b95a1;font-size:8.5px;white-space:nowrap}
+.export-driver-grid strong{display:block;margin-top:5px;color:#191f28;font-size:11px;line-height:1.25;overflow-wrap:anywhere}
+.export-driver-grid em{display:block;margin-top:4px;font-style:normal;font-size:10px;font-weight:900}
+.export-driver-grid em.up{color:#e64a61}.export-driver-grid em.down{color:#3182f6}.export-driver-grid em.flat{color:#8b95a1}
+
+@media(max-width:360px){
+  .export-axis-layout{grid-template-columns:40px minmax(0,1fr);gap:5px}
+  .export-y-axis,.export-amount-plot,.export-yoy-plot{height:190px}
+  .export-driver-card{padding:13px}
+  .export-driver-grid{gap:5px}
+  .export-driver-grid>div{padding:9px 6px}
+  .export-driver-grid strong{font-size:10px}
+  .export-driver-tag{font-size:8px}
+}
