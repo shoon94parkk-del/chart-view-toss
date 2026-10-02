@@ -1,0 +1,221 @@
+{
+  "base": "https://chart-view-toss.onrender.com",
+  "measuredAt": "2026-10-02T04:04:52.605Z",
+  "results": [
+    {
+      "name": "home",
+      "domMs": 357,
+      "readyMs": 547,
+      "readyText": "6,974.55",
+      "paint": [
+        {
+          "name": "first-paint",
+          "ms": 412
+        },
+        {
+          "name": "first-contentful-paint",
+          "ms": 412
+        }
+      ],
+      "requests": [
+        {
+          "path": "/api/home-snapshot",
+          "status": 200,
+          "ms": 118
+        },
+        {
+          "path": "/api/home-bootstrap",
+          "status": 200,
+          "ms": 249
+        },
+        {
+          "path": "/api/market-now",
+          "status": 200,
+          "ms": 255
+        }
+      ],
+      "errors": [],
+      "overflow": false
+    },
+    {
+      "name": "detail",
+      "domMs": 78,
+      "readyMs": 538,
+      "readyText": "276,000원",
+      "paint": [
+        {
+          "name": "first-paint",
+          "ms": 136
+        },
+        {
+          "name": "first-contentful-paint",
+          "ms": 136
+        }
+      ],
+      "requests": [
+        {
+          "path": "/api/valuation",
+          "status": 200,
+          "ms": 110
+        },
+        {
+          "path": "/api/relationship-evidence",
+          "status": 200,
+          "ms": 114
+        },
+        {
+          "path": "/api/business-report",
+          "status": 200,
+          "ms": 115
+        },
+        {
+          "path": "/api/financial-quarters",
+          "status": 200,
+          "ms": 95
+        },
+        {
+          "path": "/shoon94parkk-del/chart_View/main/static/data/screener.json",
+          "status": 200,
+          "ms": 309
+        },
+        {
+          "path": "/api/financial-history",
+          "status": 200,
+          "ms": 338
+        },
+        {
+          "path": "/api/compare",
+          "status": 200,
+          "ms": 340
+        },
+        {
+          "path": "/api/activity",
+          "status": 200,
+          "ms": 393
+        }
+      ],
+      "errors": [],
+      "overflow": false
+    },
+    {
+      "name": "US-detail",
+      "domMs": 112,
+      "readyMs": 948,
+      "readyText": "$230.86",
+      "paint": [
+        {
+          "name": "first-paint",
+          "ms": 160
+        },
+        {
+          "name": "first-contentful-paint",
+          "ms": 160
+        }
+      ],
+      "requests": [
+        {
+          "path": "/api/valuation",
+          "status": 200,
+          "ms": 679
+        },
+        {
+          "path": "/api/compare",
+          "status": 200,
+          "ms": 680
+        }
+      ],
+      "errors": [],
+      "overflow": false
+    },
+    {
+      "name": "index",
+      "domMs": 75,
+      "readyMs": 1927,
+      "readyText": "6,974.55 pt",
+      "paint": [
+        {
+          "name": "first-paint",
+          "ms": 116
+        },
+        {
+          "name": "first-contentful-paint",
+          "ms": 116
+        }
+      ],
+      "requests": [
+        {
+          "path": "/api/market-now",
+          "status": 200,
+          "ms": 1421
+        },
+        {
+          "path": "/api/compare",
+          "status": 200,
+          "ms": 1818
+        }
+      ],
+      "errors": [],
+      "overflow": false
+    },
+    {
+      "name": "bands",
+      "domMs": 80,
+      "readyMs": 895,
+      "readyText": "",
+      "paint": [
+        {
+          "name": "first-paint",
+          "ms": 112
+        },
+        {
+          "name": "first-contentful-paint",
+          "ms": 112
+        }
+      ],
+      "requests": [
+        {
+          "path": "/api/valuation-band",
+          "status": 200,
+          "ms": 751
+        }
+      ],
+      "errors": [],
+      "overflow": false
+    },
+    {
+      "name": "heatmap",
+      "domMs": 89,
+      "readyMs": 903,
+      "readyText": "삼성전자-0.18%",
+      "paint": [
+        {
+          "name": "first-paint",
+          "ms": 112
+        },
+        {
+          "name": "first-contentful-paint",
+          "ms": 112
+        }
+      ],
+      "requests": [
+        {
+          "path": "/api/heatmap/full",
+          "status": 200,
+          "ms": 592
+        },
+        {
+          "path": "/api/activity",
+          "status": 200,
+          "ms": 695
+        },
+        {
+          "path": "/api/home-snapshot",
+          "status": 200,
+          "ms": 595
+        }
+      ],
+      "errors": [],
+      "overflow": false
+    }
+  ]
+}
