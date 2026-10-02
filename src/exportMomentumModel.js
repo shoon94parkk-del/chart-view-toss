@@ -51,6 +51,14 @@ export function normalizeExportSnapshot(raw={}){
     }))
     .filter(row=>row.name&&row.exportYoY!==null);
 
+  const history=(Array.isArray(raw.history)?raw.history:[])
+    .map(row=>({
+      period:text(row?.period),
+      exportsUsdBillion:finite(row?.exportsUsdBillion),
+      exportYoY:finite(row?.exportYoY),
+    }))
+    .filter(row=>row.period&&row.exportsUsdBillion!==null);
+
   const sources=(Array.isArray(raw.sources)?raw.sources:[])
     .map(row=>({name:text(row?.name),url:text(row?.url),role:text(row?.role)}))
     .filter(row=>row.name&&/^https:\/\//.test(row.url));
@@ -67,6 +75,7 @@ export function normalizeExportSnapshot(raw={}){
     checkpoints,
     items,
     regions,
+    history,
     sources,
   };
 }
@@ -132,4 +141,24 @@ export function checkpointProgress(snapshot){
     if(progress===null&&checkpoints.length)progress=(index+1)/checkpoints.length*100;
     return {...row,progress:Math.max(0,Math.min(100,progress))};
   });
+}
+
+
+export function chartExtent(values=[]){
+  const usable=values.map(finite).filter(value=>value!==null);
+  if(!usable.length)return {min:0,max:1,span:1};
+  const min=Math.min(0,...usable);
+  const max=Math.max(0,...usable);
+  const span=Math.max(1,max-min);
+  return {min,max,span};
+}
+
+export function chartPct(value,extent){
+  const number=finite(value);
+  if(number===null)return 0;
+  return Math.max(0,Math.min(100,(number-extent.min)/extent.span*100));
+}
+
+export function zeroPct(extent){
+  return Math.max(0,Math.min(100,(0-extent.min)/extent.span*100));
 }
