@@ -1,6 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
+  chartExtent,
+  chartPct,
   checkpointProgress,
   formatSignedPct,
   formatUsdBillion,
@@ -8,6 +10,7 @@ import {
   semiconductorShare,
   tradeBalanceLabel,
   yoyLabel,
+  zeroPct,
 } from '../src/exportMomentumModel.js';
 
 const fixture={
@@ -58,4 +61,24 @@ test('semiconductor share and labels are descriptive, not investment scores',()=
   assert.equal(yoyLabel(-5),'전년비 약세');
   assert.equal(tradeBalanceLabel(49.85),'흑자');
   assert.equal(tradeBalanceLabel(-2.1),'적자');
+});
+
+
+test('chart helpers keep zero axis stable across positive and negative growth',()=>{
+  const extent=chartExtent([262.8,72,31,-5]);
+  assert.equal(extent.min,-5);
+  assert.equal(extent.max,262.8);
+  assert.ok(zeroPct(extent)>1&&zeroPct(extent)<2);
+  assert.equal(chartPct(262.8,extent),100);
+  assert.equal(chartPct(-5,extent),0);
+});
+
+test('history is optional now and normalized for the future API contract',()=>{
+  const value=normalizeExportSnapshot({...fixture,history:[
+    {period:'2026-08',exportsUsdBillion:70,exportYoY:10},
+    {period:'2026-09',exportsUsdBillion:120.94,exportYoY:83.5},
+  ]});
+  assert.equal(value.history.length,2);
+  assert.equal(value.history[1].period,'2026-09');
+  assert.equal(value.history[1].exportsUsdBillion,120.94);
 });
