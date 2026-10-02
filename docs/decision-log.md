@@ -279,3 +279,9 @@ Explicit chart retries bypass cached empty/partial HTTP200 results while ordinar
 - 1차 시각화는 1~10일/1~20일/월 전체 누적 수출 막대, 품목별 YoY 발산 막대, 지역별 YoY 막대를 제공한다.
 - 프론트 데이터 계약에 optional `history`를 추가해 API 연결 후 최근 12개월 수출액+YoY 복합 차트를 같은 화면에서 자동 노출한다.
 - Home/bootstrap/시세 polling에는 수출 데이터 요청을 추가하지 않는다.
+
+## 2026-10-02 — 수출 모멘텀 실 API 전환
+- `#exports`는 정적 JSON이 아니라 공용 백엔드 `/api/export-momentum`을 lazy-load한다.
+- 총괄 최신 월과 HS 상세 최신 월이 다를 수 있으므로 `itemPeriod` / `regionPeriod`를 화면에 따로 표시한다.
+- 품목 상세 기준월과 총괄 기준월이 다르면 반도체 비중을 서로 다른 월끼리 나눠 계산하지 않는다.
+- 현재 승인받은 월간 API가 제공하지 않는 10일/20일 checkpoint는 실 API 화면에서 만들지 않는다.
