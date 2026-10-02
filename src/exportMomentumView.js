@@ -3,8 +3,11 @@ import {
   chartExtent,
   chartPct,
   checkpointProgress,
+  exportDriverLabel,
   formatSignedPct,
+  formatUnitValue,
   formatUsdBillion,
+  formatWeightKg,
   semiconductorShare,
   tradeBalanceLabel,
   yoyLabel,
@@ -31,6 +34,18 @@ const monthLabel=(period)=>{
 const cumulativeLabel=(period)=>{
   const match=/^(\d{4})-(\d{2})$/.exec(period||'');
   return match?`1~${Number(match[2])}월 누적 수출`:'연간 누적 수출';
+};
+
+const amountAxisLabel=(usdBillion)=>{
+  const value=Number(usdBillion);
+  if(!Number.isFinite(value))return '-';
+  return Math.round(value*10).toLocaleString('ko-KR')+'억';
+};
+
+const pctAxisLabel=(value)=>{
+  const number=Number(value);
+  if(!Number.isFinite(number))return '-';
+  return `${number>0?'+':''}${Math.round(number)}%`;
 };
 
 function loading(){
@@ -105,28 +120,41 @@ function checkpoints(snapshot){
 
 function items(snapshot){
   if(!snapshot.items.length)return '';
-  const maxAbs=Math.max(...snapshot.items.map(row=>Math.abs(row.exportYoY||0)),1);
   return `
     <section class="export-section">
-      <div class="export-section-head"><div><span>품목별</span><h3>어떤 품목이 움직였나</h3></div><small>${esc(monthLabel(snapshot.itemPeriod||snapshot.period))} 기준 · 전년 동월 대비</small></div>
-      <div class="export-chart-card">
-        <div class="export-diverging-chart" role="img" aria-label="주요 수출 품목 전년 동월 대비 증감률 그래프">
-          ${snapshot.items.map(row=>{
-            const width=Math.min(50,Math.abs(row.exportYoY)/maxAbs*50);
-            const positive=row.exportYoY>=0;
-            return `
-              <div class="export-diverging-row" aria-label="${esc(row.name)} ${esc(formatSignedPct(row.exportYoY))}">
-                <div class="export-diverging-label"><strong>${esc(row.name)}</strong><span class="${yoyTone(row.exportYoY)}">${esc(formatSignedPct(row.exportYoY))}</span></div>
-                <div class="export-diverging-track">
-                  <i class="zero"></i>
-                  <b class="${positive?'up':'down'}" style="${positive?'left:50%;':'right:50%;'}width:${width.toFixed(1)}%"></b>
-                </div>
-                <small>${row.exportsUsdBillion!==null?esc(formatUsdBillion(row.exportsUsdBillion,{digits:1})+' · '):''}${esc(row.note||yoyLabel(row.exportYoY))}</small>
-              </div>
-            `;
-          }).join('')}
-        </div>
+      <div class="export-section-head"><div><span>품목별</span><h3>금액 · 물량 · 단가로 분해</h3></div><small>${esc(monthLabel(snapshot.itemPeriod||snapshot.period))} 기준 · 전년 동월 대비</small></div>
+      <div class="export-item-driver-note">
+        <strong>어떻게 읽나요?</strong>
+        <span>수출액은 신고금액, 물량은 순중량(kg), 단가는 수출금액÷순중량으로 계산한 kg당 평균 신고금액입니다.</span>
       </div>
+      <div class="export-driver-list">
+        ${snapshot.items.map(row=>`
+          <article class="export-driver-card">
+            <div class="export-driver-head">
+              <div><strong>${esc(row.name)}</strong><small>${esc(row.note)}</small></div>
+              <span class="export-driver-tag">${esc(exportDriverLabel(row))}</span>
+            </div>
+            <div class="export-driver-grid">
+              <div>
+                <span>수출액</span>
+                <strong>${esc(formatUsdBillion(row.exportsUsdBillion,{digits:1}))}</strong>
+                <em class="${yoyTone(row.exportYoY)}">${esc(formatSignedPct(row.exportYoY))}</em>
+              </div>
+              <div>
+                <span>물량 · 순중량</span>
+                <strong>${esc(formatWeightKg(row.exportWeightKg))}</strong>
+                <em class="${yoyTone(row.exportWeightYoY)}">${esc(formatSignedPct(row.exportWeightYoY))}</em>
+              </div>
+              <div>
+                <span>kg당 신고금액</span>
+                <strong>${esc(formatUnitValue(row.unitValueUsdPerKg))}</strong>
+                <em class="${yoyTone(row.unitValueYoY)}">${esc(formatSignedPct(row.unitValueYoY))}</em>
+              </div>
+            </div>
+          </article>
+        `).join('')}
+      </div>
+      <p class="export-chart-note">kg당 신고금액은 개별 제품 판매가격이 아닙니다. 같은 HS 그룹 안의 제품 구성·고부가가치 비중 변화가 함께 반영되는 ‘평균 단위가치’로 해석해야 합니다.</p>
     </section>
   `;
 }
@@ -156,24 +184,62 @@ function history(snapshot){
   if(!snapshot.history||snapshot.history.length<2)return '';
   const rows=snapshot.history.slice(-12);
   const exportMax=Math.max(...rows.map(row=>row.exportsUsdBillion||0),1);
-  const yoyExtent=chartExtent(rows.map(row=>row.exportYoY));
-  const zero=zeroPct(yoyExtent);
+  const amountTop=Math.ceil(exportMax/10)*10||10;
+  const amountMid=amountTop/2;
+
+  const yoyValues=rows.map(row=>row.exportYoY).filter(value=>Number.isFinite(value));
+  const rawMin=yoyValues.length?Math.min(0,...yoyValues):0;
+  const rawMax=yoyValues.length?Math.max(0,...yoyValues):1;
+  let yoyMin=Math.floor(rawMin/10)*10;
+  let yoyMax=Math.ceil(rawMax/10)*10;
+  if(yoyMax===yoyMin)yoyMax=yoyMin+10;
+  const yoySpan=yoyMax-yoyMin;
+  const yoyPos=value=>Math.max(0,Math.min(100,((Number(value)-yoyMin)/yoySpan)*100));
+  const zero=yoyPos(0);
+
   return `
     <section class="export-section">
-      <div class="export-section-head"><div><span>최근 추이</span><h3>월별 수출액과 증가율</h3></div><small>최근 12개월</small></div>
+      <div class="export-section-head"><div><span>최근 추이</span><h3>월별 수출액과 증가율</h3></div><small>최근 12개월 · 단위 분리</small></div>
+
       <div class="export-chart-card export-history-card">
-        <div class="export-chart-legend"><span><i class="bar"></i>수출액</span><span><i class="line"></i>전년 동월비</span></div>
-        <div class="export-history-chart" role="img" aria-label="최근 월별 수출액과 전년 동월 대비 추이">
-          ${rows.map(row=>`
-            <div class="export-history-column" aria-label="${esc(row.period)} 수출 ${esc(formatUsdBillion(row.exportsUsdBillion,{digits:1}))}, 전년 대비 ${esc(formatSignedPct(row.exportYoY))}">
-              <span class="export-history-yoy ${yoyTone(row.exportYoY)}" style="bottom:${chartPct(row.exportYoY,yoyExtent).toFixed(1)}%"></span>
-              <i style="height:${Math.max(4,row.exportsUsdBillion/exportMax*76).toFixed(1)}%"></i>
-              <small>${esc(row.period.slice(5))}월</small>
-            </div>
-          `).join('')}
-          <span class="export-history-zero" style="bottom:${zero.toFixed(1)}%"></span>
+        <div class="export-chart-title"><strong>월별 수출액</strong><span>Y축 · 억달러</span></div>
+        <div class="export-axis-layout">
+          <div class="export-y-axis amount-axis">
+            <span>${esc(amountAxisLabel(amountTop))}</span>
+            <span>${esc(amountAxisLabel(amountMid))}</span>
+            <span>0</span>
+          </div>
+          <div class="export-amount-plot" role="img" aria-label="최근 12개월 수출액, 단위 억달러">
+            <i class="grid g-top"></i><i class="grid g-mid"></i><i class="grid g-bottom"></i>
+            ${rows.map(row=>`
+              <div class="export-amount-column" aria-label="${esc(row.period)} 수출 ${esc(formatUsdBillion(row.exportsUsdBillion,{digits:1}))}">
+                <i style="height:${Math.max(3,(row.exportsUsdBillion/amountTop)*100).toFixed(1)}%"></i>
+                <small>${esc(row.period.slice(5))}월</small>
+              </div>
+            `).join('')}
+          </div>
         </div>
-        <p class="export-chart-note">막대는 수출액, 점은 전년 동월 대비 변화입니다.</p>
+      </div>
+
+      <div class="export-chart-card export-history-card export-yoy-card">
+        <div class="export-chart-title"><strong>전년 동월 대비 증가율</strong><span>Y축 · %</span></div>
+        <div class="export-axis-layout">
+          <div class="export-y-axis yoy-axis">
+            <span>${esc(pctAxisLabel(yoyMax))}</span>
+            <span>0%</span>
+            <span>${esc(pctAxisLabel(yoyMin))}</span>
+          </div>
+          <div class="export-yoy-plot" style="--zero:${zero.toFixed(1)}%" role="img" aria-label="최근 12개월 수출 전년 동월 대비 증가율, 단위 퍼센트">
+            <i class="grid g-top"></i><i class="grid g-zero" style="bottom:${zero.toFixed(1)}%"></i><i class="grid g-bottom"></i>
+            ${rows.map(row=>`
+              <div class="export-yoy-column" aria-label="${esc(row.period)} 전년 대비 ${esc(formatSignedPct(row.exportYoY))}">
+                <span class="export-yoy-dot ${yoyTone(row.exportYoY)}" style="bottom:${yoyPos(row.exportYoY).toFixed(1)}%"></span>
+                <small>${esc(row.period.slice(5))}월</small>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+        <p class="export-chart-note">위 그래프는 금액(억달러), 아래 그래프는 전년 동월 대비 증감률(%)입니다. 서로 다른 단위를 한 축에 겹치지 않습니다.</p>
       </div>
     </section>
   `;

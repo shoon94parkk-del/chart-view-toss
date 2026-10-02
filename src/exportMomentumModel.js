@@ -38,6 +38,10 @@ export function normalizeExportSnapshot(raw={}){
       name:text(row?.name),
       exportsUsdBillion:finite(row?.exportsUsdBillion),
       exportYoY:finite(row?.exportYoY),
+      exportWeightKg:finite(row?.exportWeightKg),
+      exportWeightYoY:finite(row?.exportWeightYoY),
+      unitValueUsdPerKg:finite(row?.unitValueUsdPerKg),
+      unitValueYoY:finite(row?.unitValueYoY),
       note:text(row?.note),
     }))
     .filter(row=>row.name&&row.exportYoY!==null);
@@ -99,6 +103,35 @@ export function formatSignedPct(value,{digits=1}={}){
   return `${number>0?'+':''}${number.toFixed(digits)}%`;
 }
 
+export function formatWeightKg(value,{digits=1}={}){
+  const kg=finite(value);
+  if(kg===null)return '-';
+  const tons=kg/1000;
+  if(tons>=1_000_000)return (tons/1_000_000).toLocaleString('ko-KR',{maximumFractionDigits:digits})+'백만톤';
+  if(tons>=10_000)return (tons/10_000).toLocaleString('ko-KR',{maximumFractionDigits:digits})+'만톤';
+  if(tons>=1_000)return (tons/1_000).toLocaleString('ko-KR',{maximumFractionDigits:digits})+'천톤';
+  if(tons>=1)return tons.toLocaleString('ko-KR',{maximumFractionDigits:digits})+'톤';
+  return kg.toLocaleString('ko-KR',{maximumFractionDigits:0})+'kg';
+}
+
+export function formatUnitValue(value,{digits=1}={}){
+  const number=finite(value);
+  if(number===null)return '-';
+  const currency=String.fromCharCode(36);
+  return currency+number.toLocaleString('en-US',{maximumFractionDigits:digits,minimumFractionDigits:number<10?Math.min(2,digits):0})+'/kg';
+}
+
+export function exportDriverLabel(row={}){
+  const amount=finite(row.exportYoY);
+  const weight=finite(row.exportWeightYoY);
+  const unit=finite(row.unitValueYoY);
+  if(weight===null||unit===null)return '금액 기준';
+  if(weight>0&&unit>0)return '물량·단가 동반 증가';
+  if(weight<0&&unit<0)return '물량·단가 동반 감소';
+  if(weight>0&&unit<=0)return amount!==null&&amount>=0?'물량 증가 영향 우세':'단가 하락 영향 우세';
+  if(weight<=0&&unit>0)return amount!==null&&amount>=0?'단가 상승 영향 우세':'물량 감소 영향 우세';
+  return '물량·단가 혼조';
+}
 export function yoyTone(value){
   const number=finite(value);
   if(number===null||number===0)return 'flat';

@@ -133,18 +133,18 @@ async function installMocks(page, mode='ok') {
     if(path==='/api/valuation') return json(route,{stocks:valuationStocks});
     if(path==='/api/macro') return json(route,{generatedAt:'2026-09-21T03:04:00Z',freshCount:4,staleCount:0,summary:{level:'yellow',text:'현재 집계에서는 긍정·부정 신호가 함께 나타납니다.',notice:'시장 환경을 설명하기 위한 요약이며 투자 행동을 권유하지 않습니다.'},results:macroRows});
     if(path==='/api/export-momentum') return json(route,{
-      schemaVersion:2,status:'official_api',period:'2026-09',periodLabel:'2026년 9월',basis:'관세청 통관기준 월간 실적',
+      schemaVersion:3,status:'official_api',period:'2026-09',periodLabel:'2026년 9월',basis:'관세청 통관기준 월간 실적',
       updatedAt:'2026-10-02T14:00:00+09:00',itemPeriod:'2026-08',regionPeriod:'2026-08',
       summary:{exportsUsdBillion:65.9,importsUsdBillion:58.2,balanceUsdBillion:7.7,exportYoY:7.2,importYoY:2.3,cumulativeExportsUsdBillion:540.1,cumulativeBalanceUsdBillion:52.4},
       history:Array.from({length:12},(_,i)=>({period:`${i<3?'2025':'2026'}-${String(((i+9)%12)+1).padStart(2,'0')}`,exportsUsdBillion:55+i,exportYoY:(i-4)*1.8})),
       checkpoints:[],
       items:[
-        {name:'반도체',exportsUsdBillion:14.2,exportYoY:18.4,note:'HS 8541+8542 합산'},
-        {name:'승용차',exportsUsdBillion:5.8,exportYoY:4.1,note:'HS 8703 기준'},
-        {name:'석유제품',exportsUsdBillion:4.1,exportYoY:-3.2,note:'HS 2710 기준'},
-        {name:'화장품',exportsUsdBillion:1.0,exportYoY:11.3,note:'HS 3304 기준'},
-        {name:'선박',exportsUsdBillion:2.9,exportYoY:8.7,note:'HS 89 기준'},
-        {name:'철강',exportsUsdBillion:3.6,exportYoY:-1.5,note:'HS 72 기준'},
+        {name:'반도체',exportsUsdBillion:14.2,exportYoY:18.4,exportWeightKg:5200000,exportWeightYoY:5.0,unitValueUsdPerKg:2730.8,unitValueYoY:12.8,note:'HS 8541+8542 합산'},
+        {name:'승용차',exportsUsdBillion:5.8,exportYoY:4.1,exportWeightKg:165000000,exportWeightYoY:6.2,unitValueUsdPerKg:35.2,unitValueYoY:-2.0,note:'HS 8703 기준'},
+        {name:'석유제품',exportsUsdBillion:4.1,exportYoY:-3.2,exportWeightKg:5100000000,exportWeightYoY:8.1,unitValueUsdPerKg:0.8,unitValueYoY:-10.4,note:'HS 2710 기준'},
+        {name:'화장품',exportsUsdBillion:1.0,exportYoY:11.3,exportWeightKg:21000000,exportWeightYoY:2.3,unitValueUsdPerKg:47.6,unitValueYoY:8.8,note:'HS 3304 기준'},
+        {name:'선박',exportsUsdBillion:2.9,exportYoY:8.7,exportWeightKg:89000000,exportWeightYoY:-4.0,unitValueUsdPerKg:32.6,unitValueYoY:13.2,note:'HS 89 기준'},
+        {name:'철강',exportsUsdBillion:3.6,exportYoY:-1.5,exportWeightKg:4300000000,exportWeightYoY:3.5,unitValueUsdPerKg:0.84,unitValueYoY:-4.8,note:'HS 72 기준'},
       ],
       regions:[
         {name:'미국',exportsUsdBillion:11.2,exportYoY:5.1,note:'관세청 국가코드 US 기준'},
@@ -285,9 +285,14 @@ try{
     await page.goto(`${BASE}/#${tab}`,{waitUntil:'networkidle'});
     await page.waitForTimeout(120);
     if(tab==='exports'){
-      await page.waitForSelector('.export-history-chart');
-      if(await page.locator('.export-history-column').count()!==12) throw new Error('export history must show 12 official monthly observations');
-      if(await page.locator('.export-diverging-row').count()<5) throw new Error('export item chart is missing major HS groups');
+      await page.waitForSelector('.export-amount-plot');
+      if(await page.locator('.export-amount-column').count()!==12) throw new Error('export amount chart must show 12 official monthly observations');
+      if(await page.locator('.export-yoy-column').count()!==12) throw new Error('export YoY chart must show 12 official monthly observations');
+      const chartText=await page.locator('.export-section').filter({hasText:'월별 수출액과 증가율'}).innerText();
+      if(!chartText.includes('Y축 · 억달러')||!chartText.includes('Y축 · %')) throw new Error(`export chart units must be explicit: ${chartText}`);
+      if(await page.locator('.export-driver-card').count()<5) throw new Error('export value-volume-unit-value cards are missing major HS groups');
+      const itemText=await page.locator('.export-driver-card').first().innerText();
+      for(const label of ['수출액','물량 · 순중량','kg당 신고금액']) if(!itemText.includes(label)) throw new Error(`export decomposition metric missing: ${label}`);
       if(await page.locator('.export-horizontal-row').count()<5) throw new Error('export country chart is missing major destinations');
       if(await page.locator('.export-column-chart').count()) throw new Error('monthly API must not fabricate 10-day/20-day checkpoint bars');
       const periodText=await page.locator('.export-period-split').innerText();

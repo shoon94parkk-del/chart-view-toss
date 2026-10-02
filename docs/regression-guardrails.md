@@ -237,3 +237,7 @@ Saved investment baselines are device records: show them before network completi
 - A lagged `itemPeriod` may not be divided by the headline month total to produce a semiconductor share.
 - Show `itemPeriod` and `regionPeriod` when they differ from the headline `period`.
 - Do not restore static 10-day/20-day bars unless an official preliminary-data source is actually connected.
+
+- 월별 수출액과 YoY는 서로 다른 단위이므로 축을 섞지 않는다. 수출액 차트는 억달러, YoY 차트는 %를 명시한다.
+- 품목의 ‘물량’은 순중량이며 개수/대수로 바꾸지 않는다.
+- kg당 신고금액을 제품 판매단가 또는 ASP라고 부르지 않는다.
