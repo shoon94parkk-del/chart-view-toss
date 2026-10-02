@@ -79,3 +79,36 @@
   .export-driver-grid strong{font-size:10px}
   .export-driver-tag{font-size:8px}
 }
+
+
+/* Export V3: driver quadrant + lazy item drilldown */
+.export-quadrant-card{position:relative;padding:16px;border:1px solid #edf0f2;border-radius:20px;background:#fff;box-shadow:0 8px 24px rgba(25,31,40,.035)}
+.export-quadrant{position:relative;height:260px;margin:22px 8px 6px;border:1px solid #edf0f2;border-radius:16px;background:linear-gradient(90deg,rgba(49,130,246,.025) 50%,rgba(230,74,97,.025) 50%),linear-gradient(180deg,rgba(230,74,97,.018) 50%,rgba(49,130,246,.018) 50%);overflow:hidden}
+.export-quadrant .q-v,.export-quadrant .q-h{position:absolute;background:#cfd6de;z-index:1}.export-quadrant .q-v{top:0;bottom:0;left:50%;width:1px}.export-quadrant .q-h{left:0;right:0;top:50%;height:1px}
+.export-quadrant-axis{display:flex;align-items:center;justify-content:space-between;color:#8b95a1;font-size:9px}.export-quadrant-axis strong{color:#4e5968;font-size:10px}.export-quadrant-axis.y-axis{position:absolute;transform:rotate(-90deg);transform-origin:left top;left:4px;margin-top:228px;width:230px;pointer-events:none}
+.export-quadrant-point{position:absolute;z-index:3;transform:translate(-50%,50%);border:0;background:transparent;min-width:44px;min-height:44px;padding:0;display:grid;place-items:center}
+.export-quadrant-point i{width:11px;height:11px;border-radius:50%;background:#3182f6;border:2px solid #fff;box-shadow:0 2px 8px rgba(49,130,246,.28)}
+.export-quadrant-point span{position:absolute;top:30px;left:50%;transform:translateX(-50%);padding:3px 5px;border-radius:6px;background:rgba(255,255,255,.94);border:1px solid #edf0f2;color:#333d4b;font-size:8px;font-weight:800;white-space:nowrap}
+.export-quadrant .q-label{position:absolute;z-index:0;color:#a4adb8;font-size:8px;font-weight:700}.export-quadrant .q1{right:8px;top:8px}.export-quadrant .q2{left:8px;top:8px}.export-quadrant .q3{left:8px;bottom:8px}.export-quadrant .q4{right:8px;bottom:8px}
+
+.export-driver-trade{display:flex;flex-wrap:wrap;gap:7px 12px;margin-top:10px;padding-top:10px;border-top:1px solid #f0f2f5;color:#6b7684;font-size:9px}
+.export-driver-trade b{color:#333d4b;font-size:10px}.export-driver-trade b.up{color:#e64a61}.export-driver-trade b.down{color:#3182f6}.export-driver-trade em{font-style:normal;font-weight:800}.export-driver-trade em.up{color:#e64a61}.export-driver-trade em.down{color:#3182f6}
+.export-driver-open{width:100%;min-height:44px;margin-top:11px;border:0;border-radius:12px;background:#eef6ff;color:#1769c2;font-size:11px;font-weight:900}
+
+.export-item-detail{scroll-margin-top:16px;margin:13px 0 4px;padding:16px;border:1px solid #dfe8f3;border-radius:20px;background:#fbfdff;box-shadow:0 10px 28px rgba(49,130,246,.06)}
+.export-item-detail[hidden]{display:none}
+.export-detail-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.export-detail-head>div{min-width:0}.export-detail-head span{display:block;color:#3182f6;font-size:9px;font-weight:800}.export-detail-head h4{margin:3px 0;font-size:19px}.export-detail-head small{color:#8b95a1;font-size:9px}.export-detail-head button,.export-detail-error button{min-width:44px;min-height:44px;border:0;border-radius:11px;background:#f2f4f6;color:#4e5968;font-weight:800}
+.export-detail-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:14px}.export-detail-summary>div{padding:10px 8px;border-radius:13px;background:#fff;border:1px solid #edf0f2;min-width:0}.export-detail-summary span,.export-detail-summary small{display:block;color:#8b95a1;font-size:8px}.export-detail-summary strong{display:block;margin:5px 0 3px;font-size:11px;overflow-wrap:anywhere}.export-detail-summary strong.up,.export-detail-summary small.up{color:#e64a61}.export-detail-summary strong.down,.export-detail-summary small.down{color:#3182f6}
+.export-detail-chart-stack{display:grid;gap:10px;margin-top:12px}.export-detail-chart{padding:12px;border-radius:15px;background:#fff;border:1px solid #edf0f2}.export-detail-chart-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px}.export-detail-chart-head strong{font-size:11px}.export-detail-chart-head span{font-size:8px;color:#8b95a1}
+.export-detail-bars{height:118px;display:grid;grid-template-columns:repeat(12,minmax(10px,1fr));gap:3px;align-items:end;border-bottom:1px solid #e8edf3;padding:4px 1px 18px}.export-detail-bar{height:100%;position:relative;display:flex;align-items:flex-end;justify-content:center}.export-detail-bar i{display:block;width:70%;background:linear-gradient(180deg,#8dbdfd,#3182f6);border-radius:4px 4px 1px 1px}.export-detail-bar small{position:absolute;bottom:-15px;color:#8b95a1;font-size:7px}
+.export-detail-country{margin-top:13px;padding:13px;border-radius:15px;background:#fff;border:1px solid #edf0f2}.export-detail-country-head{display:flex;justify-content:space-between;gap:8px;align-items:flex-start;margin-bottom:10px}.export-detail-country-head strong{font-size:11px}.export-detail-country-head small{max-width:48%;text-align:right;color:#8b95a1;font-size:8px;line-height:1.35}
+.export-detail-country-row{margin-top:10px}.export-detail-country-row>div:first-child{display:flex;justify-content:space-between;gap:8px;font-size:10px}.export-detail-country-row>div:first-child span{color:#6b7684}.export-detail-country-track{height:8px;margin-top:5px;border-radius:999px;background:#f2f4f6;overflow:hidden}.export-detail-country-track i{display:block;height:100%;border-radius:inherit;background:#3182f6}.export-detail-country-row>small{display:block;margin-top:4px;color:#8b95a1;font-size:8px}
+.export-detail-loading,.export-detail-error{min-height:150px;display:grid;place-items:center;align-content:center;gap:8px;text-align:center;color:#6b7684}.export-detail-loading span{width:24px;height:24px;border:3px solid #dce8f7;border-top-color:#3182f6;border-radius:50%;animation:export-spin .8s linear infinite}.export-detail-loading strong,.export-detail-error strong{font-size:12px;color:#333d4b}.export-detail-loading small,.export-detail-error p{font-size:9px;color:#8b95a1;margin:0;line-height:1.45}
+
+@media(max-width:360px){
+  .export-quadrant{height:230px;margin-left:5px;margin-right:5px}
+  .export-quadrant-axis.y-axis{margin-top:202px;width:205px}
+  .export-detail-summary{grid-template-columns:1fr}
+  .export-detail-bars{gap:2px}
+  .export-detail-bar small{font-size:6.5px}
+}

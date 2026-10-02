@@ -9,6 +9,7 @@ import {
   formatUnitValue,
   formatUsdBillion,
   formatWeightKg,
+  normalizeExportItemDetail,
   normalizeExportSnapshot,
   semiconductorShare,
   tradeBalanceLabel,
@@ -24,7 +25,7 @@ const fixture={
     {label:'1~20일',exportsUsdBillion:71.409,exportYoY:78.3},
     {label:'월 전체',exportsUsdBillion:120.94,exportYoY:83.5},
   ],
-  items:[{name:'반도체',exportsUsdBillion:60.3,exportYoY:262.8,exportWeightKg:12000000,exportWeightYoY:15,unitValueUsdPerKg:5025,unitValueYoY:215}],
+  items:[{key:'semiconductor',name:'반도체',exportsUsdBillion:60.3,exportYoY:262.8,exportWeightKg:12000000,exportWeightYoY:15,unitValueUsdPerKg:5025,unitValueYoY:215,importsUsdBillion:8.5,importYoY:11,importWeightKg:3200000,tradeBalanceUsdBillion:51.8}],
 };
 
 test('export snapshot normalizes official numeric fields without inventing missing values',()=>{
@@ -102,4 +103,30 @@ test('history is optional now and normalized for the future API contract',()=>{
   assert.equal(value.history.length,2);
   assert.equal(value.history[1].period,'2026-09');
   assert.equal(value.history[1].exportsUsdBillion,120.94);
+});
+
+
+test('item drilldown normalizes 12-month trade and country breakdown',()=>{
+  const detail=normalizeExportItemDetail({
+    key:'semiconductor',
+    name:'반도체',
+    period:'2026-08',
+    history:[
+      {period:'2026-07',exportsUsdBillion:12,exportWeightKg:5000000,unitValueUsdPerKg:2400,importsUsdBillion:7,tradeBalanceUsdBillion:5},
+      {period:'2026-08',exportsUsdBillion:14,exportWeightKg:5200000,unitValueUsdPerKg:2692.3,importsUsdBillion:8,tradeBalanceUsdBillion:6},
+    ],
+    countries:[{name:'미국',code:'US',exportsUsdBillion:3.2,sharePct:22.9}],
+  });
+  assert.equal(detail.history.length,2);
+  assert.equal(detail.history[1].unitValueUsdPerKg,2692.3);
+  assert.equal(detail.countries[0].sharePct,22.9);
+});
+
+test('main item contract keeps imports and trade balance separate from exports',()=>{
+  const value=normalizeExportSnapshot(fixture);
+  const semi=value.items[0];
+  assert.equal(semi.key,'semiconductor');
+  assert.equal(semi.importsUsdBillion,8.5);
+  assert.equal(semi.importYoY,11);
+  assert.equal(semi.tradeBalanceUsdBillion,51.8);
 });

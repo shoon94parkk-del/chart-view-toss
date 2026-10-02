@@ -35,6 +35,7 @@ export function normalizeExportSnapshot(raw={}){
 
   const items=(Array.isArray(raw.items)?raw.items:[])
     .map(row=>({
+      key:text(row?.key),
       name:text(row?.name),
       exportsUsdBillion:finite(row?.exportsUsdBillion),
       exportYoY:finite(row?.exportYoY),
@@ -42,6 +43,10 @@ export function normalizeExportSnapshot(raw={}){
       exportWeightYoY:finite(row?.exportWeightYoY),
       unitValueUsdPerKg:finite(row?.unitValueUsdPerKg),
       unitValueYoY:finite(row?.unitValueYoY),
+      importsUsdBillion:finite(row?.importsUsdBillion),
+      importYoY:finite(row?.importYoY),
+      importWeightKg:finite(row?.importWeightKg),
+      tradeBalanceUsdBillion:finite(row?.tradeBalanceUsdBillion),
       note:text(row?.note),
     }))
     .filter(row=>row.name&&row.exportYoY!==null);
@@ -198,4 +203,45 @@ export function chartPct(value,extent){
 
 export function zeroPct(extent){
   return Math.max(0,Math.min(100,(0-extent.min)/extent.span*100));
+}
+
+
+export function normalizeExportItemDetail(raw={}){
+  const history=(Array.isArray(raw.history)?raw.history:[]).map(row=>({
+    period:text(row?.period),
+    exportsUsdBillion:finite(row?.exportsUsdBillion),
+    exportYoY:finite(row?.exportYoY),
+    exportWeightKg:finite(row?.exportWeightKg),
+    exportWeightYoY:finite(row?.exportWeightYoY),
+    unitValueUsdPerKg:finite(row?.unitValueUsdPerKg),
+    unitValueYoY:finite(row?.unitValueYoY),
+    importsUsdBillion:finite(row?.importsUsdBillion),
+    importYoY:finite(row?.importYoY),
+    importWeightKg:finite(row?.importWeightKg),
+    tradeBalanceUsdBillion:finite(row?.tradeBalanceUsdBillion),
+  })).filter(row=>row.period&&row.exportsUsdBillion!==null);
+
+  const countries=(Array.isArray(raw.countries)?raw.countries:[]).map(row=>({
+    name:text(row?.name),
+    code:text(row?.code),
+    exportsUsdBillion:finite(row?.exportsUsdBillion),
+    sharePct:finite(row?.sharePct),
+  })).filter(row=>row.name&&row.exportsUsdBillion!==null);
+
+  return {
+    schemaVersion:Number(raw.schemaVersion)||1,
+    key:text(raw.key),
+    name:text(raw.name),
+    note:text(raw.note),
+    period:text(raw.period),
+    history,
+    countries,
+    meta:raw.meta&&typeof raw.meta==='object'?raw.meta:{},
+  };
+}
+
+export function balanceTone(value){
+  const number=finite(value);
+  if(number===null||number===0)return 'flat';
+  return number>0?'up':'down';
 }

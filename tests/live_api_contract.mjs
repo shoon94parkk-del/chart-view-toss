@@ -47,6 +47,22 @@ assert(
   'derived export unit value is missing'
 );
 
+const exportDetail = await get('/api/export-momentum/item-detail?key=semiconductor', 60000);
+assert(exportDetail.key === 'semiconductor', 'export item detail key mismatch');
+assert(Array.isArray(exportDetail.history) && exportDetail.history.length === 12, 'export item detail must keep 12 months');
+assert(
+  exportDetail.history.every((row) => row.period && Number(row.exportsUsdBillion) >= 0),
+  'export item detail monthly values missing'
+);
+assert(
+  exportDetail.history.some((row) => Number(row.exportWeightKg) > 0 && Number(row.unitValueUsdPerKg) > 0),
+  'export item detail value-volume-unit-value series missing'
+);
+assert(
+  Array.isArray(exportDetail.countries) && exportDetail.countries.length === 5,
+  'export item detail country breakdown missing'
+);
+
 console.log('Live backend contract smoke passed', {
   base: BASE,
   quoteCount: quotes.results.length,
@@ -54,4 +70,6 @@ console.log('Live backend contract smoke passed', {
   macroCount: macro.results.length,
   exportItemCount: exportsSnapshot.items.length,
   exportItemPeriod: exportsSnapshot.itemPeriod,
+  exportDetailMonths: exportDetail.history.length,
+  exportDetailCountries: exportDetail.countries.length,
 });
