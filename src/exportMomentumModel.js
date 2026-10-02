@@ -111,9 +111,25 @@ export function semiconductorShare(snapshot){
   return semi/total*100;
 }
 
+export function tradeBalanceLabel(value){
+  const number=finite(value);
+  if(number===null)return '수지 미제공';
+  if(number>0)return '흑자';
+  if(number<0)return '적자';
+  return '균형';
+}
+
 export function checkpointProgress(snapshot){
   const checkpoints=Array.isArray(snapshot?.checkpoints)?snapshot.checkpoints:[];
-  const finalValue=checkpoints.at(-1)?.exportsUsdBillion;
-  if(!Number.isFinite(finalValue)||finalValue<=0)return checkpoints.map(row=>({...row,progress:null}));
-  return checkpoints.map(row=>({...row,progress:Math.max(0,Math.min(100,row.exportsUsdBillion/finalValue*100))}));
+  return checkpoints.map((row,index)=>{
+    const match=/^(\d{4})-(\d{2})-(\d{2})$/.exec(row.endDate||'');
+    let progress=null;
+    if(match){
+      const year=Number(match[1]),month=Number(match[2]),day=Number(match[3]);
+      const daysInMonth=new Date(Date.UTC(year,month,0)).getUTCDate();
+      if(day>=1&&day<=daysInMonth)progress=day/daysInMonth*100;
+    }
+    if(progress===null&&checkpoints.length)progress=(index+1)/checkpoints.length*100;
+    return {...row,progress:Math.max(0,Math.min(100,progress))};
+  });
 }
