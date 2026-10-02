@@ -33,6 +33,26 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/performance-latest.json
-          git diff --cached --quiet || git commit -m "docs: record latest production performance"
-          git push
+          cp docs/performance-latest.json /tmp/performance-latest.json
+
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git checkout -B main origin/main
+            cp /tmp/performance-latest.json docs/performance-latest.json
+            git add docs/performance-latest.json
+
+            if git diff --cached --quiet; then
+              echo "Performance result is already current."
+              exit 0
+            fi
+
+            git commit -m "docs: record latest production performance"
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+
+            echo "Push raced with another main update; retrying (${attempt}/3)."
+          done
+
+          echo "Could not save performance result after 3 retries."
+          exit 1
