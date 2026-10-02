@@ -257,9 +257,16 @@ try{
 
   const context=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:1});
   const page=await context.newPage();await seed(page);await installMocks(page);
-  for(const tab of ['valuation','macro','watch','news','picks','heatmap','detail/005930.KS','more','info']){
+  for(const tab of ['valuation','macro','exports','watch','news','picks','heatmap','detail/005930.KS','more','info']){
     await page.goto(`${BASE}/#${tab}`,{waitUntil:'networkidle'});
     await page.waitForTimeout(120);
+    if(tab==='exports'){
+      await page.waitForSelector('.export-column-chart');
+      if(await page.locator('.export-column-item').count()!==3) throw new Error('export checkpoint chart must show 10-day, 20-day and full-month bars');
+      if(await page.locator('.export-diverging-row').count()<5) throw new Error('export item chart is missing major products');
+      if(await page.locator('.export-horizontal-row').count()<3) throw new Error('export region chart is missing major destinations');
+      await assertNoHorizontalOverflow(page,'390px exports');
+    }
     if(tab==='macro'){
       await page.waitForSelector('.macro-mini-chart .macro-sparkline');
       const sparkCount=await page.locator('.macro-mini-chart .macro-sparkline').count();
