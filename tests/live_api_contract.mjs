@@ -56,6 +56,7 @@ assert(
 
 const exportDetail = await get('/api/export-momentum/item-detail?key=semiconductor', 60000);
 assert(exportDetail.key === 'semiconductor', 'export item detail key mismatch');
+assert(Number(exportDetail.schemaVersion) >= 2, 'export item detail schema v2 missing');
 assert(Array.isArray(exportDetail.history) && exportDetail.history.length === 12, 'export item detail must keep 12 months');
 assert(
   exportDetail.history.every((row) => row.period && Number(row.exportsUsdBillion) >= 0),
@@ -75,6 +76,16 @@ assert(Number.isFinite(Number(exportDetail.momentum?.volume?.avg3mYoY)), 'export
 assert(Number.isFinite(Number(exportDetail.momentum?.unitValue?.avg3mYoY)), 'export 3-month unit-value momentum missing');
 assert(Array.isArray(exportDetail.momentum?.phaseHistory) && exportDetail.momentum.phaseHistory.length === 12, 'export phase history missing');
 
+assert(Array.isArray(exportDetail.semiconductorBreakdown) && exportDetail.semiconductorBreakdown.length >= 4, 'semiconductor HSK breakdown missing');
+const dram = exportDetail.semiconductorBreakdown.find((row) => row.code === '8542321010');
+const flash = exportDetail.semiconductorBreakdown.find((row) => row.code === '8542321030');
+const sram = exportDetail.semiconductorBreakdown.find((row) => row.code === '8542321020');
+assert(dram && Array.isArray(dram.history) && dram.history.length >= 1, 'official DRAM HSK series missing');
+assert(flash && Array.isArray(flash.history) && flash.history.length >= 1, 'official Flash memory HSK series missing');
+assert(sram, 'official SRAM HSK series missing');
+assert(String(dram.note || '').includes('HBM'), 'HBM classification limitation missing');
+assert(String(flash.note || '').includes('NAND'), 'Flash/NAND scope note missing');
+
 console.log('Live backend contract smoke passed', {
   base: BASE,
   quoteCount: quotes.results.length,
@@ -86,4 +97,6 @@ console.log('Live backend contract smoke passed', {
   exportBreadthRising: exportsSnapshot.breadth.risingCount,
   exportDetailMonths: exportDetail.history.length,
   exportDetailCountries: exportDetail.countries.length,
+  semiconductorSegments: exportDetail.semiconductorBreakdown.length,
+  dramMonths: dram.history.length,
 });
