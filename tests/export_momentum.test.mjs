@@ -271,3 +271,36 @@ test('10-day provisional radar preserves checkpoint comparisons and contribution
   assert.equal(radar.items[0].name,'반도체');
   assert.equal(radar.items[0].exportMoM,31.1);
 });
+
+
+test('month-end landing projection preserves range actual review and backtest quality',()=>{
+  const radar=normalizeExportProvisionalRadar({
+    schemaVersion:2,status:'official_preliminary_api',period:'2026-09',latestStage:30,latestStageLabel:'월 전체',
+    checkpoints:[{stage:30,label:'월 전체',total:{exportsUsdBillion:120.9},semiconductor:{exportsUsdBillion:60.5}}],
+    items:[{key:'semiconductor',name:'반도체',exportsUsdBillion:60.5}],
+    landingProjection:{
+      status:'final-review',stage:20,stageLabel:'1~20일',message:'회고',
+      total:{
+        currentUsdBillion:71.4,estimateUsdBillion:112.8,rangeLowUsdBillion:104.2,rangeHighUsdBillion:123.7,
+        medianCompletionPct:63.3,completionQ25Pct:57.7,completionQ75Pct:68.5,
+        projectedYoY:71.0,rangeYoYLow:58.0,rangeYoYHigh:87.5,historySampleCount:60,
+        actualUsdBillion:120.94,actualErrorPct:-6.7,
+        backtest:{sampleCount:24,medianAbsErrorPct:6.1,rangeHitPct:70.8},
+      },
+      semiconductor:{
+        currentUsdBillion:34.13,estimateUsdBillion:55.8,rangeLowUsdBillion:50.2,rangeHighUsdBillion:62.7,
+        medianCompletionPct:61.2,completionQ25Pct:54.4,completionQ75Pct:68.0,
+        projectedYoY:235.0,rangeYoYLow:201.0,rangeYoYHigh:277.0,historySampleCount:60,
+        actualUsdBillion:60.5,actualErrorPct:-7.8,
+        backtest:{sampleCount:24,medianAbsErrorPct:7.3,rangeHitPct:75.0},
+      },
+      model:{historyWindowMonths:60,backtestWindowMonths:24},
+    },
+  });
+  assert.equal(radar.landingProjection.status,'final-review');
+  assert.equal(radar.landingProjection.stage,20);
+  assert.equal(radar.landingProjection.total.actualUsdBillion,120.94);
+  assert.equal(radar.landingProjection.total.backtest.medianAbsErrorPct,6.1);
+  assert.equal(radar.landingProjection.semiconductor.rangeHighUsdBillion,62.7);
+  assert.equal(radar.landingProjection.semiconductor.backtest.rangeHitPct,75);
+});
