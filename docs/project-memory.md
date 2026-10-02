@@ -212,3 +212,10 @@ Audit: measured all 17 principal route journeys at 390px on the live site, inclu
 
 ## 2026-10-02 Whole-site reliability follow-up
 Use explicit force only for chart retry to recover cached 200 empty/partial data. Disclose missing selected companies above comparison charts. Domestic detail alone offers DART research/industry; absent industry removes its jump. Detail news retry is independent, and secure external web opening no longer emits false failure from noopener null. tests/reliability_audit_qa.mjs covers 320/390/430px. Production and audit evidence: RELIABILITY_UX_AUDIT_2026-10-02.md.
+
+### 2026-10-02 — Export momentum foundation
+- New lazy route: `#exports` / `/exports`, entered from More > 근거와 시장 환경 확인.
+- v1 reads an official static snapshot at `/data/export-momentum.json`; no Home/bootstrap request was added.
+- Snapshot schema covers summary, 1~10/1~20/full-month checkpoints, items, regions and official source URLs. Missing amounts remain null.
+- Future Customs ServiceKey work should replace only the producer/backend loader; keep the UI contract and lazy-load/performance isolation.
+- Do not label export growth as a stock buy/sell recommendation. HS→industry→listed-company mapping is deferred for separate data-quality and Apps in Toss scope review.
