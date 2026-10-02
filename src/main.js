@@ -956,6 +956,7 @@ async function refreshDetailChart({symbol,epoch,period,force=false}){
    const periodReturn=finiteNumber(stock.return);
    status.textContent=periodReturn===null?'조회 완료':`${periodReturn>=0?'+':''}${periodReturn.toFixed(2)}%`;
    document.querySelector('#detail-return-note').innerHTML=`<span>${esc(stock.startDate||'-')} → ${esc(stock.endDate||'-')}</span><span>${symbol.startsWith('^')?'지수 pt · Yahoo Chart':esc(currencyLabel(stock.currency))+' 기준 · '+(stock.priceBasis==='adjusted_close'?'조정종가 우선':'종가 기준')}</span>`;
+   return stock;
  }catch(error){
    if(seq!==detailChartLoadSeq||epoch!==viewEpoch||state.tab!=='detail'||state.detailSymbol!==symbol)return;
    document.querySelector('#detail-chart-loading')?.remove();
@@ -1096,7 +1097,7 @@ async function renderDetail(){
    priceBox.querySelector('.quote-provenance').open=Boolean(provenanceOpen);
    if(provenanceFocused)priceBox.querySelector('.quote-provenance summary').focus({preventScroll:true});
  };
- if(!isIndex&&/\.(KS|KQ)$/i.test(symbol))void screenerData().then(data=>{if(epoch!==viewEpoch)return;const row=(data.stocks||[]).find(row=>row.symbol===symbol);if(row?.price!=null){closingQuote={price:row.price,date:row.date||data.tradeDate||data.updated||'기준일 미제공'};const quote=getLiveQuote(symbol);if(quote)paintDetailQuote(quote);}}).catch(()=>{});
+ if(!isIndex&&/\.(KS|KQ)$/i.test(symbol))void screenerData().then(data=>{if(epoch!==viewEpoch)return;const row=(data.stocks||[]).find(row=>row.symbol===symbol);if(row?.price!=null){closingQuote={price:row.price,date:row.date||data.tradeDate||data.updated||'기준일 미제공'};const quote=getLiveQuote(symbol);if(quote)paintDetailQuote(quote);else paintDetailQuote({ticker:symbol,name:row.name||knownName||symbol,price:row.price,change:row.change1d,currency:'KRW',priceBasis:'regular_close',source:'장마감 스크리너'});}}).catch(()=>{});
  if(saved)seedWatchQuoteCache(state.watchlist.map(x=>x.symbol));
  const cachedQuote=resolveLiveQuote(symbol,homeCachedQuote(symbol));
  if(cachedQuote){
@@ -1125,7 +1126,13 @@ async function renderDetail(){
    }
  };
  jobs.push(pullDetailLive());
- jobs.push(refreshDetailChart({symbol,epoch,period:state.detailPeriod}));
+ const detailChartTask=refreshDetailChart({symbol,epoch,period:state.detailPeriod}).then(stock=>{
+   if(!stock?.price||getLiveQuote(symbol)||epoch!==viewEpoch||state.tab!=='detail'||state.detailSymbol!==symbol)return stock;
+   if(!knownName&&stock.name)applyDetailName(stock.name);
+   paintDetailQuote({ticker:symbol,name:stock.name||knownName||symbol,price:stock.price,change:null,currency:stock.currency,asOf:stock.quoteAsOf,source:stock.quoteSource||stock.source||'Yahoo Chart'});
+   return stock;
+ });
+ jobs.push(detailChartTask);
  if(isIndex){
    document.querySelector('.detail-jump-nav')?.remove();
    for(const id of ['detail-industry-block','detail-research-card','detail-metrics-section','detail-news-section'])document.getElementById(id)?.remove();
