@@ -139,12 +139,12 @@ async function installMocks(page, mode='ok') {
       history:Array.from({length:12},(_,i)=>({period:`${i<3?'2025':'2026'}-${String(((i+9)%12)+1).padStart(2,'0')}`,exportsUsdBillion:55+i,exportYoY:(i-4)*1.8})),
       checkpoints:[],
       items:[
-        {name:'반도체',exportsUsdBillion:14.2,exportYoY:18.4,exportWeightKg:5200000,exportWeightYoY:5.0,unitValueUsdPerKg:2730.8,unitValueYoY:12.8,note:'HS 8541+8542 합산'},
-        {name:'승용차',exportsUsdBillion:5.8,exportYoY:4.1,exportWeightKg:165000000,exportWeightYoY:6.2,unitValueUsdPerKg:35.2,unitValueYoY:-2.0,note:'HS 8703 기준'},
-        {name:'석유제품',exportsUsdBillion:4.1,exportYoY:-3.2,exportWeightKg:5100000000,exportWeightYoY:8.1,unitValueUsdPerKg:0.8,unitValueYoY:-10.4,note:'HS 2710 기준'},
-        {name:'화장품',exportsUsdBillion:1.0,exportYoY:11.3,exportWeightKg:21000000,exportWeightYoY:2.3,unitValueUsdPerKg:47.6,unitValueYoY:8.8,note:'HS 3304 기준'},
-        {name:'선박',exportsUsdBillion:2.9,exportYoY:8.7,exportWeightKg:89000000,exportWeightYoY:-4.0,unitValueUsdPerKg:32.6,unitValueYoY:13.2,note:'HS 89 기준'},
-        {name:'철강',exportsUsdBillion:3.6,exportYoY:-1.5,exportWeightKg:4300000000,exportWeightYoY:3.5,unitValueUsdPerKg:0.84,unitValueYoY:-4.8,note:'HS 72 기준'},
+        {key:'semiconductor',name:'반도체',exportsUsdBillion:14.2,exportYoY:18.4,exportWeightKg:5200000,exportWeightYoY:5.0,unitValueUsdPerKg:2730.8,unitValueYoY:12.8,importsUsdBillion:8.2,importYoY:9.1,importWeightKg:1900000,tradeBalanceUsdBillion:6.0,note:'HS 8541+8542 합산'},
+        {key:'passenger-car',name:'승용차',exportsUsdBillion:5.8,exportYoY:4.1,exportWeightKg:165000000,exportWeightYoY:6.2,unitValueUsdPerKg:35.2,unitValueYoY:-2.0,importsUsdBillion:1.1,importYoY:2.0,importWeightKg:31000000,tradeBalanceUsdBillion:4.7,note:'HS 8703 기준'},
+        {key:'petroleum',name:'석유제품',exportsUsdBillion:4.1,exportYoY:-3.2,exportWeightKg:5100000000,exportWeightYoY:8.1,unitValueUsdPerKg:0.8,unitValueYoY:-10.4,importsUsdBillion:0.9,importYoY:-4.5,importWeightKg:900000000,tradeBalanceUsdBillion:3.2,note:'HS 2710 기준'},
+        {key:'cosmetics',name:'화장품',exportsUsdBillion:1.0,exportYoY:11.3,exportWeightKg:21000000,exportWeightYoY:2.3,unitValueUsdPerKg:47.6,unitValueYoY:8.8,importsUsdBillion:0.22,importYoY:6.2,importWeightKg:6500000,tradeBalanceUsdBillion:0.78,note:'HS 3304 기준'},
+        {key:'ships',name:'선박',exportsUsdBillion:2.9,exportYoY:8.7,exportWeightKg:89000000,exportWeightYoY:-4.0,unitValueUsdPerKg:32.6,unitValueYoY:13.2,importsUsdBillion:0.4,importYoY:3.1,importWeightKg:12000000,tradeBalanceUsdBillion:2.5,note:'HS 89 기준'},
+        {key:'steel',name:'철강',exportsUsdBillion:3.6,exportYoY:-1.5,exportWeightKg:4300000000,exportWeightYoY:3.5,unitValueUsdPerKg:0.84,unitValueYoY:-4.8,importsUsdBillion:2.8,importYoY:4.0,importWeightKg:3500000000,tradeBalanceUsdBillion:0.8,note:'HS 72 기준'},
       ],
       regions:[
         {name:'미국',exportsUsdBillion:11.2,exportYoY:5.1,note:'관세청 국가코드 US 기준'},
@@ -154,6 +154,25 @@ async function installMocks(page, mode='ok') {
         {name:'대만',exportsUsdBillion:2.5,exportYoY:9.4,note:'관세청 국가코드 TW 기준'},
       ],
       sources:[{name:'관세청 수출입총괄',role:'월별 총수출·수입·무역수지',url:'https://www.data.go.kr/data/15102108/openapi.do'}],
+      meta:{cacheStatus:'fresh'},
+    });
+    if(path==='/api/export-momentum/item-detail') return json(route,{
+      schemaVersion:1,key:url.searchParams.get('key')||'semiconductor',name:'반도체',note:'HS 8541+8542 합산',period:'2026-08',
+      history:Array.from({length:12},(_,i)=>({
+        period:`2025-${String(i+9).padStart(2,'0')}`.replace('13','01').replace('14','02').replace('15','03').replace('16','04').replace('17','05').replace('18','06').replace('19','07').replace('20','08'),
+        exportsUsdBillion:9+i*0.45,exportYoY:5+i,
+        exportWeightKg:4000000+i*90000,exportWeightYoY:-2+i*0.8,
+        unitValueUsdPerKg:2200+i*45,unitValueYoY:6+i*0.5,
+        importsUsdBillion:5+i*0.2,importYoY:2+i*0.4,importWeightKg:1500000+i*25000,
+        tradeBalanceUsdBillion:4+i*0.25,
+      })),
+      countries:[
+        {name:'미국',code:'US',exportsUsdBillion:3.1,sharePct:21.8},
+        {name:'중국',code:'CN',exportsUsdBillion:2.8,sharePct:19.7},
+        {name:'베트남',code:'VN',exportsUsdBillion:1.6,sharePct:11.3},
+        {name:'일본',code:'JP',exportsUsdBillion:1.2,sharePct:8.5},
+        {name:'대만',code:'TW',exportsUsdBillion:1.0,sharePct:7.0},
+      ],
       meta:{cacheStatus:'fresh'},
     });
     if(path==='/api/personalized-news') return json(route,{items:newsItems});
@@ -292,7 +311,14 @@ try{
       if(!chartText.includes('Y축 · 억달러')||!chartText.includes('Y축 · %')) throw new Error(`export chart units must be explicit: ${chartText}`);
       if(await page.locator('.export-driver-card').count()<5) throw new Error('export value-volume-unit-value cards are missing major HS groups');
       const itemText=await page.locator('.export-driver-card').first().innerText();
-      for(const label of ['수출액','물량 · 순중량','kg당 신고금액']) if(!itemText.includes(label)) throw new Error(`export decomposition metric missing: ${label}`);
+      for(const label of ['수출액','물량 · 순중량','kg당 신고금액','수입','무역수지']) if(!itemText.includes(label)) throw new Error(`export decomposition metric missing: ${label}`);
+      if(await page.locator('.export-quadrant-point').count()<5) throw new Error('export volume-unit-value quadrant is missing');
+      await page.locator('.export-driver-open').first().click();
+      await page.waitForSelector('#export-item-detail .export-detail-chart');
+      if(await page.locator('#export-item-detail .export-detail-chart').count()!==3) throw new Error('export item detail must show amount, volume and unit-value history');
+      if(await page.locator('#export-item-detail .export-detail-bar').count()!==36) throw new Error('export item detail must keep all 12 months across three charts');
+      if(await page.locator('#export-item-detail .export-detail-country-row').count()!==5) throw new Error('export item country breakdown must show five configured markets');
+      await assertNoHorizontalOverflow(page,'390px export item detail');
       if(await page.locator('.export-horizontal-row').count()<5) throw new Error('export country chart is missing major destinations');
       if(await page.locator('.export-column-chart').count()) throw new Error('monthly API must not fabricate 10-day/20-day checkpoint bars');
       const periodText=await page.locator('.export-period-split').innerText();
