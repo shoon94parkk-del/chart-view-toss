@@ -133,7 +133,7 @@ async function installMocks(page, mode='ok') {
     if(path==='/api/valuation') return json(route,{stocks:valuationStocks});
     if(path==='/api/macro') return json(route,{generatedAt:'2026-09-21T03:04:00Z',freshCount:4,staleCount:0,summary:{level:'yellow',text:'현재 집계에서는 긍정·부정 신호가 함께 나타납니다.',notice:'시장 환경을 설명하기 위한 요약이며 투자 행동을 권유하지 않습니다.'},results:macroRows});
     if(path==='/api/export-momentum') return json(route,{
-      schemaVersion:3,status:'official_api',period:'2026-09',periodLabel:'2026년 9월',basis:'관세청 통관기준 월간 실적',
+      schemaVersion:4,status:'official_api',period:'2026-09',periodLabel:'2026년 9월',basis:'관세청 통관기준 월간 실적',
       updatedAt:'2026-10-02T14:00:00+09:00',itemPeriod:'2026-08',regionPeriod:'2026-08',
       summary:{exportsUsdBillion:65.9,importsUsdBillion:58.2,balanceUsdBillion:7.7,exportYoY:7.2,importYoY:2.3,cumulativeExportsUsdBillion:540.1,cumulativeBalanceUsdBillion:52.4},
       history:Array.from({length:12},(_,i)=>({period:`${i<3?'2025':'2026'}-${String(((i+9)%12)+1).padStart(2,'0')}`,exportsUsdBillion:55+i,exportYoY:(i-4)*1.8})),
@@ -146,6 +146,18 @@ async function installMocks(page, mode='ok') {
         {key:'ships',name:'선박',exportsUsdBillion:2.9,exportYoY:8.7,exportWeightKg:89000000,exportWeightYoY:-4.0,unitValueUsdPerKg:32.6,unitValueYoY:13.2,importsUsdBillion:0.4,importYoY:3.1,importWeightKg:12000000,tradeBalanceUsdBillion:2.5,note:'HS 89 기준'},
         {key:'steel',name:'철강',exportsUsdBillion:3.6,exportYoY:-1.5,exportWeightKg:4300000000,exportWeightYoY:3.5,unitValueUsdPerKg:0.84,unitValueYoY:-4.8,importsUsdBillion:2.8,importYoY:4.0,importWeightKg:3500000000,tradeBalanceUsdBillion:0.8,note:'HS 72 기준'},
       ],
+      breadth:{
+        period:'2026-08',level:'HS2',comparableCount:80,risingCount:52,fallingCount:26,flatCount:2,
+        risingBreadthPct:65.0,risingExportSharePct:72.4,netChangeUsdBillion:6.2,
+        topPositive:[
+          {code:'85',name:'전기기기·전자부품',exportsUsdBillion:20,priorExportsUsdBillion:15,deltaUsdBillion:5,exportYoY:33.3,sharePct:30.0},
+          {code:'89',name:'선박·보트',exportsUsdBillion:4,priorExportsUsdBillion:2.8,deltaUsdBillion:1.2,exportYoY:42.9,sharePct:6.0},
+        ],
+        topNegative:[
+          {code:'87',name:'자동차·차량',exportsUsdBillion:5,priorExportsUsdBillion:6,deltaUsdBillion:-1,exportYoY:-16.7,sharePct:7.5},
+          {code:'72',name:'철강',exportsUsdBillion:3,priorExportsUsdBillion:3.4,deltaUsdBillion:-0.4,exportYoY:-11.8,sharePct:4.5},
+        ],
+      },
       regions:[
         {name:'미국',exportsUsdBillion:11.2,exportYoY:5.1,note:'관세청 국가코드 US 기준'},
         {name:'중국',exportsUsdBillion:10.4,exportYoY:-2.2,note:'관세청 국가코드 CN 기준'},
@@ -166,6 +178,18 @@ async function installMocks(page, mode='ok') {
         importsUsdBillion:5+i*0.2,importYoY:2+i*0.4,importWeightKg:1500000+i*25000,
         tradeBalanceUsdBillion:4+i*0.25,
       })),
+      momentum:{
+        exports:{avg3mYoY:18,previous3mYoY:11,accelerationPp:7,label:'증가세 강화'},
+        volume:{avg3mYoY:5,previous3mYoY:2,accelerationPp:3,label:'증가세 강화'},
+        unitValue:{avg3mYoY:12,previous3mYoY:9,accelerationPp:3,label:'증가세 강화'},
+        latestPhase:'물량↑·단위가치↑',
+        phaseHistory:Array.from({length:12},(_,i)=>({
+          period:`2026-${String(i+1).padStart(2,'0')}`,
+          phase:i%3===0?'물량↓·단위가치↑':'물량↑·단위가치↑',
+          volumeYoY:i%3===0?-2:5,
+          unitValueYoY:10,
+        })),
+      },
       countries:[
         {name:'미국',code:'US',exportsUsdBillion:3.1,sharePct:21.8},
         {name:'중국',code:'CN',exportsUsdBillion:2.8,sharePct:19.7},
@@ -312,12 +336,17 @@ try{
       if(await page.locator('.export-driver-card').count()<5) throw new Error('export value-volume-unit-value cards are missing major HS groups');
       const itemText=await page.locator('.export-driver-card').first().innerText();
       for(const label of ['수출액','물량 · 순중량','kg당 신고금액','수입','무역수지']) if(!itemText.includes(label)) throw new Error(`export decomposition metric missing: ${label}`);
+      if(await page.locator('.export-breadth-card').count()!==1) throw new Error('export HS2 breadth card missing');
+      const breadthText=await page.locator('.export-breadth-card').innerText();
+      for(const label of ['증가 품목','상승 확산도','수출 증가 기여액 상위','수출 감소 기여액 상위']) if(!breadthText.includes(label)) throw new Error(`export breadth label missing: ${label}`);
       if(await page.locator('.export-quadrant-point').count()<5) throw new Error('export volume-unit-value quadrant is missing');
       await page.locator('.export-driver-open').first().click();
       await page.waitForSelector('#export-item-detail .export-detail-chart');
       if(await page.locator('#export-item-detail .export-detail-chart').count()!==3) throw new Error('export item detail must show amount, volume and unit-value history');
       if(await page.locator('#export-item-detail .export-detail-bar').count()!==36) throw new Error('export item detail must keep all 12 months across three charts');
       if(await page.locator('#export-item-detail .export-detail-country-row').count()!==5) throw new Error('export item country breakdown must show five configured markets');
+      if(await page.locator('#export-item-detail .export-momentum-summary>div').count()!==3) throw new Error('export item momentum summary must show amount, volume and unit-value metrics');
+      if(await page.locator('#export-item-detail .export-phase-strip .phase').count()!==12) throw new Error('export item phase history must show 12 months');
       await assertNoHorizontalOverflow(page,'390px export item detail');
       if(await page.locator('.export-horizontal-row').count()<5) throw new Error('export country chart is missing major destinations');
       if(await page.locator('.export-column-chart').count()) throw new Error('monthly API must not fabricate 10-day/20-day checkpoint bars');
