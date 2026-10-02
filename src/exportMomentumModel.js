@@ -118,7 +118,6 @@ export function formatUnitValue(value,{digits=1}={}){
   const number=finite(value);
   if(number===null)return '-';
   return '
-export function yoyTone(value){
   const number=finite(value);
   if(number===null||number===0)return 'flat';
   return number>0?'up':'down';
@@ -202,7 +201,6 @@ export function exportDriverLabel(row={}){
   if(weight<=0&&unit>0)return amount!==null&&amount>=0?'단가 상승 영향 우세':'물량 감소 영향 우세';
   return '물량·단가 혼조';
 }
-
 export function yoyTone(value){
   const number=finite(value);
   if(number===null||number===0)return 'flat';
