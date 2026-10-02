@@ -247,3 +247,9 @@ Saved investment baselines are device records: show them before network completi
 - ‘수출 증가/감소 기여액’은 전년동월 대비 달러 증감액이다. 종목 추천, 주가 기여, 기업 이익 기여로 바꾸지 않는다.
 - 3개월 가속도는 최근 3개월 YoY 평균 - 직전 3개월 YoY 평균(%p)이다. 전망치나 다음 달 예측으로 표기하지 않는다.
 - HS2 확산도 UI 때문에 신규 관세청 호출을 추가하지 않는다.
+
+## Export dual-axis / semiconductor detail
+- 메인 월별 차트에서 수출액은 왼쪽 억달러 축, YoY는 오른쪽 % 축에만 바인딩한다. 축 숫자와 범례를 숨기지 않는다.
+- 품목 상세 12개월 차트는 금액·순중량·평균 단위가치 각각의 Y축 눈금을 보존한다.
+- HBM 전용 통관 수출액을 만들지 않는다. 공식 HSK에 독립 코드가 생기기 전에는 제한사항을 명시한다.
+- 8542321030은 Flash memory이며 NAND-only로 바꾸지 않는다.
