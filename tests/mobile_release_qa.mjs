@@ -274,8 +274,11 @@ try{
     }
     if(tab==='detail/005930.KS'){
       if(await page.locator('#detail-watch-quick').count()) throw new Error('detail has a duplicate interest action');
-      const jumpHeights=await page.locator('.detail-jump-nav button').evaluateAll(nodes=>nodes.map(node=>node.getBoundingClientRect().height));
-      if(jumpHeights.length!==5||jumpHeights.some(height=>height<44)) throw new Error(`detail jump controls are too small: ${jumpHeights}`);
+      const jumpControls=await page.locator('.detail-jump-nav button').evaluateAll(nodes=>nodes.map(node=>({label:node.textContent.trim(),height:node.getBoundingClientRect().height})));
+      const coreJumpLabels=['가격','공시 실적','뉴스','공시 비교'];
+      if(coreJumpLabels.some(label=>!jumpControls.some(control=>control.label===label))||jumpControls.some(control=>control.height<44)) {
+        throw new Error(`detail jump controls are missing or too small: ${JSON.stringify(jumpControls)}`);
+      }
       await page.waitForSelector('#detail-price strong');
       const detailPrice=await page.locator('#detail-price').innerText();
       if((detailPrice.match(/원/g)||[]).length!==1||!detailPrice.includes('84,200원')) throw new Error(`KRW detail price should show its unit exactly once: ${detailPrice}`);
