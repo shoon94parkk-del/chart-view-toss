@@ -210,3 +210,16 @@ Saved investment baselines are device records: show them before network completi
 - Every detail jump must have a mounted target. DART analysis is offered only for Korean exchange tickers.
 - News transport failure is not a valid empty news result; independent retry must not reload unrelated data.
 - Secure external open with noopener returns null even when a tab opens; never infer an error from that value. Keep opener isolation, HTTPS validation and native failure handling.
+
+
+## No-repeat performance/cache regression gate (2026-10-02)
+- Performance, quote freshness, cache, Home/Detail, heatmap, valuation, and loading changes must first consult `docs/no-repeat-regression-policy.md`.
+- Before editing, classify the issue as new behavior, new bug, or regression of a previously fixed behavior.
+- A regression must restore the known-good contract before introducing a new architecture or cache layer.
+- Do not weaken `fresh=true` canonical Detail quote revalidation to make first paint faster. Fast Home/market/screener data may paint first, but fresh validation still runs.
+- Older browser/device/API cache must never overwrite a newer in-session quote.
+- Direct Detail routes should paint available primary price data independently from slower news/DART/financial/valuation work.
+- Backend valuation-band prewarm/singleflight/cache is an intentional performance contract; removing it is a regression unless deliberately redesigned and remeasured.
+- Same-harness production reference on 2026-10-02 (390x844 Chromium, single-run reference only): Home ~0.55s, Samsung Detail ~0.54s, NVIDIA Detail ~0.95s, KOSPI index Detail ~1.93s, valuation band ~0.90s, full heatmap ~0.90s.
+- These timings are not SLAs. Use them only to detect a material regression with the same measurement method.
+- A repeated bug is not complete until the existing regression test is identified and strengthened or a new test is added.
