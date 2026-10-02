@@ -361,6 +361,38 @@ export function normalizeExportProvisionalRadar(raw={}){
     name:text(row?.name),
     ...normalizeRadarMetric(row),
   })).filter(row=>row.key&&row.name&&row.exportsUsdBillion!==null);
+
+  const normalizeLandingMetric=(metric)=>metric&&typeof metric==='object'?{
+    currentUsdBillion:finite(metric.currentUsdBillion),
+    estimateUsdBillion:finite(metric.estimateUsdBillion),
+    rangeLowUsdBillion:finite(metric.rangeLowUsdBillion),
+    rangeHighUsdBillion:finite(metric.rangeHighUsdBillion),
+    medianCompletionPct:finite(metric.medianCompletionPct),
+    completionQ25Pct:finite(metric.completionQ25Pct),
+    completionQ75Pct:finite(metric.completionQ75Pct),
+    projectedYoY:finite(metric.projectedYoY),
+    rangeYoYLow:finite(metric.rangeYoYLow),
+    rangeYoYHigh:finite(metric.rangeYoYHigh),
+    historySampleCount:finite(metric.historySampleCount),
+    actualUsdBillion:finite(metric.actualUsdBillion),
+    actualErrorPct:finite(metric.actualErrorPct),
+    backtest:metric.backtest&&typeof metric.backtest==='object'?{
+      sampleCount:finite(metric.backtest.sampleCount),
+      medianAbsErrorPct:finite(metric.backtest.medianAbsErrorPct),
+      rangeHitPct:finite(metric.backtest.rangeHitPct),
+    }:{sampleCount:null,medianAbsErrorPct:null,rangeHitPct:null},
+  }:null;
+
+  const rawLanding=raw.landingProjection&&typeof raw.landingProjection==='object'?raw.landingProjection:null;
+  const landingProjection=rawLanding?{
+    status:text(rawLanding.status),
+    stage:finite(rawLanding.stage),
+    stageLabel:text(rawLanding.stageLabel),
+    message:text(rawLanding.message),
+    total:normalizeLandingMetric(rawLanding.total),
+    semiconductor:normalizeLandingMetric(rawLanding.semiconductor),
+    model:rawLanding.model&&typeof rawLanding.model==='object'?rawLanding.model:{},
+  }:null;
   return {
     schemaVersion:Number(raw.schemaVersion)||1,
     status:text(raw.status),
@@ -370,6 +402,7 @@ export function normalizeExportProvisionalRadar(raw={}){
     latestStageLabel:text(raw.latestStageLabel),
     checkpoints,
     items,
+    landingProjection,
     meta:raw.meta&&typeof raw.meta==='object'?raw.meta:{},
     source:raw.source&&typeof raw.source==='object'?{
       name:text(raw.source.name),
