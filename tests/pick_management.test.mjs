@@ -8,6 +8,7 @@ const api=readFileSync(new URL('../src/api.js',import.meta.url),'utf8');
 const main=readFileSync(new URL('../src/main.js',import.meta.url),'utf8');
 const home=readFileSync(new URL('../src/homeExtras.js',import.meta.url),'utf8');
 const scope=readFileSync(new URL('../src/releaseScope.js',import.meta.url),'utf8');
+const ideaView=readFileSync(new URL('../src/ideaView.js',import.meta.url),'utf8');
 
 test('PICK management combines recommendation performance and monitoring',()=>{
   assert.match(api,/pick_monitor\.json/);
@@ -56,4 +57,12 @@ test('PICK technical timing alerts stay advisory and visibly separate from funda
   assert.ok(ledger.includes('기술 경고만으로 자동 매도 확정하지 않아요.'));
   assert.match(ledgerCss,/pick-ledger-tech-status\.tech-sell/);
   assert.match(ledgerCss,/pick-ledger-tech-alert/);
+});
+
+
+test('pick monitor prefers the static data CDN and does not block IDEA LAB first render',()=>{
+  assert.match(api,/pickMonitor=\(\)=>staticData\('pick_monitor\.json'/);
+  assert.ok(ideaView.includes("const monitorPromise=pickMonitor().catch(()=>null);"));
+  assert.ok(ideaView.includes("const [data,companyMeta]=await Promise.all(["));
+  assert.ok(ideaView.includes("void monitorPromise.then(payload=>applyMonitorStatuses(host,ideas,payload));"));
 });
