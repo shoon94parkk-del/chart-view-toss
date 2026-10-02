@@ -5,6 +5,7 @@ import {
   chartPct,
   checkpointProgress,
   exportDriverLabel,
+  formatPp,
   formatSignedPct,
   formatUnitValue,
   formatUsdBillion,
@@ -129,4 +130,38 @@ test('main item contract keeps imports and trade balance separate from exports',
   assert.equal(semi.importsUsdBillion,8.5);
   assert.equal(semi.importYoY,11);
   assert.equal(semi.tradeBalanceUsdBillion,51.8);
+});
+
+
+test('breadth contract keeps HS2 growth counts and movers',()=>{
+  const value=normalizeExportSnapshot({
+    ...fixture,
+    breadth:{
+      period:'2026-08',level:'HS2',comparableCount:80,risingCount:52,fallingCount:26,flatCount:2,
+      risingBreadthPct:65,risingExportSharePct:72.4,netChangeUsdBillion:6.2,
+      topPositive:[{code:'85',name:'전기기기',exportsUsdBillion:20,priorExportsUsdBillion:15,deltaUsdBillion:5,exportYoY:33.3,sharePct:30}],
+      topNegative:[{code:'87',name:'자동차',exportsUsdBillion:5,priorExportsUsdBillion:6,deltaUsdBillion:-1,exportYoY:-16.7,sharePct:7.5}],
+    },
+  });
+  assert.equal(value.breadth.risingCount,52);
+  assert.equal(value.breadth.topPositive[0].code,'85');
+  assert.equal(value.breadth.topNegative[0].deltaUsdBillion,-1);
+});
+
+test('item detail momentum preserves 3-month averages acceleration and phases',()=>{
+  const detail=normalizeExportItemDetail({
+    key:'semiconductor',name:'반도체',period:'2026-08',
+    history:[{period:'2026-08',exportsUsdBillion:14}],
+    momentum:{
+      exports:{avg3mYoY:20,previous3mYoY:12,accelerationPp:8,label:'증가세 강화'},
+      volume:{avg3mYoY:5,previous3mYoY:2,accelerationPp:3,label:'증가세 강화'},
+      unitValue:{avg3mYoY:14,previous3mYoY:10,accelerationPp:4,label:'증가세 강화'},
+      latestPhase:'물량↑·단위가치↑',
+      phaseHistory:[{period:'2026-08',phase:'물량↑·단위가치↑',volumeYoY:5,unitValueYoY:14}],
+    },
+  });
+  assert.equal(detail.momentum.exports.accelerationPp,8);
+  assert.equal(detail.momentum.latestPhase,'물량↑·단위가치↑');
+  assert.equal(detail.momentum.phaseHistory.length,1);
+  assert.equal(formatPp(8),'+8.0%p');
 });
