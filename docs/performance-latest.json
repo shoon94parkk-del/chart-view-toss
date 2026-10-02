@@ -1,96 +1,124 @@
 {
   "base": "https://chart-view-toss.onrender.com",
-  "measuredAt": "2026-10-02T13:56:56.101Z",
+  "measuredAt": "2026-10-02T14:12:49.637Z",
   "results": [
     {
       "name": "home",
-      "domMs": 180,
-      "readyMs": 3547,
+      "domMs": 425,
+      "readyMs": 748,
       "readyText": "7,003.74",
       "paint": [
         {
           "name": "first-paint",
-          "ms": 232
+          "ms": 460
         },
         {
           "name": "first-contentful-paint",
-          "ms": 232
+          "ms": 460
         }
       ],
       "overflow": false,
       "loaders": [],
       "requests": [
         {
-          "path": "/api/home-bootstrap",
+          "path": "/api/activity",
           "status": 200,
-          "ms": 2934
-        },
-        {
-          "path": "/api/home-snapshot",
-          "status": 200,
-          "ms": 2944
+          "ms": 177
         },
         {
           "path": "/api/market-now",
           "status": 200,
-          "ms": 3024
+          "ms": 249
+        },
+        {
+          "path": "/api/home-bootstrap",
+          "status": 200,
+          "ms": 254
+        },
+        {
+          "path": "/api/home-snapshot",
+          "status": 200,
+          "ms": 309
         }
       ],
       "errors": []
     },
     {
       "name": "detail",
-      "domMs": 97,
-      "readyMs": 1143,
+      "domMs": 104,
+      "readyMs": 418,
       "readyText": "276,000원",
       "paint": [
         {
           "name": "first-paint",
-          "ms": 164
+          "ms": 140
         },
         {
           "name": "first-contentful-paint",
-          "ms": 164
+          "ms": 140
         }
       ],
       "overflow": false,
       "loaders": [
-        "분기 보고서를 확인하고 있어요 · 첫 조회는 시간이 걸릴 수 있어요",
-        "최근 재무제표를 확인하고 있어요",
         "관련 뉴스를 불러오고 있어요"
       ],
       "requests": [
         {
-          "path": "/shoon94parkk-del/chart_View/main/static/data/screener.json",
+          "path": "/api/relationship-evidence",
           "status": 200,
-          "ms": 387
+          "ms": 123
         },
         {
-          "path": "/api/compare",
+          "path": "/api/business-report",
           "status": 200,
-          "ms": 1902
+          "ms": 132
+        },
+        {
+          "path": "/shoon94parkk-del/chart_View/main/static/data/screener.json",
+          "status": 200,
+          "ms": 202
         },
         {
           "path": "/api/valuation",
           "status": 200,
-          "ms": 1992
+          "ms": 255
+        },
+        {
+          "path": "/api/financial-history",
+          "status": 200,
+          "ms": 275
+        },
+        {
+          "path": "/api/compare",
+          "status": 200,
+          "ms": 276
+        },
+        {
+          "path": "/api/activity",
+          "status": 200,
+          "ms": 435
+        },
+        {
+          "path": "/api/financial-quarters",
+          "status": 200,
+          "ms": 339
         }
       ],
       "errors": []
     },
     {
       "name": "US-detail",
-      "domMs": 101,
-      "readyMs": 4954,
-      "readyText": "$237.24",
+      "domMs": 103,
+      "readyMs": 922,
+      "readyText": "236.76",
       "paint": [
         {
           "name": "first-paint",
-          "ms": 148
+          "ms": 132
         },
         {
           "name": "first-contentful-paint",
-          "ms": 148
+          "ms": 132
         }
       ],
       "overflow": false,
@@ -99,44 +127,73 @@
       ],
       "requests": [
         {
-          "path": "/api/compare",
+          "path": "/api/home-snapshot",
           "status": 200,
-          "ms": 4608
+          "ms": 708
         },
         {
           "path": "/api/valuation",
           "status": 200,
-          "ms": 4696
+          "ms": 1308
+        },
+        {
+          "path": "/api/compare",
+          "status": 200,
+          "ms": 1309
+        },
+        {
+          "path": "/api/activity",
+          "status": 200,
+          "ms": 1389
         }
       ],
       "errors": []
     },
     {
       "name": "index",
-      "domMs": 79,
-      "readyMs": 5427,
-      "readyText": "확인 불가",
+      "domMs": 100,
+      "readyMs": 1411,
+      "readyText": "7,003.74 pt",
       "paint": [
         {
           "name": "first-paint",
-          "ms": 120
+          "ms": 124
         },
         {
           "name": "first-contentful-paint",
-          "ms": 120
+          "ms": 124
         }
       ],
       "overflow": false,
-      "loaders": [
-        "종목 차트를 불러오고 있어요"
+      "loaders": [],
+      "requests": [
+        {
+          "path": "/api/market-now",
+          "status": 200,
+          "ms": 951
+        },
+        {
+          "path": "/api/compare",
+          "status": 200,
+          "ms": 950
+        },
+        {
+          "path": "/api/quotes",
+          "status": 200,
+          "ms": 1054
+        },
+        {
+          "path": "/api/activity",
+          "status": 200,
+          "ms": 1133
+        }
       ],
-      "requests": [],
       "errors": []
     },
     {
       "name": "chart",
-      "domMs": 90,
-      "readyMs": 3935,
+      "domMs": 106,
+      "readyMs": 918,
       "readyText": "",
       "paint": [
         {
@@ -154,24 +211,29 @@
         {
           "path": "/api/compare",
           "status": 200,
-          "ms": 3650
+          "ms": 501
+        },
+        {
+          "path": "/api/activity",
+          "status": 200,
+          "ms": 587
         }
       ],
       "errors": []
     },
     {
       "name": "heatmap",
-      "domMs": 79,
-      "readyMs": 3917,
+      "domMs": 116,
+      "readyMs": 1423,
       "readyText": "삼성전자0.00%",
       "paint": [
         {
           "name": "first-paint",
-          "ms": 104
+          "ms": 136
         },
         {
           "name": "first-contentful-paint",
-          "ms": 104
+          "ms": 136
         }
       ],
       "overflow": false,
@@ -180,31 +242,36 @@
       ],
       "requests": [
         {
-          "path": "/api/heatmap/full",
+          "path": "/api/activity",
           "status": 200,
-          "ms": 3737
+          "ms": 189
         },
         {
           "path": "/api/home-snapshot",
           "status": 200,
-          "ms": 3835
+          "ms": 96
+        },
+        {
+          "path": "/api/heatmap/full",
+          "status": 200,
+          "ms": 649
         }
       ],
       "errors": []
     },
     {
       "name": "discover",
-      "domMs": 81,
-      "readyMs": 243,
+      "domMs": 98,
+      "readyMs": 235,
       "readyText": "3S060310.KQ · KOSDAQ · 2026-10-02기준 종가 1,185원+6.66%RSI 59.4 · 거래량 2.87배 · 20일 +5.52%RSI 59.4거래량 2.9배20일선 > 60일선",
       "paint": [
         {
           "name": "first-paint",
-          "ms": 112
+          "ms": 116
         },
         {
           "name": "first-contentful-paint",
-          "ms": 112
+          "ms": 116
         }
       ],
       "overflow": false,
@@ -213,15 +280,20 @@
         {
           "path": "/shoon94parkk-del/chart_View/main/static/data/screener.json",
           "status": 200,
-          "ms": 35
+          "ms": 63
+        },
+        {
+          "path": "/api/activity",
+          "status": 200,
+          "ms": 233
         }
       ],
       "errors": []
     },
     {
       "name": "macro",
-      "domMs": 96,
-      "readyMs": 1920,
+      "domMs": 103,
+      "readyMs": 904,
       "readyText": "T10Y2Y최근 관측장단기 금리차 (10Y-2Y)0.46%p+5bp2026.05.112026.10.0110년-2년 미국 국채 금리차입니다.2026-10-01 관측이전 관측 대비FRED mirror · Equibles CSV원본 시리즈",
       "paint": [
         {
@@ -239,24 +311,29 @@
         {
           "path": "/api/macro",
           "status": 200,
-          "ms": 1513
+          "ms": 344
+        },
+        {
+          "path": "/api/activity",
+          "status": 200,
+          "ms": 631
         }
       ],
       "errors": []
     },
     {
       "name": "news",
-      "domMs": 78,
-      "readyMs": 2903,
-      "readyText": "직접 관련삼성전자thedailypost.kr · 24분 전하이브랩, 대규모 프리IPO 투자 유치…기업가치 1000억 달성한국어기사 제목·요약에 기업명 확인실적수주",
+      "domMs": 94,
+      "readyMs": 292,
+      "readyText": "직접 관련삼성전자thedailypost.kr · 40분 전하이브랩, 대규모 프리IPO 투자 유치…기업가치 1000억 달성한국어기사 제목·요약에 기업명 확인실적수주",
       "paint": [
         {
           "name": "first-paint",
-          "ms": 108
+          "ms": 112
         },
         {
           "name": "first-contentful-paint",
-          "ms": 108
+          "ms": 112
         }
       ],
       "overflow": false,
@@ -265,64 +342,81 @@
         {
           "path": "/api/personalized-news",
           "status": 200,
-          "ms": 2789
+          "ms": 120
+        },
+        {
+          "path": "/api/activity",
+          "status": 200,
+          "ms": 205
         }
       ],
       "errors": []
     },
     {
       "name": "tools",
-      "domMs": 111,
-      "readyMs": 151,
+      "domMs": 100,
+      "readyMs": 127,
       "readyText": "FZFinviz미국 주식 스크리너↗",
       "paint": [
         {
           "name": "first-paint",
-          "ms": 152
+          "ms": 124
         },
         {
           "name": "first-contentful-paint",
-          "ms": 152
+          "ms": 124
         }
       ],
       "overflow": false,
       "loaders": [],
-      "requests": [],
+      "requests": [
+        {
+          "path": "/api/activity",
+          "status": 200,
+          "ms": 269
+        }
+      ],
       "errors": []
     },
     {
       "name": "watch",
-      "domMs": 67,
-      "readyMs": 101,
+      "domMs": 98,
+      "readyMs": 120,
       "readyText": "아직 관심종목이 없어요‘종목 추가’에서 저장하면 홈과 뉴스에도 바로 반영돼요.종목 추가",
       "paint": [
         {
           "name": "first-paint",
-          "ms": 96
+          "ms": 116
         },
         {
           "name": "first-contentful-paint",
-          "ms": 96
+          "ms": 116
         }
       ],
       "overflow": false,
       "loaders": [],
-      "requests": [],
+      "requests": [
+        {
+          "path": "/api/activity",
+          "status": 200,
+          "ms": 339
+        }
+      ],
       "errors": []
     },
     {
       "name": "valuation",
-      "domMs": 89,
-      "readyMs": 3417,
-      "readyText": "삼삼성전자005930.KS · 공급자 기간 기준 확인 필요Yahoo Finance · 일별 저장 자료3.89배10. 02. 22:55 KST",
+      "domMs": 91,
+      "readyMs": 290,
+      "readyText": "삼삼성전자005930.KS · 공급자 기간 기준 확인 필요Yahoo Finance · 일별 저장 자료3.89배10. 02. 23:12 KST",
       "paint": [
         {
           "name": "first-paint",
-          "ms": 124
+          "ms": 112
         },
         {
           "name": "first-contentful-paint",
-          "ms": 124
+          "ms": 112
         }
       ],
       "overflow": false,
@@ -331,169 +425,192 @@
         {
           "path": "/api/quotes",
           "status": 200,
-          "ms": 3091
+          "ms": 121
         },
         {
           "path": "/api/valuation",
           "status": 200,
-          "ms": 3092
+          "ms": 121
+        },
+        {
+          "path": "/api/activity",
+          "status": 200,
+          "ms": 292
         }
       ],
       "errors": []
     },
     {
       "name": "consensus",
-      "domMs": 88,
-      "readyMs": 3912,
-      "readyText": "연간 EPS 평균 추정8.82EPS 범위8.28 ~ 8.94참여 애널리스트39명연간 매출 평균 추정477.85십억 달러원값 477,854,311,900 USDEPS 30일 변경+0.09%30일 상향 / 하향 건수5 / 2",
+      "domMs": 96,
+      "readyMs": 293,
+      "readyText": "연간 EPS 평균 추정47,865.77EPS 범위40,609 ~ 60,367참여 애널리스트33명연간 매출 평균 추정723.58조 원원값 723,582,269,610,000 KRWEPS 30일 변경-1.49%30일 상향 / 하향 건수5 / 7",
       "paint": [
         {
           "name": "first-paint",
-          "ms": 120
+          "ms": 116
         },
         {
           "name": "first-contentful-paint",
-          "ms": 120
+          "ms": 116
         }
       ],
       "overflow": false,
-      "loaders": [
-        "추정치를 불러오고 있어요",
-        "추정치를 불러오고 있어요"
-      ],
+      "loaders": [],
       "requests": [
         {
           "path": "/api/consensus",
           "status": 200,
-          "ms": 3739
+          "ms": 112
+        },
+        {
+          "path": "/api/consensus",
+          "status": 200,
+          "ms": 118
+        },
+        {
+          "path": "/api/consensus",
+          "status": 200,
+          "ms": 118
+        },
+        {
+          "path": "/api/activity",
+          "status": 200,
+          "ms": 177
         }
       ],
       "errors": []
     },
     {
       "name": "bands",
-      "domMs": 85,
-      "readyMs": 1904,
+      "domMs": 102,
+      "readyMs": 404,
       "readyText": "",
       "paint": [
         {
           "name": "first-paint",
-          "ms": 116
+          "ms": 120
         },
         {
           "name": "first-contentful-paint",
-          "ms": 116
+          "ms": 120
         }
       ],
       "overflow": false,
       "loaders": [],
       "requests": [
         {
-          "path": "/api/valuation-band",
-          "status": 200,
-          "ms": 1596
-        },
-        {
           "path": "/api/activity",
           "status": 200,
-          "ms": 1864
+          "ms": 212
+        },
+        {
+          "path": "/api/valuation-band",
+          "status": 200,
+          "ms": 228
         }
       ],
       "errors": []
     },
     {
       "name": "more",
-      "domMs": 72,
-      "readyMs": 116,
+      "domMs": 97,
+      "readyMs": 124,
       "readyText": "시장 스크리너조건으로 종목 찾기",
       "paint": [
         {
           "name": "first-paint",
-          "ms": 112
+          "ms": 128
         },
         {
           "name": "first-contentful-paint",
-          "ms": 112
-        }
-      ],
-      "overflow": false,
-      "loaders": [],
-      "requests": [],
-      "errors": []
-    },
-    {
-      "name": "picks",
-      "domMs": 74,
-      "readyMs": 3404,
-      "readyText": "LG에너지솔루션373220.KS · 2026-10-02\n      ⚪ 검토 대기\n      0.00%\n      추천 369,000원→점검가 369,000원\n      최고 0.00%점수 85점\n      ⌄\n    \n    \n      \n      ",
-      "paint": [
-        {
-          "name": "first-paint",
-          "ms": 84
-        },
-        {
-          "name": "first-contentful-paint",
-          "ms": 84
+          "ms": 128
         }
       ],
       "overflow": false,
       "loaders": [],
       "requests": [
         {
-          "path": "/api/home-bootstrap",
+          "path": "/api/activity",
           "status": 200,
-          "ms": 1550
+          "ms": 287
+        }
+      ],
+      "errors": []
+    },
+    {
+      "name": "picks",
+      "domMs": 100,
+      "readyMs": 893,
+      "readyText": "LG에너지솔루션373220.KS · 2026-10-02\n      ⚪ 검토 대기\n      0.00%\n      추천 369,000원→점검가 369,000원\n      최고 0.00%점수 85점\n      ⌄\n    \n    \n      \n      ",
+      "paint": [
+        {
+          "name": "first-paint",
+          "ms": 108
         },
+        {
+          "name": "first-contentful-paint",
+          "ms": 108
+        }
+      ],
+      "overflow": false,
+      "loaders": [],
+      "requests": [
         {
           "path": "/api/activity",
           "status": 200,
-          "ms": 2002
+          "ms": 191
         },
         {
-          "path": "/static/data/pick_monitor.json",
+          "path": "/api/home-bootstrap",
           "status": 200,
-          "ms": 3053
+          "ms": 95
+        },
+        {
+          "path": "/shoon94parkk-del/chart_View/main/static/data/pick_monitor.json",
+          "status": 200,
+          "ms": 330
         }
       ],
       "errors": []
     },
     {
       "name": "ideas",
-      "domMs": 73,
-      "readyMs": 2010,
+      "domMs": 121,
+      "readyMs": 1440,
       "readyText": "🔥후보 다수거래량이 붙은 상승 종목\n    20일 평균 대비 거래량이 크게 늘면서 당일 주가도 오른 종목을 모았어요.\n    \n    \n      덕우전자263600.KQ · KOSDAQ · 전자부품 제조업\n      5,290+19.95%\n    ",
       "paint": [
         {
           "name": "first-paint",
-          "ms": 84
+          "ms": 128
         },
         {
           "name": "first-contentful-paint",
-          "ms": 84
+          "ms": 128
         }
       ],
       "overflow": false,
       "loaders": [],
       "requests": [
         {
-          "path": "/shoon94parkk-del/chart_View/main/static/data/company_context.json",
+          "path": "/api/activity",
           "status": 200,
-          "ms": 112
+          "ms": 200
         },
         {
           "path": "/shoon94parkk-del/chart_View/main/static/data/screener.json",
           "status": 200,
-          "ms": 245
+          "ms": 133
         },
         {
-          "path": "/api/activity",
+          "path": "/shoon94parkk-del/chart_View/main/static/data/pick_monitor.json",
           "status": 200,
-          "ms": 657
+          "ms": 151
         },
         {
-          "path": "/static/data/pick_monitor.json",
+          "path": "/shoon94parkk-del/chart_View/main/static/data/company_context.json",
           "status": 200,
-          "ms": 1716
+          "ms": 737
         }
       ],
       "errors": []
