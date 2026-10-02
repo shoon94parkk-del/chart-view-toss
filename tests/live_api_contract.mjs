@@ -72,6 +72,22 @@ for (const [name,row] of [['memory',semiMemory],['dram',semiDram],['flash',semiF
   assert(Number.isFinite(Number(row.unitValueMoM)), `semiconductor report ${name} unit-value MoM missing`);
 }
 
+const semiconductorCountries = await get('/api/export-momentum/semiconductor-countries', 90000);
+assert(semiconductorCountries.period === exportsSnapshot.itemPeriod, 'semiconductor country period must match item period');
+assert(Array.isArray(semiconductorCountries.segments) && semiconductorCountries.segments.length === 4, 'semiconductor country segment matrix missing');
+assert(Array.isArray(semiconductorCountries.markets) && semiconductorCountries.markets.length === 6, 'semiconductor country market scope mismatch');
+for (const code of ['CN','HK','VN','TW','US','JP']) {
+  assert(semiconductorCountries.markets.some((row) => row.code === code), `configured semiconductor market missing: ${code}`);
+}
+for (const key of ['dram','flash','mcp-memory','dram-module']) {
+  const segment = semiconductorCountries.segments.find((row) => row.key === key);
+  assert(segment, `semiconductor country segment missing: ${key}`);
+  assert(Array.isArray(segment.countries) && segment.countries.length >= 4, `semiconductor country rows too sparse: ${key}`);
+  assert(segment.countries.some((row) => Number(row.exportsUsdBillion) >= 0 && Number.isFinite(Number(row.exportYoY))), `semiconductor country YoY missing: ${key}`);
+  assert(segment.countries.some((row) => Number.isFinite(Number(row.deltaUsdBillion))), `semiconductor country delta missing: ${key}`);
+}
+assert(String(semiconductorCountries.meta?.scope || '').includes('not a global ranking'), 'semiconductor country scope warning missing');
+
 const exportDetail = await get('/api/export-momentum/item-detail?key=semiconductor', 60000);
 assert(exportDetail.key === 'semiconductor', 'export item detail key mismatch');
 assert(Number(exportDetail.schemaVersion) >= 2, 'export item detail schema v2 missing');
@@ -123,4 +139,6 @@ console.log('Live backend contract smoke passed', {
   flashMoM: semiFlash.exportMoM,
   mcpExports: semiMcp.exportsUsdBillion,
   dramModuleExports: semiDramModule.exportsUsdBillion,
+  semiconductorCountrySegments: semiconductorCountries.segments.length,
+  semiconductorCountryMarkets: semiconductorCountries.markets.length,
 });
