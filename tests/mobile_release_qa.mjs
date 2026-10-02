@@ -672,13 +672,14 @@ try{
   if(!(await page.locator('h2').first().innerText()).includes('최근 주목받는 종목')) throw new Error('PICK path entry did not restore spotlight');
   await context.close();
 
-  const notFoundPage=await context.newPage();await seed(notFoundPage);await installMocks(notFoundPage);
+  const auditContext=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:1});
+  const notFoundPage=await auditContext.newPage();await seed(notFoundPage);await installMocks(notFoundPage);
   await notFoundPage.goto(`${BASE}/#definitely-missing`,{waitUntil:'networkidle'});
   await notFoundPage.waitForSelector('.not-found-card');
   if(!(await notFoundPage.locator('.not-found-card').innerText()).includes('이 주소의 화면을 찾을 수 없어요')) throw new Error('unknown route did not show not-found guidance');
   await notFoundPage.close();
 
-  const shortMenu=await context.newPage();await seed(shortMenu);await installMocks(shortMenu);
+  const shortMenu=await auditContext.newPage();await seed(shortMenu);await installMocks(shortMenu);
   await shortMenu.setViewportSize({width:360,height:560});
   await shortMenu.goto(`${BASE}/#more`,{waitUntil:'networkidle'});
   const shortInfo=shortMenu.locator('.feature-menu [data-tab="info"]');
@@ -686,6 +687,7 @@ try{
   const [shortInfoBox,shortNavBox]=await Promise.all([shortInfo.boundingBox(),shortMenu.locator('.bottom-nav').boundingBox()]);
   if(!shortInfoBox||!shortNavBox||shortInfoBox.y+shortInfoBox.height>shortNavBox.y-2) throw new Error(`short viewport data guide is obscured: ${JSON.stringify({shortInfoBox,shortNavBox})}`);
   await shortMenu.close();
+  await auditContext.close();
 
   const desktopContext=await browser.newContext({viewport:{width:1440,height:900},deviceScaleFactor:1});
   const desktopPage=await desktopContext.newPage();await seed(desktopPage);await installMocks(desktopPage);
