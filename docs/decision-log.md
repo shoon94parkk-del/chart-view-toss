@@ -304,3 +304,8 @@ Explicit chart retries bypass cached empty/partial HTTP200 results while ordinar
 - 품목 상세의 수출액·순중량·평균 단위가치 12개월 차트에도 실제 Y축 눈금을 각각 표시한다.
 - 반도체 상세는 관세청 2026 HSK 기준 DRAM/Flash memory/SRAM/메모리 전체/프로세서·컨트롤러/기타 IC 카드를 제공한다.
 - HBM은 독립 HSK가 없어 별도 수출액을 만들지 않으며, Flash memory는 NAND-only가 아님을 화면에서 안내한다.
+
+## 2026-10-02 — 반도체 세부 카드 성능 계약
+- DRAM/Flash/SRAM 등 세부 카드는 메인 export snapshot에 함께 캐시된 최신월·전년동월 HSK 계산값을 소비한다.
+- 세부 카드 표시를 위해 브라우저가 별도 provider endpoint를 호출하지 않는다.
+- 대표 반도체 12개월 금액·물량·단위가치 그래프는 기존 item-detail 분석을 유지하고, 세부 HSK 자체의 12개월 시계열은 현재 표시하지 않는다.
