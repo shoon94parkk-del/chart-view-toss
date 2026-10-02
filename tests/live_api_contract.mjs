@@ -88,6 +88,22 @@ for (const key of ['dram','flash','mcp-memory','dram-module']) {
 }
 assert(String(semiconductorCountries.meta?.scope || '').includes('not a global ranking'), 'semiconductor country scope warning missing');
 
+const provisional = await get('/api/export-momentum/provisional', 90000);
+assert(Number(provisional.schemaVersion) >= 1, 'provisional export schema missing');
+assert(provisional.status === 'official_preliminary_api', 'provisional export status mismatch');
+assert(/^\d{4}-\d{2}$/.test(String(provisional.period || '')), 'provisional export period missing');
+assert([10,20,30].includes(Number(provisional.latestStage)), 'provisional latest stage invalid');
+assert(Array.isArray(provisional.checkpoints) && provisional.checkpoints.length >= 1, 'provisional export checkpoints missing');
+const provisionalLatest = provisional.checkpoints.at(-1);
+assert(Number(provisionalLatest?.total?.exportsUsdBillion) > 0, 'provisional total exports missing');
+assert(Number(provisionalLatest?.semiconductor?.exportsUsdBillion) > 0, 'provisional semiconductor exports missing');
+assert(Number.isFinite(Number(provisionalLatest?.semiconductor?.exportYoY)), 'provisional semiconductor YoY missing');
+assert(Number.isFinite(Number(provisionalLatest?.semiconductor?.exportMoM)), 'provisional semiconductor same-window MoM missing');
+assert(Number(provisionalLatest?.semiconductorSharePct) > 0, 'provisional semiconductor share missing');
+assert(Array.isArray(provisional.items) && provisional.items.length >= 8, 'provisional major export products missing');
+assert(provisional.items.some((row) => row.key === 'semiconductor' && Number(row.exportsUsdBillion) > 0), 'provisional semiconductor item row missing');
+assert(String(provisional.meta?.classification || '').includes('not HS monthly classification'), 'provisional classification scope warning missing');
+
 const exportDetail = await get('/api/export-momentum/item-detail?key=semiconductor', 60000);
 assert(exportDetail.key === 'semiconductor', 'export item detail key mismatch');
 assert(Number(exportDetail.schemaVersion) >= 2, 'export item detail schema v2 missing');
@@ -127,6 +143,12 @@ console.log('Live backend contract smoke passed', {
   macroCount: macro.results.length,
   exportItemCount: exportsSnapshot.items.length,
   exportItemPeriod: exportsSnapshot.itemPeriod,
+  provisionalPeriod: provisional.period,
+  provisionalStage: provisional.latestStageLabel,
+  provisionalCheckpoints: provisional.checkpoints.length,
+  provisionalSemiconductorExports: provisionalLatest.semiconductor.exportsUsdBillion,
+  provisionalSemiconductorYoY: provisionalLatest.semiconductor.exportYoY,
+  provisionalSemiconductorShare: provisionalLatest.semiconductorSharePct,
   exportBreadthCount: exportsSnapshot.breadth.comparableCount,
   exportBreadthRising: exportsSnapshot.breadth.risingCount,
   exportDetailMonths: exportDetail.history.length,

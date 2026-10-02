@@ -336,6 +336,49 @@ export function normalizeExportItemDetail(raw={}){
   };
 }
 
+export function normalizeExportProvisionalRadar(raw={}){
+  const normalizeRadarMetric=(metric={})=>({
+    exportsUsdBillion:finite(metric?.exportsUsdBillion),
+    exportYoY:finite(metric?.exportYoY),
+    exportMoM:finite(metric?.exportMoM),
+    priorYearUsdBillion:finite(metric?.priorYearUsdBillion),
+    previousMonthUsdBillion:finite(metric?.previousMonthUsdBillion),
+    deltaYoYUsdBillion:finite(metric?.deltaYoYUsdBillion),
+  });
+  const checkpoints=(Array.isArray(raw.checkpoints)?raw.checkpoints:[]).map(row=>({
+    stage:finite(row?.stage),
+    label:text(row?.label),
+    periodRaw:text(row?.periodRaw),
+    total:normalizeRadarMetric(row?.total),
+    semiconductor:normalizeRadarMetric(row?.semiconductor),
+    semiconductorSharePct:finite(row?.semiconductorSharePct),
+    semiconductorContributionPct:finite(row?.semiconductorContributionPct),
+    semiconductorYoYAccelerationPp:finite(row?.semiconductorYoYAccelerationPp),
+    totalYoYAccelerationPp:finite(row?.totalYoYAccelerationPp),
+  })).filter(row=>row.stage!==null&&row.label);
+  const items=(Array.isArray(raw.items)?raw.items:[]).map(row=>({
+    key:text(row?.key),
+    name:text(row?.name),
+    ...normalizeRadarMetric(row),
+  })).filter(row=>row.key&&row.name&&row.exportsUsdBillion!==null);
+  return {
+    schemaVersion:Number(raw.schemaVersion)||1,
+    status:text(raw.status),
+    period:text(raw.period),
+    periodLabel:text(raw.periodLabel)||text(raw.period),
+    latestStage:finite(raw.latestStage),
+    latestStageLabel:text(raw.latestStageLabel),
+    checkpoints,
+    items,
+    meta:raw.meta&&typeof raw.meta==='object'?raw.meta:{},
+    source:raw.source&&typeof raw.source==='object'?{
+      name:text(raw.source.name),
+      url:text(raw.source.url),
+    }:{name:'',url:''},
+  };
+}
+
+
 export function normalizeSemiconductorCountryMatrix(raw={}){
   const markets=(Array.isArray(raw.markets)?raw.markets:[]).map(row=>({
     name:text(row?.name),

@@ -1,4 +1,4 @@
-import { loadExportItemDetail, loadExportMomentumSnapshot, loadSemiconductorCountryMatrix } from './exportMomentumData.js';
+import { loadExportItemDetail, loadExportMomentumSnapshot, loadExportProvisionalRadar, loadSemiconductorCountryMatrix } from './exportMomentumData.js';
 import {
   balanceTone,
   chartExtent,
@@ -52,6 +52,83 @@ const pctAxisLabel=(value)=>{
 
 function loading(){
   return `<section class="export-loading" role="status"><span></span><strong>최신 수출 스냅샷을 확인하고 있어요.</strong></section>`;
+}
+
+function provisionalPlaceholder(){
+  return `
+    <section id="export-provisional-radar" class="export-section export-provisional-shell">
+      <div class="export-section-head"><div><span>수출 속보</span><h3>10일 단위 잠정 수출 레이더</h3></div><small>관세청 · 별도 로딩</small></div>
+      <div class="export-provisional-loading" role="status"><span></span><strong>1~10일 · 1~20일 · 월말 잠정치를 확인하고 있어요.</strong></div>
+    </section>
+  `;
+}
+
+function renderProvisionalRadar(radar){
+  const latest=radar.checkpoints.at(-1)||{};
+  const latestSemi=latest.semiconductor||{};
+  const latestTotal=latest.total||{};
+  const maxItem=Math.max(...radar.items.map(row=>row.exportsUsdBillion||0),1);
+  const stageWidth=stage=>stage===10?33.3:stage===20?66.7:100;
+  return `
+    <section id="export-provisional-radar" class="export-section export-provisional-shell">
+      <div class="export-section-head">
+        <div><span>수출 속보</span><h3>10일 단위 잠정 수출 레이더</h3></div>
+        <small>${esc(radar.periodLabel)} · ${esc(radar.latestStageLabel)}</small>
+      </div>
+      <div class="export-provisional-hero">
+        <div>
+          <span>전체 수출 · ${esc(radar.latestStageLabel)}</span>
+          <strong>${esc(formatUsdBillion(latestTotal.exportsUsdBillion,{digits:1}))}</strong>
+          <small class="${yoyTone(latestTotal.exportYoY)}">전년 같은 구간 ${esc(formatSignedPct(latestTotal.exportYoY))}</small>
+        </div>
+        <div>
+          <span>반도체 · ${esc(radar.latestStageLabel)}</span>
+          <strong>${esc(formatUsdBillion(latestSemi.exportsUsdBillion,{digits:1}))}</strong>
+          <small class="${yoyTone(latestSemi.exportYoY)}">전년 같은 구간 ${esc(formatSignedPct(latestSemi.exportYoY))}</small>
+        </div>
+      </div>
+      <div class="export-provisional-summary">
+        <div><span>반도체 비중</span><strong>${latest.semiconductorSharePct===null?'-':esc(latest.semiconductorSharePct.toFixed(1)+'%')}</strong><small>같은 구간 전체 수출 대비</small></div>
+        <div><span>전월 같은 구간</span><strong class="${yoyTone(latestSemi.exportMoM)}">${esc(formatSignedPct(latestSemi.exportMoM))}</strong><small>반도체 수출액 비교</small></div>
+        <div><span>증가율 가속</span><strong class="${yoyTone(latest.semiconductorYoYAccelerationPp)}">${esc(formatPp(latest.semiconductorYoYAccelerationPp))}</strong><small>직전 체크포인트 YoY 대비</small></div>
+        <div><span>증가액 기여</span><strong>${latest.semiconductorContributionPct===null?'-':esc(latest.semiconductorContributionPct.toFixed(1)+'%')}</strong><small>전체 수출 YoY 증가액 중 반도체</small></div>
+      </div>
+      <div class="export-provisional-flow">
+        ${radar.checkpoints.map((row,index)=>`
+          <article class="export-provisional-stage ${index===radar.checkpoints.length-1?'is-latest':''}">
+            <div class="export-provisional-stage-head"><strong>${esc(row.label)}</strong><span>${esc(formatUsdBillion(row.semiconductor.exportsUsdBillion,{digits:1}))}</span></div>
+            <div class="export-provisional-progress"><i style="width:${stageWidth(row.stage).toFixed(1)}%"></i></div>
+            <div class="export-provisional-stage-metrics">
+              <span class="${yoyTone(row.semiconductor.exportYoY)}">YoY ${esc(formatSignedPct(row.semiconductor.exportYoY))}</span>
+              <span class="${yoyTone(row.semiconductor.exportMoM)}">전월동기 ${esc(formatSignedPct(row.semiconductor.exportMoM))}</span>
+              <span>비중 ${row.semiconductorSharePct===null?'-':esc(row.semiconductorSharePct.toFixed(1)+'%')}</span>
+              ${row.semiconductorYoYAccelerationPp===null?'':`<span class="${yoyTone(row.semiconductorYoYAccelerationPp)}">가속 ${esc(formatPp(row.semiconductorYoYAccelerationPp))}</span>`}
+            </div>
+          </article>
+        `).join('')}
+      </div>
+      <div class="export-provisional-items">
+        <div class="export-detail-country-head"><strong>주요 품목 · ${esc(radar.latestStageLabel)}</strong><small>관세청 10대 품목 자체 분류</small></div>
+        ${radar.items.map((row,index)=>`
+          <div class="export-provisional-item">
+            <div><span>${String(index+1).padStart(2,'0')}</span><strong>${esc(row.name)}</strong><em>${esc(formatUsdBillion(row.exportsUsdBillion,{digits:1}))}</em></div>
+            <div class="export-provisional-item-track"><i style="width:${Math.max(2,(row.exportsUsdBillion/maxItem)*100).toFixed(1)}%"></i></div>
+            <small><b class="${yoyTone(row.exportYoY)}">YoY ${esc(formatSignedPct(row.exportYoY))}</b><b class="${yoyTone(row.exportMoM)}">전월동기 ${esc(formatSignedPct(row.exportMoM))}</b></small>
+          </div>
+        `).join('')}
+      </div>
+      <p class="export-chart-note">이 속보는 관세청의 10대 품목 자체 분류입니다. 아래 월간 HS 품목 통계와 분류 범위가 달라 절대금액을 서로 이어 붙이지 않습니다. 1~10일·1~20일은 누적 잠정치입니다.</p>
+    </section>
+  `;
+}
+
+function provisionalError(message){
+  return `
+    <section id="export-provisional-radar" class="export-section export-provisional-shell">
+      <div class="export-section-head"><div><span>수출 속보</span><h3>10일 단위 잠정 수출 레이더</h3></div><small>잠정치</small></div>
+      <div class="export-provisional-error"><strong>10일 단위 속보를 불러오지 못했어요.</strong><span>${esc(message||'월간 수출 데이터는 계속 이용할 수 있습니다.')}</span></div>
+    </section>
+  `;
 }
 
 function errorView(message){
@@ -582,7 +659,7 @@ function sources(snapshot){
 }
 
 function paint(host,snapshot,bindNav,onItemOpen){
-  host.innerHTML=`${summary(snapshot)}${history(snapshot)}${checkpoints(snapshot)}${facts(snapshot)}${semiconductorReport(snapshot)}${breadth(snapshot)}${quadrant(snapshot)}${items(snapshot)}${regions(snapshot)}${sources(snapshot)}`;
+  host.innerHTML=`${summary(snapshot)}${provisionalPlaceholder()}${history(snapshot)}${checkpoints(snapshot)}${facts(snapshot)}${semiconductorReport(snapshot)}${breadth(snapshot)}${quadrant(snapshot)}${items(snapshot)}${regions(snapshot)}${sources(snapshot)}`;
   bindNav();
   host.querySelectorAll('[data-export-item]').forEach(button=>button.addEventListener('click',()=>onItemOpen(button.dataset.exportItem)));
 }
@@ -594,6 +671,7 @@ export function renderExportMomentumView({shell,bindNav}){
   const host=app.querySelector('#export-momentum-root');
   let seq=0;
   let detailSeq=0;
+  let provisionalSeq=0;
 
   const openItemDetail=async(key)=>{
     const panel=host.querySelector('#export-item-detail');
@@ -640,6 +718,16 @@ export function renderExportMomentumView({shell,bindNav}){
       const snapshot=await loadExportMomentumSnapshot({force});
       if(token!==seq||!host.isConnected)return;
       paint(host,snapshot,bindNav,openItemDetail);
+      const provisionalToken=++provisionalSeq;
+      void loadExportProvisionalRadar({force}).then(radar=>{
+        const node=host.querySelector('#export-provisional-radar');
+        if(token!==seq||provisionalToken!==provisionalSeq||!node?.isConnected)return;
+        node.outerHTML=renderProvisionalRadar(radar);
+      }).catch(error=>{
+        const node=host.querySelector('#export-provisional-radar');
+        if(token!==seq||provisionalToken!==provisionalSeq||!node?.isConnected)return;
+        node.outerHTML=provisionalError(error?.message);
+      });
     }catch(error){
       if(token!==seq||!host.isConnected)return;
       host.innerHTML=errorView(error?.message);
@@ -648,5 +736,5 @@ export function renderExportMomentumView({shell,bindNav}){
   };
 
   void load();
-  return ()=>{seq+=1;detailSeq+=1;};
+  return ()=>{seq+=1;detailSeq+=1;provisionalSeq+=1;};
 }
