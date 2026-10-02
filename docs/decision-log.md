@@ -348,3 +348,14 @@ Explicit chart retries bypass cached empty/partial HTTP200 results while ordinar
 - 일반 웹 데스크톱은 760px까지 확장하되 Apps in Toss 런타임의 모바일 폭은 유지한다.
 - 홈 중복 분석도구 바로가기는 제거하고 최근 주목 종목/아이디어 LAB을 일반 시장 카드보다 먼저 노출한다.
 - 알 수 없는 경로는 홈으로 조용히 보내지 않고 명시적 페이지 없음 화면을 표시한다.
+## 2026-10-02 — Preserve missing monthly export YoY in the chart
+Classification: new bug in the dual-axis export history view, introduced with the recent export UI, rather than a quote/cache regression. Checked AGENTS, no-repeat policy, project memory, guardrails, decision log and export view history before editing.
+The snapshot normalizer preserves missing YoY as null, but the view used Number(null) for coordinates and drew it as zero. Omit missing dots, split the polyline at gaps, and disclose missing months. Keep amount bars, real zero/negative YoY, dual axes, lazy loading and backend contracts unchanged.
+Validation under Node 24.21.0: baseline 150 tests passed; final 153 tests passed; npm run build passed with all 18 preview routes. Headless Edge DOM/layout fixture passed at 320/390/430px: four observed dots, two separate line segments, five amount bars and no horizontal overflow. Screenshot capture timed out; visual screenshot inspection remains unverified.
+Live read-only check: preview and backend health returned HTTP 200. The served exportMomentumView-HlhnDOhD.js lacks the new missing-YoY notice; this local change is not deployed. No exact production revision, Android/iOS Sandbox or public release verification is claimed.
+
+
+## 2026-10-02 — Independent export recovery after live usability audit
+Classification: new reliability/UX bug in the recently added export view. Audited live 390px Home/search/detail, PICK, IDEA LAB, More and exports. No pageerror or horizontal overflow was observed in these inspected states; a later live exports reload timed out, so the isolated failure case is validated with controlled browser responses instead of being presented as a successful live API recovery.
+Add independent retry for provisional radar, item detail and semiconductor country matrix. Explicit retries use force:true to bypass cached HTTP200 empty/unavailable data and do not reload successful monthly or item charts. Keep route/detail sequence checks. Pending item lookup now has Close, invalidates the request token and cannot reopen on a late response. No provider fan-out, backend schema, quote freshness or native navigation changes.
+Regression: tests/export_recovery_qa.mjs covers empty HTTP200, HTTP503, independent request counts, preserved charts, delayed response after close, 320/390/430px and no pageerror/overflow; included in mobile-release-qa.yml. Full unit/build and deployment evidence are recorded in the audit deliverable.

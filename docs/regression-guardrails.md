@@ -287,3 +287,5 @@ Saved investment baselines are device records: show them before network completi
 - 데이터 안내/마지막 메뉴는 560px 높이에서도 고정 하단 내비게이션에 가려지지 않아야 한다.
 - Apps in Toss 런타임 레이아웃 변경 없이 일반 웹 데스크톱만 확장한다.
 - 존재하지 않는 경로를 홈 성공 화면으로 위장하지 않는다.
+
+- Export provisional/item/country failure states each offer a force retry of only the failed request. Cached empty HTTP200 must not make retry permanent; preserve ready monthly/item charts. Closing pending detail invalidates its token so a late response cannot reopen it. See tests/export_recovery_qa.mjs and the mobile QA workflow.

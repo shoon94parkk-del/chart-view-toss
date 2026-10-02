@@ -202,7 +202,7 @@ function provisionalError(message){
   return `
     <section id="export-provisional-radar" class="export-section export-provisional-shell">
       <div class="export-section-head"><div><span>수출 속보</span><h3>10일 단위 잠정 수출 레이더</h3></div><small>잠정치</small></div>
-      <div class="export-provisional-error"><strong>10일 단위 속보를 불러오지 못했어요.</strong><span>${esc(message||'월간 수출 데이터는 계속 이용할 수 있습니다.')}</span></div>
+      <div class="export-provisional-error"><strong>10일 단위 속보를 불러오지 못했어요.</strong><span>${esc(message||'월간 수출 데이터는 계속 이용할 수 있습니다.')}</span><button type="button" data-export-provisional-retry>잠정치 다시 시도</button></div>
     </section>
   `;
 }
@@ -637,7 +637,7 @@ function regions(snapshot){
   `;
 }
 
-function history(snapshot){
+export function history(snapshot){
   if(!snapshot.history||snapshot.history.length<2)return '';
   const rows=snapshot.history.slice(-12);
   const exportMax=Math.max(...rows.map(row=>row.exportsUsdBillion||0),1);
@@ -653,11 +653,19 @@ function history(snapshot){
   const yoyMid=(yoyMax+yoyMin)/2;
   const yoySpan=yoyMax-yoyMin;
   const yoyPct=value=>Math.max(0,Math.min(100,((Number(value)-yoyMin)/yoySpan)*100));
-  const linePoints=rows.map((row,index)=>{
+  const lineSegments=[];
+  let segment=[];
+  rows.forEach((row,index)=>{
+    if(!Number.isFinite(row.exportYoY)){
+      if(segment.length)lineSegments.push(segment.join(' '));
+      segment=[];
+      return;
+    }
     const x=((index+0.5)/rows.length*1200).toFixed(1);
     const y=(100-yoyPct(row.exportYoY)).toFixed(1);
-    return `${x},${y}`;
-  }).join(' ');
+    segment.push(`${x},${y}`);
+  });
+  if(segment.length)lineSegments.push(segment.join(' '));
 
   return `
     <section class="export-section">
@@ -684,11 +692,11 @@ function history(snapshot){
               `).join('')}
             </div>
             <svg class="export-combo-line" viewBox="0 0 1200 100" preserveAspectRatio="none" aria-hidden="true">
-              <polyline points="${linePoints}"></polyline>
+              ${lineSegments.map(points=>`<polyline points="${points}"></polyline>`).join('')}
             </svg>
-            ${rows.map((row,index)=>`
+            ${rows.map((row,index)=>Number.isFinite(row.exportYoY)?`
               <span class="export-combo-dot ${yoyTone(row.exportYoY)}" style="left:${((index+0.5)/rows.length*100).toFixed(2)}%;bottom:${yoyPct(row.exportYoY).toFixed(1)}%" title="${esc(row.period+' '+formatSignedPct(row.exportYoY))}"></span>
-            `).join('')}
+            `:'').join('')}
           </div>
           <div class="export-combo-axis right-axis">
             <span>${esc(pctAxisLabel(yoyMax))}</span>
@@ -696,7 +704,7 @@ function history(snapshot){
             <span>${esc(pctAxisLabel(yoyMin))}</span>
           </div>
         </div>
-        <p class="export-chart-note">막대는 왼쪽 Y축의 수출액(억달러), 선·점은 오른쪽 보조 Y축의 전년동월 대비 증가율(%)입니다.</p>
+        <p class="export-chart-note">막대는 왼쪽 Y축의 수출액(억달러), 선·점은 오른쪽 보조 Y축의 전년동월 대비 증가율(%)입니다.${yoyValues.length<rows.length?' 증가율 미제공 월은 점을 표시하지 않고 선을 끊습니다.':''}</p>
       </div>
     </section>
   `;
@@ -749,15 +757,20 @@ export function renderExportMomentumView({shell,bindNav}){
   let detailSeq=0;
   let provisionalSeq=0;
 
-  const openItemDetail=async(key)=>{
+  const openItemDetail=async(key,{force=false}={})=>{
     const panel=host.querySelector('#export-item-detail');
     if(!panel||!key)return;
     const token=++detailSeq;
     panel.hidden=false;
-    panel.innerHTML='<div class="export-detail-loading" role="status"><span></span><strong>12개월 품목 상세를 불러오고 있어요.</strong><small>첫 조회는 관세청 상세 통계를 수집해 조금 더 걸릴 수 있습니다.</small></div>';
+    panel.innerHTML='<div class="export-detail-loading" role="status"><span></span><strong>12개월 품목 상세를 불러오고 있어요.</strong><small>첫 조회는 관세청 상세 통계를 수집해 조금 더 걸릴 수 있습니다.</small><button type="button" data-export-detail-close>닫기</button></div>';
+    panel.querySelector('[data-export-detail-close]')?.addEventListener('click',()=>{
+      detailSeq+=1;
+      panel.hidden=true;
+      panel.innerHTML='';
+    });
     panel.scrollIntoView({behavior:'smooth',block:'start'});
     try{
-      const detail=await loadExportItemDetail(key);
+      const detail=await loadExportItemDetail(key,{force});
       if(token!==detailSeq||!panel.isConnected)return;
       panel.innerHTML=renderItemDetail(detail);
       panel.querySelector('[data-export-detail-close]')?.addEventListener('click',()=>{
@@ -767,23 +780,51 @@ export function renderExportMomentumView({shell,bindNav}){
       });
       if(detail.key==='semiconductor'){
         const countryHost=panel.querySelector('#export-semi-country-matrix');
-        void loadSemiconductorCountryMatrix().then(matrix=>{
+        const loadCountries=async(force=false)=>{
           if(token!==detailSeq||!countryHost?.isConnected)return;
-          countryHost.outerHTML=renderSemiconductorCountryMatrix(matrix);
-        }).catch(error=>{
-          if(token!==detailSeq||!countryHost?.isConnected)return;
-          countryHost.innerHTML=`<strong>국가별 세부 분석을 불러오지 못했어요.</strong><small>${esc(error?.message||'잠시 후 다시 시도해주세요.')}</small>`;
-          countryHost.classList.add('is-error');
-        });
+          countryHost.classList.remove('is-error');
+          countryHost.innerHTML='<strong role="status">국가별 수출을 불러오고 있어요.</strong>';
+          try{
+            const matrix=await loadSemiconductorCountryMatrix({force});
+            if(token!==detailSeq||!countryHost.isConnected)return;
+            countryHost.classList.remove('export-semi-country-loading');
+            countryHost.innerHTML=renderSemiconductorCountryMatrix(matrix);
+          }catch(error){
+            if(token!==detailSeq||!countryHost.isConnected)return;
+            countryHost.innerHTML=`<strong>국가별 세부 분석을 불러오지 못했어요.</strong><small>${esc(error?.message||'잠시 후 다시 시도해주세요.')}</small><button type="button" data-export-country-retry>국가별 분석 다시 시도</button>`;
+            countryHost.classList.add('is-error');
+            countryHost.querySelector('[data-export-country-retry]')?.addEventListener('click',()=>void loadCountries(true));
+          }
+        };
+        void loadCountries();
       }
     }catch(error){
       if(token!==detailSeq||!panel.isConnected)return;
-      panel.innerHTML=`<div class="export-detail-error"><strong>품목 상세를 불러오지 못했어요.</strong><p>${esc(error?.message||'잠시 후 다시 시도해주세요.')}</p><button type="button" data-export-detail-close>닫기</button></div>`;
+      panel.innerHTML=`<div class="export-detail-error"><strong>품목 상세를 불러오지 못했어요.</strong><p>${esc(error?.message||'잠시 후 다시 시도해주세요.')}</p><button type="button" data-export-item-retry>품목 상세 다시 시도</button><button type="button" data-export-detail-close>닫기</button></div>`;
+      panel.querySelector('[data-export-item-retry]')?.addEventListener('click',()=>void openItemDetail(key,{force:true}));
       panel.querySelector('[data-export-detail-close]')?.addEventListener('click',()=>{
         detailSeq+=1;
         panel.hidden=true;
         panel.innerHTML='';
       });
+    }
+  };
+
+  const loadProvisional=async(parentToken,force=false)=>{
+    const node=host.querySelector('#export-provisional-radar');
+    if(parentToken!==seq||!node?.isConnected)return;
+    const token=++provisionalSeq;
+    node.outerHTML=provisionalPlaceholder();
+    try{
+      const radar=await loadExportProvisionalRadar({force});
+      const current=host.querySelector('#export-provisional-radar');
+      if(parentToken!==seq||token!==provisionalSeq||!current?.isConnected)return;
+      current.outerHTML=renderProvisionalRadar(radar);
+    }catch(error){
+      const current=host.querySelector('#export-provisional-radar');
+      if(parentToken!==seq||token!==provisionalSeq||!current?.isConnected)return;
+      current.outerHTML=provisionalError(error?.message);
+      host.querySelector('[data-export-provisional-retry]')?.addEventListener('click',()=>void loadProvisional(parentToken,true));
     }
   };
 
@@ -794,16 +835,7 @@ export function renderExportMomentumView({shell,bindNav}){
       const snapshot=await loadExportMomentumSnapshot({force});
       if(token!==seq||!host.isConnected)return;
       paint(host,snapshot,bindNav,openItemDetail);
-      const provisionalToken=++provisionalSeq;
-      void loadExportProvisionalRadar({force}).then(radar=>{
-        const node=host.querySelector('#export-provisional-radar');
-        if(token!==seq||provisionalToken!==provisionalSeq||!node?.isConnected)return;
-        node.outerHTML=renderProvisionalRadar(radar);
-      }).catch(error=>{
-        const node=host.querySelector('#export-provisional-radar');
-        if(token!==seq||provisionalToken!==provisionalSeq||!node?.isConnected)return;
-        node.outerHTML=provisionalError(error?.message);
-      });
+      void loadProvisional(token,force);
     }catch(error){
       if(token!==seq||!host.isConnected)return;
       host.innerHTML=errorView(error?.message);
