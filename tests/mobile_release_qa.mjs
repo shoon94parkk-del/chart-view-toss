@@ -573,7 +573,7 @@ try{
       if(await page.locator('.feature-menu [data-tab="tools"]').count()) throw new Error('redundant external investment-tools row should not remain in More');
       const versionText=await page.locator('.version-card').innerText();
       if(!versionText.includes('토스/토스증권 공식 서비스 아님')) throw new Error('independent-service notice missing from More');
-      const infoRow=page.locator('[data-tab="info"]');
+      const infoRow=page.locator('.feature-menu [data-tab="info"]');
       await infoRow.scrollIntoViewIfNeeded();
       const [infoBox,navBox]=await Promise.all([infoRow.boundingBox(),page.locator('.bottom-nav').boundingBox()]);
       if(!infoBox||!navBox||infoBox.y+infoBox.height>navBox.y-2) throw new Error(`data guide row is obscured by bottom nav: ${JSON.stringify({infoBox,navBox})}`);
@@ -681,7 +681,7 @@ try{
   const shortMenu=await context.newPage();await seed(shortMenu);await installMocks(shortMenu);
   await shortMenu.setViewportSize({width:360,height:560});
   await shortMenu.goto(`${BASE}/#more`,{waitUntil:'networkidle'});
-  const shortInfo=shortMenu.locator('[data-tab="info"]');
+  const shortInfo=shortMenu.locator('.feature-menu [data-tab="info"]');
   await shortInfo.scrollIntoViewIfNeeded();
   const [shortInfoBox,shortNavBox]=await Promise.all([shortInfo.boundingBox(),shortMenu.locator('.bottom-nav').boundingBox()]);
   if(!shortInfoBox||!shortNavBox||shortInfoBox.y+shortInfoBox.height>shortNavBox.y-2) throw new Error(`short viewport data guide is obscured: ${JSON.stringify({shortInfoBox,shortNavBox})}`);
