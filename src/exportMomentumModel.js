@@ -107,11 +107,11 @@ export function formatWeightKg(value,{digits=1}={}){
   const kg=finite(value);
   if(kg===null)return '-';
   const tons=kg/1000;
-  if(tons>=1_000_000)return `${(tons/1_000_000).toLocaleString('ko-KR',{maximumFractionDigits:digits})}백만톤`;
-  if(tons>=10_000)return `${(tons/10_000).toLocaleString('ko-KR',{maximumFractionDigits:digits})}만톤`;
-  if(tons>=1_000)return `${(tons/1_000).toLocaleString('ko-KR',{maximumFractionDigits:digits})}천톤`;
-  if(tons>=1)return `${tons.toLocaleString('ko-KR',{maximumFractionDigits:digits})}톤`;
-  return `${kg.toLocaleString('ko-KR',{maximumFractionDigits:0})}kg`;
+  if(tons>=1_000_000)return (tons/1_000_000).toLocaleString('ko-KR',{maximumFractionDigits:digits})+'백만톤';
+  if(tons>=10_000)return (tons/10_000).toLocaleString('ko-KR',{maximumFractionDigits:digits})+'만톤';
+  if(tons>=1_000)return (tons/1_000).toLocaleString('ko-KR',{maximumFractionDigits:digits})+'천톤';
+  if(tons>=1)return tons.toLocaleString('ko-KR',{maximumFractionDigits:digits})+'톤';
+  return kg.toLocaleString('ko-KR',{maximumFractionDigits:0})+'kg';
 }
 
 export function formatUnitValue(value,{digits=1}={}){
@@ -185,7 +185,10 @@ export function chartPct(value,extent){
 export function zeroPct(extent){
   return Math.max(0,Math.min(100,(0-extent.min)/extent.span*100));
 }
-+number.toLocaleString('en-US',{maximumFractionDigits:digits,minimumFractionDigits:number<10?Math.min(2,digits):0})+'/kg';
++number.toLocaleString('en-US',{
+    maximumFractionDigits:digits,
+    minimumFractionDigits:number<10?Math.min(2,digits):0,
+  })+'/kg';
 }
 
 export function exportDriverLabel(row={}){
