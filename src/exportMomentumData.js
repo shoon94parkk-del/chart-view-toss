@@ -1,5 +1,5 @@
 import { api } from './api.js';
-import { normalizeExportItemDetail, normalizeExportSnapshot, normalizeSemiconductorCountryMatrix } from './exportMomentumModel.js';
+import { normalizeExportItemDetail, normalizeExportProvisionalRadar, normalizeExportSnapshot, normalizeSemiconductorCountryMatrix } from './exportMomentumModel.js';
 
 export async function loadExportMomentumSnapshot({force=false}={}){
   const raw=await api('/api/export-momentum',{
@@ -42,5 +42,18 @@ export async function loadSemiconductorCountryMatrix({force=false}={}){
   });
   const payload=normalizeSemiconductorCountryMatrix(raw);
   if(!payload.period||!payload.segments.length)throw new Error('반도체 국가별 데이터가 아직 준비되지 않았어요.');
+  return payload;
+}
+
+
+export async function loadExportProvisionalRadar({force=false}={}){
+  const raw=await api('/api/export-momentum/provisional',{
+    ttlMs:300000,
+    timeoutMs:30000,
+    retries:0,
+    force,
+  });
+  const payload=normalizeExportProvisionalRadar(raw);
+  if(!payload.period||!payload.checkpoints.length)throw new Error('10일 단위 잠정 수출 데이터가 아직 준비되지 않았어요.');
   return payload;
 }
