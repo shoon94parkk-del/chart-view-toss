@@ -212,3 +212,9 @@ Audit: measured all 17 principal route journeys at 390px on the live site, inclu
 
 ## 2026-10-02 Whole-site reliability follow-up
 Use explicit force only for chart retry to recover cached 200 empty/partial data. Disclose missing selected companies above comparison charts. Domestic detail alone offers DART research/industry; absent industry removes its jump. Detail news retry is independent, and secure external web opening no longer emits false failure from noopener null. tests/reliability_audit_qa.mjs covers 320/390/430px. Production and audit evidence: RELIABILITY_UX_AUDIT_2026-10-02.md.
+
+### 2026-10-02 — Export momentum dashboard
+- Placement: More > 근거와 시장 환경 확인 > 수출 모멘텀. Do not add it to Home.
+- Current charts: 10/20/full-month cumulative export bars, item YoY diverging bars, destination YoY bars.
+- `history[]` is optional in the normalized snapshot and will activate the recent-12-month export amount + YoY chart after Customs API integration.
+- Export data remains lazy-loaded on the exports route only.
