@@ -1,0 +1,140 @@
+{
+  "schemaVersion": 1,
+  "status": "official_static_snapshot",
+  "period": "2026-09",
+  "periodLabel": "2026년 9월",
+  "publishedAt": "2026-10-01T09:00:00+09:00",
+  "updatedAt": "2026-10-02T13:00:00+09:00",
+  "basis": "통관기준 잠정치",
+  "summary": {
+    "exportsUsdBillion": 120.94,
+    "importsUsdBillion": 71.09,
+    "balanceUsdBillion": 49.85,
+    "exportYoY": 83.5,
+    "importYoY": 26.0,
+    "cumulativeExportsUsdBillion": 814.5,
+    "cumulativeBalanceUsdBillion": 252.5,
+    "nonSemiconductorYoY": 23.0,
+    "nonSemiconductorAndComputerYoY": 12.0,
+    "risingMajorItems": 11,
+    "majorItemCount": 20
+  },
+  "checkpoints": [
+    {
+      "label": "1~10일",
+      "endDate": "2026-09-10",
+      "exportsUsdBillion": 34.973,
+      "importsUsdBillion": 24.606,
+      "balanceUsdBillion": 10.367,
+      "exportYoY": 82.6,
+      "importYoY": 20.7,
+      "semiconductorUsdBillion": 16.5
+    },
+    {
+      "label": "1~20일",
+      "endDate": "2026-09-20",
+      "exportsUsdBillion": 71.409,
+      "importsUsdBillion": 48.443,
+      "balanceUsdBillion": 22.966,
+      "exportYoY": 78.3,
+      "importYoY": 26.7,
+      "semiconductorUsdBillion": 34.1
+    },
+    {
+      "label": "월 전체",
+      "endDate": "2026-09-30",
+      "exportsUsdBillion": 120.94,
+      "importsUsdBillion": 71.09,
+      "balanceUsdBillion": 49.85,
+      "exportYoY": 83.5,
+      "importYoY": 26.0,
+      "semiconductorUsdBillion": 60.3
+    }
+  ],
+  "items": [
+    {
+      "name": "반도체",
+      "exportsUsdBillion": 60.3,
+      "exportYoY": 262.8,
+      "note": "월간 수출 600억달러를 처음 돌파"
+    },
+    {
+      "name": "석유제품",
+      "exportsUsdBillion": null,
+      "exportYoY": 72.0,
+      "note": "공식 브리핑 기준 전년 동월 대비 증가"
+    },
+    {
+      "name": "화장품",
+      "exportsUsdBillion": null,
+      "exportYoY": 31.0,
+      "note": "공식 브리핑 기준 역대 최대 실적"
+    },
+    {
+      "name": "선박",
+      "exportsUsdBillion": null,
+      "exportYoY": 30.0,
+      "note": "고부가가치 선박 수출 증가"
+    },
+    {
+      "name": "전기기기",
+      "exportsUsdBillion": null,
+      "exportYoY": 23.0,
+      "note": "AI 데이터센터·전력망 관련 수요가 언급됨"
+    },
+    {
+      "name": "철강",
+      "exportsUsdBillion": null,
+      "exportYoY": 3.0,
+      "note": "수입규제 환경에서도 증가"
+    },
+    {
+      "name": "자동차",
+      "exportsUsdBillion": 6.1,
+      "exportYoY": -5.0,
+      "note": "조업일수 감소와 중고차 수출 부진 영향이 공식 브리핑에서 언급됨"
+    }
+  ],
+  "regions": [
+    {
+      "name": "미국",
+      "exportsUsdBillion": null,
+      "exportYoY": 137.0,
+      "note": "공식 브리핑 반올림 수치"
+    },
+    {
+      "name": "중국",
+      "exportsUsdBillion": null,
+      "exportYoY": 123.0,
+      "note": "공식 브리핑 반올림 수치"
+    },
+    {
+      "name": "아세안",
+      "exportsUsdBillion": null,
+      "exportYoY": 93.0,
+      "note": "월간 수출 200억달러 첫 돌파"
+    }
+  ],
+  "sources": [
+    {
+      "name": "관세청",
+      "role": "9월 전체 잠정치",
+      "url": "https://www.customs.go.kr/kcs/na/ntt/selectNttInfo.do?bbsId=1362&mi=2891&nttSn=10178304&nttSnUrl=9714bd0f6916ae89827b90b1f37f4b19"
+    },
+    {
+      "name": "산업통상부 정책브리핑",
+      "role": "품목·지역별 공식 설명",
+      "url": "https://www.korea.kr/briefing/policyBriefingView.do?newsId=156783969"
+    },
+    {
+      "name": "관세청 1~10일",
+      "role": "중간 잠정치",
+      "url": "https://www.customs.go.kr/kcs/na/ntt/selectNttInfo.do?bbsId=1362&mi=2891&nttSn=10176444&nttSnUrl=8599e04facbad02816d3af783a538778"
+    },
+    {
+      "name": "관세청 1~20일",
+      "role": "중간 잠정치",
+      "url": "https://www.customs.go.kr/kcs/na/ntt/selectNttInfo.do?bbsId=1362&mi=2891&nttSn=10177443&nttSnUrl=b76927b3d643e2a959deed83783dc1b8"
+    }
+  ]
+}
