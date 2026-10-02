@@ -1,5 +1,5 @@
 import { api } from './api.js';
-import { normalizeExportItemDetail, normalizeExportSnapshot } from './exportMomentumModel.js';
+import { normalizeExportItemDetail, normalizeExportSnapshot, normalizeSemiconductorCountryMatrix } from './exportMomentumModel.js';
 
 export async function loadExportMomentumSnapshot({force=false}={}){
   const raw=await api('/api/export-momentum',{
@@ -29,5 +29,18 @@ export async function loadExportItemDetail(key,{force=false}={}){
   });
   const payload=normalizeExportItemDetail(raw);
   if(!payload.key||!payload.history.length)throw new Error('품목 상세 데이터가 아직 준비되지 않았어요.');
+  return payload;
+}
+
+
+export async function loadSemiconductorCountryMatrix({force=false}={}){
+  const raw=await api('/api/export-momentum/semiconductor-countries',{
+    ttlMs:900000,
+    timeoutMs:45000,
+    retries:0,
+    force,
+  });
+  const payload=normalizeSemiconductorCountryMatrix(raw);
+  if(!payload.period||!payload.segments.length)throw new Error('반도체 국가별 데이터가 아직 준비되지 않았어요.');
   return payload;
 }
