@@ -253,3 +253,6 @@ Saved investment baselines are device records: show them before network completi
 - 품목 상세 12개월 차트는 금액·순중량·평균 단위가치 각각의 Y축 눈금을 보존한다.
 - HBM 전용 통관 수출액을 만들지 않는다. 공식 HSK에 독립 코드가 생기기 전에는 제한사항을 명시한다.
 - 8542321030은 Flash memory이며 NAND-only로 바꾸지 않는다.
+
+- 반도체 세부 카드에 12개월 시계열이 없다는 이유로 브라우저/백엔드에서 HSK별 다중 fan-out을 추가하지 않는다.
+- 세부 HSK는 최신 itemPeriod와 전년동월 비교 카드로 유지하고, 전체 반도체 12개월 추이는 기존 item-detail history를 사용한다.
