@@ -12,6 +12,7 @@ import {
   formatWeightKg,
   normalizeExportItemDetail,
   normalizeExportSnapshot,
+  normalizeSemiconductorCountryMatrix,
   semiconductorShare,
   tradeBalanceLabel,
   yoyLabel,
@@ -214,4 +215,29 @@ test('semiconductor report keeps YoY MoM unit-value and official MCP/module code
   assert.equal(mcp.exportMoM,20);
   assert.equal(module.code,'8473304060');
   assert.equal(module.unitValueMoM,15);
+});
+
+
+test('semiconductor country matrix preserves configured-market shares and deltas',()=>{
+  const matrix=normalizeSemiconductorCountryMatrix({
+    schemaVersion:1,
+    period:'2026-08',
+    markets:[{name:'중국',code:'CN'},{name:'홍콩',code:'HK'}],
+    segments:[{
+      key:'dram',name:'DRAM',code:'8542321010',period:'2026-08',
+      exportsUsdBillion:15.7,coveredSharePct:62.4,
+      leaderCountry:'중국',growthLeaderCountry:'홍콩',declineLeaderCountry:'',
+      countries:[
+        {name:'중국',code:'CN',exportsUsdBillion:5.1,priorExportsUsdBillion:3.8,exportYoY:34.2,deltaUsdBillion:1.3,sharePct:32.5},
+        {name:'홍콩',code:'HK',exportsUsdBillion:4.7,priorExportsUsdBillion:2.9,exportYoY:62.1,deltaUsdBillion:1.8,sharePct:29.9},
+      ],
+    }],
+    meta:{scope:'configured markets; not a global ranking'},
+  });
+  assert.equal(matrix.segments.length,1);
+  assert.equal(matrix.segments[0].countries.length,2);
+  assert.equal(matrix.segments[0].countries[0].sharePct,32.5);
+  assert.equal(matrix.segments[0].countries[1].deltaUsdBillion,1.8);
+  assert.equal(matrix.segments[0].growthLeaderCountry,'홍콩');
+  assert.equal(matrix.markets[1].code,'HK');
 });

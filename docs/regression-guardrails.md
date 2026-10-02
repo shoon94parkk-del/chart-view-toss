@@ -262,3 +262,8 @@ Saved investment baselines are device records: show them before network completi
 - MCP는 HSK 8542323000, DRAM 모듈은 HSK 8473304060 기준을 유지한다.
 - HBM 독립 수출액을 생성하거나 Flash memory를 NAND-only로 표기하지 않는다.
 - 모바일 390px에서 5개 카드, 비교막대, 상세 HSK 카드가 가로 스크롤 없이 표시되어야 한다.
+
+- semiconductor country matrix 요청은 반도체 상세이 열린 뒤 별도로 실행한다. 메인 수출 탭의 초기 요청에 합치지 않는다.
+- 모바일에서는 4개 품목×6개 국가 행이 가로 스크롤 없이 보여야 한다.
+- 국가별 증감 기여를 YoY 퍼센트만으로 대체하지 않는다. 수출액 증감액을 같이 표시한다.
+- 중국·홍콩·베트남·대만·미국·일본 6개 지정시장 분석을 전세계 순위로 표현하지 않는다.

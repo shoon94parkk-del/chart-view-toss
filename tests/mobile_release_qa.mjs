@@ -178,6 +178,64 @@ async function installMocks(page, mode='ok') {
       sources:[{name:'관세청 수출입총괄',role:'월별 총수출·수입·무역수지',url:'https://www.data.go.kr/data/15102108/openapi.do'}],
       meta:{cacheStatus:'fresh'},
     });
+    if(path==='/api/export-momentum/semiconductor-countries') return json(route,{
+      schemaVersion:1,period:'2026-08',
+      markets:[
+        {name:'중국',code:'CN'},{name:'홍콩',code:'HK'},{name:'베트남',code:'VN'},
+        {name:'대만',code:'TW'},{name:'미국',code:'US'},{name:'일본',code:'JP'},
+      ],
+      segments:[
+        {
+          key:'dram',name:'DRAM',code:'8542321010',period:'2026-08',exportsUsdBillion:15.7,coveredSharePct:72.0,
+          leaderCountry:'중국',growthLeaderCountry:'홍콩',declineLeaderCountry:'대만',
+          countries:[
+            {name:'중국',code:'CN',exportsUsdBillion:5.2,priorExportsUsdBillion:3.8,exportYoY:36.8,deltaUsdBillion:1.4,sharePct:33.1},
+            {name:'홍콩',code:'HK',exportsUsdBillion:3.8,priorExportsUsdBillion:2.0,exportYoY:90.0,deltaUsdBillion:1.8,sharePct:24.2},
+            {name:'베트남',code:'VN',exportsUsdBillion:1.0,priorExportsUsdBillion:.7,exportYoY:42.9,deltaUsdBillion:.3,sharePct:6.4},
+            {name:'대만',code:'TW',exportsUsdBillion:.5,priorExportsUsdBillion:.8,exportYoY:-37.5,deltaUsdBillion:-.3,sharePct:3.2},
+            {name:'미국',code:'US',exportsUsdBillion:.45,priorExportsUsdBillion:.35,exportYoY:28.6,deltaUsdBillion:.1,sharePct:2.9},
+            {name:'일본',code:'JP',exportsUsdBillion:.35,priorExportsUsdBillion:.32,exportYoY:9.4,deltaUsdBillion:.03,sharePct:2.2},
+          ],
+        },
+        {
+          key:'flash',name:'Flash memory',code:'8542321030',period:'2026-08',exportsUsdBillion:2.86,coveredSharePct:68.5,
+          leaderCountry:'중국',growthLeaderCountry:'베트남',declineLeaderCountry:'대만',
+          countries:[
+            {name:'중국',code:'CN',exportsUsdBillion:.8,priorExportsUsdBillion:.6,exportYoY:33.3,deltaUsdBillion:.2,sharePct:28.0},
+            {name:'홍콩',code:'HK',exportsUsdBillion:.45,priorExportsUsdBillion:.3,exportYoY:50.0,deltaUsdBillion:.15,sharePct:15.7},
+            {name:'베트남',code:'VN',exportsUsdBillion:.36,priorExportsUsdBillion:.12,exportYoY:200.0,deltaUsdBillion:.24,sharePct:12.6},
+            {name:'대만',code:'TW',exportsUsdBillion:.15,priorExportsUsdBillion:.2,exportYoY:-25.0,deltaUsdBillion:-.05,sharePct:5.2},
+            {name:'미국',code:'US',exportsUsdBillion:.11,priorExportsUsdBillion:.09,exportYoY:22.2,deltaUsdBillion:.02,sharePct:3.8},
+            {name:'일본',code:'JP',exportsUsdBillion:.09,priorExportsUsdBillion:.08,exportYoY:12.5,deltaUsdBillion:.01,sharePct:3.1},
+          ],
+        },
+        {
+          key:'mcp-memory',name:'MCP',code:'8542323000',period:'2026-08',exportsUsdBillion:12.22,coveredSharePct:76.1,
+          leaderCountry:'중국',growthLeaderCountry:'중국',declineLeaderCountry:'',
+          countries:[
+            {name:'중국',code:'CN',exportsUsdBillion:4.4,priorExportsUsdBillion:2.7,exportYoY:63.0,deltaUsdBillion:1.7,sharePct:36.0},
+            {name:'홍콩',code:'HK',exportsUsdBillion:2.0,priorExportsUsdBillion:1.4,exportYoY:42.9,deltaUsdBillion:.6,sharePct:16.4},
+            {name:'베트남',code:'VN',exportsUsdBillion:1.1,priorExportsUsdBillion:.8,exportYoY:37.5,deltaUsdBillion:.3,sharePct:9.0},
+            {name:'대만',code:'TW',exportsUsdBillion:.8,priorExportsUsdBillion:.6,exportYoY:33.3,deltaUsdBillion:.2,sharePct:6.5},
+            {name:'미국',code:'US',exportsUsdBillion:.6,priorExportsUsdBillion:.5,exportYoY:20.0,deltaUsdBillion:.1,sharePct:4.9},
+            {name:'일본',code:'JP',exportsUsdBillion:.4,priorExportsUsdBillion:.3,exportYoY:33.3,deltaUsdBillion:.1,sharePct:3.3},
+          ],
+        },
+        {
+          key:'dram-module',name:'DRAM 모듈',code:'8473304060',period:'2026-08',exportsUsdBillion:7.84,coveredSharePct:61.0,
+          leaderCountry:'미국',growthLeaderCountry:'미국',declineLeaderCountry:'일본',
+          countries:[
+            {name:'중국',code:'CN',exportsUsdBillion:1.0,priorExportsUsdBillion:.8,exportYoY:25.0,deltaUsdBillion:.2,sharePct:12.8},
+            {name:'홍콩',code:'HK',exportsUsdBillion:.7,priorExportsUsdBillion:.5,exportYoY:40.0,deltaUsdBillion:.2,sharePct:8.9},
+            {name:'베트남',code:'VN',exportsUsdBillion:.6,priorExportsUsdBillion:.4,exportYoY:50.0,deltaUsdBillion:.2,sharePct:7.7},
+            {name:'대만',code:'TW',exportsUsdBillion:.4,priorExportsUsdBillion:.3,exportYoY:33.3,deltaUsdBillion:.1,sharePct:5.1},
+            {name:'미국',code:'US',exportsUsdBillion:1.7,priorExportsUsdBillion:.8,exportYoY:112.5,deltaUsdBillion:.9,sharePct:21.7},
+            {name:'일본',code:'JP',exportsUsdBillion:.38,priorExportsUsdBillion:.42,exportYoY:-9.5,deltaUsdBillion:-.04,sharePct:4.8},
+          ],
+        },
+      ],
+      meta:{scope:'CN, HK, VN, TW, US, JP configured semiconductor markets; not a global ranking',cacheStatus:'fresh'},
+    });
     if(path==='/api/export-momentum/item-detail') return json(route,{
       schemaVersion:2,key:url.searchParams.get('key')||'semiconductor',name:'반도체',note:'HS 8541+8542 합산',period:'2026-08',
       history:Array.from({length:12},(_,i)=>({
@@ -371,6 +429,12 @@ try{
       if(await page.locator('#export-item-detail .export-detail-bar').count()!==36) throw new Error('export item detail must keep all 12 months across three charts');
       if(await page.locator('#export-item-detail .export-detail-y-axis').count()!==3) throw new Error('export item detail charts must expose three Y axes');
       if(await page.locator('#export-item-detail .export-semi-card').count()<8) throw new Error('semiconductor HSK breakdown cards missing');
+      await page.waitForSelector('#export-item-detail .export-semi-country-card');
+      if(await page.locator('#export-item-detail .export-semi-country-card').count()!==4) throw new Error('semiconductor country matrix must show four segment cards');
+      if(await page.locator('#export-item-detail .export-semi-country-row').count()!==24) throw new Error('semiconductor country matrix must show six configured markets per segment');
+      const countryMatrixText=await page.locator('#export-item-detail .export-semi-country-section').last().innerText();
+      for(const label of ['세부 품목 × 국가','중국','홍콩','베트남','대만','미국','일본','최대 시장','증가 기여','감소 기여','전세계 국가 순위가 아니며']) if(!countryMatrixText.includes(label)) throw new Error(`semiconductor country matrix label missing: ${label}`);
+
       const semiText=await page.locator('#export-item-detail .export-semi-section').innerText();
       for(const label of ['DRAM','Flash memory','SRAM','MCP','DRAM 모듈','HBM은 별도 수출코드가 없습니다.','NAND']) if(!semiText.includes(label)) throw new Error(`semiconductor detail label missing: ${label}`);
       if(await page.locator('#export-item-detail .export-detail-country-row').count()!==5) throw new Error('export item country breakdown must show five configured markets');
