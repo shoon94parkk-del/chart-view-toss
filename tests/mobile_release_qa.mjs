@@ -576,7 +576,7 @@ try{
       const infoRow=page.locator('[data-tab="info"]');
       await infoRow.scrollIntoViewIfNeeded();
       const [infoBox,navBox]=await Promise.all([infoRow.boundingBox(),page.locator('.bottom-nav').boundingBox()]);
-      if(!infoBox||!navBox||infoBox.bottom>navBox.y-2) throw new Error(`data guide row is obscured by bottom nav: ${JSON.stringify({infoBox,navBox})}`);
+      if(!infoBox||!navBox||infoBox.y+infoBox.height>navBox.y-2) throw new Error(`data guide row is obscured by bottom nav: ${JSON.stringify({infoBox,navBox})}`);
     }
     if(tab==='info'){
       const infoText=await page.locator('body').innerText();
@@ -684,7 +684,7 @@ try{
   const shortInfo=shortMenu.locator('[data-tab="info"]');
   await shortInfo.scrollIntoViewIfNeeded();
   const [shortInfoBox,shortNavBox]=await Promise.all([shortInfo.boundingBox(),shortMenu.locator('.bottom-nav').boundingBox()]);
-  if(!shortInfoBox||!shortNavBox||shortInfoBox.bottom>shortNavBox.y-2) throw new Error(`short viewport data guide is obscured: ${JSON.stringify({shortInfoBox,shortNavBox})}`);
+  if(!shortInfoBox||!shortNavBox||shortInfoBox.y+shortInfoBox.height>shortNavBox.y-2) throw new Error(`short viewport data guide is obscured: ${JSON.stringify({shortInfoBox,shortNavBox})}`);
   await shortMenu.close();
 
   const desktopContext=await browser.newContext({viewport:{width:1440,height:900},deviceScaleFactor:1});
