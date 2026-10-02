@@ -1,11 +1,14 @@
 import { loadExportMomentumSnapshot } from './exportMomentumData.js';
 import {
+  chartExtent,
+  chartPct,
   checkpointProgress,
   formatSignedPct,
   formatUsdBillion,
   semiconductorShare,
   tradeBalanceLabel,
   yoyLabel,
+  zeroPct,
   yoyTone,
 } from './exportMomentumModel.js';
 
@@ -59,19 +62,26 @@ function summary(snapshot){
 function checkpoints(snapshot){
   const rows=checkpointProgress(snapshot);
   if(!rows.length)return '';
+  const maxExport=Math.max(...rows.map(row=>row.exportsUsdBillion||0),1);
   return `
     <section class="export-section">
-      <div class="export-section-head"><div><span>발표 흐름</span><h3>10일 → 20일 → 월 전체</h3></div><small>같은 달 누적 통관 실적</small></div>
-      <div class="export-checkpoints">
-        ${rows.map(row=>`
-          <article class="export-checkpoint">
-            <div><strong>${esc(row.label)}</strong><span>${esc(row.endDate)}</span></div>
-            <b>${esc(formatUsdBillion(row.exportsUsdBillion,{digits:1}))}</b>
-            <em class="${yoyTone(row.exportYoY)}">${esc(formatSignedPct(row.exportYoY))}</em>
-            <div class="export-progress" aria-label="${esc(row.label)} 월 기간 진행"><i style="width:${Number.isFinite(row.progress)?row.progress.toFixed(1):0}%"></i></div>
-            ${row.semiconductorUsdBillion!==null?`<small>반도체 ${esc(formatUsdBillion(row.semiconductorUsdBillion,{digits:1}))}</small>`:''}
-          </article>
-        `).join('')}
+      <div class="export-section-head"><div><span>발표 흐름</span><h3>이번 달 수출 누적 흐름</h3></div><small>1~10일 · 1~20일 · 월 전체</small></div>
+      <div class="export-chart-card">
+        <div class="export-chart-legend"><span><i class="bar"></i>누적 수출액</span><span>숫자: 전년 동기 대비</span></div>
+        <div class="export-column-chart" role="img" aria-label="10일, 20일, 월 전체 누적 수출액 그래프">
+          ${rows.map(row=>{
+            const height=Math.max(9,(row.exportsUsdBillion/maxExport)*100);
+            return `
+              <div class="export-column-item" aria-label="${esc(row.label)} 수출 ${esc(formatUsdBillion(row.exportsUsdBillion,{digits:1}))}, 전년 대비 ${esc(formatSignedPct(row.exportYoY))}">
+                <em class="${yoyTone(row.exportYoY)}">${esc(formatSignedPct(row.exportYoY))}</em>
+                <div class="export-column-track"><i style="height:${height.toFixed(1)}%"></i></div>
+                <strong>${esc(row.label)}</strong>
+                <small>${esc(formatUsdBillion(row.exportsUsdBillion,{digits:1}))}</small>
+              </div>
+            `;
+          }).join('')}
+        </div>
+        <p class="export-chart-note">각 값은 같은 달의 누적 통관 실적입니다. 서로 다른 기간의 독립 합계가 아닙니다.</p>
       </div>
     </section>
   `;
@@ -79,20 +89,27 @@ function checkpoints(snapshot){
 
 function items(snapshot){
   if(!snapshot.items.length)return '';
+  const maxAbs=Math.max(...snapshot.items.map(row=>Math.abs(row.exportYoY||0)),1);
   return `
     <section class="export-section">
-      <div class="export-section-head"><div><span>품목별</span><h3>주요 수출 품목</h3></div><small>전년 동월 대비</small></div>
-      <div class="export-item-list">
-        ${snapshot.items.map(row=>`
-          <article class="export-item">
-            <div class="export-item-main">
-              <span><strong>${esc(row.name)}</strong><small>${esc(yoyLabel(row.exportYoY))}</small></span>
-              <em class="${yoyTone(row.exportYoY)}">${esc(formatSignedPct(row.exportYoY))}</em>
-            </div>
-            ${row.exportsUsdBillion!==null?`<b>${esc(formatUsdBillion(row.exportsUsdBillion,{digits:1}))}</b>`:''}
-            ${row.note?`<p>${esc(row.note)}</p>`:''}
-          </article>
-        `).join('')}
+      <div class="export-section-head"><div><span>품목별</span><h3>어떤 품목이 움직였나</h3></div><small>전년 동월 대비</small></div>
+      <div class="export-chart-card">
+        <div class="export-diverging-chart" role="img" aria-label="주요 수출 품목 전년 동월 대비 증감률 그래프">
+          ${snapshot.items.map(row=>{
+            const width=Math.min(50,Math.abs(row.exportYoY)/maxAbs*50);
+            const positive=row.exportYoY>=0;
+            return `
+              <div class="export-diverging-row" aria-label="${esc(row.name)} ${esc(formatSignedPct(row.exportYoY))}">
+                <div class="export-diverging-label"><strong>${esc(row.name)}</strong><span class="${yoyTone(row.exportYoY)}">${esc(formatSignedPct(row.exportYoY))}</span></div>
+                <div class="export-diverging-track">
+                  <i class="zero"></i>
+                  <b class="${positive?'up':'down'}" style="${positive?'left:50%;':'right:50%;'}width:${width.toFixed(1)}%"></b>
+                </div>
+                <small>${row.exportsUsdBillion!==null?esc(formatUsdBillion(row.exportsUsdBillion,{digits:1})+' · '):''}${esc(row.note||yoyLabel(row.exportYoY))}</small>
+              </div>
+            `;
+          }).join('')}
+        </div>
       </div>
     </section>
   `;
@@ -100,18 +117,47 @@ function items(snapshot){
 
 function regions(snapshot){
   if(!snapshot.regions.length)return '';
+  const max=Math.max(...snapshot.regions.map(row=>Math.max(0,row.exportYoY||0)),1);
   return `
     <section class="export-section">
-      <div class="export-section-head"><div><span>지역별</span><h3>주요 수출 지역</h3></div><small>전년 동월 대비</small></div>
-      <div class="export-region-grid">
-        ${snapshot.regions.map(row=>`
-          <article>
-            <span>${esc(row.name)}</span>
-            <strong class="${yoyTone(row.exportYoY)}">${esc(formatSignedPct(row.exportYoY,{digits:0}))}</strong>
-            ${row.exportsUsdBillion!==null?`<small>${esc(formatUsdBillion(row.exportsUsdBillion,{digits:1}))}</small>`:''}
-            ${row.note?`<p>${esc(row.note)}</p>`:''}
-          </article>
-        `).join('')}
+      <div class="export-section-head"><div><span>지역별</span><h3>어디로 수출이 늘었나</h3></div><small>전년 동월 대비</small></div>
+      <div class="export-chart-card">
+        <div class="export-horizontal-chart" role="img" aria-label="주요 수출 지역 전년 동월 대비 증가율 그래프">
+          ${snapshot.regions.map(row=>`
+            <div class="export-horizontal-row" aria-label="${esc(row.name)} ${esc(formatSignedPct(row.exportYoY,{digits:0}))}">
+              <div><strong>${esc(row.name)}</strong><span class="${yoyTone(row.exportYoY)}">${esc(formatSignedPct(row.exportYoY,{digits:0}))}</span></div>
+              <div class="export-horizontal-track"><i style="width:${Math.max(3,Math.max(0,row.exportYoY)/max*100).toFixed(1)}%"></i></div>
+              ${row.note?`<small>${esc(row.note)}</small>`:''}
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+function history(snapshot){
+  if(!snapshot.history||snapshot.history.length<2)return '';
+  const rows=snapshot.history.slice(-12);
+  const exportMax=Math.max(...rows.map(row=>row.exportsUsdBillion||0),1);
+  const yoyExtent=chartExtent(rows.map(row=>row.exportYoY));
+  const zero=zeroPct(yoyExtent);
+  return `
+    <section class="export-section">
+      <div class="export-section-head"><div><span>최근 추이</span><h3>월별 수출액과 증가율</h3></div><small>최근 12개월</small></div>
+      <div class="export-chart-card export-history-card">
+        <div class="export-chart-legend"><span><i class="bar"></i>수출액</span><span><i class="line"></i>전년 동월비</span></div>
+        <div class="export-history-chart" role="img" aria-label="최근 월별 수출액과 전년 동월 대비 추이">
+          ${rows.map(row=>`
+            <div class="export-history-column" aria-label="${esc(row.period)} 수출 ${esc(formatUsdBillion(row.exportsUsdBillion,{digits:1}))}, 전년 대비 ${esc(formatSignedPct(row.exportYoY))}">
+              <span class="export-history-yoy ${yoyTone(row.exportYoY)}" style="bottom:${chartPct(row.exportYoY,yoyExtent).toFixed(1)}%"></span>
+              <i style="height:${Math.max(4,row.exportsUsdBillion/exportMax*76).toFixed(1)}%"></i>
+              <small>${esc(row.period.slice(5))}월</small>
+            </div>
+          `).join('')}
+          <span class="export-history-zero" style="bottom:${zero.toFixed(1)}%"></span>
+        </div>
+        <p class="export-chart-note">막대는 수출액, 점은 전년 동월 대비 변화입니다.</p>
       </div>
     </section>
   `;
@@ -145,7 +191,7 @@ function sources(snapshot){
 }
 
 function paint(host,snapshot,bindNav){
-  host.innerHTML=`${summary(snapshot)}${checkpoints(snapshot)}${facts(snapshot)}${items(snapshot)}${regions(snapshot)}${sources(snapshot)}`;
+  host.innerHTML=`${summary(snapshot)}${history(snapshot)}${checkpoints(snapshot)}${facts(snapshot)}${items(snapshot)}${regions(snapshot)}${sources(snapshot)}`;
   bindNav();
 }
 
