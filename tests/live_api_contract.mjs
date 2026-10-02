@@ -35,7 +35,7 @@ assert(macro.dataContract?.observedAt, 'macro observation contract missing');
 assert(macro.results.some((row) => row.unit && row.observedAt), 'macro unit/observation metadata missing');
 
 const exportsSnapshot = await get('/api/export-momentum', 45000);
-assert(Number(exportsSnapshot.schemaVersion) >= 5, 'export schema v5 missing');
+assert(Number(exportsSnapshot.schemaVersion) >= 6, 'export schema v6 missing');
 assert(Array.isArray(exportsSnapshot.items) && exportsSnapshot.items.length >= 1, 'export item rows missing');
 assert(exportsSnapshot.itemPeriod, 'export item period missing');
 assert(
@@ -58,6 +58,19 @@ assert(
   Array.isArray(exportsSnapshot.semiconductorBreakdown) && exportsSnapshot.semiconductorBreakdown.length >= 4,
   'cached semiconductor HSK breakdown missing from export snapshot'
 );
+
+const semiMemory = exportsSnapshot.semiconductorBreakdown.find((row) => row.code === '854232');
+const semiDram = exportsSnapshot.semiconductorBreakdown.find((row) => row.code === '8542321010');
+const semiFlash = exportsSnapshot.semiconductorBreakdown.find((row) => row.code === '8542321030');
+const semiMcp = exportsSnapshot.semiconductorBreakdown.find((row) => row.code === '8542323000');
+const semiDramModule = exportsSnapshot.semiconductorBreakdown.find((row) => row.code === '8473304060');
+for (const [name,row] of [['memory',semiMemory],['dram',semiDram],['flash',semiFlash],['mcp',semiMcp],['dramModule',semiDramModule]]) {
+  assert(row && Number(row.exportsUsdBillion) >= 0, `semiconductor report ${name} missing`);
+  assert(Number.isFinite(Number(row.exportYoY)), `semiconductor report ${name} YoY missing`);
+  assert(Number.isFinite(Number(row.exportMoM)), `semiconductor report ${name} MoM missing`);
+  assert(Number(row.unitValueUsdPerKg) > 0, `semiconductor report ${name} unit value missing`);
+  assert(Number.isFinite(Number(row.unitValueMoM)), `semiconductor report ${name} unit-value MoM missing`);
+}
 
 const exportDetail = await get('/api/export-momentum/item-detail?key=semiconductor', 60000);
 assert(exportDetail.key === 'semiconductor', 'export item detail key mismatch');
@@ -103,6 +116,11 @@ console.log('Live backend contract smoke passed', {
   exportDetailMonths: exportDetail.history.length,
   exportDetailCountries: exportDetail.countries.length,
   semiconductorSegments: exportDetail.semiconductorBreakdown.length,
-  dramExports: dram.exportsUsdBillion,
-  flashExports: flash.exportsUsdBillion,
+  semiconductorReportSegments: exportsSnapshot.semiconductorBreakdown.length,
+  dramExports: semiDram.exportsUsdBillion,
+  dramMoM: semiDram.exportMoM,
+  flashExports: semiFlash.exportsUsdBillion,
+  flashMoM: semiFlash.exportMoM,
+  mcpExports: semiMcp.exportsUsdBillion,
+  dramModuleExports: semiDramModule.exportsUsdBillion,
 });
