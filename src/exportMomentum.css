@@ -227,3 +227,25 @@
 .export-semi-country-loading.is-error>span{display:none}.export-semi-country-loading.is-error{background:#fff8f8}
 @media(min-width:700px){.export-semi-country-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:360px){.export-semi-country-card{padding:10px}.export-semi-country-summary{gap:4px 6px}.export-semi-country-metrics{gap:4px 7px}}
+
+
+/* Export V8: 10-day provisional export radar */
+.export-provisional-shell{position:relative}
+.export-provisional-loading,.export-provisional-error{min-height:110px;display:grid;place-items:center;align-content:center;gap:8px;text-align:center;border:1px solid #edf0f2;border-radius:18px;background:#fff}
+.export-provisional-loading>span{width:23px;height:23px;border:3px solid #dce8f7;border-top-color:#3182f6;border-radius:50%;animation:export-spin .8s linear infinite}
+.export-provisional-loading strong,.export-provisional-error strong{font-size:10px;color:#333d4b}.export-provisional-error span{font-size:8.5px;color:#8b95a1}
+.export-provisional-hero{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.export-provisional-hero>div{padding:14px;border-radius:18px;background:linear-gradient(145deg,#f7fbff,#fff);border:1px solid #e6eef8;min-width:0}
+.export-provisional-hero span,.export-provisional-hero small{display:block}.export-provisional-hero span{color:#6b7684;font-size:8.5px}.export-provisional-hero strong{display:block;margin:6px 0 5px;font-size:18px;color:#191f28;letter-spacing:-.4px}.export-provisional-hero small{font-size:8.5px;font-weight:800}.export-provisional-hero small.up{color:#e64a61}.export-provisional-hero small.down{color:#3182f6}
+.export-provisional-summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:9px}
+.export-provisional-summary>div{padding:10px;border-radius:14px;background:#fff;border:1px solid #edf0f2;min-width:0}.export-provisional-summary span,.export-provisional-summary small{display:block;color:#8b95a1;font-size:7.8px}.export-provisional-summary strong{display:block;margin:5px 0 3px;font-size:12px}.export-provisional-summary strong.up{color:#e64a61}.export-provisional-summary strong.down{color:#3182f6}
+.export-provisional-flow{display:grid;gap:8px;margin-top:10px}
+.export-provisional-stage{padding:11px 12px;border-radius:15px;background:#fbfcfe;border:1px solid #edf0f2}.export-provisional-stage.is-latest{background:#f6faff;border-color:#cfe3ff}
+.export-provisional-stage-head{display:flex;justify-content:space-between;gap:8px;align-items:center}.export-provisional-stage-head strong{font-size:10px}.export-provisional-stage-head span{font-size:10px;color:#333d4b;font-weight:900}
+.export-provisional-progress{height:7px;margin-top:7px;border-radius:999px;background:#edf2f7;overflow:hidden}.export-provisional-progress i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#8dbdfd,#3182f6)}
+.export-provisional-stage-metrics{display:flex;flex-wrap:wrap;gap:5px 9px;margin-top:7px;color:#6b7684;font-size:7.5px;font-weight:800}.export-provisional-stage-metrics .up{color:#e64a61}.export-provisional-stage-metrics .down{color:#3182f6}
+.export-provisional-items{margin-top:10px;padding:13px;border-radius:17px;background:#fff;border:1px solid #edf0f2}
+.export-provisional-item{margin-top:10px}.export-provisional-item:first-of-type{margin-top:4px}.export-provisional-item>div:first-child{display:grid;grid-template-columns:20px minmax(0,1fr) auto;gap:6px;align-items:center}.export-provisional-item>div:first-child span{font-size:7.5px;color:#b0b8c1;font-weight:900}.export-provisional-item>div:first-child strong{font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.export-provisional-item>div:first-child em{font-style:normal;font-size:8.5px;color:#4e5968;font-weight:800}
+.export-provisional-item-track{height:7px;margin-top:5px;border-radius:999px;background:#f2f4f6;overflow:hidden}.export-provisional-item-track i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#91c0ff,#3182f6)}
+.export-provisional-item>small{display:flex;gap:9px;flex-wrap:wrap;margin-top:4px}.export-provisional-item>small b{font-size:7.3px;font-weight:800;color:#8b95a1}.export-provisional-item>small b.up{color:#e64a61}.export-provisional-item>small b.down{color:#3182f6}
+@media(max-width:360px){.export-provisional-hero{grid-template-columns:1fr}.export-provisional-summary{grid-template-columns:1fr 1fr}.export-provisional-hero strong{font-size:16px}}
