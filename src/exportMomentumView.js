@@ -1,5 +1,6 @@
-import { loadExportMomentumSnapshot } from './exportMomentumData.js';
+import { loadExportItemDetail, loadExportMomentumSnapshot } from './exportMomentumData.js';
 import {
+  balanceTone,
   chartExtent,
   chartPct,
   checkpointProgress,
@@ -118,6 +119,35 @@ function checkpoints(snapshot){
   `;
 }
 
+function quadrant(snapshot){
+  const rows=snapshot.items.filter(row=>Number.isFinite(row.exportWeightYoY)&&Number.isFinite(row.unitValueYoY));
+  if(rows.length<2)return '';
+  const maxAbs=Math.max(10,...rows.flatMap(row=>[Math.abs(row.exportWeightYoY),Math.abs(row.unitValueYoY)]));
+  const scale=value=>50+Math.max(-45,Math.min(45,(value/maxAbs)*45));
+  return `
+    <section class="export-section">
+      <div class="export-section-head"><div><span>원인 분해</span><h3>물량 × 단위가치 4분면</h3></div><small>${esc(monthLabel(snapshot.itemPeriod||snapshot.period))} 기준 · YoY</small></div>
+      <div class="export-quadrant-card">
+        <div class="export-quadrant-axis x-axis"><span>물량 감소</span><strong>물량 YoY</strong><span>물량 증가</span></div>
+        <div class="export-quadrant-axis y-axis"><span>단위가치 증가</span><strong>단위가치 YoY</strong><span>단위가치 감소</span></div>
+        <div class="export-quadrant" role="img" aria-label="품목별 수출 물량과 kg당 평균 신고금액 전년 동월 대비 4분면">
+          <i class="q-v"></i><i class="q-h"></i>
+          <span class="q-label q1">물량↑ · 단가↑</span>
+          <span class="q-label q2">물량↓ · 단가↑</span>
+          <span class="q-label q3">물량↓ · 단가↓</span>
+          <span class="q-label q4">물량↑ · 단가↓</span>
+          ${rows.map(row=>`
+            <button type="button" class="export-quadrant-point" data-export-item="${esc(row.key)}" style="left:${scale(row.exportWeightYoY).toFixed(1)}%;bottom:${scale(row.unitValueYoY).toFixed(1)}%" aria-label="${esc(row.name)} 물량 ${esc(formatSignedPct(row.exportWeightYoY))}, 단위가치 ${esc(formatSignedPct(row.unitValueYoY))}">
+              <i></i><span>${esc(row.name)}</span>
+            </button>
+          `).join('')}
+        </div>
+        <p class="export-chart-note">오른쪽일수록 물량 증가, 위쪽일수록 kg당 평균 신고금액 증가입니다. 점을 누르면 해당 품목의 12개월 상세를 엽니다.</p>
+      </div>
+    </section>
+  `;
+}
+
 function items(snapshot){
   if(!snapshot.items.length)return '';
   return `
@@ -151,11 +181,67 @@ function items(snapshot){
                 <em class="${yoyTone(row.unitValueYoY)}">${esc(formatSignedPct(row.unitValueYoY))}</em>
               </div>
             </div>
+            <div class="export-driver-trade">
+              <span>수입 <b>${esc(formatUsdBillion(row.importsUsdBillion,{digits:1}))}</b> <em class="${yoyTone(row.importYoY)}">${esc(formatSignedPct(row.importYoY))}</em></span>
+              <span>무역수지 <b class="${balanceTone(row.tradeBalanceUsdBillion)}">${esc(formatUsdBillion(row.tradeBalanceUsdBillion,{digits:1}))}</b></span>
+            </div>
+            ${row.key?`<button type="button" class="export-driver-open" data-export-item="${esc(row.key)}">${esc(row.name)} 12개월 상세 보기</button>`:''}
           </article>
         `).join('')}
       </div>
+      <div id="export-item-detail" class="export-item-detail" hidden></div>
       <p class="export-chart-note">kg당 신고금액은 개별 제품 판매가격이 아닙니다. 같은 HS 그룹 안의 제품 구성·고부가가치 비중 변화가 함께 반영되는 ‘평균 단위가치’로 해석해야 합니다.</p>
     </section>
+  `;
+}
+
+function detailMetricBars(history,field,title,unit,formatter){
+  const rows=history.filter(row=>Number.isFinite(row[field]));
+  if(!rows.length)return '';
+  const max=Math.max(...rows.map(row=>Math.max(0,row[field])),1);
+  return `
+    <div class="export-detail-chart">
+      <div class="export-detail-chart-head"><strong>${esc(title)}</strong><span>${esc(unit)}</span></div>
+      <div class="export-detail-bars" role="img" aria-label="${esc(title)} 최근 12개월 추이">
+        ${history.map(row=>{
+          const value=Number(row[field]);
+          const height=Number.isFinite(value)?Math.max(3,Math.min(100,value/max*100)):0;
+          return `<div class="export-detail-bar" aria-label="${esc(row.period)} ${esc(formatter(row[field]))}"><i style="height:${height.toFixed(1)}%"></i><small>${esc(row.period.slice(5))}</small></div>`;
+        }).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function renderItemDetail(detail){
+  const latest=detail.history.at(-1)||{};
+  const maxCountry=Math.max(...detail.countries.map(row=>row.exportsUsdBillion||0),1);
+  return `
+    <div class="export-detail-head">
+      <div><span>품목 상세 · ${esc(detail.period)}</span><h4>${esc(detail.name)}</h4><small>${esc(detail.note)}</small></div>
+      <button type="button" data-export-detail-close aria-label="품목 상세 닫기">닫기</button>
+    </div>
+    <div class="export-detail-summary">
+      <div><span>수출액</span><strong>${esc(formatUsdBillion(latest.exportsUsdBillion,{digits:1}))}</strong><small class="${yoyTone(latest.exportYoY)}">${esc(formatSignedPct(latest.exportYoY))}</small></div>
+      <div><span>수입액</span><strong>${esc(formatUsdBillion(latest.importsUsdBillion,{digits:1}))}</strong><small class="${yoyTone(latest.importYoY)}">${esc(formatSignedPct(latest.importYoY))}</small></div>
+      <div><span>무역수지</span><strong class="${balanceTone(latest.tradeBalanceUsdBillion)}">${esc(formatUsdBillion(latest.tradeBalanceUsdBillion,{digits:1}))}</strong><small>${esc(tradeBalanceLabel(latest.tradeBalanceUsdBillion))}</small></div>
+    </div>
+    <div class="export-detail-chart-stack">
+      ${detailMetricBars(detail.history,'exportsUsdBillion','수출액 추이','억달러',value=>formatUsdBillion(value,{digits:1}))}
+      ${detailMetricBars(detail.history,'exportWeightKg','수출 물량 추이','순중량',value=>formatWeightKg(value))}
+      ${detailMetricBars(detail.history,'unitValueUsdPerKg','kg당 평균 신고금액','$ / kg',value=>formatUnitValue(value))}
+    </div>
+    <div class="export-detail-country">
+      <div class="export-detail-country-head"><strong>주요 5개 국가 × ${esc(detail.name)}</strong><small>전세계 순위가 아닌 지정 시장 비교</small></div>
+      ${detail.countries.map(row=>`
+        <div class="export-detail-country-row">
+          <div><strong>${esc(row.name)}</strong><span>${esc(formatUsdBillion(row.exportsUsdBillion,{digits:1}))}</span></div>
+          <div class="export-detail-country-track"><i style="width:${Math.max(2,(row.exportsUsdBillion/maxCountry)*100).toFixed(1)}%"></i></div>
+          <small>${row.sharePct===null?'-':esc(row.sharePct.toFixed(1)+'%')} · 해당 품목 총수출 대비</small>
+        </div>
+      `).join('')}
+    </div>
+    <p class="export-chart-note">국가 비교는 미국·중국·베트남·일본·대만 5개 지정 시장입니다. kg당 신고금액은 품목 믹스가 반영된 평균 단위가치입니다.</p>
   `;
 }
 
@@ -277,9 +363,10 @@ function sources(snapshot){
   `;
 }
 
-function paint(host,snapshot,bindNav){
-  host.innerHTML=`${summary(snapshot)}${history(snapshot)}${checkpoints(snapshot)}${facts(snapshot)}${items(snapshot)}${regions(snapshot)}${sources(snapshot)}`;
+function paint(host,snapshot,bindNav,onItemOpen){
+  host.innerHTML=`${summary(snapshot)}${history(snapshot)}${checkpoints(snapshot)}${facts(snapshot)}${quadrant(snapshot)}${items(snapshot)}${regions(snapshot)}${sources(snapshot)}`;
   bindNav();
+  host.querySelectorAll('[data-export-item]').forEach(button=>button.addEventListener('click',()=>onItemOpen(button.dataset.exportItem)));
 }
 
 export function renderExportMomentumView({shell,bindNav}){
@@ -288,6 +375,34 @@ export function renderExportMomentumView({shell,bindNav}){
   bindNav();
   const host=app.querySelector('#export-momentum-root');
   let seq=0;
+  let detailSeq=0;
+
+  const openItemDetail=async(key)=>{
+    const panel=host.querySelector('#export-item-detail');
+    if(!panel||!key)return;
+    const token=++detailSeq;
+    panel.hidden=false;
+    panel.innerHTML='<div class="export-detail-loading" role="status"><span></span><strong>12개월 품목 상세를 불러오고 있어요.</strong><small>첫 조회는 관세청 상세 통계를 수집해 조금 더 걸릴 수 있습니다.</small></div>';
+    panel.scrollIntoView({behavior:'smooth',block:'start'});
+    try{
+      const detail=await loadExportItemDetail(key);
+      if(token!==detailSeq||!panel.isConnected)return;
+      panel.innerHTML=renderItemDetail(detail);
+      panel.querySelector('[data-export-detail-close]')?.addEventListener('click',()=>{
+        detailSeq+=1;
+        panel.hidden=true;
+        panel.innerHTML='';
+      });
+    }catch(error){
+      if(token!==detailSeq||!panel.isConnected)return;
+      panel.innerHTML=`<div class="export-detail-error"><strong>품목 상세를 불러오지 못했어요.</strong><p>${esc(error?.message||'잠시 후 다시 시도해주세요.')}</p><button type="button" data-export-detail-close>닫기</button></div>`;
+      panel.querySelector('[data-export-detail-close]')?.addEventListener('click',()=>{
+        detailSeq+=1;
+        panel.hidden=true;
+        panel.innerHTML='';
+      });
+    }
+  };
 
   const load=async(force=false)=>{
     const token=++seq;
@@ -295,7 +410,7 @@ export function renderExportMomentumView({shell,bindNav}){
     try{
       const snapshot=await loadExportMomentumSnapshot({force});
       if(token!==seq||!host.isConnected)return;
-      paint(host,snapshot,bindNav);
+      paint(host,snapshot,bindNav,openItemDetail);
     }catch(error){
       if(token!==seq||!host.isConnected)return;
       host.innerHTML=errorView(error?.message);
@@ -304,5 +419,5 @@ export function renderExportMomentumView({shell,bindNav}){
   };
 
   void load();
-  return ()=>{seq+=1;};
+  return ()=>{seq+=1;detailSeq+=1;};
 }
