@@ -223,3 +223,17 @@ Saved investment baselines are device records: show them before network completi
 - Same-harness production reference on 2026-10-02 (390x844 Chromium, single-run reference only): Home ~0.55s, Samsung Detail ~0.54s, NVIDIA Detail ~0.95s, KOSPI index Detail ~1.93s, valuation band ~0.90s, full heatmap ~0.90s.
 - These timings are not SLAs. Use them only to detect a material regression with the same measurement method.
 - A repeated bug is not complete until the existing regression test is identified and strengthened or a new test is added.
+
+## Export momentum dashboard
+- Keep `#exports` out of Home first paint, home bootstrap, quote polling and heatmap refresh.
+- The route belongs under `근거와 시장 환경 확인`.
+- 1~10일, 1~20일, 월 전체 bars are cumulative checkpoints within one month, not independent period totals.
+- Missing official values remain missing; never convert null to zero or estimate undisclosed amounts.
+- Graphs must have text labels/aria descriptions and no horizontal overflow at supported mobile widths.
+- Optional history must not render a fake 12-month chart until at least two official monthly observations exist.
+
+## Export momentum live API
+- Export route must call the shared backend only after the user enters `#exports`; never warm it from Home.
+- A lagged `itemPeriod` may not be divided by the headline month total to produce a semiconductor share.
+- Show `itemPeriod` and `regionPeriod` when they differ from the headline `period`.
+- Do not restore static 10-day/20-day bars unless an official preliminary-data source is actually connected.

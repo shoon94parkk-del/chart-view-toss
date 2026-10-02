@@ -23,6 +23,8 @@ try{
  await page.locator('.bottom-nav [data-tab="more"]').click();
  await page.waitForTimeout(3000);
  assert.deepEqual(errors,[],'late requests must not access a destroyed screen');
- assert.equal(await page.locator('.page-intro h2').innerText(),'전체');
+ assert.equal(new URL(page.url()).hash,'#more','navigation must settle on the More route');
+ assert.equal(await page.locator('.topbar h1').innerText(),'전체');
+ assert.equal(await page.locator('.page-intro h2').innerText(),'분석과 도구');
  console.log('Progressive home and navigation race checks passed');
 }finally{await browser.close();}

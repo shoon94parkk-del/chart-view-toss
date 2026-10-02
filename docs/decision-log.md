@@ -272,3 +272,16 @@ Explicit chart retries bypass cached empty/partial HTTP200 results while ordinar
 **결정:** 대화 기억이 아니라 저장소 기록을 우선한다. 성능·시세·캐시·히트맵·valuation·로딩 관련 변경 전에는 `docs/no-repeat-regression-policy.md`를 반드시 확인하고, 작업을 새 기능/새 버그/기존 수정의 회귀 중 하나로 먼저 분류한다. 회귀라면 기존 known-good 계약을 복원하는 것이 우선이며, 같은 문제를 새 구조로 처음부터 다시 구현하지 않는다.
 
 **보호:** `AGENTS.md`가 no-repeat 정책을 최우선 읽기 문서로 지정한다. `docs/regression-guardrails.md`에 현재 quote/heatmap/detail/valuation 성능 계약과 동일 측정 방식 기준값을 기록한다. 반복된 문제는 회귀 테스트를 새로 추가하거나 강화하지 않으면 완료로 보지 않는다.
+
+## 2026-10-02 — 수출 모멘텀 대시보드
+- 수출 화면은 Home에 넣지 않고 `전체 > 근거와 시장 환경 확인 > 수출 모멘텀`에서만 진입한다.
+- API 키 전 단계에서는 관세청·산업통상부 공식 잠정치 정적 스냅샷을 사용한다.
+- 1차 시각화는 1~10일/1~20일/월 전체 누적 수출 막대, 품목별 YoY 발산 막대, 지역별 YoY 막대를 제공한다.
+- 프론트 데이터 계약에 optional `history`를 추가해 API 연결 후 최근 12개월 수출액+YoY 복합 차트를 같은 화면에서 자동 노출한다.
+- Home/bootstrap/시세 polling에는 수출 데이터 요청을 추가하지 않는다.
+
+## 2026-10-02 — 수출 모멘텀 실 API 전환
+- `#exports`는 정적 JSON이 아니라 공용 백엔드 `/api/export-momentum`을 lazy-load한다.
+- 총괄 최신 월과 HS 상세 최신 월이 다를 수 있으므로 `itemPeriod` / `regionPeriod`를 화면에 따로 표시한다.
+- 품목 상세 기준월과 총괄 기준월이 다르면 반도체 비중을 서로 다른 월끼리 나눠 계산하지 않는다.
+- 현재 승인받은 월간 API가 제공하지 않는 10일/20일 checkpoint는 실 API 화면에서 만들지 않는다.
