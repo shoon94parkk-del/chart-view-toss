@@ -120,6 +120,75 @@ function checkpoints(snapshot){
   `;
 }
 
+function semiconductorReport(snapshot){
+  const wanted=['memory-total','dram','flash','mcp-memory','dram-module'];
+  const rows=wanted.map(key=>(snapshot.semiconductorBreakdown||[]).find(row=>row.key===key)).filter(Boolean);
+  if(rows.length<3)return '';
+  const maxExport=Math.max(...rows.map(row=>row.exportsUsdBillion||0),1);
+  const momRows=rows.filter(row=>Number.isFinite(row.exportMoM));
+  const strongest=momRows.length?[...momRows].sort((a,b)=>b.exportMoM-a.exportMoM)[0]:null;
+  const unitRows=rows.filter(row=>Number.isFinite(row.unitValueMoM));
+  const weakestUnit=unitRows.length?[...unitRows].sort((a,b)=>a.unitValueMoM-b.unitValueMoM)[0]:null;
+  const label=row=>row.key==='flash'?'Flash memory':row.name;
+  return `
+    <section class="export-section export-semi-report">
+      <div class="export-section-head">
+        <div><span>반도체 리포트</span><h3>메모리 세부 수출 한눈에 보기</h3></div>
+        <small>${esc(monthLabel(snapshot.itemPeriod||snapshot.period))} · 관세청 HSK</small>
+      </div>
+      <div class="export-semi-report-intro">
+        <div>
+          <strong>증권사 수출통계처럼 금액·YoY·MoM·단위가치를 함께 봅니다.</strong>
+          <span>HBM은 독립 HSK가 없어 별도 수출액으로 만들지 않으며, Flash memory는 NAND/NOR 등을 함께 포함합니다.</span>
+        </div>
+        <button type="button" data-export-item="semiconductor">반도체 12개월 상세</button>
+      </div>
+      <div class="export-semi-report-cards">
+        ${rows.map(row=>`
+          <article class="export-semi-report-card">
+            <div class="export-semi-report-head">
+              <div><span>HS ${esc(row.code)}</span><strong>${esc(label(row))}</strong></div>
+              <em class="${yoyTone(row.exportMoM)}">MoM ${esc(formatSignedPct(row.exportMoM))}</em>
+            </div>
+            <div class="export-semi-report-amount">${esc(formatUsdBillion(row.exportsUsdBillion,{digits:1}))}</div>
+            <div class="export-semi-report-pills">
+              <span class="${yoyTone(row.exportYoY)}">YoY ${esc(formatSignedPct(row.exportYoY))}</span>
+              <span class="${yoyTone(row.exportMoM)}">MoM ${esc(formatSignedPct(row.exportMoM))}</span>
+            </div>
+            <div class="export-semi-report-unit">
+              <span>kg당 평균 신고금액</span>
+              <strong>${esc(formatUnitValue(row.unitValueUsdPerKg,{digits:0}))}</strong>
+              <small class="${yoyTone(row.unitValueYoY)}">YoY ${esc(formatSignedPct(row.unitValueYoY))}</small>
+              <small class="${yoyTone(row.unitValueMoM)}">MoM ${esc(formatSignedPct(row.unitValueMoM))}</small>
+            </div>
+          </article>
+        `).join('')}
+      </div>
+      <div class="export-semi-report-chart">
+        <div class="export-detail-country-head"><strong>세부 품목 수출액 비교</strong><small>막대 · 억달러</small></div>
+        ${rows.map(row=>`
+          <div class="export-semi-report-row">
+            <div><strong>${esc(label(row))}</strong><span>${esc(formatUsdBillion(row.exportsUsdBillion,{digits:1}))}</span></div>
+            <div class="export-semi-report-track"><i style="width:${Math.max(3,(row.exportsUsdBillion/maxExport)*100).toFixed(1)}%"></i></div>
+            <div class="export-semi-report-change">
+              <span class="${yoyTone(row.exportYoY)}">YoY ${esc(formatSignedPct(row.exportYoY))}</span>
+              <span class="${yoyTone(row.exportMoM)}">MoM ${esc(formatSignedPct(row.exportMoM))}</span>
+              <span class="${yoyTone(row.unitValueMoM)}">단위가치 MoM ${esc(formatSignedPct(row.unitValueMoM))}</span>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+      ${strongest||weakestUnit?`
+        <div class="export-semi-report-brief">
+          <strong>이번 달 읽을 포인트</strong>
+          ${strongest?`<span>수출액 MoM 변화가 가장 큰 항목은 <b>${esc(label(strongest))}</b> ${esc(formatSignedPct(strongest.exportMoM))}입니다.</span>`:''}
+          ${weakestUnit?`<span>단위가치 MoM이 가장 낮은 항목은 <b>${esc(label(weakestUnit))}</b> ${esc(formatSignedPct(weakestUnit.unitValueMoM))}입니다.</span>`:''}
+        </div>`:''}
+      <p class="export-chart-note">MCP는 HSK 8542323000 복합구조칩 메모리, DRAM 모듈은 HSK 8473304060 기준입니다. 이 통계는 TRASS 분류와 집계시점이 달라 증권사 잠정치와 숫자가 다를 수 있습니다.</p>
+    </section>
+  `;
+}
+
 function breadth(snapshot){
   const data=snapshot.breadth;
   if(!data||!Number.isFinite(data.comparableCount)||data.comparableCount<=0)return '';
@@ -268,6 +337,7 @@ function semiconductorBreakdown(detail){
   if(detail.key!=='semiconductor'||!rows.length)return '';
   const memory=rows.filter(row=>row.group==='memory');
   const logic=rows.filter(row=>row.group==='logic');
+  const moduleRows=rows.filter(row=>row.group==='module');
   const card=row=>`
     <article class="export-semi-card">
       <div class="export-semi-head">
@@ -275,7 +345,12 @@ function semiconductorBreakdown(detail){
         <em class="${yoyTone(row.exportYoY)}">${esc(formatSignedPct(row.exportYoY))}</em>
       </div>
       <div class="export-semi-main">${esc(formatUsdBillion(row.exportsUsdBillion,{digits:1}))}</div>
-      <div class="export-semi-meta"><span>물량 ${esc(formatSignedPct(row.exportWeightYoY))}</span><span>단위가치 ${esc(formatSignedPct(row.unitValueYoY))}</span></div>
+      <div class="export-semi-meta">
+        <span>수출 MoM ${esc(formatSignedPct(row.exportMoM))}</span>
+        <span>물량 YoY ${esc(formatSignedPct(row.exportWeightYoY))}</span>
+        <span>단위가치 YoY ${esc(formatSignedPct(row.unitValueYoY))}</span>
+        <span>단위가치 MoM ${esc(formatSignedPct(row.unitValueMoM))}</span>
+      </div>
       <small>${esc(row.note)}</small>
     </article>
   `;
@@ -287,6 +362,7 @@ function semiconductorBreakdown(detail){
         <span>HBM을 독립 수출액으로 만들지 않습니다. DRAM·복합구조 메모리 등의 신고 분류에 포함될 수 있습니다. Flash memory도 NAND만이 아니라 NOR 등을 함께 포함합니다.</span>
       </div>
       ${memory.length?`<div class="export-semi-group"><h5>메모리</h5><div class="export-semi-grid">${memory.map(card).join('')}</div></div>`:''}
+      ${moduleRows.length?`<div class="export-semi-group"><h5>모듈</h5><div class="export-semi-grid">${moduleRows.map(card).join('')}</div></div>`:''}
       ${logic.length?`<div class="export-semi-group"><h5>기타 IC</h5><div class="export-semi-grid">${logic.map(card).join('')}</div></div>`:''}
     </div>
   `;
@@ -451,7 +527,7 @@ function sources(snapshot){
 }
 
 function paint(host,snapshot,bindNav,onItemOpen){
-  host.innerHTML=`${summary(snapshot)}${history(snapshot)}${checkpoints(snapshot)}${facts(snapshot)}${breadth(snapshot)}${quadrant(snapshot)}${items(snapshot)}${regions(snapshot)}${sources(snapshot)}`;
+  host.innerHTML=`${summary(snapshot)}${history(snapshot)}${checkpoints(snapshot)}${facts(snapshot)}${semiconductorReport(snapshot)}${breadth(snapshot)}${quadrant(snapshot)}${items(snapshot)}${regions(snapshot)}${sources(snapshot)}`;
   bindNav();
   host.querySelectorAll('[data-export-item]').forEach(button=>button.addEventListener('click',()=>onItemOpen(button.dataset.exportItem)));
 }
