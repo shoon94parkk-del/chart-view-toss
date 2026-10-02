@@ -73,6 +73,17 @@ test('chart helpers keep zero axis stable across positive and negative growth',(
   assert.equal(chartPct(-5,extent),0);
 });
 
+test('detail periods are preserved and prevent cross-month semiconductor share',()=>{
+  const value=normalizeExportSnapshot({
+    ...fixture,
+    itemPeriod:'2026-08',
+    regionPeriod:'2026-08',
+  });
+  assert.equal(value.itemPeriod,'2026-08');
+  assert.equal(value.regionPeriod,'2026-08');
+  assert.equal(semiconductorShare(value),null);
+});
+
 test('history is optional now and normalized for the future API contract',()=>{
   const value=normalizeExportSnapshot({...fixture,history:[
     {period:'2026-08',exportsUsdBillion:70,exportYoY:10},
