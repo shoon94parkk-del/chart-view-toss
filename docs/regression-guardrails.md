@@ -256,3 +256,9 @@ Saved investment baselines are device records: show them before network completi
 
 - 반도체 세부 카드에 12개월 시계열이 없다는 이유로 브라우저/백엔드에서 HSK별 다중 fan-out을 추가하지 않는다.
 - 세부 HSK는 최신 itemPeriod와 전년동월 비교 카드로 유지하고, 전체 반도체 12개월 추이는 기존 item-detail history를 사용한다.
+
+- 반도체 리포트 핵심 5개 카드에서 YoY와 MoM을 혼동하지 않도록 둘 다 명시적으로 라벨링한다.
+- kg당 평균 신고금액은 단가/ASP로 단정하지 않고 평균 단위가치 성격을 유지한다.
+- MCP는 HSK 8542323000, DRAM 모듈은 HSK 8473304060 기준을 유지한다.
+- HBM 독립 수출액을 생성하거나 Flash memory를 NAND-only로 표기하지 않는다.
+- 모바일 390px에서 5개 카드, 비교막대, 상세 HSK 카드가 가로 스크롤 없이 표시되어야 한다.

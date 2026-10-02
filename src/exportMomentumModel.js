@@ -92,6 +92,24 @@ export function normalizeExportSnapshot(raw={}){
     topNegative:(Array.isArray(rawBreadth.topNegative)?rawBreadth.topNegative:[]).map(normalizeMover).filter(row=>row.code),
   }:null;
 
+  const semiconductorBreakdown=(Array.isArray(raw.semiconductorBreakdown)?raw.semiconductorBreakdown:[]).map(row=>({
+    key:text(row?.key),
+    name:text(row?.name),
+    code:text(row?.code),
+    group:text(row?.group),
+    note:text(row?.note),
+    period:text(row?.period),
+    exportsUsdBillion:finite(row?.exportsUsdBillion),
+    exportYoY:finite(row?.exportYoY),
+    exportMoM:finite(row?.exportMoM),
+    exportWeightKg:finite(row?.exportWeightKg),
+    exportWeightYoY:finite(row?.exportWeightYoY),
+    exportWeightMoM:finite(row?.exportWeightMoM),
+    unitValueUsdPerKg:finite(row?.unitValueUsdPerKg),
+    unitValueYoY:finite(row?.unitValueYoY),
+    unitValueMoM:finite(row?.unitValueMoM),
+  })).filter(row=>row.key&&row.name);
+
   const sources=(Array.isArray(raw.sources)?raw.sources:[])
     .map(row=>({name:text(row?.name),url:text(row?.url),role:text(row?.role)}))
     .filter(row=>row.name&&/^https:\/\//.test(row.url));
@@ -110,6 +128,7 @@ export function normalizeExportSnapshot(raw={}){
     summary,
     checkpoints,
     items,
+    semiconductorBreakdown,
     breadth,
     regions,
     history,
@@ -236,10 +255,13 @@ export function normalizeExportItemDetail(raw={}){
     period:text(row?.period),
     exportsUsdBillion:finite(row?.exportsUsdBillion),
     exportYoY:finite(row?.exportYoY),
+    exportMoM:finite(row?.exportMoM),
     exportWeightKg:finite(row?.exportWeightKg),
     exportWeightYoY:finite(row?.exportWeightYoY),
+    exportWeightMoM:finite(row?.exportWeightMoM),
     unitValueUsdPerKg:finite(row?.unitValueUsdPerKg),
     unitValueYoY:finite(row?.unitValueYoY),
+    unitValueMoM:finite(row?.unitValueMoM),
     importsUsdBillion:finite(row?.importsUsdBillion),
     importYoY:finite(row?.importYoY),
     importWeightKg:finite(row?.importWeightKg),
@@ -275,10 +297,13 @@ export function normalizeExportItemDetail(raw={}){
     period:text(row?.period),
     exportsUsdBillion:finite(row?.exportsUsdBillion),
     exportYoY:finite(row?.exportYoY),
+    exportMoM:finite(row?.exportMoM),
     exportWeightKg:finite(row?.exportWeightKg),
     exportWeightYoY:finite(row?.exportWeightYoY),
+    exportWeightMoM:finite(row?.exportWeightMoM),
     unitValueUsdPerKg:finite(row?.unitValueUsdPerKg),
     unitValueYoY:finite(row?.unitValueYoY),
+    unitValueMoM:finite(row?.unitValueMoM),
     history:(Array.isArray(row?.history)?row.history:[]).map(point=>({
       period:text(point?.period),
       exportsUsdBillion:finite(point?.exportsUsdBillion),

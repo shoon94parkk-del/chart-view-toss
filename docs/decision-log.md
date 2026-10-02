@@ -309,3 +309,11 @@ Explicit chart retries bypass cached empty/partial HTTP200 results while ordinar
 - DRAM/Flash/SRAM 등 세부 카드는 메인 export snapshot에 함께 캐시된 최신월·전년동월 HSK 계산값을 소비한다.
 - 세부 카드 표시를 위해 브라우저가 별도 provider endpoint를 호출하지 않는다.
 - 대표 반도체 12개월 금액·물량·단위가치 그래프는 기존 item-detail 분석을 유지하고, 세부 HSK 자체의 12개월 시계열은 현재 표시하지 않는다.
+
+## 2026-10-02 — 반도체 수출 리포트 UI
+- 수출 모멘텀의 전체 수출 추이 다음에 ‘반도체 리포트’ 섹션을 둔다.
+- 핵심 5개 항목은 메모리 IC, DRAM, Flash memory, MCP, DRAM 모듈이다.
+- 각 카드에서 수출액, YoY, MoM, kg당 평균 신고금액, 단위가치 YoY/MoM을 동시에 표시한다.
+- 세부 품목 수출액 비교 막대와 YoY/MoM/단위가치 MoM을 함께 보여준다.
+- HBM은 독립 HSK가 없고 Flash memory는 NAND-only가 아니라는 설명을 화면에 유지한다.
+- 관세청 월간 상세 통계와 TRASS 잠정치는 집계시점/분류가 달라 숫자가 다를 수 있음을 명시한다.

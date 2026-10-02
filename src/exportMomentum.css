@@ -187,3 +187,25 @@
   .export-detail-y-axis{font-size:7px}
   .export-semi-grid{grid-template-columns:1fr}
 }
+
+
+/* Export V6: securities-style semiconductor report */
+.export-semi-report-intro{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:13px 14px;margin-bottom:10px;border:1px solid #e5edf7;border-radius:16px;background:linear-gradient(135deg,#f7fbff,#fff)}
+.export-semi-report-intro>div{min-width:0}.export-semi-report-intro strong{display:block;font-size:11px;color:#333d4b}.export-semi-report-intro span{display:block;margin-top:5px;color:#8b95a1;font-size:8.5px;line-height:1.5}
+.export-semi-report-intro button{flex:none;min-height:44px;border:0;border-radius:12px;padding:0 11px;background:#eef6ff;color:#1769c2;font-size:9px;font-weight:900}
+.export-semi-report-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.export-semi-report-card{padding:13px;border:1px solid #edf0f2;border-radius:17px;background:#fff;box-shadow:0 6px 18px rgba(25,31,40,.025);min-width:0}
+.export-semi-report-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}.export-semi-report-head>div{min-width:0}.export-semi-report-head span{display:block;color:#8b95a1;font-size:7.5px}.export-semi-report-head strong{display:block;margin-top:2px;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.export-semi-report-head em{flex:none;font-size:8.5px;font-style:normal;font-weight:900}.export-semi-report-head em.up{color:#e64a61}.export-semi-report-head em.down{color:#3182f6}
+.export-semi-report-amount{margin-top:9px;color:#191f28;font-size:17px;font-weight:900;letter-spacing:-.3px}
+.export-semi-report-pills{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}.export-semi-report-pills span{padding:4px 6px;border-radius:999px;background:#f5f7fa;font-size:8px;font-weight:800}.export-semi-report-pills .up{color:#e64a61;background:#fff2f4}.export-semi-report-pills .down{color:#3182f6;background:#f0f6ff}
+.export-semi-report-unit{display:grid;grid-template-columns:1fr auto;gap:4px 8px;align-items:center;margin-top:10px;padding-top:9px;border-top:1px solid #f0f2f5}.export-semi-report-unit>span{grid-column:1/-1;color:#8b95a1;font-size:8px}.export-semi-report-unit strong{font-size:10px;color:#333d4b}.export-semi-report-unit small{text-align:right;font-size:7.5px;font-weight:800}.export-semi-report-unit small.up{color:#e64a61}.export-semi-report-unit small.down{color:#3182f6}
+.export-semi-report-chart{margin-top:10px;padding:14px;border:1px solid #edf0f2;border-radius:17px;background:#fff}.export-semi-report-row{margin-top:12px}.export-semi-report-row:first-of-type{margin-top:6px}.export-semi-report-row>div:first-child{display:flex;justify-content:space-between;gap:8px;align-items:center}.export-semi-report-row>div:first-child strong{font-size:10px}.export-semi-report-row>div:first-child span{color:#6b7684;font-size:9px}
+.export-semi-report-track{height:9px;margin-top:6px;border-radius:999px;background:#f2f4f6;overflow:hidden}.export-semi-report-track i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#77affb,#3182f6)}
+.export-semi-report-change{display:flex;flex-wrap:wrap;gap:5px 10px;margin-top:5px;font-size:7.5px;font-weight:800}.export-semi-report-change .up{color:#e64a61}.export-semi-report-change .down{color:#3182f6}
+.export-semi-report-brief{display:grid;gap:5px;margin-top:10px;padding:11px 12px;border-radius:14px;background:#f8fafc;border:1px solid #edf0f2}.export-semi-report-brief strong{font-size:10px;color:#333d4b}.export-semi-report-brief span{font-size:8.5px;line-height:1.45;color:#6b7684}.export-semi-report-brief b{color:#333d4b}
+
+@media(max-width:360px){
+  .export-semi-report-intro{display:grid}
+  .export-semi-report-intro button{width:100%}
+  .export-semi-report-cards{grid-template-columns:1fr}
+}
