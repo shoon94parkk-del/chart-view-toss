@@ -11,6 +11,7 @@ import {
   formatUsdBillion,
   formatWeightKg,
   normalizeExportItemDetail,
+  normalizeExportProvisionalRadar,
   normalizeExportSnapshot,
   normalizeSemiconductorCountryMatrix,
   semiconductorShare,
@@ -240,4 +241,33 @@ test('semiconductor country matrix preserves configured-market shares and deltas
   assert.equal(matrix.segments[0].countries[1].deltaUsdBillion,1.8);
   assert.equal(matrix.segments[0].growthLeaderCountry,'홍콩');
   assert.equal(matrix.markets[1].code,'HK');
+});
+
+
+test('10-day provisional radar preserves checkpoint comparisons and contribution',()=>{
+  const radar=normalizeExportProvisionalRadar({
+    schemaVersion:1,status:'official_preliminary_api',period:'2026-09',periodLabel:'2026년 9월',
+    latestStage:30,latestStageLabel:'월 전체',
+    checkpoints:[
+      {
+        stage:10,label:'1~10일',
+        total:{exportsUsdBillion:34.9,exportYoY:20,exportMoM:10,deltaYoYUsdBillion:5.8},
+        semiconductor:{exportsUsdBillion:16.48,exportYoY:270.1,exportMoM:65.6,deltaYoYUsdBillion:12.0},
+        semiconductorSharePct:47.1,semiconductorContributionPct:206.9,
+      },
+      {
+        stage:20,label:'1~20일',
+        total:{exportsUsdBillion:71.4,exportYoY:25,exportMoM:15,deltaYoYUsdBillion:14.2},
+        semiconductor:{exportsUsdBillion:34.13,exportYoY:200,exportMoM:31.1,deltaYoYUsdBillion:22.7},
+        semiconductorSharePct:47.8,semiconductorContributionPct:159.9,semiconductorYoYAccelerationPp:-70.1,
+      },
+    ],
+    items:[{key:'semiconductor',name:'반도체',exportsUsdBillion:34.13,exportYoY:200,exportMoM:31.1,deltaYoYUsdBillion:22.7}],
+  });
+  assert.equal(radar.period,'2026-09');
+  assert.equal(radar.checkpoints.length,2);
+  assert.equal(radar.checkpoints[1].semiconductorSharePct,47.8);
+  assert.equal(radar.checkpoints[1].semiconductorYoYAccelerationPp,-70.1);
+  assert.equal(radar.items[0].name,'반도체');
+  assert.equal(radar.items[0].exportMoM,31.1);
 });
