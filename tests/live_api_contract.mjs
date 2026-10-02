@@ -34,9 +34,24 @@ assert(Array.isArray(macro.results) && macro.results.length >= 1, 'macro rows mi
 assert(macro.dataContract?.observedAt, 'macro observation contract missing');
 assert(macro.results.some((row) => row.unit && row.observedAt), 'macro unit/observation metadata missing');
 
+const exportsSnapshot = await get('/api/export-momentum', 45000);
+assert(Number(exportsSnapshot.schemaVersion) >= 3, 'export schema v3 missing');
+assert(Array.isArray(exportsSnapshot.items) && exportsSnapshot.items.length >= 1, 'export item rows missing');
+assert(exportsSnapshot.itemPeriod, 'export item period missing');
+assert(
+  exportsSnapshot.items.some((row) => Number(row.exportWeightKg) > 0),
+  'official export weight is missing'
+);
+assert(
+  exportsSnapshot.items.some((row) => Number(row.unitValueUsdPerKg) > 0 && Number.isFinite(Number(row.unitValueYoY))),
+  'derived export unit value is missing'
+);
+
 console.log('Live backend contract smoke passed', {
   base: BASE,
   quoteCount: quotes.results.length,
   compareCount: compare.stocks.length,
   macroCount: macro.results.length,
+  exportItemCount: exportsSnapshot.items.length,
+  exportItemPeriod: exportsSnapshot.itemPeriod,
 });
