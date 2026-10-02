@@ -1,5 +1,5 @@
 import { resolveRoute } from './routes.js';
-import {indexSeries,quoteHtml,detailCachedQuote} from './detailPresentation.js';
+import {indexSeries,quoteHtml,detailCachedQuote,invalidSymbolHtml} from './detailPresentation.js';
 import {encodeSharedView,decodeSharedView,homeBriefState,quoteBasisLabel} from './experienceState.js';
 import { recordMetric, diagnosticSummary, clearDiagnostics } from './diagnostics.js';
 import './styles.css';
@@ -21,7 +21,7 @@ import { readHomeFast, writeHomeFast } from './homeFastCache.js';
 import { rememberLiveQuotes, getLiveQuote, mergeRowsWithLive, resolveLiveQuote } from './liveQuoteStore.js';
 import { seedWatchQuoteCache, saveWatchQuoteCache } from './watchQuoteCache.js';
 import { loadingIndicator, chartLoadingPreview } from './loadingView.js';
-import { formatKst, formatDataSource, formatFinancialAmount, formatChartDate, formatMetricPeriod, formatCurrencyPrice, formatMacroValue, formatMacroChange, macroFreshness, observationLabel, macroCategory, macroPublicationLabel, macroSourceUrl, changeBasisLabel, relationBasisLabel, newsRelation, translatedTag, titleLanguage } from './dataPresentation.js';
+import { formatKst, formatDataSource, formatFinancialAmount, formatChartDate, formatMetricPeriod, formatCurrencyPrice, formatMacroValue, formatMacroChange, macroFreshness, observationLabel, macroCategory, macroPublicationLabel, macroSourceUrl, changeBasisLabel, relationBasisLabel, newsRelation, translatedTag, titleLanguage, formatMarketCap } from './dataPresentation.js';
 
 const WATCHLIST_KEY='chartview-toss-watchlist-v1';
 const SELECTED_KEY='chartview-toss-selected-v1';
@@ -1040,10 +1040,31 @@ async function renderDetail(){
    paintWatchState();
  };
  const markNameUnavailable=()=>{if(epoch!==viewEpoch||knownName)return;const hero=document.querySelector('#detail-name');if(hero){hero.textContent='종목명 확인 불가';hero.classList.remove('identity-loading');}const title=document.querySelector('#detail-top-title');if(title)title.textContent=symbol;};
+ // 운영자 수정 2026-10-03: 무효 티커(ZZZZZZ 등) 진입 시 '종목명 확인 불가' 껍데기+관심등록 대신 안내 화면으로 전환
+ const showInvalidSymbol=invalid=>{
+   if(epoch!==viewEpoch||state.tab!=='detail'||state.detailSymbol!==invalid)return;
+   viewEpoch++;
+   cleanupChart();
+   document.querySelector('#app').innerHTML=shell(invalidSymbolHtml(invalid),'종목 상세');
+   bindNav();
+   document.querySelector('[data-invalid-search]')?.addEventListener('click',()=>openStockSelector({
+     title:'종목 검색',
+     description:'종목명이나 티커를 검색해 상세 정보를 확인하세요.',
+     initial:[],
+     favorites:state.watchlist,
+     nameFor:(nextSymbol)=>displayName(nextSymbol),
+     onPick:(nextSymbol,nextName)=>navigate('detail',nextSymbol,nextName),
+     restoreBack:restoreNativeBack,
+   }));
+ };
  const resolvedName=knownName?Promise.resolve(knownName):searchStocks(symbol).then(data=>{
    const exact=(data?.results||[]).find(row=>String(row.symbol).toUpperCase()===symbol.toUpperCase());
    if(exact?.name)applyDetailName(exact.name);
-   if(!knownName)markNameUnavailable();
+   if(!knownName){
+     // 검색은 성공했으나 검증된 종목 정보가 없는 티커(DIRECT 에코 등) → 무효 티커 안내
+     if(exact)showInvalidSymbol(symbol);
+     else markNameUnavailable();
+   }
    return knownName||symbol;
  }).catch(()=>{markNameUnavailable();return knownName||symbol;});
  if(knownName)applyDetailName(knownName);
@@ -1266,7 +1287,12 @@ async function renderDetail(){
  const metricDefs=[['예상 PER','forwardPE','배'],['실적 PER','trailingPE','배'],['PBR','pbr','배'],['ROE','roe','%'],['영업이익률','operatingMargin','%'],['배당수익률','dividendYield','%']];
    document.querySelector('#detail-metrics').innerHTML=metricDefs.map(([label,key,suffix],i)=>{const v=valuation?.[key];return `<div class="detail-metric tone-bg-${i%3}"><span>${label}</span><strong>${v==null?'-':esc(Number(v).toLocaleString('ko-KR',{maximumFractionDigits:2})+suffix)}</strong><small>${esc(formatMetricPeriod(valuation?.fieldMeta?.[key]?.period))}</small></div>`}).join('');
  document.querySelector('#detail-metric-meta').innerHTML=valuation?`재무 데이터 조회 ${esc(formatKst(valuation.generatedAt))} · 지표별 출처는 밸류에이션 비교에서 확인할 수 있어요.`:'재무 데이터를 불러오지 못했어요. <button class="retry" data-retry-detail>다시 시도</button>';
-
+ // 운영자 수정 2026-10-03: 현재가 영역에 시가총액 표기 (기존 valuation 파이프라인의 marketCap 재사용)
+ const priceSection=document.querySelector('#detail-price');
+ if(priceSection&&!priceSection.querySelector('.quote-marketcap')){
+   const mcCurrency=valuation?.currency||(koreanDetail?'KRW':'USD');
+   priceSection.insertAdjacentHTML('beforeend',`<div class="quote-marketcap"><span>시가총액</span><strong>${esc(formatMarketCap(valuation?.marketCap,mcCurrency))}</strong></div>`);
+ }
  }));
  const loadDetailNews=()=>{
    const host=document.querySelector('#detail-news');
@@ -1332,7 +1358,8 @@ function renderInfo(){
      <article class="info-card"><span class="info-icon coral">${iconSvg('news',21)}</span><div><strong>뉴스</strong><p>뉴스는 외부 매체의 기사 제목·링크를 모아 보여주며 기사 내용과 정확성에 대한 책임은 해당 제공처에 있어요.</p></div></article>
    </section>
    <section class="release-notice"><strong>투자 판단 안내</strong><p>Chart View의 모든 정보는 정보 제공 목적이며 특정 종목의 매수·매도 또는 투자 성과를 보장하거나 권유하지 않아요. 최종 투자 판단은 이용자가 직접 해야 해요.</p></section>
-   <div class="policy-links"><button data-external-url="${esc(PUBLIC_SITE_BASE+'/privacy.html')}"><span>개인정보 처리 안내</span>${iconSvg('arrow',18)}</button><button data-external-url="${esc(PUBLIC_SITE_BASE+'/terms.html')}"><span>서비스 이용 안내</span>${iconSvg('arrow',18)}</button><button data-external-url="${esc(PUBLIC_SITE_BASE+'/data-guide.html')}"><span>데이터 기준 전체 보기</span>${iconSvg('arrow',18)}</button><div class="analysis-card"><strong>고객문의 · 박상훈</strong><p>kimtang89@naver.com</p></div></div>
+   <div class="policy-links"><button data-external-url="${esc(PUBLIC_SITE_BASE+'/privacy.html')}"><span>개인정보 처리 안내</span>${iconSvg('arrow',18)}</button><button data-external-url="${esc(PUBLIC_SITE_BASE+'/terms.html')}"><span>서비스 이용 안내</span>${iconSvg('arrow',18)}</button><button data-external-url="${esc(PUBLIC_SITE_BASE+'/data-guide.html')}"><span>데이터 기준 전체 보기</span>${iconSvg('arrow',18)}</button></div>
+   <div class="analysis-card"><strong>고객문의 · 박상훈</strong><p>kimtang89@naver.com</p></div>
    <section class="local-data-card"><div><strong>기기 저장 데이터</strong><p>관심종목, 비교 종목과 조사 카드는 현재 이 기기에 저장돼요. 토스 익명 식별키로 사용자별 목록을 구분하며, 초기화하면 현재 사용자의 목록, 조사 카드와 이용 기록을 삭제합니다.</p></div><button id="clear-local-data" type="button">기기 데이터 초기화</button></section>
  `,'데이터 안내');
  bindNav();

@@ -15,6 +15,12 @@ export function resolvedSelectorName(name, symbol) {
   return value && value.toUpperCase() !== ticker.toUpperCase() ? value : '';
 }
 
+// 운영자 수정 2026-10-03: 백엔드가 미확인 입력을 그대로 돌려주는 DIRECT 에코는
+// 검증된 종목명이 없으면 검색 결과에서 제외한다 (무효 티커 상세 진입 차단).
+export function isVerifiableSearchRow(row) {
+  return Boolean(resolvedSelectorName(row?.name, row?.symbol)) || row?.type !== 'DIRECT';
+}
+
 export function formatSelectedStockLabel(name, symbol) {
   const ticker = String(symbol || '').trim();
   const resolved = resolvedSelectorName(name, ticker);
@@ -231,7 +237,10 @@ export function openStockSelector({
         const data = await searchStocks(query);
         if (seq !== querySeq || !overlay.isConnected) return;
         searchState = 'idle';
-        paintResults([...matchedFavorites, ...(data?.results || []).slice(0, 12)], query);
+        // 운영자 수정 2026-10-03: 백엔드가 미확인 입력을 그대로 돌려주는 DIRECT 에코는
+        // 검증된 종목명이 없으면 결과에서 제외 → '상세 보기' 폴백 버튼 생성 억제
+        const verified = (data?.results || []).filter(isVerifiableSearchRow);
+        paintResults([...matchedFavorites, ...verified.slice(0, 12)], query);
       } catch (error) {
         if (seq !== querySeq || !overlay.isConnected) return;
         searchState = 'error';

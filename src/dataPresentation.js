@@ -38,6 +38,18 @@ export function formatMetricPeriod(value) {
   if (!period) return '기준기간 미제공';
   if (/^FY\+1(?:\s|$)/i.test(period)) return '다음 회계연도 예상';
   if (/^TTM(?:\s|$)/i.test(period)) return '최근 12개월 실적';
+  // 운영자 수정 2026-10-03: 백엔드가 내려주는 복합/제공처 표기를 그대로
+  // '공급자 기간 기준 확인 필요'로 뭉개지 않고 사람이 읽을 수 있게 풀어준다.
+  if (/^provider forward period/i.test(period)) return '제공처 예상 기간(미검증)';
+  if (/^TTM\/latest reported$/i.test(period)) return '최근 12개월 실적·최근 공시 기준';
+  const latestLabels = {
+    'latest trading value': '최근 거래값 기준',
+    'latest available': '최근 가용 데이터 기준',
+    'latest reported': '최근 공시 기준',
+    'latest indicated/reported': '최근 공시·배당 기준',
+  };
+  const latest = latestLabels[period.toLowerCase()];
+  if (latest) return latest;
   const fiscalYear = period.match(/^FY\s*(\d{4})$/i);
   if (fiscalYear) return `${fiscalYear[1]} 회계연도`;
   const labels = {
@@ -46,6 +58,21 @@ export function formatMetricPeriod(value) {
     'MRQ': '최근 분기', 'Last Quarter': '최근 분기', 'Next Year': '다음 회계연도 예상',
   };
   return labels[period] || (/[A-Za-z]/.test(period) ? '공급자 기간 기준 확인 필요' : period);
+}
+
+// 운영자 수정 2026-10-03: 종목 상세 현재가 영역에 표시할 시가총액 표기.
+// 한국 종목은 조/억원, 그 외(미국 등)는 $B 단위. 값이 없으면 '미제공'.
+export function formatMarketCap(value, currency) {
+  const n = Number(value);
+  if (!Number.isFinite(n) || n <= 0) return '미제공';
+  const ccy = String(currency || '').toUpperCase();
+  if (ccy === 'KRW' || ccy === '원') {
+    const jo = Math.floor(n / 1e12);
+    const eok = Math.floor((n % 1e12) / 1e8);
+    if (jo > 0) return `${jo.toLocaleString('ko-KR')}조 ${eok.toLocaleString('ko-KR')}억원`;
+    return `${eok.toLocaleString('ko-KR')}억원`;
+  }
+  return `$${(n / 1e9).toLocaleString('en-US', { maximumFractionDigits: 1 })}B`;
 }
 
 export function formatDataSource(value){
