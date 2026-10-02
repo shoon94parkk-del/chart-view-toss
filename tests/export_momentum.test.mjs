@@ -6,6 +6,7 @@ import {
   formatUsdBillion,
   normalizeExportSnapshot,
   semiconductorShare,
+  tradeBalanceLabel,
   yoyLabel,
 } from '../src/exportMomentumModel.js';
 
@@ -35,12 +36,19 @@ test('display helpers preserve Korean export units and signed growth',()=>{
   assert.equal(formatSignedPct(-5),'-5.0%');
 });
 
-test('checkpoint progress is bounded against the completed month',()=>{
-  const value=normalizeExportSnapshot(fixture);
+test('checkpoint progress follows calendar coverage rather than future export totals',()=>{
+  const value=normalizeExportSnapshot({
+    ...fixture,
+    checkpoints:[
+      {...fixture.checkpoints[0],endDate:'2026-09-10'},
+      {...fixture.checkpoints[1],endDate:'2026-09-20'},
+      {...fixture.checkpoints[2],endDate:'2026-09-30'},
+    ],
+  });
   const rows=checkpointProgress(value);
+  assert.ok(rows[0].progress>33&&rows[0].progress<34);
+  assert.ok(rows[1].progress>66&&rows[1].progress<67);
   assert.equal(rows.at(-1).progress,100);
-  assert.ok(rows[0].progress>28&&rows[0].progress<30);
-  assert.ok(rows[1].progress>59&&rows[1].progress<60);
 });
 
 test('semiconductor share and labels are descriptive, not investment scores',()=>{
@@ -48,4 +56,6 @@ test('semiconductor share and labels are descriptive, not investment scores',()=
   assert.ok(Math.abs(semiconductorShare(value)-49.86)<0.05);
   assert.equal(yoyLabel(262.8),'전년비 급증');
   assert.equal(yoyLabel(-5),'전년비 약세');
+  assert.equal(tradeBalanceLabel(49.85),'흑자');
+  assert.equal(tradeBalanceLabel(-2.1),'적자');
 });
