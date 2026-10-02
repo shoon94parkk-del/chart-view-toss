@@ -263,3 +263,9 @@ Live index journey follow-up: Home's market payload and stock heatmap cache were
 
 ## 2026-10-02 Whole-site reliability follow-up
 Explicit chart retries bypass cached empty/partial HTTP200 results while ordinary period loads retain caching. Partial charts disclose missing selected names and offer an independent retry without inventing returns. Domestic-only DART comparison and industry jumps match actual mounted targets; missing Korean context removes its jump too. Detail news has independent failure/loading/retry distinct from a valid empty response, with ticker fallback if identity search fails. Web external opening keeps noopener/noreferrer but does not misread its deliberate null return as failure. Native URL error handling and HTTPS validation are unchanged. Browser regression reliability_audit_qa.mjs covers 320/390/430px, response recovery, preserved period, complete coverage, supported routes, news-only retry and secure popup without false toast. See RELIABILITY_UX_AUDIT_2026-10-02.md for production evidence.
+
+## 2026-10-02 — 수출 모멘텀 1차 기반
+- `#exports` / `/exports`에 대한민국 수출 모멘텀 조회 화면을 추가한다. Home 초기 로딩에는 수출 요청을 추가하지 않고 사용자가 화면에 들어갈 때만 lazy-load한다.
+- API 키가 준비되기 전에는 `public/data/export-momentum.json`의 공식 발표 정적 스냅샷을 사용한다. 초기 값은 관세청·산업통상부의 2026년 9월 잠정치이며 1~10일, 1~20일, 월 전체, 주요 품목·지역을 같은 데이터 계약으로 정규화한다.
+- 누락 수치는 추정하지 않고 null로 유지한다. 화면의 증감 표현은 통계 설명이며 종목 매수·매도 신호나 투자 점수로 만들지 않는다.
+- 관세청 ServiceKey 연결 단계에서는 shared backend 수집/캐시 계층만 추가하고 프론트 계약을 유지한다. 정적 JSON은 장애 fallback 및 회귀 fixture로 남길 수 있다.
