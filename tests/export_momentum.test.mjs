@@ -46,7 +46,7 @@ test('weight and implied unit value helpers stay explicit about their units',()=
   assert.equal(formatWeightKg(12_500_000),'1.3만톤');
   assert.equal(formatUnitValue(12.34),'$12.3/kg');
   assert.equal(exportDriverLabel({exportWeightYoY:8,unitValueYoY:12}),'물량·단가 동반 증가');
-  assert.equal(exportDriverLabel({exportWeightYoY:-5,unitValueYoY:20}),'단가 주도');
+  assert.equal(exportDriverLabel({exportYoY:14,exportWeightYoY:-5,unitValueYoY:20}),'단가 상승 영향 우세');
 });
 
 test('checkpoint progress follows calendar coverage rather than future export totals',()=>{
