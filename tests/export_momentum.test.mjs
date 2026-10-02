@@ -194,3 +194,24 @@ test('semiconductor detail keeps official HSK subgroup labels without inventing 
   assert.equal(detail.semiconductorBreakdown[1].name,'Flash memory');
   assert.ok(detail.semiconductorBreakdown[1].note.includes('NAND/NOR'));
 });
+
+
+test('semiconductor report keeps YoY MoM unit-value and official MCP/module codes',()=>{
+  const snapshot=normalizeExportSnapshot({
+    ...fixture,
+    semiconductorBreakdown:[
+      {key:'memory-total',name:'메모리 IC',code:'854232',group:'memory',period:'2026-08',exportsUsdBillion:20,exportYoY:100,exportMoM:10,unitValueUsdPerKg:5000,unitValueYoY:80,unitValueMoM:-5},
+      {key:'dram',name:'DRAM',code:'8542321010',group:'memory',period:'2026-08',exportsUsdBillion:10,exportYoY:120,exportMoM:6,unitValueUsdPerKg:6000,unitValueYoY:90,unitValueMoM:-8},
+      {key:'flash',name:'Flash memory',code:'8542321030',group:'memory',period:'2026-08',exportsUsdBillion:4,exportYoY:70,exportMoM:12,unitValueUsdPerKg:4500,unitValueYoY:60,unitValueMoM:-10},
+      {key:'mcp-memory',name:'MCP',code:'8542323000',group:'memory',period:'2026-08',exportsUsdBillion:6,exportYoY:55,exportMoM:20,unitValueUsdPerKg:7000,unitValueYoY:40,unitValueMoM:3},
+      {key:'dram-module',name:'DRAM 모듈',code:'8473304060',group:'module',period:'2026-08',exportsUsdBillion:3,exportYoY:65,exportMoM:25,unitValueUsdPerKg:3500,unitValueYoY:50,unitValueMoM:15},
+    ],
+  });
+  assert.equal(snapshot.semiconductorBreakdown.length,5);
+  const mcp=snapshot.semiconductorBreakdown.find(row=>row.key==='mcp-memory');
+  const module=snapshot.semiconductorBreakdown.find(row=>row.key==='dram-module');
+  assert.equal(mcp.code,'8542323000');
+  assert.equal(mcp.exportMoM,20);
+  assert.equal(module.code,'8473304060');
+  assert.equal(module.unitValueMoM,15);
+});
