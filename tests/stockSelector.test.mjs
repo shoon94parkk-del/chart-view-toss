@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { prioritizeStocks, resolvedSelectorName, lookupSelectorName, formatSelectedStockLabel } from '../src/stockSelector.js';
+import { prioritizeStocks, resolvedSelectorName, lookupSelectorName, formatSelectedStockLabel, isVerifiableSearchRow } from '../src/stockSelector.js';
 
 test('favorite stocks come first in saved order and duplicate search hits collapse',()=>{
  const favorites=[{symbol:'000660.KS'},{symbol:'005930.KS'}];
@@ -28,3 +28,12 @@ test('selected ticker chips use company name instead of duplicating ticker',asyn
  assert.equal(formatSelectedStockLabel('MU','MU'),'MU');
 });
 
+test('unverified DIRECT echoes are excluded from search results',()=>{
+ // ZZZZZZ 같은 무효 입력: 백엔드가 티커 그대로를 DIRECT로 에코 → 제외
+ assert.equal(isVerifiableSearchRow({symbol:'ZZZZZZ',name:'ZZZZZZ',type:'DIRECT'}),false);
+ // 검증된 종목명이 있으면 DIRECT라도 유지
+ assert.equal(isVerifiableSearchRow({symbol:'ABC',name:'에이비씨',type:'DIRECT'}),true);
+ // 정상 결과는 유지
+ assert.equal(isVerifiableSearchRow({symbol:'NVDA',name:'NVIDIA',type:'LOCAL'}),true);
+ assert.equal(isVerifiableSearchRow({symbol:'005930.KS',name:'삼성전자',type:'KRX'}),true);
+});

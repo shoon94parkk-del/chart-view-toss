@@ -125,7 +125,7 @@ export function industryContextHtml(context,{collapsible=false,open=false,busine
       <span class="industry-status ${esc(sector.tone)}">${esc(sector.label)}</span>
     </div>
     <p class="industry-name">${esc(sector.industry)} <span>· 비교군 ${Number(sector.peerCount||0).toLocaleString()}개 · 5거래일 수익률 확인 ${Number(sector.observedCount||0).toLocaleString()}개</span></p>
-    <p class="industry-caption">${esc(sector.groupBasis||'KRX 업종')} 기준 · 최근 5거래일${sector.tradeDate?' ('+esc(sector.tradeDate)+' 종가 기준)':''}${sector.officialIndustry&&sector.officialIndustry!==sector.industry?' · KRX 업종: '+esc(sector.officialIndustry):''}. 수익률은 5거래일 전 종가 대비이며, 평균은 수익률 확인 종목의 단순 평균이에요. 산업 분류만으로 직접 거래 관계를 뜻하지 않아요.</p>
+    <p class="industry-caption">${sector.officialIndustry&&sector.officialIndustry!==sector.industry?`비교군은 차트뷰 자체 분류 ‘${esc(sector.industry)}’(${esc(sector.groupBasis||'KRX 업종')} 기준)이며, KRX 공식 업종 ‘${esc(sector.officialIndustry)}’와 다를 수 있어요. `:`${esc(sector.groupBasis||'KRX 업종')} 기준 · `}최근 5거래일${sector.tradeDate?' ('+esc(sector.tradeDate)+' 종가 기준)':''}. 수익률은 5거래일 전 종가 대비이며, 평균은 수익률 확인 종목의 단순 평균이에요. 산업 분류만으로 직접 거래 관계를 뜻하지 않아요.</p>
     <div class="industry-meter"><span style="width:${Math.max(0,Math.min(100,Math.round(Number(sector.upRatio||0)*100)))}%"></span></div>
     <div class="industry-metrics">
       <div><span>5거래일 상승</span><strong>${ratio(sector.upRatio)}</strong></div>
