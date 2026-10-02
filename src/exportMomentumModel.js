@@ -68,9 +68,12 @@ export function normalizeExportSnapshot(raw={}){
     status:text(raw.status)||'unknown',
     period:text(raw.period),
     periodLabel:text(raw.periodLabel)||text(raw.period),
+    itemPeriod:text(raw.itemPeriod),
+    regionPeriod:text(raw.regionPeriod),
     publishedAt:text(raw.publishedAt),
     updatedAt:text(raw.updatedAt),
     basis:text(raw.basis)||'통관기준 잠정치',
+    meta:raw.meta&&typeof raw.meta==='object'?raw.meta:{},
     summary,
     checkpoints,
     items,
@@ -113,6 +116,7 @@ export function yoyLabel(value){
 }
 
 export function semiconductorShare(snapshot){
+  if(snapshot?.itemPeriod&&snapshot?.period&&snapshot.itemPeriod!==snapshot.period)return null;
   const total=finite(snapshot?.summary?.exportsUsdBillion);
   const semiconductor=(snapshot?.items||[]).find(row=>row.name==='반도체');
   const semi=finite(semiconductor?.exportsUsdBillion);
