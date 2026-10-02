@@ -58,6 +58,29 @@ function ideaCard(idea,index){
   </article>`;
 }
 
+function applyMonitorStatuses(host,ideas,monitorPayload){
+  if(!host?.isConnected)return;
+  const monitorBySymbol=latestMonitorBySymbol(monitorPayload);
+  for(const idea of ideas){
+    for(const row of idea.candidates||[]){
+      const status=monitorSummary(monitorBySymbol.get(String(row.symbol||'').toUpperCase()));
+      if(!status)continue;
+      const wrap=host.querySelector(`[data-idea-symbol="${CSS.escape(String(row.symbol||''))}"]`);
+      const button=wrap?.querySelector('.idea-candidate');
+      const reasons=button?.querySelector('.idea-reasons');
+      if(!button||!reasons)continue;
+      let badge=button.querySelector('.idea-monitor-status');
+      if(!badge){
+        badge=document.createElement('span');
+        badge.className='idea-monitor-status';
+        reasons.insertAdjacentElement('afterend',badge);
+      }
+      badge.className=`idea-monitor-status ${status.cls}`;
+      badge.innerHTML=`<b>${esc(status.label)}</b>${status.note?`<small>${esc(status.note)}</small>`:''}`;
+    }
+  }
+}
+
 function bindLazyIdeaContext(host,ideas,bindNav){
   const bySymbol=new Map();
   for(const idea of ideas){
@@ -121,10 +144,10 @@ export async function renderIdeaView({shell,bindNav}){
   bindNav();
   const host=document.querySelector('#idea-body');
   try{
-    const [data,companyMeta,monitorPayload]=await Promise.all([
+    const monitorPromise=pickMonitor().catch(()=>null);
+    const [data,companyMeta]=await Promise.all([
       screenerData(),
       companyContextData().catch(()=>null),
-      pickMonitor().catch(()=>null),
     ]);
     const metaBySymbol=new Map((companyMeta?.companies||[]).map(row=>[String(row.symbol||'').toUpperCase(),row]));
     const enrichedData={
@@ -135,8 +158,7 @@ export async function renderIdeaView({shell,bindNav}){
         return {...row,industry:meta.industry||row.industry||'',mainProducts:meta.mainProducts||row.mainProducts||''};
       }),
     };
-    const monitorBySymbol=latestMonitorBySymbol(monitorPayload);
-    const ideas=buildInvestmentIdeas(enrichedData,{limit:4,perIdea:4}).map(idea=>({...idea,candidates:idea.candidates.map(row=>({...row,monitorStatus:monitorSummary(monitorBySymbol.get(String(row.symbol||'').toUpperCase()))}))}));
+    const ideas=buildInvestmentIdeas(enrichedData,{limit:4,perIdea:4});
     const coverage=ideaCoverage(enrichedData);
     const companyCoverage=(enrichedData?.stocks||[]).filter(row=>row?.industry||row?.mainProducts).length;
     if(!host?.isConnected)return;
@@ -154,6 +176,7 @@ export async function renderIdeaView({shell,bindNav}){
     `;
     bindNav();
     bindLazyIdeaContext(host,ideas,bindNav);
+    void monitorPromise.then(payload=>applyMonitorStatuses(host,ideas,payload));
   }catch(error){
     if(!host?.isConnected)return;
     host.setAttribute('aria-busy','false');
