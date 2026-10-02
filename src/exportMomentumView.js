@@ -5,6 +5,7 @@ import {
   chartPct,
   checkpointProgress,
   exportDriverLabel,
+  formatPp,
   formatSignedPct,
   formatUnitValue,
   formatUsdBillion,
@@ -119,6 +120,41 @@ function checkpoints(snapshot){
   `;
 }
 
+function breadth(snapshot){
+  const data=snapshot.breadth;
+  if(!data||!Number.isFinite(data.comparableCount)||data.comparableCount<=0)return '';
+  const risingPct=Number.isFinite(data.risingBreadthPct)?Math.max(0,Math.min(100,data.risingBreadthPct)):0;
+  const fallingPct=100-risingPct;
+  const moverRows=(rows,tone)=>rows.map(row=>`
+    <div class="export-breadth-mover">
+      <div><span>HS ${esc(row.code)}</span><strong>${esc(row.name)}</strong></div>
+      <div><b class="${tone}">${esc(formatUsdBillion(row.deltaUsdBillion,{digits:1}))}</b><small class="${yoyTone(row.exportYoY)}">${esc(formatSignedPct(row.exportYoY))}</small></div>
+    </div>
+  `).join('');
+  return `
+    <section class="export-section">
+      <div class="export-section-head"><div><span>수출 확산도</span><h3>몇 개 품목이 같이 좋아졌나</h3></div><small>${esc(monthLabel(data.period||snapshot.itemPeriod))} · HS2</small></div>
+      <div class="export-breadth-card">
+        <div class="export-breadth-summary">
+          <div><span>증가 품목</span><strong>${esc(data.risingCount)} / ${esc(data.comparableCount)}</strong><small>전년동월 비교 가능 HS2</small></div>
+          <div><span>상승 확산도</span><strong>${esc(formatSignedPct(data.risingBreadthPct,{digits:1}).replace('+',''))}</strong><small>증가 품목 비율</small></div>
+          <div><span>증가 품목 수출 비중</span><strong>${data.risingExportSharePct===null?'-':esc(data.risingExportSharePct.toFixed(1)+'%')}</strong><small>현재 HS2 수출액 기준</small></div>
+          <div><span>HS2 순증감</span><strong class="${balanceTone(data.netChangeUsdBillion)}">${esc(formatUsdBillion(data.netChangeUsdBillion,{digits:1}))}</strong><small>전년동월 대비</small></div>
+        </div>
+        <div class="export-breadth-track" aria-label="증가 품목 ${esc(data.risingCount)}개, 감소 품목 ${esc(data.fallingCount)}개">
+          <i class="up" style="width:${risingPct.toFixed(1)}%"></i><i class="down" style="width:${fallingPct.toFixed(1)}%"></i>
+        </div>
+        <div class="export-breadth-legend"><span>증가 ${esc(data.risingCount)}개</span><span>보합 ${esc(data.flatCount)}개</span><span>감소 ${esc(data.fallingCount)}개</span></div>
+        <div class="export-breadth-movers">
+          <div><h4>수출 증가 기여액 상위</h4>${moverRows(data.topPositive,'up')}</div>
+          <div><h4>수출 감소 기여액 상위</h4>${moverRows(data.topNegative,'down')}</div>
+        </div>
+        <p class="export-chart-note">‘기여액’은 해당 HS2 품목의 전년동월 대비 수출금액 증감액입니다. 기업 실적 기여나 투자 순위가 아닙니다.</p>
+      </div>
+    </section>
+  `;
+}
+
 function quadrant(snapshot){
   const rows=snapshot.items.filter(row=>Number.isFinite(row.exportWeightYoY)&&Number.isFinite(row.unitValueYoY));
   if(rows.length<2)return '';
@@ -213,9 +249,14 @@ function detailMetricBars(history,field,title,unit,formatter){
   `;
 }
 
+function momentumCard(label,metric){
+  return `<div><span>${esc(label)}</span><strong>${esc(formatSignedPct(metric?.avg3mYoY))}</strong><small>${esc(metric?.label||'데이터 부족')}</small><em class="${yoyTone(metric?.accelerationPp)}">직전 3개월 대비 ${esc(formatPp(metric?.accelerationPp))}</em></div>`;
+}
+
 function renderItemDetail(detail){
   const latest=detail.history.at(-1)||{};
   const maxCountry=Math.max(...detail.countries.map(row=>row.exportsUsdBillion||0),1);
+  const phaseRows=(detail.momentum?.phaseHistory||[]).slice(-12);
   return `
     <div class="export-detail-head">
       <div><span>품목 상세 · ${esc(detail.period)}</span><h4>${esc(detail.name)}</h4><small>${esc(detail.note)}</small></div>
@@ -226,6 +267,12 @@ function renderItemDetail(detail){
       <div><span>수입액</span><strong>${esc(formatUsdBillion(latest.importsUsdBillion,{digits:1}))}</strong><small class="${yoyTone(latest.importYoY)}">${esc(formatSignedPct(latest.importYoY))}</small></div>
       <div><span>무역수지</span><strong class="${balanceTone(latest.tradeBalanceUsdBillion)}">${esc(formatUsdBillion(latest.tradeBalanceUsdBillion,{digits:1}))}</strong><small>${esc(tradeBalanceLabel(latest.tradeBalanceUsdBillion))}</small></div>
     </div>
+    <div class="export-momentum-summary">
+      ${momentumCard('수출액 3개월 YoY',detail.momentum?.exports)}
+      ${momentumCard('물량 3개월 YoY',detail.momentum?.volume)}
+      ${momentumCard('단위가치 3개월 YoY',detail.momentum?.unitValue)}
+    </div>
+    ${phaseRows.length?`<div class="export-phase-card"><div><strong>12개월 국면 변화</strong><span>현재 · ${esc(detail.momentum.latestPhase||'-')}</span></div><div class="export-phase-strip">${phaseRows.map(row=>`<span class="phase ${row.phase.includes('↑·단위가치↑')?'both-up':row.phase.includes('↓·단위가치↓')?'both-down':row.phase.includes('물량↓')?'price-up':'volume-up'}" title="${esc(row.period+' '+row.phase)}"><i></i><small>${esc(row.period.slice(5))}</small></span>`).join('')}</div></div>`:''}
     <div class="export-detail-chart-stack">
       ${detailMetricBars(detail.history,'exportsUsdBillion','수출액 추이','억달러',value=>formatUsdBillion(value,{digits:1}))}
       ${detailMetricBars(detail.history,'exportWeightKg','수출 물량 추이','순중량',value=>formatWeightKg(value))}
@@ -364,7 +411,7 @@ function sources(snapshot){
 }
 
 function paint(host,snapshot,bindNav,onItemOpen){
-  host.innerHTML=`${summary(snapshot)}${history(snapshot)}${checkpoints(snapshot)}${facts(snapshot)}${quadrant(snapshot)}${items(snapshot)}${regions(snapshot)}${sources(snapshot)}`;
+  host.innerHTML=`${summary(snapshot)}${history(snapshot)}${checkpoints(snapshot)}${facts(snapshot)}${breadth(snapshot)}${quadrant(snapshot)}${items(snapshot)}${regions(snapshot)}${sources(snapshot)}`;
   bindNav();
   host.querySelectorAll('[data-export-item]').forEach(button=>button.addEventListener('click',()=>onItemOpen(button.dataset.exportItem)));
 }
