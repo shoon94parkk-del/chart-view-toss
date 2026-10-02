@@ -132,6 +132,30 @@ async function installMocks(page, mode='ok') {
     if(path==='/api/compare') return json(route,{stocks:compareStocks,errors:[],fetchedAt:'2026-09-21T03:03:00Z',comparisonBasis:{currencyMode:'local currency per symbol; no FX conversion',missingObservationPolicy:'missing observations are omitted; no interpolation'}});
     if(path==='/api/valuation') return json(route,{stocks:valuationStocks});
     if(path==='/api/macro') return json(route,{generatedAt:'2026-09-21T03:04:00Z',freshCount:4,staleCount:0,summary:{level:'yellow',text:'현재 집계에서는 긍정·부정 신호가 함께 나타납니다.',notice:'시장 환경을 설명하기 위한 요약이며 투자 행동을 권유하지 않습니다.'},results:macroRows});
+    if(path==='/api/export-momentum') return json(route,{
+      schemaVersion:2,status:'official_api',period:'2026-09',periodLabel:'2026년 9월',basis:'관세청 통관기준 월간 실적',
+      updatedAt:'2026-10-02T14:00:00+09:00',itemPeriod:'2026-08',regionPeriod:'2026-08',
+      summary:{exportsUsdBillion:65.9,importsUsdBillion:58.2,balanceUsdBillion:7.7,exportYoY:7.2,importYoY:2.3,cumulativeExportsUsdBillion:540.1,cumulativeBalanceUsdBillion:52.4},
+      history:Array.from({length:12},(_,i)=>({period:`${i<3?'2025':'2026'}-${String(((i+9)%12)+1).padStart(2,'0')}`,exportsUsdBillion:55+i,exportYoY:(i-4)*1.8})),
+      checkpoints:[],
+      items:[
+        {name:'반도체',exportsUsdBillion:14.2,exportYoY:18.4,note:'HS 8541+8542 합산'},
+        {name:'승용차',exportsUsdBillion:5.8,exportYoY:4.1,note:'HS 8703 기준'},
+        {name:'석유제품',exportsUsdBillion:4.1,exportYoY:-3.2,note:'HS 2710 기준'},
+        {name:'화장품',exportsUsdBillion:1.0,exportYoY:11.3,note:'HS 3304 기준'},
+        {name:'선박',exportsUsdBillion:2.9,exportYoY:8.7,note:'HS 89 기준'},
+        {name:'철강',exportsUsdBillion:3.6,exportYoY:-1.5,note:'HS 72 기준'},
+      ],
+      regions:[
+        {name:'미국',exportsUsdBillion:11.2,exportYoY:5.1,note:'관세청 국가코드 US 기준'},
+        {name:'중국',exportsUsdBillion:10.4,exportYoY:-2.2,note:'관세청 국가코드 CN 기준'},
+        {name:'베트남',exportsUsdBillion:5.3,exportYoY:7.8,note:'관세청 국가코드 VN 기준'},
+        {name:'일본',exportsUsdBillion:2.7,exportYoY:1.2,note:'관세청 국가코드 JP 기준'},
+        {name:'대만',exportsUsdBillion:2.5,exportYoY:9.4,note:'관세청 국가코드 TW 기준'},
+      ],
+      sources:[{name:'관세청 수출입총괄',role:'월별 총수출·수입·무역수지',url:'https://www.data.go.kr/data/15102108/openapi.do'}],
+      meta:{cacheStatus:'fresh'},
+    });
     if(path==='/api/personalized-news') return json(route,{items:newsItems});
     if(path==='/api/search') return json(route,{results:[{symbol:'MSFT',name:'마이크로소프트',market:'US'}]});
     if(path==='/api/home-insights') return json(route,{screener:{tradeDate:'2026-09-20',stocks:[]}});
@@ -261,10 +285,13 @@ try{
     await page.goto(`${BASE}/#${tab}`,{waitUntil:'networkidle'});
     await page.waitForTimeout(120);
     if(tab==='exports'){
-      await page.waitForSelector('.export-column-chart');
-      if(await page.locator('.export-column-item').count()!==3) throw new Error('export checkpoint chart must show 10-day, 20-day and full-month bars');
-      if(await page.locator('.export-diverging-row').count()<5) throw new Error('export item chart is missing major products');
-      if(await page.locator('.export-horizontal-row').count()<3) throw new Error('export region chart is missing major destinations');
+      await page.waitForSelector('.export-history-chart');
+      if(await page.locator('.export-history-column').count()!==12) throw new Error('export history must show 12 official monthly observations');
+      if(await page.locator('.export-diverging-row').count()<5) throw new Error('export item chart is missing major HS groups');
+      if(await page.locator('.export-horizontal-row').count()<5) throw new Error('export country chart is missing major destinations');
+      if(await page.locator('.export-column-chart').count()) throw new Error('monthly API must not fabricate 10-day/20-day checkpoint bars');
+      const periodText=await page.locator('.export-period-split').innerText();
+      for(const label of ['총괄 9월','품목 8월','국가 8월']) if(!periodText.includes(label)) throw new Error(`export source-period label missing: ${label}`);
       await assertNoHorizontalOverflow(page,'390px exports');
     }
     if(tab==='macro'){
