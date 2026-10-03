@@ -28,7 +28,10 @@ try{
   await page.goto(base+'/#exports',{waitUntil:'domcontentloaded'});
   await page.locator('[data-export-provisional-retry]').click();
   await page.locator('#export-provisional-radar .export-provisional-error').waitFor({state:'detached'});
-  await page.getByText('1~20일',{exact:true}).first().waitFor();
+  await page.getByText('1~20일',{exact:true}).first().waitFor().catch(async error=>{
+    console.error(JSON.stringify({width,calls,errors,radar:await page.locator('#export-provisional-radar').innerText(),url:page.url()}));
+    throw error;
+  });
   assert.equal(calls.radar,2,'retry bypasses cached empty HTTP200');
   assert.equal(calls.monthly,1,'radar retry preserves monthly request');
   await page.locator('[data-export-item="semiconductor"]').first().click();
