@@ -159,12 +159,13 @@ export function openStockSelector({
             <b>${searchOnly ? esc(pickLabel) : chosen ? '선택됨' : isFavorite ? '관심종목' : '선택'}</b>
           </button>`;
         }).join('')}`
-      : searchState === 'idle' ? `<div class="selector-empty">${query ? '검색 결과가 없어요. 이름·6자리 코드·영문 티커를 확인해보세요.' : '관심종목이 없어요. 이름이나 티커로 검색해보세요.'}</div>` : '';
+      : searchState === 'idle' ? `<div class="selector-empty">${query ? '검색 결과가 없어요. 이름·6자리 코드·영문 티커를 확인해보세요.<button type="button" class="selector-retry" data-selector-retry>검색 다시 확인</button>' : '관심종목이 없어요. 이름이나 티커로 검색해보세요.'}</div>` : '';
     if (searchState === 'loading') resultEl.insertAdjacentHTML('beforeend', loadingIndicator('종목을 검색하고 있어요'));
     if (searchState === 'error') {
       resultEl.insertAdjacentHTML('beforeend', '<div class="selector-empty" role="status">검색을 완료하지 못했어요. 관심종목은 계속 선택할 수 있어요.<button type="button" class="selector-retry" data-selector-retry>검색 다시 시도</button></div>');
       resultEl.querySelector('[data-selector-retry]').onclick = () => searchQuery(true);
     }
+    if(searchState === 'idle')resultEl.querySelector('[data-selector-retry]')?.addEventListener('click',()=>searchQuery(true));
 
     resultEl.querySelectorAll('[data-selector-symbol]').forEach((button) => {
       button.onclick = () => {
@@ -200,6 +201,7 @@ export function openStockSelector({
   };
 
   let timer = null;
+  let searchController = null;
   paintResults(favoriteRows);
 
   // Initial comparison selections may only have a ticker (for example MU or
@@ -219,6 +221,7 @@ export function openStockSelector({
 
   const searchQuery = (immediate = false) => {
     clearTimeout(timer);
+    searchController?.abort();
     const query = input.value.trim();
     currentQuery = query;
     clear.hidden = !input.value;
@@ -233,8 +236,9 @@ export function openStockSelector({
     const matchedFavorites = favoriteRows.filter(row => `${row.name} ${row.symbol}`.toLowerCase().includes(query.toLowerCase()));
     paintResults(matchedFavorites, query);
     timer = setTimeout(async () => {
+      searchController = new AbortController();
       try {
-        const data = await searchStocks(query);
+        const data = await searchStocks(query, {force: immediate, signal: searchController.signal});
         if (seq !== querySeq || !overlay.isConnected) return;
         searchState = 'idle';
         // 운영자 수정 2026-10-03: 백엔드가 미확인 입력을 그대로 돌려주는 DIRECT 에코는
@@ -255,6 +259,7 @@ export function openStockSelector({
     if (!overlay.isConnected) return;
     ++querySeq;
     clearTimeout(timer);
+    searchController?.abort();
     overlay.remove();
     document.removeEventListener('keydown', onKeyDown, true);
     if (app) app.inert = wasInert;

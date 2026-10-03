@@ -78,6 +78,7 @@ export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareS
     seedWatchQuoteCache(state.watchlist.map(x=>x.symbol));
     let latestHome=readHomeFast('snapshot',6*60*60*1000);
     let shownFull=readHomeFast('full-heatmap',6*60*60*1000);
+    let fullCached=Boolean(shownFull);
     host.innerHTML=`<div class="shared-heatmap-analysis">${loadingIndicator('전체 히트맵 데이터를 불러오고 있어요')}</div><section class="section sector-heatmap-section"><div class="section-head"><h2>섹터별 등락 히트맵</h2></div><div data-full-sectors></div></section>`;
     const sectorView=mountSectorHeatmap(host.querySelector('[data-full-sectors]'),{onStock:symbol=>window.__chartviewNavigate?.('detail',symbol),retry:()=>void refreshFull(true)});
     sectorView.loading();
@@ -85,7 +86,7 @@ export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareS
       if(!current()||!full?.results?.length)return;
       shownFull=full;
       const payload=alignFullHeatmapWithHome(full,latestHome);
-      host.querySelector('.shared-heatmap-analysis').innerHTML=renderSharedHeatmap(payload,{scope:'full'});
+      host.querySelector('.shared-heatmap-analysis').innerHTML=renderSharedHeatmap(payload,{scope:'full',cached:fullCached});
       sectorView.update(payload);
       if(save)writeHomeFast('full-heatmap',payload);
       bindNav();
@@ -100,7 +101,8 @@ export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareS
       sectorView?.loading();
       try{
         let full=await fullHeatmap({force});if(!current())return;
-        if(!full?.results?.length)throw new Error('전체 히트맵 데이터를 아직 확인하지 못했어요.');
+          if(!full?.results?.length)throw new Error('전체 히트맵 데이터를 아직 확인하지 못했어요.');
+          fullCached=false;
         paintFull(full,{save:true});
         for(let i=0;full?.refreshing&&i<20&&current();i++){
           await new Promise(resolve=>setTimeout(resolve,3000));if(!current())return;

@@ -23,7 +23,7 @@ test('quote has a compact main row and expandable distinct observation sources',
 });
 test('invalid ticker shows a not-found notice instead of an empty detail shell',()=>{
  const html=invalidSymbolHtml('ZZZZZZ');
- assert.match(html,/존재하지 않는 종목/);
+ assert.match(html,/종목을 확인할 수 없어요/);
  assert.match(html,/ZZZZZZ/);
  assert.match(html,/data-invalid-search/);
  assert.match(html,/data-tab="home"/);

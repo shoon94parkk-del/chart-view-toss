@@ -245,10 +245,10 @@ function paintPicks(host, payload) {
     performance;
 }
 
-function paintHeatmap(host, payload) {
+function paintHeatmap(host, payload, {cached = false} = {}) {
   if (!host || !host.isConnected) return;
   rememberLiveQuotes(payload?.results || [], { priority: 20 });
-  host.innerHTML = renderSharedHeatmap({ ...payload, results: mergeRowsWithLive(payload?.results || []) });
+  host.innerHTML = renderSharedHeatmap({ ...payload, results: mergeRowsWithLive(payload?.results || []) }, {cached});
   host.querySelectorAll('[data-stock-detail]').forEach((cell) => {
     const openDetail = () => navigate('detail', cell.dataset.stockDetail, cell.dataset.stockName || '');
     cell.addEventListener('click', openDetail);
@@ -279,7 +279,7 @@ async function mount() {
     paintHeatmap(sections.heatmap.querySelector('#home-daily-heatmap'), {
       results: cachedSnapshot.heatmap.results,
       generatedAt: cachedSnapshot.generatedAt || cachedSnapshot.heatmap.generatedAt || ''
-    });
+    }, {cached: true});
   }
 
   const picksTask = SHOW_SPOTLIGHT ? homeBootstrap()
@@ -311,7 +311,12 @@ async function mount() {
     })
     .catch(() => {
       if (token !== generation || !sections.heatmap.isConnected) return;
-      sections.heatmap.querySelector('#home-daily-heatmap').innerHTML =
+      const host = sections.heatmap.querySelector('#home-daily-heatmap');
+      if (host.querySelector('.home-heatmap-cell')) {
+        host.querySelector('.home-heatmap-meta').textContent = '새 시세 조회에 실패했어요. 이전 저장 시세의 기준시각은 종목 상세에서 확인해주세요.';
+        return;
+      }
+      host.innerHTML =
         '<div class="home-extra-empty"><strong>히트맵을 불러오지 못했어요.</strong><span>시장 화면에서 다시 확인할 수 있어요.</span></div>';
     });
 

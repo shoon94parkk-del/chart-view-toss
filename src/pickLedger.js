@@ -23,10 +23,10 @@ const dateValue=(value)=>{const t=Date.parse(`${String(value||'')}T00:00:00+09:0
 function symbolOf(row){return String(row?.symbol||row?.ticker||'').toUpperCase();}
 function codeOf(row){return String(row?.code||symbolOf(row).split('.')[0]||'');}
 function stockName(row,displayName){const symbol=symbolOf(row);return row?.name||displayName(symbol)||symbol||'종목';}
-function statusMeta(status){return STATUS[status]||STATUS.PENDING_REVIEW;}
+export function statusMeta(status){return STATUS[status]||STATUS.PENDING_REVIEW;}
 function technicalMeta(signal){return TECH_STATUS[signal]||TECH_STATUS.TECH_NORMAL;}
 function technicalOrder(row){return technicalMeta(row?.monitor?.technical?.signal).order;}
-function actionStatus(row){
+export function actionStatus(row){
   const fundamental=row?.monitor?.status||'PENDING_REVIEW';
   const technical=row?.monitor?.technical?.signal||'TECH_NORMAL';
   if(fundamental==='SELL_REVIEW'||technical==='TECH_SELL_REVIEW')return 'SELL_REVIEW';
@@ -44,11 +44,11 @@ function price(value,row){
   return n.toLocaleString('ko-KR',{maximumFractionDigits:2});
 }
 function monitorKey(date,code,symbol){return `${String(date||'')}:${String(code||String(symbol||'').split('.')[0]||'')}`;}
-function monitorFor(row,picks){
+export function monitorFor(row,picks){
   const key=monitorKey(row?.recommendedDate,row?.code,row?.symbol);
   return picks.find((pick)=>String(pick?.pickId||monitorKey(pick?.pickDate,pick?.code,pick?.symbol))===key)||null;
 }
-function technicalMarkup(pick){
+export function technicalMarkup(pick){
   const tech=pick?.technical;
   if(!tech||finite(tech?.score)===null)return '<p class="pick-ledger-muted">기술점수 비교 데이터가 아직 없어요.</p>';
   const meta=technicalMeta(tech?.signal);

@@ -1,6 +1,6 @@
 import { finiteNumber } from './analysisData.js';
 const SPREAD_SYMBOLS = new Set(['T10Y2Y','T10Y3M','BAMLH0A0HYM2']);
-const RATE_SYMBOLS = new Set(['DFII10','T10YIE','PCEPI','PCETRIM12M159SFRBDAL','UNRATE','FEDFUNDS']);
+const RATE_SYMBOLS = new Set(['DFII10','T10YIE','PCEPI','PCETRIM12M159SFRBDAL','UNRATE','FEDFUNDS','FEDTARGET','DFF']);
 
 export function formatKst(value, { dateOnly = false } = {}) {
   if (!value) return '-';
@@ -213,6 +213,8 @@ export function changeBasisLabel(value) {
     'previous observation': '이전 관측 대비',
     'previous monthly observation': '이전 월 관측 대비',
     'previous trading close': '전 거래일 종가 대비',
+    'previous fomc target change': '직전 FOMC 목표금리 변경 대비',
+    'previous daily observation': '이전 일별 관측 대비',
   };
   return map[String(value || '').toLowerCase()] || value || '이전 관측 대비';
 }

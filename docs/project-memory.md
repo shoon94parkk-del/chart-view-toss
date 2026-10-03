@@ -218,3 +218,6 @@ Use explicit force only for chart retry to recover cached 200 empty/partial data
 - Current charts: 10/20/full-month cumulative export bars, item YoY diverging bars, destination YoY bars.
 - `history[]` is optional in the normalized snapshot and will activate the recent-12-month export amount + YoY chart after Customs API integration.
 - Export data remains lazy-loaded on the exports route only.
+
+## 2026-10-03 — External review validation, 0.10.4
+DIRECT search rows are syntactic fallback candidates: require a positive quote before exposing selection. Exact Micron aliases use MU and preserve Hana Micron results. Selector cancels obsolete/closed requests and offers retry after empty/failed responses. Unknown direct detail cannot add watch/compare entries. Fast cached Home/full heatmap paint explicitly identifies stored data until revalidation; quote freshness rules and TTLs remain unchanged. Cap and each valuation metric expose independent source/time/basis. Domestic/US coverage differs explicitly. Expanded detail review lazily reuses dated PICK/monitor and screener data; no new trading signal or mandatory Home request. Macro empty200 is retryable error, policy/effective rates use %. Complete disposition: REVIEW_VALIDATION_2026-10-03.md.

@@ -2,6 +2,7 @@ import { createRequestClient } from './requestClient.js';
 import { recordMetric } from './diagnostics.js';
 import { staticData } from './staticData.js';
 import { earlyHome } from './homeFastCache.js';
+import { searchAlias, verifiedSearchRows } from './searchIdentity.js';
 export { ApiError } from './requestClient.js';
 export const API_BASE=(import.meta.env?.VITE_CHARTVIEW_API_BASE||'https://chart-view-pkv8.onrender.com').replace(/\/$/,'');
 const DEFAULT_TIMEOUT_MS=Number(import.meta.env?.VITE_CHARTVIEW_API_TIMEOUT_MS||12000);
@@ -18,7 +19,17 @@ const list=tickers=>encodeURIComponent([...new Set(tickers)].join(','));
 export const quoteSnapshots=(tickers,{force=false}={})=>api(`/api/quotes?tickers=${list(tickers)}`,{ttlMs:15000,force});
 export const quoteSnapshotsLive=tickers=>api(`/api/quotes?tickers=${list(tickers)}&fresh=true`,{ttlMs:0,force:true,timeoutMs:5000,retries:0});
 export const compareStocks=(tickers,period='1mo',range={}, {force=false}={})=>api(`/api/compare?tickers=${list(tickers)}&period=${encodeURIComponent(period)}${range.start&&range.end?`&start=${encodeURIComponent(range.start)}&end=${encodeURIComponent(range.end)}`:''}`,{ttlMs:60000,timeoutMs:8000,retries:0,force});
-export const searchStocks=query=>api(`/api/search?q=${encodeURIComponent(query)}`,{timeoutMs:8000,retries:0,ttlMs:60000});
+export const searchStocks=async(query,{force=false,signal}={})=>{
+ const options={timeoutMs:8000,retries:0,ttlMs:60000,force,signal};
+ const alias=searchAlias(query);
+ const [data,aliased]=await Promise.all([
+   api(`/api/search?q=${encodeURIComponent(query)}`,options),
+   alias?api(`/api/search?q=${alias}`,options):Promise.resolve(null),
+ ]);
+ const results=await verifiedSearchRows([...(aliased?.results||[]),...(data?.results||[])],tickers=>api(`/api/quotes?tickers=${list(tickers)}`,{timeoutMs:5000,retries:0,ttlMs:60000,force,signal}));
+ const unverifiedDirect=[...(aliased?.results||[]),...(data?.results||[])].filter(row=>row.type==='DIRECT'&&!results.some(result=>result.symbol===row.symbol)).map(row=>row.symbol);
+ return {...data,results,unverifiedDirect};
+};
 export const marketNow=()=>earlyHome('market',()=>api('/api/market-now',{ttlMs:15000}));
 export const marketNowLive=()=>api('/api/market-now',{ttlMs:0,force:true,timeoutMs:5000,retries:0});
 export const homeSnapshot=({force=false}={})=>force?api('/api/home-snapshot',{ttlMs:60000,force:true}):earlyHome('snapshot',()=>api('/api/home-snapshot',{ttlMs:60000}));
@@ -35,7 +46,7 @@ export const homeLive=()=>api('/api/home-live',{ttlMs:0,force:true,timeoutMs:500
 export const homeHeatmap=()=>api('/api/heatmap',{ttlMs:60000});
 export const fullHeatmap=({force=false}={})=>api('/api/heatmap/full',{ttlMs:15000,force});
 export const valuationStocks=tickers=>api(`/api/valuation?tickers=${list(tickers)}`,{ttlMs:300000});
-export const macroData=()=>api('/api/macro',{ttlMs:300000});
+export const macroData=({force=false}={})=>api('/api/macro',{ttlMs:300000,force});
 export const homeInsights=(tickers=[])=>api(`/api/home-insights?tickers=${list(tickers)}`,{ttlMs:60000});
 export const personalizedNews=(tickers=[],names=[])=>api(`/api/personalized-news?tickers=${list(tickers)}&names=${encodeURIComponent(names.join('|'))}`,{timeoutMs:10000,retries:0,ttlMs:60000});
 export const screenerData=()=>staticData('screener.json',()=>api('/static/data/screener.json',{ttlMs:60000}));

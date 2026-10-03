@@ -193,7 +193,7 @@ const heatmapMarketMarkup = (payload, market, scope = 'home') => {
   }).join('');
 };
 
-export function renderSharedHeatmap(payload = {}, { scope = 'home' } = {}) {
+export function renderSharedHeatmap(payload = {}, { scope = 'home', cached = false } = {}) {
   const kr = marketRows(payload, 'KR', scope);
   const us = marketRows(payload, 'US', scope);
   if (!kr.length && !us.length) {
@@ -202,7 +202,7 @@ export function renderSharedHeatmap(payload = {}, { scope = 'home' } = {}) {
 
   const stamp = formatKst(payload.generatedAt || payload.updatedAt);
   const full = scope === 'full';
-  return `<div class="home-heatmap-meta">업데이트 ${esc(stamp)} KST</div>
+  return `<div class="home-heatmap-meta" role="status">${cached ? '이전 저장 시세 · 새 시세 확인 중 · ' : ''}수집 ${esc(stamp)} KST</div>
     <div class="home-heatmap-board ${full ? 'full-heatmap-board' : ''}">
       <div class="home-heatmap-market market-kr">
         <div class="home-heatmap-market-head"><strong>${full ? `한국 주요 ${kr.length}종목` : '한국 대표'}</strong><span>시총 영향 완화</span></div>

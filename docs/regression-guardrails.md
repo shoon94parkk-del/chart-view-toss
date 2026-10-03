@@ -289,3 +289,9 @@ Saved investment baselines are device records: show them before network completi
 - 존재하지 않는 경로를 홈 성공 화면으로 위장하지 않는다.
 
 - Export provisional/item/country failure states each offer a force retry of only the failed request. Cached empty HTTP200 must not make retry permanent; preserve ready monthly/item charts. Closing pending detail invalidates its token so a late response cannot reopen it. See tests/export_recovery_qa.mjs and the mobile QA workflow.
+
+- Stored Home/full heatmap first paint must identify previous saved prices until real revalidation. Do not shorten TTLs or replace latest canonical quotes to hide this state. Failed refresh must not label prior prices as fresh.
+- Search DIRECT is not a listing. Verify a positive matching quote; lookup failure remains retryable and must not authorize watch/compare addition. Keep genuine named provider/KRX hits, including ticker-like company names such as AMD.
+- Empty macro responses cannot display 0 indicators as a successful assessment; explicit retry bypasses the cached empty200. DFF/FEDTARGET percentages retain units.
+- Detail marketCap/metric metadata must use the corresponding field provenance, not the latest quote timestamp. Missing field time remains explicitly missing.
+- Lazy detail PICK summary uses existing combined status and exact selection-date/code linkage. No record is not a buy/keep signal; unavailable records are not proof of no record. Technical/peer periods remain distinct from daily quotes.
