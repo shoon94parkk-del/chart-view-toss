@@ -27,7 +27,7 @@ try{
   };
   await page.route('**/backend/**',mock);await page.route('https://chart-view-pkv8.onrender.com/**',mock);
   await page.goto(base+'/#discover',{waitUntil:'domcontentloaded'});
-  await page.locator('#screener-filters').waitFor();
+  await page.locator('#screener-filters').waitFor({state:'attached'});
   await page.locator('[data-screener-preset="rsi-oversold"]').click();
   const hanchang=page.locator('.analysis-stock[data-stock-detail="005110.KS"]');
   await hanchang.waitFor();
@@ -39,6 +39,7 @@ try{
   await page.locator('[data-clear-preset]').click();
   const clearedRsi=await page.locator('[name="rsiMax"]').inputValue();
   if(!observe)assert.equal(clearedRsi,'','technical clear must clear the actual form condition');
+  await page.locator('.screener-advanced summary').click();
   await page.locator('#screener-filters button[type="reset"]').click();
   await page.locator('[name="query"]').fill('삼성');
   await page.locator('[name="market"]').selectOption('KOSPI');

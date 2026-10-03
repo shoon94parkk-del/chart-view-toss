@@ -1,3 +1,4 @@
+import { valueEntriesMarkup } from './valueDiscovery.js';
 import { resolveRoute } from './routes.js';
 import {indexSeries,quoteHtml,detailCachedQuote,marketCapHtml,metricBasis,invalidSymbolHtml} from './detailPresentation.js';
 import {encodeSharedView,decodeSharedView,homeBriefState,quoteBasisLabel} from './experienceState.js';
@@ -6,6 +7,7 @@ import './styles.css';
 import './homeExtras.css';
 import './homeExtras.js';
 import './experience.css';
+import './valueDiscovery.css';
 import { SHOW_SPOTLIGHT } from './releaseScope.js';
 import { ANALYSIS_ROUTES, renderAnalysis } from './analysisViews.js';
 import packageInfo from '../package.json';
@@ -224,7 +226,9 @@ function esc(v=''){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt
 
 function navigate(tab,detailSymbol=null,detailName=''){
  if(tab==='picks'&&!SHOW_SPOTLIGHT)tab='home';
- if(tab===state.tab&&(tab==='detail'?(!detailSymbol||detailSymbol===state.detailSymbol):tab==='news'?(detailSymbol||null)===state.newsSymbol:true)){
+ const hash=detailSymbol?`#${tab}/${encodeURIComponent(detailSymbol)}`:`#${tab}`;
+ const featureTab=['discover','picks','exports'].includes(tab);
+ if(tab===state.tab&&(!featureTab||location.hash===hash)&&(tab==='detail'?(!detailSymbol||detailSymbol===state.detailSymbol):tab==='news'?(detailSymbol||null)===state.newsSymbol:true)){
    if(detailSymbol&&detailName)state.detailName=detailName;
    window.scrollTo(0,0);
    return;
@@ -235,8 +239,8 @@ function navigate(tab,detailSymbol=null,detailName=''){
  if(tab==='detail')state.detailOrigin=state.tab==='detail'?state.detailOrigin:['home','chart','watch'].includes(state.tab)?state.tab:'more';
  if(tab==='detail'&&state.tab==='discover')state.returnFocusSymbol=detailSymbol;
  state.tab=tab;
- if(detailSymbol){state.detailSymbol=detailSymbol;state.detailName=detailName||'';}
- const hash=detailSymbol?`#${tab}/${encodeURIComponent(detailSymbol)}`:`#${tab}`;
+ if(featureTab)Object.assign(state,resolveRoute({hash}));
+ else if(detailSymbol){state.detailSymbol=detailSymbol;state.detailName=detailName||'';}
  const nextUrl=new URL(location.href);nextUrl.searchParams.delete('cv');nextUrl.hash=hash;
  navigationDepth+=1;
  history.pushState({tab,detailSymbol:state.detailSymbol,detailName:state.detailName,detailOrigin:state.detailOrigin,cvNavigation:{session:navigationSession,depth:navigationDepth}},'',nextUrl);
@@ -247,6 +251,10 @@ function navigate(tab,detailSymbol=null,detailName=''){
 }
 window.__chartviewNavigate=(tab,detailSymbol=null,detailName='')=>navigate(tab,detailSymbol,detailName);
 function bindNav(){
+ document.querySelectorAll('[data-feature-route]').forEach(b=>b.onclick=()=>{
+   if(b.dataset.featureRoute==='discover')state.screener.appliedRoutePreset=null;
+   navigate(b.dataset.featureRoute,b.dataset.featureTarget||null);
+ });
  document.querySelectorAll('[data-share-current]').forEach(button=>button.onclick=shareCurrent);
  document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>navigate(b.dataset.tab));
  document.querySelectorAll('[data-stock-news]').forEach(b=>b.onclick=()=>navigate('news',b.dataset.stockNews,b.dataset.stockName||''));
@@ -260,6 +268,7 @@ function bindNav(){
    if(!opened)showToast('외부 링크를 열지 못했어요. 잠시 후 다시 시도해주세요.');
  });
 }
+window.__chartviewBindNav=bindNav;
 function openHomeSearch(){
  openStockSelector({
    title:'종목 검색',
@@ -456,10 +465,12 @@ async function renderHome(){
  const hasWatch=state.watchlist.length>0;
  document.querySelector('#app').innerHTML=shell(`
    <section class="home-compact-head">
-     <div><span class="home-kicker">오늘 시장</span><h2>시장과 내 종목을 한눈에</h2><p class="home-value-copy">공시로 투자 근거를 확인하고, 선정 종목의 이후 성과를 추적해요.</p></div>
+     <div><span class="home-kicker">투자 근거를 찾는 시작점</span><h2>데이터로 찾고, 근거로 확인해요</h2><p class="home-value-copy">수출 흐름부터 조건별 종목, 선정 이후 점검까지.</p></div>
      <button class="search-box elevated home-search" id="home-search-open" type="button">${iconSvg('search',20)}<span>종목 검색</span><b>${iconSvg('arrow',18)}</b></button>
    </section>
-   <section class="section watch-section home-primary">${sectionTitle('내 관심종목','<button class="text-button" data-tab="watch">'+(hasWatch?'관리':'추가')+'</button>')}<div id="home-watchlist" class="watch-card">${hasWatch?loadingIndicator('관심종목 시세를 확인하고 있어요')+'<div class="skeleton watch"></div><div class="skeleton watch"></div>':'<div class="home-empty-watch"><strong>관심종목을 추가해보세요</strong><span>저장한 종목의 가격과 주요 뉴스를 홈에서 바로 볼 수 있어요.</span><button type="button" data-tab="watch">관심종목 추가</button></div>'}</div></section>
+   ${valueEntriesMarkup(SHOW_SPOTLIGHT)}
+   <div id="home-discovery-feed"></div>
+   <section class="section watch-section home-primary">${sectionTitle('내 관심종목','<button class="text-button" data-tab="watch">'+(hasWatch?'관리':'추가')+'</button>')}<div id="home-watchlist" class="watch-card">${hasWatch?loadingIndicator('관심종목 시세를 확인하고 있어요')+'<div class="skeleton watch"></div><div class="skeleton watch"></div>':'<div class="home-empty-watch"><span>자주 보는 종목을 여기에 모아보세요.</span><button type="button" data-tab="watch">관심종목 추가</button></div>'}</div></section>
    <section class="market-section home-primary"><div class="section-head market-head"><h2>주요 시장</h2><div class="market-head-actions"><span id="market-time">기준 시각 확인 중</span><button type="button" id="market-expand" class="market-expand" aria-expanded="false" hidden>지표 더 보기 <span>⌄</span></button></div></div><div id="market-card">${loadingIndicator('주요 시장을 확인하고 있어요')}<div class="market-grid"><div class="skeleton quote"></div><div class="skeleton quote"></div><div class="skeleton quote"></div><div class="skeleton quote"></div></div></div></section>
    <section id="brief-card" class="brief-card compact-brief skeleton brief">${loadingIndicator('시장 요약을 확인하고 있어요')}</section>
    <section class="section quick-section">${sectionTitle('빠른 비교','<button class="text-button" data-go-chart>종목 변경</button>')}<div class="ticker-strip">${state.selected.map((x,i)=>`<button data-go-chart><span class="ticker-orb tone-${i%4}">${esc(displayName(x).slice(0,1))}</span><span><strong>${esc(displayName(x))}</strong><small>${esc(x)}</small></span><b>${iconSvg('arrow',16)}</b></button>`).join('')||'<span class="muted-copy">비교 종목을 선택해주세요.</span>'}</div></section>
@@ -1472,7 +1483,7 @@ function render(){
  if(state.tab==='exports'){
    cleanupChart();
    void Promise.all([import('./exportMomentumView.js'),import('./exportMomentum.css')]).then(([exportsView])=>{
-     if(state.tab==='exports')analysisCleanup=exportsView.renderExportMomentumView({shell,bindNav});
+     if(state.tab==='exports')analysisCleanup=exportsView.renderExportMomentumView({shell,bindNav,focus:state.exportFocus});
    });
    return;
  }
@@ -1486,7 +1497,7 @@ function render(){
  if(state.tab==='picks'&&SHOW_SPOTLIGHT){
    cleanupChart();
    void Promise.all([import('./pickLedger.js'),import('./pickLedger.css')]).then(([ledger])=>{
-     if(state.tab==='picks')ledger.renderPickLedger({shell,bindNav,displayName});
+     if(state.tab==='picks')ledger.renderPickLedger({shell,bindNav,displayName,focusKey:state.pickFocusKey});
    });
    return;
  }

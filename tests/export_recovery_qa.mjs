@@ -15,7 +15,8 @@ try{
   const calls={monthly:0,radar:0,item:0,country:0};
   const errors=[];
   page.on('pageerror',e=>errors.push(e.message));
-  await page.route('**/api/export-momentum**',async route=>{
+  // Match monthly and child endpoints explicitly across Playwright versions.
+  await page.route(/\/api\/export-momentum(?:[/?]|$)/,async route=>{
     const path=new URL(route.request().url()).pathname;
     let body;
     if(path.endsWith('/provisional'))body=++calls.radar===1?{period:'2026-09',checkpoints:[]}:radar;
@@ -26,9 +27,14 @@ try{
     await route.fulfill({status:failed503?503:200,contentType:'application/json',body:JSON.stringify(body)});
   });
   await page.goto(base+'/#exports',{waitUntil:'domcontentloaded'});
+  await page.locator('[data-export-provisional-retry]').waitFor();
+  assert.equal(calls.radar,1,'initial unavailable radar response must be intercepted');
   await page.locator('[data-export-provisional-retry]').click();
   await page.locator('#export-provisional-radar .export-provisional-error').waitFor({state:'detached'});
-  await page.getByText('1~20일',{exact:true}).first().waitFor();
+  await page.getByText('1~20일',{exact:true}).first().waitFor().catch(async error=>{
+    console.error(JSON.stringify({width,calls,errors,radar:await page.locator('#export-provisional-radar').innerText(),url:page.url()}));
+    throw error;
+  });
   assert.equal(calls.radar,2,'retry bypasses cached empty HTTP200');
   assert.equal(calls.monthly,1,'radar retry preserves monthly request');
   await page.locator('[data-export-item="semiconductor"]').first().click();

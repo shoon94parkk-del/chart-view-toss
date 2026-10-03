@@ -36,6 +36,10 @@ jobs:
           exit 1
       - name: Run mobile release QA
         run: node tests/mobile_release_qa.mjs
+      - name: Verify core value entries and exact selection records
+        run: node tests/value_discovery_qa.mjs
+      - name: Verify full sector exploration and refresh failure retention
+        run: node tests/sector_heatmap_qa.mjs
       - name: Verify data views and custom date range
         run: node tests/analysis_qa.mjs
       - name: Build with production request timeout
@@ -52,6 +56,10 @@ jobs:
         env:
           QA_BASE_URL: http://127.0.0.1:4173
         run: node tests/strategy_report_qa.mjs
+      - name: Verify shared conditions and filter restoration
+        env:
+          QA_BASE_URL: http://127.0.0.1:4173
+        run: node tests/experience_audit_qa.mjs
       - name: Verify deep links, large text and local performance diagnostics
         run: node tests/release_gates_qa.mjs
       - name: Upload mobile QA screenshots
@@ -62,4 +70,7 @@ jobs:
           path: |
             artifacts/mobile-qa
             artifacts/strategy-report
+            artifacts/value-discovery
+            artifacts/sector-heatmap
+            output/playwright/experience-audit
           if-no-files-found: warn

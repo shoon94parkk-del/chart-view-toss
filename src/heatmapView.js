@@ -144,8 +144,8 @@ const marketRows = (payload, market, scope = 'home') => {
     .sort((left, right) => right.marketCap - left.marketCap);
 };
 
-const heatmapMarketMarkup = (payload, market, scope = 'home') => {
-  const rows = marketRows(payload, market, scope);
+const heatmapMarketMarkup = (payload, market, scope = 'home', limit = Infinity) => {
+  const rows = marketRows(payload, market, scope).slice(0, limit);
   const items = rows.map((item) => ({
     item,
     weight: market === 'KR' ? Math.pow(Math.max(1, item.marketCap), 0.58) : Math.max(1, item.marketCap),
@@ -166,7 +166,7 @@ const heatmapMarketMarkup = (payload, market, scope = 'home') => {
     const tickerLabel = item.ticker.replace(/\.(KS|KQ)$/, '');
     const tinyLabel = market === 'KR' ? item.short : tickerLabel;
     const compactLabel = !full && market === 'US' ? tickerLabel : item.short;
-    const label = tickerOnly || veryTight ? tinyLabel : compact ? compactLabel : item.name;
+    const label = tickerOnly || veryTight ? tinyLabel : compact || Number.isFinite(limit) ? compactLabel : item.name;
     const logoSvg = item.logo && HOME_LOGOS[item.logo] ? HOME_LOGOS[item.logo] : '';
     const showLogo = Boolean(logoSvg) && !tickerOnly && !veryTight && area >= 0.05 && width >= 0.17 && height >= 0.18;
     const showFallback = !logoSvg && !compact && area >= 0.09 && width >= 0.22 && height >= 0.25;
@@ -193,9 +193,9 @@ const heatmapMarketMarkup = (payload, market, scope = 'home') => {
   }).join('');
 };
 
-export function renderSharedHeatmap(payload = {}, { scope = 'home', cached = false } = {}) {
-  const kr = marketRows(payload, 'KR', scope);
-  const us = marketRows(payload, 'US', scope);
+export function renderSharedHeatmap(payload = {}, { scope = 'home', cached = false, market = null, limit = Infinity } = {}) {
+  const kr = marketRows(payload, 'KR', scope).slice(0,limit);
+  const us = marketRows(payload, 'US', scope).slice(0,limit);
   if (!kr.length && !us.length) {
     return '<div class="home-extra-empty">히트맵 데이터를 준비 중이에요.</div>';
   }
@@ -204,13 +204,13 @@ export function renderSharedHeatmap(payload = {}, { scope = 'home', cached = fal
   const full = scope === 'full';
   return `<div class="home-heatmap-meta" role="status">${cached ? '이전 저장 시세 · 새 시세 확인 중 · ' : ''}수집 ${esc(stamp)} KST</div>
     <div class="home-heatmap-board ${full ? 'full-heatmap-board' : ''}">
-      <div class="home-heatmap-market market-kr">
-        <div class="home-heatmap-market-head"><strong>${full ? `한국 주요 ${kr.length}종목` : '한국 대표'}</strong><span>시총 영향 완화</span></div>
-        <div class="home-heatmap-treemap">${heatmapMarketMarkup(payload, 'KR', scope)}</div>
+      <div class="home-heatmap-market market-kr" ${market==='US'?'hidden':''}>
+        <div class="home-heatmap-market-head"><strong>${full ? `한국 주요 ${kr.length}종목` : (Number.isFinite(limit)?`한국 대표 ${kr.length}종목 미리보기`:'한국 대표')}</strong><span>시총 영향 완화</span></div>
+        <div class="home-heatmap-treemap">${heatmapMarketMarkup(payload, 'KR', scope, limit)}</div>
       </div>
-      <div class="home-heatmap-market market-us">
-        <div class="home-heatmap-market-head"><strong>${full ? `미국 시총 상위 ${us.length}종목` : '미국 대표'}</strong><span>시총 비중</span></div>
-        <div class="home-heatmap-treemap">${heatmapMarketMarkup(payload, 'US', scope)}</div>
+      <div class="home-heatmap-market market-us" ${market==='KR'?'hidden':''}>
+        <div class="home-heatmap-market-head"><strong>${full ? `미국 시총 상위 ${us.length}종목` : (Number.isFinite(limit)?`미국 대표 ${us.length}종목 미리보기`:'미국 대표')}</strong><span>시총 비중</span></div>
+        <div class="home-heatmap-treemap">${heatmapMarketMarkup(payload, 'US', scope, limit)}</div>
       </div>
     </div>
     <div class="home-heatmap-legend"><span><i class="home-legend-dot up"></i>상승</span><span><i class="home-legend-dot flat"></i>보합</span><span><i class="home-legend-dot down"></i>하락</span></div>`;
