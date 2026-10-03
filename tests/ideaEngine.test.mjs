@@ -45,3 +45,12 @@ test('classification work is bounded by visible winners while ranking is preserv
  assert.deepEqual(ideas[0].candidates.map(row=>row.symbol),['T299.KS','T298.KS','T297.KS','T296.KS']);
  assert.ok(reads<stocks.length*30,`unnecessary industry reads: ${reads}`);
 });
+
+test('idea candidates retain unusual-move warnings through ranking and enrichment',()=>{
+ const snapshot={stocks:[{...data.stocks[0],symbol:'005110.KS',name:'한창',price:112,change1d:-91.07,rsi14:0,volumeRatio:20}]};
+ const candidate=buildInvestmentIdeas(snapshot,{limit:5}).find(idea=>idea.id==='oversold')?.candidates[0];
+ assert.equal(candidate?.symbol,'005110.KS');
+ assert.ok(candidate?.dataWarnings?.length,'idea presentation must receive the unusual daily move warning');
+ assert.match(candidate.dataWarnings.join(' '),/원자료/);
+ assert.equal(candidate.change1d,-91.07);
+});

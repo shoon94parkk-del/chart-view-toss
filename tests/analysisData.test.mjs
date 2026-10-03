@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { SCREENER_PRESETS, screenerPreset, screenerMatchReasons, filterScreener, finiteNumber, estimateRevision } from '../src/analysisData.js';
+import * as analysis from '../src/analysisData.js';
+const { SCREENER_PRESETS, screenerPreset, screenerMatchReasons, filterScreener, finiteNumber, estimateRevision } = analysis;
 test('missing data stays missing, zero remains an actual zero',()=>{
  for(const x of [null,undefined,'',NaN,Infinity])assert.equal(finiteNumber(x),null);
  assert.equal(finiteNumber(0),0);assert.equal(finiteNumber('0'),0);
@@ -39,4 +40,28 @@ test('MACD and trend filters remain usable before boolean helper fields are rege
  const row={symbol:'A.KS',name:'A',market:'KOSPI',price:110,ma20:105,ma60:100,macd:2,macdSignal:1,rsi14:60};
  assert.equal(filterScreener([row],{trend:'trend2060'}).length,1);
  assert.equal(filterScreener([row],{signal:'macdBullish'}).length,1);
+});
+
+test('unusual daily moves carry a factual warning without changing screener matches',()=>{
+ const row={symbol:'005110.KS',name:'한창',price:112,change1d:-91.07,rsi14:0,volumeRatio:20};
+ const warnings=analysis.screenerDataWarnings?.(row);
+ assert.ok(warnings?.length,'large daily moves need a visible data warning');
+ assert.match(warnings.join(' '),/일간 변동.*35%.*원자료/);
+ assert.doesNotMatch(warnings.join(' '),/감자|상장폐지|오류 확정/);
+ assert.deepEqual(filterScreener([row],{rsiMax:30}),[row]);
+ assert.ok(analysis.screenerDataWarnings({change1d:35}).length);
+ assert.deepEqual(analysis.screenerDataWarnings({change1d:-30,rsi14:0}),[]);
+ for(const change1d of [0,null,undefined,'',NaN,Infinity])assert.deepEqual(analysis.screenerDataWarnings({change1d}),[]);
+ assert.deepEqual(analysis.screenerDataWarnings({symbol:'0004V0.KQ',change1d:0.32,rsi14:53.7}),[]);
+});
+
+test('empty screener explains a name match excluded by technical conditions within the selected market',()=>{
+ const rows=[{symbol:'A.KS',name:'삼성전자',market:'KOSPI',rsi14:60},{symbol:'B.KQ',name:'삼성부품',market:'KOSDAQ',rsi14:20}];
+ assert.deepEqual(analysis.screenerEmptyState?.(rows,{query:'삼성',market:'KOSPI',rsiMax:30}),{
+  message:'검색어·시장에 맞는 종목 1개가 기술 조건에서 제외됐어요. 검색어·시장·기술 조건은 함께 적용돼요.',canClearTechnical:true,
+ });
+ assert.deepEqual(analysis.screenerEmptyState(rows,{query:'없는종목',rsiMax:30}),{message:'검색어와 시장에 맞는 종목이 없어요. 종목명·코드와 시장을 확인해주세요.',canClearTechnical:false});
+ assert.deepEqual(analysis.screenerEmptyState(rows,{query:'삼성전자',market:'KOSDAQ',rsiMax:30}),{message:'검색어와 시장에 맞는 종목이 없어요. 종목명·코드와 시장을 확인해주세요.',canClearTechnical:false});
+ assert.equal(analysis.screenerEmptyState(rows,{market:'KONEX',rsiMax:30}).canClearTechnical,false,'technical clear cannot recover a market with no collected rows');
+ assert.deepEqual(analysis.screenerEmptyState(rows,{rsiMax:10}),{message:'조건에 맞는 종목이 없어요. 기술 조건을 해제하거나 범위를 넓혀보세요.',canClearTechnical:true});
 });

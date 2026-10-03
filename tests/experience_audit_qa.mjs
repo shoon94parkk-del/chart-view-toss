@@ -9,6 +9,8 @@ await fs.mkdir('output/playwright/experience-audit',{recursive:true});
 try{
  for(const width of [320,390,430]){
   const context=await browser.newContext({viewport:{width,height:844},permissions:['clipboard-read','clipboard-write']});
+  // Exercise the web clipboard fallback consistently; native share sheets are a device QA gate.
+  await context.addInitScript(()=>Object.defineProperty(navigator,'share',{configurable:true,value:undefined}));
   const page=await context.newPage(),errors=[],requests=[];
   let homeMode='empty';
   page.on('pageerror',e=>errors.push(e.message));
@@ -31,7 +33,12 @@ try{
   };
   await page.route('**/backend/**',mock);await page.route('https://chart-view-pkv8.onrender.com/**',mock);
   const nav=async(tab,symbol=null)=>page.evaluate(({tab,symbol})=>window.__chartviewNavigate(tab,symbol),{tab,symbol});
-  const share=async()=>{await page.locator('.topbar [data-share-current]').click();return new URL(await page.evaluate(()=>navigator.clipboard.readText()));};
+  const share=async()=>{
+   await page.evaluate(()=>navigator.clipboard.writeText(''));
+   await page.locator('.topbar [data-share-current]').click();
+   await page.waitForFunction(async()=>!!await navigator.clipboard.readText());
+   return new URL(await page.evaluate(()=>navigator.clipboard.readText()));
+  };
   await page.goto(`${base}/#home`);
   await page.locator('#brief-card[data-state="empty"]').waitFor();
   assert.equal(await page.locator('#brief-card .loading-spinner').count(),0);
@@ -39,7 +46,7 @@ try{
   await page.locator('#brief-card .loading-spinner').waitFor();
   await page.locator('#brief-card[data-state="error"]').waitFor({timeout:20000});
   homeMode='ready';await page.locator('[data-retry-brief]').click();await page.locator('#brief-card[data-state="ready"]').waitFor();
-  await nav('discover');await page.locator('#screener-filters').waitFor();
+  await nav('discover');await page.locator('.screener-advanced summary').click();await page.locator('#screener-filters').waitFor();
   await page.locator('[name="query"]').fill('삼성');await page.locator('[name="market"]').selectOption('KOSPI');
   await page.locator('[data-stock-detail="005930.KS"]').click();
   await page.locator('#research-question').waitFor().catch(async error=>{console.log({url:page.url(),errors,body:(await page.locator('body').innerText()).slice(0,2200)});throw error;});
@@ -95,7 +102,7 @@ try{
   chartLink.host=new URL(base).host;chartLink.protocol=new URL(base).protocol;
   await receiver.goto(chartLink.href);await receiver.locator('[data-period="1y"][aria-pressed="true"]').waitFor();
   screenerLink.host=new URL(base).host;screenerLink.protocol=new URL(base).protocol;
-  await receiver.goto(screenerLink.href);await receiver.locator('#screener-filters').waitFor();assert.equal(await receiver.locator('[name="query"]').inputValue(),'삼성');
+  await receiver.goto(screenerLink.href);await receiver.locator('.screener-advanced summary').click();await receiver.locator('#screener-filters').waitFor();assert.equal(await receiver.locator('[name="query"]').inputValue(),'삼성');
   detailLink.host=new URL(base).host;detailLink.protocol=new URL(base).protocol;
   await receiver.goto(detailLink.href);await receiver.locator('#research-question').waitFor();assert.match(await receiver.locator('#research-peer-selection').textContent(),/SK하이닉스/);
   assert.equal(await receiver.locator('.bottom-nav [aria-current="page"]').count(),1);

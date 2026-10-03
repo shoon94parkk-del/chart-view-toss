@@ -1,4 +1,4 @@
-import { finiteNumber } from './analysisData.js';
+import { finiteNumber, screenerDataWarnings } from './analysisData.js';
 import { companyContext } from './industryContext.js';
 
 const num=(row,key)=>finiteNumber(row?.[key]);
@@ -41,6 +41,7 @@ const candidate=(row,reasons,score,context)=>({
   ret20:num(row,'ret20'),
   distance52HighPct:num(row,'distance52HighPct'),
   reasons:reasons.filter(Boolean).slice(0,4),
+  dataWarnings:screenerDataWarnings(row),
   score:Number.isFinite(score)?score:0,
   context,
 });

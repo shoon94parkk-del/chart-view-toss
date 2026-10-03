@@ -52,6 +52,14 @@ jobs:
         run: node tests/export_recovery_qa.mjs
       - name: Verify search identity, stale disclosure, detail context and empty macro recovery
         run: node tests/review_validation_qa.mjs
+      - name: Verify unusual screener data and combined-filter recovery
+        env:
+          QA_BASE_URL: http://127.0.0.1:4173
+        run: node tests/strategy_report_qa.mjs
+      - name: Verify shared conditions and filter restoration
+        env:
+          QA_BASE_URL: http://127.0.0.1:4173
+        run: node tests/experience_audit_qa.mjs
       - name: Verify deep links, large text and local performance diagnostics
         run: node tests/release_gates_qa.mjs
       - name: Upload mobile QA screenshots
@@ -59,5 +67,10 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: mobile-release-qa-screenshots
-          path: artifacts/mobile-qa
+          path: |
+            artifacts/mobile-qa
+            artifacts/strategy-report
+            artifacts/value-discovery
+            artifacts/sector-heatmap
+            output/playwright/experience-audit
           if-no-files-found: warn

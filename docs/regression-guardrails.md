@@ -297,6 +297,11 @@ Saved investment baselines are device records: show them before network completi
 - Lazy detail PICK summary uses existing combined status and exact selection-date/code linkage. No record is not a buy/keep signal; unavailable records are not proof of no record. Technical/peer periods remain distinct from daily quotes.
 
 
+### Strategy audit screener interpretation/recovery (2026-10-03)
+- Unusual-move notices are factual review prompts, not proof of a corporate action, delisting or bad data. Preserve raw rows/values/ranks; zero RSI or an alphanumeric stock code alone is not a warning.
+- Screener technical clear must reset the actual technical form fields, preserving name/code query and market. Keep the cleared state across detail/back, expose clear for manual conditions and explain query/market intersection separately from technical exclusion.
+- Use the shared filterScreener contract for both matches and empty-result explanations; do not introduce a second ranking/filter implementation. See tests/analysisData.test.mjs and tests/strategy_report_qa.mjs.
+
 ## 2026-10-03 — 사용자 승인: 핵심 가치 발견 (0.11.0)
 
 새 동작으로 홈 배치를 변경한다. 이전 수출 진입 숨김·홈 18종목 동시 표시·홈 전체 섹터 보드는 이 결정으로 대체된다. 첫 화면에 수출, 조건별 종목 찾기, 최근 선정 진입을 노출한다. 최근 선정의 원문 이유와 날짜·점검 상태를 보여주고 날짜/코드가 일치하는 기록만 직접 연다. 전체 성과는 펼쳐서 확인한다. 관심목록은 시장보다 앞에 유지하되 빈 목록은 작게 표시한다.
