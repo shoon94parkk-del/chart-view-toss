@@ -626,7 +626,7 @@ async function loadChart({retainPrevious=false,force=false}={}){
    chartResizeObserver?.disconnect();chartResizeObserver=null;
    if(chartInstance){chartInstance.remove();chartInstance=null;}
    canvas.innerHTML='';
-   chartInstance=createChart(canvas,{localization:{locale:'ko-KR'},handleScale:{pinch:false},width:canvas.clientWidth||320,height:278,layout:{background:{type:ColorType.Solid,color:'#ffffff'},textColor:'#8b95a1',fontFamily:'Pretendard, -apple-system, sans-serif'},grid:{vertLines:{color:'#f2f4f6'},horzLines:{color:'#f2f4f6'}},rightPriceScale:{borderVisible:false},timeScale:{borderVisible:false,timeVisible:false},crosshair:{vertLine:{color:'#d1d6db'},horzLine:{color:'#d1d6db'}}});
+   chartInstance=createChart(canvas,{localization:{locale:'ko-KR',dateFormat:'yyyy.MM.dd'},handleScale:{pinch:false},width:canvas.clientWidth||320,height:278,layout:{background:{type:ColorType.Solid,color:'#ffffff'},textColor:'#8b95a1',fontFamily:'Pretendard, -apple-system, sans-serif'},grid:{vertLines:{color:'#f2f4f6'},horzLines:{color:'#f2f4f6'}},rightPriceScale:{borderVisible:false},timeScale:{borderVisible:false,timeVisible:false},crosshair:{vertLine:{color:'#d1d6db'},horzLine:{color:'#d1d6db'}}});
    const lineStyles=[LineStyle.Solid,LineStyle.Solid,LineStyle.Solid,LineStyle.Dashed,LineStyle.Dotted,LineStyle.LargeDashed];
    const seriesRows=stocks.map((s,i)=>{
      const line=chartInstance.addLineSeries({color:COLORS[i%COLORS.length],lineWidth:i<3?2:2,lineStyle:lineStyles[i%lineStyles.length],priceLineVisible:false,lastValueVisible:false});
@@ -955,7 +955,7 @@ async function refreshDetailChart({symbol,epoch,period,force=false}){
    chartResizeObserver?.disconnect();chartResizeObserver=null;
    if(chartInstance){chartInstance.remove();chartInstance=null;}
    canvas.innerHTML='';
-   chartInstance=createChart(canvas,{localization:{locale:'ko-KR'},handleScale:{pinch:false},width:canvas.clientWidth||320,height:220,layout:{background:{type:ColorType.Solid,color:'#ffffff'},textColor:'#8b95a1',fontFamily:'Pretendard, -apple-system, sans-serif'},grid:{vertLines:{color:'#f7f8fa'},horzLines:{color:'#f2f4f6'}},rightPriceScale:{borderVisible:false},timeScale:{borderVisible:false},crosshair:{vertLine:{color:'#d1d6db'},horzLine:{color:'#d1d6db'}}});
+   chartInstance=createChart(canvas,{localization:{locale:'ko-KR',dateFormat:'yyyy.MM.dd'},handleScale:{pinch:false},width:canvas.clientWidth||320,height:220,layout:{background:{type:ColorType.Solid,color:'#ffffff'},textColor:'#8b95a1',fontFamily:'Pretendard, -apple-system, sans-serif'},grid:{vertLines:{color:'#f7f8fa'},horzLines:{color:'#f2f4f6'}},rightPriceScale:{borderVisible:false},timeScale:{borderVisible:false},crosshair:{vertLine:{color:'#d1d6db'},horzLine:{color:'#d1d6db'}}});
    const line=chartInstance.addAreaSeries({lineColor:'#3182f6',topColor:'rgba(49,130,246,.18)',bottomColor:'rgba(49,130,246,.01)',lineWidth:2,priceLineVisible:false,lastValueVisible:false});
    line.setData(points);chartInstance.timeScale().fitContent();
    if(symbol.startsWith('^'))chartInstance.applyOptions({localization:{priceFormatter:value=>value.toLocaleString('ko-KR',{maximumFractionDigits:2})+' pt'}});

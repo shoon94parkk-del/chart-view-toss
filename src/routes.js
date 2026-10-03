@@ -2,7 +2,7 @@ import { SHOW_SPOTLIGHT } from './releaseScope.js';
 
 const routes = new Set(['home','chart','watch','valuation','macro','exports','discover','ideas','news','detail','info','more','heatmap','consensus','bands','tools','notfound']);
 if (SHOW_SPOTLIGHT) routes.add('picks');
-const aliases = {chartviewHome:'chart',search:'chart',compare:'chart',stock:'detail'};
+const aliases = {favorites:'watch',chartviewHome:'chart',search:'chart',compare:'chart',stock:'detail'};
 export function resolveRoute({pathname='/',hash=''}) {
   const raw = hash ? hash.replace(/^#/,'') : pathname.replace(/^\//,'');
   let parts;
