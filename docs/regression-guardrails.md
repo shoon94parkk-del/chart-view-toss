@@ -310,3 +310,9 @@ Saved investment baselines are device records: show them before network completi
 
 ### 운영 경고 카드 첫 화면 (0.11.1)
 거래량 급증 첫 결과 전체 노출은 일반 카드뿐 아니라 ±35% 원자료 경고가 붙은 카드로도 320×693부터 확인한다. 경고 전문을 숨기거나 원시 가격·변동·지표를 바꿔 공간을 확보하지 않는다.
+
+## Redesign review follow-up
+- A provided selection score of 0 stays 0; missing stays unavailable. Selection score provenance is separate from current technical signals. Never infer a calculation scale or a sell decision from 0.
+- favorites resolves to existing watch state; canonical sharing/storage stays unchanged.
+- Native crosshair dates on comparison/detail/band charts use yyyy.MM.dd, preserving series dates and returns.
+- Revalidate external reports against current code/API and KRX identity before correcting data or redoing implemented features.

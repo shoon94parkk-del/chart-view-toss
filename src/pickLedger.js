@@ -76,7 +76,15 @@ function evidenceMarkup(pick){
     </button>`).join('')}</div>`;
 }
 
+export function selectionScorePresentation(row){
+  const score=finite(row?.score);
+  return {label:score===null?'선정 점수 미제공':`선정 점수 ${Math.round(score)}점`,
+    source:row?.analysisSource||'선정 점수 출처 미제공',
+    note:score===null?'이 선정 기록에는 점수가 제공되지 않았어요.':(score===0?'0점은 원자료에 기록된 값이에요. ':'선정 당시 기록된 값이에요. ')+'계산 산식과 척도가 제공되지 않아 현재 기술점수·점검 상태와 직접 비교하지 않아요.'};
+}
+
 function rowMarkup(row,index,displayName){
+  const score=selectionScorePresentation(row);
   const pick=row?.monitor;
   const finalStatus=actionStatus(row);
   const meta=statusMeta(finalStatus);
@@ -95,7 +103,7 @@ function rowMarkup(row,index,displayName){
       <span class="pick-ledger-status-stack"><span class="pick-ledger-status ${meta.cls}">${meta.icon} ${meta.label}</span></span>
       <span class="pick-ledger-return ${tone(row?.returnPct)}">${pct(row?.returnPct)}</span>
       <span class="pick-ledger-prices"><small>추천 ${esc(price(row?.recommendedPrice,row))}</small><b>→</b><small>점검가 ${esc(price(row?.currentPrice,row))}</small></span>
-      <span class="pick-ledger-secondary"><em class="${tone(row?.bestReturnPct)}">최고 ${pct(row?.bestReturnPct)}</em><em>점수 ${finite(row?.score)===null?'—':Math.round(Number(row.score))+'점'}</em></span>
+      <span class="pick-ledger-secondary"><em class="${tone(row?.bestReturnPct)}">최고 ${pct(row?.bestReturnPct)}</em><em>${esc(score.label)}${finite(row?.score)===0?'<small class="pick-score-note">산식 미제공</small>':''}</em></span>
       <span class="pick-ledger-chevron">⌄</span>
     </button>
     <div class="pick-ledger-detail" data-pick-detail="${esc(id)}" hidden>
@@ -103,6 +111,7 @@ function rowMarkup(row,index,displayName){
         <section><strong>추천 당시 이유</strong><p>${esc(row?.reason||'추천 사유가 기록되지 않았어요.')}</p></section>
         <section><strong>투자논리 기준선</strong><p>${esc(thesis)}</p></section>
         <section><strong>최근 점검</strong><p>${esc(review)}</p></section>
+        <section data-pick-score-basis><strong>선정 점수 · 출처</strong><p>${esc(score.label)} · ${esc(score.source)}</p><p>${esc(score.note)}</p></section>
         <section><strong>단기 기술 신호</strong>${technicalMarkup(pick)}</section>
         <section><strong>검증 근거</strong>${evidenceMarkup(pick)}</section>
       </div>

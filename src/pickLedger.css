@@ -36,3 +36,5 @@
 .pick-ledger-tech-detail p{margin:0;color:#59636f;font-size:9px;line-height:1.45}
 .pick-ledger-tech-detail small{color:#8b95a1;font-size:8px;font-weight:700;line-height:1.4}
 @media(max-width:350px){.pick-ledger-tech-status{font-size:8px;padding:3px 5px}.pick-ledger-tech-metrics{grid-template-columns:1fr 1fr}}
+
+.pick-ledger-secondary{flex-wrap:wrap}.pick-score-note{display:inline-block;margin-left:4px;font-size:9px;color:#6b7684}

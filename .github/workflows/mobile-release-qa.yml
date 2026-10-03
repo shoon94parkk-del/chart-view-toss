@@ -60,6 +60,8 @@ jobs:
         env:
           QA_BASE_URL: http://127.0.0.1:4173
         run: node tests/experience_audit_qa.mjs
+      - name: Verify review fixes for aliases, score provenance and chart dates
+        run: node tests/redesign_review_qa.mjs
       - name: Verify deep links, large text and local performance diagnostics
         run: node tests/release_gates_qa.mjs
       - name: Upload mobile QA screenshots
@@ -72,5 +74,6 @@ jobs:
             artifacts/strategy-report
             artifacts/value-discovery
             artifacts/sector-heatmap
+            artifacts/redesign-review
             output/playwright/experience-audit
           if-no-files-found: warn
