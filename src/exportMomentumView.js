@@ -223,7 +223,7 @@ function summary(snapshot){
         <div>
           <span class="export-kicker">대한민국 수출 · ${esc(snapshot.basis)}</span>
           <h2>${esc(snapshot.periodLabel)}</h2>
-          <p>${apiBacked?'관세청 공공데이터를 서버에서 수집·캐시해 월별 흐름을 비교합니다.':'공식 발표 스냅샷으로 수출 흐름을 확인합니다.'}</p>
+          <p>${apiBacked?'관세청 월간 실적에서 품목과 국가별 흐름을 살펴보세요.':'공식 발표 스냅샷으로 수출 흐름을 확인합니다.'}</p>
         </div>
         <span class="export-status">${apiBacked?'관세청 API':'공식 스냅샷'}</span>
       </div>
@@ -284,7 +284,7 @@ function semiconductorReport(snapshot){
   const weakestUnit=unitRows.length?[...unitRows].sort((a,b)=>a.unitValueMoM-b.unitValueMoM)[0]:null;
   const label=row=>row.key==='flash'?'Flash memory':row.name;
   return `
-    <section class="export-section export-semi-report">
+    <section id="export-memory" tabindex="-1" class="export-section export-semi-report">
       <div class="export-section-head">
         <div><span>반도체 리포트</span><h3>메모리 세부 수출 한눈에 보기</h3></div>
         <small>${esc(monthLabel(snapshot.itemPeriod||snapshot.period))} · 관세청 HSK</small>
@@ -409,7 +409,7 @@ function quadrant(snapshot){
 function items(snapshot){
   if(!snapshot.items.length)return '';
   return `
-    <section class="export-section">
+    <section id="export-items" tabindex="-1" class="export-section">
       <div class="export-section-head"><div><span>품목별</span><h3>금액 · 물량 · 단가로 분해</h3></div><small>${esc(monthLabel(snapshot.itemPeriod||snapshot.period))} 기준 · 전년 동월 대비</small></div>
       <div class="export-item-driver-note">
         <strong>어떻게 읽나요?</strong>
@@ -620,7 +620,7 @@ function regions(snapshot){
   if(!snapshot.regions.length)return '';
   const max=Math.max(...snapshot.regions.map(row=>Math.max(0,row.exportYoY||0)),1);
   return `
-    <section class="export-section">
+    <section id="export-countries" tabindex="-1" class="export-section">
       <div class="export-section-head"><div><span>국가별</span><h3>어디로 수출이 늘었나</h3></div><small>${esc(monthLabel(snapshot.regionPeriod||snapshot.period))} 기준 · 전년 동월 대비</small></div>
       <div class="export-chart-card">
         <div class="export-horizontal-chart" role="img" aria-label="주요 수출 국가 전년 동월 대비 증가율 그래프">
@@ -668,7 +668,7 @@ export function history(snapshot){
   if(segment.length)lineSegments.push(segment.join(' '));
 
   return `
-    <section class="export-section">
+    <section id="export-history" tabindex="-1" class="export-section">
       <div class="export-section-head"><div><span>최근 추이</span><h3>월별 수출액과 증가율</h3></div><small>최근 12개월 · 이중 Y축</small></div>
       <div class="export-chart-card export-history-card export-combo-card">
         <div class="export-combo-legend">
@@ -748,9 +748,9 @@ function paint(host,snapshot,bindNav,onItemOpen){
   host.querySelectorAll('[data-export-item]').forEach(button=>button.addEventListener('click',()=>onItemOpen(button.dataset.exportItem)));
 }
 
-export function renderExportMomentumView({shell,bindNav}){
+export function renderExportMomentumView({shell,bindNav,focus=null}){
   const app=document.querySelector('#app');
-  app.innerHTML=shell(`<div id="export-momentum-root" class="export-momentum-view">${loading()}</div>`,'수출 모멘텀');
+  app.innerHTML=shell(`<nav class="export-topic-nav" aria-label="수출 분석 바로가기">${[['history','수출 흐름'],['items','품목별'],['countries','국가별'],['memory','메모리 보고서'],['provisional','잠정 레이더'],['breadth','상승 확산도'],['quadrant','물량·단위가치']].map(([key,label])=>`<button type="button" data-export-topic="${key}" disabled>${label}</button>`).join('')}</nav><div id="export-momentum-root" class="export-momentum-view">${loading()}</div>`,'수출 모멘텀');
   bindNav();
   const host=app.querySelector('#export-momentum-root');
   let seq=0;
@@ -830,11 +830,16 @@ export function renderExportMomentumView({shell,bindNav}){
 
   const load=async(force=false)=>{
     const token=++seq;
+    app.querySelectorAll('[data-export-topic]').forEach(button=>{button.disabled=true;});
     host.innerHTML=loading();
     try{
       const snapshot=await loadExportMomentumSnapshot({force});
       if(token!==seq||!host.isConnected)return;
       paint(host,snapshot,bindNav,openItemDetail);
+      const targetFor=key=>{const selector={provisional:'#export-provisional-radar',breadth:'.export-breadth-card',quadrant:'.export-quadrant-point'}[key]||'#export-'+key;return host.querySelector(selector)?.closest('section');};
+      const jump=key=>{const target=targetFor(key);if(target){target.tabIndex=-1;target.scrollIntoView({block:'start'});target.focus({preventScroll:true});}};
+      app.querySelectorAll('[data-export-topic]').forEach(button=>{button.disabled=!targetFor(button.dataset.exportTopic);button.onclick=()=>jump(button.dataset.exportTopic);});
+      if(focus){jump(focus);focus=null;}
       void loadProvisional(token,force);
     }catch(error){
       if(token!==seq||!host.isConnected)return;

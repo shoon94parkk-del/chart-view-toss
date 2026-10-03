@@ -1,3 +1,4 @@
+import { selectionKey } from './valueDiscovery.js';
 import { homeBootstrap, pickMonitor } from './api.js';
 import { loadingIndicator } from './loadingView.js';
 
@@ -88,7 +89,7 @@ function rowMarkup(row,index,displayName){
     ||'추천 당시 투자논리 기록이 없어요.';
   const review=pick?.monitor?.reason||'최신 점검 대기';
   const reviewed=pick?.monitor?.lastReviewedTradeDate||String(pick?.monitor?.lastReviewedAt||'').slice(0,10)||'—';
-  return `<article class="pick-ledger-item ${meta.cls}">
+  return `<article class="pick-ledger-item ${meta.cls}" data-pick-key="${esc(selectionKey(row))}">
     <button type="button" class="pick-ledger-row" data-pick-expand="${esc(id)}" aria-expanded="false">
       <span class="pick-ledger-stock"><strong>${esc(name)}</strong><small>${esc(symbol||row?.code||'')} · ${esc(row?.recommendedDate||'추천일 미제공')}</small></span>
       <span class="pick-ledger-status-stack"><span class="pick-ledger-status ${meta.cls}">${meta.icon} ${meta.label}</span></span>
@@ -111,14 +112,14 @@ function rowMarkup(row,index,displayName){
   </article>`;
 }
 
-export async function renderPickLedger({shell,bindNav,displayName}){
+export async function renderPickLedger({shell,bindNav,displayName,focusKey=null}){
   document.querySelector('#app').innerHTML=shell(`
     <section class="task-head pick-ledger-head"><div><span class="page-kicker">CHARTVIEW</span><h2>최근 주목받는 종목</h2><p>선정 종목의 기록과 이후 성과·점검 내용을 확인해요.</p></div></section>
-    <section class="pick-ledger-summary" id="pick-ledger-summary">${loadingIndicator('선정 기록을 불러오고 있어요')}<div class="skeleton quote"></div></section>
+    <details class="pick-ledger-overview"><summary>전체 성과·상태 요약 보기</summary><section class="pick-ledger-summary" id="pick-ledger-summary">${loadingIndicator('선정 기록을 불러오고 있어요')}<div class="skeleton quote"></div></section>
     <section class="pick-ledger-status-strip" id="pick-ledger-status-strip">${loadingIndicator('점검 상태를 확인하고 있어요')}<div class="skeleton quote"></div></section>
-    <section class="pick-ledger-tech-alert" id="pick-ledger-tech-alert" hidden></section>
+    </details><section class="pick-ledger-tech-alert" id="pick-ledger-tech-alert" hidden></section>
     <p class="pick-ledger-policy" id="pick-ledger-policy">매도검토는 자동 매도 확정이 아니며 가격·차트만으로 판정하지 않아요. 단기 기술 경고는 펀더멘털 매도검토와 별도이며 기술 경고만으로 자동 매도 확정하지 않아요.</p>
-    <section class="pick-ledger-toolbar" id="pick-ledger-toolbar" hidden>
+    <details class="pick-ledger-search-options"><summary>기록 검색·필터</summary><section class="pick-ledger-toolbar" id="pick-ledger-toolbar" hidden>
       <label class="pick-ledger-search"><span>종목 검색</span><input id="pick-ledger-search" type="search" placeholder="종목명 · 코드" autocomplete="off"></label>
       <div class="pick-ledger-filters">
         <select id="pick-ledger-period" aria-label="기간 필터"><option value="all">기간 전체</option><option value="7">최근 7일</option><option value="30">최근 30일</option></select>
@@ -127,7 +128,7 @@ export async function renderPickLedger({shell,bindNav,displayName}){
         <select id="pick-ledger-sort" aria-label="정렬"><option value="latest">최신 추천순</option><option value="technical">단기 경고 우선</option><option value="status">점검 우선순</option><option value="return">수익률 높은순</option><option value="best">최고수익률 높은순</option><option value="score">점수 높은순</option></select>
       </div>
     </section>
-    <p class="pick-ledger-count" id="pick-ledger-count"></p>
+    </details><p class="pick-ledger-focus-note" role="status"></p><p class="pick-ledger-count" id="pick-ledger-count"></p>
     <section class="pick-ledger-list" id="pick-ledger-list">${loadingIndicator('종목 목록을 불러오고 있어요')}<div class="skeleton watch"></div><div class="skeleton watch"></div></section>
   `,'최근 주목받는 종목');
   bindNav();
@@ -144,6 +145,8 @@ export async function renderPickLedger({shell,bindNav,displayName}){
       homeBootstrap(),
       pickMonitor().then((value)=>({ok:true,value})).catch(()=>({ok:false,value:null})),
     ]);
+    if(!list.isConnected)return;
+    let focusApplied=false;
     const picks=Array.isArray(monitorResult.value?.picks)?monitorResult.value.picks:[];
     const rows=(Array.isArray(payload?.recommendations)?payload.recommendations:[]).map((row)=>({...row,monitor:monitorFor(row,picks)}));
     const evaluated=rows.filter((row)=>finite(row?.returnPct)!==null);
@@ -222,6 +225,14 @@ export async function renderPickLedger({shell,bindNav,displayName}){
         button.setAttribute('aria-expanded',String(open));
       }));
       bindNav();
+      if(focusKey&&!focusApplied){
+        focusApplied=true;
+        const article=[...list.querySelectorAll('[data-pick-key]')].find(el=>el.dataset.pickKey===focusKey);
+        if(article){
+          const button=article.querySelector('[data-pick-expand]');button.click();
+          requestAnimationFrame(()=>{if(article.isConnected){article.scrollIntoView({block:'start'});button.focus({preventScroll:true});}});
+        }else document.querySelector('.pick-ledger-focus-note').textContent='요청한 날짜의 선정 기록을 찾지 못했어요. 다른 기록을 대신 열지 않았어요.';
+      }
     }
     search.addEventListener('input',paint);
     period.addEventListener('change',paint);
@@ -230,6 +241,7 @@ export async function renderPickLedger({shell,bindNav,displayName}){
     sort.addEventListener('change',paint);
     paint();
   }catch(error){
+    if(!list.isConnected)return;
     summary.innerHTML='<div class="empty compact"><strong>PICK 성과를 불러오지 못했어요.</strong><span>잠시 후 다시 확인해주세요.</span></div>';
     statusStrip.innerHTML='';
     techAlert.hidden=true;

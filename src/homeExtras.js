@@ -1,3 +1,4 @@
+import { recentSelections, selectionCardMarkup } from './valueDiscovery.js';
 import { homeBootstrap, homeSnapshot, homeHeatmap } from './api.js';
 import { HOME_LOGOS } from './homeLogos.js';
 import { HOME_STOCK_META, renderSharedHeatmap } from './heatmapView.js';
@@ -6,7 +7,6 @@ import { mergeLiveRows } from './liveHomeSync.js';
 import { rememberLiveQuotes, getLiveQuote, mergeRowsWithLive } from './liveQuoteStore.js';
 import { SHOW_SPOTLIGHT } from './releaseScope.js';
 import { loadingIndicator } from './loadingView.js';
-import { attachLazySectors } from './sectorHeatmapLoader.js';
 
 const STOCK_META = HOME_STOCK_META;
 
@@ -19,6 +19,7 @@ const esc = (value) => String(value == null ? '' : value).replace(/[&<>"']/g, (c
 }[char]));
 
 const finite = (value) => {
+  if (value == null || String(value).trim() === '') return null;
   const number = Number(value);
   return Number.isFinite(number) ? number : null;
 };
@@ -177,17 +178,35 @@ function createSections(marketSection) {
 
   if (picks) {
     // Surface Chart View's differentiator before generic market cards.
-    marketSection.insertAdjacentElement('beforebegin', picks);
+    document.querySelector('#home-discovery-feed').append(picks);
     marketSection.insertAdjacentElement('afterend', heatmap);
   } else {
     marketSection.insertAdjacentElement('afterend', heatmap);
   }
-  const sectors=document.createElement('section');
-  sectors.className='section home-extra-section sector-heatmap-section home-primary';
-  sectors.innerHTML='<div class="section-head"><h2>섹터별 등락 히트맵</h2></div><p class="home-extra-caption">한국장·미국장 업종의 흐름과 구성 종목을 확인해요.</p><div data-home-sectors></div>';
-  heatmap.insertAdjacentElement('afterend',sectors);
-  attachLazySectors(sectors.querySelector('[data-home-sectors]'),symbol=>navigate('detail',symbol));
-  return { picks, heatmap, sectors };
+  const discovery=document.querySelector('#home-discovery-feed');
+  const quick=document.createElement('section');
+  quick.className='section home-screening-preview';
+  quick.innerHTML='<div class="section-head"><h2>지금 조건으로 찾아보기</h2></div><div class="home-preset-links"><button type="button" data-feature-route="discover" data-feature-target="volume-surge">거래량 2배 이상</button><button type="button" data-feature-route="discover" data-feature-target="uptrend">상승추세</button><button type="button" data-feature-route="discover" data-feature-target="rsi-oversold">RSI 과매도</button></div><small>장마감 지표로 조건에 맞는 실제 종목을 확인해요.</small>';
+  discovery.append(quick);
+  const exportPreview=document.createElement('section');exportPreview.className='home-export-preview';
+  exportPreview.innerHTML='<div class="section-head"><h2>수출에서 산업 흐름 찾기</h2><button type="button" class="text-button" data-feature-route="exports">분석 보기</button></div><p data-export-preview-summary>총수출과 품목·국가별 흐름을 확인해보세요.</p><div class="home-preset-links"><button type="button" data-feature-route="exports" data-feature-target="items">품목별 분석</button><button type="button" data-feature-route="exports" data-feature-target="countries">국가별 분석</button><button type="button" data-feature-route="exports" data-feature-target="memory">메모리 보고서</button><button type="button" data-export-preview-retry hidden>요약 다시 시도</button></div>';
+  discovery.append(exportPreview);
+  const loadPreview=()=>void import('./homeExportPreview.js').then(module=>{if(exportPreview.isConnected)void module.mountHomeExportPreview(exportPreview);}).catch(()=>{if(exportPreview.isConnected)exportPreview.querySelector('[data-export-preview-summary]').textContent='분석 보기에서 수출 흐름을 확인해주세요.';});
+  const previewObserver=new IntersectionObserver(entries=>{if(entries.some(entry=>entry.isIntersecting)){previewObserver.disconnect();loadPreview();}else if(!exportPreview.isConnected)previewObserver.disconnect();},{rootMargin:'120px'});
+  previewObserver.observe(exportPreview);
+  heatmap.querySelector('.home-extra-caption').textContent='한 시장의 대표 6종목 미리보기예요. 전체 화면에서 더 많은 종목과 섹터를 탐색해요.';
+  const marketTabs=document.createElement('div');marketTabs.className='market-tabs home-preview-markets';
+  marketTabs.innerHTML='<button type="button" data-preview-market="KR" aria-pressed="true">한국</button><button type="button" data-preview-market="US" aria-pressed="false">미국</button>';
+  heatmap.querySelector('#home-daily-heatmap').before(marketTabs);
+  heatmap.dataset.previewMarket='KR';
+  marketTabs.addEventListener('click',event=>{
+    const button=event.target.closest('[data-preview-market]');if(!button)return;
+    heatmap.dataset.previewMarket=button.dataset.previewMarket;
+    marketTabs.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));
+    const target=heatmap.querySelector('#home-daily-heatmap');if(target._payload)paintHeatmap(target,target._payload,{cached:target._cached});
+  });
+  return { picks, heatmap };
+
 }
 
 function paintPicks(host, payload) {
@@ -233,22 +252,30 @@ function paintPicks(host, payload) {
 
   host.innerHTML =
     '<div class="home-pick-meta">' + esc(dateLabel) + '</div>' +
-    rows.map((row, index) => {
-      const symbol = String(row && (row.symbol || row.ticker) || '').toUpperCase();
-      const name = row && row.name || (STOCK_META[symbol] && STOCK_META[symbol].name) || symbol || '종목';
-      const attrs = symbol ? ' data-home-extra-stock="' + esc(symbol) + '"' : ' disabled';
-      return '<button type="button" class="home-pick-row"' + attrs + '>' +
-        '<span class="home-pick-rank">' + (index + 1) + '</span>' +
-        '<span class="home-pick-copy"><strong>' + esc(name) + '</strong><small>' + esc(symbol || '종목코드 미제공') + '</small></span>' +
-        '<span class="home-pick-arrow" aria-hidden="true">›</span></button>';
-    }).join('') +
-    performance;
+    recentSelections(payload).map(row=>selectionCardMarkup(row)).join('') +
+    '<details class="home-performance-details"><summary>역대 선정 성과 보기</summary>'+performance+'</details>';
+  window.__chartviewBindNav?.();
+  const paintToken=host._pickPaintToken=(host._pickPaintToken||0)+1;
+  const refreshStatuses=async()=>{
+    try{
+      const [{pickMonitor},{monitorFor,actionStatus,statusMeta}]=await Promise.all([import('./api.js'),import('./pickLedger.js')]);
+      const monitor=await pickMonitor();if(!host.isConnected||host._pickPaintToken!==paintToken)return;
+      for(const row of recentSelections(payload)){
+        const pick=monitorFor(row,monitor.picks||[]);
+        const status=pick?statusMeta(actionStatus({monitor:pick})).label:'점검 기록 미제공';
+        const node=[...host.querySelectorAll('[data-selection-status]')].find(el=>el.dataset.selectionStatus===row.key);
+        if(node)node.textContent=status;
+      }
+    }catch{if(host.isConnected&&host._pickPaintToken===paintToken)host.querySelectorAll('[data-selection-status]').forEach(el=>el.textContent='점검 상태 조회 실패');}
+  };
+  void refreshStatuses();
 }
 
 function paintHeatmap(host, payload, {cached = false} = {}) {
   if (!host || !host.isConnected) return;
   rememberLiveQuotes(payload?.results || [], { priority: 20 });
-  host.innerHTML = renderSharedHeatmap({ ...payload, results: mergeRowsWithLive(payload?.results || []) }, {cached});
+  host._payload=payload;host._cached=cached;
+  host.innerHTML = renderSharedHeatmap({ ...payload, results: mergeRowsWithLive(payload?.results || []) }, {cached,market:host.closest('[data-preview-market]')?.dataset.previewMarket||host.closest('.home-heatmap-section')?.dataset.previewMarket||'KR',limit:6});
   host.querySelectorAll('[data-stock-detail]').forEach((cell) => {
     const openDetail = () => navigate('detail', cell.dataset.stockDetail, cell.dataset.stockName || '');
     cell.addEventListener('click', openDetail);
@@ -269,6 +296,7 @@ async function mount() {
 
   const token = ++generation;
   const sections = createSections(marketSection);
+  window.__chartviewBindNav?.();
 
   if (SHOW_SPOTLIGHT) {
     const cachedPicks = readHomeFast('bootstrap', 36 * 60 * 60 * 1000);

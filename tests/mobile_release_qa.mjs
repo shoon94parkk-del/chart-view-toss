@@ -367,7 +367,7 @@ try{
       if(tab==='home'){
         await page.waitForSelector('#market-card .quote-card');
         const homePriority=await page.evaluate(()=>({watch:document.querySelector('.watch-section.home-primary')?.getBoundingClientRect().top,market:document.querySelector('.market-section.home-primary')?.getBoundingClientRect().top}));
-        if(!(homePriority.watch<homePriority.market&&homePriority.watch<820)) throw new Error(`${width}px Home must surface the watchlist before market cards: ${JSON.stringify(homePriority)}`);
+        if(!(homePriority.watch<homePriority.market)) throw new Error(`${width}px Home must keep the watchlist before market cards: ${JSON.stringify(homePriority)}`);
         await page.waitForSelector('#home-top-picks-section');
         const pickMarketOrder=await page.evaluate(()=>({pick:document.querySelector('#home-top-picks-section')?.getBoundingClientRect().top,market:document.querySelector('.market-section.home-primary')?.getBoundingClientRect().top}));
         if(!(pickMarketOrder.pick<pickMarketOrder.market)) throw new Error(`${width}px tracked picks must appear before generic market cards: ${JSON.stringify(pickMarketOrder)}`);
@@ -392,10 +392,10 @@ try{
         if(await page.locator('#home-top-picks .home-pick-row').count()!==3) throw new Error(`${width}px spotlight selection missing`);
         if(!(await page.locator('#home-top-picks-section').innerText()).includes('최근 주목받는 종목')) throw new Error(`${width}px spotlight title missing`);
         await page.waitForSelector('#home-daily-heatmap .home-heatmap-cell');
-        if(await page.locator('#home-daily-heatmap .home-heatmap-cell').count()!==18) throw new Error(`${width}px home heatmap representative set mismatch`);
+        if(await page.locator('#home-daily-heatmap .home-heatmap-cell:visible').count()!==6) throw new Error(`${width}px home heatmap representative set mismatch`);
         if(await page.locator('#home-daily-heatmap .home-heatmap-logo').count()<3) throw new Error(`${width}px heatmap logos missing`);
         if(await page.locator('#home-daily-heatmap img').count()!==0) throw new Error(`${width}px heatmap must not fetch external image assets`);
-        const geometry=await page.locator('#home-daily-heatmap .home-heatmap-treemap').evaluateAll(boards=>boards.map(board=>{
+        const geometry=await page.locator('#home-daily-heatmap .home-heatmap-treemap:visible').evaluateAll(boards=>boards.map(board=>{
           const cells=[...board.querySelectorAll('.home-heatmap-cell')];
           const box=board.getBoundingClientRect();
           const rects=cells.map(cell=>cell.getBoundingClientRect());
@@ -410,8 +410,8 @@ try{
             }).length,
           };
         }));
-        if(geometry.some(board=>board.count<8||board.topBands<2||board.bottomGap>2||board.rightGap>2||board.transparent>0)) throw new Error(`${width}px heatmap geometry regression: ${JSON.stringify(geometry)}`);
-        const clipped=await page.locator('#home-daily-heatmap .home-heatmap-cell').evaluateAll(cells=>cells.filter(cell=>{
+        if(geometry.some(board=>board.count!==6||board.topBands<2||board.bottomGap>2||board.rightGap>2||board.transparent>0)) throw new Error(`${width}px heatmap geometry regression: ${JSON.stringify(geometry)}`);
+        const clipped=await page.locator('#home-daily-heatmap .home-heatmap-cell:visible').evaluateAll(cells=>cells.filter(cell=>{
           const name=cell.querySelector('.home-heatmap-name strong,.home-heatmap-ticker');
           const change=cell.querySelector('.home-heatmap-change');
           return [name,change].filter(Boolean).some(node=>{
@@ -422,7 +422,7 @@ try{
         }).map(cell=>cell.getAttribute('aria-label')));
         if(clipped.length) throw new Error(`${width}px heatmap text clipped: ${clipped.join(", ")}`);
         if(width<=360){
-          const visibleSmallChanges=await page.locator('#home-daily-heatmap .home-heatmap-cell.is-small .home-heatmap-change').evaluateAll(nodes=>nodes.filter(node=>{
+          const visibleSmallChanges=await page.locator('#home-daily-heatmap .home-heatmap-cell.is-small:visible .home-heatmap-change').evaluateAll(nodes=>nodes.filter(node=>{
             const style=getComputedStyle(node);
             return style.display!=='none'&&style.visibility!=='hidden';
           }).length);
@@ -431,10 +431,12 @@ try{
         if(width===390){
           await page.waitForFunction(()=>{
             const text=document.querySelector('#home-daily-heatmap')?.innerText||'';
-            return text.includes('+4.44%')&&text.includes('+2.22%');
+            return text.includes('+4.44%');
           },{timeout:6_500});
           const liveText=await page.locator('#home-daily-heatmap').innerText();
-          if(!liveText.includes('+4.44%')||!liveText.includes('+2.22%')) throw new Error(`Home live shared-cache update missing: ${liveText}`);
+          await page.locator('[data-preview-market=US]').click();
+          const usLiveText=await page.locator('#home-daily-heatmap').innerText();
+          if(!liveText.includes('+4.44%')||!usLiveText.includes('+2.22%')) throw new Error(`Home live shared-cache update missing: ${liveText}`);
         }
       }
       if(tab==='chart'&&width===390){
@@ -594,11 +596,13 @@ try{
     if(tab==='heatmap'){
       await page.waitForSelector('#analysis-body .home-heatmap-cell');
       if(await page.locator('#analysis-body .home-heatmap-cell').count()!==60) throw new Error('full heatmap must show expanded 60-stock set');
-      const fullText=await page.locator('#analysis-body').innerText();
+      const krFullText=await page.locator('#analysis-body').innerText();
+      await page.locator('[data-full-market=US]').click();
+      const fullText=krFullText+' '+await page.locator('#analysis-body').innerText();
       if(!fullText.includes('한국 주요 20종목')||!fullText.includes('미국 시총 상위 40종목')) throw new Error('full heatmap market counts missing');
       if(fullText.includes('+99.99%')||fullText.includes('-88.88%')) throw new Error('full heatmap leaked stale server values instead of Home parity values');
       if(!fullText.includes('엔비디아')||!fullText.includes('+0.22%')||!fullText.includes('삼성전자')||!fullText.includes('+3.62%')) throw new Error('full heatmap did not align overlapping symbols to Home snapshot');
-      const fullGeometry=await page.locator('#analysis-body .home-heatmap-treemap').evaluateAll(boards=>boards.map(board=>{
+      const fullGeometry=await page.locator('#analysis-body .home-heatmap-treemap:visible').evaluateAll(boards=>boards.map(board=>{
         const cells=[...board.querySelectorAll('.home-heatmap-cell')];
         const box=board.getBoundingClientRect();
         const rects=cells.map(cell=>cell.getBoundingClientRect());
@@ -609,7 +613,7 @@ try{
         };
       }));
       if(fullGeometry.some(board=>board.topBands<2||board.bottomGap>2||board.rightGap>2)) throw new Error(`full heatmap geometry regression: ${JSON.stringify(fullGeometry)}`);
-      const denseLabels=await page.locator('#analysis-body .home-heatmap-cell').evaluateAll(cells=>{
+      const denseLabels=await page.locator('#analysis-body .home-heatmap-cell:visible').evaluateAll(cells=>{
         const tiny=cells.filter(cell=>cell.clientWidth<52||cell.clientHeight<34);
         const oversized=tiny.filter(cell=>{
           const label=cell.querySelector('.home-heatmap-ticker,.home-heatmap-name strong');
@@ -623,7 +627,7 @@ try{
       });
       if(denseLabels.tiny&&!denseLabels.reduced) throw new Error(`full heatmap tiny labels were not reduced: ${JSON.stringify(denseLabels)}`);
       if(denseLabels.oversized.length) throw new Error(`full heatmap tiny labels oversized: ${JSON.stringify(denseLabels.oversized)}`);
-      const krVisible=await page.locator('#analysis-body .market-kr').innerText();
+      const krVisible=krFullText;
       if(/\b\d{6}\b/.test(krVisible)) throw new Error(`Korean heatmap must show company names instead of numeric ticker labels: ${krVisible}`);
       const usReturns=await page.locator('#analysis-body .market-us .home-heatmap-change').count();
       if(usReturns<24) throw new Error(`US heatmap should keep return percentages visible on most readable cells; found ${usReturns}`);

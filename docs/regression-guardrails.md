@@ -295,3 +295,10 @@ Saved investment baselines are device records: show them before network completi
 - Empty macro responses cannot display 0 indicators as a successful assessment; explicit retry bypasses the cached empty200. DFF/FEDTARGET percentages retain units.
 - Detail marketCap/metric metadata must use the corresponding field provenance, not the latest quote timestamp. Missing field time remains explicitly missing.
 - Lazy detail PICK summary uses existing combined status and exact selection-date/code linkage. No record is not a buy/keep signal; unavailable records are not proof of no record. Technical/peer periods remain distinct from daily quotes.
+
+
+## 2026-10-03 — 사용자 승인: 핵심 가치 발견 (0.11.0)
+
+새 동작으로 홈 배치를 변경한다. 이전 수출 진입 숨김·홈 18종목 동시 표시·홈 전체 섹터 보드는 이 결정으로 대체된다. 첫 화면에 수출, 조건별 종목 찾기, 최근 선정 진입을 노출한다. 최근 선정의 원문 이유와 날짜·점검 상태를 보여주고 날짜/코드가 일치하는 기록만 직접 연다. 전체 성과는 펼쳐서 확인한다. 관심목록은 시장보다 앞에 유지하되 빈 목록은 작게 표시한다.
+
+홈 히트맵은 선택 시장 대표 6종목 미리보기다. 전체 화면은 한국/미국·종목/섹터 탐색을 제공한다. 공유 렌더러, 전체 수집 범위, canonical 최신 시세·출처·거래일, 캐시 TTL을 유지한다. 홈 수출 요약은 화면 접근 시 월간 스냅샷만 지연 요청하며 품목 상세/국가 세부 API는 진입 전 호출하지 않는다. 스크리너는 실제 프리셋과 결과를 먼저 보여주고 수동 조건은 접는다. 상세 왕복 시 조건·페이지 상태를 유지한다. 수출 바로가기는 기존 분석 섹션으로 이동하며 월별 기준·단위·누락값 계약을 유지한다. 브라우저 검증으로 10초/30초 실사용 목표 달성을 주장하지 않는다.

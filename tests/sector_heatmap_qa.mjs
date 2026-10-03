@@ -22,21 +22,23 @@ try{
   await page.route('https://chart-view-pkv8.onrender.com/**',mock);await page.route('**/backend/**',mock);
   await page.goto(base+'/#home');await page.locator('#market-card .quote-card').first().waitFor();await page.waitForTimeout(500);
   assert.equal(calls,0,'sector API is not requested on initial Home');
-  const host=page.locator('[data-home-sectors]');await host.scrollIntoViewIfNeeded();await host.locator('.sector-tile').first().waitFor();
+  assert.equal(await page.locator('[data-home-sectors]').count(),0,'Home offers a stock preview, full sector exploration is on the full screen');
+  await page.goto(base+'/#heatmap');await page.locator('[data-heatmap-view=sectors]').click();
+  const host=page.locator('[data-full-sectors]');await host.scrollIntoViewIfNeeded();await host.locator('.sector-tile').first().waitFor();
   assert.match(await host.innerText(),/\+1\.00%/,'KR cap-weighted mean');
   await host.locator('[data-sector-market="US"]').click();assert.equal(await host.locator('.sector-tile').count(),11);
   await host.locator('[data-sector-name="기술"]').click();
   if(width===390){await page.waitForTimeout(3300);assert.equal(await host.locator('.sector-tile').count(),11,'empty refresh cannot blank cached tiles');assert.equal(await host.locator('.sector-members').count(),1,'empty refresh retains expanded members');}
-  await page.waitForFunction(()=>document.querySelector('[data-home-sectors] .sector-load-status')?.textContent.trim()==='',{},{timeout:10000});
+  await page.waitForFunction(()=>document.querySelector('[data-full-sectors] .sector-load-status')?.textContent.trim()==='',{},{timeout:10000});
   assert.equal(await host.locator('[data-sector-market="US"]').getAttribute('aria-pressed'),'true');assert.equal(await host.locator('.sector-members').count(),1,'poll retains expanded sector');
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
   await host.screenshot({path:`artifacts/sector-heatmap/${width}-US.png`});
   await host.locator('[data-sector-stock="NVDA"]').click();await page.locator('.quote-main').waitFor();await page.waitForTimeout(300);
   assert.equal(screenCalls,0,'US detail does not download KR universe');
-  const before=calls;await page.goto(base+'/#heatmap');await page.locator('[data-full-sectors] .sector-tile').first().waitFor();
+  const before=calls;await page.goto(base+'/#heatmap');await page.locator('[data-heatmap-view=sectors]').click();await page.locator('[data-full-sectors] .sector-tile').first().waitFor();
   assert.ok(calls<=before+1,'stock and sector maps share one payload or reuse fresh client cache');
   await page.locator('[data-full-sectors]').scrollIntoViewIfNeeded();await page.locator('[data-full-sectors]').screenshot({path:`artifacts/sector-heatmap/${width}-KR.png`});
-  if(width===320){fail=true;await page.goto(base+'/#home');await page.reload();await page.locator('[data-home-sectors]').scrollIntoViewIfNeeded();await page.locator('[data-sector-retry]').waitFor({timeout:10000});assert.ok(await page.locator('[data-home-sectors] .sector-tile').count()>0,'retain cached sectors on error');fail=false;await page.locator('[data-sector-retry]').click();await page.waitForFunction(()=>!document.querySelector('[data-sector-retry]'));}
+  if(width===320){fail=true;await page.goto(base+'/#home');await page.goto(base+'/#heatmap');await page.reload();await page.locator('[data-heatmap-view=sectors]').click();await page.locator('[data-full-sectors]').scrollIntoViewIfNeeded();await page.locator('[data-sector-retry]').waitFor({timeout:10000});assert.ok(await page.locator('[data-full-sectors] .sector-tile').count()>0,'retain cached sectors on error');fail=false;await page.locator('[data-sector-retry]').click();await page.waitForFunction(()=>!document.querySelector('[data-sector-retry]'));}
   assert.deepEqual(errors,[]);await ctx.close();console.log(`${width}px sector loading, weighting, selection, cache, navigation and overflow passed`);
  }
 }finally{await browser.close();}
