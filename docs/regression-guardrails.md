@@ -295,3 +295,9 @@ Saved investment baselines are device records: show them before network completi
 - Empty macro responses cannot display 0 indicators as a successful assessment; explicit retry bypasses the cached empty200. DFF/FEDTARGET percentages retain units.
 - Detail marketCap/metric metadata must use the corresponding field provenance, not the latest quote timestamp. Missing field time remains explicitly missing.
 - Lazy detail PICK summary uses existing combined status and exact selection-date/code linkage. No record is not a buy/keep signal; unavailable records are not proof of no record. Technical/peer periods remain distinct from daily quotes.
+
+
+### Strategy audit screener interpretation/recovery (2026-10-03)
+- Unusual-move notices are factual review prompts, not proof of a corporate action, delisting or bad data. Preserve raw rows/values/ranks; zero RSI or an alphanumeric stock code alone is not a warning.
+- Screener technical clear must reset the actual technical form fields, preserving name/code query and market. Keep the cleared state across detail/back, expose clear for manual conditions and explain query/market intersection separately from technical exclusion.
+- Use the shared filterScreener contract for both matches and empty-result explanations; do not introduce a second ranking/filter implementation. See tests/analysisData.test.mjs and tests/strategy_report_qa.mjs.

@@ -14,6 +14,20 @@ export const SCREENER_PRESETS=[
 
 export function screenerPreset(id){return SCREENER_PRESETS.find(item=>item.id===id)||null;}
 
+// A review threshold, not a diagnosis of a corporate action or a provider error.
+export function screenerDataWarnings(row){
+ const change=finiteNumber(row?.change1d);
+ return change!==null&&Math.abs(change)>=35?['일간 변동 ±35% 이상 · 가격 기준과 기업 공시 등 원자료를 확인해주세요.']:[];
+}
+
+export function screenerEmptyState(rows,filters={}){
+ const query=String(filters.query||'').trim();
+ const matches=filterScreener(rows,{query,market:filters.market});
+ if(!matches.length)return {message:'검색어와 시장에 맞는 종목이 없어요. 종목명·코드와 시장을 확인해주세요.',canClearTechnical:false};
+ if(query)return {message:`검색어·시장에 맞는 종목 ${matches.length.toLocaleString('ko-KR')}개가 기술 조건에서 제외됐어요. 검색어·시장·기술 조건은 함께 적용돼요.`,canClearTechnical:true};
+ return {message:'조건에 맞는 종목이 없어요. 기술 조건을 해제하거나 범위를 넓혀보세요.',canClearTechnical:true};
+}
+
 function signalMatch(row,signal){
  if(!signal)return true;
  if(signal==='macdBullish'){

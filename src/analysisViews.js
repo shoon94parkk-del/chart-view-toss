@@ -1,5 +1,5 @@
 import { screenerData, fullHeatmap, homeSnapshot, consensusData, valuationBandData } from './api.js';
-import { SCREENER_PRESETS, screenerPreset, screenerMatchReasons, filterScreener, finiteNumber, estimateRevision } from './analysisData.js';
+import { SCREENER_PRESETS, screenerPreset, screenerMatchReasons, screenerDataWarnings, screenerEmptyState, filterScreener, finiteNumber, estimateRevision } from './analysisData.js';
 import { formatKst,formatFinancialAmount,formatDataSource } from './dataPresentation.js';
 import { renderSharedHeatmap } from './heatmapView.js';
 import { loadChartRuntime } from './chartRuntime.js';
@@ -44,7 +44,12 @@ export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareS
     const technicalNames=['rsiMin','rsiMax','volumeMin','ret20Min','valueMin','trend','signal','sort'];
     function syncPresetUi(){
      presetButtons.forEach(button=>{const on=button.dataset.screenerPreset===activePreset;button.classList.toggle('active',on);button.setAttribute('aria-pressed',String(on));});
-     if(clearPreset)clearPreset.hidden=!activePreset;
+     if(clearPreset){clearPreset.textContent='기술 조건 해제';clearPreset.hidden=!technicalNames.some(name=>name!=='sort'&&form.elements.namedItem(name)?.value);}
+    }
+    function clearTechnical(){
+     activePreset='';
+     for(const name of technicalNames){const field=form.elements.namedItem(name);if(field)field.value=name==='sort'?'name':'';}
+     count=30;syncPresetUi();paint();
     }
     function setPreset(id){
      const preset=screenerPreset(id);if(!preset)return;
@@ -61,15 +66,17 @@ export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareS
      const filtered=filterScreener(rows,filters);
      const active=screenerPreset(activePreset);
      const presetLine=active?`<p class="screener-active-preset"><span>${esc(active.icon)} ${esc(active.label)}</span><small>${esc(active.description)}</small></p>`:'';
-     host.innerHTML=`${presetLine}<p class="analysis-meta">기준 거래일 ${esc(data.tradeDate||data.updated||'미제공')} · 수집 ${rows.length.toLocaleString()}개 · 조건 일치 <strong>${filtered.length.toLocaleString()}개</strong></p><p class="muted-copy">시세는 장마감 수집값이에요. 지표는 종목별 동일 기준일의 일봉으로 계산해요.</p><div class="analysis-list">${filtered.slice(0,count).map(row=>{const reasons=screenerMatchReasons(row,filters);return `<button class="analysis-stock" data-stock-detail="${esc(row.symbol)}"><span><strong>${esc(row.name||row.symbol)}</strong><small>${esc(row.symbol)} · ${esc(row.market)} · ${esc(row.date||'기준일 미제공')}</small></span><span><b>기준 종가 ${number(row.price,'원')}</b><em class="${Number(row.change1d)>0?'up':'down'}">${pct(row.change1d)}</em></span><span class="analysis-row-metrics">RSI ${number(row.rsi14)} · 거래량 ${number(row.volumeRatio,'배')} · 20일 ${pct(row.ret20)}</span>${reasons.length?`<span class="analysis-match-reasons">${reasons.map(reason=>`<i>${esc(reason)}</i>`).join('')}</span>`:''}</button>`}).join('')||empty('조건에 맞는 종목이 없어요.')}</div>${count<filtered.length?'<button class="retry" id="screener-more">30개 더 보기</button>':''}`;
+     const noResults=!filtered.length?screenerEmptyState(rows,filters):null;
+     host.innerHTML=`${presetLine}<p class="analysis-meta">기준 거래일 ${esc(data.tradeDate||data.updated||'미제공')} · 수집 ${rows.length.toLocaleString()}개 · 조건 일치 <strong>${filtered.length.toLocaleString()}개</strong></p><p class="muted-copy">시세는 장마감 수집값이에요. 지표는 종목별 동일 기준일의 일봉으로 계산해요. 검색어·시장·기술 조건은 함께 적용돼요.</p><div class="analysis-list">${filtered.slice(0,count).map(row=>{const reasons=screenerMatchReasons(row,filters),warnings=screenerDataWarnings(row);return `<button class="analysis-stock" data-stock-detail="${esc(row.symbol)}"><span><strong>${esc(row.name||row.symbol)}</strong><small>${esc(row.symbol)} · ${esc(row.market)} · ${esc(row.date||'기준일 미제공')}</small></span><span><b>기준 종가 ${number(row.price,'원')}</b><em class="${Number(row.change1d)>0?'up':'down'}">${pct(row.change1d)}</em></span><span class="analysis-row-metrics">RSI ${number(row.rsi14)} · 거래량 ${number(row.volumeRatio,'배')} · 20일 ${pct(row.ret20)}</span>${reasons.length?`<span class="analysis-match-reasons">${reasons.map(reason=>`<i>${esc(reason)}</i>`).join('')}</span>`:''}${warnings.length?`<span class="data-quality-warning"><b>변동 기준 확인</b>${warnings.map(esc).join(' ')}</span>`:''}</button>`}).join('')||`<div class="empty"><strong>${esc(noResults.message)}</strong>${noResults.canClearTechnical?'<button type="button" class="retry" data-clear-technical>기술 조건 해제</button>':''}</div>`}</div>${count<filtered.length?'<button class="retry" id="screener-more">30개 더 보기</button>':''}`;
      bindNav();
+     host.querySelector('[data-clear-technical]')?.addEventListener('click',clearTechnical);
      if(state.returnFocusSymbol){const target=[...host.querySelectorAll('[data-stock-detail]')].find(el=>el.dataset.stockDetail===state.returnFocusSymbol);if(target){target.focus({preventScroll:true});state.returnFocusSymbol=null;}}
      host.querySelector('#screener-more')?.addEventListener('click',()=>{count+=30;paint();});
     }
     presetButtons.forEach(button=>button.addEventListener('click',()=>setPreset(button.dataset.screenerPreset)));
-    clearPreset?.addEventListener('click',()=>{activePreset='';syncPresetUi();paint();});
+    clearPreset?.addEventListener('click',clearTechnical);
     form.onsubmit=e=>e.preventDefault();
-    const manualChange=()=>{const filters=Object.fromEntries(new FormData(form));if(JSON.stringify(filters)===JSON.stringify(state.screener?.filters))return;if(!applyingPreset&&activePreset){activePreset='';syncPresetUi();}count=30;paint();};
+    const manualChange=()=>{const filters=Object.fromEntries(new FormData(form));if(JSON.stringify(filters)===JSON.stringify(state.screener?.filters))return;if(!applyingPreset&&activePreset)activePreset='';syncPresetUi();count=30;paint();};
     form.oninput=manualChange;form.onchange=manualChange;
     form.onreset=e=>{e.preventDefault();activePreset='';for(const input of form.querySelectorAll('input,select'))input.value=input.name==='sort'?'name':'';count=30;syncPresetUi();paint();};
     syncPresetUi();paint();
