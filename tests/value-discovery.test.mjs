@@ -6,7 +6,7 @@ import {renderSharedHeatmap,HOME_STOCK_META} from '../src/heatmapView.js';
 test('recent selection uses the exact date and code, not another thesis for the same company',()=>{
  const payload={day:{tradeDate:'2026-10-02',top3:[{symbol:'005930.KS',name:'삼성전자'}]},recommendations:[{symbol:'005930.KS',recommendedDate:'2026-09-01',reason:'old'},{code:'005930',symbol:'005930.KS',recommendedDate:'2026-10-02',reason:'real <reason>',returnPct:null}]};
  const [row]=recentSelections(payload);assert.equal(row.reason,'real <reason>');assert.equal(row.key,'2026-10-02:005930');assert.equal(row.returnPct,null);
- const html=selectionCardMarkup(row);assert.ok(html.includes('real &lt;reason&gt;'));assert.ok(html.includes('data-feature-target="2026-10-02:005930"'));assert.ok(!html.includes('유지'));assert.equal(selectionKey({pickDate:'2026-10-02',code:'005930'}),row.key);
+ const html=selectionCardMarkup(row);assert.ok(!html.includes('real &lt;reason&gt;'));assert.ok(html.includes('선정 근거·점검 보기'));assert.ok(html.includes('data-feature-target="2026-10-02:005930"'));assert.ok(!html.includes('유지'));assert.equal(selectionKey({pickDate:'2026-10-02',code:'005930'}),row.key);
 });
 test('missing reason remains explicitly unavailable',()=>{assert.match(recentSelections({day:{top3:[{symbol:'NVDA'}]}})[0].reason,/아직 제공되지/);});
 test('feature entry parameters round-trip and malformed targets cannot open another record',()=>{

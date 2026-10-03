@@ -164,7 +164,8 @@ function createSections(marketSection) {
     picks.className = 'section home-extra-section home-pick-section home-primary';
     picks.id = 'home-top-picks-section';
     picks.innerHTML =
-      '<div class="section-head"><h2>최근 주목받는 종목</h2><div class="home-pick-head-actions"><button type="button" class="text-button" data-home-extra-route="ideas">아이디어 LAB</button><button type="button" class="text-button" data-home-extra-route="picks">선정 기록</button></div></div>' +
+      '<div class="section-head"><h2>선정 기록·성과</h2><div class="home-pick-head-actions"><button type="button" class="text-button" data-home-extra-route="picks">전체 기록 →</button></div></div>' +
+      '<p class="home-records-caption">선정 당시 이유와 이후 결과를 기록해요. 종목을 누르면 근거·점검 내용을 열어요.</p>' +
       `<div id="home-top-picks" class="home-pick-list">${loadingIndicator('최근 선정 종목을 불러오고 있어요')}<div class="skeleton home-extra-skeleton"></div></div>`;
   }
 
@@ -176,13 +177,8 @@ function createSections(marketSection) {
     '<p class="home-extra-caption">대표 종목의 당일 등락률을 시가총액 비중으로 보여줘요.</p>' +
     `<div id="home-daily-heatmap">${loadingIndicator('오늘 등락 히트맵을 불러오고 있어요')}<div class="skeleton home-heatmap-skeleton"></div></div>`;
 
-  if (picks) {
-    // Surface Chart View's differentiator before generic market cards.
-    document.querySelector('#home-discovery-feed').append(picks);
-    marketSection.insertAdjacentElement('afterend', heatmap);
-  } else {
-    marketSection.insertAdjacentElement('afterend', heatmap);
-  }
+  if (picks) document.querySelector('#home-discovery-feed').append(picks);
+  document.querySelector('#home-discovery-feed').insertAdjacentElement('afterend', heatmap);
   const discovery=document.querySelector('#home-discovery-feed');
   const quick=document.createElement('section');
   quick.className='section home-screening-preview';
@@ -230,15 +226,15 @@ function paintPicks(host, payload) {
   const performance =
     '<div class="home-pick-performance">' +
       '<div class="home-pick-performance-main">' +
-        '<span>선정 종목 사후 수익률</span>' +
+        '<span>전체 선정 기록 평균 수익률</span>' +
         '<strong class="' + returnTone(avgReturn) + '">' + esc(signedPct(avgReturn)) + '</strong>' +
-        '<small>' + esc((latestClose || day && day.tradeDate || '기준일 확인 중') + ' 종가 기준 · 미평가 제외') + '</small>' +
+        '<small>' + esc('최근 시세기준일 ' + (latestClose || day && day.tradeDate || '확인 중') + ' · 기록별 점검가 · 미평가 제외') + '</small>' +
       '</div>' +
       '<div class="home-pick-performance-kpis">' +
         '<div><span>플러스 비율</span><b>' + esc(winRate === null ? '-' : winRate + '%') + '</b></div>' +
         '<div><span>평가</span><b>' + tracked.length.toLocaleString('ko-KR') + '/' + recommendations.length.toLocaleString('ko-KR') + '건</b></div>' +
       '</div>' +
-    '</div>';
+    '</div><details class="home-performance-details"><summary>성과 계산 기준</summary><p>추천가 대비 점검가의 단순 수익률을 산술 평균해요. 미평가 기록은 제외하며 선정일·보유기간은 종목별로 달라요. 매매비용 미반영 값으로, 포트폴리오 수익률과 달라요.</p></details>';
 
   if (!rows.length) {
     host.innerHTML =
@@ -251,9 +247,8 @@ function paintPicks(host, payload) {
   const dateLabel = tradeDate ? (tradeDate === kstDateKey() ? '오늘 선정 · ' : '최근 선정 · ') + tradeDate : '선정일 확인 중';
 
   host.innerHTML =
-    '<div class="home-pick-meta">' + esc(dateLabel) + '</div>' +
-    recentSelections(payload).map(row=>selectionCardMarkup(row)).join('') +
-    '<details class="home-performance-details"><summary>역대 선정 성과 보기</summary>'+performance+'</details>';
+    performance + '<div class="home-pick-meta">' + esc(dateLabel) + ' · 종목을 눌러 기록 확인</div>' +
+    recentSelections(payload).map(row=>selectionCardMarkup(row)).join('');
   window.__chartviewBindNav?.();
   const paintToken=host._pickPaintToken=(host._pickPaintToken||0)+1;
   const refreshStatuses=async()=>{

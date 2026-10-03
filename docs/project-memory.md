@@ -231,3 +231,6 @@ DIRECT search rows are syntactic fallback candidates: require a positive quote b
 
 ## 2026-10-04 — 개편 리뷰 중복/사실 검증
 0.11.2: PICK 선정 점수(원자료의 0 포함)와 현 기술점수를 구분, 출처/산식 미제공 설명. favorites 별칭은 watch, 정식 공유/저장 그대로. 비교/상세/밴드 chart localization은 yyyy.MM.dd. 실제 KRX 영숫자 종목코드를 숫자로 교정하지 않는다. PER은 기간 차이를 먼저 대조한다. 전용 redraw/별칭/0-누락 모바일 QA 추가.
+
+## 2026-10-04 — 시장 우선 홈 동선, 0.12.0
+사용자 새 승인으로 0.11.0의 시장 후행 배치를 대체: 주요 시장 → 핵심 분석 3진입 → 관심 → 선정 기록·성과. 320×693 첫 화면에서 시장과 세 진입 유지. 선정 이유는 정확한 날짜/코드의 기록 클릭 후 확인하며 평균/분모/기간 차이는 홈에서 설명. more 표시만 분석, 목적 이동은 hash/history를 바꾸지 않는다. 탭 용도 안내 추가. 계산·시세·저장·native 계약 유지. tests/home_journey_qa.mjs의 9상태를 기존 모바일 CI와 같이 실행.

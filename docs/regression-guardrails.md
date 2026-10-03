@@ -316,3 +316,9 @@ Saved investment baselines are device records: show them before network completi
 - favorites resolves to existing watch state; canonical sharing/storage stays unchanged.
 - Native crosshair dates on comparison/detail/band charts use yyyy.MM.dd, preserving series dates and returns.
 - Revalidate external reports against current code/API and KRX identity before correcting data or redoing implemented features.
+
+## Market-first Home and record access (0.12.0)
+- New user-approved order replaces earlier watch/picks-before-market assertions: market → three core entries → watch → dated record/results. Market and core entries must be above the bottom navigation at 320×693, retaining times, error recovery and quote convergence.
+- Home averages cover all evaluated records; preserve missing exclusions, denominator and different holding-period disclosure. They are not a portfolio return or performance of only the latest picks.
+- Recent company rows open the exact selection date/code and retain the original reason in that record. Keep source scores and current technical/fundamental distinctions.
+- more is displayed as 분석; its purpose jumps stay in the same route without history/hash changes, and selected group headings stay reachable above native bottom navigation. Do not change existing deep links, sharing or detail-origin back semantics.
