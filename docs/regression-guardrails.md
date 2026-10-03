@@ -322,3 +322,8 @@ Saved investment baselines are device records: show them before network completi
 - Home averages cover all evaluated records; preserve missing exclusions, denominator and different holding-period disclosure. They are not a portfolio return or performance of only the latest picks.
 - Recent company rows open the exact selection date/code and retain the original reason in that record. Keep source scores and current technical/fundamental distinctions.
 - more is displayed as 분석; its purpose jumps stay in the same route without history/hash changes, and selected group headings stay reachable above native bottom navigation. Do not change existing deep links, sharing or detail-origin back semantics.
+
+## Purpose identity (0.12.1)
+- Keep core tool icons decorative with readable action names; disabled PICK scope must omit its action and graphic. Export, screening and record entry graphics/colors must match their menu destination.
+- Purpose tones are not price/return, recommendation or technical status. Preserve financial red/blue, warnings, provenance and all calculations.
+- Decoration must not push markets/core entries below the 320×693 first fold or change native header visibility, fixed navigation, safe areas, routes, storage or lazy fetches.

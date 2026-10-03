@@ -1,3 +1,4 @@
+import {uiIcon} from './uiIdentity.js';
 import { recentSelections, selectionCardMarkup } from './valueDiscovery.js';
 import { homeBootstrap, homeSnapshot, homeHeatmap } from './api.js';
 import { HOME_LOGOS } from './homeLogos.js';
@@ -164,7 +165,7 @@ function createSections(marketSection) {
     picks.className = 'section home-extra-section home-pick-section home-primary';
     picks.id = 'home-top-picks-section';
     picks.innerHTML =
-      '<div class="section-head"><h2>선정 기록·성과</h2><div class="home-pick-head-actions"><button type="button" class="text-button" data-home-extra-route="picks">전체 기록 →</button></div></div>' +
+      '<div class="section-head"><h2><i class="section-symbol" aria-hidden="true">' + uiIcon('ledger',16) + '</i>선정 기록·성과</h2><div class="home-pick-head-actions"><button type="button" class="text-button" data-home-extra-route="picks">전체 기록 →</button></div></div>' +
       '<p class="home-records-caption">선정 당시 이유와 이후 결과를 기록해요. 종목을 누르면 근거·점검 내용을 열어요.</p>' +
       `<div id="home-top-picks" class="home-pick-list">${loadingIndicator('최근 선정 종목을 불러오고 있어요')}<div class="skeleton home-extra-skeleton"></div></div>`;
   }
@@ -173,7 +174,7 @@ function createSections(marketSection) {
   heatmap.className = 'section home-extra-section home-heatmap-section home-primary';
   heatmap.id = 'home-daily-heatmap-section';
   heatmap.innerHTML =
-    '<div class="section-head"><h2>오늘 등락 히트맵</h2><button type="button" class="text-button" data-home-extra-route="heatmap">히트맵 보기</button></div>' +
+    '<div class="section-head"><h2><i class="section-symbol" aria-hidden="true">' + uiIcon('market',16) + '</i>오늘 등락 히트맵</h2><button type="button" class="text-button" data-home-extra-route="heatmap">히트맵 보기</button></div>' +
     '<p class="home-extra-caption">대표 종목의 당일 등락률을 시가총액 비중으로 보여줘요.</p>' +
     `<div id="home-daily-heatmap">${loadingIndicator('오늘 등락 히트맵을 불러오고 있어요')}<div class="skeleton home-heatmap-skeleton"></div></div>`;
 
@@ -182,10 +183,10 @@ function createSections(marketSection) {
   const discovery=document.querySelector('#home-discovery-feed');
   const quick=document.createElement('section');
   quick.className='section home-screening-preview';
-  quick.innerHTML='<div class="section-head"><h2>지금 조건으로 찾아보기</h2></div><div class="home-preset-links"><button type="button" data-feature-route="discover" data-feature-target="volume-surge">거래량 2배 이상</button><button type="button" data-feature-route="discover" data-feature-target="uptrend">상승추세</button><button type="button" data-feature-route="discover" data-feature-target="rsi-oversold">RSI 과매도</button></div><small>장마감 지표로 조건에 맞는 실제 종목을 확인해요.</small>';
+  quick.innerHTML='<div class="section-head"><h2><i class="section-symbol" aria-hidden="true">' + uiIcon('filter',16) + '</i>지금 조건으로 찾아보기</h2></div><div class="home-preset-links"><button type="button" data-feature-route="discover" data-feature-target="volume-surge">거래량 2배 이상</button><button type="button" data-feature-route="discover" data-feature-target="uptrend">상승추세</button><button type="button" data-feature-route="discover" data-feature-target="rsi-oversold">RSI 과매도</button></div><small>장마감 지표로 조건에 맞는 실제 종목을 확인해요.</small>';
   discovery.append(quick);
   const exportPreview=document.createElement('section');exportPreview.className='home-export-preview';
-  exportPreview.innerHTML='<div class="section-head"><h2>수출에서 산업 흐름 찾기</h2><button type="button" class="text-button" data-feature-route="exports">분석 보기</button></div><p data-export-preview-summary>총수출과 품목·국가별 흐름을 확인해보세요.</p><div class="home-preset-links"><button type="button" data-feature-route="exports" data-feature-target="items">품목별 분석</button><button type="button" data-feature-route="exports" data-feature-target="countries">국가별 분석</button><button type="button" data-feature-route="exports" data-feature-target="memory">메모리 보고서</button><button type="button" data-export-preview-retry hidden>요약 다시 시도</button></div>';
+  exportPreview.innerHTML='<div class="section-head"><h2><i class="section-symbol" aria-hidden="true">' + uiIcon('exports',16) + '</i>수출에서 산업 흐름 찾기</h2><button type="button" class="text-button" data-feature-route="exports">분석 보기</button></div><p data-export-preview-summary>총수출과 품목·국가별 흐름을 확인해보세요.</p><div class="home-preset-links"><button type="button" data-feature-route="exports" data-feature-target="items">품목별 분석</button><button type="button" data-feature-route="exports" data-feature-target="countries">국가별 분석</button><button type="button" data-feature-route="exports" data-feature-target="memory">메모리 보고서</button><button type="button" data-export-preview-retry hidden>요약 다시 시도</button></div>';
   discovery.append(exportPreview);
   const loadPreview=()=>void import('./homeExportPreview.js').then(module=>{if(exportPreview.isConnected)void module.mountHomeExportPreview(exportPreview);}).catch(()=>{if(exportPreview.isConnected)exportPreview.querySelector('[data-export-preview-summary]').textContent='분석 보기에서 수출 흐름을 확인해주세요.';});
   const previewObserver=new IntersectionObserver(entries=>{if(entries.some(entry=>entry.isIntersecting)){previewObserver.disconnect();loadPreview();}else if(!exportPreview.isConnected)previewObserver.disconnect();},{rootMargin:'120px'});

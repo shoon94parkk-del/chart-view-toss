@@ -38,6 +38,11 @@ try {
   assert.ok(geometry.market.top<geometry.entries.top&&geometry.entries.top<geometry.watch.top&&geometry.watch.top<geometry.records.top,'daily context, research entries, watch and history order');
   assert.ok(geometry.market.bottom<geometry.nav.top,'all four market cards or explicit failure are readable on first screen');
   assert.ok(geometry.entries.bottom<geometry.nav.top,'core value entries remain discoverable on first screen');
+  const visual=await page.locator('.home-value-entries button').evaluateAll(buttons=>buttons.map(button=>({label:button.innerText,background:getComputedStyle(button).backgroundColor,icons:button.querySelectorAll('svg[aria-hidden="true"][focusable="false"]').length,height:button.getBoundingClientRect().height})));
+  assert.equal(new Set(visual.map(x=>x.background)).size,3,'each core tool has a distinct purpose surface');
+  assert.ok(visual.every(x=>x.icons===1&&x.height>=44),'graphics stay decorative and controls remain touchable');
+  assert.equal(await page.locator('.bottom-nav [data-tab="more"] svg rect').count(),3,'analysis has a tool dashboard icon');
+  assert.equal(await page.locator('.bottom-nav [aria-current="page"]').innerText(),'홈');
   assert.equal(await page.locator('.home-pick-performance-main strong').innerText(),'+11.10%');
   assert.match(await page.locator('.home-pick-performance-kpis').innerText(),/1\/2건/);
   assert.ok(await page.locator('.home-pick-performance-main strong').isVisible(),'performance visible without a disclosure click');
@@ -54,6 +59,9 @@ try {
   await page.locator('.bottom-nav [data-tab="more"]').click();
   await page.getByRole('heading',{name:'분석',level:1,exact:true}).waitFor();
   assert.equal(await page.locator('.bottom-nav [aria-current="page"]').getAttribute('data-tab'),'more');
+  assert.equal(await page.locator('.app-shell').getAttribute('data-ui-tone'),'analysis');
+  assert.match(await page.locator('.surface-label').innerText(),/목적별 분석/);
+  await page.screenshot({path:`artifacts/home-journey/${width}-${scenario}-analysis.png`});
   await page.locator('.tab-usage-guide summary').click();
   assert.deepEqual(await page.locator('.tab-usage-guide dt').allTextContents(),['홈','차트','관심','분석']);
   assert.match(await page.locator('.tab-usage-guide').innerText(),/기간 수익률 비교.*기기에 저장한 내 종목 관리/s);

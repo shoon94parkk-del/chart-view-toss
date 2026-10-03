@@ -1,3 +1,4 @@
+import {uiIcon} from './uiIdentity.js';
 const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export const selectionKey = row => `${row?.recommendedDate || row?.pickDate || ''}:${row?.code || String(row?.symbol || row?.ticker || '').split('.')[0]}`;
 export function recentSelections(payload) {
@@ -13,9 +14,9 @@ export function recentSelections(payload) {
 }
 export function valueEntriesMarkup(showPicks = true) {
   return `<nav class="home-value-entries" aria-label="차트뷰 핵심 분석">
-    <button type="button" data-feature-route="exports"><strong>수출 데이터</strong><small>품목·국가별 흐름</small><span aria-hidden="true">↗</span></button>
-    <button type="button" data-feature-route="discover" data-feature-target="volume-surge"><strong>조건별 종목 찾기</strong><small>거래량·추세 스크리닝</small><span aria-hidden="true">↗</span></button>
-    ${showPicks ? '<button type="button" data-feature-route="picks"><strong>선정 기록·성과</strong><small>이유·이후 결과 확인</small><span aria-hidden="true">↗</span></button>' : ''}
+    <button type="button" class="tool-exports" data-feature-route="exports"><i class="tool-symbol" aria-hidden="true">${uiIcon('exports',20)}</i><strong>수출 데이터</strong><small>품목·국가 흐름</small><span class="tool-open" aria-hidden="true">↗</span></button>
+    <button type="button" class="tool-find" data-feature-route="discover" data-feature-target="volume-surge"><i class="tool-symbol" aria-hidden="true">${uiIcon('filter',20)}</i><strong>조건별 종목 찾기</strong><small>거래량·추세 검색</small><span class="tool-open" aria-hidden="true">↗</span></button>
+    ${showPicks ? '<button type="button" class="tool-records" data-feature-route="picks"><i class="tool-symbol" aria-hidden="true">' + uiIcon('ledger',20) + '</i><strong>선정 기록·성과</strong><small>선정 이유·결과</small><span class="tool-open" aria-hidden="true">↗</span></button>' : ''}
   </nav>`;
 }
 export function selectionCardMarkup(row, status = '점검 상태 확인 중') {
