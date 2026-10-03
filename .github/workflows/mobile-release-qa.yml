@@ -38,6 +38,8 @@ jobs:
         run: node tests/mobile_release_qa.mjs
       - name: Verify core value entries and exact selection records
         run: node tests/value_discovery_qa.mjs
+      - name: Verify market-first Home, selection results and purpose navigation
+        run: node tests/home_journey_qa.mjs
       - name: Verify full sector exploration and refresh failure retention
         run: node tests/sector_heatmap_qa.mjs
       - name: Verify data views and custom date range
@@ -72,6 +74,7 @@ jobs:
           path: |
             artifacts/mobile-qa
             artifacts/strategy-report
+            artifacts/home-journey
             artifacts/value-discovery
             artifacts/sector-heatmap
             artifacts/redesign-review

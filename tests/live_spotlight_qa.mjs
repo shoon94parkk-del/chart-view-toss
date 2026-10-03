@@ -29,18 +29,18 @@ try {
   } catch (error) {
     throw new Error(`Home spotlight missing: ${(await page.locator('body').innerText()).slice(0, 1000)}; errors=${errors.join(' | ')}`, { cause: error });
   }
-  assert.match(await page.locator('#home-top-picks-section').innerText(), /최근 주목받는 종목/);
+  assert.match(await page.locator('#home-top-picks-section').innerText(), /선정 기록·성과/);
   assert.equal(await page.locator('#home-top-picks .home-pick-row').count(), selected.length);
   for (const row of selected) {
     assert.ok(await page.locator(`#home-top-picks [data-home-extra-stock="${row.symbol}"]`).count(), `${row.symbol} absent from Home`);
   }
   await page.locator('#home-top-picks-section [data-home-extra-route="picks"]').click();
   await page.locator('.pick-ledger-item').first().waitFor({ timeout: 30000 });
-  assert.match(await page.locator('.pick-ledger-head').innerText(), /최근 주목받는 종목/);
+  assert.match(await page.locator('.pick-ledger-head').innerText(), /선정 기록·성과/);
   await page.goto(`${site}/picks`, { waitUntil: 'domcontentloaded' });
   await page.locator('.pick-ledger-item').first().waitFor({ timeout: 30000 });
   assert.deepEqual(errors, [], 'live browser must have no JavaScript errors');
-  console.log(JSON.stringify({ version: '0.9.4', selected: selected.map(row => row.symbol), screenerParity: true, homeCount: selected.length, page: '최근 주목받는 종목', errors }));
+  console.log(JSON.stringify({ version: '0.9.4', selected: selected.map(row => row.symbol), screenerParity: true, homeCount: selected.length, page: '선정 기록·성과', errors }));
 } finally {
   await browser.close();
 }

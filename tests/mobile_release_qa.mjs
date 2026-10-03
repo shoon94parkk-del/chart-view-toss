@@ -367,10 +367,10 @@ try{
       if(tab==='home'){
         await page.waitForSelector('#market-card .quote-card');
         const homePriority=await page.evaluate(()=>({watch:document.querySelector('.watch-section.home-primary')?.getBoundingClientRect().top,market:document.querySelector('.market-section.home-primary')?.getBoundingClientRect().top}));
-        if(!(homePriority.watch<homePriority.market)) throw new Error(`${width}px Home must keep the watchlist before market cards: ${JSON.stringify(homePriority)}`);
+        if(!(homePriority.market<homePriority.watch)) throw new Error(`${width}px Home must show market context before the watchlist: ${JSON.stringify(homePriority)}`);
         await page.waitForSelector('#home-top-picks-section');
         const pickMarketOrder=await page.evaluate(()=>({pick:document.querySelector('#home-top-picks-section')?.getBoundingClientRect().top,market:document.querySelector('.market-section.home-primary')?.getBoundingClientRect().top}));
-        if(!(pickMarketOrder.pick<pickMarketOrder.market)) throw new Error(`${width}px tracked picks must appear before generic market cards: ${JSON.stringify(pickMarketOrder)}`);
+        if(!(pickMarketOrder.market<pickMarketOrder.pick)) throw new Error(`${width}px market context must precede historical records: ${JSON.stringify(pickMarketOrder)}`);
         if(await page.locator('.compact-tools').count()) throw new Error(`${width}px duplicate Home analysis shortcuts should be removed`);
         const initialMarketCards=await page.locator('#market-card .quote-card').count();
         if(initialMarketCards!==4) throw new Error(`${width}px Home market should stay compact before expand: ${initialMarketCards}`);
@@ -390,7 +390,7 @@ try{
 
         await page.waitForSelector('#home-top-picks .home-pick-row');
         if(await page.locator('#home-top-picks .home-pick-row').count()!==3) throw new Error(`${width}px spotlight selection missing`);
-        if(!(await page.locator('#home-top-picks-section').innerText()).includes('최근 주목받는 종목')) throw new Error(`${width}px spotlight title missing`);
+        if(!(await page.locator('#home-top-picks-section').innerText()).includes('선정 기록·성과')) throw new Error(`${width}px spotlight title missing`);
         await page.waitForSelector('#home-daily-heatmap .home-heatmap-cell');
         if(await page.locator('#home-daily-heatmap .home-heatmap-cell:visible').count()!==6) throw new Error(`${width}px home heatmap representative set mismatch`);
         if(await page.locator('#home-daily-heatmap .home-heatmap-logo').count()<3) throw new Error(`${width}px heatmap logos missing`);
@@ -571,7 +571,7 @@ try{
       if(relationText.includes('title entity match')) throw new Error(`news relation basis leaked English metadata: ${relationText}`);
     }
     if(tab==='more'){
-      if(!(await page.locator('[data-tab="picks"]').innerText()).includes('최근 주목받는 종목')) throw new Error('Spotlight entry missing from menu');
+      if(!(await page.locator('[data-tab="picks"]').innerText()).includes('선정 기록·성과')) throw new Error('Spotlight entry missing from menu');
       const groups=await page.locator('.menu-group>h3').allInnerTexts();
       if(!groups.includes('종목 찾기')||!groups.includes('종목 비교하기')||!groups.includes('근거와 시장 환경 확인')) throw new Error(`task-based menu groups missing: ${groups}`);
       if(await page.locator('.feature-menu [data-tab="tools"]').count()) throw new Error('redundant external investment-tools row should not remain in More');
@@ -589,7 +589,7 @@ try{
     if(tab==='picks'){
       await page.waitForSelector('.pick-ledger-item');
       const body=await page.locator('body').innerText();
-      if(!body.includes('최근 주목받는 종목')||!body.includes('추천 81,000원')||!body.includes('점검가 87,480원')||!body.includes('+8.00%')) throw new Error('Restored spotlight history missing');
+      if(!body.includes('선정 기록·성과')||!body.includes('추천 81,000원')||!body.includes('점검가 87,480원')||!body.includes('+8.00%')) throw new Error('Restored spotlight history missing');
       await page.locator('.pick-ledger-row').first().click();
       if(await page.locator('.pick-ledger-detail').first().isHidden()) throw new Error('Spotlight detail did not expand');
     }
@@ -672,10 +672,10 @@ try{
   await page.screenshot({path:`${OUT}/360-selector-short-viewport.png`});
   await page.goto(`${BASE}/#picks`,{waitUntil:'networkidle'});
   await page.waitForSelector('.pick-ledger-item');
-  if(!(await page.locator('h2').first().innerText()).includes('최근 주목받는 종목')) throw new Error('PICK hash entry did not restore spotlight');
+  if(!(await page.locator('h2').first().innerText()).includes('선정 기록·성과')) throw new Error('PICK hash entry did not restore spotlight');
   await page.goto(`${BASE}/picks`,{waitUntil:'networkidle'});
   await page.waitForSelector('.pick-ledger-item');
-  if(!(await page.locator('h2').first().innerText()).includes('최근 주목받는 종목')) throw new Error('PICK path entry did not restore spotlight');
+  if(!(await page.locator('h2').first().innerText()).includes('선정 기록·성과')) throw new Error('PICK path entry did not restore spotlight');
   await context.close();
 
   const auditContext=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:1});

@@ -15,11 +15,9 @@ export function valueEntriesMarkup(showPicks = true) {
   return `<nav class="home-value-entries" aria-label="차트뷰 핵심 분석">
     <button type="button" data-feature-route="exports"><strong>수출 데이터</strong><small>품목·국가별 흐름</small><span aria-hidden="true">↗</span></button>
     <button type="button" data-feature-route="discover" data-feature-target="volume-surge"><strong>조건별 종목 찾기</strong><small>거래량·추세 스크리닝</small><span aria-hidden="true">↗</span></button>
-    ${showPicks ? '<button type="button" data-feature-route="picks"><strong>최근 선정 종목</strong><small>선정 이유·사후 점검</small><span aria-hidden="true">↗</span></button>' : ''}
+    ${showPicks ? '<button type="button" data-feature-route="picks"><strong>선정 기록·성과</strong><small>이유·이후 결과 확인</small><span aria-hidden="true">↗</span></button>' : ''}
   </nav>`;
 }
 export function selectionCardMarkup(row, status = '점검 상태 확인 중') {
-  return `<article class="home-pick-row"><div class="home-selection-heading"><strong>${esc(row.name || row.symbol)}</strong><small>${esc(row.recommendedDate || '선정일 미제공')} 선정</small></div>
-    <p class="home-selection-reason">${esc(row.reason)}</p><div class="home-selection-actions"><span data-selection-status="${esc(row.key)}">${esc(status)}</span>
-    <button type="button" data-feature-route="picks" data-feature-target="${esc(row.key)}">선정 근거·점검 보기</button><button type="button" data-home-extra-stock="${esc(row.symbol)}">기업 상세</button></div></article>`;
+  return `<article class="home-pick-row"><button type="button" class="home-selection-link" data-feature-route="picks" data-feature-target="${esc(row.key)}" aria-label="${esc((row.name || row.symbol) + ' ' + row.recommendedDate + ' 선정 근거·점검 보기')}"><span class="home-selection-heading"><strong>${esc(row.name || row.symbol)}</strong><small>${esc(row.recommendedDate || '선정일 미제공')} 선정</small></span><span class="home-selection-actions"><span data-selection-status="${esc(row.key)}">${esc(status)}</span><span class="home-selection-open">근거·점검 →</span></span></button></article>`;
 }

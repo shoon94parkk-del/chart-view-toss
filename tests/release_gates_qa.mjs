@@ -14,7 +14,7 @@ try {
  }
  await page.goto(`${base}/?diagnostics=1#detail/%ZZ`);
  await page.locator('[data-tab="more"]').first().click();
- await page.getByRole('heading',{name:'전체',exact:true,level:1}).waitFor();
+ await page.getByRole('heading',{name:'분석',exact:true,level:1}).waitFor();
  await page.getByRole('heading',{name:'분석과 도구',exact:true,level:2}).waitFor();
  // Large text and long labels must remain reachable at the narrow supported width.
  await page.addStyleTag({content:'body,button,input,select{font-size:24px!important}'});

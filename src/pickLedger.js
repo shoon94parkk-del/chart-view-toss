@@ -123,7 +123,7 @@ function rowMarkup(row,index,displayName){
 
 export async function renderPickLedger({shell,bindNav,displayName,focusKey=null}){
   document.querySelector('#app').innerHTML=shell(`
-    <section class="task-head pick-ledger-head"><div><span class="page-kicker">CHARTVIEW</span><h2>최근 주목받는 종목</h2><p>선정 종목의 기록과 이후 성과·점검 내용을 확인해요.</p></div></section>
+    <section class="task-head pick-ledger-head"><div><span class="page-kicker">CHARTVIEW</span><h2>선정 기록·성과</h2><p>과거에 선정한 이유와 이후 성과·점검 내용을 확인해요. 실시간 인기 순위가 아니에요.</p></div></section>
     <details class="pick-ledger-overview"><summary>전체 성과·상태 요약 보기</summary><section class="pick-ledger-summary" id="pick-ledger-summary">${loadingIndicator('선정 기록을 불러오고 있어요')}<div class="skeleton quote"></div></section>
     <section class="pick-ledger-status-strip" id="pick-ledger-status-strip">${loadingIndicator('점검 상태를 확인하고 있어요')}<div class="skeleton quote"></div></section>
     </details><section class="pick-ledger-tech-alert" id="pick-ledger-tech-alert" hidden></section>
@@ -139,7 +139,7 @@ export async function renderPickLedger({shell,bindNav,displayName,focusKey=null}
     </section>
     </details><p class="pick-ledger-focus-note" role="status"></p><p class="pick-ledger-count" id="pick-ledger-count"></p>
     <section class="pick-ledger-list" id="pick-ledger-list">${loadingIndicator('종목 목록을 불러오고 있어요')}<div class="skeleton watch"></div><div class="skeleton watch"></div></section>
-  `,'최근 주목받는 종목');
+  `,'선정 기록·성과');
   bindNav();
 
   const summary=document.querySelector('#pick-ledger-summary');
