@@ -34,8 +34,8 @@ try{
    if(path==='/api/quotes')return json({results:url.searchParams.get('tickers')==='ZZZZZZ'?[]:url.searchParams.get('tickers')==='MU'?[{ticker:'MU',name:'Micron Technology',price:100,currency:'USD',asOf:fresh.asOf}]:[fresh]});
    if(path==='/api/valuation')return json({stocks:[{ticker:url.searchParams.get('tickers'),marketCap:2e15,currency:'KRW',forwardPE:3.89,fieldMeta:{marketCap:{source:'Cap fixture',asOf:old.asOf,period:'latest available'}}}]});
    if(path==='/api/macro')return json(++macro===1?{results:[],summary:{text:'should not appear'}}:{results:[{symbol:'DFF',name:'실효 금리',value:3.88,asOf:'2026-10-02'}]});
-   if(path==='/static/data/pick_monitor.json')return json({picks:[]});
-   if(path==='/api/home-bootstrap')return bootstrapFails?route.fulfill({status:503,body:'unavailable'}):json({recommendations:[]});
+   if(path==='/static/data/pick_monitor.json')return json({picks:[{pickDate:'2026-09-21',code:'005930',symbol:'005930.KS',monitor:{status:'KEEP'},technical:{score:26,previousScore:26,dayDelta:0,signal:'NEUTRAL',rsi14:55.7,ret5:-3.33,ret20:10.18,change1d:0}}]});
+   if(path==='/api/home-bootstrap')return bootstrapFails?route.fulfill({status:503,body:'unavailable'}):json({recommendations:[{symbol:'005930.KS',code:'005930',recommendedDate:'2026-09-21',returnPct:0.55,lastUpdatedTradeDate:'2026-10-02'}]});
    return json({stocks:[],results:[],items:[],available:false});
   });
   await page.goto(BASE,{waitUntil:'domcontentloaded'});
@@ -70,6 +70,13 @@ try{
    await page.locator('#detail-review summary').click();await page.waitForFunction(()=>document.querySelector('#detail-review-body')?.textContent.includes('선정 기록을 확인하지 못했어요'));
    assert.doesNotMatch(await page.locator('#detail-review-body').innerText(),/선정 기록이 없는/);
    bootstrapFails=false;await page.locator('[data-review-retry]').click();await page.waitForFunction(()=>document.querySelector('#detail-review-body')?.textContent.includes('선정 기록이 없는'));assert.equal(await page.locator('#detail-watch').isEnabled(),true);
+   await page.goto(BASE+'/#detail/005930.KS');await page.locator('#detail-review summary').click();
+   await page.locator('#detail-review .pick-ledger-tech-metrics').waitFor();
+   const spacing=await page.locator('#detail-review .pick-ledger-tech-metrics').evaluate(el=>{
+    const boxes=[...el.children].map(node=>node.getBoundingClientRect());
+    return boxes.every((box,i)=>box.width>0&&box.height>0&&boxes.slice(i+1).every(other=>Math.abs(box.y-other.y)>1||other.x-box.right>=8));
+   });
+   assert.equal(spacing,true,'Tracked detail technical metrics must have readable spacing at each mobile width');
   }
   await page.goto(BASE+'/#macro');await page.waitForTimeout(500);
   const macroEmpty=await page.locator('#macro-groups').innerText();

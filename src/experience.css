@@ -107,3 +107,6 @@
 .detail-actions button:disabled{opacity:.5;cursor:default}
 .detail-review summary{font-size:15px;font-weight:700;cursor:pointer}.detail-review p,.detail-review small{font-size:12px;line-height:1.6;overflow-wrap:anywhere}
 .detail-metric small{overflow-wrap:anywhere;line-height:1.5}
+.detail-review .pick-ledger-tech-detail{padding:12px;border:1px solid #e5eaf1;border-radius:12px;background:#f8f9fc}
+.detail-review .pick-ledger-tech-line,.detail-review .pick-ledger-tech-metrics{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 12px;margin:10px 0}
+.detail-review .pick-ledger-tech-metrics span{font-size:12px;line-height:1.6;white-space:nowrap}
