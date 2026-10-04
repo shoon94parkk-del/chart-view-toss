@@ -650,7 +650,7 @@ try{
   const monitorBadge=ideaPage.locator('[data-idea-symbol="005930.KS"] .idea-monitor-status.sell').first();
   await monitorBadge.waitFor();
   const monitorText=await monitorBadge.innerText();
-  if(!monitorText.includes('사후점검 · 단기 매도 검토')||!monitorText.includes('RSI 81.7')) throw new Error(`idea/pick monitor conflict was not reconciled: ${monitorText}`);
+  if(!monitorText.includes('가격·거래 · 강한 기술 경고')||!monitorText.includes('RSI 81.7')||monitorText.includes('기업 근거 · 재점검 필요')) throw new Error(`idea/pick monitor conflict was not reconciled: ${monitorText}`);
   if(await ideaPage.locator('.idea-guide').evaluate(node=>node.open)) throw new Error('idea methodology should start collapsed');
   const firstIdea=await ideaPage.locator('.idea-card .idea-candidate').first().boundingBox();
   if(!firstIdea||firstIdea.y>=844) throw new Error(`the first idea candidate is below the first viewport: ${JSON.stringify(firstIdea)}`);

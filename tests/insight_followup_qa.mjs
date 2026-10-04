@@ -10,7 +10,7 @@ try{for(const width of [320,390,430]){
  let financialCalls=0,failed=false,held=false,release;
  const oldUrl='https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260814001146';
  const old={type:'interim',year:2026,quarter:2,label:'2026년 반기 누적',basis:'연결재무제표',currency:'KRW',sourceUrl:oldUrl,current:{revenue:100,operatingProfit:10,netIncome:null,operatingCashFlow:null,inventories:null,receivables:null},previous:{revenue:80,operatingProfit:8,netIncome:null,operatingCashFlow:null,inventories:null,receivables:null}};
- await context.addInitScript(({old})=>localStorage.setItem('chartview-toss-review-v1',JSON.stringify({'005930.KS':{filing:old,reviewedAt:'2026-10-04T10:00:00Z',conditions:[]}})),{old});
+ await context.addInitScript(({old})=>{if(!localStorage.getItem('chartview-toss-review-v1'))localStorage.setItem('chartview-toss-review-v1',JSON.stringify({'005930.KS':{filing:old,reviewedAt:'2026-10-04T10:00:00Z',conditions:[]}}));},{old});
  const route=async r=>{
   const u=new URL(r.request().url()),path=u.pathname.replace(/^\/backend/,'');let body={};
   if(path==='/api/financial-history'){
