@@ -103,3 +103,9 @@ html:not([data-ait-runtime="true"]) .app-shell .page-intro{background:transparen
 .app-shell .export-detail-summary strong,.app-shell .export-detail-chart-head strong,.app-shell .export-detail-country-head strong{font-size:14px}
 .app-shell .export-detail-summary .up,.app-shell .export-momentum-summary .up{color:#ad2938}
 .app-shell .export-detail-summary .down,.app-shell .export-momentum-summary .down{color:#205ca8}
+
+.app-shell .export-landing-card :is(span,small,b,em){font-size:12px;line-height:1.6;color:#4e5968;white-space:normal;overflow-wrap:anywhere}
+.app-shell .export-landing-stats strong{font-size:14px}
+.app-shell .export-landing-card-head span{font-size:14px}
+.app-shell .export-landing-stats strong.up{color:#ad2938}
+.app-shell .export-landing-stats strong.down{color:#205ca8}
