@@ -119,3 +119,5 @@ html:not([data-ait-runtime="true"]) .app-shell .page-intro{background:transparen
 .app-shell .industry-name span,.app-shell .industry-metrics span,.app-shell .industry-peer-group>small{color:#4e5968}
 .app-shell .industry-product{font-size:15px}
 .app-shell .industry-section{background:#fff;box-shadow:none}
+
+.app-shell .quote-asof,.app-shell .source-line,.app-shell .macro-meta-line{font-size:12px;color:var(--cv-secondary)}

@@ -22,7 +22,7 @@ try {
    if(path==='/api/quotes')body={results:[quote]};
    if(path==='/static/data/screener.json')body={tradeDate:'2026-10-02',stocks:[{symbol:'005930.KS',name:'삼성전자',market:'KOSPI',date:'2026-10-02',volumeRatio:3,rsi14:0,price:100000,change1d:-91.07,ret20:-91.07},{symbol:'000660.KS',name:'SK하이닉스',market:'KOSPI',date:'2026-10-02',volumeRatio:1,rsi14:60,price:200000}]};
    if(path==='/api/compare')body={stocks:[]};
-   if(path==='/api/export-momentum')body={period:'2026-09',summary:{exportsUsdBillion:60,exportYoY:12},itemPeriod:'2026-08',regionPeriod:'2026-08',items:[{key:'semiconductor',name:'반도체',exportsUsdBillion:10,exportYoY:20}],regions:[{name:'미국',exportsUsdBillion:5,exportYoY:20}],history:[{period:'2026-08',exportsUsdBillion:55,exportYoY:10},{period:'2026-09',exportsUsdBillion:60,exportYoY:12}]};
+   if(path==='/api/export-momentum')body={period:'2026-09',summary:{exportsUsdBillion:60,exportYoY:12},itemPeriod:'2026-08',regionPeriod:'2026-08',items:[{key:'semiconductor',name:'반도체',exportsUsdBillion:10,exportYoY:20,exportWeightYoY:5,unitValueYoY:3}],regions:[{name:'미국',exportsUsdBillion:5,exportYoY:20}],history:[{period:'2026-08',exportsUsdBillion:55,exportYoY:10},{period:'2026-09',exportsUsdBillion:60,exportYoY:12}]};
    await route.fulfill({contentType:'application/json',body:JSON.stringify(body)});
   });
   await page.goto(base+'/#home',{waitUntil:'domcontentloaded'});await page.locator('.home-selection-link').waitFor();

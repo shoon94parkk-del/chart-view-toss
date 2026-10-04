@@ -569,7 +569,7 @@ async function renderChart(){
    <section class="surface chart-surface elevated-panel"><div class="chart-heading"><div><strong>기간 수익률</strong><small>각 종목의 첫 가용 관측값을 0%로 표시해요</small></div><span id="chart-status" role="status">불러오는 중</span></div><div class="chart-plot-wrap"><div id="chart-canvas" class="chart-canvas"></div><div id="chart-loading" class="chart-loading">${chartLoadingPreview('수익률 차트를 불러오고 있어요')}</div><div id="chart-tooltip" class="chart-tooltip" hidden></div></div><div id="chart-legend" class="chart-legend interactive-legend chart-legend-loading" aria-hidden="true"><span></span><span></span><span></span></div></section>
    <section id="chart-table-wrap" class="chart-table-wrap"></section>
    <details class="calculation-guide" id="calculation-guide"><summary>계산 기준</summary><div id="calculation-guide-body">${loadingIndicator('차트 계산 기준을 확인하고 있어요')}</div></details>
- `,'차트');
+ `,'수익률 비교');
  bindNav();
  document.querySelector('#open-compare-selector')?.addEventListener('click',()=>openCompareSheet(()=>renderChart()));
  document.querySelectorAll('[data-period]').forEach(b=>b.onclick=()=>{haptic('tickWeak');refreshChart({period:b.dataset.period,range:null})});
@@ -1060,7 +1060,8 @@ async function renderDetail(){
   if(epoch!==viewEpoch||!sectionNav?.isConnected)return;
   const buttons=[...sectionNav.querySelectorAll('[data-detail-jump]')];
   let active=buttons[0],nearest=-Infinity;
-  const threshold=sectionNav.getBoundingClientRect().bottom+24;
+  const atEnd=window.scrollY+window.innerHeight>=document.documentElement.scrollHeight-2;
+  const threshold=atEnd?window.innerHeight-90:sectionNav.getBoundingClientRect().bottom+24;
   for(const button of buttons){const target=document.getElementById(button.dataset.detailJump);const top=target?.getBoundingClientRect().top;if(top<=threshold&&top>nearest){active=button;nearest=top;}}
   buttons.forEach(button=>{if(button===active)button.setAttribute('aria-current','location');else button.removeAttribute('aria-current');});
  };

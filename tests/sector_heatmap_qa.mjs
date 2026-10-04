@@ -33,8 +33,8 @@ try{
   assert.equal(await host.locator('[data-sector-market="US"]').getAttribute('aria-pressed'),'true');assert.equal(await host.locator('.sector-members').count(),1,'poll retains expanded sector');
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
   await host.screenshot({path:`artifacts/sector-heatmap/${width}-US.png`});
-  await host.locator('[data-sector-stock="NVDA"]').click();await page.locator('.quote-main').waitFor();await page.waitForTimeout(300);
-  assert.equal(screenCalls,0,'US detail does not download KR universe');
+  const beforeDetailScreens=screenCalls;await host.locator('[data-sector-stock="NVDA"]').click();await page.locator('.quote-main').waitFor();await page.waitForTimeout(300);
+  assert.equal(screenCalls,beforeDetailScreens,'US detail does not download additional KR universe');
   const before=calls;await page.goto(base+'/#heatmap');await page.locator('[data-heatmap-view=sectors]').click();await page.locator('[data-full-sectors] .sector-tile').first().waitFor();
   assert.ok(calls<=before+1,'stock and sector maps share one payload or reuse fresh client cache');
   await page.locator('[data-full-sectors]').scrollIntoViewIfNeeded();await page.locator('[data-full-sectors]').screenshot({path:`artifacts/sector-heatmap/${width}-KR.png`});

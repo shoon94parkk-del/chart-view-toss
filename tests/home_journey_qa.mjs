@@ -36,7 +36,7 @@ try {
   }
   if(scenario==='failed')await page.locator('#retry-market').waitFor();
   else await page.locator('#market-card .quote-card').first().waitFor();
-  await page.locator('.home-change-card').first().waitFor();
+  await page.locator('.home-changes').scrollIntoViewIfNeeded();await page.locator('.home-change-card').first().waitFor();await page.locator('body').press('Control+Home');
   if(scenario==='watch-20'){assert.equal(await page.locator('#home-watchlist .watch-rich-row').count(),3);assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('chartview-toss-watchlist-v1')).length),20);}
   const geometry=await page.evaluate(()=>{
    const rect=s=>{const r=document.querySelector(s).getBoundingClientRect();return {top:r.top,bottom:r.bottom};};
