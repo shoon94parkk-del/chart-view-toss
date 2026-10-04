@@ -42,7 +42,7 @@ function candidateRow(row){
     <button class="idea-candidate" data-stock-detail="${esc(row.symbol)}" data-stock-name="${esc(row.name)}">
       <span class="idea-candidate-main"><strong>${esc(row.name)}</strong><small>${esc(row.symbol)}${row.market?' · '+esc(row.market):''}${row.context?.industry?' · '+esc(row.context.industry):''}</small></span>
       <span class="idea-candidate-price"><strong>${price(row.price)}</strong><em class="${change>0?'up':change<0?'down':'flat'}">${pct(row.change1d)}</em></span>
-      <span class="idea-reasons">${row.reasons.map(reason=>`<i>${esc(reason)}</i>`).join('')}</span>
+      <span class="idea-reasons">${row.reasons.slice(0,2).map(reason=>`<i>${esc(reason)}</i>`).join('')}</span>
       ${row.dataWarnings?.length?`<span class="data-quality-warning"><b>변동 기준 확인</b>${row.dataWarnings.map(esc).join(' ')}</span>`:''}
       ${row.monitorStatus?`<span class="idea-monitor-status ${esc(row.monitorStatus.cls)}"><b>${esc(row.monitorStatus.label)}</b>${row.monitorStatus.note?`<small>${esc(row.monitorStatus.note)}</small>`:''}</span>`:''}
     </button>

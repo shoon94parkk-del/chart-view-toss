@@ -14,11 +14,11 @@ export function recentSelections(payload) {
 }
 export function valueEntriesMarkup(showPicks = true) {
   return `<nav class="home-value-entries" aria-label="차트뷰 핵심 분석">
-    <button type="button" class="tool-exports" data-feature-route="exports"><i class="tool-symbol" aria-hidden="true">${uiIcon('exports',20)}</i><strong>수출 데이터</strong><small>품목·국가 흐름</small><span class="tool-open" aria-hidden="true">↗</span></button>
-    <button type="button" class="tool-find" data-feature-route="discover" data-feature-target="volume-surge"><i class="tool-symbol" aria-hidden="true">${uiIcon('filter',20)}</i><strong>조건별 종목 찾기</strong><small>거래량·추세 검색</small><span class="tool-open" aria-hidden="true">↗</span></button>
-    ${showPicks ? '<button type="button" class="tool-records" data-feature-route="picks"><i class="tool-symbol" aria-hidden="true">' + uiIcon('ledger',20) + '</i><strong>선정 기록·성과</strong><small>선정 이유·결과</small><span class="tool-open" aria-hidden="true">↗</span></button>' : ''}
+    <button type="button" class="tool-exports" data-feature-route="exports"><i class="tool-symbol" aria-hidden="true">${uiIcon('exports',20)}</i><strong>수출 데이터</strong><small>품목·국가</small><span class="tool-open" aria-hidden="true">↗</span></button>
+    <button type="button" class="tool-find" data-feature-route="discover" data-feature-target="volume-surge"><i class="tool-symbol" aria-hidden="true">${uiIcon('filter',20)}</i><strong>조건별 종목 찾기</strong><small>거래량·추세</small><span class="tool-open" aria-hidden="true">↗</span></button>
+    ${showPicks ? '<button type="button" class="tool-records" data-feature-route="picks"><i class="tool-symbol" aria-hidden="true">' + uiIcon('ledger',20) + '</i><strong>선정 기록·성과</strong><small>선정 이유</small><span class="tool-open" aria-hidden="true">↗</span></button>' : ''}
   </nav>`;
 }
 export function selectionCardMarkup(row, status = '점검 상태 확인 중') {
-  return `<article class="home-pick-row"><button type="button" class="home-selection-link" data-feature-route="picks" data-feature-target="${esc(row.key)}" aria-label="${esc((row.name || row.symbol) + ' ' + row.recommendedDate + ' 선정 근거·점검 보기')}"><span class="home-selection-heading"><strong>${esc(row.name || row.symbol)}</strong><small>${esc(row.recommendedDate || '선정일 미제공')} 선정</small></span><span class="home-selection-actions"><span data-selection-status="${esc(row.key)}">${esc(status)}</span><span class="home-selection-open">근거·점검 →</span></span></button></article>`;
+  return `<article class="home-pick-row"><button type="button" class="home-selection-link" data-feature-route="picks" data-feature-target="${esc(row.key)}" aria-label="${esc((row.name || row.symbol) + ' ' + row.recommendedDate + ' 선정 근거·점검 보기')}"><span class="home-selection-heading"><strong>${esc(row.name || row.symbol)}</strong><small>${esc(row.recommendedDate || '선정일 미제공')} 선정</small></span><span class="home-selection-reason">${esc(row.reason||'선정 이유 확인하기')}</span><span class="home-selection-actions"><span data-selection-status="${esc(row.key)}">${esc(status)}</span><span class="home-selection-open">기록 열기 →</span></span></button></article>`;
 }

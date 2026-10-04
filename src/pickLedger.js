@@ -84,6 +84,10 @@ export function selectionScorePresentation(row){
     note:score===null?'이 선정 기록에는 점수가 제공되지 않았어요.':(score===0?'0점은 원자료에 기록된 값이에요. ':'선정 당시 기록된 값이에요. ')+'계산 산식과 척도가 제공되지 않아 현재 기술점수·점검 상태와 직접 비교하지 않아요.'};
 }
 
+function technicalAlertRows(rows,displayName){
+ return rows.map(row=>`<button type="button" class="pick-alert-record" data-pick-alert-key="${esc(selectionKey(row))}"><b>${esc(stockName(row,displayName))} · ${esc(row.recommendedDate)}</b><small>${esc(technicalWarning([row]))}</small><span>해당 기록 확인 →</span></button>`).join('');
+}
+
 function rowMarkup(row,index,displayName){
   const score=selectionScorePresentation(row);
   const pick=row?.monitor;
@@ -96,7 +100,7 @@ function rowMarkup(row,index,displayName){
     ||(Array.isArray(pick?.originalThesis?.pillars)?pick.originalThesis.pillars.join(' · '):'')
     ||row?.reason
     ||'추천 당시 투자논리 기록이 없어요.';
-  const review=pick?.monitor?.reason||'최신 점검 대기';
+  const review=pick?.monitor?.reason||'새 기업 근거 확인 전 · 근거 검토 대기';
   const reviewed=pick?.monitor?.lastReviewedTradeDate||String(pick?.monitor?.lastReviewedAt||'').slice(0,10)||'—';
   return `<article class="pick-ledger-item ${meta.cls}" data-pick-key="${esc(selectionKey(row))}">
     <button type="button" class="pick-ledger-row" data-pick-expand="${esc(id)}" aria-expanded="false">
@@ -110,7 +114,7 @@ function rowMarkup(row,index,displayName){
     <div class="pick-ledger-detail" data-pick-detail="${esc(id)}" hidden>
       <div class="pick-ledger-detail-grid">
         <section><strong>추천 당시 이유</strong><p>${esc(row?.reason||'추천 사유가 기록되지 않았어요.')}</p></section>
-        <section><strong>투자논리 기준선</strong><p>${esc(thesis)}</p></section>
+        ${thesis.trim()!==String(row?.reason||'').trim()?`<section><strong>투자논리 기준선</strong><p>${esc(thesis)}</p></section>`:''}
         <section><strong>최근 점검</strong><p>${esc(review)}</p></section>
         <section data-pick-score-basis><strong>선정 점수 · 출처</strong><p>${esc(score.label)} · ${esc(score.source)}</p><p>${esc(score.note)}</p></section>
         <section><strong>단기 기술 신호</strong>${technicalMarkup(pick)}</section>
@@ -185,17 +189,10 @@ export async function renderPickLedger({shell,bindNav,displayName,focusKey=null}
       <div class="sell"><span>🔴 매도검토</span><b>${counts.SELL_REVIEW}</b></div>
       <div><span>⚪ 검토 대기</span><b>${counts.PENDING_REVIEW}</b></div>
     </div><p class="pick-ledger-basis">${monitorResult.ok?esc(`사후점검 ${String(monitorResult.value?.generatedAt||'').slice(0,10)||'기준일 미확인'} 기준 · 신호등은 펀더멘털과 단기 기술신호 중 더 높은 위험도를 반영 · 자동 점검 실행 ${reviewed}/${rows.length}건 · 근거 검토 대기는 별도 표시`):'사후점검 데이터를 불러오지 못해 성과 기록만 표시 중이에요.'}</p>`;
-    if(techSell.length){
-      techAlert.hidden=false;
-      techAlert.innerHTML=`<strong>🔴 단기 매도 검토 ${techSell.length}개</strong><span>${esc(techSell.slice(0,4).map((row)=>stockName(row,displayName)).join(' · '))}${techSell.length>4?' 외 '+(techSell.length-4)+'개':''}</span><small>${esc(technicalWarning(techSell))}</small>`;
-    }else if(techCaution.length){
-      techAlert.hidden=false;
-      techAlert.classList.add('caution');
-      techAlert.innerHTML=`<strong>🟠 기술 경고 ${techCaution.length}개</strong><span>${esc(techCaution.slice(0,4).map((row)=>stockName(row,displayName)).join(' · '))}</span><small>${esc(technicalWarning(techCaution))}</small>`;
-    }else{
-      techAlert.hidden=true;
-      techAlert.innerHTML='';
-    }
+    const warningRows=rows.filter(row=>['TECH_SELL_REVIEW','TECH_CAUTION'].includes(row.monitor?.technical?.signal));
+    techAlert.hidden=!warningRows.length;
+    techAlert.classList.toggle('caution',!techSell.length);
+    techAlert.innerHTML=warningRows.length?`<strong>단기 경고 · 매도 검토 ${techSell.length}개 · 기술 경고 ${techCaution.length}개</strong>${technicalAlertRows(warningRows,displayName)}`:'';
     toolbar.hidden=false;
 
     const search=document.querySelector('#pick-ledger-search');
@@ -250,6 +247,14 @@ export async function renderPickLedger({shell,bindNav,displayName,focusKey=null}
     status.addEventListener('change',paint);
     sort.addEventListener('change',paint);
     paint();
+    techAlert.querySelectorAll('[data-pick-alert-key]').forEach(button=>button.onclick=()=>{
+      search.value='';period.value='all';perf.value='all';status.value='all';paint();
+      const article=[...list.querySelectorAll('[data-pick-key]')].find(el=>el.dataset.pickKey===button.dataset.pickAlertKey);
+      const expand=article?.querySelector('[data-pick-expand]');
+      if(!expand)return;
+      if(expand.getAttribute('aria-expanded')!=='true')expand.click();
+      article.scrollIntoView({block:'start'});expand.focus({preventScroll:true});
+    });
   }catch(error){
     if(!list.isConnected)return;
     summary.innerHTML='<div class="empty compact"><strong>PICK 성과를 불러오지 못했어요.</strong><span>잠시 후 다시 확인해주세요.</span></div>';

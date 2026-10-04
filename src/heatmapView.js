@@ -213,5 +213,13 @@ export function renderSharedHeatmap(payload = {}, { scope = 'home', cached = fal
         <div class="home-heatmap-treemap">${heatmapMarketMarkup(payload, 'US', scope, limit)}</div>
       </div>
     </div>
-    <div class="home-heatmap-legend"><span><i class="home-legend-dot up"></i>상승</span><span><i class="home-legend-dot flat"></i>보합</span><span><i class="home-legend-dot down"></i>하락</span></div>`;
+    ${full?'<p class="heatmap-scope-guide">수집 대상 주요 종목의 전일 기준 대비 등락이에요. 한국 타일 크기는 시총 영향 완화(0.58승), 미국은 시총 비중을 사용해요. 색이 진할수록 등락폭이 커요. 전체 상장 종목을 포함하지 않아요.</p>':''}<div class="home-heatmap-legend"><span><i class="home-legend-dot up"></i>상승</span><span><i class="home-legend-dot flat"></i>보합</span><span><i class="home-legend-dot down"></i>하락</span></div>`;
+}
+
+export function renderHeatmapList(payload={}, {market='KR',limit=Infinity,cached=false}={}){
+ const rows=marketRows(payload,market,'full').slice(0,limit);
+ return `<div class="home-heatmap-meta" role="status">${cached?'이전 저장 시세 · 새 시세 확인 중 · ':''}수집 ${esc(formatKst(payload.generatedAt||payload.updatedAt))} KST</div><p class="heatmap-list-scope">${market==='KR'?'한국 주요':'미국 시총 상위'} ${rows.length}종목 · 지도와 같은 자료 · 전일 기준 대비 등락</p><div class="heatmap-readable-list">${rows.map(row=>{
+  const price=row.price==null||String(row.price).trim()===''||!Number.isFinite(Number(row.price))?'가격 미제공':Number(row.price).toLocaleString('ko-KR',{maximumFractionDigits:2})+(market==='KR'?'원':' 달러');
+  return `<button type="button" data-stock-detail="${esc(row.ticker)}" data-stock-name="${esc(row.name)}"><strong>${esc(row.name)}</strong><span>${esc(row.ticker)} · ${esc(price)}</span><b class="${toneClass(row.change)}">${esc(signedPct(row.change))}</b><small>기준 ${esc(row.sessionDate||formatKst(row.asOf)||'미제공')}</small></button>`;
+ }).join('')||'<p>이 시장의 수집 종목이 없어요.</p>'}</div>`;
 }

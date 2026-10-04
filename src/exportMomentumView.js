@@ -591,6 +591,8 @@ function renderItemDetail(detail){
       <div><span>수입액</span><strong>${esc(formatUsdBillion(latest.importsUsdBillion,{digits:1}))}</strong><small class="${yoyTone(latest.importYoY)}">${esc(formatSignedPct(latest.importYoY))}</small></div>
       <div><span>무역수지</span><strong class="${balanceTone(latest.tradeBalanceUsdBillion)}">${esc(formatUsdBillion(latest.tradeBalanceUsdBillion,{digits:1}))}</strong><small>${esc(tradeBalanceLabel(latest.tradeBalanceUsdBillion))}</small></div>
     </div>
+    <button type="button" class="export-research-jump" data-export-research-jump>기업 실적으로 확인하기 →</button>
+    <section class="export-research" tabindex="-1"></section>
     <div class="export-momentum-summary">
       ${momentumCard('수출액 3개월 YoY',detail.momentum?.exports)}
       ${momentumCard('물량 3개월 YoY',detail.momentum?.volume)}
@@ -602,9 +604,8 @@ function renderItemDetail(detail){
       ${detailMetricBars(detail.history,'exportWeightKg','수출 물량 추이','순중량',value=>formatWeightKg(value))}
       ${detailMetricBars(detail.history,'unitValueUsdPerKg','kg당 평균 신고금액','$ / kg',value=>formatUnitValue(value))}
     </div>
-    ${semiconductorBreakdown(detail)}
-    ${semiconductorCountryPlaceholder(detail)}
-    <div class="export-detail-country">
+    ${detail.key==='semiconductor'?`<details class="export-data-details"><summary>반도체 세부 HS·국가 비교 보기</summary>${semiconductorBreakdown(detail)}${semiconductorCountryPlaceholder(detail)}</details>`:''}
+    <details class="export-data-details"><summary>주요 5개 국가 수출액 보기 · 지정 시장</summary><div class="export-detail-country">
       <div class="export-detail-country-head"><strong>주요 5개 국가 × ${esc(detail.name)}</strong><small>전세계 순위가 아닌 지정 시장 비교</small></div>
       ${detail.countries.map(row=>`
         <div class="export-detail-country-row">
@@ -613,7 +614,7 @@ function renderItemDetail(detail){
           <small>${row.sharePct===null?'-':esc(row.sharePct.toFixed(1)+'%')} · 해당 품목 총수출 대비</small>
         </div>
       `).join('')}
-    </div>
+    </div></details>
     <p class="export-chart-note">국가 비교는 미국·중국·베트남·일본·대만 5개 지정 시장입니다. kg당 신고금액은 품목 믹스가 반영된 평균 단위가치입니다.</p>
   `;
 }
@@ -752,7 +753,7 @@ function paint(host,snapshot,bindNav,onItemOpen){
 
 export function renderExportMomentumView({shell,bindNav,focus=null,state={}}){
   const app=document.querySelector('#app');
-  app.innerHTML=shell(`<nav class="export-topic-nav" aria-label="수출 분석 바로가기">${[['history','수출 흐름'],['items','품목별'],['countries','국가별'],['memory','메모리 보고서'],['provisional','잠정 레이더'],['breadth','상승 확산도'],['quadrant','물량·단위가치']].map(([key,label])=>`<button type="button" data-export-topic="${key}" disabled>${label}</button>`).join('')}</nav><div id="export-momentum-root" class="export-momentum-view">${loading()}</div>`,'수출 모멘텀');
+  app.innerHTML=shell(`<nav class="export-topic-nav" aria-label="수출 분석 바로가기">${[['history','수출 흐름'],['items','품목별'],['countries','국가별'],['memory','메모리 보고서'],['provisional','잠정 레이더'],['breadth','상승 확산도'],['quadrant','물량·단위가치']].map(([key,label])=>`<button type="button" data-export-topic="${key}" disabled>${label}</button>`).join('')}</nav><div id="export-momentum-root" class="export-momentum-view">${loading()}</div>`,'수출 데이터');
   bindNav();
   const host=app.querySelector('#export-momentum-root');
   let seq=0;
@@ -777,7 +778,8 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={}}){
       const detail=await loadExportItemDetail(key,{force});
       if(token!==detailSeq||!panel.isConnected)return;
       panel.innerHTML=renderItemDetail(detail);
-      const researchHost=document.createElement('section');researchHost.className='export-research';panel.append(researchHost);
+      const researchHost=panel.querySelector('.export-research');
+      panel.querySelector('[data-export-research-jump]').onclick=()=>{researchHost.scrollIntoView({block:'start'});researchHost.focus({preventScroll:true});};
       void import('./exportResearchView.js').then(({mountExportResearch})=>{if(token===detailSeq&&researchHost.isConnected)void mountExportResearch(researchHost,detail,{state,alive:()=>token===detailSeq&&researchHost.isConnected});}).catch(()=>{if(researchHost.isConnected)researchHost.textContent='기업 연결을 열지 못했어요. 주요제품과 공시를 직접 확인해주세요.';});
       window.__chartviewRestoreScroll?.();
       panel.querySelector('[data-export-detail-close]')?.addEventListener('click',()=>{

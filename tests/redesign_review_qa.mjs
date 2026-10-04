@@ -32,7 +32,7 @@ try{
   assert.match(await page.locator('[data-pick-key="2026-09-17:039030"]').innerText(),/선정 점수 미제공/);
   await page.screenshot({path:`artifacts/redesign-review/${width}-score.png`,fullPage:true});
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
-  await page.getByRole('button',{name:'차트',exact:true}).click();await page.locator('#chart-table-wrap .return-table').waitFor();
+  await page.getByRole('button',{name:'수익률',exact:true}).click();await page.locator('#chart-table-wrap .return-table').waitFor();
   await page.locator('#chart-canvas').hover();
   await page.waitForFunction(()=>window.__reviewDrawnDates.some(s=>/^2026\.09\.\d{2}$/.test(s)));
   assert.match(await page.locator('#chart-tooltip').innerText(),/2026\.09\.\d{2}/);

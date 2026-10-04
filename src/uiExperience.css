@@ -1,0 +1,123 @@
+:root{
+ --cv-text-body:15px;--cv-text-meta:12px;--cv-text-title:22px;--cv-control-min:44px;
+ --cv-readable:#4e5968;--cv-secondary:#596575;
+}
+.app-shell button:focus-visible,.app-shell a:focus-visible,.app-shell summary:focus-visible,.app-shell input:focus-visible,.app-shell select:focus-visible{outline:3px solid #1769c2;outline-offset:3px}
+.app-shell .task-head p,.app-shell .page-intro p,.app-shell .more-intro p{font-size:var(--cv-text-body);line-height:1.6;color:var(--cv-readable)}
+.app-shell .feature-row small,.app-shell .surface-label{font-size:var(--cv-text-meta);color:var(--cv-secondary)}
+.app-shell .home-value-entries strong{font-size:14px;line-height:1.4}
+.app-shell .home-value-entries small{font-size:12px;line-height:1.4;color:var(--cv-readable)}
+.app-shell .home-value-entries button{min-height:100px;padding:10px 8px}
+.app-shell .home-value-entries .tool-open{display:none}
+.app-shell .home-value-entries .tool-symbol{margin-bottom:5px}
+.app-shell .home-analysis-heading>span{font-size:12px;color:var(--cv-secondary)}
+.app-shell .industry-caption,.app-shell .industry-report-detail,.app-shell .industry-revenue-row>small,.app-shell .industry-revenue-basis span,.app-shell .industry-peer-copy small{font-size:12px;line-height:1.6;color:var(--cv-secondary)}
+.app-shell .industry-source-link{min-height:44px;min-width:72px;font-size:12px;padding:8px 10px}
+.app-shell .industry-context-card,.app-shell .industry-company,.app-shell .industry-report,.app-shell .industry-revenue-basis{box-shadow:none;background:#fff}
+.app-shell .industry-revenue-basis{border:0;border-left:3px solid #a4b2c4;border-radius:0;padding-left:12px}
+.app-shell .industry-revenue-row{grid-template-columns:minmax(0,1fr) auto;gap:8px}
+.app-shell .industry-revenue-row>small{grid-column:1/-1;text-align:left}
+.app-shell .industry-report-head{align-items:center;flex-wrap:wrap}
+.app-shell .export-section-head>small,.app-shell .export-chart-note,.app-shell .export-chart-legend,.app-shell .export-item small,.app-shell .export-item p,.app-shell .export-region-grid p,.app-shell .export-source small,.app-shell .export-source p,.app-shell .export-facts span,.app-shell .export-research-basis{font-size:12px;line-height:1.6;color:var(--cv-secondary);white-space:normal}
+.app-shell .export-section-head{align-items:flex-start;flex-wrap:wrap}
+.app-shell .export-summary-grid span,.app-shell .export-summary-grid small{font-size:12px;color:var(--cv-secondary)}
+.app-shell .export-checkpoint>small,.app-shell .export-checkpoint>div:first-child span{font-size:12px;color:var(--cv-secondary)}
+.app-shell .export-checkpoints{grid-template-columns:repeat(auto-fit,minmax(min(100%,140px),1fr))}
+.app-shell .pick-ledger-detail p,.app-shell .pick-detail small,.app-shell .pick-tech-alert small{font-size:12px;line-height:1.6;color:var(--cv-readable)}
+.app-shell .bottom-nav button{min-height:44px;min-width:44px}
+.app-shell .text-button,.app-shell .retry,.app-shell .calculation-guide>summary,.app-shell .tab-usage-guide>summary{min-height:44px;display:inline-flex;align-items:center}
+/* Keep a single visible page title in web preview; native runtime retains its content title. */
+html:not([data-ait-runtime="true"]) .app-shell .task-head h2,
+html:not([data-ait-runtime="true"]) .app-shell .page-intro h2{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+html:not([data-ait-runtime="true"]) .app-shell .task-head,
+html:not([data-ait-runtime="true"]) .app-shell .page-intro{background:transparent;border-left:0;padding-left:0}
+@media(max-width:350px){
+ .app-shell .home-analysis-heading>span{display:none}
+ .app-shell .home-value-entries button{padding:8px 6px;min-height:100px}
+ .app-shell .home-value-entries strong{font-size:14px}
+ .app-shell .home-value-entries small{font-size:12px}
+}
+@media(prefers-reduced-motion:reduce){.app-shell *{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+.app-shell .home-changes{padding:14px 0;border:0;background:#fff;margin:12px 0 20px}
+.app-shell .home-changes-title p{font-size:12px;line-height:1.5;color:var(--cv-secondary)}
+.app-shell .home-change-card{padding:14px;border:1px solid #dde5ee;border-radius:16px;background:#fff}
+.app-shell .home-change-card header{align-items:flex-start;gap:12px}
+.app-shell .home-change-card h3{font-size:15px;line-height:1.4}
+.app-shell .home-change-card small,.app-shell .home-change-card p{font-size:12px;line-height:1.6;color:var(--cv-secondary)}
+.app-shell .home-change-card button{font-size:14px;min-height:44px}
+.app-shell .home-change-more{grid-column:1/-1;display:grid;gap:10px}
+.app-shell .home-change-more[hidden]{display:none}
+.app-shell .home-selection-link{display:grid;gap:9px;padding:14px;min-height:44px}
+.app-shell .home-selection-heading{width:100%;display:flex;justify-content:space-between;gap:10px}
+.app-shell .home-selection-heading small,.app-shell .home-selection-actions{font-size:12px;color:var(--cv-secondary)}
+.app-shell .home-selection-reason{font-size:14px;line-height:1.5;color:var(--cv-readable);display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;text-align:left}
+.app-shell .home-selection-actions{width:100%;display:flex;justify-content:space-between}
+.app-shell .home-empty-watch{padding:0;background:transparent}
+.app-shell .home-empty-watch button{width:100%;text-align:left;min-height:44px;font-size:14px}
+.app-shell .home-records-caption{font-size:12px;line-height:1.6;color:var(--cv-secondary)}
+
+.app-shell .export-research-jump{min-height:48px;width:100%;font-size:15px;font-weight:700;color:#fff;background:#2464dc;border:0;border-radius:12px;margin:12px 0}
+.app-shell .export-research{scroll-margin-top:90px;margin:8px 0 20px;padding:16px;background:#f2f6ff;border-radius:14px}
+.app-shell .export-research p{font-size:14px;line-height:1.6}
+.app-shell .export-data-details>summary,.export-company-products>summary{min-height:44px;display:flex;align-items:center;font-size:14px;color:#4e5968;cursor:pointer}
+.export-data-details{border-top:1px solid #e5e8ed;margin-top:14px}
+.export-company-products p{overflow-wrap:anywhere}
+
+.app-shell .insight-context{padding:16px;background:#f5f7fa;box-shadow:none}
+.app-shell .insight-context p{font-size:14px;line-height:1.6;margin:8px 0;overflow-wrap:anywhere}
+.app-shell .insight-context h3{font-size:17px}
+.insight-evidence-details>summary,.industry-raw-values>summary{min-height:44px;display:flex;align-items:center;cursor:pointer;font-size:14px}
+.app-shell .detail-jump-nav button{min-height:44px;font-size:13px;flex-shrink:0}
+.app-shell .detail-jump-nav button[aria-current]{background:#eaf1ff;color:#174eaf;font-weight:700}
+.app-shell .industry-raw-values p{font-size:12px;line-height:1.6;overflow-wrap:anywhere}
+
+.app-shell .pick-ledger-detail p{font-size:14px;line-height:1.65}
+.app-shell .pick-alert-record{display:grid;gap:8px;width:100%;padding:12px;text-align:left;background:#fff;border:1px solid #e8d2ce;border-radius:12px;min-height:44px}
+.app-shell .pick-alert-record small{font-size:12px;line-height:1.6;color:#4e5968}
+.pick-alert-record span{font-size:13px;color:#174eaf}
+.app-shell .screener-preset-strip{padding-bottom:10px;scrollbar-width:thin;scrollbar-color:#b6c8e8 #f1f4f8}
+.app-shell .consensus-caution{font-size:14px;line-height:1.6;color:#4e5968;background:#f5f7fa;padding:12px;border-radius:12px}
+.macro-observations{margin:12px 0;padding-left:20px;font-size:15px;line-height:1.7}
+.macro-observations li+li{margin-top:8px}
+.macro-summary-details summary{min-height:44px;display:flex;align-items:center;font-size:15px;cursor:pointer}
+
+.app-shell [hidden]{display:none!important}
+.heatmap-readable-list{display:grid;gap:8px}
+.heatmap-readable-list button{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px;padding:14px;text-align:left;background:#fff;border:1px solid #e5e8ed;border-radius:12px;min-height:44px}
+.heatmap-readable-list strong{font-size:15px;overflow-wrap:anywhere}
+.heatmap-readable-list span,.heatmap-readable-list small{font-size:12px;color:#4e5968;grid-column:1/-1}
+.heatmap-readable-list b{grid-row:1;grid-column:2;font-size:15px;background:none}
+.heatmap-readable-list b[class*="hm-up"]{color:#ac2929}
+.heatmap-readable-list b[class*="hm-down"]{color:#2555ab}
+.heatmap-scope-guide,.heatmap-list-scope{font-size:12px;line-height:1.6;color:#4e5968}
+.app-shell .heatmap-explore-controls [role="group"]{flex-wrap:wrap}
+.app-shell .heatmap-explore-controls button{min-height:44px}
+
+.app-shell .export-detail-head span,.app-shell .export-detail-head small,
+.app-shell .export-detail-summary span,.app-shell .export-detail-summary small,
+.app-shell .export-momentum-summary span,.app-shell .export-momentum-summary small,.app-shell .export-momentum-summary em,
+.app-shell .export-detail-chart-head span,.app-shell .export-detail-bar small,.app-shell .export-detail-country-head small,.app-shell .export-detail-country-row small,
+.app-shell .export-landing-head small,.app-shell .export-landing-card p,.app-shell .export-landing-method span,.app-shell .export-landing-method strong,
+.app-shell .export-semi-report-pills span,.app-shell .export-semi-report-unit>span,.app-shell .export-semi-report-unit small,.app-shell .export-semi-report-row>div:first-child span,
+.app-shell .export-semi-country-head span,.app-shell .export-semi-country-head em,.app-shell .export-semi-country-summary,.app-shell .export-semi-country-loading small{font-size:12px;line-height:1.6;color:#4e5968;white-space:normal;overflow-wrap:anywhere}
+.app-shell .export-detail-summary strong,.app-shell .export-detail-chart-head strong,.app-shell .export-detail-country-head strong{font-size:14px}
+.app-shell .export-detail-summary .up,.app-shell .export-momentum-summary .up{color:#ad2938}
+.app-shell .export-detail-summary .down,.app-shell .export-momentum-summary .down{color:#205ca8}
+
+.app-shell .export-landing-card :is(span,small,b,em){font-size:12px;line-height:1.6;color:#4e5968;white-space:normal;overflow-wrap:anywhere}
+.app-shell .export-landing-stats strong{font-size:14px}
+.app-shell .export-landing-card-head span{font-size:14px}
+.app-shell .export-landing-stats strong.up{color:#ad2938}
+.app-shell .export-landing-stats strong.down{color:#205ca8}
+
+.app-shell .pick-ledger-kpis span,.app-shell .pick-ledger-kpis small,.app-shell .pick-ledger-basis,.app-shell .pick-ledger-policy,.app-shell .pick-ledger-search span,.app-shell .pick-ledger-count,.app-shell .pick-ledger-status-kpis span,
+.app-shell .pick-ledger-stock small,.app-shell .pick-ledger-prices small,.app-shell .pick-ledger-secondary em,.app-shell .pick-ledger-detail-grid section>strong,.app-shell .pick-ledger-evidence-row span,.app-shell .pick-ledger-evidence-row small,.app-shell .pick-ledger-detail-foot{font-size:12px;line-height:1.6;color:#4e5968;white-space:normal;overflow-wrap:anywhere}
+.app-shell .pick-ledger-stock strong,.app-shell .pick-ledger-evidence-row strong{font-size:15px}
+.app-shell .pick-ledger-status,.app-shell .pick-ledger-tech-status{font-size:12px;white-space:normal}
+.app-shell .pick-ledger-search input,.app-shell .pick-ledger-filters select,.app-shell .pick-ledger-detail-link,.app-shell .pick-ledger-evidence-row{min-height:44px;font-size:14px}
+.app-shell .pick-ledger-secondary{flex-wrap:wrap}
+.app-shell .industry-name span,.app-shell .industry-metrics span,.app-shell .industry-peer-group>small{color:#4e5968}
+.app-shell .industry-product{font-size:15px}
+.app-shell .industry-section{background:#fff;box-shadow:none}
+
+.app-shell .quote-asof,.app-shell .market-section.home-primary .quote-asof,.app-shell .market-section.home-primary #market-time,.app-shell .source-line,.app-shell .macro-meta-line{font-size:12px;color:var(--cv-secondary)}

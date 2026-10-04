@@ -247,3 +247,13 @@ Home/analysis entries share local semantic SVGs and purposeful teal/export, blue
 - Saved research reuses existing device-local keys; raw questions/evidence never enter public share.
 - Price comparison list changes only on explicit user action.
 - Retry just the failed optional provider; preserve ready siblings and normal cache TTL.
+
+
+## 2026-10-04 — 승인된 UI·UX 계획 0.14.0
+- 홈 순서는 시장 → 세 핵심 입구 → 변화 기본2/펼침3 → 최근 선정2/원문 이유1행 → 관심 최대3/저장 조사 최대1 → 히트맵이다. 저장 원본은 제한하지 않는다. 집계 성과 계산은 전체 기록의 펼침에 유지한다. 이전 관심 선행·홈 집계 상시 노출 결정은 이번 승인으로 대체된다.
+- 수출 상세 요약 다음에 기업 조사 CTA와 기존 후보를 둔다. 국가/품목/제품 전체는 펼치되 검증된 제품 구절·출처·날짜·수혜 미확인 한계는 처음부터 표시한다. 동일 API/context/state/cache를 재사용한다.
+- 상세 요약은 핵심 관찰·날짜·한계·행동과 전체 근거 펼침을 제공한다. 공시 사업매출 단위가 확인되면 조/억 원으로 표시하고 원값을 보존한다. 현재 섹션은 실제 DOM 위치/스크롤 끝 기준이며 버튼 순서를 따르지 않는다.
+- 공통 핵심 근거/출처12px, 독립 조작44px, 키보드 포커스. 하단 chart의 표시 수익률, 화면 제목 수익률 비교; 기존 route/storage/native 계약 그대로.
+- 지도/목록은 같은 heatmap payload/시장/숫자/시세 freshness를 사용한다. 빈 관심 편집·정렬을 숨기고 빈 조사 검색 입구를 제공한다.
+- 새 위치의 Home 관찰은 viewport 근처에서 기존 screener를 단일 캐시 요청할 수 있다. 시장/입구 렌더링과 독립; 늦은 소스 완료 때 해당 CTA 포커스와 화면 위치를 보존한다.
+- UIUX_IMPLEMENTATION_2026-10-04.md와 기존 CI suites가 근거다. 웹 검증으로 native Android/iOS나 실제5명 사용성 검증 완료를 주장하지 않는다.

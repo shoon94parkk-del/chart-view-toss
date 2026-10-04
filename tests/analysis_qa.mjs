@@ -52,7 +52,7 @@ try{
     assert.match(consensusText,/회계연도 전체 추정치/);
     assert.match(consensusText,/연간 EPS 평균 추정/);
     assert.match(consensusText,/연간 매출 평균 추정/);
-    assert.match(consensusText,/회계연도 전체 컨센서스/);
+    assert.equal(await page.locator('.consensus-caution').count(),1);assert.match(await page.locator('.consensus-caution').innerText(),/확정 실적이 아니며 연간 수치를 분기 실적과 직접 비교하지/);
     await page.selectOption('#consensus-period','+1y');
     assert.match(await page.locator('#analysis-body').innerText(),/제공되지/);
    }

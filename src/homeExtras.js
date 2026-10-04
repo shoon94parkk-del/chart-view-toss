@@ -179,11 +179,12 @@ function createSections(marketSection) {
     `<div id="home-daily-heatmap">${loadingIndicator('오늘 등락 히트맵을 불러오고 있어요')}<div class="skeleton home-heatmap-skeleton"></div></div>`;
 
   if (picks) document.querySelector('#home-discovery-feed').append(picks);
-  document.querySelector('#home-discovery-feed').insertAdjacentElement('afterend', heatmap);
+  const revisit=document.querySelector('.saved-research')||document.querySelector('.watch-section');
+  revisit.insertAdjacentElement('afterend',heatmap);
   const discovery=document.querySelector('#home-discovery-feed');
   const exportPreview=document.createElement('section');exportPreview.className='home-export-preview home-changes';
-  exportPreview.innerHTML='<div class="home-changes-title"><h2><i class="section-symbol" aria-hidden="true">' + uiIcon('evidence',16) + '</i>이번 자료에서 확인할 변화</h2><p>관찰한 변화에서 다음 확인으로 · 자료마다 기준일이 달라요.</p></div><div class="home-change-grid" data-home-changes></div><p role="status" data-home-change-status></p><button type="button" class="text-button" data-home-change-retry hidden>변화 자료 다시 확인</button>';
-  discovery.append(exportPreview);
+  exportPreview.innerHTML='<div class="home-changes-title"><h2><i class="section-symbol" aria-hidden="true">' + uiIcon('evidence',16) + '</i>이번 자료에서 확인할 변화</h2><p>관찰한 변화에서 다음 확인으로 · 자료마다 기준일이 달라요.</p></div><div class="home-change-grid" data-home-changes></div><button type="button" class="text-button" data-home-change-toggle aria-expanded="false" hidden>변화 모두 보기</button><p role="status" data-home-change-status></p><button type="button" class="text-button" data-home-change-retry hidden>변화 자료 다시 확인</button>';
+  discovery.prepend(exportPreview);
   const loadPreview=()=>void import('./homeChangesView.js').then(module=>{if(exportPreview.isConnected)void module.mountHomeChanges(exportPreview);}).catch(()=>{if(exportPreview.isConnected)exportPreview.querySelector('[data-home-changes]').textContent='수출·조건 검색 화면에서 자료를 확인해주세요.';});
   const previewObserver=new IntersectionObserver(entries=>{if(entries.some(entry=>entry.isIntersecting)){previewObserver.disconnect();loadPreview();}else if(!exportPreview.isConnected)previewObserver.disconnect();},{rootMargin:'120px'});
   previewObserver.observe(exportPreview);
@@ -206,37 +207,9 @@ function paintPicks(host, payload) {
   if (!host || !host.isConnected) return;
   const day = payload && payload.day;
   const rows = Array.isArray(day && day.top3) ? day.top3.slice(0, 3) : [];
-  const recommendations = Array.isArray(payload && payload.recommendations) ? payload.recommendations : [];
-  const tracked = recommendations
-    .map((row) => ({ row, value: finite(row && row.returnPct) }))
-    .filter((item) => item.value !== null);
-  const avgReturn = tracked.length
-    ? tracked.reduce((sum, item) => sum + item.value, 0) / tracked.length
-    : null;
-  const wins = tracked.filter((item) => item.value > 0).length;
-  const winRate = tracked.length ? Math.round(wins / tracked.length * 100) : null;
-  const latestClose = tracked.reduce((latest, item) => {
-    const value = String(item.row && item.row.lastUpdatedTradeDate || '');
-    return value > latest ? value : latest;
-  }, '');
-
-  const performance =
-    '<div class="home-pick-performance">' +
-      '<div class="home-pick-performance-main">' +
-        '<span>전체 선정 기록 평균 수익률</span>' +
-        '<strong class="' + returnTone(avgReturn) + '">' + esc(signedPct(avgReturn)) + '</strong>' +
-        '<small>' + esc('최근 시세기준일 ' + (latestClose || day && day.tradeDate || '확인 중') + ' · 기록별 점검가 · 미평가 제외') + '</small>' +
-      '</div>' +
-      '<div class="home-pick-performance-kpis">' +
-        '<div><span>플러스 비율</span><b>' + esc(winRate === null ? '-' : winRate + '%') + '</b></div>' +
-        '<div><span>평가</span><b>' + tracked.length.toLocaleString('ko-KR') + '/' + recommendations.length.toLocaleString('ko-KR') + '건</b></div>' +
-      '</div>' +
-    '</div><details class="home-performance-details"><summary>성과 계산 기준</summary><p>추천가 대비 점검가의 단순 수익률을 산술 평균해요. 미평가 기록은 제외하며 선정일·보유기간은 종목별로 달라요. 매매비용 미반영 값으로, 포트폴리오 수익률과 달라요.</p></details>';
-
   if (!rows.length) {
     host.innerHTML =
-      '<div class="home-extra-empty"><strong>선정 종목을 준비 중이에요.</strong><span>최근 스크리닝이 완료되면 선정 종목이 표시돼요.</span></div>' +
-      performance;
+      '<div class="home-extra-empty"><strong>선정 종목을 준비 중이에요.</strong><span>최근 스크리닝이 완료되면 선정 종목이 표시돼요.</span></div>';
     return;
   }
 
@@ -245,7 +218,7 @@ function paintPicks(host, payload) {
 
   host.innerHTML =
     '<div class="home-pick-meta">' + esc(dateLabel) + ' · 종목을 눌러 기록 확인</div>' +
-    recentSelections(payload).map(row=>selectionCardMarkup(row)).join('') + performance;
+    recentSelections(payload).slice(0,2).map(row=>selectionCardMarkup(row)).join('');
   window.__chartviewBindNav?.();
   const paintToken=host._pickPaintToken=(host._pickPaintToken||0)+1;
   const refreshStatuses=async()=>{

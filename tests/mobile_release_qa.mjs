@@ -389,7 +389,7 @@ try{
         if(await page.locator('#market-card .market-extra-card').count()) throw new Error(`${width}px Home market did not collapse`);
 
         await page.waitForSelector('#home-top-picks .home-pick-row');
-        if(await page.locator('#home-top-picks .home-pick-row').count()!==3) throw new Error(`${width}px spotlight selection missing`);
+        if(await page.locator('#home-top-picks .home-pick-row').count()!==2) throw new Error(`${width}px spotlight selection missing`);
         if(!(await page.locator('#home-top-picks-section').innerText()).includes('선정 기록·성과')) throw new Error(`${width}px spotlight title missing`);
         await page.waitForSelector('#home-daily-heatmap .home-heatmap-cell');
         if(await page.locator('#home-daily-heatmap .home-heatmap-cell:visible').count()!==6) throw new Error(`${width}px home heatmap representative set mismatch`);
@@ -502,6 +502,7 @@ try{
       if(await page.locator('#export-item-detail .export-detail-bar').count()!==36) throw new Error('export item detail must keep all 12 months across three charts');
       if(await page.locator('#export-item-detail .export-detail-y-axis').count()!==3) throw new Error('export item detail charts must expose three Y axes');
       if(await page.locator('#export-item-detail .export-semi-card').count()<8) throw new Error('semiconductor HSK breakdown cards missing');
+      await page.getByText('반도체 세부 HS·국가 비교 보기',{exact:true}).click();
       await page.waitForSelector('#export-item-detail .export-semi-country-card');
       if(await page.locator('#export-item-detail .export-semi-country-card').count()!==4) throw new Error('semiconductor country matrix must show four segment cards');
       if(await page.locator('#export-item-detail .export-semi-country-row').count()!==24) throw new Error('semiconductor country matrix must show six configured markets per segment');
