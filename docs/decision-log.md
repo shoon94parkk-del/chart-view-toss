@@ -419,3 +419,8 @@ Initially semiconductor only: candidates require actual KRX mainProducts, show s
 Home remains market-first; add at most three dated change observations below existing primary entries. Home/watch revisit existing device-local questions and evidence regardless of watch registration. No new storage namespace or public question sharing. Saved conditions show stored baseline separately from current refreshed disclosures.
 
 Verification: 189 units plus AIT contract, production Vite build and 19 direct-entry routes; insight mobile 320/390 and existing relevant QA. Full evidence and plan rulings in INSIGHT_IMPLEMENTATION_2026-10-04.md. Android/iOS Toss Sandbox and five-person usability study remain external gates; fixed-period selection benchmarks require validated prices/corporate actions and are deferred as planned.
+
+
+## 2026-10-04 — Production verification follow-up (0.13.1)
+Live0.13.0 showed the corrected snapshot balance but old browser HTTP-cached item detail300.3rather than286.9. Origin detail API already returns28.6889billion; CF-cache-status=DYNAMIC. Add a stable signed-v1 calculation basis query on snapshot/detail to separate obsolete HTTP entries while retaining300/600second application TTL and lazy request budgets. No client recomputation or global HTTP-cache disabling.
+Real KRX Samsung products includes unrelated wireless equipment alongside semiconductor manufacturing; whole-field exclusions removed it while accepting package substrates and parts. Match each product clause, require semiconductor manufacturing/product wording or KRX semiconductor-manufacturing industry with an exact core product. Exclude substrates/parts/equipment per clause. Regression tests use actual Samsung/SK/Mico/Daeduck strings.

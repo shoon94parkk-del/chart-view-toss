@@ -2,7 +2,8 @@ import { api } from './api.js';
 import { normalizeExportItemDetail, normalizeExportProvisionalRadar, normalizeExportSnapshot, normalizeSemiconductorCountryMatrix } from './exportMomentumModel.js';
 
 export async function loadExportMomentumSnapshot({force=false}={}){
-  const raw=await api('/api/export-momentum',{
+  // Separate corrected signed balances from browser HTTP caches of the old calculation.
+  const raw=await api('/api/export-momentum?balanceBasis=signed-v1',{
     ttlMs:300000,
     timeoutMs:30000,
     retries:0,
@@ -21,7 +22,7 @@ export const exportMomentumApiPath='/api/export-momentum';
 export async function loadExportItemDetail(key,{force=false}={}){
   const encoded=encodeURIComponent(String(key||'').trim());
   if(!encoded)throw new Error('조회할 품목이 없어요.');
-  const raw=await api('/api/export-momentum/item-detail?key='+encoded,{
+  const raw=await api('/api/export-momentum/item-detail?key='+encoded+'&balanceBasis=signed-v1',{
     ttlMs:600000,
     timeoutMs:45000,
     retries:0,
