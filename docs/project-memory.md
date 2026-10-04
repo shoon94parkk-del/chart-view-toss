@@ -277,3 +277,9 @@ User-approved new behavior. Home cards include dated observations, questions and
 - Products keeps amount/volume/unit-value cards, breadth, quadrant and 12-month drilldown. Semiconductor keeps DRAM/Flash/MCP/DRAM-module Customs report plus lazy market prices. Trend keeps provisional radar, 12-month total trend and checkpoints.
 - Memory prices load from `/api/memory-prices` only when Semiconductor is opened. Price-family chips show one family at a time: DRAM chip, NAND chip, NAND wafer, DRAM module, GDDR.
 - HBM/MCP/eMMC-UFS without public numeric price are disclosed as unavailable; MCP export evidence remains in the Customs report.
+
+
+## 2026-10-05 — mobile density contract
+- User preference: mobile research lists should prioritize scan density. Screener and pick rows should show several stocks per viewport rather than one large card per stock.
+- Current compact targets: screener row min-height 68px before optional warnings; pick ledger collapsed row min-height 70px. Export cards use <=600px density overrides.
+- Preserve all trust metadata and warnings; compact by typography/layout, not by deleting evidence or basis text.
