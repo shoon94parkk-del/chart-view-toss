@@ -448,3 +448,7 @@ Classification: new behavior following actual 78/100 product review. Implement q
 ## 2026-10-04 — 수출 메모리 화면에 DRAM 현물가 추가
 Classification: new behavior. 수출 데이터 > 메모리 진입에 독립 `/api/memory-spot` lazy 요청을 추가하고 DDR5 16Gb, DDR4 16Gb, DDR4 8Gb의 공개 최신 평균가·당일 고저가·차트뷰 자체 누적 추이를 표시한다. 기존 관세청 수출 snapshot과 현물가 요청은 서로 실패 격리하며 한쪽 실패가 다른 쪽을 지우지 않는다.
 그래프는 inline SVG를 사용해 Lightweight Charts를 추가 로딩하지 않는다. Home/시장/시세/히트맵 경로에는 새 요청을 추가하지 않는다. 공급자 기준일·원문 링크·stale 상태와 “유료 과거 이력 미사용, 수집 시작일부터 누적” 기준을 화면에 명시한다.
+
+
+## 2026-10-04 — 수출 데이터 정보구조 단순화
+Classification: intentional UX redesign. 수출 데이터 첫 진입은 `전체 요약`만 표시하며 최근 총수출·수입·무역수지·누적·핵심 사실과 데이터 기준만 보여준다. 기존 상세 분석은 삭제하지 않고 `품목 / 국가 / 반도체 / 속보·추세` 탭으로 이동한다. 반도체 가격과 잠정 레이더는 해당 탭을 열 때만 lazy load한다. 기존 focus deep link(history/items/countries/memory/provisional/breadth/quadrant)는 새 탭으로 매핑한다.
