@@ -744,18 +744,21 @@ function facts(snapshot){
 function sources(snapshot){
   const apiBacked=snapshot.status==='official_api';
   const dates=[
-    snapshot.publishedAt?`발표일 ${dateLabel(snapshot.publishedAt)}`:'',
-    snapshot.updatedAt?`데이터 갱신 ${dateLabel(snapshot.updatedAt)}`:'',
+    snapshot.publishedAt?\`발표일 \${dateLabel(snapshot.publishedAt)}\`:'',
+    snapshot.updatedAt?\`데이터 갱신 \${dateLabel(snapshot.updatedAt)}\`:'',
   ].filter(Boolean).join(' · ');
-  return `
-    <section class="export-source">
-      <div><strong>데이터 기준</strong><p>${apiBacked?'관세청 공공데이터 API를 차트뷰 서버에서 수집·캐시해 표시합니다. 인증키는 서버에서만 사용하며 브라우저에는 전달하지 않습니다. 총괄과 HS 상세의 최신 기준월이 다르면 각각의 기준월을 따로 표시합니다.':'공식 발표 수치를 저장한 스냅샷입니다.'}</p></div>
-      <div class="export-source-links">
-        ${snapshot.sources.map(source=>`<button type="button" data-external-url="${esc(source.url)}"><span>${esc(source.name)}</span><small>${esc(source.role)}</small></button>`).join('')}
+  return \`
+    <details class="export-source">
+      <summary><strong>데이터 기준</strong><span>\${apiBacked?'관세청 API · 자세히 보기':'공식 스냅샷 · 자세히 보기'}</span></summary>
+      <div class="export-source-body">
+        <p>\${apiBacked?'관세청 공공데이터 API를 차트뷰 서버에서 수집·캐시해 표시합니다. 인증키는 서버에서만 사용하며 브라우저에는 전달하지 않습니다. 총괄과 HS 상세의 최신 기준월이 다르면 각각의 기준월을 따로 표시합니다.':'공식 발표 수치를 저장한 스냅샷입니다.'}</p>
+        <div class="export-source-links">
+          \${snapshot.sources.map(source=>\`<button type="button" data-external-url="\${esc(source.url)}"><span>\${esc(source.name)}</span><small>\${esc(source.role)}</small></button>\`).join('')}
+        </div>
+        \${dates?\`<small>\${esc(dates)}</small>\`:''}
       </div>
-      ${dates?`<small>${esc(dates)}</small>`:''}
-    </section>
-  `;
+    </details>
+  \`;
 }
 
 function exportPanel(key,content){
