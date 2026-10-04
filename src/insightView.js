@@ -1,0 +1,6 @@
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+export function investigationHtml(context){
+ if(!context)return '';
+ const exported=context.kind==='export';
+ return `<aside id="detail-investigation" class="insight-context ${exported?'tool-exports':'tool-find'}"><span class="insight-kind">${exported?'수출 통계에서 확인 중':'기술 조건에서 발견'}</span><h3>${exported?'이 흐름을 기업 공시로 확인하기':'이 종목을 본 이유'}</h3><p>${esc(context.title)} · ${esc(context.basisDate||'기준일 미제공')}</p>${context.conditions?.length?`<small>적용 조건 · ${context.conditions.map(esc).join(' · ')}</small>`:''}<div><b>확인된 관찰값</b><p>${(context.observations||[]).map(esc).join(' · ')||'관찰값 미제공'}</p></div><div><b>함께 볼 반대 근거</b><p>${esc(context.challenge)}</p></div>${context.warnings?.length?`<p class="data-quality-warning">${context.warnings.map(esc).join(' ')}</p>`:''}${exported?`<small>${esc(context.source)} · 사업 분류 ${esc(context.productDate)} · ${esc(context.products)}</small><p>월간 HS 통계와 분기 기업 실적의 기간·범위가 달라요. 해당 기업의 수출 노출과 수혜는 확인되지 않았어요.</p>`:''}<button type="button" data-detail-jump="${exported?'detail-industry-block':'detail-financial-block'}">${esc(context.next||'공시로 확인하기')} →</button></aside>`;
+}

@@ -9,7 +9,7 @@ const view=readFileSync(new URL('../src/industryContextView.js',import.meta.url)
 test('detail loads DART revenue only after the base industry context can render',()=>{
  assert.match(main,/const industryBasePromise=koreanDetail\?Promise\.all/);
  assert.match(main,/jobs\.push\(settle\(industryBasePromise/);
- assert.match(main,/resolvedName\.then\(name=>businessReportData\(symbol,name\)\)\.catch/);
+ // Resolved-name and independent retry behavior is exercised by insight_flow_qa.
  assert.match(main,/report\?\.available/);
  assert.match(main,/KRX \+ DART/);
 });
@@ -46,9 +46,7 @@ test('IDEA LAB keeps industry context collapsed and loads DART only on expand',(
  const idea=readFileSync(new URL('../src/ideaView.js',import.meta.url),'utf8');
  assert.match(idea,/industryContextHtml\(row\.context,\{collapsible:true,open:false\}\)/);
  assert.match(idea,/details\.addEventListener\('toggle'/);
- assert.match(idea,/businessReportData\(symbol,name\)\.then/);
- assert.match(idea,/relationshipEvidenceData\(symbol,name\)\.then/);
- assert.match(idea,/\.then\(repaint\)/);
+ // Lazy and independent request behavior is covered by insight_research_qa.
  assert.doesNotMatch(idea,/const \[report,evidence\]=await Promise\.all/);
 });
 
@@ -56,7 +54,7 @@ test('slow DART and direct evidence show independent loading and failure states'
  assert.match(main,/현재가를 확인하고 있어요/);
  assert.match(main,/회사·산업 정보를 불러오고 있어요/);
  assert.match(main,/reportState:koreanDetail\?'loading':'idle'/);
- assert.match(main,/report\?\.loadError\?'error':report\?\.available\?'ready':'unavailable'/);
+ // Loading/error transitions are exercised with delayed/failed API responses in insight_flow_qa.
  assert.match(view,/DART 사업보고서 매출 구조 확인 중/);
  assert.match(view,/첫 조회는 공시 확인에 시간이 걸릴 수 있어요/);
  assert.match(view,/DART 공시를 불러오지 못했어요/);
@@ -73,4 +71,3 @@ test('direct supply-chain UI is evidence-backed and separate from inferred adjac
  assert.match(view,/최근 기사에서 두 회사의 구체적 계약·납품 단서를 찾지 못했어요/);
  assert.match(readFileSync(new URL('../src/api.js',import.meta.url),'utf8'),/relationshipEvidenceData=.*timeoutMs:18000/);
 });
-

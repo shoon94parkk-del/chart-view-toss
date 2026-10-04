@@ -44,6 +44,8 @@ try {
   assert.equal(await page.locator('.bottom-nav [data-tab="more"] svg rect').count(),3,'analysis has a tool dashboard icon');
   assert.equal(await page.locator('.bottom-nav [aria-current="page"]').innerText(),'홈');
   assert.equal(await page.locator('.home-pick-performance-main strong').innerText(),'+11.10%');
+  assert.ok(await page.evaluate(()=>document.querySelector('.home-selection-link').compareDocumentPosition(document.querySelector('.home-pick-performance'))&Node.DOCUMENT_POSITION_FOLLOWING),'recent records precede secondary performance');
+  assert.ok(await page.locator('.home-pick-performance-main strong').evaluate(el=>parseFloat(getComputedStyle(el).fontSize)<=16),'whole-history performance is secondary verification');
   assert.match(await page.locator('.home-pick-performance-kpis').innerText(),/1\/2건/);
   assert.ok(await page.locator('.home-pick-performance-main strong').isVisible(),'performance visible without a disclosure click');
   await page.locator('.home-performance-details summary').click();

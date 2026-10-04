@@ -7,6 +7,7 @@ import { questionPlan, resolveComparisonTarget, compareReports, reportObservatio
 import { qualitySlice, qualityLabels, qualityObservations } from './financialQuality.js';
 import { qualityCell, qualityReviewHtml } from './financialQualityView.js';
 import { comparisonGroup } from './industryContext.js';
+import {comparisonExample} from './insightModel.js';
 import { formatKst, formatMetricPeriod, formatDataSource } from './dataPresentation.js';
 import {conditionChoices} from './investmentReview.js';
 import {saveCondition} from './reviewStorage.js';
@@ -27,11 +28,11 @@ export function mountResearchCard(host,options){
  try{saved=readResearchNote(symbol);}catch{}
  selectedPeer=options.initialPeer||(options.draft?options.draft.peer:saved?.peer)||null;
  const korean=/\.(KS|KQ)$/i.test(symbol);
- const examplePeer=symbol==='000660.KS'?'삼성전자':'SK하이닉스';
+ let examplePeer=null,peerRows=[];
  const examples=[
   {label:'최근 실적 비교',question:'최근 매출과 영업이익은 이전보다 어떻게 달라졌어?'},
   {label:'전년 대비 증가율',question:'매출과 영업이익의 전년 대비 증가율을 비교해줘'},
-  {label:`${examplePeer}와 비교`,question:`${examplePeer}와 매출 및 영업이익 증가율을 비교해줘`},
+  {label:'다른 회사와 비교',question:''},
   {label:'현금흐름 비교',question:'영업현금흐름과 순이익을 비교해줘'},
   {label:'실적의 질 확인',question:'실적의 질과 함께 확인할 위험 변화를 비교해줘'},
   {label:'부채·재고 확인',question:'부채비율과 재고, 매출채권은 어떻게 달라졌어?'},
@@ -40,7 +41,7 @@ export function mountResearchCard(host,options){
   <details class="research-guide" id="research-guide"><summary>지원 항목과 이용 방법</summary><strong>비교할 수 있는 항목</strong><p>국내 종목의 DART 공시에서 확인한 매출액·영업이익·영업이익률·전년 대비 증가율을 비교해요. 순이익·영업현금흐름·부채·재고·매출채권도 함께 볼 수 있어요.</p><p class="research-guide-limit">앞으로의 전망, 목표주가, 주가 상승 이유 같은 예측·원인 해석은 지원하지 않아요. 공시 자료가 없으면 확인 불가로 표시해요.</p></details>
   ${korean?`<div class="research-examples" aria-label="질문 예시"><span>질문 예시 · 누르면 입력돼요</span>${examples.map((row,index)=>`<button type="button" data-research-example="${index}">${esc(row.label)}</button>`).join('')}</div>`:''}
   <label for="research-question">${esc(name||symbol)}의 어떤 실적을 비교할까요?</label>
-  <textarea id="research-question" name="question" maxlength="180" rows="2" required aria-describedby="research-help" placeholder="예: 하이닉스와 매출·영업이익 증가율을 비교해줘">${esc(options.draft?.question??saved?.question??'')}</textarea>
+  <textarea id="research-question" name="question" maxlength="180" rows="2" required aria-describedby="research-help" placeholder="예: ${esc(name||symbol)}의 영업현금흐름과 순이익을 비교해줘">${esc(options.draft?.question??saved?.question??'')}</textarea>
   <p class="research-form-help" id="research-help">종목명과 항목을 찾아 공시 수치를 조회·계산하는 기능이에요. 다른 회사 하나의 이름을 함께 적으면 같은 기간의 실적을 나란히 비교해요.</p>
   ${korean?`<details class="research-peer-picker" ${selectedPeer?'open':''}><summary>비교할 회사 선택 · 선택 사항</summary><div id="research-peer-selection" role="status">${selectedPeer?`${esc(selectedPeer.name)} (${esc(selectedPeer.symbol)}) 선택됨`:'선택하지 않으면 이전 실적과 비교해요.'}</div><div id="research-peer-options"></div>${onChoosePeer?'<button type="button" data-research-choose-peer>관심종목·검색에서 선택</button>':''}<button type="button" data-research-clear-peer ${selectedPeer?'':'hidden'}>회사 선택 해제</button><small>산업 분류가 같아도 사업 구성은 달라요. 회사 전체 공시를 비교해요.</small></details>`:''}
   <button type="submit" class="research-analyze">비교 분석하기</button>
@@ -49,6 +50,7 @@ export function mountResearchCard(host,options){
  ${saved&&(saved.support||saved.challenge||saved.reviewOn)?`<details class="research-legacy"><summary>이전에 적은 메모</summary><p>${esc(saved.support)}</p><p>${esc(saved.challenge)}</p>${saved.reviewOn?`<p>다시 볼 날짜 ${esc(saved.reviewOn)}</p>`:''}</details>`:''}`;
  const form=host.querySelector('form'),input=host.querySelector('textarea'),result=host.querySelector('#research-result'),saveState=host.querySelector('#research-save-state');
  const updateDraft=()=>options.onDraftChange?.({question:input.value,peer:selectedPeer});
+ const updateExample=()=>{examplePeer=comparisonExample(symbol,peerRows,selectedPeer);examples[2]={label:examplePeer?`${examplePeer.name}와 비교`:'다른 회사와 비교',question:examplePeer?`${examplePeer.name}와 매출 및 영업이익 증가율을 비교해줘`:''};const button=host.querySelector('[data-research-example="2"]');if(button)button.textContent=examples[2].label;};
  updateDraft();
  input.addEventListener('input',()=>{sequence++;result.innerHTML='';result.setAttribute('aria-busy','false');updateDraft();saveState.textContent='작성 중 · 이 화면을 떠나도 이번 방문 동안 유지돼요. 다음 방문에도 보려면 저장하세요.';});
  const choosePeer=row=>{
@@ -58,6 +60,7 @@ export function mountResearchCard(host,options){
   host.querySelector('[data-research-clear-peer]').hidden=false;
   saveState.textContent='비교할 회사를 선택했어요. 비교 분석하기를 눌러주세요.';
   updateDraft();
+  updateExample();
  };
  host.querySelector('[data-research-choose-peer]')?.addEventListener('click',()=>onChoosePeer(choosePeer));
  host.querySelector('[data-research-clear-peer]')?.addEventListener('click',()=>{
@@ -65,10 +68,12 @@ export function mountResearchCard(host,options){
   host.querySelector('#research-peer-selection').textContent='선택하지 않으면 이전 실적과 비교해요.';
   host.querySelector('[data-research-clear-peer]').hidden=true;
   updateDraft();
+  updateExample();
  });
  const peerButtons=(rows,label)=>rows.length?`<span>${esc(label)}</span>${rows.map(row=>`<button type="button" data-peer-symbol="${esc(row.symbol)}" data-peer-name="${esc(row.name)}">${esc(row.name)}</button>`).join('')}`:'';
  const paintPeers=stocks=>{
   if(!host.isConnected||!korean)return;
+  peerRows=stocks;updateExample();
   const watch=favorites.filter(row=>row.symbol!==symbol&&/\.(KS|KQ)$/i.test(row.symbol)).slice(0,4);
   const group=comparisonGroup(stocks.find(row=>row.symbol===symbol));
   const others=group?stocks.filter(row=>row.symbol!==symbol&&/\.(KS|KQ)$/i.test(row.symbol)&&comparisonGroup(row)?.key===group.key&&!watch.some(w=>w.symbol===row.symbol)).slice(0,4):[];
@@ -78,8 +83,9 @@ export function mountResearchCard(host,options){
  paintPeers([]);
  if(korean)screenerData().then(data=>paintPeers(data.stocks||[])).catch(()=>{});
  host.querySelectorAll('[data-research-example]').forEach(button=>button.onclick=()=>{
+  if(Number(button.dataset.researchExample)===2&&!examplePeer){host.querySelector('.research-peer-picker').open=true;host.querySelector('#research-peer-selection').textContent='비교 후보가 확인되지 않았어요. 관심종목·검색에서 다른 회사를 직접 선택해주세요.';return;}
   input.value=examples[Number(button.dataset.researchExample)].question;
-  if(Number(button.dataset.researchExample)===2){selectedPeer=null;host.querySelector('[data-research-clear-peer]').hidden=true;host.querySelector('#research-peer-selection').textContent='질문에 적은 회사와 비교해요.';}
+  if(Number(button.dataset.researchExample)===2){selectedPeer=examplePeer;host.querySelector('[data-research-clear-peer]').hidden=false;host.querySelector('#research-peer-selection').textContent=`${examplePeer.name} (${examplePeer.symbol}) 선택됨`;}
   sequence++;result.innerHTML='';result.setAttribute('aria-busy','false');
   saveState.textContent='예시를 입력했어요. 비교 분석하기를 눌러주세요.';
   input.focus({preventScroll:true});
@@ -148,7 +154,7 @@ export function mountResearchCard(host,options){
      <table class="research-table"><caption>${esc(selection.label)} 공시 실적 비교</caption><thead><tr><th scope="col">지표</th>${companies.map(r=>`<th scope="col">${esc(r.name)}</th>`).join('')}</tr></thead><tbody>${metrics.map(key=>`<tr><th scope="row">${labels[key]}</th>${slices.map(s=>`<td>${cell(s,key)}</td>`).join('')}</tr>`).join('')}</tbody></table>
      <div class="research-findings"><h4>공시에서 확인한 변화</h4>${companies.length===2&&!['cash','balance'].includes(plan.focus)?`<ul class="research-growth-difference">${growthComparison(slices,companies.map(r=>r.name)).map(t=>`<li>${esc(t)}</li>`).join('')}</ul>`:''}${plan.focus==='growth'&&companies.length===2?'':slices.map((s,i)=>`<div><b>${esc(companies[i].name)}</b><ul>${(['cash','balance'].includes(plan.focus)?qualityObservations(s,plan.focus):reportObservations(s)).map(t=>`<li>${esc(t)}</li>`).join('')}</ul></div>`).join('')}</div>
      <details class="research-quality-details" ${plan.focus==='quality'?'open':''}><summary>회사별 실적의 질과 함께 확인할 변화</summary>${slices.map((slice,i)=>qualityReviewHtml(slice,{name:companies[i].name,compact:true})).join('')}</details>
-     <div class="research-price-comparison"><button type="button" data-research-prices>가격 지표도 비교</button><div id="research-prices" aria-live="polite"></div></div>
+     <div class="research-price-comparison"><button type="button" data-research-prices>가격 지표도 비교</button>${companies.length===2&&options.onCompare?'<button type="button" data-research-chart>이 두 회사의 가격 차트 비교</button><small>누르면 비교 목록을 이 두 회사로 바꾸고 차트를 열어요.</small>':''}<div id="research-prices" aria-live="polite"></div></div>
      <div class="research-scope"><strong>확인 범위</strong><p>질문 키워드로 비교 항목을 정리한 결과예요. 공시의 실적·현금흐름·재무상태 수치를 계산하며 자유 질문에 대한 AI 답변은 제공하지 않아요.</p>${limits}<p>영업이익률 = 영업이익 ÷ 매출액 × 100. 증감률은 이전 값이 양수일 때만 계산해요. ${esc(slices[0].basis||'재무제표')} · ${esc(slices[0].currency||'통화 확인 필요')} · 연간과 분기 누적은 서로 섞지 않아요. 재고·채권·부채 잔액의 이전 값은 전년 말 기준이에요.</p></div>
      <div class="research-sources"><span>비교에 사용한 원자료</span>${slices.map((s,i)=>sourceUrl(s.sourceUrl)?`<button type="button" data-research-source="${esc(sourceUrl(s.sourceUrl))}">${esc(companies[i].name)} 공시 원문</button>`:'').join('')}<button type="button" data-research-jump="detail-financial-block">전체 실적 흐름</button><button type="button" data-research-jump="detail-industry-block">회사·산업</button><button type="button" data-research-jump="detail-news-section">관련 뉴스</button></div>
     </div>`;
@@ -166,6 +172,7 @@ export function mountResearchCard(host,options){
      finally{if(run===sequence&&host.isConnected)prices.setAttribute('aria-busy','false');}
     };
     result.querySelector('[data-research-prices]').onclick=loadPrices;
+    result.querySelector('[data-research-chart]')?.addEventListener('click',()=>options.onCompare(companies));
     const choices=conditionChoices(companies,reports),track=document.createElement('div');track.className='research-track-options';
     track.innerHTML=`<strong>이 비교를 투자 근거로 계속 확인하기</strong><p>공시가 바뀌었을 때 다시 확인할 조건을 고르세요. 현재 충족 여부와 수치도 함께 저장해요.</p>${choices.map((c,i)=>`<button type="button" data-track-condition="${i}" ${c.baseline.matched===null?'disabled':''}>${esc(c.label)} · ${c.baseline.matched===null?'확인 불가':c.baseline.matched?'현재 충족':'현재 미충족'}</button>`).join('')}<span role="status" data-track-status></span>`;
     result.querySelector('.research-answer').appendChild(track);

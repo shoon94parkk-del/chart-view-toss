@@ -24,6 +24,5 @@ test('missing Korean company context removes the optional panel instead of break
 test('Korean detail tickers enter DART enrichment branch',()=>{
  assert.match(main,/const koreanDetail=\/\\\.\(KS\|KQ\)\$\/i\.test\(symbol\)/);
  assert.match(main,/if\(koreanDetail\)/);
- assert.match(main,/resolvedName\.then\(name=>businessReportData\(symbol,name\)\)/);
+ // Korean name/API binding and retry are behavioral assertions in insight_flow_qa.
 });
-

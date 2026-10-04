@@ -1,5 +1,9 @@
 import {uiIcon, surfaceIdentity} from './uiIdentity.js';
 import { valueEntriesMarkup } from './valueDiscovery.js';
+import {marketBrief} from './insightModel.js';
+import {investigationHtml} from './insightView.js';
+import {savedResearchHtml} from './savedResearchView.js';
+import './insight.css';
 import { resolveRoute } from './routes.js';
 import {indexSeries,quoteHtml,detailCachedQuote,marketCapHtml,metricBasis,invalidSymbolHtml} from './detailPresentation.js';
 import {encodeSharedView,decodeSharedView,homeBriefState,quoteBasisLabel} from './experienceState.js';
@@ -229,7 +233,7 @@ function sectionTitle(title,action=''){return `<div class="section-head"><h2>${t
 function stockRow(x){const name=displayName(x.symbol,x.name);return `<button class="stock-row" data-stock-detail="${x.symbol}"><span class="stock-logo">${esc(name.slice(0,1))}</span><span class="stock-copy"><strong>${esc(name)}</strong><small>${esc(x.symbol)}</small></span><span class="chevron">${iconSvg('arrow',18)}</span></button>`}
 function esc(v=''){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 
-function navigate(tab,detailSymbol=null,detailName=''){
+function navigate(tab,detailSymbol=null,detailName='',investigation=null){
  if(tab==='picks'&&!SHOW_SPOTLIGHT)tab='home';
  const hash=detailSymbol?`#${tab}/${encodeURIComponent(detailSymbol)}`:`#${tab}`;
  const featureTab=['discover','picks','exports'].includes(tab);
@@ -241,6 +245,8 @@ function navigate(tab,detailSymbol=null,detailName=''){
  scrollPositions.set(location.hash||'#home',window.scrollY);
  closeStockSelector();
  state.sharedDetailSymbol=null;
+ state.restoreScroll=null;
+ state.detailInvestigation=tab==='detail'&&investigation?.symbol===detailSymbol?investigation:null;
  if(tab==='detail')state.detailOrigin=state.tab==='detail'?state.detailOrigin:['home','chart','watch'].includes(state.tab)?state.tab:'more';
  if(tab==='detail'&&state.tab==='discover')state.returnFocusSymbol=detailSymbol;
  state.tab=tab;
@@ -248,13 +254,15 @@ function navigate(tab,detailSymbol=null,detailName=''){
  else if(detailSymbol){state.detailSymbol=detailSymbol;state.detailName=detailName||'';}
  const nextUrl=new URL(location.href);nextUrl.searchParams.delete('cv');nextUrl.hash=hash;
  navigationDepth+=1;
- history.pushState({tab,detailSymbol:state.detailSymbol,detailName:state.detailName,detailOrigin:state.detailOrigin,cvNavigation:{session:navigationSession,depth:navigationDepth}},'',nextUrl);
+ history.pushState({tab,detailSymbol:state.detailSymbol,detailName:state.detailName,detailOrigin:state.detailOrigin,investigation:state.detailInvestigation,cvNavigation:{session:navigationSession,depth:navigationDepth}},'',nextUrl);
  if(tab==='news')state.newsSymbol=detailSymbol||null;
  haptic('tickWeak');
  render();
  window.scrollTo(0,0);
 }
 window.__chartviewNavigate=(tab,detailSymbol=null,detailName='')=>navigate(tab,detailSymbol,detailName);
+window.__chartviewInvestigate=(symbol,name,context)=>navigate('detail',symbol,name,context);
+window.__chartviewRestoreScroll=()=>requestAnimationFrame(()=>{const y=state.restoreScroll;if(y==null)return;if(document.documentElement.scrollHeight>=y+innerHeight){window.scrollTo(0,y);state.restoreScroll=null;}});
 function bindNav(){
  document.querySelectorAll('[data-feature-route]').forEach(b=>b.onclick=()=>{
    if(b.dataset.featureRoute==='discover')state.screener.appliedRoutePreset=null;
@@ -265,6 +273,7 @@ function bindNav(){
  document.querySelectorAll('[data-stock-news]').forEach(b=>b.onclick=()=>navigate('news',b.dataset.stockNews,b.dataset.stockName||''));
  document.querySelectorAll('[data-go-chart]').forEach(b=>b.onclick=()=>navigate('chart'));
  document.querySelectorAll('[data-stock-detail]').forEach(b=>b.onclick=()=>navigate('detail',b.dataset.stockDetail,b.dataset.stockName||''));
+ document.querySelectorAll('[data-saved-research]').forEach(button=>button.onclick=()=>navigate('detail',button.dataset.savedResearch,'',{kind:'saved',symbol:button.dataset.savedResearch,jump:button.dataset.savedJump}));
  document.querySelectorAll('[data-retry-detail]').forEach(b=>b.onclick=renderDetail);
  document.querySelectorAll('[data-back]').forEach(b=>b.onclick=goBack);
  document.querySelectorAll('[data-external-url]').forEach(b=>b.onclick=async()=>{
@@ -445,6 +454,7 @@ function paintHomeWatch(quotes,hasWatch,{pending=false,failed=false}={}){
 
 function paintHomeBrief(home,options={}){
  const macro=home?.macro?.summary||{};
+ const explanation=marketBrief(home?.macro);
  const staleVix=(home?.macro?.results||[]).find(row=>(row.original_symbol||row.symbol)==='^VIX'&&macroFreshness(row).stale);
  const brief=document.querySelector('#brief-card');
  if(!brief)return false;
@@ -453,7 +463,7 @@ function paintHomeBrief(home,options={}){
    brief.dataset.state='ready';
    const level=macro.level||'yellow';
    const label=level==='red'?'위험 신호 많음':level==='green'?'안정 신호 많음':'신호 혼재';
-   brief.innerHTML=`<div class="brief-icon ${esc(level)}">${iconSvg('spark',22)}</div><div class="brief-copy"><span>시장 지표 요약 <b class="status-badge ${esc(level)}">${label}</b></span><strong>${esc(String(macro.text).slice(0,105))}</strong><small>${staleVix?'VIX 관측일이 오래되어 시장 요약 해석에 주의가 필요해요. ':''}최근 원자료 ${esc(macro.latestBasisDate||'-')} · 투자 행동을 권유하는 신호가 아니에요.</small></div><button data-tab="macro" aria-label="경제 지표 보기">${iconSvg('arrow',20)}</button>`;
+   brief.innerHTML=`<div class="brief-icon ${esc(level)}">${iconSvg('spark',22)}</div><div class="brief-copy"><span>시장 지표 요약 <b class="status-badge ${esc(level)}">${label}</b></span><strong>${esc(explanation.text)}</strong><small>${staleVix?'VIX 관측일이 오래되어 시장 요약 해석에 주의가 필요해요. ':''}${esc(explanation.basis)} · 투자 행동을 권유하는 신호가 아니에요.</small></div><button data-tab="macro" aria-label="경제 지표 보기">${iconSvg('arrow',20)}</button>`;
    if(options.failed)brief.querySelector('.brief-copy small').insertAdjacentText('afterbegin','새 요약 조회에 실패했어요. 이전 요약을 표시해요. ');
    return true;
  }
@@ -476,6 +486,7 @@ async function renderHome(){
    <div class="home-analysis-heading"><h2><i class="section-symbol" aria-hidden="true">${uiIcon('analysis',16)}</i>근거를 찾는 분석</h2><span>목적에 맞게 바로 열어요</span></div>
    ${valueEntriesMarkup(SHOW_SPOTLIGHT)}
    <section class="section watch-section home-primary">${sectionTitle('<i class="section-symbol" aria-hidden="true">'+uiIcon('watch',16)+'</i>내 관심종목','<button class="text-button" data-tab="watch">'+(hasWatch?'관리':'추가')+'</button>')}<div id="home-watchlist" class="watch-card">${hasWatch?loadingIndicator('관심종목 시세를 확인하고 있어요')+'<div class="skeleton watch"></div><div class="skeleton watch"></div>':'<div class="home-empty-watch"><span>자주 보는 종목을 여기에 모아보세요.</span><button type="button" data-tab="watch">관심종목 추가</button></div>'}</div></section>
+   ${savedResearchHtml(symbol=>displayName(symbol),{compact:true})}
    <div id="home-discovery-feed"></div>
    <section id="brief-card" class="brief-card compact-brief skeleton brief">${loadingIndicator('시장 요약을 확인하고 있어요')}</section>
    <section class="section quick-section">${sectionTitle('<i class="section-symbol" aria-hidden="true">'+uiIcon('compare',16)+'</i>빠른 비교','<button class="text-button" data-go-chart>종목 변경</button>')}<div class="ticker-strip">${state.selected.map((x,i)=>`<button data-go-chart><span class="ticker-orb tone-${i%4}">${esc(displayName(x).slice(0,1))}</span><span><strong>${esc(displayName(x))}</strong><small>${esc(x)}</small></span><b>${iconSvg('arrow',16)}</b></button>`).join('')||'<span class="muted-copy">비교 종목을 선택해주세요.</span>'}</div></section>
@@ -719,6 +730,7 @@ async function renderWatch(){
    <section class="task-head watch-task-head"><div><h2>관심종목 <span>${state.watchlist.length}</span></h2><p>이 목록은 현재 기기에 저장돼요.</p></div><div class="task-actions"><button class="primary-subtle" id="watch-add">종목 추가</button><button class="neutral-action" id="watch-edit">편집</button></div></section>
    <div class="watch-sort" role="group" aria-label="관심종목 정렬">${[['manual','직접'],['name','이름'],['change','등락률']].map(([k,l])=>`<button data-watch-sort="${k}" class="${state.watchSort===k?'active':''}" aria-pressed="${state.watchSort===k}">${l}</button>`).join('')}</div>
    <div id="watch-rich-list" class="watch-rich-list">${state.watchlist.length?loadingIndicator('관심종목 시세를 불러오고 있어요')+'<div class="skeleton watch-large"></div><div class="skeleton watch-large"></div>':'<div class="empty watch-empty"><strong>아직 관심종목이 없어요</strong><span>‘종목 추가’에서 저장하면 홈과 뉴스에도 바로 반영돼요.</span><button class="retry" id="watch-empty-add">종목 추가</button></div>'}</div>
+   ${savedResearchHtml(symbol=>displayName(symbol))}
  `,'관심종목');
  bindNav();
 
@@ -1008,6 +1020,7 @@ async function renderDetail(){
      <div class="detail-actions"><button id="detail-change" type="button">${iconSvg('search',18)} <span>다른 종목</span></button><button id="detail-watch" class="detail-watch-button" type="button">${iconSvg('heart',18)} <span>${saved?'관심 등록됨':'관심 등록'}</span></button><button id="detail-compare">${iconSvg('chart',18)} <span>${state.selected.includes(symbol)?'비교 열기':'비교 추가'}</span></button></div>
    </section>
    <section class="detail-price skeleton detail-price-skeleton" id="detail-price">${loadingIndicator('현재가를 확인하고 있어요')}</section>
+   ${state.detailInvestigation?.symbol===symbol&&state.detailInvestigation.kind!=='saved'?investigationHtml(state.detailInvestigation):''}
    ${!isIndex?'<p id="detail-identity-note" class="detail-identity-note" role="status"></p><div id="detail-cap">시가총액 확인 중</div>':''}
    <nav class="detail-jump-nav" aria-label="종목 정보 바로가기"><button type="button" data-detail-jump="detail-price">가격</button><button type="button" data-detail-jump="${koreanDetail?'detail-financial-block':'detail-metrics-section'}">${koreanDetail?'공시 실적':'핵심 지표'}</button>${koreanDetail?'<button type="button" data-detail-jump="detail-industry-block">산업</button>':''}<button type="button" data-detail-jump="detail-news-section">뉴스</button>${koreanDetail?'<button type="button" data-detail-jump="detail-research-card">공시 비교</button>':''}</nav>
    <div class="segmented detail-period-tabs">${[['1mo','1개월'],['3mo','3개월'],['6mo','6개월'],['1y','1년']].map(([p,l])=>`<button data-detail-period="${p}" aria-pressed="${state.detailPeriod===p}" class="${state.detailPeriod===p?'active':''}">${l}</button>`).join('')}</div>
@@ -1037,10 +1050,12 @@ async function renderDetail(){
    target.setAttribute('tabindex','-1');target.focus({preventScroll:true});
    return true;
  };
+ const restoreInvestigationJump=()=>{const context=state.detailInvestigation;if(epoch===viewEpoch&&context?.symbol===symbol&&context.jump&&jumpToDetail(context.jump)){context.jump=null;}};
  document.querySelectorAll('[data-detail-jump]').forEach(button=>button.addEventListener('click',()=>jumpToDetail(button.dataset.detailJump)));
  if(koreanDetail)import('./researchCard.js').then(({mountResearchCard})=>{
    if(epoch!==viewEpoch)return;
-   mountResearchCard(document.querySelector('#research-card-body'),{symbol,name:knownName||symbol,onJump:jumpToDetail,onNotice:showToast,candidates:[...state.watchlist,...Object.entries(DISPLAY_NAMES).map(([symbol,name])=>({symbol,name}))],favorites:state.watchlist,draft:researchDrafts.get(symbol),initialPeer:state.sharedDetailSymbol===symbol?state.researchPeer:null,onDraftChange:draft=>{researchDrafts.set(symbol,draft);state.researchPeer=draft.resultPeer||draft.peer||null;},onChoosePeer:callback=>openStockSelector({title:'공시를 비교할 회사',description:'현재 종목과 다른 국내 회사 하나를 선택하세요.',favorites:state.watchlist,nameFor:comparisonStockName,pickLabel:'비교 선택',restoreBack:restoreNativeBack,onPick:(symbol,name)=>callback({symbol,name})})});
+   mountResearchCard(document.querySelector('#research-card-body'),{symbol,name:knownName||symbol,onJump:jumpToDetail,onNotice:showToast,candidates:[...state.watchlist,...Object.entries(DISPLAY_NAMES).map(([symbol,name])=>({symbol,name}))],favorites:state.watchlist,draft:researchDrafts.get(symbol),initialPeer:state.sharedDetailSymbol===symbol?state.researchPeer:null,onDraftChange:draft=>{researchDrafts.set(symbol,draft);state.researchPeer=draft.resultPeer||draft.peer||null;},onCompare:companies=>{state.selected=companies.map(row=>row.symbol);companies.forEach(row=>resolvedNames.set(row.symbol,row.name));persist();navigate('chart');},onChoosePeer:callback=>openStockSelector({title:'공시를 비교할 회사',description:'현재 종목과 다른 국내 회사 하나를 선택하세요.',favorites:state.watchlist,nameFor:comparisonStockName,pickLabel:'비교 선택',restoreBack:restoreNativeBack,onPick:(symbol,name)=>callback({symbol,name})})});
+   restoreInvestigationJump();
  }).catch(()=>{
    if(epoch!==viewEpoch)return;
    const host=document.querySelector('#research-card-body');
@@ -1248,7 +1263,7 @@ async function renderDetail(){
    const reviewHost=document.createElement('div');reviewHost.id='detail-report-review';reviewHost.className='report-review-host';
    document.querySelector('#detail-financial-history').after(reviewHost);
    const reviewReady=import('./reportReviewView.js').then(view=>{
-     if(epoch===viewEpoch)view.mountReportReview(reviewHost,{symbol,data:{available:false,pending:true},onNotice:showToast});
+     if(epoch===viewEpoch){view.mountReportReview(reviewHost,{symbol,data:{available:false,pending:true},onNotice:showToast});restoreInvestigationJump();}
      return view;
    }).catch(()=>{
      if(epoch===viewEpoch){reviewHost.innerHTML='<div class="financial-empty">저장한 투자 근거 화면을 불러오지 못했어요. 저장한 내용은 이 기기에 보관되어 있어요. <button type="button" class="retry" data-reload-review>화면 새로고침</button></div>';reviewHost.querySelector('button').onclick=()=>location.reload();}
@@ -1299,29 +1314,26 @@ async function renderDetail(){
      const badge=document.querySelector('#detail-industry-block .detail-context-badge');
      if(badge)badge.textContent=enrichment.report?.available&&enrichment.directRelations.length?'KRX + DART + 근거':enrichment.report?.available?'KRX + DART':'KRX + 근거';
      bindNav();
+     host.querySelectorAll('[data-industry-retry]').forEach(button=>button.onclick=()=>void loadEnrichment(button.dataset.industryRetry,true));
    };
-   jobs.push(settle(Promise.all([
-     industryBasePromise,
-     resolvedName.then(name=>businessReportData(symbol,name)).catch(()=>({loadError:true})),
-   ]),dartRes=>{
-     if(dartRes.status!=='fulfilled')return;
-     const [base,report]=dartRes.value||[];
-     if(!base)return;
-     enrichment.report=report;
-     enrichment.reportState=report?.loadError?'error':report?.available?'ready':'unavailable';
+   const enrichmentRuns={report:0,relations:0};
+   async function loadEnrichment(kind,force=false){
+     const run=++enrichmentRuns[kind];
+     const [base,name]=await Promise.all([industryBasePromise.catch(()=>null),resolvedName]);
+     if(!base||epoch!==viewEpoch)return;
+     enrichment[kind+'State']='loading';renderEnrichment(base);
+     const data=await (kind==='report'?businessReportData(symbol,name,{force}):relationshipEvidenceData(symbol,name,{force})).catch(()=>({loadError:true}));
+     if(epoch!==viewEpoch||enrichmentRuns[kind]!==run)return;
+     if(kind==='report'){
+       if(data?.available)enrichment.report=data;
+       enrichment.reportState=data?.loadError?'error':data?.available?'ready':'unavailable';
+     }else{
+       if(data?.available)enrichment.directRelations=data.relations||[];
+       enrichment.relationsState=data?.loadError?'error':['provider_timeout','news_provider_unavailable'].includes(data?.reason)?'unavailable':'ready';
+     }
      renderEnrichment(base);
-   }));
-   jobs.push(settle(Promise.all([
-     industryBasePromise,
-     resolvedName.then(name=>relationshipEvidenceData(symbol,name)).catch(()=>({loadError:true})),
-   ]),evidenceRes=>{
-     if(evidenceRes.status!=='fulfilled')return;
-     const [base,evidence]=evidenceRes.value||[];
-     if(!base)return;
-     enrichment.directRelations=evidence?.available?evidence.relations||[]:[];
-     enrichment.relationsState=evidence?.loadError?'error':['provider_timeout','news_provider_unavailable'].includes(evidence?.reason)?'unavailable':'ready';
-     renderEnrichment(base);
-   }));
+   }
+   jobs.push(loadEnrichment('report'),loadEnrichment('relations'));
  }
  jobs.push(settle(valuationStocks([symbol]),valRes=>{
  const valuation=valRes.status==='fulfilled'?valRes.value?.stocks?.[0]:null;
@@ -1493,7 +1505,7 @@ function render(){
  if(state.tab==='exports'){
    cleanupChart();
    void Promise.all([import('./exportMomentumView.js'),import('./exportMomentum.css')]).then(([exportsView])=>{
-     if(state.tab==='exports')analysisCleanup=exportsView.renderExportMomentumView({shell,bindNav,focus:state.exportFocus});
+     if(state.tab==='exports'){state.exports ||= {};analysisCleanup=exportsView.renderExportMomentumView({shell,bindNav,focus:state.exportFocus,state:state.exports});}
    });
    return;
  }
@@ -1524,7 +1536,8 @@ function syncFromLocation(){
  const route=resolveRoute(location);
  Object.assign(state,route);
  const shared=decodeSharedView(new URLSearchParams(location.search).get('cv'));
- if(shared?.tab===route.tab&&(!shared.detailSymbol||shared.detailSymbol===route.detailSymbol)){Object.assign(state,shared);state.sharedDetailSymbol=shared.detailSymbol||null;}
+ if(shared?.tab===route.tab&&(!shared.detailSymbol||shared.detailSymbol===route.detailSymbol)){const sessionScreener=state.screener;Object.assign(state,shared);state.sharedDetailSymbol=shared.detailSymbol||null;if(route.tab==='discover'&&state.screener){state.screener={...sessionScreener,...state.screener,appliedRoutePreset:state.screenerPreset};}}
+ state.detailInvestigation=route.tab==='detail'&&history.state?.investigation?.symbol===route.detailSymbol?history.state.investigation:null;
  if(route.tab!=='detail')state.researchPeer=null;
  state.detailName=route.tab==='detail'?(history.state?.detailName||''):'';
  state.detailOrigin=route.tab==='detail'&&['home','chart','watch','more'].includes(history.state?.detailOrigin)?history.state.detailOrigin:'home';
@@ -1532,7 +1545,7 @@ function syncFromLocation(){
 }
 
 applyRuntimeClass();
-window.addEventListener('popstate',event=>{navigationDepth=event.state?.cvNavigation?.session===navigationSession?event.state.cvNavigation.depth:0;closeStockSelector();syncFromLocation();render();requestAnimationFrame(()=>window.scrollTo(0,scrollPositions.get(location.hash||'#home')||0))});
+window.addEventListener('popstate',event=>{navigationDepth=event.state?.cvNavigation?.session===navigationSession?event.state.cvNavigation.depth:0;closeStockSelector();syncFromLocation();state.restoreScroll=scrollPositions.get(location.hash||'#home')||0;render();window.__chartviewRestoreScroll();});
 window.addEventListener('online',()=>render());
 window.addEventListener('offline',()=>render());
 document.addEventListener('chartview:storage-error',()=>showToast('데이터를 기기에 저장하지 못했어요. 다시 시도해주세요.'));

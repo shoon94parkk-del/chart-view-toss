@@ -11,7 +11,7 @@ try{
   await page.addInitScript(()=>localStorage.setItem('chartview-toss-watchlist-v1',JSON.stringify([{symbol:'000660.KS',name:'SK하이닉스'},{symbol:'033500.KQ',name:'동성화인텍'}])));
   await page.addInitScript(()=>{if(!localStorage.getItem('chartview-toss-research-v1'))localStorage.setItem('chartview-toss-research-v1',JSON.stringify({'005930.KS':{question:'이전 질문',support:'예전 보고서 메모',challenge:'반대 단서',reviewOn:'2026-10-15'}}));});
   page.on('pageerror',e=>errors.push(e.message));
-  await page.route('**/backend/**',async route=>{
+  await page.route(/(?:\/backend\/|^https:\/\/chart-view-pkv8\.onrender\.com\/)/,async route=>{
    requests.push(route.request().url()+(route.request().postData()||''));
    const u=new URL(route.request().url()),path=u.pathname.replace('/backend','');let body={};
    if(path==='/api/financial-history'){
@@ -21,7 +21,7 @@ try{
     body={available:true,basis:'연결재무제표',currency:'KRW',annual:[{year:2024,revenue:100e12,operatingProfit:10e12},{year:2025,revenue:120e12,operatingProfit:15e12}],interim:{year:2026,quarter:2,revenue:peer?40e12:80e12,operatingProfit:peer?null:8e12,priorRevenue:peer?30e12:60e12,priorOperatingProfit:3e12},interimSourceUrl:'https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260814001146'};
     body.quality={interim:{year:2026,quarter:2,current:{netIncome:10e12,operatingCashFlow:peer?12e12:0,inventories:20e12,receivables:peer?null:15e12,assets:100e12,liabilities:50e12,equity:50e12},previous:{netIncome:6e12,operatingCashFlow:9e12,inventories:10e12,receivables:8e12,assets:80e12,liabilities:30e12,equity:50e12},accounts:{receivables:{accountName:'매출채권 및 기타채권',accountId:'ifrs-full_TradeAndOtherCurrentReceivables',statement:'BS'}}}};
    }
-   if(path==='/static/data/screener.json')body={stocks:[{symbol:'005930.KS',name:'삼성전자'},{symbol:'000660.KS',name:'SK하이닉스'},{symbol:'452400.KQ',name:'이닉스'}]};
+   if(path==='/static/data/screener.json')body={stocks:[{symbol:'005930.KS',name:'삼성전자',mainProducts:'반도체 제조(메모리) 제품'},{symbol:'000660.KS',name:'SK하이닉스',mainProducts:'DRAM NAND'},{symbol:'452400.KQ',name:'이닉스'}]};
    if(path==='/api/quotes')body={results:[{ticker:'005930.KS',name:'삼성전자',price:85000,currency:'KRW',change:1,source:'QA'}]};
    if(path==='/api/compare')body={stocks:[{ticker:'005930.KS',name:'삼성전자',return:3,data:[{time:'2026-06-29',value:0},{time:'2026-09-29',value:3}]}]};
    if(path==='/api/personalized-news')body={items:[]};

@@ -1,4 +1,5 @@
 import { selectionKey } from './valueDiscovery.js';
+import {technicalWarning} from './insightModel.js';
 import { homeBootstrap, pickMonitor } from './api.js';
 import { loadingIndicator } from './loadingView.js';
 
@@ -186,11 +187,11 @@ export async function renderPickLedger({shell,bindNav,displayName,focusKey=null}
     </div><p class="pick-ledger-basis">${monitorResult.ok?esc(`사후점검 ${String(monitorResult.value?.generatedAt||'').slice(0,10)||'기준일 미확인'} 기준 · 신호등은 펀더멘털과 단기 기술신호 중 더 높은 위험도를 반영 · 자동 점검 실행 ${reviewed}/${rows.length}건 · 근거 검토 대기는 별도 표시`):'사후점검 데이터를 불러오지 못해 성과 기록만 표시 중이에요.'}</p>`;
     if(techSell.length){
       techAlert.hidden=false;
-      techAlert.innerHTML=`<strong>🔴 단기 매도 검토 ${techSell.length}개</strong><span>${esc(techSell.slice(0,4).map((row)=>stockName(row,displayName)).join(' · '))}${techSell.length>4?' 외 '+(techSell.length-4)+'개':''}</span><small>기술점수 하락과 RSI 과열·최근 급등이 겹친 보조 신호예요.</small>`;
+      techAlert.innerHTML=`<strong>🔴 단기 매도 검토 ${techSell.length}개</strong><span>${esc(techSell.slice(0,4).map((row)=>stockName(row,displayName)).join(' · '))}${techSell.length>4?' 외 '+(techSell.length-4)+'개':''}</span><small>${esc(technicalWarning(techSell))}</small>`;
     }else if(techCaution.length){
       techAlert.hidden=false;
       techAlert.classList.add('caution');
-      techAlert.innerHTML=`<strong>🟠 기술 경고 ${techCaution.length}개</strong><span>${esc(techCaution.slice(0,4).map((row)=>stockName(row,displayName)).join(' · '))}</span><small>기술점수 변화와 과열 여부를 확인해보세요.</small>`;
+      techAlert.innerHTML=`<strong>🟠 기술 경고 ${techCaution.length}개</strong><span>${esc(techCaution.slice(0,4).map((row)=>stockName(row,displayName)).join(' · '))}</span><small>${esc(technicalWarning(techCaution))}</small>`;
     }else{
       techAlert.hidden=true;
       techAlert.innerHTML='';

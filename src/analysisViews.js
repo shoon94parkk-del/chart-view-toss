@@ -8,6 +8,8 @@ import { seedWatchQuoteCache } from './watchQuoteCache.js';
 import { loadingIndicator } from './loadingView.js';
 import { investmentToolsMarkup, bindInvestmentToolLogos } from './investmentTools.js';
 import {alignHeatmapQuotes} from './heatmapAlignment.js';
+import {bandCoverage,discoveryContext} from './insightModel.js';
+import {encodeSharedView} from './experienceState.js';
 
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const number=(v,suffix='')=>finiteNumber(v)===null?'—':Number(v).toLocaleString('ko-KR',{maximumFractionDigits:2})+suffix;
@@ -62,6 +64,7 @@ export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareS
      if(!current())return;
      const filters=Object.fromEntries(new FormData(form));
      state.screener={...state.screener,filters,count,activePreset};
+     const url=new URL(location.href);url.searchParams.set('cv',encodeSharedView(state));history.replaceState(history.state,'',url);
      if(!form.checkValidity()||(filters.rsiMin!==''&&filters.rsiMax!==''&&Number(filters.rsiMin)>Number(filters.rsiMax))){host.innerHTML=empty('조건의 범위와 RSI 상·하한을 확인해주세요.');return;}
      const filtered=filterScreener(rows,filters);
      const active=screenerPreset(activePreset);
@@ -69,6 +72,8 @@ export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareS
      const noResults=!filtered.length?screenerEmptyState(rows,filters):null;
      host.innerHTML=`${presetLine}<p class="analysis-meta">기준 거래일 ${esc(data.tradeDate||data.updated||'미제공')} · 수집 ${rows.length.toLocaleString()}개 · 조건 일치 <strong>${filtered.length.toLocaleString()}개</strong></p><p class="muted-copy">장마감 데이터 · 검색어·시장·기술 조건을 함께 적용해요.</p><div class="analysis-list">${filtered.slice(0,count).map(row=>{const reasons=screenerMatchReasons(row,filters),warnings=screenerDataWarnings(row);return `<button class="analysis-stock" data-stock-detail="${esc(row.symbol)}"><span><strong>${esc(row.name||row.symbol)}</strong></span><span><b>기준 종가 ${number(row.price,'원')}</b><em class="${Number(row.change1d)>0?'up':'down'}">${pct(row.change1d)}</em></span><span class="analysis-stock-basis">${esc(row.symbol)} · ${esc(row.market)} · ${esc(row.date||'기준일 미제공')}</span><span class="analysis-row-metrics">RSI ${number(row.rsi14)} · 거래량 ${number(row.volumeRatio,'배')} · 20일 ${pct(row.ret20)}</span>${reasons.length?`<span class="analysis-match-reasons">${reasons.map(reason=>`<i>${esc(reason)}</i>`).join('')}</span>`:''}${warnings.length?`<span class="data-quality-warning"><b>변동 기준 확인</b>${warnings.map(esc).join(' ')}</span>`:''}</button>`}).join('')||`<div class="empty"><strong>${esc(noResults.message)}</strong>${noResults.canClearTechnical?'<button type="button" class="retry" data-clear-technical>기술 조건 해제</button>':''}</div>`}</div>${count<filtered.length?'<button class="retry" id="screener-more">30개 더 보기</button>':''}`;
      bindNav();
+     host.querySelectorAll('.analysis-stock').forEach(button=>button.onclick=()=>{const row=rows.find(row=>row.symbol===button.dataset.stockDetail);window.__chartviewInvestigate?.(row.symbol,row.name,discoveryContext(row,filters,active?.label,data.tradeDate||data.updated));});
+     window.__chartviewRestoreScroll?.();
      host.querySelector('[data-clear-technical]')?.addEventListener('click',clearTechnical);
      if(state.returnFocusSymbol){const target=[...host.querySelectorAll('[data-stock-detail]')].find(el=>el.dataset.stockDetail===state.returnFocusSymbol);if(target){target.focus({preventScroll:true});state.returnFocusSymbol=null;}}
      host.querySelector('#screener-more')?.addEventListener('click',()=>{count+=30;paint();});
@@ -94,9 +99,9 @@ export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareS
     let fullCached=Boolean(shownFull);
     let fullError=false;
     host.innerHTML=`<div class="shared-heatmap-analysis">${loadingIndicator('전체 히트맵 데이터를 불러오고 있어요')}</div><section class="section sector-heatmap-section"><div class="section-head"><h2>섹터별 등락 히트맵</h2></div><div data-full-sectors></div></section>`;
-    const sectorView=mountSectorHeatmap(host.querySelector('[data-full-sectors]'),{onStock:symbol=>window.__chartviewNavigate?.('detail',symbol),retry:()=>void refreshFull(true)});
-    sectorView.loading();
     state.heatmap ||= {view:'stocks',market:'KR'};
+    const sectorView=mountSectorHeatmap(host.querySelector('[data-full-sectors]'),{state:state.heatmap,onStock:symbol=>window.__chartviewNavigate?.('detail',symbol),retry:()=>void refreshFull(true)});
+    sectorView.loading();
     controls.innerHTML='<div class="heatmap-explore-controls"><div role="group" aria-label="히트맵 보기"><button type="button" data-heatmap-view="stocks">종목</button><button type="button" data-heatmap-view="sectors">섹터</button></div><div role="group" aria-label="종목 히트맵 시장"><button type="button" data-full-market="KR">한국</button><button type="button" data-full-market="US">미국</button></div><small>종목은 개별 등락, 섹터는 업종과 구성 종목을 보여줘요.</small></div>';
     function syncView(){
       const sector=state.heatmap.view==='sectors';
@@ -105,8 +110,8 @@ export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareS
       controls.querySelectorAll('[data-full-market]').forEach(b=>{b.hidden=sector;b.setAttribute('aria-pressed',String(b.dataset.fullMarket===state.heatmap.market));});
       controls.querySelectorAll('[data-heatmap-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.heatmapView===state.heatmap.view)));
     }
-    controls.querySelectorAll('[data-heatmap-view]').forEach(b=>b.onclick=()=>{state.heatmap.view=b.dataset.heatmapView;syncView();});syncView();
-    controls.querySelectorAll('[data-full-market]').forEach(b=>b.onclick=()=>{state.heatmap.market=b.dataset.fullMarket;syncView();if(shownFull)paintFull(shownFull);});
+    controls.querySelectorAll('[data-heatmap-view]').forEach(b=>b.onclick=()=>{state.heatmap.view=b.dataset.heatmapView;sectorView.setMarket(state.heatmap.market);syncView();if(shownFull)paintFull(shownFull);});syncView();
+    controls.querySelectorAll('[data-full-market]').forEach(b=>b.onclick=()=>{state.heatmap.market=b.dataset.fullMarket;sectorView.setMarket(state.heatmap.market);syncView();if(shownFull)paintFull(shownFull);});
     const paintFull=(full,{save=false}={})=>{
       if(!current()||!full?.results?.length)return;
       shownFull=full;
@@ -115,6 +120,7 @@ export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareS
       sectorView.update({...payload,error:fullError});
       if(save)writeHomeFast('full-heatmap',payload);
       bindNav();
+      window.__chartviewRestoreScroll?.();
     };
     if(shownFull)paintFull(shownFull);
     void homeSnapshot().then(home=>{
@@ -167,6 +173,7 @@ export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareS
      if(result.status!=='fulfilled'){box.innerHTML=`<h3>${esc(displayName(symbol))}</h3><p>추정치를 불러오지 못했어요.</p><button class="retry" data-estimate-retry="${i}">다시 시도</button>`;box.querySelector('button').onclick=()=>fetchOne(symbol,i);return;}
      const period=controls.querySelector('select').value,row=d.periods?.[period];state.consensusPeriod=period;
      const annual=period.endsWith('y');
+     const surface= document.querySelector('.surface-label');if(surface)surface.textContent=annual?'연간 실적 추정치':'분기 실적 추정치';
      const periodKind=annual?'회계연도 전체':'분기';
      box.innerHTML=`<button class="text-button" data-stock-detail="${esc(symbol)}">${esc(displayName(symbol,d.name))} · ${esc(symbol)}</button><p class="analysis-meta">${esc(formatDataSource(d.source||'출처 미제공'))} · ${esc(formatKst(d.asOf))}</p>${row?`<p><strong>${esc(periodKind)} 추정치</strong> · 회계기간 종료 ${esc(row.endDate)} · ${esc(d.currency||'통화 미제공')}</p><dl class="analysis-metrics"><div><dt>${annual?'연간 ':''}EPS 평균 추정</dt><dd>${number(row.earnings?.avg)}</dd></div><div><dt>EPS 범위</dt><dd>${number(row.earnings?.low)} ~ ${number(row.earnings?.high)}</dd></div><div><dt>참여 애널리스트</dt><dd>${number(row.earnings?.analysts,'명')}</dd></div><div><dt>${annual?'연간 ':''}매출 평균 추정</dt><dd>${esc(formatFinancialAmount(row.revenue?.avg,d.currency))}<small>원값 ${esc(number(row.revenue?.avg))} ${esc(d.currency||'')}</small></dd></div><div><dt>EPS 30일 변경</dt><dd>${pct(estimateRevision(row.epsTrend?.current??row.earnings?.avg,row.epsTrend?.['30daysAgo']))}</dd></div><div><dt>30일 상향 / 하향 건수</dt><dd>${number(row.revisions?.up30)} / ${number(row.revisions?.down30)}</dd></div></dl><p class="muted-copy">Yahoo earningsTrend의 ${annual?'회계연도 전체':'해당 분기'} 컨센서스예요. 연간 수치를 분기 실적과 직접 비교하지 마세요. 추정치는 확정 실적이 아니며 EPS가 0을 넘나드는 변경률은 표시하지 않아요.</p>`:empty('이 기간의 추정치가 제공되지 않아요.')}`;bindNav();
     }
@@ -183,7 +190,7 @@ export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareS
     function paint(){
      if(!current())return;chart?.remove();chart=null;observer?.disconnect();
      saveBand();const metric=controls.querySelector('#band-metric').value,series=data?.[metric],stats=series?.stats;
-     host.innerHTML=`<p class="analysis-meta">${esc(formatDataSource(data?.source||''))} · 조회 ${esc(formatKst(data?.generatedAt))}</p><p class="muted-copy">${esc(data?.method||'')}</p><p class="muted-copy">과거 공시일을 완전히 복원한 지표가 아니며 재무자료에 보수적 시차를 적용한 재구성이에요.</p><div id="band-chart" class="detail-chart"></div>${stats?`<dl class="analysis-metrics"><div><dt>최근값</dt><dd>${number(stats.current,'배')}</dd></div><div><dt>중앙값</dt><dd>${number(stats.median,'배')}</dd></div><div><dt>하위 20% 경계</dt><dd>${number(stats.p20,'배')}</dd></div><div><dt>상위 20% 경계</dt><dd>${number(stats.p80,'배')}</dd></div></dl><p class="analysis-meta">${esc(stats.start)} ~ ${esc(stats.end)} · ${number(stats.observations)}개 관측</p>`:empty('이 종목의 해당 지표 이력이 제공되지 않아요.')}`;
+     host.innerHTML=`<p class="analysis-meta">${esc(formatDataSource(data?.source||''))} · 조회 ${esc(formatKst(data?.generatedAt))}</p><p class="muted-copy" data-band-coverage>${esc(bandCoverage(stats,state.band.years,data?.years))}</p><p class="muted-copy">${esc(data?.method||'')}</p><p class="muted-copy">과거 공시일을 완전히 복원한 지표가 아니며 재무자료에 보수적 시차를 적용한 재구성이에요.</p><div id="band-chart" class="detail-chart"></div>${stats?`<dl class="analysis-metrics"><div><dt>최근값</dt><dd>${number(stats.current,'배')}</dd></div><div><dt>중앙값</dt><dd>${number(stats.median,'배')}</dd></div><div><dt>하위 20% 경계</dt><dd>${number(stats.p20,'배')}</dd></div><div><dt>상위 20% 경계</dt><dd>${number(stats.p80,'배')}</dd></div></dl><p class="analysis-meta">${esc(stats.start)} ~ ${esc(stats.end)} · ${number(stats.observations)}개 관측</p>`:empty('이 종목의 해당 지표 이력이 제공되지 않아요.')}`;
      const canvas=host.querySelector('#band-chart');if(!series?.points?.length)return;
      chart=chartRuntime.createChart(canvas,{localization:{locale:'ko-KR',dateFormat:'yyyy.MM.dd'},width:canvas.clientWidth,height:230,handleScale:{pinch:false},layout:{background:{type:chartRuntime.ColorType.Solid,color:'#fff'},textColor:'#6b7684'},timeScale:{borderVisible:false},rightPriceScale:{borderVisible:false}});
      const line=chart.addLineSeries({color:'#3182f6',lineWidth:2,priceLineVisible:false});line.setData(series.points);if(stats)for(const value of [stats.p20,stats.median,stats.p80])if(finiteNumber(value)!==null)line.createPriceLine({price:Number(value),color:'#9ca3af',lineWidth:1,lineStyle:2,axisLabelVisible:true});chart.timeScale().fitContent();

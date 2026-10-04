@@ -24,7 +24,7 @@ const identities = {
  exports: ['exports', '품목·국가별 수출 분석', 'exports'],
  heatmap: ['market', '시장 등락 탐색', 'market'],
  valuation: ['compare', '재무지표 비교', 'compare'],
- consensus: ['compare', '연간 실적 추정치', 'compare'],
+ consensus: ['compare', '기간별 실적 추정치', 'compare'],
  bands: ['compare', '과거 밸류에이션', 'compare'],
  macro: ['evidence', '경제 지표와 기준', 'evidence'],
  news: ['evidence', '종목 관련 기사', 'evidence'],

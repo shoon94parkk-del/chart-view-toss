@@ -1,4 +1,5 @@
 import { loadExportItemDetail, loadExportMomentumSnapshot, loadExportProvisionalRadar, loadSemiconductorCountryMatrix } from './exportMomentumData.js';
+import {memoryMovements} from './insightModel.js';
 import {
   balanceTone,
   chartExtent,
@@ -278,8 +279,7 @@ function semiconductorReport(snapshot){
   const rows=wanted.map(key=>(snapshot.semiconductorBreakdown||[]).find(row=>row.key===key)).filter(Boolean);
   if(rows.length<3)return '';
   const maxExport=Math.max(...rows.map(row=>row.exportsUsdBillion||0),1);
-  const momRows=rows.filter(row=>Number.isFinite(row.exportMoM));
-  const strongest=momRows.length?[...momRows].sort((a,b)=>b.exportMoM-a.exportMoM)[0]:null;
+  const {increase:strongest,decrease:weakest}=memoryMovements(rows);
   const unitRows=rows.filter(row=>Number.isFinite(row.unitValueMoM));
   const weakestUnit=unitRows.length?[...unitRows].sort((a,b)=>a.unitValueMoM-b.unitValueMoM)[0]:null;
   const label=row=>row.key==='flash'?'Flash memory':row.name;
@@ -331,10 +331,12 @@ function semiconductorReport(snapshot){
           </div>
         `).join('')}
       </div>
-      ${strongest||weakestUnit?`
+      ${strongest||weakest||weakestUnit?`
         <div class="export-semi-report-brief">
           <strong>이번 달 읽을 포인트</strong>
-          ${strongest?`<span>수출액 MoM 변화가 가장 큰 항목은 <b>${esc(label(strongest))}</b> ${esc(formatSignedPct(strongest.exportMoM))}입니다.</span>`:''}
+          ${strongest?`<span>수출액 MoM 증가율이 가장 높은 항목은 <b>${esc(label(strongest))}</b> ${esc(formatSignedPct(strongest.exportMoM))}입니다.</span>`:''}
+          ${weakest?`<span>수출액 MoM 감소율이 가장 큰 항목은 <b>${esc(label(weakest))}</b> ${esc(formatSignedPct(weakest.exportMoM))}입니다.</span>`:''}
+          <span>메모리 IC는 DRAM·Flash·MCP를 포함하는 상위 분류예요. 이 카드들을 서로 합산하지 않아요. DRAM 모듈은 별도 HSK 분류예요.</span>
           ${weakestUnit?`<span>단위가치 MoM이 가장 낮은 항목은 <b>${esc(label(weakestUnit))}</b> ${esc(formatSignedPct(weakestUnit.unitValueMoM))}입니다.</span>`:''}
         </div>`:''}
       <p class="export-chart-note">MCP는 HSK 8542323000 복합구조칩 메모리, DRAM 모듈은 HSK 8473304060 기준입니다. 이 통계는 TRASS 분류와 집계시점이 달라 증권사 잠정치와 숫자가 다를 수 있습니다.</p>
@@ -748,7 +750,7 @@ function paint(host,snapshot,bindNav,onItemOpen){
   host.querySelectorAll('[data-export-item]').forEach(button=>button.addEventListener('click',()=>onItemOpen(button.dataset.exportItem)));
 }
 
-export function renderExportMomentumView({shell,bindNav,focus=null}){
+export function renderExportMomentumView({shell,bindNav,focus=null,state={}}){
   const app=document.querySelector('#app');
   app.innerHTML=shell(`<nav class="export-topic-nav" aria-label="수출 분석 바로가기">${[['history','수출 흐름'],['items','품목별'],['countries','국가별'],['memory','메모리 보고서'],['provisional','잠정 레이더'],['breadth','상승 확산도'],['quadrant','물량·단위가치']].map(([key,label])=>`<button type="button" data-export-topic="${key}" disabled>${label}</button>`).join('')}</nav><div id="export-momentum-root" class="export-momentum-view">${loading()}</div>`,'수출 모멘텀');
   bindNav();
@@ -757,24 +759,30 @@ export function renderExportMomentumView({shell,bindNav,focus=null}){
   let detailSeq=0;
   let provisionalSeq=0;
 
-  const openItemDetail=async(key,{force=false}={})=>{
+  const openItemDetail=async(key,{force=false,restore=false}={})=>{
     const panel=host.querySelector('#export-item-detail');
     if(!panel||!key)return;
     const token=++detailSeq;
+    if(state.itemKey!==key)state.countryName='';state.itemKey=key;
     panel.hidden=false;
     panel.innerHTML='<div class="export-detail-loading" role="status"><span></span><strong>12개월 품목 상세를 불러오고 있어요.</strong><small>첫 조회는 관세청 상세 통계를 수집해 조금 더 걸릴 수 있습니다.</small><button type="button" data-export-detail-close>닫기</button></div>';
     panel.querySelector('[data-export-detail-close]')?.addEventListener('click',()=>{
       detailSeq+=1;
+      state.itemKey=null;
       panel.hidden=true;
       panel.innerHTML='';
     });
-    panel.scrollIntoView({behavior:'smooth',block:'start'});
+    if(!restore)panel.scrollIntoView({behavior:'smooth',block:'start'});
     try{
       const detail=await loadExportItemDetail(key,{force});
       if(token!==detailSeq||!panel.isConnected)return;
       panel.innerHTML=renderItemDetail(detail);
+      const researchHost=document.createElement('section');researchHost.className='export-research';panel.append(researchHost);
+      void import('./exportResearchView.js').then(({mountExportResearch})=>{if(token===detailSeq&&researchHost.isConnected)void mountExportResearch(researchHost,detail,{state,alive:()=>token===detailSeq&&researchHost.isConnected});}).catch(()=>{if(researchHost.isConnected)researchHost.textContent='기업 연결을 열지 못했어요. 주요제품과 공시를 직접 확인해주세요.';});
+      window.__chartviewRestoreScroll?.();
       panel.querySelector('[data-export-detail-close]')?.addEventListener('click',()=>{
         detailSeq+=1;
+        state.itemKey=null;
         panel.hidden=true;
         panel.innerHTML='';
       });
@@ -804,6 +812,7 @@ export function renderExportMomentumView({shell,bindNav,focus=null}){
       panel.querySelector('[data-export-item-retry]')?.addEventListener('click',()=>void openItemDetail(key,{force:true}));
       panel.querySelector('[data-export-detail-close]')?.addEventListener('click',()=>{
         detailSeq+=1;
+        state.itemKey=null;
         panel.hidden=true;
         panel.innerHTML='';
       });
@@ -836,6 +845,8 @@ export function renderExportMomentumView({shell,bindNav,focus=null}){
       const snapshot=await loadExportMomentumSnapshot({force});
       if(token!==seq||!host.isConnected)return;
       paint(host,snapshot,bindNav,openItemDetail);
+      if(state.itemKey)void openItemDetail(state.itemKey,{restore:true});
+      window.__chartviewRestoreScroll?.();
       const targetFor=key=>{const selector={provisional:'#export-provisional-radar',breadth:'.export-breadth-card',quadrant:'.export-quadrant-point'}[key]||'#export-'+key;return host.querySelector(selector)?.closest('section');};
       const jump=key=>{const target=targetFor(key);if(target){target.tabIndex=-1;target.scrollIntoView({block:'start'});target.focus({preventScroll:true});}};
       app.querySelectorAll('[data-export-topic]').forEach(button=>{button.disabled=!targetFor(button.dataset.exportTopic);button.onclick=()=>jump(button.dataset.exportTopic);});
