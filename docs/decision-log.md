@@ -425,6 +425,14 @@ Verification: 189 units plus AIT contract, production Vite build and 19 direct-e
 Live0.13.0 showed the corrected snapshot balance but old browser HTTP-cached item detail300.3rather than286.9. Origin detail API already returns28.6889billion; CF-cache-status=DYNAMIC. Add a stable signed-v1 calculation basis query on snapshot/detail to separate obsolete HTTP entries while retaining300/600second application TTL and lazy request budgets. No client recomputation or global HTTP-cache disabling.
 Real KRX Samsung products includes unrelated wireless equipment alongside semiconductor manufacturing; whole-field exclusions removed it while accepting package substrates and parts. Match each product clause, require semiconductor manufacturing/product wording or KRX semiconductor-manufacturing industry with an exact core product. Exclude substrates/parts/equipment per clause. Regression tests use actual Samsung/SK/Mico/Daeduck strings.
 
+## 2026-10-04 — Apps in Toss 심사 면책 문구 보완
+- Classification: review-compliance fix; data/quote/cache/navigation behavior is unchanged.
+- Review version 20260927-6 was rejected because the service did not make “reference only / not investment solicitation” sufficiently obvious.
+- Keep the existing global data disclosure, but make the first Apps in Toss content row explicitly state “참고용” and “투자 정보는 투자 권유가 아닙니다”. Strengthen the detailed disclosure and Info page to say the service is general reference information, does not recommend buy/sell/investment decisions, and the final decision/responsibility belongs to the user.
+- The top notice reuses the existing Apps in Toss share row so Home’s market-first information hierarchy and request budget do not change. No new API request, provider, storage key, cache, quote freshness, route, or native navigation behavior is introduced.
+- Add a regression test that statically guards the review wording and its Apps in Toss runtime visibility.
+- This wording fix does not itself resolve the separate scope gate for recommendation-like PICK/IDEA LAB functionality recorded in P0_RELEASE_GATE.md; that remains a release-policy confirmation item.
+
 
 ## 2026-10-04 — 승인된 UI·UX 조사 동선 (0.14.0)
 Classification: new behavior, plus malformed/null macro crash bug fix. 사용자 승인 계획 U01–U12에 따라 홈을 시장 → 세 핵심 입구 → 기본 두 변화/나머지 펼침 → 최근 선정 두 종목/이유 → 관심 최대3/저장 조사 최대1 → 대표 히트맵으로 구성한다. 0.12.0의 관심 선행 및 홈 집계성과 상시 표시 결정을 대체한다. 집계 계산은 변경하지 않고 전체 선정 기록 요약에 유지한다. 최근 기록은 정확한 날짜·코드를 연다.
