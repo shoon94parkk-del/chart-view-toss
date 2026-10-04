@@ -165,16 +165,21 @@ assert(String(dram.note || '').includes('HBM'), 'HBM classification limitation m
 assert(String(flash.note || '').includes('NAND'), 'Flash/NAND scope note missing');
 
 
-const memorySpot = await get('/api/memory-spot', 25000);
-assert(memorySpot.provider === 'TrendForce', 'DRAM spot provider mismatch');
-assert(/^\d{4}-\d{2}-\d{2}$/.test(String(memorySpot.sourceDate || '')), 'DRAM spot source date missing');
-assert(Array.isArray(memorySpot.items) && memorySpot.items.length === 3, 'DRAM spot target rows missing');
-for (const key of ['ddr5-16gb','ddr4-16gb','ddr4-8gb']) {
-  const row = memorySpot.items.find((item) => item.key === key);
-  assert(row && Number(row.average) > 0, `DRAM spot average missing: ${key}`);
+const memorySpot = await get('/api/memory-prices', 25000);
+assert(memorySpot.provider === 'TrendForce', 'memory price provider mismatch');
+assert(Number(memorySpot.schemaVersion) >= 2, 'memory price catalog schema v2 missing');
+assert(Array.isArray(memorySpot.groups) && memorySpot.groups.length >= 5, 'memory price groups missing');
+for (const key of ['dram-chip','dram-module','gddr','nand-chip','nand-wafer']) {
+  const group = memorySpot.groups.find((item) => item.key === key);
+  assert(group && Array.isArray(group.items) && group.items.length >= 2, `memory price group missing: ${key}`);
+  assert(group.items.some((row) => Number(row.average) > 0), `memory price averages missing: ${key}`);
 }
-assert(Array.isArray(memorySpot.history) && memorySpot.history.length >= 1, 'DRAM spot accumulated history missing');
-assert(String(memorySpot.sourceUrl || '').includes('trendforce.com'), 'DRAM spot source link missing');
+const unavailablePriceKeys = new Set((memorySpot.unavailablePriceSeries || []).map((row) => row.key));
+for (const key of ['hbm','mcp','emmc-ufs']) {
+  assert(unavailablePriceKeys.has(key), `non-public memory price disclosure missing: ${key}`);
+}
+assert(Array.isArray(memorySpot.history) && memorySpot.history.length >= 1, 'memory price accumulated history missing');
+assert(String(memorySpot.groups.find((group) => group.key === 'nand-chip')?.sourceUrl || '').includes('trendforce.com'), 'NAND source link missing');
 
 console.log('Live backend contract smoke passed', {
   base: BASE,
@@ -211,6 +216,6 @@ console.log('Live backend contract smoke passed', {
   dramModuleExports: semiDramModule.exportsUsdBillion,
   semiconductorCountrySegments: semiconductorCountries.segments.length,
   semiconductorCountryMarkets: semiconductorCountries.markets.length,
-  dramSpotDate: memorySpot.sourceDate,
-  dramSpotHistoryCount: memorySpot.history.length,
+  memoryPriceGroups: memorySpot.groups.length,
+  memoryPriceHistoryCount: memorySpot.history.length,
 });
