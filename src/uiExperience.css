@@ -109,3 +109,13 @@ html:not([data-ait-runtime="true"]) .app-shell .page-intro{background:transparen
 .app-shell .export-landing-card-head span{font-size:14px}
 .app-shell .export-landing-stats strong.up{color:#ad2938}
 .app-shell .export-landing-stats strong.down{color:#205ca8}
+
+.app-shell .pick-ledger-kpis span,.app-shell .pick-ledger-kpis small,.app-shell .pick-ledger-basis,.app-shell .pick-ledger-policy,.app-shell .pick-ledger-search span,.app-shell .pick-ledger-count,.app-shell .pick-ledger-status-kpis span,
+.app-shell .pick-ledger-stock small,.app-shell .pick-ledger-prices small,.app-shell .pick-ledger-secondary em,.app-shell .pick-ledger-detail-grid section>strong,.app-shell .pick-ledger-evidence-row span,.app-shell .pick-ledger-evidence-row small,.app-shell .pick-ledger-detail-foot{font-size:12px;line-height:1.6;color:#4e5968;white-space:normal;overflow-wrap:anywhere}
+.app-shell .pick-ledger-stock strong,.app-shell .pick-ledger-evidence-row strong{font-size:15px}
+.app-shell .pick-ledger-status,.app-shell .pick-ledger-tech-status{font-size:12px;white-space:normal}
+.app-shell .pick-ledger-search input,.app-shell .pick-ledger-filters select,.app-shell .pick-ledger-detail-link,.app-shell .pick-ledger-evidence-row{min-height:44px;font-size:14px}
+.app-shell .pick-ledger-secondary{flex-wrap:wrap}
+.app-shell .industry-name span,.app-shell .industry-metrics span,.app-shell .industry-peer-group>small{color:#4e5968}
+.app-shell .industry-product{font-size:15px}
+.app-shell .industry-section{background:#fff;box-shadow:none}

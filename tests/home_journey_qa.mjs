@@ -7,11 +7,11 @@ const quote={ticker:'005930.KS',name:'삼성전자',price:100000,change:2,curren
 const record={...quote,symbol:quote.ticker,code:'005930',recommendedDate:'2026-10-02',recommendedPrice:90000,currentPrice:100000,returnPct:11.1,reason:'해당 날짜에 기록된 실제 선정 이유'};
 await fs.mkdir('artifacts/home-journey',{recursive:true});
 try {
- for(const width of [320,390,430,1280])for(const scenario of ['ready-empty','ready-saved','watch-20','failed','null-macro']){
+ for(const width of [320,390,430,1280])for(const scenario of ['ready-empty','ready-saved','watch-3','watch-20','failed','null-macro']){
   const height=width===320?693:844;
-  const context=await browser.newContext({viewport:{width,height}}),page=await context.newPage(),errors=[];
+  const context=await browser.newContext({viewport:{width,height}}),page=await context.newPage(),errors=[];let macroSnapshots=0;
   page.on('pageerror',e=>errors.push(e.message));
-  if(scenario==='watch-20')await page.addInitScript(()=>localStorage.setItem('chartview-toss-watchlist-v1',JSON.stringify(Array.from({length:20},(_,i)=>({symbol:i===0?'005930.KS':'QA'+i,name:i===0?'삼성전자':'관심 '+i})))));
+  if(scenario==='watch-3'||scenario==='watch-20')await page.addInitScript(count=>localStorage.setItem('chartview-toss-watchlist-v1',JSON.stringify(Array.from({length:count},(_,i)=>({symbol:i===0?'005930.KS':'QA'+i,name:i===0?'삼성전자':'관심 '+i})))),scenario==='watch-3'?3:20);
   if(scenario==='ready-saved')await page.addInitScript(()=>localStorage.setItem('chartview-toss-watchlist-v1',JSON.stringify([{symbol:'005930.KS',name:'삼성전자'}])));
   await page.route('https://chart-view-pkv8.onrender.com/**',async route=>{
    const path=new URL(route.request().url()).pathname;let body={results:[],items:[]};
@@ -22,7 +22,7 @@ try {
    if(path==='/api/home-bootstrap')body={day:{tradeDate:'2026-10-02',top3:[record]},recommendations:[record,{...record,recommendedDate:'2026-09-01',returnPct:null}]};
    if(path==='/static/data/pick_monitor.json')body={picks:[]};
    if(path==='/api/quotes')body={results:[quote]};
-   if(path==='/api/home-snapshot')body={heatmap:{results:[]},...(scenario==='null-macro'?{macro:null}:{})};
+   if(path==='/api/home-snapshot')body={heatmap:{results:[]},...(scenario==='null-macro'?{macro:++macroSnapshots===1?null:{summary:{text:'경제 지표 재시도 성공'},results:[]}}:{})};
    if(path==='/api/export-momentum')body={period:'2026-09',items:[],regions:[],summary:{exportYoY:4}};
    await route.fulfill({contentType:'application/json',body:JSON.stringify(body)});
   });
@@ -31,8 +31,8 @@ try {
   if(scenario==='null-macro'){
    await page.locator('[data-retry-brief]').waitFor();
    await page.locator('[data-retry-brief]').click();
-   await page.locator('[data-retry-brief]').waitFor();
-   assert.match(await page.locator('#brief-card').innerText(),/경제지표|경제 지표/);
+   await page.waitForFunction(()=>document.querySelector('#brief-card')?.textContent.includes('경제 지표 재시도 성공'));
+   assert.equal(await page.locator('[data-retry-brief]').count(),0);
   }
   if(scenario==='failed')await page.locator('#retry-market').waitFor();
   else await page.locator('#market-card .quote-card').first().waitFor();
