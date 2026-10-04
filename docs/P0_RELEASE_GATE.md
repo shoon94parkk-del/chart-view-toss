@@ -27,6 +27,7 @@ Updated: 2026-09-21
 - [x] obtain an official Apps in Toss scope answer: operator-provided reply permits lookup-only service and excludes stock recommendations/investment prompts (2026-09-28)
 - [ ] confirm the restored `최근 주목받는 종목` view with Toss; existing user-selected stocks and recommendation performance are visible again in `0.9.4`, outside the previously cleared lookup-only scope
 - [ ] confirm commercial-use / redistribution conditions for every data provider in `DATA_PROVIDER_INVENTORY.md`
+- [ ] confirm TrendForce DRAM public latest-price redistribution/public-app use or replace `/api/memory-spot` with a source whose license explicitly covers the intended Apps in Toss use
 - [x] actual operator 박상훈 and support kimtang89@naver.com disclosed
 - [ ] eliminate user-visible cold-start dependency through a validated free static/serverless path or an explicitly authorized non-sleeping API; paid compute is not itself a Toss policy requirement
 - [ ] Android Apps in Toss Sandbox / QR smoke test
