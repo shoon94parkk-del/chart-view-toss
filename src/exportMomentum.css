@@ -305,3 +305,31 @@
  .dram-spot-basis{align-items:stretch;flex-direction:column}
  .dram-spot-basis button{width:100%}
 }
+
+
+/* Export information architecture: overview first, detail by tab. */
+.export-topic-nav{position:sticky;top:0;z-index:12;display:flex;gap:7px;overflow-x:auto;padding:8px 0 10px;margin-bottom:4px;background:rgba(255,255,255,.96);backdrop-filter:blur(12px);scrollbar-width:none}
+.export-topic-nav::-webkit-scrollbar{display:none}
+.export-topic-nav button{flex:none;min-height:38px;border:1px solid #e7ebf0;border-radius:999px;background:#fff;color:#6b7684;padding:8px 13px;font-size:11px;font-weight:800;white-space:nowrap}
+.export-topic-nav button.is-active,.export-topic-nav button[aria-selected="true"]{border-color:#3182f6;background:#e8f3ff;color:#1769c2}
+.export-topic-nav button:disabled{opacity:.45}
+.export-tab-panel[hidden]{display:none}
+.export-tab-panel{min-width:0}
+.export-tab-panel>.export-section:first-child{margin-top:4px}
+
+/* Memory price catalog: one price family at a time to avoid another long dashboard. */
+.memory-price-tabs{display:flex;gap:6px;overflow-x:auto;margin:12px 0 10px;padding-bottom:2px;scrollbar-width:none}
+.memory-price-tabs::-webkit-scrollbar{display:none}
+.memory-price-tabs button{flex:none;min-height:36px;border:1px solid #e7ebf0;border-radius:11px;background:#fff;color:#6b7684;padding:7px 10px;font-size:10px;font-weight:800;white-space:nowrap}
+.memory-price-tabs button[aria-selected="true"]{border-color:#9fc7fb;background:#eef6ff;color:#1769c2}
+.memory-price-active{min-width:0}
+.memory-price-group-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:4px 1px 9px}
+.memory-price-group-head>div{min-width:0}.memory-price-group-head strong{display:block;font-size:13px}.memory-price-group-head span{display:block;margin-top:3px;color:#8b95a1;font-size:9px}
+.memory-price-group-head em{font-style:normal;color:#6b7684;font-size:9px;font-weight:800;white-space:nowrap}
+.memory-price-source{width:100%;min-height:40px;margin-top:9px;border:1px solid #e3eaf3;border-radius:12px;background:#fff;color:#1769c2;font-size:10px;font-weight:800}
+.memory-price-unavailable{margin-top:10px;border:1px solid #edf0f2;border-radius:15px;background:#fbfcfd;overflow:hidden}
+.memory-price-unavailable summary{min-height:42px;display:flex;align-items:center;padding:0 13px;color:#4e5968;font-size:10px;font-weight:800;cursor:pointer}
+.memory-price-unavailable>div{padding:0 13px 12px}
+.memory-price-unavailable p{margin:7px 0 0;padding-top:7px;border-top:1px solid #f0f2f5}
+.memory-price-unavailable p strong,.memory-price-unavailable p span{display:block}
+.memory-price-unavailable p strong{font-size:10px}.memory-price-unavailable p span{margin-top:3px;color:#8b95a1;font-size:9px;line-height:1.45}
