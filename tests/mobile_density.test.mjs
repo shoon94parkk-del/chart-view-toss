@@ -28,5 +28,5 @@ test('mobile export views use reduced card spacing and chart height',()=>{
 
 
 test('narrow analysis headers reduce title size instead of wrapping by default',()=>{
-  assert.match(styles,/@media\\(max-width:360px\\)\\{\\.brand-lockup h1\\{font-size:17px/);
+  assert.match(styles,/@media\(max-width:360px\)\{\.brand-lockup h1\{font-size:17px/);
 });
