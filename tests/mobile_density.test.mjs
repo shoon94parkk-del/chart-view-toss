@@ -13,7 +13,7 @@ test('mobile screener rows keep a compact base height and typography',()=>{
 });
 
 test('mobile pick ledger keeps collapsed records compact without hiding core fields',()=>{
-  assert.match(picks,/@media\(max-width:600px\)[\s\S]*\.pick-ledger-row\{[\s\S]*min-height:70px/);
+  assert.match(picks,/@media\(max-width:600px\)[\s\S]*\.pick-ledger-row\{[\s\S]*min-height:62px/);
   assert.match(picks,/\.pick-ledger-stock strong\{font-size:12\.5px/);
   assert.match(picks,/\.pick-ledger-return\{font-size:13px/);
 });
