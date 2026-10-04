@@ -39,10 +39,10 @@ export function mountResearchCard(host,options){
  ];
  host.innerHTML=`<form class="research-form research-ask" id="research-form">
   <details class="research-guide" id="research-guide"><summary>지원 항목과 이용 방법</summary><strong>비교할 수 있는 항목</strong><p>국내 종목의 DART 공시에서 확인한 매출액·영업이익·영업이익률·전년 대비 증가율을 비교해요. 순이익·영업현금흐름·부채·재고·매출채권도 함께 볼 수 있어요.</p><p class="research-guide-limit">앞으로의 전망, 목표주가, 주가 상승 이유 같은 예측·원인 해석은 지원하지 않아요. 공시 자료가 없으면 확인 불가로 표시해요.</p></details>
-  ${korean?`<div class="research-examples" aria-label="질문 예시"><span>질문 예시 · 누르면 입력돼요</span>${examples.map((row,index)=>`<button type="button" data-research-example="${index}">${esc(row.label)}</button>`).join('')}</div>`:''}
+  ${korean?`<div class="research-examples" aria-label="질문 예시"><span>지원하는 비교 항목 · 누르면 질문에 입력돼요</span>${examples.map((row,index)=>`<button type="button" data-research-example="${index}">${esc(row.label)}</button>`).join('')}</div>`:''}
   <label for="research-question">${esc(name||symbol)}의 어떤 실적을 비교할까요?</label>
   <textarea id="research-question" name="question" maxlength="180" rows="2" required aria-describedby="research-help" placeholder="예: ${esc(name||symbol)}의 영업현금흐름과 순이익을 비교해줘">${esc(options.draft?.question??saved?.question??'')}</textarea>
-  <p class="research-form-help" id="research-help">종목명과 항목을 찾아 공시 수치를 조회·계산하는 기능이에요. 다른 회사 하나의 이름을 함께 적으면 같은 기간의 실적을 나란히 비교해요.</p>
+  <p class="research-form-help" id="research-help">선택한 항목의 공시 수치를 조회·계산해요. 자유로운 전망·원인 해석은 지원하지 않아요. 다른 회사 하나의 이름을 함께 적으면 같은 기간의 실적을 나란히 비교해요.</p>
   ${korean?`<details class="research-peer-picker" ${selectedPeer?'open':''}><summary>비교할 회사 선택 · 선택 사항</summary><div id="research-peer-selection" role="status">${selectedPeer?`${esc(selectedPeer.name)} (${esc(selectedPeer.symbol)}) 선택됨`:'선택하지 않으면 이전 실적과 비교해요.'}</div><div id="research-peer-options"></div>${onChoosePeer?'<button type="button" data-research-choose-peer>관심종목·검색에서 선택</button>':''}<button type="button" data-research-clear-peer ${selectedPeer?'':'hidden'}>회사 선택 해제</button><small>산업 분류가 같아도 사업 구성은 달라요. 회사 전체 공시를 비교해요.</small></details>`:''}
   <button type="submit" class="research-analyze">비교 분석하기</button>
  </form><div id="research-result" aria-live="polite"></div>

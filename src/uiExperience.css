@@ -62,3 +62,11 @@ html:not([data-ait-runtime="true"]) .app-shell .page-intro{background:transparen
 .app-shell .export-data-details>summary,.export-company-products>summary{min-height:44px;display:flex;align-items:center;font-size:14px;color:#4e5968;cursor:pointer}
 .export-data-details{border-top:1px solid #e5e8ed;margin-top:14px}
 .export-company-products p{overflow-wrap:anywhere}
+
+.app-shell .insight-context{padding:16px;background:#f5f7fa;box-shadow:none}
+.app-shell .insight-context p{font-size:14px;line-height:1.6;margin:8px 0;overflow-wrap:anywhere}
+.app-shell .insight-context h3{font-size:17px}
+.insight-evidence-details>summary,.industry-raw-values>summary{min-height:44px;display:flex;align-items:center;cursor:pointer;font-size:14px}
+.app-shell .detail-jump-nav button{min-height:44px;font-size:13px;flex-shrink:0}
+.app-shell .detail-jump-nav button[aria-current]{background:#eaf1ff;color:#174eaf;font-weight:700}
+.app-shell .industry-raw-values p{font-size:12px;line-height:1.6;overflow-wrap:anywhere}

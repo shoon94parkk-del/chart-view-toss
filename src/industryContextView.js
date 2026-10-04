@@ -1,4 +1,5 @@
 import './industryContextView.css';
+import {formatFinancialAmount} from './dataPresentation.js';
 import {revenueMixBasis} from './experienceState.js';
 
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -6,10 +7,10 @@ const pct=v=>Number.isFinite(Number(v))?`${Number(v)>0?'+':''}${Number(v).toFixe
 const ratio=v=>Number.isFinite(Number(v))?`${Math.round(Number(v)*100)}%`:'—';
 const clip=(value,max=120)=>{const text=String(value||'').trim();return text.length>max?`${text.slice(0,max)}…`:text;};
 const revenueAmount=(value,unit='')=>{
-  const n=Number(value);
-  if(!Number.isFinite(n))return '';
-  const formatted=Math.abs(n)>=1_000_000?n.toLocaleString('ko-KR',{maximumFractionDigits:0}):n.toLocaleString('ko-KR',{maximumFractionDigits:1});
-  return `${formatted}${unit?' '+unit:''}`;
+  if(value==null||String(value).trim()==='')return '';
+  const n=Number(value);if(!Number.isFinite(n))return '';
+  const multiplier={'원':1,'천원':1e3,'천 원':1e3,'백만원':1e6,'백만 원':1e6,'억원':1e8,'억 원':1e8}[String(unit).trim()];
+  return multiplier?formatFinancialAmount(n*multiplier,'KRW'):`${n.toLocaleString('ko-KR',{maximumFractionDigits:1})}${unit?' '+unit:''}`;
 };
 const evidenceDate=value=>{
   if(!value)return '';
@@ -39,7 +40,7 @@ function reportRevenueHtml(report){
         <div class="industry-revenue-bar"><i style="width:${Math.max(3,Math.min(100,(Number(item.share)||0)/maxShare*100))}%"></i></div>
         ${Number.isFinite(Number(item.revenue))?`<small>${esc(revenueAmount(item.revenue,report.unit||''))}</small>`:''}
       </div>`).join('')}</div>
-    ${basisText}<p class="industry-caption">${esc(sourceLabel||'DART 사업보고서')} · 공시 표에서 직접 확인한 값만 표시해요.${report.hasConsolidationAdjustment?' 연결조정을 반영한 매출을 기준으로 계산해 부문 비중의 합은 100%를 넘을 수 있어요.':''}</p>
+    ${basisText}<details class="industry-raw-values"><summary>원값·공시 단위 보기</summary>${items.map(item=>`<p>${esc(item.name)} · ${item.revenue==null?'미제공':esc(Number(item.revenue).toLocaleString('ko-KR'))+' '+esc(report.unit||'단위 미제공')}</p>`).join('')}${mix.basis?`<p>매출 합계 ${esc(mix.basis.totalAmount)} · 부문 합계 ${esc(mix.basis.positiveSegmentTotal)} · 연결 조정 ${esc(mix.basis.adjustmentAmount)} · ${esc(report.unit||'단위 미제공')}</p>`:''}</details><p class="industry-caption">${esc(sourceLabel||'DART 사업보고서')} · 공시 표에서 직접 확인한 값만 표시해요.${report.hasConsolidationAdjustment?' 연결조정을 반영한 매출을 기준으로 계산해 부문 비중의 합은 100%를 넘을 수 있어요.':''}</p>
   </section>`;
 }
 

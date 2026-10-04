@@ -86,6 +86,7 @@ let chartInstance=null;
 let chartResizeObserver=null;
 let detailLiveTimer=null;
 let viewEpoch=0;
+let detailJumpCleanup=null;
 let analysisCleanup=null;
 let searchSeq=0;
 let chartLoadSeq=0;
@@ -295,7 +296,7 @@ function openHomeSearch(){
    restoreBack:restoreNativeBack,
  });
 }
-function cleanupChart(){analysisCleanup?.();analysisCleanup=null;viewEpoch++;chartLoadSeq++;chartResizeObserver?.disconnect();chartResizeObserver=null;if(detailLiveTimer){clearTimeout(detailLiveTimer);detailLiveTimer=null;}if(chartInstance){try{chartInstance.remove()}catch{}chartInstance=null}}
+function cleanupChart(){detailJumpCleanup?.();detailJumpCleanup=null;analysisCleanup?.();analysisCleanup=null;viewEpoch++;chartLoadSeq++;chartResizeObserver?.disconnect();chartResizeObserver=null;if(detailLiveTimer){clearTimeout(detailLiveTimer);detailLiveTimer=null;}if(chartInstance){try{chartInstance.remove()}catch{}chartInstance=null}}
 
 function previousFromPct(price,changePct){
  const p=finiteNumber(price),c=finiteNumber(changePct);
@@ -1021,9 +1022,9 @@ async function renderDetail(){
      <div class="detail-actions"><button id="detail-change" type="button">${iconSvg('search',18)} <span>다른 종목</span></button><button id="detail-watch" class="detail-watch-button" type="button">${iconSvg('heart',18)} <span>${saved?'관심 등록됨':'관심 등록'}</span></button><button id="detail-compare">${iconSvg('chart',18)} <span>${state.selected.includes(symbol)?'비교 열기':'비교 추가'}</span></button></div>
    </section>
    <section class="detail-price skeleton detail-price-skeleton" id="detail-price">${loadingIndicator('현재가를 확인하고 있어요')}</section>
+   <nav class="detail-jump-nav" aria-label="종목 정보 바로가기"><button type="button" data-detail-jump="detail-price">가격</button><button type="button" data-detail-jump="${koreanDetail?'detail-financial-block':'detail-metrics-section'}">${koreanDetail?'공시 실적':'핵심 지표'}</button>${koreanDetail?'<button type="button" data-detail-jump="detail-industry-block">산업</button>':''}<button type="button" data-detail-jump="detail-news-section">뉴스</button>${koreanDetail?'<button type="button" data-detail-jump="detail-research-card">공시 비교</button>':''}</nav>
    ${state.detailInvestigation?.symbol===symbol&&state.detailInvestigation.kind!=='saved'?investigationHtml(state.detailInvestigation):''}
    ${!isIndex?'<p id="detail-identity-note" class="detail-identity-note" role="status"></p><div id="detail-cap">시가총액 확인 중</div>':''}
-   <nav class="detail-jump-nav" aria-label="종목 정보 바로가기"><button type="button" data-detail-jump="detail-price">가격</button><button type="button" data-detail-jump="${koreanDetail?'detail-financial-block':'detail-metrics-section'}">${koreanDetail?'공시 실적':'핵심 지표'}</button>${koreanDetail?'<button type="button" data-detail-jump="detail-industry-block">산업</button>':''}<button type="button" data-detail-jump="detail-news-section">뉴스</button>${koreanDetail?'<button type="button" data-detail-jump="detail-research-card">공시 비교</button>':''}</nav>
    <div class="segmented detail-period-tabs">${[['1mo','1개월'],['3mo','3개월'],['6mo','6개월'],['1y','1년']].map(([p,l])=>`<button data-detail-period="${p}" aria-pressed="${state.detailPeriod===p}" class="${state.detailPeriod===p?'active':''}">${l}</button>`).join('')}</div>
    <section class="detail-chart-card" id="detail-chart-section"><div class="detail-section-head"><div><span>기간 수익률</span><strong id="detail-period-label">선택 기간 흐름</strong></div><small id="detail-chart-status" role="status">불러오는 중</small></div><div class="detail-chart-wrap"><div id="detail-chart" class="detail-chart"></div><div id="detail-chart-loading" class="chart-loading">${chartLoadingPreview('종목 차트를 불러오고 있어요')}</div></div><div id="detail-return-note" class="detail-return-note"></div></section>
    ${!isIndex?'<details class="detail-block detail-review" id="detail-review"><summary>선정 기록 · 기술 지표 확인</summary><div id="detail-review-body">펼치면 기존 선정 기록의 신호등·성과와 수집된 기술 지표를 확인해요.</div></details>':''}
@@ -1053,6 +1054,16 @@ async function renderDetail(){
  };
  const restoreInvestigationJump=()=>{const context=state.detailInvestigation;if(epoch===viewEpoch&&context?.symbol===symbol&&context.jump&&jumpToDetail(context.jump)){context.jump=null;}};
  document.querySelectorAll('[data-detail-jump]').forEach(button=>button.addEventListener('click',()=>jumpToDetail(button.dataset.detailJump)));
+ const sectionNav=document.querySelector('.detail-jump-nav');
+ const updateSection=()=>{
+  if(epoch!==viewEpoch||!sectionNav?.isConnected)return;
+  const buttons=[...sectionNav.querySelectorAll('[data-detail-jump]')];
+  let active=buttons[0];
+  for(const button of buttons){const target=document.getElementById(button.dataset.detailJump);if(target&&target.getBoundingClientRect().top<=sectionNav.getBoundingClientRect().bottom+24)active=button;}
+  buttons.forEach(button=>{if(button===active)button.setAttribute('aria-current','location');else button.removeAttribute('aria-current');});
+ };
+ window.addEventListener('scroll',updateSection,{passive:true});detailJumpCleanup=()=>window.removeEventListener('scroll',updateSection);updateSection();
+
  if(koreanDetail)import('./researchCard.js').then(({mountResearchCard})=>{
    if(epoch!==viewEpoch)return;
    mountResearchCard(document.querySelector('#research-card-body'),{symbol,name:knownName||symbol,onJump:jumpToDetail,onNotice:showToast,candidates:[...state.watchlist,...Object.entries(DISPLAY_NAMES).map(([symbol,name])=>({symbol,name}))],favorites:state.watchlist,draft:researchDrafts.get(symbol),initialPeer:state.sharedDetailSymbol===symbol?state.researchPeer:null,onDraftChange:draft=>{researchDrafts.set(symbol,draft);state.researchPeer=draft.resultPeer||draft.peer||null;},onCompare:companies=>{state.selected=companies.map(row=>row.symbol);companies.forEach(row=>resolvedNames.set(row.symbol,row.name));persist();navigate('chart');},onChoosePeer:callback=>openStockSelector({title:'공시를 비교할 회사',description:'현재 종목과 다른 국내 회사 하나를 선택하세요.',favorites:state.watchlist,nameFor:comparisonStockName,pickLabel:'비교 선택',restoreBack:restoreNativeBack,onPick:(symbol,name)=>callback({symbol,name})})});
