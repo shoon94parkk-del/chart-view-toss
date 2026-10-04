@@ -78,3 +78,15 @@
   .pick-ledger-tech-alert small{font-size:8px}
   .pick-ledger-overview>summary,.pick-ledger-search-options>summary{font-size:10px;min-height:36px}
 }
+
+
+/* Compact two-row record layout. Performance, best return and chevron share one cell. */
+.pick-ledger-row{grid-template-areas:'stock status' 'prices performance'}
+.pick-ledger-performance{grid-area:performance;align-self:center;justify-self:end;display:flex;align-items:center;justify-content:flex-end;gap:7px;white-space:nowrap}
+.pick-ledger-performance .pick-ledger-return,.pick-ledger-performance .pick-ledger-secondary,.pick-ledger-performance .pick-ledger-chevron{grid-area:auto;justify-self:auto}
+.pick-ledger-performance .pick-ledger-secondary{display:block}
+@media(max-width:600px){
+  .pick-ledger-row{min-height:62px}
+  .pick-ledger-performance{gap:4px}
+  .pick-ledger-secondary em{font-size:7.5px}
+}
