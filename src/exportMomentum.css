@@ -333,3 +333,91 @@
 .memory-price-unavailable p{margin:7px 0 0;padding-top:7px;border-top:1px solid #f0f2f5}
 .memory-price-unavailable p strong,.memory-price-unavailable p span{display:block}
 .memory-price-unavailable p strong{font-size:10px}.memory-price-unavailable p span{margin-top:3px;color:#8b95a1;font-size:9px;line-height:1.45}
+
+
+/* 2026-10-05 mobile density: keep export screens scan-friendly. */
+@media(max-width:600px){
+  .export-momentum-view{padding-top:0}
+  .export-topic-nav{gap:5px;padding:5px 0 7px}
+  .export-topic-nav button{min-height:36px;padding:7px 10px;font-size:10px}
+  .export-hero{padding:15px!important;border-radius:19px}
+  .export-hero-top{gap:8px}
+  .export-kicker{font-size:9px}
+  .export-hero h2,.export-hero-top h2{font-size:20px!important;margin:4px 0!important}
+  .export-hero p,.export-hero-top p{font-size:10px!important;line-height:1.4!important;margin:4px 0!important}
+  .export-status{padding:5px 7px;font-size:8.5px}
+  .export-main-number{margin-top:10px!important;padding-top:10px}
+  .export-main-number>span{font-size:9.5px}
+  .export-main-number strong{font-size:24px!important}
+  .export-main-number em{font-size:12px}
+  .export-summary-grid{gap:6px!important;margin-top:10px!important}
+  .export-summary-grid>div{padding:8px!important;border-radius:12px}
+  .export-summary-grid span,.export-summary-grid small{font-size:8.5px}
+  .export-summary-grid strong{margin:3px 0 1px;font-size:12px}
+  .export-section{margin:16px 0}
+  .export-section-head{margin-bottom:8px;gap:8px}
+  .export-section-head span{font-size:8.5px}
+  .export-section-head h3{margin-top:2px;font-size:15px}
+  .export-section-head>small{font-size:8.5px;max-width:48%}
+  .export-facts{padding:10px 11px;border-radius:14px}
+  .export-facts>strong{font-size:10px}
+  .export-facts>div{gap:4px;margin-top:6px}
+  .export-facts span{padding:5px 7px;font-size:8.5px}
+  .export-source{margin:14px 0 5px;padding:11px;border-radius:14px}
+  .export-source>div:first-child strong{font-size:10px}
+  .export-source>div:first-child p{margin-top:4px;font-size:9px;line-height:1.4}
+  .export-source-links{gap:5px;margin:8px 0}
+  .export-source-links button{min-height:42px;padding:7px 8px}
+  .export-source-links button span{font-size:9.5px}
+  .export-source-links button small{font-size:8px}
+  .export-chart-card,.export-quadrant-card,.export-breadth-card{padding:11px;border-radius:15px}
+  .export-driver-list{gap:6px}
+  .export-driver-card{padding:10px 11px;border-radius:14px}
+  .export-driver-head strong{font-size:12.5px}
+  .export-driver-head small{margin-top:2px;font-size:8px}
+  .export-driver-tag{padding:4px 6px;font-size:8px}
+  .export-driver-grid{gap:4px;margin-top:8px}
+  .export-driver-grid>div{padding:7px 6px;border-radius:10px}
+  .export-driver-grid span{font-size:7.5px}
+  .export-driver-grid strong{margin-top:3px;font-size:9.5px}
+  .export-driver-grid em{margin-top:2px;font-size:8.5px}
+  .export-driver-trade{gap:4px 8px;margin-top:7px;padding-top:7px;font-size:8px}
+  .export-driver-trade b{font-size:8.5px}
+  .export-driver-open{min-height:38px;margin-top:7px;font-size:9.5px}
+  .export-semi-report-cards{gap:6px}
+  .export-semi-report-card{padding:10px 11px;border-radius:14px}
+  .export-semi-report-head strong{font-size:12px}
+  .export-semi-report-head span,.export-semi-report-head em{font-size:8px}
+  .export-semi-report-amount{margin-top:7px;font-size:21px}
+  .export-semi-report-pills{gap:4px;margin-top:6px}
+  .export-semi-report-pills span{padding:4px 6px;font-size:8px}
+  .export-semi-report-unit{margin-top:7px;padding-top:7px}
+  .export-semi-report-unit span,.export-semi-report-unit small{font-size:8px}
+  .export-semi-report-unit strong{font-size:11px}
+  .dram-spot-intro{padding:10px 11px;border-radius:14px}
+  .dram-spot-intro strong{font-size:11px}
+  .dram-spot-intro span{margin-top:3px;font-size:9px;line-height:1.4}
+  .memory-price-tabs{gap:4px;margin:8px 0}
+  .memory-price-tabs button{min-height:34px;padding:6px 8px;font-size:9px}
+  .dram-spot-grid{gap:6px;margin-top:7px}
+  .dram-spot-card{padding:10px 11px;border-radius:14px}
+  .dram-spot-card-head span{font-size:8px}
+  .dram-spot-card-head strong{margin-top:2px;font-size:11px}
+  .dram-spot-card-head em{font-size:9px}
+  .dram-spot-price{margin-top:7px;font-size:21px}
+  .dram-spot-range{margin-top:3px;font-size:8.5px}
+  .dram-spot-chart{margin-top:8px;padding-top:5px}
+  .dram-spot-chart svg{height:78px}
+  .dram-spot-chart-labels{margin-top:-15px;font-size:7px}
+  .dram-spot-basis{margin-top:7px;padding:8px 9px;border-radius:12px}
+  .dram-spot-basis span{font-size:8.5px}
+  .memory-price-group-head{margin-bottom:6px}
+  .memory-price-group-head strong{font-size:11px}
+  .memory-price-group-head span,.memory-price-group-head em{font-size:8px}
+  .export-region-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+  .export-region-grid article{padding:10px;border-radius:13px}
+  .export-region-grid span{font-size:9px}
+  .export-region-grid strong{margin-top:4px;font-size:14px}
+  .export-region-grid small{font-size:8.5px}
+  .export-region-grid p{font-size:8px}
+}
