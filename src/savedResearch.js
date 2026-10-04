@@ -11,9 +11,9 @@ export function savedResearch(){
  for(const symbol of keys){
   let note=null,review={};try{note=readResearchNote(symbol);}catch{error=true;}
   try{review=readReview(symbol);}catch{error=true;}
-  if(!note&&!review.conditions?.length)continue;
-  const updatedAt=[note?.updatedAt,...(review.conditions||[]).map(c=>c.savedAt)].filter(value=>typeof value==='string').sort().at(-1)||'';
-  rows.push({symbol,question:note?.question||'',reviewOn:note?.reviewOn||'',conditions:review.conditions||[],updatedAt});
+  if(!note&&!review.conditions?.length&&!review.filing)continue;
+  const updatedAt=[note?.updatedAt,review.reviewedAt,...(review.conditions||[]).map(c=>c.savedAt)].filter(value=>typeof value==='string').sort().at(-1)||'';
+  rows.push({symbol,question:note?.question||'',reviewOn:note?.reviewOn||'',conditions:review.conditions||[],filing:review.filing,observation:review.observation,updatedAt});
  }
  return {rows:rows.sort((a,b)=>b.updatedAt.localeCompare(a.updatedAt)),error};
 }

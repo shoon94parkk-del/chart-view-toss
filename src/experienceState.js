@@ -2,7 +2,7 @@
 const symbolPattern=/^[A-Z0-9^][A-Z0-9.^=\-]{0,29}$/;
 const periods=new Set(['1mo','3mo','6mo','1y','5y','max']);
 const shareTabs=new Set(['chart','detail','discover','valuation','consensus','bands','news']);
-const filterKeys=['query','market','rsiMin','rsiMax','volumeMin','ret20Min','valueMin','trend','signal','sort'];
+const filterKeys=['query','market','rsiMin','rsiMax','volumeMin','ret20Min','valueMin','trend','signal','sort','priceBasis'];
 export function encodeSharedView(state){
  if(!shareTabs.has(state.tab))return '';
  const view={tab:state.tab};

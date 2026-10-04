@@ -4,14 +4,14 @@ import { homeBootstrap, pickMonitor } from './api.js';
 import { loadingIndicator } from './loadingView.js';
 
 const STATUS={
-  SELL_REVIEW:{label:'매도검토',icon:'🔴',cls:'sell',order:0},
+  SELL_REVIEW:{label:'기업 근거 재점검',icon:'🔴',cls:'sell',order:0},
   WATCH:{label:'경계',icon:'🟡',cls:'watch',order:1},
   PENDING_REVIEW:{label:'검토 대기',icon:'⚪',cls:'pending',order:2},
   KEEP:{label:'유지',icon:'🟢',cls:'keep',order:3},
   EXIT:{label:'종료',icon:'✓',cls:'exit',order:4},
 };
 const TECH_STATUS={
-  TECH_SELL_REVIEW:{label:'단기 매도 검토',icon:'🔴',cls:'tech-sell',order:0},
+  TECH_SELL_REVIEW:{label:'강한 기술 경고',icon:'🔴',cls:'tech-sell',order:0},
   TECH_CAUTION:{label:'기술 경고',icon:'🟠',cls:'tech-caution',order:1},
   TECH_IMPROVING:{label:'기술 개선',icon:'🟢',cls:'tech-improving',order:2},
   TECH_NORMAL:{label:'기술 중립',icon:'',cls:'tech-normal',order:3},
@@ -91,8 +91,8 @@ function technicalAlertRows(rows,displayName){
 function rowMarkup(row,index,displayName){
   const score=selectionScorePresentation(row);
   const pick=row?.monitor;
-  const finalStatus=actionStatus(row);
-  const meta=statusMeta(finalStatus);
+  const meta=statusMeta(pick?.status||pick?.monitor?.status||'PENDING_REVIEW');
+  const technical=technicalMeta(pick?.technical?.signal);
   const symbol=symbolOf(row);
   const name=stockName(row,displayName);
   const id=`pick-${String(row?.recommendedDate||'date')}-${String(row?.rank||index)}-${symbol||index}`.replace(/[^a-zA-Z0-9_-]/g,'-');
@@ -105,19 +105,19 @@ function rowMarkup(row,index,displayName){
   return `<article class="pick-ledger-item ${meta.cls}" data-pick-key="${esc(selectionKey(row))}">
     <button type="button" class="pick-ledger-row" data-pick-expand="${esc(id)}" aria-expanded="false">
       <span class="pick-ledger-stock"><strong>${esc(name)}</strong><small>${esc(symbol||row?.code||'')} · ${esc(row?.recommendedDate||'추천일 미제공')}</small></span>
-      <span class="pick-ledger-status-stack"><span class="pick-ledger-status ${meta.cls}">${meta.icon} ${meta.label}</span></span>
+      <span class="pick-ledger-status-stack"><span class="pick-ledger-status ${meta.cls}">${meta.icon} 기업 근거 · ${meta.label}</span>${pick?.technical?.signal&&technical.order<2?`<span class="pick-ledger-tech-status ${technical.cls}">가격·거래 · ${technical.label}</span>`:''}</span>
       <span class="pick-ledger-return ${tone(row?.returnPct)}">${pct(row?.returnPct)}</span>
       <span class="pick-ledger-prices"><small>추천 ${esc(price(row?.recommendedPrice,row))}</small><b>→</b><small>점검가 ${esc(price(row?.currentPrice,row))}</small></span>
-      <span class="pick-ledger-secondary"><em class="${tone(row?.bestReturnPct)}">최고 ${pct(row?.bestReturnPct)}</em><em>${esc(score.label)}${finite(row?.score)===0?'<small class="pick-score-note">산식 미제공</small>':''}</em></span>
+      <span class="pick-ledger-secondary"><em class="${tone(row?.bestReturnPct)}">최고 ${pct(row?.bestReturnPct)}</em></span>
       <span class="pick-ledger-chevron">⌄</span>
     </button>
     <div class="pick-ledger-detail" data-pick-detail="${esc(id)}" hidden>
       <div class="pick-ledger-detail-grid">
         <section><strong>추천 당시 이유</strong><p>${esc(row?.reason||'추천 사유가 기록되지 않았어요.')}</p></section>
         ${thesis.trim()!==String(row?.reason||'').trim()?`<section><strong>투자논리 기준선</strong><p>${esc(thesis)}</p></section>`:''}
-        <section><strong>최근 점검</strong><p>${esc(review)}</p></section>
+        <section><strong>기업 근거 점검</strong><p>원자료 상태 · ${esc(pick?.status||pick?.monitor?.status||'PENDING_REVIEW')} ${(pick?.status||pick?.monitor?.status)==='SELL_REVIEW'?'· 매도검토':''}</p></section><section><strong>최근 점검</strong><p>${esc(review)}</p></section>
         <section data-pick-score-basis><strong>선정 점수 · 출처</strong><p>${esc(score.label)} · ${esc(score.source)}</p><p>${esc(score.note)}</p></section>
-        <section><strong>단기 기술 신호</strong>${technicalMarkup(pick)}</section>
+        <section><strong>단기 기술 신호</strong><p>원자료 신호 · ${esc(pick?.technical?.signal||'TECH_NORMAL')} ${pick?.technical?.signal==='TECH_SELL_REVIEW'?'· 단기 매도 검토':''}</p>${technicalMarkup(pick)}</section>
         <section><strong>검증 근거</strong>${evidenceMarkup(pick)}</section>
       </div>
       <div class="pick-ledger-detail-foot"><span>마지막 점검 ${esc(reviewed)} · 시세기준 ${esc(row?.lastUpdatedTradeDate||'—')}</span>${pick?.needsUserReview?'<strong>사용자 확인 필요</strong>':''}</div>
@@ -138,8 +138,8 @@ export async function renderPickLedger({shell,bindNav,displayName,focusKey=null}
       <div class="pick-ledger-filters">
         <select id="pick-ledger-period" aria-label="기간 필터"><option value="all">기간 전체</option><option value="7">최근 7일</option><option value="30">최근 30일</option></select>
         <select id="pick-ledger-performance" aria-label="성과 필터"><option value="all">성과 전체</option><option value="win">수익 종목</option><option value="loss">손실 종목</option></select>
-        <select id="pick-ledger-status" aria-label="점검 상태 필터"><option value="all">상태 전체</option><option value="SELL_REVIEW">🔴 매도검토</option><option value="WATCH">🟡 경계</option><option value="KEEP">🟢 유지</option><option value="PENDING_REVIEW">⚪ 검토 대기</option><option value="EXIT">종료</option></select>
-        <select id="pick-ledger-sort" aria-label="정렬"><option value="latest">최신 추천순</option><option value="technical">단기 경고 우선</option><option value="status">점검 우선순</option><option value="return">수익률 높은순</option><option value="best">최고수익률 높은순</option><option value="score">점수 높은순</option></select>
+        <select id="pick-ledger-status" aria-label="점검 우선순위 필터"><option value="all">기업·기술 신호 전체</option><option value="SELL_REVIEW">기업 근거 재점검 / 강한 기술 경고</option><option value="WATCH">🟡 경계</option><option value="KEEP">🟢 유지</option><option value="PENDING_REVIEW">⚪ 검토 대기</option><option value="EXIT">종료</option></select>
+        <select id="pick-ledger-sort" aria-label="정렬"><option value="latest">최신 추천순</option><option value="technical">단기 경고 우선</option><option value="status">기업·기술 점검 우선순</option><option value="return">수익률 높은순</option><option value="best">최고수익률 높은순</option><option value="score">과거 선정 점수순</option></select>
       </div>
     </section>
     </details><p class="pick-ledger-focus-note" role="status"></p><p class="pick-ledger-count" id="pick-ledger-count"></p>
@@ -186,13 +186,13 @@ export async function renderPickLedger({shell,bindNav,displayName,focusKey=null}
     statusStrip.innerHTML=`<div class="pick-ledger-status-kpis">
       <div class="keep"><span>🟢 유지</span><b>${counts.KEEP}</b></div>
       <div class="watch"><span>🟡 경계</span><b>${counts.WATCH}</b></div>
-      <div class="sell"><span>🔴 매도검토</span><b>${counts.SELL_REVIEW}</b></div>
+      <div class="sell"><span>🔴 재점검 우선</span><b>${counts.SELL_REVIEW}</b></div>
       <div><span>⚪ 검토 대기</span><b>${counts.PENDING_REVIEW}</b></div>
     </div><p class="pick-ledger-basis">${monitorResult.ok?esc(`사후점검 ${String(monitorResult.value?.generatedAt||'').slice(0,10)||'기준일 미확인'} 기준 · 신호등은 펀더멘털과 단기 기술신호 중 더 높은 위험도를 반영 · 자동 점검 실행 ${reviewed}/${rows.length}건 · 근거 검토 대기는 별도 표시`):'사후점검 데이터를 불러오지 못해 성과 기록만 표시 중이에요.'}</p>`;
     const warningRows=rows.filter(row=>['TECH_SELL_REVIEW','TECH_CAUTION'].includes(row.monitor?.technical?.signal));
     techAlert.hidden=!warningRows.length;
     techAlert.classList.toggle('caution',!techSell.length);
-    techAlert.innerHTML=warningRows.length?`<strong>단기 경고 · 매도 검토 ${techSell.length}개 · 기술 경고 ${techCaution.length}개</strong>${technicalAlertRows(warningRows,displayName)}`:'';
+    techAlert.innerHTML=warningRows.length?`<strong>가격·거래 경고 · 강한 경고 ${techSell.length}개 · 기술 경고 ${techCaution.length}개</strong>${technicalAlertRows(warningRows,displayName)}`:'';
     toolbar.hidden=false;
 
     const search=document.querySelector('#pick-ledger-search');

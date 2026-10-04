@@ -12,3 +12,7 @@ test('malformed or blocked saved storage is disclosed without overwriting it',()
  assert.equal(setup('{broken','{}')?.error,true);assert.equal(setup('{}','{}',true)?.error,true);
  assert.equal(setup('{}','{}')?.rows?.length,0);
 });
+test('an acknowledged filing appears for revisit even without a saved question or condition',()=>{
+ const result=setup('{}',JSON.stringify({'005930.KS':{filing:{label:'2026년 반기'},reviewedAt:'2026-10-04T10:00:00Z'}}));
+ assert.equal(result.rows.length,1);assert.equal(result.rows[0].filing.label,'2026년 반기');assert.equal(result.rows[0].updatedAt,'2026-10-04T10:00:00Z');
+});

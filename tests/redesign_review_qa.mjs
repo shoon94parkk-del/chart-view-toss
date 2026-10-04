@@ -27,9 +27,11 @@ try{
   await page.goto(base+'/#favorites');await page.locator('.watch-detail-card').waitFor();assert.match(await page.locator('body').innerText(),/삼성전자/);
   await page.goto(base+'/favorites/');await page.locator('.watch-detail-card').waitFor();
   await page.goto(base+'/#picks');const zero=page.locator('[data-pick-key="2026-09-17:251970"]');await zero.waitFor();
-  assert.match(await zero.innerText(),/선정 점수 0점.*산식 미제공/s);
-  await zero.locator('[data-pick-expand]').click();assert.match(await zero.locator('[data-pick-score-basis]').innerText(),/사용자 최종 선택.*0점은 원자료.*현재 기술점수/s);
-  assert.match(await page.locator('[data-pick-key="2026-09-17:039030"]').innerText(),/선정 점수 미제공/);
+   assert.doesNotMatch(await zero.innerText(),/선정 점수/, 'raw score belongs in the record detail');
+   await zero.locator('[data-pick-expand]').click();assert.match(await zero.innerText(),/선정 점수 0점.*계산 산식과 척도가 제공되지 않아/s);
+   assert.match(await zero.locator('[data-pick-score-basis]').innerText(),/사용자 최종 선택.*0점은 원자료.*현재 기술점수/s);
+   const missing=page.locator('[data-pick-key="2026-09-17:039030"]');assert.doesNotMatch(await missing.innerText(),/선정 점수/);
+   await missing.locator('[data-pick-expand]').click();assert.match(await missing.innerText(),/선정 점수 미제공/);
   await page.screenshot({path:`artifacts/redesign-review/${width}-score.png`,fullPage:true});
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
   await page.getByRole('button',{name:'수익률',exact:true}).click();await page.locator('#chart-table-wrap .return-table').waitFor();

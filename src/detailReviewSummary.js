@@ -10,9 +10,9 @@ export function detailReviewHtml(symbol, bootstrap, monitor, screener, {monitorF
  const rows=(Array.isArray(bootstrap?.recommendations)?bootstrap.recommendations:[]).filter(row=>String(row.symbol||row.ticker).toUpperCase()===symbol.toUpperCase()).sort((a,b)=>String(b.recommendedDate).localeCompare(String(a.recommendedDate)));
  const row=rows[0];
  const pick=row?monitorFor(row,Array.isArray(monitor?.picks)?monitor.picks:[]):null;
- const meta=statusMeta(actionStatus({monitor:pick}));
+ const meta=statusMeta(pick?.status||pick?.monitor?.status||'PENDING_REVIEW');
  const technical=(Array.isArray(screener?.stocks)?screener.stocks:[]).find(row=>String(row.symbol).toUpperCase()===symbol.toUpperCase());
- return `${row?`<p><strong>${esc(meta.icon)} ${esc(meta.label)}</strong> · 최근 선정 ${esc(row.recommendedDate)}</p><p>선정 이후 수익률 ${pct(row.returnPct)} · ${esc(row.lastUpdatedTradeDate||'기준일 미제공')} 종가 기준</p>${monitorFailed?'<p>사후점검을 불러오지 못했어요. 신호는 검토 대기로 표시해요.</p>':pick?`<p>${esc(pick.monitor?.reason||'점검 근거 확인 필요')}</p><small>마지막 근거 점검 ${esc(pick.monitor?.lastReviewedTradeDate||'미제공')} · 사후점검 수집 ${esc(formatKst(monitor?.generatedAt))}</small>${technicalMarkup(pick)}`:'<p>이 선정 기록에 대응하는 사후점검은 검토 대기 중이에요.</p>'}`:'<p>선정 기록이 없는 종목이에요. 매매 신호를 새로 만들지 않아요.</p>'}
+ return `${row?`<p><strong>${esc(meta.icon)} 기업 근거 · ${esc(meta.label)}</strong> · 최근 선정 ${esc(row.recommendedDate)}</p><p>선정 이후 수익률 ${pct(row.returnPct)} · ${esc(row.lastUpdatedTradeDate||'기준일 미제공')} 종가 기준</p>${monitorFailed?'<p>사후점검을 불러오지 못했어요. 신호는 검토 대기로 표시해요.</p>':pick?`<p>${esc(pick.monitor?.reason||'점검 근거 확인 필요')}</p><small>마지막 근거 점검 ${esc(pick.monitor?.lastReviewedTradeDate||'미제공')} · 사후점검 수집 ${esc(formatKst(monitor?.generatedAt))}</small>${technicalMarkup(pick)}`:'<p>이 선정 기록에 대응하는 사후점검은 검토 대기 중이에요.</p>'}`:'<p>선정 기록이 없는 종목이에요. 매매 신호를 새로 만들지 않아요.</p>'}
  ${technical?`<p><strong>장마감 기술 지표</strong> · ${esc(technical.date||screener.tradeDate||'기준일 미제공')}</p><p>RSI(14) ${finiteNumber(technical.rsi14)===null?'확인 불가':Number(technical.rsi14).toFixed(1)} · 5거래일 ${pct(technical.ret5)} · 20거래일 ${pct(technical.ret20)}</p>`:'<p>이 종목의 장마감 기술 지표는 현재 수집 범위에 없어요.</p>'}
  <p class="muted-copy">선정 기록의 기존 신호등을 사용해요. 기술 지표와 펀더멘털 근거는 서로 다른 기준이며, 자동 주문이나 매매 확정이 아니에요.</p><button type="button" class="text-button" data-tab="picks">전체 선정 기록 보기</button>`;
 }

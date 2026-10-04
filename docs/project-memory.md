@@ -257,3 +257,7 @@ Home/analysis entries share local semantic SVGs and purposeful teal/export, blue
 - 지도/목록은 같은 heatmap payload/시장/숫자/시세 freshness를 사용한다. 빈 관심 편집·정렬을 숨기고 빈 조사 검색 입구를 제공한다.
 - 새 위치의 Home 관찰은 viewport 근처에서 기존 screener를 단일 캐시 요청할 수 있다. 시장/입구 렌더링과 독립; 늦은 소스 완료 때 해당 CTA 포커스와 화면 위치를 보존한다.
 - UIUX_IMPLEMENTATION_2026-10-04.md와 기존 CI suites가 근거다. 웹 검증으로 native Android/iOS나 실제5명 사용성 검증 완료를 주장하지 않는다.
+
+
+## Insight revisit follow-up — 0.15.0
+User-approved new behavior. Home cards include dated observations, questions and limits. Manual screener and guided LAB have explicit roles. Optional priceBasis exclude/only uses existing ±35% warning; default inclusion and values preserved, cv round-trips. Source selection score remains in detail including real0; fundamental row status and technical warning badges are independent, raw source codes retained. Saved filing-only records are listed. REVIEW_KEY adds observation, never replaces filing/condition baseline implicitly. Home explicit check only (max3saved issuers/up to3peers each, deduplicated), pending/unavailable/new/corrected/condition-change distinguished, late closed-page response cannot persist. Revisit status/filing comparison is a lightweight import; financial comparison loads only on detail/action. See INSIGHT_FOLLOWUP_2026-10-04.md.
