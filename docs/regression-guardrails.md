@@ -362,3 +362,11 @@ Keep original actionStatus priority/count/filter arithmetic but label combined p
 - Keep provider observation date, stale/latest state and source link visible. Do not label Chart View collection time as the spot-price observation date.
 - Do not add paid historical TrendForce backfill to make the chart look longer. Trend means Chart View's own accumulated public-latest observations.
 - Keep the mini trend graph lightweight (inline SVG or equivalent); do not force the shared heavyweight chart runtime onto the exports first paint for this feature.
+
+
+## Export tab information architecture
+- Clean Export entry shows only the recent overall summary/facts/source basis. Do not re-stack every detailed section on the default screen.
+- Detailed sections remain reachable under five tabs: overview/products/countries/semiconductor/trend. Moving a section is allowed; deleting an existing analysis is not.
+- Memory price network work starts only after Semiconductor is activated. Provisional radar network work starts only after Trend is activated.
+- Existing focus deep links map to the corresponding new tab: history/provisional→trend, items/breadth/quadrant→products, countries→countries, memory→semiconductor.
+- The memory-price UI shows one price family at a time to avoid recreating a long dashboard inside the Semiconductor tab.
