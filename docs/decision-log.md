@@ -443,3 +443,8 @@ Classification: new behavior, plus malformed/null macro crash bug fix. 사용자
 
 ## 2026-10-04 — 사용자 승인: 변화 해석과 근거 재점검 (0.15.0)
 Classification: new behavior following actual 78/100 product review. Implement questions beside dated Home observations, separate source fundamental/technical labels and hide uncalibrated selection score in detail; preserve every raw value and combined priority arithmetic. Manual priceBasis include/exclude/only is additive to public filters; warn threshold is not an error diagnosis. LAB next/counter-checks precede candidates. Existing saved report/conditions drive explicit Home revisit, not automatic background polling or invented visit notifications. Keep device/account keys and acknowledged baselines. Observed320×693warning card bottom601.1<nav615, all model and release gates required; native/5-user remain external. See INSIGHT_FOLLOWUP_2026-10-04.md.
+
+
+## 2026-10-04 — 수출 메모리 화면에 DRAM 현물가 추가
+Classification: new behavior. 수출 데이터 > 메모리 진입에 독립 `/api/memory-spot` lazy 요청을 추가하고 DDR5 16Gb, DDR4 16Gb, DDR4 8Gb의 공개 최신 평균가·당일 고저가·차트뷰 자체 누적 추이를 표시한다. 기존 관세청 수출 snapshot과 현물가 요청은 서로 실패 격리하며 한쪽 실패가 다른 쪽을 지우지 않는다.
+그래프는 inline SVG를 사용해 Lightweight Charts를 추가 로딩하지 않는다. Home/시장/시세/히트맵 경로에는 새 요청을 추가하지 않는다. 공급자 기준일·원문 링크·stale 상태와 “유료 과거 이력 미사용, 수집 시작일부터 누적” 기준을 화면에 명시한다.
