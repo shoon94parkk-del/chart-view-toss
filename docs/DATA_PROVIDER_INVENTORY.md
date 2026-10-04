@@ -13,6 +13,7 @@
 | 경제지표 | FRED/Federal Reserve 계열 캐시 | 단위·관측일·변화 기준·원본 시리즈 링크 | 원자료별 조건 확인 필요 |
 | 절사평균 PCE | Dallas Fed 계열/FRED series | 월간 관측월, YoY 단위 | 원자료별 조건 확인 필요 |
 | 뉴스 | NAVER API HUB / Finnhub Company News | 제목·출처·게시시각·외부 링크 | API 계약별 검토 필요 |
+| DRAM 현물가 | TrendForce 공개 DRAM Spot Price 최신 표 → 공용 backend `/api/memory-spot` | DDR5/DDR4 최신 세션 평균·당일 고저가·Chart View 자체 누적 추이·원문 링크 | **재배포/공개 서비스 허용 범위 미확인**. 유료 역사 데이터는 backfill하지 않음 |
 
 ## 출시 전에 확인할 질문
 
