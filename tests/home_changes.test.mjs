@@ -37,3 +37,16 @@ test('Home observations render independent sources and retain ready cards during
  assert.match(nodes['data-home-changes'].innerHTML,/전체 수출.*평균보다 거래량이 늘어난 종목/s);
  assert.equal(nodes['data-home-change-retry'].hidden,true);
 });
+
+test('late screener completion preserves a focused export action and scroll position',async()=>{
+ let resolveStocks,focusedCalls=0,scrolled=0;
+ const nodes=Object.fromEntries(['data-home-changes','data-home-change-status','data-home-change-retry','data-home-change-toggle'].map(key=>[key,{innerHTML:'',textContent:'',hidden:true,setAttribute(){}}]));
+ const button={dataset:{featureRoute:'exports',featureTarget:'items'},matches:()=>true,getBoundingClientRect:()=>({top:40}),focus:()=>focusedCalls++};
+ const doc={activeElement:null};
+ const host={isConnected:true,contains:()=>true,querySelector:key=>nodes[key.slice(1,-1)],querySelectorAll:()=>[button]};
+ const context=vm.createContext({document:doc,homeChanges,window:{scrollBy:()=>scrolled++},loadExportMomentumSnapshot:async()=>({period:'2026-09',summary:{exportYoY:4}}),screenerData:()=>new Promise(resolve=>{resolveStocks=resolve;})});
+ vm.runInContext(readFileSync(new URL('../src/homeChangesView.js',import.meta.url),'utf8').replace(/^import .*;\r?\n/gm,'').replaceAll('export ',''),context);
+ const mounted=context.mountHomeChanges(host);await new Promise(resolve=>setImmediate(resolve));doc.activeElement=button;
+ resolveStocks({tradeDate:'2026-10-02',stocks:[{volumeRatio:3}]});await mounted;
+ assert.equal(focusedCalls,1);assert.equal(scrolled,0);
+});

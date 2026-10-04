@@ -424,3 +424,10 @@ Verification: 189 units plus AIT contract, production Vite build and 19 direct-e
 ## 2026-10-04 — Production verification follow-up (0.13.1)
 Live0.13.0 showed the corrected snapshot balance but old browser HTTP-cached item detail300.3rather than286.9. Origin detail API already returns28.6889billion; CF-cache-status=DYNAMIC. Add a stable signed-v1 calculation basis query on snapshot/detail to separate obsolete HTTP entries while retaining300/600second application TTL and lazy request budgets. No client recomputation or global HTTP-cache disabling.
 Real KRX Samsung products includes unrelated wireless equipment alongside semiconductor manufacturing; whole-field exclusions removed it while accepting package substrates and parts. Match each product clause, require semiconductor manufacturing/product wording or KRX semiconductor-manufacturing industry with an exact core product. Exclude substrates/parts/equipment per clause. Regression tests use actual Samsung/SK/Mico/Daeduck strings.
+
+
+## 2026-10-04 — 승인된 UI·UX 조사 동선 (0.14.0)
+Classification: new behavior, plus malformed/null macro crash bug fix. 사용자 승인 계획 U01–U12에 따라 홈을 시장 → 세 핵심 입구 → 기본 두 변화/나머지 펼침 → 최근 선정 두 종목/이유 → 관심 최대3/저장 조사 최대1 → 대표 히트맵으로 구성한다. 0.12.0의 관심 선행 및 홈 집계성과 상시 표시 결정을 대체한다. 집계 계산은 변경하지 않고 전체 선정 기록 요약에 유지한다. 최근 기록은 정확한 날짜·코드를 연다.
+변화 섹션이 앞에 와 기존 관찰 source인 screener가 viewport 근처에서 불러와질 수 있다. 기존 IntersectionObserver와 단일 API 캐시를 재사용하며 시장/입구/성공한 수출 자료는 기다리지 않는다. 홈에서 full heatmap·품목 상세 선행 요청 금지는 유지한다. 부분 완료 시 포커스와 해당 버튼의 화면 위치를 보존한다.
+수출 상세의 기업 CTA/분류 후보를 요약 다음에 두고 HS·국가·전체 주요제품은 펼친다. 검증된 제품 구절·출처·날짜·기업 수혜 미확인 한계는 기본 영역에 남긴다. 종목 상세는 관찰 1–2개/핵심 한계/다음 행동과 전체 근거 펼침을 제공한다. 이동 메뉴는 가격 다음, 현재 위치는 버튼 순서가 아닌 실제 문서 위치로 판단한다. 사업 매출을 공시 단위가 확인된 경우에만 조·억 원으로 바꾸고 원값·단위·조정 분모를 보존한다.
+목록에는 주요 조건 근거 두 개를 표시하고 전체 적용 조건은 상세 맥락으로 전달한다. 기술 경고는 회사·선정일별 이유와 해당 기록 링크를 제공한다. 동일 투자논리만 중복을 줄이며 상태 계산은 유지한다. 히트맵 목록은 지도와 같은 payload/대상/날짜/등락을 사용한다. 관심0개에서는 단일 추가 버튼, 저장 조사0개에서는 검색 입구를 제공한다. 기존 저장/공유/네이티브/API/TTL/시세 freshness 계약은 유지한다.

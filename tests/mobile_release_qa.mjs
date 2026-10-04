@@ -389,7 +389,7 @@ try{
         if(await page.locator('#market-card .market-extra-card').count()) throw new Error(`${width}px Home market did not collapse`);
 
         await page.waitForSelector('#home-top-picks .home-pick-row');
-        if(await page.locator('#home-top-picks .home-pick-row').count()!==3) throw new Error(`${width}px spotlight selection missing`);
+        if(await page.locator('#home-top-picks .home-pick-row').count()!==2) throw new Error(`${width}px spotlight selection missing`);
         if(!(await page.locator('#home-top-picks-section').innerText()).includes('선정 기록·성과')) throw new Error(`${width}px spotlight title missing`);
         await page.waitForSelector('#home-daily-heatmap .home-heatmap-cell');
         if(await page.locator('#home-daily-heatmap .home-heatmap-cell:visible').count()!==6) throw new Error(`${width}px home heatmap representative set mismatch`);

@@ -1059,8 +1059,9 @@ async function renderDetail(){
  const updateSection=()=>{
   if(epoch!==viewEpoch||!sectionNav?.isConnected)return;
   const buttons=[...sectionNav.querySelectorAll('[data-detail-jump]')];
-  let active=buttons[0];
-  for(const button of buttons){const target=document.getElementById(button.dataset.detailJump);if(target&&target.getBoundingClientRect().top<=sectionNav.getBoundingClientRect().bottom+24)active=button;}
+  let active=buttons[0],nearest=-Infinity;
+  const threshold=sectionNav.getBoundingClientRect().bottom+24;
+  for(const button of buttons){const target=document.getElementById(button.dataset.detailJump);const top=target?.getBoundingClientRect().top;if(top<=threshold&&top>nearest){active=button;nearest=top;}}
   buttons.forEach(button=>{if(button===active)button.setAttribute('aria-current','location');else button.removeAttribute('aria-current');});
  };
  window.addEventListener('scroll',updateSection,{passive:true});detailJumpCleanup=()=>window.removeEventListener('scroll',updateSection);updateSection();

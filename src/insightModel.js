@@ -27,12 +27,13 @@ export function bandCoverage(stats,years,providedYears){
 // establish classification candidates, never issuer export exposure/contracts.
 export function exportCompanyCandidates(key,metadata={}){
  if(key!=='semiconductor')return [];
- const candidates=(metadata.companies||[]).filter(row=>/^[A-Z0-9]{6}\.(KS|KQ)$/.test(row.symbol||'')&&String(row.mainProducts||'').split(/[,;\n]/).some(part=>{
+ const productEvidence=row=>String(row.mainProducts||'').split(/[,;\n]/).find(part=>{
   const product=part.trim();
   if(!/(?:반도체|DRAM|NAND|메모리)/i.test(product)||/장비|검사|테스트|캐리어|소재|재료|부품|기판|유통|설계/i.test(product))return false;
   return /제조|제품/.test(product)||(/반도체 제조업/.test(row.industry||'')&&/^(?:반도체|DRAM|NAND)(?:\s+(?:DRAM|NAND))*$/i.test(product));
- }));
- return candidates.sort((a,b)=>Number(b.symbol==='005930.KS'||b.symbol==='000660.KS')-Number(a.symbol==='005930.KS'||a.symbol==='000660.KS')||a.name.localeCompare(b.name,'ko')).slice(0,3).map(row=>({...row,source:metadata.source||'KRX 주요제품',basisDate:String(metadata.updated||metadata.asOf||'기준일 미제공').slice(0,10)}));
+ });
+ const candidates=(metadata.companies||[]).filter(row=>/^[A-Z0-9]{6}\.(KS|KQ)$/.test(row.symbol||'')&&productEvidence(row));
+ return candidates.sort((a,b)=>Number(b.symbol==='005930.KS'||b.symbol==='000660.KS')-Number(a.symbol==='005930.KS'||a.symbol==='000660.KS')||a.name.localeCompare(b.name,'ko')).slice(0,3).map(row=>({...row,productEvidence:productEvidence(row).trim(),source:metadata.source||'KRX 주요제품',basisDate:String(metadata.updated||metadata.asOf||'기준일 미제공').slice(0,10)}));
 }
 export function comparisonExample(symbol,rows=[],selected=null){
  if(selected?.symbol!==symbol&&/^[A-Z0-9]{6}\.(KS|KQ)$/.test(selected?.symbol||''))return selected;

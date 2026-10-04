@@ -32,7 +32,7 @@ test('business report uses readable KRW units while retaining original public va
 });
 
 import {selectionKey} from '../src/valueDiscovery.js';
-import {technicalWarning} from '../src/insightModel.js';
+import {exportCompanyCandidates,technicalWarning} from '../src/insightModel.js';
 test('selection thesis is shown once only when equal and warnings link to their own dated records',()=>{
  const view=loadView('pickLedger.js',{selectionKey,technicalWarning});
  const a={symbol:'005930.KS',recommendedDate:'2026-10-02',name:'삼성전자',reason:'메모리 수요',monitor:{originalThesis:{summary:'메모리 수요'},technical:{reasons:['RSI 하락']}}};
@@ -64,4 +64,17 @@ test('Home shows two recent records even when the source supplies three',()=>{
  const view=loadView('homeExtras.js',{HOME_STOCK_META:{},recentSelections,selectionCardMarkup,window:{},document:{readyState:'loading',addEventListener(){}},MutationObserver:class{}});
  const host={isConnected:true,innerHTML:'',querySelectorAll:()=>[]};view.paintPicks(host,{day:{tradeDate:'2026-10-02',top3:['005930.KS','000660.KS','373220.KS'].map(symbol=>({symbol,name:symbol}))}});
  assert.equal((host.innerHTML.match(/home-selection-link/g)||[]).length,2);
+});
+
+test('detail current section follows document position rather than button order',()=>{
+ const buttons=['price','news','research'].map(id=>({dataset:{detailJump:id},setAttribute(k,v){this[k]=v;},removeAttribute(k){delete this[k];}}));
+ const sectionNav={isConnected:true,querySelectorAll:()=>buttons,getBoundingClientRect:()=>({bottom:80})};
+ const source=readFileSync(new URL('../src/main.js',import.meta.url),'utf8').match(/const updateSection=\(\)=>\{[\s\S]*?\n \};/)[0];
+ const context=vm.createContext({sectionNav,epoch:1,viewEpoch:1,document:{getElementById:id=>({getBoundingClientRect:()=>({top:{price:-1400,news:90,research:-700}[id]})})}});
+ vm.runInContext(source+'updateSection();',context);assert.equal(buttons[1]['aria-current'],'location');assert.equal(buttons[2]['aria-current'],undefined);
+});
+
+test('export candidate carries the exact qualifying product phrase for its summary',()=>{
+ const [row]=exportCompanyCandidates('semiconductor',{companies:[{symbol:'005930.KS',name:'삼성전자',mainProducts:'휴대폰 제조; 메모리 반도체 제품; 기타 사업',industry:'반도체 제조업'}]});
+ assert.equal(row.productEvidence,'메모리 반도체 제품');
 });
