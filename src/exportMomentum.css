@@ -433,7 +433,7 @@
 .export-source-body>small{color:#8b95a1;font-size:9px}
 @media(max-width:600px){
   .export-source{padding:7px 11px}
-  .export-source summary{min-height:38px}
+  .export-source summary{min-height:44px}
   .export-source summary strong{font-size:10px}
   .export-source summary span{font-size:8px}
   .export-source-body{padding-top:7px}
