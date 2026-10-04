@@ -908,7 +908,7 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={}}){
       });
 
       const requestedFocus=focus;
-      const initialPanel=requestedFocus?panelForFocus(requestedFocus):(state.exportSection||'overview');
+      const initialPanel=requestedFocus?panelForFocus(requestedFocus):'overview';
       activatePanel(initialPanel);
       if(requestedFocus){
         const target=focusTarget(requestedFocus);
