@@ -27,7 +27,7 @@ test('export candidates require product evidence, retain dates, and never infer 
  const result=model.exportCompanyCandidates?.('semiconductor',meta);
  assert.equal(result?.length,1);assert.equal(result?.[0]?.symbol,'005930.KS');assert.equal(result?.[0]?.basisDate,'2026-10-01');
  assert.deepEqual(model.exportCompanyCandidates?.('unknown',meta),[]);
- const live={source:'KRX KIND',companies:[{symbol:'005930.KS',name:'삼성전자',mainProducts:'통신 및 방송 장비 제조(무선) 제품, 반도체 제조(메모리) 제품, 전자부품 제조(디스플레이) 제품'},{symbol:'000660.KS',name:'SK하이닉스',industry:'반도체 제조업',mainProducts:'반도체,컴퓨터,통신기기 제조,도매'},{symbol:'084010.KS',name:'대덕',mainProducts:'반도체패키지기판,메모리모듈기판 제조'},{symbol:'059090.KQ',name:'미코',mainProducts:'반도체 및 디스플레이 부품 제조'}]};
+ const live={source:'KRX KIND',companies:[{symbol:'005930.KS',name:'삼성전자',mainProducts:'통신 및 방송 장비 제조(무선) 제품, 반도체 제조(메모리) 제품, 전자부품 제조(디스플레이) 제품'},{symbol:'000660.KS',name:'SK하이닉스',industry:'반도체 제조업',mainProducts:'반도체,컴퓨터,통신기기 제조,도매'},{symbol:'084010.KS',name:'대덕',mainProducts:'반도체패키지기판,메모리모듈기판 제조'},{symbol:'059090.KQ',name:'미코',mainProducts:'반도체 및 디스플레이 부품 제조'},{symbol:'357780.KQ',name:'솔브레인',mainProducts:'반도체 및 디스플레이 관련 화학재료 제조ㆍ판매 등'}]};
  assert.deepEqual(model.exportCompanyCandidates?.('semiconductor',live)?.map(row=>row.symbol),['005930.KS','000660.KS']);
 });
 test('discovery context records actual condition, value and date without inventing financial evidence',()=>{
