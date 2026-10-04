@@ -882,9 +882,18 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={}}){
         return selector?host.querySelector(selector)?.closest('section'):null;
       };
 
-      const activatePanel=(panelKey,{scroll=false}={})=>{
+      const activatePanel=(panelKey,{scroll=false,closeDetail=false}={})=>{
         const panel=host.querySelector('[data-export-panel="'+panelKey+'"]');
         if(!panel)return;
+        if(closeDetail){
+          const detailPanel=host.querySelector('#export-item-detail');
+          if(detailPanel&&!detailPanel.hidden){
+            detailSeq+=1;
+            state.itemKey=null;
+            detailPanel.hidden=true;
+            detailPanel.innerHTML='';
+          }
+        }
         state.exportSection=panelKey;
         host.querySelectorAll('[data-export-panel]').forEach(node=>{node.hidden=node!==panel;});
         app.querySelectorAll('[data-export-topic]').forEach(button=>{
@@ -904,7 +913,7 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={}}){
       };
 
       app.querySelectorAll('[data-export-topic]').forEach(button=>{
-        button.onclick=()=>activatePanel(button.dataset.exportTopic,{scroll:true});
+        button.onclick=()=>activatePanel(button.dataset.exportTopic,{scroll:true,closeDetail:true});
       });
 
       const requestedFocus=focus;
