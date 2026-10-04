@@ -120,4 +120,4 @@ html:not([data-ait-runtime="true"]) .app-shell .page-intro{background:transparen
 .app-shell .industry-product{font-size:15px}
 .app-shell .industry-section{background:#fff;box-shadow:none}
 
-.app-shell .quote-asof,.app-shell .source-line,.app-shell .macro-meta-line{font-size:12px;color:var(--cv-secondary)}
+.app-shell .quote-asof,.app-shell .market-section.home-primary .quote-asof,.app-shell .market-section.home-primary #market-time,.app-shell .source-line,.app-shell .macro-meta-line{font-size:12px;color:var(--cv-secondary)}
