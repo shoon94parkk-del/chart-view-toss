@@ -31,3 +31,8 @@ Fresh reviewer found no Critical or Minor issues and3Important findings. Each wa
 6. Fixed5/20trading-day cohort medians/benchmarks remain deferred until price/corporate-action inputs validate, as explicitly planned. Cost: users retain the current clearly limited whole-history performance metric.
 
 Deferred minors: none from final review. Public Toss launch approval is outside this Render preview deployment and retains existing P0 gates.
+
+
+## Live validation follow-up — 0.13.1
+Backend ad9eac1 is live, /health exact match. All6item balances and12semiconductor history months satisfy exports-imports=balance within output rounding. Corrected card balances: semiconductor286.9,petroleum54.4,steel8.8hundred-million USD. The old browser HTTP detail response persisted after origin correction; stable balanceBasis=signed-v1 separates those entries without TTL changes. KRX real multi-business Samsung products and non-chip substrate/parts entries are now clause-matched, with actual industry required for bare chip products. Both defects reproduced RED→GREEN;190unit tests/build19routes, export-research320/390 and export-recovery320/390/430passed. No second final review; these are focused production-verification fixes with regression coverage.
+Render automatic events did not start despite confirmed settings and matching Git branches; read-only deploy/log/health checks proved old revisions. Clean-cache manual redeploys were used in the approved Chart View workspace, without changing plan/credentials/provider settings.

@@ -1,7 +1,5 @@
 import assert from 'node:assert/strict';
-import { createRequire } from 'node:module';
-const require=createRequire(import.meta.url);
-const {chromium}=require(process.env.QA_PLAYWRIGHT_MODULE||'playwright');
+const {chromium}=await import(process.env.QA_PLAYWRIGHT_MODULE||'playwright');
 const browser=await chromium.launch({headless:true,...(process.env.QA_BROWSER_CHANNEL?{channel:process.env.QA_BROWSER_CHANNEL}:{})});
 const base=process.env.QA_BASE_URL||'http://127.0.0.1:4173';
 const snapshot={period:'2026-09',summary:{exportsUsdBillion:60,exportYoY:10},items:[{key:'semiconductor',name:'반도체',exportsUsdBillion:20,exportYoY:15},{key:'passenger-car',name:'승용차',exportsUsdBillion:5,exportYoY:10}],history:[{period:'2026-08',exportsUsdBillion:50,exportYoY:null},{period:'2026-09',exportsUsdBillion:60,exportYoY:10}]};
@@ -54,7 +52,7 @@ try{
   // A closed pending detail must not reopen when its response arrives.
   let release;
   const held=new Promise(resolve=>{release=resolve});
-  await page.route('**/api/export-momentum/item-detail?key=passenger-car',async route=>{
+  await page.route('**/api/export-momentum/item-detail?key=passenger-car*',async route=>{
     await held;
     await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({...detail,key:'passenger-car',name:'승용차'})});
   });
