@@ -2,8 +2,9 @@ import {finiteNumber,screenerMatchReasons,screenerDataWarnings} from './analysis
 import {comparisonGroup} from './industryContext.js';
 
 export function marketBrief(macro={}){
+ macro=macro&&typeof macro==='object'?macro:{};
  const names={'^VIX':'VIX',DFF:'정책금리',FEDTARGET:'정책금리',T10Y2Y:'장단기 금리차',CPIAUCSL:'물가'};
- const observations=(macro.results||[]).filter(row=>names[row.original_symbol||row.symbol]).map(row=>`${names[row.original_symbol||row.symbol]} 관측 ${String(row.asOf||row.date||'미제공').slice(0,10)}`);
+ const observations=(Array.isArray(macro.results)?macro.results:[]).filter(row=>row&&names[row.original_symbol||row.symbol]).map(row=>`${names[row.original_symbol||row.symbol]} 관측 ${String(row.asOf||row.date||'미제공').slice(0,10)}`);
  return {text:String(macro.summary?.text||''),basis:observations.join(' · ')||`최근 원자료 ${macro.summary?.latestBasisDate||'미제공'}`};
 }
 export function memoryMovements(rows=[]){

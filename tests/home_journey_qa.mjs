@@ -7,7 +7,7 @@ const quote={ticker:'005930.KS',name:'삼성전자',price:100000,change:2,curren
 const record={...quote,symbol:quote.ticker,code:'005930',recommendedDate:'2026-10-02',recommendedPrice:90000,currentPrice:100000,returnPct:11.1,reason:'해당 날짜에 기록된 실제 선정 이유'};
 await fs.mkdir('artifacts/home-journey',{recursive:true});
 try {
- for(const width of [320,390,430])for(const scenario of ['ready-empty','ready-saved','failed']){
+ for(const width of [320,390,430])for(const scenario of ['ready-empty','ready-saved','failed','null-macro']){
   const height=width===320?693:844;
   const context=await browser.newContext({viewport:{width,height}}),page=await context.newPage(),errors=[];
   page.on('pageerror',e=>errors.push(e.message));
@@ -21,12 +21,18 @@ try {
    if(path==='/api/home-bootstrap')body={day:{tradeDate:'2026-10-02',top3:[record]},recommendations:[record,{...record,recommendedDate:'2026-09-01',returnPct:null}]};
    if(path==='/static/data/pick_monitor.json')body={picks:[]};
    if(path==='/api/quotes')body={results:[quote]};
-   if(path==='/api/home-snapshot')body={heatmap:{results:[]}};
+   if(path==='/api/home-snapshot')body={heatmap:{results:[]},...(scenario==='null-macro'?{macro:null}:{})};
    if(path==='/api/export-momentum')body={period:'2026-09',items:[],regions:[],summary:{}};
    await route.fulfill({contentType:'application/json',body:JSON.stringify(body)});
   });
   await page.goto(base+'/#home',{waitUntil:'domcontentloaded'});
   await page.locator('.home-selection-link').waitFor();
+  if(scenario==='null-macro'){
+   await page.locator('[data-retry-brief]').waitFor();
+   await page.locator('[data-retry-brief]').click();
+   await page.locator('[data-retry-brief]').waitFor();
+   assert.match(await page.locator('#brief-card').innerText(),/경제지표|경제 지표/);
+  }
   if(scenario==='failed')await page.locator('#retry-market').waitFor();
   else await page.locator('#market-card .quote-card').first().waitFor();
   const geometry=await page.evaluate(()=>{

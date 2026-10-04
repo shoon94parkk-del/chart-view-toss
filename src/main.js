@@ -455,7 +455,7 @@ function paintHomeWatch(quotes,hasWatch,{pending=false,failed=false}={}){
 function paintHomeBrief(home,options={}){
  const macro=home?.macro?.summary||{};
  const explanation=marketBrief(home?.macro);
- const staleVix=(home?.macro?.results||[]).find(row=>(row.original_symbol||row.symbol)==='^VIX'&&macroFreshness(row).stale);
+ const staleVix=(Array.isArray(home?.macro?.results)?home.macro.results:[]).find(row=>row&&(row.original_symbol||row.symbol)==='^VIX'&&macroFreshness(row).stale);
  const brief=document.querySelector('#brief-card');
  if(!brief)return false;
  brief.classList.remove('skeleton','brief');

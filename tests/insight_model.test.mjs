@@ -2,6 +2,12 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 const model=await import('../src/insightModel.js').catch(()=>({}));
 
+test('missing and malformed macro data remains an unavailable brief, not a page error',()=>{
+ for(const value of [null,undefined,{results:null},{results:{}},{results:[null,{}]}]){
+  assert.deepEqual(model.marketBrief(value),{text:'',basis:'최근 원자료 미제공'});
+ }
+});
+
 test('market brief keeps complete sentences and individual observation dates',()=>{
  const result=model.marketBrief?.({summary:{text:'신호가 혼재합니다. 현재는 부정 압력이 넓게 나타납니다.',latestBasisDate:'2026-10-02'},results:[{symbol:'^VIX',value:16.34,date:'2026-09-30'}]});
  assert.equal(result?.text,'신호가 혼재합니다. 현재는 부정 압력이 넓게 나타납니다.');
