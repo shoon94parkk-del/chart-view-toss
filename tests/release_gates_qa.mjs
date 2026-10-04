@@ -9,7 +9,7 @@ try {
  const base=process.env.QA_BASE_URL||'http://127.0.0.1:4173';
  for(const [path,title] of [['chartviewHome','수익률 비교'],['chartview/chartviewHome','수익률 비교'],['heatmap','시장 히트맵'],['consensus','실적 전망 조회'],['bands','역사적 밸류에이션'],['discover','조건별 종목 찾기']]){
   await page.goto(`${base}/${path}?diagnostics=1`);
-  await page.getByRole('heading',{name:title,exact:true,level:1}).waitFor();
+  await page.getByRole('heading',{name:title,exact:true,level:1}).waitFor();assert.equal(await page.title(),title+' | 차트뷰');
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true,`${path} overflow`);
  }
  await page.goto(`${base}/?diagnostics=1#detail/%ZZ`);

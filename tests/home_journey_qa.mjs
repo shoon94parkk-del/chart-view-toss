@@ -23,7 +23,7 @@ try {
    if(path==='/static/data/pick_monitor.json')body={picks:[]};
    if(path==='/api/quotes')body={results:[quote]};
    if(path==='/api/home-snapshot')body={heatmap:{results:[]},...(scenario==='null-macro'?{macro:++macroSnapshots===1?null:{summary:{text:'경제 지표 재시도 성공'},results:[]}}:{})};
-   if(path==='/api/export-momentum')body={period:'2026-09',items:[],regions:[],summary:{exportYoY:4}};
+   if(path==='/api/export-momentum')body={period:'2026-09',items:[],regions:[],summary:{exportsUsdBillion:60,exportYoY:4}};
    await route.fulfill({contentType:'application/json',body:JSON.stringify(body)});
   });
   await page.goto(base+'/#home',{waitUntil:'domcontentloaded'});
@@ -61,7 +61,7 @@ try {
   await page.screenshot({path:`artifacts/home-journey/${width}-${scenario}-home.png`});
   await page.locator('.home-selection-link').click();
   await page.locator('[data-pick-key="2026-10-02:005930"] [data-pick-detail]').waitFor({state:'visible'});
-  assert.match(await page.locator('[data-pick-key="2026-10-02:005930"]').innerText(),new RegExp(record.reason));
+  assert.match(await page.locator('[data-pick-key="2026-10-02:005930"]').innerText(),new RegExp(record.reason));assert.equal(await page.title(),'선정 기록·성과 | 차트뷰');
   assert.equal(await page.locator('[data-pick-key="2026-09-01:005930"] [data-pick-expand]').getAttribute('aria-expanded'),'false');
   await page.locator('.bottom-nav [data-tab="more"]').click();
   await page.getByRole('heading',{name:'분석',level:1,exact:true}).waitFor();

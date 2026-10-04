@@ -196,6 +196,7 @@ function dataDisclosure(){
  return `<aside class="data-disclosure"><div><strong>데이터 이용 안내</strong><span>시세·재무·뉴스 데이터는 제공처 상황에 따라 지연·누락·오류가 있을 수 있으며 투자 권유가 아니에요.</span></div><button data-tab="info">데이터 기준 안내</button></aside>`;
 }
 function shell(content,title='차트뷰'){
+ document.title=title==='차트뷰'?'차트뷰':`${title} | 차트뷰`;
  const identity=surfaceIdentity(state.tab);
  const secondary=ANALYSIS_ROUTES.has(state.tab)||['valuation','macro','exports','discover','ideas','picks','news','detail','info'].includes(state.tab);
  const navTab=state.tab==='detail'?state.detailOrigin:(secondary?'more':state.tab);
@@ -215,7 +216,7 @@ function shareDetails(){
  if(tab==='detail'&&symbol)url.hash=`detail/${encodeURIComponent(symbol)}`;
  else if(tab==='news'&&state.newsSymbol)url.hash=`news/${encodeURIComponent(state.newsSymbol)}`;
  else if(tab!=='home')url.hash=tab;
- const titleByTab={home:'차트뷰',chart:'수익률 비교 | 차트뷰',watch:'관심종목 | 차트뷰',valuation:'밸류에이션 | 차트뷰',macro:'경제 지표 | 차트뷰',exports:'수출 데이터 | 차트뷰',discover:'조건별 종목 찾기 | 차트뷰',heatmap:'시장 히트맵 | 차트뷰',consensus:'실적 전망 | 차트뷰',bands:'역사적 밸류에이션 | 차트뷰',ideas:'투자 아이디어 LAB | 차트뷰',picks:'PICK 관리 | 차트뷰',news:'관심종목 뉴스 | 차트뷰',more:'차트뷰',info:'데이터 안내 | 차트뷰',tools:'투자 도구 | 차트뷰'};
+ const titleByTab={home:'차트뷰',chart:'수익률 비교 | 차트뷰',watch:'관심종목 | 차트뷰',valuation:'밸류에이션 | 차트뷰',macro:'경제 지표 | 차트뷰',exports:'수출 데이터 | 차트뷰',discover:'조건별 종목 찾기 | 차트뷰',heatmap:'시장 히트맵 | 차트뷰',consensus:'실적 전망 | 차트뷰',bands:'역사적 밸류에이션 | 차트뷰',ideas:'투자 아이디어 LAB | 차트뷰',picks:'선정 기록·성과 | 차트뷰',news:'관심종목 뉴스 | 차트뷰',more:'차트뷰',info:'데이터 안내 | 차트뷰',tools:'투자 도구 | 차트뷰'};
  return {url:url.toString(),title:tab==='detail'?`${name} (${symbol}) | 차트뷰`:titleByTab[tab]||'차트뷰',text:tab==='detail'?`${name} 종목의 차트와 기업 정보를 확인해보세요.`:'차트뷰에서 시장 데이터와 종목 정보를 확인해보세요.'};
 }
 async function shareCurrent(){
@@ -1100,7 +1101,7 @@ async function renderDetail(){
    knownName=resolved;
    state.detailName=resolved;
    resolvedNames.set(symbol,resolved);
-   const title=document.querySelector('#detail-top-title');if(title)title.textContent=resolved;
+   const title=document.querySelector('#detail-top-title');if(title)title.textContent=resolved;document.title=`${resolved} | 차트뷰`;
    const hero=document.querySelector('#detail-name');if(hero){hero.textContent=resolved;hero.classList.remove('identity-loading');}
    const logo=document.querySelector('#detail-logo');if(logo)logo.textContent=resolved.slice(0,1);
    const entry=state.watchlist.find(row=>row.symbol===symbol);
