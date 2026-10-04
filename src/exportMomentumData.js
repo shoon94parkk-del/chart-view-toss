@@ -58,3 +58,20 @@ export async function loadExportProvisionalRadar({force=false}={}){
   if(!payload.period||!payload.checkpoints.length)throw new Error('10일 단위 잠정 수출 데이터가 아직 준비되지 않았어요.');
   return payload;
 }
+
+
+export async function loadMemorySpot({force=false}={}){
+  const raw=await api('/api/memory-spot',{
+    ttlMs:900000,
+    timeoutMs:12000,
+    retries:0,
+    force,
+  });
+  if(!raw||!Array.isArray(raw.items)||!raw.items.length){
+    throw new Error('DRAM 현물가 데이터가 아직 준비되지 않았어요.');
+  }
+  return {
+    ...raw,
+    history:Array.isArray(raw.history)?raw.history:[],
+  };
+}

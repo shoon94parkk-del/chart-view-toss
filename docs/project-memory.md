@@ -261,3 +261,11 @@ Home/analysis entries share local semantic SVGs and purposeful teal/export, blue
 
 ## Insight revisit follow-up — 0.15.0
 User-approved new behavior. Home cards include dated observations, questions and limits. Manual screener and guided LAB have explicit roles. Optional priceBasis exclude/only uses existing ±35% warning; default inclusion and values preserved, cv round-trips. Source selection score remains in detail including real0; fundamental row status and technical warning badges are independent, raw source codes retained. Saved filing-only records are listed. REVIEW_KEY adds observation, never replaces filing/condition baseline implicitly. Home explicit check only (max3saved issuers/up to3peers each, deduplicated), pending/unavailable/new/corrected/condition-change distinguished, late closed-page response cannot persist. Revisit status/filing comparison is a lightweight import; financial comparison loads only on detail/action. See INSIGHT_FOLLOWUP_2026-10-04.md.
+
+
+## 2026-10-04 — DRAM spot price in Toss exports
+- `src/memorySpotView.js` mounts only inside `#exports` > memory and calls shared backend `/api/memory-spot`.
+- The existing memory export report remains intact. A separate DRAM spot section appears immediately before it so spot price and Customs export/unit-value evidence can be read together.
+- Three visible series: DDR5 16Gb, DDR4 16Gb, DDR4 8Gb. Cards show session average, daily high/low, provider source date, and Chart View accumulated history.
+- The chart is inline SVG; no extra chart runtime is loaded. Home/bootstrap/quotes/heatmap receive no new request.
+- Spot provider failure is isolated and retryable; ready Customs sections remain visible. The UI discloses that paid historical TrendForce data is not backfilled and links the source page.

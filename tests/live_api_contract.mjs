@@ -164,6 +164,18 @@ assert(sram && Number(sram.exportsUsdBillion) >= 0, 'official SRAM HSK value mis
 assert(String(dram.note || '').includes('HBM'), 'HBM classification limitation missing');
 assert(String(flash.note || '').includes('NAND'), 'Flash/NAND scope note missing');
 
+
+const memorySpot = await get('/api/memory-spot', 25000);
+assert(memorySpot.provider === 'TrendForce', 'DRAM spot provider mismatch');
+assert(/^\d{4}-\d{2}-\d{2}$/.test(String(memorySpot.sourceDate || '')), 'DRAM spot source date missing');
+assert(Array.isArray(memorySpot.items) && memorySpot.items.length === 3, 'DRAM spot target rows missing');
+for (const key of ['ddr5-16gb','ddr4-16gb','ddr4-8gb']) {
+  const row = memorySpot.items.find((item) => item.key === key);
+  assert(row && Number(row.average) > 0, `DRAM spot average missing: ${key}`);
+}
+assert(Array.isArray(memorySpot.history) && memorySpot.history.length >= 1, 'DRAM spot accumulated history missing');
+assert(String(memorySpot.sourceUrl || '').includes('trendforce.com'), 'DRAM spot source link missing');
+
 console.log('Live backend contract smoke passed', {
   base: BASE,
   quoteCount: quotes.results.length,
@@ -199,4 +211,6 @@ console.log('Live backend contract smoke passed', {
   dramModuleExports: semiDramModule.exportsUsdBillion,
   semiconductorCountrySegments: semiconductorCountries.segments.length,
   semiconductorCountryMarkets: semiconductorCountries.markets.length,
+  dramSpotDate: memorySpot.sourceDate,
+  dramSpotHistoryCount: memorySpot.history.length,
 });

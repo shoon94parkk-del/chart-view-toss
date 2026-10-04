@@ -1,5 +1,6 @@
 import { loadExportItemDetail, loadExportMomentumSnapshot, loadExportProvisionalRadar, loadSemiconductorCountryMatrix } from './exportMomentumData.js';
 import {memoryMovements} from './insightModel.js';
+import { memorySpotPlaceholder, mountMemorySpot } from './memorySpotView.js';
 import {
   balanceTone,
   chartExtent,
@@ -746,19 +747,20 @@ function sources(snapshot){
 }
 
 function paint(host,snapshot,bindNav,onItemOpen){
-  host.innerHTML=`${summary(snapshot)}${provisionalPlaceholder()}${history(snapshot)}${checkpoints(snapshot)}${facts(snapshot)}${semiconductorReport(snapshot)}${breadth(snapshot)}${quadrant(snapshot)}${items(snapshot)}${regions(snapshot)}${sources(snapshot)}`;
+  host.innerHTML=`${summary(snapshot)}${provisionalPlaceholder()}${history(snapshot)}${checkpoints(snapshot)}${facts(snapshot)}${memorySpotPlaceholder()}${semiconductorReport(snapshot)}${breadth(snapshot)}${quadrant(snapshot)}${items(snapshot)}${regions(snapshot)}${sources(snapshot)}`;
   bindNav();
   host.querySelectorAll('[data-export-item]').forEach(button=>button.addEventListener('click',()=>onItemOpen(button.dataset.exportItem)));
 }
 
 export function renderExportMomentumView({shell,bindNav,focus=null,state={}}){
   const app=document.querySelector('#app');
-  app.innerHTML=shell(`<nav class="export-topic-nav" aria-label="수출 분석 바로가기">${[['history','수출 흐름'],['items','품목별'],['countries','국가별'],['memory','메모리 보고서'],['provisional','잠정 레이더'],['breadth','상승 확산도'],['quadrant','물량·단위가치']].map(([key,label])=>`<button type="button" data-export-topic="${key}" disabled>${label}</button>`).join('')}</nav><div id="export-momentum-root" class="export-momentum-view">${loading()}</div>`,'수출 데이터');
+  app.innerHTML=shell(`<nav class="export-topic-nav" aria-label="수출 분석 바로가기">${[['history','수출 흐름'],['items','품목별'],['countries','국가별'],['memory','메모리 가격·수출'],['provisional','잠정 레이더'],['breadth','상승 확산도'],['quadrant','물량·단위가치']].map(([key,label])=>`<button type="button" data-export-topic="${key}" disabled>${label}</button>`).join('')}</nav><div id="export-momentum-root" class="export-momentum-view">${loading()}</div>`,'수출 데이터');
   bindNav();
   const host=app.querySelector('#export-momentum-root');
   let seq=0;
   let detailSeq=0;
   let provisionalSeq=0;
+  let memorySpotCleanup=null;
 
   const openItemDetail=async(key,{force=false,restore=false}={})=>{
     const panel=host.querySelector('#export-item-detail');
@@ -842,14 +844,16 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={}}){
   const load=async(force=false)=>{
     const token=++seq;
     app.querySelectorAll('[data-export-topic]').forEach(button=>{button.disabled=true;});
+    memorySpotCleanup?.();memorySpotCleanup=null;
     host.innerHTML=loading();
     try{
       const snapshot=await loadExportMomentumSnapshot({force});
       if(token!==seq||!host.isConnected)return;
       paint(host,snapshot,bindNav,openItemDetail);
+      memorySpotCleanup=mountMemorySpot(host.querySelector('#export-memory-spot'),{bindNav});
       if(state.itemKey)void openItemDetail(state.itemKey,{restore:true});
       window.__chartviewRestoreScroll?.();
-      const targetFor=key=>{const selector={provisional:'#export-provisional-radar',breadth:'.export-breadth-card',quadrant:'.export-quadrant-point'}[key]||'#export-'+key;return host.querySelector(selector)?.closest('section');};
+      const targetFor=key=>{const selector={memory:'#export-memory-spot',provisional:'#export-provisional-radar',breadth:'.export-breadth-card',quadrant:'.export-quadrant-point'}[key]||'#export-'+key;return host.querySelector(selector)?.closest('section');};
       const jump=key=>{const target=targetFor(key);if(target){target.tabIndex=-1;target.scrollIntoView({block:'start'});target.focus({preventScroll:true});}};
       app.querySelectorAll('[data-export-topic]').forEach(button=>{button.disabled=!targetFor(button.dataset.exportTopic);button.onclick=()=>jump(button.dataset.exportTopic);});
       if(focus){jump(focus);focus=null;}
@@ -862,5 +866,5 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={}}){
   };
 
   void load();
-  return ()=>{seq+=1;detailSeq+=1;provisionalSeq+=1;};
+  return ()=>{seq+=1;detailSeq+=1;provisionalSeq+=1;memorySpotCleanup?.();memorySpotCleanup=null;};
 }
