@@ -91,3 +91,16 @@
   .screener-active-preset span{font-size:10px!important}
   .screener-active-preset small{font-size:9px!important}
 }
+
+
+@media(max-width:360px){
+  .discovery-results .analysis-stock{padding:7px 8px!important;gap:2px 6px!important}
+  .discovery-results .analysis-stock>span:first-child strong{font-size:12px}
+  .discovery-results .analysis-stock>span:nth-child(2) b,
+  .discovery-results .analysis-stock em{font-size:10px}
+  .discovery-results .analysis-stock-basis{font-size:8.5px!important;line-height:1.2!important}
+  .discovery-results .analysis-match-reasons{gap:2px!important}
+  .discovery-results .analysis-match-reasons i{padding:3px 5px;font-size:8px}
+  .discovery-results .data-quality-warning{padding:4px 6px!important;font-size:8px;line-height:1.25}
+  .discovery-results .data-quality-warning b{font-size:8px;margin-right:3px}
+}
