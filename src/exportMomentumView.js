@@ -450,7 +450,6 @@ function items(snapshot){
           </article>
         `).join('')}
       </div>
-      <div id="export-item-detail" class="export-item-detail" hidden></div>
       <p class="export-chart-note">kg당 신고금액은 개별 제품 판매가격이 아닙니다. 같은 HS 그룹 안의 제품 구성·고부가가치 비중 변화가 함께 반영되는 ‘평균 단위가치’로 해석해야 합니다.</p>
     </section>
   `;
@@ -746,8 +745,19 @@ function sources(snapshot){
   `;
 }
 
+function exportPanel(key,content){
+  return `<div class="export-tab-panel" data-export-panel="${key}" hidden>${content}</div>`;
+}
+
 function paint(host,snapshot,bindNav,onItemOpen){
-  host.innerHTML=`${summary(snapshot)}${provisionalPlaceholder()}${history(snapshot)}${checkpoints(snapshot)}${facts(snapshot)}${memorySpotPlaceholder()}${semiconductorReport(snapshot)}${breadth(snapshot)}${quadrant(snapshot)}${items(snapshot)}${regions(snapshot)}${sources(snapshot)}`;
+  host.innerHTML=[
+    exportPanel('overview',summary(snapshot)+facts(snapshot)+sources(snapshot)),
+    exportPanel('products',items(snapshot)+breadth(snapshot)+quadrant(snapshot)),
+    exportPanel('countries',regions(snapshot)),
+    exportPanel('semiconductor',memorySpotPlaceholder()+semiconductorReport(snapshot)),
+    exportPanel('trend',provisionalPlaceholder()+history(snapshot)+checkpoints(snapshot)),
+    '<div id="export-item-detail" class="export-item-detail" hidden></div>',
+  ].join('');
   bindNav();
   host.querySelectorAll('[data-export-item]').forEach(button=>button.addEventListener('click',()=>onItemOpen(button.dataset.exportItem)));
 }
