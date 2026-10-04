@@ -25,6 +25,7 @@ try{
     await route.fulfill({status:failed503?503:200,contentType:'application/json',body:JSON.stringify(body)});
   });
   await page.goto(base+'/#exports',{waitUntil:'domcontentloaded'});
+  await page.getByRole('tab',{name:'속보·추세',exact:true}).click();
   await page.locator('[data-export-provisional-retry]').waitFor();
   assert.equal(calls.radar,1,'initial unavailable radar response must be intercepted');
   await page.locator('[data-export-provisional-retry]').click();
@@ -35,6 +36,7 @@ try{
   });
   assert.equal(calls.radar,2,'retry bypasses cached empty HTTP200');
   assert.equal(calls.monthly,1,'radar retry preserves monthly request');
+  await page.getByRole('tab',{name:'품목',exact:true}).click();
   await page.locator('[data-export-item="semiconductor"]').first().click();
   await page.locator('[data-export-item-retry]').click();
   await page.getByText('반도체 세부 HS·국가 비교 보기',{exact:true}).click();
