@@ -55,3 +55,10 @@ html:not([data-ait-runtime="true"]) .app-shell .page-intro{background:transparen
 .app-shell .home-empty-watch{padding:0;background:transparent}
 .app-shell .home-empty-watch button{width:100%;text-align:left;min-height:44px;font-size:14px}
 .app-shell .home-records-caption{font-size:12px;line-height:1.6;color:var(--cv-secondary)}
+
+.app-shell .export-research-jump{min-height:48px;width:100%;font-size:15px;font-weight:700;color:#fff;background:#2464dc;border:0;border-radius:12px;margin:12px 0}
+.app-shell .export-research{scroll-margin-top:90px;margin:8px 0 20px;padding:16px;background:#f2f6ff;border-radius:14px}
+.app-shell .export-research p{font-size:14px;line-height:1.6}
+.app-shell .export-data-details>summary,.export-company-products>summary{min-height:44px;display:flex;align-items:center;font-size:14px;color:#4e5968;cursor:pointer}
+.export-data-details{border-top:1px solid #e5e8ed;margin-top:14px}
+.export-company-products p{overflow-wrap:anywhere}

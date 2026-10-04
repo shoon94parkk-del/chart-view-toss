@@ -24,7 +24,7 @@ try{for(const width of [320,390]){
   return route.fulfill({contentType:'application/json',body:JSON.stringify(body)});
  });
  await page.goto(base+'/#exports');await page.locator('[data-export-item=semiconductor]').first().click();await page.locator('[data-export-research-company]').first().waitFor();
- assert.match(await page.locator('.export-research').innerText(),/KRX KIND.*2026-10-02/s);await page.locator('[data-export-research-country]').selectOption('0');await page.locator('[data-export-research-company]').first().click();
+ assert.ok(await page.locator('[data-export-research-jump]').evaluate(el=>el.getBoundingClientRect().bottom-document.querySelector('#export-item-detail').getBoundingClientRect().top<844),'company CTA in first detail screen');await page.locator('[data-export-research-jump]').click();assert.match(await page.locator('.export-research').innerText(),/KRX KIND.*2026-10-02/s);await page.locator('[data-export-research-country]').selectOption('0');await page.locator('[data-export-research-company]').first().click();
  await page.locator('#detail-investigation').waitFor();assert.match(await page.locator('#detail-investigation').innerText(),/미국.*2026-08.*3?0?\.0.*억|미국.*2026-08/s);assert.match(await page.locator('#detail-investigation').innerText(),/수혜는 확인되지/);
  await page.locator('#detail-investigation [data-detail-jump]').click();await page.locator('#detail-industry-context .industry-context-card').waitFor();
  await page.getByRole('button',{name:'뒤로가기',exact:true}).click();await page.locator('[data-export-research-country]').waitFor();assert.equal(await page.locator('[data-export-research-country]').inputValue(),'0','export scope survives detail/back');
