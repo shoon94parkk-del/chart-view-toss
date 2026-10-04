@@ -29,8 +29,8 @@ try {
   for(const button of await page.locator('.home-value-entries button').all())assert.ok(await button.evaluate(el=>{const r=el.getBoundingClientRect();return r.top>=0&&r.bottom<innerHeight-90;}),'core entry above fixed bottom nav');
   assert.equal(calls.includes('/static/data/screener.json'),false,'Home does not fetch entire screener');assert.equal(calls.includes('/api/heatmap/full'),false,'Home does not fetch full market');assert.equal(calls.includes('/api/export-momentum/item-detail'),false);
   assert.match(await page.locator('.home-selection-link').innerText(),/삼성전자/);await page.waitForFunction(()=>document.querySelector('[data-selection-status]')?.textContent==='경계');
-  assert.equal(await page.locator('.home-pick-performance-main strong').textContent(),'+11.10%','unevaluated return does not dilute the mean');
-  assert.match(await page.locator('.home-pick-performance-kpis').textContent(),/1\/2건/);
+  assert.equal(await page.locator('.home-pick-performance').count(),0);
+  assert.match(await page.locator('.home-selection-reason').first().textContent(),new RegExp(record.reason));
   await page.screenshot({path:`artifacts/value-discovery/${width}-home.png`});
   if(width===390){
    await page.addStyleTag({content:'.home-value-entries strong{font-size:21px!important}.home-value-entries small{font-size:16px!important}.home-compact-head h2{font-size:33px!important}'});
@@ -39,6 +39,8 @@ try {
   }
   await page.locator('.home-selection-link[data-feature-route=picks]').click();await page.locator('[data-pick-key="2026-10-02:005930"] [data-pick-detail]').waitFor({state:'visible'});
   assert.match(await page.locator('[data-pick-key="2026-10-02:005930"] [data-pick-detail]').innerText(),new RegExp(record.reason));
+  await page.locator('.pick-ledger-overview summary').click();
+  assert.match(await page.locator('.pick-ledger-summary').innerText(),/11.10%/,'unevaluated records do not dilute mean');
   assert.equal(await page.locator('[data-pick-key="2026-09-01:005930"] [data-pick-detail]').isVisible(),false);assert.match(page.url(),/2026-10-02%3A005930/);
   await page.getByRole('button',{name:'홈',exact:true}).click();await page.locator('.home-value-entries [data-feature-route=discover]').click();await page.locator('.analysis-stock').waitFor();
   assert.equal(await page.locator('.analysis-stock').count(),1);assert.equal(await page.locator('.screener-advanced').getAttribute('open'),null);assert.ok(await page.locator('.analysis-stock').first().evaluate(el=>el.getBoundingClientRect().bottom<document.querySelector('.bottom-nav').getBoundingClientRect().top-6),'entire first preset result is readable above the fixed navigation');

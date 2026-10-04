@@ -22,7 +22,7 @@ try {
    if(path==='/static/data/pick_monitor.json')body={picks:[]};
    if(path==='/api/quotes')body={results:[quote]};
    if(path==='/api/home-snapshot')body={heatmap:{results:[]},...(scenario==='null-macro'?{macro:null}:{})};
-   if(path==='/api/export-momentum')body={period:'2026-09',items:[],regions:[],summary:{}};
+   if(path==='/api/export-momentum')body={period:'2026-09',items:[],regions:[],summary:{exportYoY:4}};
    await route.fulfill({contentType:'application/json',body:JSON.stringify(body)});
   });
   await page.goto(base+'/#home',{waitUntil:'domcontentloaded'});
@@ -37,11 +37,11 @@ try {
   else await page.locator('#market-card .quote-card').first().waitFor();
   const geometry=await page.evaluate(()=>{
    const rect=s=>{const r=document.querySelector(s).getBoundingClientRect();return {top:r.top,bottom:r.bottom};};
-   return {market:rect('.market-section'),entries:rect('.home-value-entries'),watch:rect('.watch-section'),records:rect('#home-top-picks-section'),nav:rect('.bottom-nav')};
+   return {market:rect('.market-section'),entries:rect('.home-value-entries'),changes:rect('.home-changes'),watch:rect('.watch-section'),records:rect('#home-top-picks-section'),nav:rect('.bottom-nav')};
   });
   console.log(JSON.stringify({width,scenario,geometry}));
   await page.screenshot({path:`artifacts/home-journey/${width}-${scenario}-initial.png`});
-  assert.ok(geometry.market.top<geometry.entries.top&&geometry.entries.top<geometry.watch.top&&geometry.watch.top<geometry.records.top,'daily context, research entries, watch and history order');
+  assert.ok(geometry.market.top<geometry.entries.top&&geometry.entries.top<geometry.changes.top&&geometry.changes.top<geometry.records.top&&geometry.records.top<geometry.watch.top,'market, entries, changes, records and personal watch order');
   assert.ok(geometry.market.bottom<geometry.nav.top,'all four market cards or explicit failure are readable on first screen');
   assert.ok(geometry.entries.bottom<geometry.nav.top,'core value entries remain discoverable on first screen');
   const visual=await page.locator('.home-value-entries button').evaluateAll(buttons=>buttons.map(button=>({label:button.innerText,background:getComputedStyle(button).backgroundColor,icons:button.querySelectorAll('svg[aria-hidden="true"][focusable="false"]').length,height:button.getBoundingClientRect().height})));
@@ -49,13 +49,9 @@ try {
   assert.ok(visual.every(x=>x.icons===1&&x.height>=44),'graphics stay decorative and controls remain touchable');
   assert.equal(await page.locator('.bottom-nav [data-tab="more"] svg rect').count(),3,'analysis has a tool dashboard icon');
   assert.equal(await page.locator('.bottom-nav [aria-current="page"]').innerText(),'홈');
-  assert.equal(await page.locator('.home-pick-performance-main strong').innerText(),'+11.10%');
-  assert.ok(await page.evaluate(()=>document.querySelector('.home-selection-link').compareDocumentPosition(document.querySelector('.home-pick-performance'))&Node.DOCUMENT_POSITION_FOLLOWING),'recent records precede secondary performance');
-  assert.ok(await page.locator('.home-pick-performance-main strong').evaluate(el=>parseFloat(getComputedStyle(el).fontSize)<=16),'whole-history performance is secondary verification');
-  assert.match(await page.locator('.home-pick-performance-kpis').innerText(),/1\/2건/);
-  assert.ok(await page.locator('.home-pick-performance-main strong').isVisible(),'performance visible without a disclosure click');
-  await page.locator('.home-performance-details summary').click();
-  assert.match(await page.locator('.home-performance-details').innerText(),/산술 평균.*미평가.*선정일·보유기간.*포트폴리오/s);
+  assert.equal(await page.locator('.home-pick-performance').count(),0,'aggregate performance belongs in records');
+  assert.match(await page.locator('.home-selection-reason').first().innerText(),new RegExp(record.reason));
+  assert.ok(geometry.changes.top<height*2,'first observation arrives within two screens');
   if(scenario==='ready-saved')assert.match(await page.locator('#home-watchlist').innerText(),/삼성전자/);
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
   await page.goto(base+'/#home');await page.locator('.home-selection-link').waitFor();

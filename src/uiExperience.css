@@ -38,3 +38,20 @@ html:not([data-ait-runtime="true"]) .app-shell .page-intro{background:transparen
  .app-shell .home-value-entries small{font-size:12px}
 }
 @media(prefers-reduced-motion:reduce){.app-shell *{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+.app-shell .home-changes{padding:14px 0;border:0;background:#fff;margin:12px 0 20px}
+.app-shell .home-changes-title p{font-size:12px;line-height:1.5;color:var(--cv-secondary)}
+.app-shell .home-change-card{padding:14px;border:1px solid #dde5ee;border-radius:16px;background:#fff}
+.app-shell .home-change-card header{align-items:flex-start;gap:12px}
+.app-shell .home-change-card h3{font-size:15px;line-height:1.4}
+.app-shell .home-change-card small,.app-shell .home-change-card p{font-size:12px;line-height:1.6;color:var(--cv-secondary)}
+.app-shell .home-change-card button{font-size:14px;min-height:44px}
+.app-shell .home-change-more{grid-column:1/-1;display:grid;gap:10px}
+.app-shell .home-change-more[hidden]{display:none}
+.app-shell .home-selection-link{display:grid;gap:9px;padding:14px;min-height:44px}
+.app-shell .home-selection-heading{width:100%;display:flex;justify-content:space-between;gap:10px}
+.app-shell .home-selection-heading small,.app-shell .home-selection-actions{font-size:12px;color:var(--cv-secondary)}
+.app-shell .home-selection-reason{font-size:14px;line-height:1.5;color:var(--cv-readable);display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;text-align:left}
+.app-shell .home-selection-actions{width:100%;display:flex;justify-content:space-between}
+.app-shell .home-empty-watch{padding:0;background:transparent}
+.app-shell .home-empty-watch button{width:100%;text-align:left;min-height:44px;font-size:14px}
+.app-shell .home-records-caption{font-size:12px;line-height:1.6;color:var(--cv-secondary)}

@@ -4,6 +4,19 @@ import vm from 'node:vm';
 import {readFileSync} from 'node:fs';
 import {homeChanges} from '../src/insightModel.js';
 
+test('Home keeps the third observation optional and preserves expansion on repaint',async()=>{
+ const nodes=Object.fromEntries(['data-home-changes','data-home-change-status','data-home-change-retry','data-home-change-toggle'].map(key=>[key,{innerHTML:'',textContent:'',hidden:true,setAttribute(k,v){this[k]=v;}}]));
+ const host={isConnected:true,querySelector:key=>nodes[key.slice(1,-1)]};
+ const context=vm.createContext({homeChanges,window:{},loadExportMomentumSnapshot:async()=>({period:'2026-09',summary:{exportYoY:4},itemPeriod:'2026-08',items:[{key:'semiconductor',exportWeightYoY:3,unitValueYoY:2}]}),screenerData:async()=>({tradeDate:'2026-10-02',stocks:[{volumeRatio:2.3}]})});
+ vm.runInContext(readFileSync(new URL('../src/homeChangesView.js',import.meta.url),'utf8').replace(/^import .*;\r?\n/gm,'').replaceAll('export ',''),context);
+ await context.mountHomeChanges(host);
+ assert.equal(nodes['data-home-change-toggle'].hidden,false);
+ assert.match(nodes['data-home-changes'].innerHTML,/home-change-more[^>]*hidden/);
+ nodes['data-home-change-toggle'].onclick();
+ assert.equal(nodes['data-home-change-toggle']['aria-expanded'],'true');
+ assert.doesNotMatch(nodes['data-home-changes'].innerHTML,/home-change-more[^>]*hidden/);
+});
+
 test('Home observations render independent sources and retain ready cards during failed-source retry',async()=>{
  const nodes=Object.fromEntries(['data-home-changes','data-home-change-status','data-home-change-retry'].map(key=>[key,{innerHTML:'',textContent:'',hidden:true}]));
  const host={isConnected:true,querySelector:key=>nodes[key.slice(1,-1)]};

@@ -446,7 +446,7 @@ function paintHomeWatch(quotes,hasWatch,{pending=false,failed=false}={}){
  if(!hasWatch)return;
  const host=document.querySelector('#home-watchlist');
  if(!host)return;
- host.innerHTML=state.watchlist.slice(0,4).map((x,i)=>{
+ host.innerHTML=state.watchlist.slice(0,3).map((x,i)=>{
    const q=(quotes||[]).find(r=>String(r.ticker).toUpperCase()===String(x.symbol).toUpperCase());const ch=finiteNumber(q?.change);const name=displayName(x.symbol,x.name);
    const status=pending?' · 새 시세 확인 중':failed?' · 갱신 실패':'';
    return `<button class="watch-rich-row" data-stock-detail="${esc(x.symbol)}"><span class="stock-logo tone-${i%4}">${esc(name.slice(0,1))}</span><span class="stock-copy"><strong>${esc(name)}</strong><small>${esc(x.symbol)}${q?.asOf?' · '+esc(formatKst(q.asOf)):''}${status}</small></span><span class="watch-price">${q?.price!=null?`<strong>${esc(formatCurrencyPrice(q.price,q.currency))}</strong><em class="${ch>0?'up':ch<0?'down':'flat'}">${esc(fmtChange(q.change))}</em>`:`<small>${pending?'가격 확인 중':'가격 확인 필요'}</small>`}</span><span class="chevron">${iconSvg('arrow',18)}</span></button>`;
@@ -486,9 +486,9 @@ async function renderHome(){
    <section class="market-section home-primary"><div class="section-head market-head"><h2><i class="section-symbol" aria-hidden="true">${uiIcon('market',16)}</i>주요 시장</h2><div class="market-head-actions"><span id="market-time">기준 시각 확인 중</span><button type="button" id="market-expand" class="market-expand" aria-expanded="false" hidden>지표 더 보기 <span>⌄</span></button></div></div><div id="market-card">${loadingIndicator('주요 시장을 확인하고 있어요')}<div class="market-grid"><div class="skeleton quote"></div><div class="skeleton quote"></div><div class="skeleton quote"></div><div class="skeleton quote"></div></div></div></section>
    <div class="home-analysis-heading"><h2><i class="section-symbol" aria-hidden="true">${uiIcon('analysis',16)}</i>근거를 찾는 분석</h2><span>목적에 맞게 바로 열어요</span></div>
    ${valueEntriesMarkup(SHOW_SPOTLIGHT)}
-   <section class="section watch-section home-primary">${sectionTitle('<i class="section-symbol" aria-hidden="true">'+uiIcon('watch',16)+'</i>내 관심종목','<button class="text-button" data-tab="watch">'+(hasWatch?'관리':'추가')+'</button>')}<div id="home-watchlist" class="watch-card">${hasWatch?loadingIndicator('관심종목 시세를 확인하고 있어요')+'<div class="skeleton watch"></div><div class="skeleton watch"></div>':'<div class="home-empty-watch"><span>자주 보는 종목을 여기에 모아보세요.</span><button type="button" data-tab="watch">관심종목 추가</button></div>'}</div></section>
-   ${savedResearchHtml(symbol=>displayName(symbol),{compact:true})}
    <div id="home-discovery-feed"></div>
+   <section class="section watch-section home-primary">${sectionTitle('<i class="section-symbol" aria-hidden="true">'+uiIcon('watch',16)+'</i>내 관심종목','<button class="text-button" data-tab="watch">'+(hasWatch?'관리':'추가')+'</button>')}<div id="home-watchlist" class="watch-card">${hasWatch?loadingIndicator('관심종목 시세를 확인하고 있어요')+'<div class="skeleton watch"></div><div class="skeleton watch"></div>':'<div class="home-empty-watch"><button type="button" data-tab="watch">자주 볼 관심종목 추가 →</button></div>'}</div></section>
+   ${savedResearchHtml(symbol=>displayName(symbol),{compact:true})}
    <section id="brief-card" class="brief-card compact-brief skeleton brief">${loadingIndicator('시장 요약을 확인하고 있어요')}</section>
    <section class="section quick-section">${sectionTitle('<i class="section-symbol" aria-hidden="true">'+uiIcon('compare',16)+'</i>빠른 비교','<button class="text-button" data-go-chart>종목 변경</button>')}<div class="ticker-strip">${state.selected.map((x,i)=>`<button data-go-chart><span class="ticker-orb tone-${i%4}">${esc(displayName(x).slice(0,1))}</span><span><strong>${esc(displayName(x))}</strong><small>${esc(x)}</small></span><b>${iconSvg('arrow',16)}</b></button>`).join('')||'<span class="muted-copy">비교 종목을 선택해주세요.</span>'}</div></section>
    <section class="section home-news-section" id="home-news-section">${sectionTitle('관심종목 뉴스','<button class="text-button" data-tab="news">뉴스 모두 보기</button>')}<div id="home-news">${loadingIndicator('관련 뉴스를 확인하고 있어요')}<div class="skeleton news"></div></div></section>
@@ -497,8 +497,8 @@ async function renderHome(){
  document.querySelector('#home-search-open').onclick=openHomeSearch;
  bindHomeMarketToggle();
 
- const watchSymbols=state.watchlist.slice(0,4).map(x=>x.symbol);
- const watchNames=state.watchlist.slice(0,4).map(x=>displayName(x.symbol,x.name));
+ const watchSymbols=state.watchlist.slice(0,3).map(x=>x.symbol);
+ const watchNames=state.watchlist.slice(0,3).map(x=>displayName(x.symbol,x.name));
  const cachedMarket=readHomeFast('market',6*60*60*1000);
  homeMarketCached=false;
  if(cachedMarket)paintHomeMarket(cachedMarket,{allowError:false,cached:true});
