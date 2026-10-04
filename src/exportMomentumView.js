@@ -764,12 +764,19 @@ function paint(host,snapshot,bindNav,onItemOpen){
 
 export function renderExportMomentumView({shell,bindNav,focus=null,state={}}){
   const app=document.querySelector('#app');
-  app.innerHTML=shell(`<nav class="export-topic-nav" aria-label="수출 분석 바로가기">${[['history','수출 흐름'],['items','품목별'],['countries','국가별'],['memory','메모리 가격·수출'],['provisional','잠정 레이더'],['breadth','상승 확산도'],['quadrant','물량·단위가치']].map(([key,label])=>`<button type="button" data-export-topic="${key}" disabled>${label}</button>`).join('')}</nav><div id="export-momentum-root" class="export-momentum-view">${loading()}</div>`,'수출 데이터');
+  const tabs=[['overview','전체 요약'],['products','품목'],['countries','국가'],['semiconductor','반도체'],['trend','속보·추세']];
+  const panelForFocus=key=>({
+    history:'trend',provisional:'trend',
+    items:'products',breadth:'products',quadrant:'products',
+    countries:'countries',memory:'semiconductor',
+  }[key]||'overview');
+  app.innerHTML=shell(`<nav class="export-topic-nav" role="tablist" aria-label="수출 데이터 분류">${tabs.map(([key,label])=>`<button type="button" role="tab" data-export-topic="${key}" aria-selected="false" disabled>${label}</button>`).join('')}</nav><div id="export-momentum-root" class="export-momentum-view">${loading()}</div>`,'수출 데이터');
   bindNav();
   const host=app.querySelector('#export-momentum-root');
   let seq=0;
   let detailSeq=0;
   let provisionalSeq=0;
+  let provisionalLoaded=false;
   let memorySpotCleanup=null;
 
   const openItemDetail=async(key,{force=false,restore=false}={})=>{
@@ -855,19 +862,65 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={}}){
     const token=++seq;
     app.querySelectorAll('[data-export-topic]').forEach(button=>{button.disabled=true;});
     memorySpotCleanup?.();memorySpotCleanup=null;
+    provisionalLoaded=false;
     host.innerHTML=loading();
     try{
       const snapshot=await loadExportMomentumSnapshot({force});
       if(token!==seq||!host.isConnected)return;
       paint(host,snapshot,bindNav,openItemDetail);
-      memorySpotCleanup=mountMemorySpot(host.querySelector('#export-memory-spot'),{bindNav});
+
+      const focusTarget=key=>{
+        const selector={
+          history:'#export-history',
+          provisional:'#export-provisional-radar',
+          items:'#export-items',
+          countries:'#export-countries',
+          memory:'#export-memory-spot',
+          breadth:'.export-breadth-card',
+          quadrant:'.export-quadrant-point',
+        }[key];
+        return selector?host.querySelector(selector)?.closest('section'):null;
+      };
+
+      const activatePanel=(panelKey,{scroll=false}={})=>{
+        const panel=host.querySelector('[data-export-panel="'+panelKey+'"]');
+        if(!panel)return;
+        state.exportSection=panelKey;
+        host.querySelectorAll('[data-export-panel]').forEach(node=>{node.hidden=node!==panel;});
+        app.querySelectorAll('[data-export-topic]').forEach(button=>{
+          const selected=button.dataset.exportTopic===panelKey;
+          button.disabled=false;
+          button.setAttribute('aria-selected',String(selected));
+          button.classList.toggle('is-active',selected);
+        });
+        if(panelKey==='semiconductor'&&!memorySpotCleanup){
+          memorySpotCleanup=mountMemorySpot(host.querySelector('#export-memory-spot'),{bindNav});
+        }
+        if(panelKey==='trend'&&!provisionalLoaded){
+          provisionalLoaded=true;
+          void loadProvisional(token,force);
+        }
+        if(scroll)panel.scrollIntoView({behavior:'smooth',block:'start'});
+      };
+
+      app.querySelectorAll('[data-export-topic]').forEach(button=>{
+        button.onclick=()=>activatePanel(button.dataset.exportTopic,{scroll:true});
+      });
+
+      const requestedFocus=focus;
+      const initialPanel=requestedFocus?panelForFocus(requestedFocus):(state.exportSection||'overview');
+      activatePanel(initialPanel);
+      if(requestedFocus){
+        const target=focusTarget(requestedFocus);
+        if(target){
+          target.tabIndex=-1;
+          target.scrollIntoView({block:'start'});
+          target.focus({preventScroll:true});
+        }
+        focus=null;
+      }
       if(state.itemKey)void openItemDetail(state.itemKey,{restore:true});
       window.__chartviewRestoreScroll?.();
-      const targetFor=key=>{const selector={memory:'#export-memory-spot',provisional:'#export-provisional-radar',breadth:'.export-breadth-card',quadrant:'.export-quadrant-point'}[key]||'#export-'+key;return host.querySelector(selector)?.closest('section');};
-      const jump=key=>{const target=targetFor(key);if(target){target.tabIndex=-1;target.scrollIntoView({block:'start'});target.focus({preventScroll:true});}};
-      app.querySelectorAll('[data-export-topic]').forEach(button=>{button.disabled=!targetFor(button.dataset.exportTopic);button.onclick=()=>jump(button.dataset.exportTopic);});
-      if(focus){jump(focus);focus=null;}
-      void loadProvisional(token,force);
     }catch(error){
       if(token!==seq||!host.isConnected)return;
       host.innerHTML=errorView(error?.message);
