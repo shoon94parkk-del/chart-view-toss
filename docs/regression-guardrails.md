@@ -375,6 +375,6 @@ Keep original actionStatus priority/count/filter arithmetic but label combined p
 ## Mobile information density
 - 320~430px에서 스크리너/선정 기록은 한 화면에 여러 종목을 비교할 수 있어야 한다. 새 배지·메타를 추가할 때 카드 높이를 무조건 키우지 말고 기존 행 안에서 재배치한다.
 - Screener base row uses compact mobile padding/gaps; unusual-data warnings remain complete but compact. Do not hide the source/basis warning to save space.
-- Pick ledger collapsed row stays compact while preserving name, date/symbol, status, return, recommended/current prices and best return. Detailed thesis/evidence remains expandable below the row.
+- Pick ledger collapsed row stays <=96px in the mobile QA fixture while preserving name, date/symbol, status, return, recommended/current prices and best return. Detailed thesis/evidence remains expandable below the row.
 - Export mobile cards use compact spacing under 600px. Do not restore desktop-sized 20px+ headings or 15px+ card padding broadly on mobile.
 - Compactness must not reduce primary interactive targets below 44px when the control itself is the touch target; entire stock rows remain larger than 44px.
