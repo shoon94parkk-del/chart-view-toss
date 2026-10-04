@@ -12,12 +12,12 @@
 7. 동일payload 지도/목록, 시장/가격/등락/기준일·범위/색/크기 설명. 빈 관심 단일추가, 빈 저장조사 검색.
 
 ## 확인 근거
-- 단위203/203과 AIT contract 통과. Null macro, 제품 구절, 공개매출 단위, 동일논리/개별경고, 지도/목록, 저장조사/홈cap, DOM순서 및 짧은 마지막섹션 회귀.
+- 단위205/205 (UI·UX203개와 최신 main의 심사안내2개)과 AIT contract 통과. Null macro, 제품 구절, 공개매출 단위, 동일논리/개별경고, 지도/목록, 저장조사/홈cap, DOM순서 및 짧은 마지막섹션 회귀.
 - CUA 실제 backend로320/390/430/1280px: 가로넘침없음, 시장/세입구가 하단고정메뉴위. 초기 관찰 카드 문서하단 약902–909px.
 - 기업 CTA 상세상단 약380px에 위치, Samsung/SK검증제품·KRX자료일 표시, 미국범위가 종목 조사에 전달됨.
 - 키보드 Enter검색/Escape닫기 및 원래 버튼포커스 복귀, 빈 조사 검색, 히트맵 목록 실제 데이터 확인.
 - 최종 독립 검토: Critical/Important 미해결없음. 리뷰에서 발견한 navigation/source typography/focus/product근거는 회귀 또는 실제 CSS확인으로 해결.
-- Browser QA는 기존 GitHub CI에서 실행한다. 최종 CI/배포상태는 PR94및 workspace outputs최종보고서에 기록한다. 이전 실패를 통과로 간주하지 않는다.
+- Browser QA는 기존 GitHub CI에서 실행한다. 최신 main의 토스 심사안내·회귀를 모두 보존하여 통합했다. 최종 CI/배포상태는 PR94및 workspace outputs최종보고서에 기록한다. 이전 실패를 통과로 간주하지 않는다.
 
 ## 판정/비용
 1. Bash없음→PowerShell장부. 비용: workflow bookkeeping차이.
@@ -27,5 +27,7 @@
 5. 제품 요약 누락은 필수요건으로 올려 정확한 검증제품구절 표시. 비용: 후보카드 높이 증가.
 6. Android/iOS실기기와 실제5명연구는 외부게이트. 비용: native/실사용 효과 미검증.
 7. CI는 preview시작성공이면 독립suite를 계속실행, 전체실패 유지. 비용: 실패job시간 증가.
+8. push의 CI가 생성되지 않아 기존workflow를 exact branch에 직접dispatch. 비용: 추가CI시간.
+9. 기존 명시적 배포승인에 따라 green head를병합, host-owned worktree보존. 비용: 잘못 판단하면 통합/배포롤백 필요.
 
 Deferred minors: none. Public Toss출시는 이번 Render웹프리뷰배포와 별개이며 기존 P0gate를 따른다. 화면읽기 virtual cursor/선택텍스트 보존을 검증한 것은 아니다.

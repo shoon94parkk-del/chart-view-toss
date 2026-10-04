@@ -345,15 +345,8 @@ Saved investment baselines are device records: show them before network completi
 - Visible Home observations may fetch the existing shared screener once; observer/caching and nonblocking primary paint remain. No early full heatmap or item-detail request. Preserve focused action and its screen position as independent sources complete.
 - Export company investigation CTA after item summary; preserve dated exact product evidence and exposure limits, scope/back state, lazy error/retry siblings and closed-panel response guards.
 - Evidence-bearing export/detail metadata ≥12px with readable contrast; 44px target for active controls. Do not inflate tiny treemap labels: offer same-payload list instead. Verify narrow and enlarged text.
-- Detail section current marker follows document geometry and lifecycle cleanup. Public revenue conversion requires a known unit, and raw values/units remain accessible.
+- Detail section current marker follows document geometry including short final sections at maximum scroll and lifecycle cleanup. Public revenue conversion requires a known unit, and raw values/units remain accessible.
 - Warning record links select exact date/code; different reasons and fundamental/technical distinction remain. Device storage contents are never trimmed by compact Home rendering.
 - Web automated validation is separate from Android/iOS Toss and five-user usability gates. Do not claim those external gates were completed by browser tests.
 
-
-## UI/UX 0.14.0 contract
-- 320px부터 market/core entries remain above fixed bottom navigation; observations and exact dated selections precede compact personal entries. Home shows2recent records and at most3watch/1research previews, preserving complete stored lists.
-- Asynchronous Home observations retain focused destination and visual position. An optional provider cannot hold successful siblings or primary content.
-- Export company CTA stays within first844pxof item detail; classification product/source/date and statistical limitations remain visible. Country disclosure, retry/closed-panel guards, exact scope/detail-back remain tested.
-- Detail current location uses actual document position, including short final sections at maximum scroll. Raw financial values/units remain accessible.
-- Full heatmap map/list reuse targets, prices, change, source date; US detail must not initiate an additional KR universe request. Initial Home screener request from visible observation is allowed and cached.
-- Browser suites run independently after earlier failures when preview started; overall failure remains failure. Update outdated presentation assertions only against explicit approved behavior.
+- US detail must not initiate an additional KR universe request after any Home observation request. Browser suites continue independently after earlier failures if preview started; overall failure remains failure.
