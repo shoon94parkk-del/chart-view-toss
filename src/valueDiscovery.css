@@ -22,3 +22,72 @@
 @media(max-width:350px){.market-section.home-primary .quote-card{padding:10px;min-height:100px}.home-analysis-heading>span{font-size:10px}.home-value-entries button{padding:10px 7px}.home-value-entries strong{font-size:12px}.home-pick-performance{grid-template-columns:1fr}.home-pick-performance-kpis{grid-template-columns:1fr 1fr}}
 
 .tab-usage-guide dl{display:grid;grid-template-columns:1fr;gap:12px;margin:0 0 14px}.tab-usage-guide dl>div{display:grid;grid-template-columns:42px 1fr;gap:8px}.tab-usage-guide dt{font-weight:700;color:#191f28}.tab-usage-guide dd{margin:0;color:#6b7684;font-size:12px;line-height:1.6}
+
+
+/* 2026-10-05 mobile density: screener should show several stocks per viewport. */
+@media(max-width:600px){
+  .discovery-results .analysis-list{gap:6px}
+  .discovery-results .analysis-stock{
+    padding:8px 10px!important;
+    gap:3px 8px!important;
+    border-radius:11px;
+    min-height:68px;
+    align-items:start;
+  }
+  .discovery-results .analysis-stock>span:first-child strong{
+    font-size:13px;
+    line-height:1.25;
+  }
+  .discovery-results .analysis-stock>span:nth-child(2){
+    gap:1px;
+    align-items:flex-end;
+  }
+  .discovery-results .analysis-stock>span:nth-child(2) b{
+    font-size:11px;
+    line-height:1.25;
+    white-space:nowrap;
+  }
+  .discovery-results .analysis-stock em{
+    font-size:11px;
+    line-height:1.2;
+  }
+  .discovery-results .analysis-stock-basis{
+    font-size:9px!important;
+    line-height:1.25!important;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .discovery-results .analysis-match-reasons{
+    gap:3px!important;
+    margin-top:0!important;
+  }
+  .discovery-results .analysis-match-reasons i{
+    padding:4px 6px;
+    font-size:8.5px;
+  }
+  .discovery-results .data-quality-warning{
+    padding:5px 7px!important;
+    border-radius:8px;
+    font-size:9px;
+    line-height:1.35;
+  }
+  .discovery-results .data-quality-warning b{
+    font-size:9px;
+    margin-right:4px;
+  }
+  .discovery-results>.analysis-meta{
+    margin:5px 0;
+    font-size:9.5px;
+    line-height:1.35;
+  }
+  .discovery-results>.price-basis-note{
+    margin:4px 0 6px;
+    font-size:9.5px;
+  }
+  .discovery-task-head h2{font-size:17px!important}
+  .discovery-task-head p{font-size:10.5px!important;line-height:1.4!important}
+  .screener-active-preset{padding:6px 8px!important;font-size:10px!important;line-height:1.35!important}
+  .screener-active-preset span{font-size:10px!important}
+  .screener-active-preset small{font-size:9px!important}
+}
