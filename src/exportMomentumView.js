@@ -238,10 +238,23 @@ function summary(snapshot){
       <div class="export-summary-grid">
         <div><span>수입</span><strong>${esc(formatUsdBillion(data.importsUsdBillion))}</strong><small>${esc(formatSignedPct(data.importYoY))} YoY</small></div>
         <div><span>무역수지</span><strong>${esc(formatUsdBillion(data.balanceUsdBillion))}</strong><small>${esc(tradeBalanceLabel(data.balanceUsdBillion))}</small></div>
-        <div><span>${esc(cumulativeLabel(snapshot.period))}</span><strong>${esc(formatUsdBillion(data.cumulativeExportsUsdBillion))}</strong><small>해당 연도 누적</small></div>
         ${semiShare!==null
           ?`<div><span>반도체 비중</span><strong>${semiShare.toFixed(1)}%</strong><small>당월 총수출 대비</small></div>`
           :`<div><span>품목 상세</span><strong>${esc(monthLabel(snapshot.itemPeriod))}</strong><small>${itemLag?'총괄보다 후행':'HS 기준'}</small></div>`}
+      </div>
+    </section>
+  `;
+}
+
+function cumulativeSummary(snapshot){
+  const data=snapshot.summary||{};
+  if(!Number.isFinite(Number(data.cumulativeExportsUsdBillion)))return '';
+  return `
+    <section class="export-section export-cumulative">
+      <div class="export-section-head"><div><span>연간 누적</span><h3>${esc(cumulativeLabel(snapshot.period))}</h3></div><small>속보·추세</small></div>
+      <div class="export-summary-grid">
+        <div><span>누적 수출</span><strong>${esc(formatUsdBillion(data.cumulativeExportsUsdBillion))}</strong><small>해당 연도 누적</small></div>
+        <div><span>누적 무역수지</span><strong>${esc(formatUsdBillion(data.cumulativeBalanceUsdBillion))}</strong><small>해당 연도 누적</small></div>
       </div>
     </section>
   `;
@@ -755,7 +768,7 @@ function paint(host,snapshot,bindNav,onItemOpen){
     exportPanel('products',items(snapshot)+breadth(snapshot)+quadrant(snapshot)),
     exportPanel('countries',regions(snapshot)),
     exportPanel('semiconductor',memorySpotPlaceholder()+semiconductorReport(snapshot)),
-    exportPanel('trend',provisionalPlaceholder()+history(snapshot)+checkpoints(snapshot)),
+    exportPanel('trend',provisionalPlaceholder()+history(snapshot)+cumulativeSummary(snapshot)+checkpoints(snapshot)),
     '<div id="export-item-detail" class="export-item-detail" hidden></div>',
   ].join('');
   bindNav();
