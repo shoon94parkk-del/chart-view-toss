@@ -9,7 +9,7 @@ const price=v=>Number.isFinite(Number(v))?Number(v).toLocaleString('ko-KR',{maxi
 
 const monitorSeverity=(pick)=>{
   const technical=String(pick?.technical?.signal||'');
-  const fundamental=String(pick?.status||'');
+  const fundamental=String(pick?.status||pick?.monitor?.status||'');
   if(fundamental==='SELL_REVIEW'||technical==='TECH_SELL_REVIEW')return 3;
   if(fundamental==='WATCH'||technical==='TECH_CAUTION')return 2;
   if(fundamental==='KEEP')return 1;
@@ -18,10 +18,10 @@ const monitorSeverity=(pick)=>{
 const monitorSummary=(pick)=>{
   if(!pick)return null;
   const severity=monitorSeverity(pick);
-  if(severity===3)return {label:pick?.technical?.signal==='TECH_SELL_REVIEW'?'사후점검 · 단기 매도 검토':'사후점검 · 매도 검토',cls:'sell',note:(pick?.technical?.reasons||[]).slice(0,2).join(' · ')||pick?.monitor?.reason||'사후점검에서 주의 신호가 확인됐어요.'};
-  if(severity===2)return {label:'사후점검 · 경계',cls:'watch',note:(pick?.technical?.reasons||[]).slice(0,2).join(' · ')||pick?.monitor?.reason||'사후점검에서 경계 신호가 확인됐어요.'};
-  if(severity===1)return {label:'사후점검 · 유지',cls:'keep',note:pick?.monitor?.reason||''};
-  return {label:'사후점검 · 검토 대기',cls:'pending',note:pick?.monitor?.reason||''};
+  if(severity===3)return {label:(pick?.status||pick?.monitor?.status)==='SELL_REVIEW'?'기업 근거 · 재점검 필요':'가격·거래 · 강한 기술 경고',cls:'sell',note:(pick?.technical?.reasons||[]).slice(0,2).join(' · ')||pick?.monitor?.reason||'사후점검에서 주의 신호가 확인됐어요.'};
+  if(severity===2)return {label:(pick?.status||pick?.monitor?.status)==='WATCH'?'기업 근거 · 경계':'가격·거래 · 기술 경고',cls:'watch',note:(pick?.technical?.reasons||[]).slice(0,2).join(' · ')||pick?.monitor?.reason||'사후점검에서 경계 신호가 확인됐어요.'};
+  if(severity===1)return {label:'기업 근거 · 유지',cls:'keep',note:pick?.monitor?.reason||''};
+  return {label:'기업 근거 · 검토 대기',cls:'pending',note:pick?.monitor?.reason||''};
 };
 const latestMonitorBySymbol=(payload)=>{
   const result=new Map();
@@ -54,8 +54,7 @@ function ideaCard(idea,index){
   return `<article class="idea-card tone-${index%4}">
     <div class="idea-card-head"><span class="idea-icon">${esc(idea.icon)}</span><div><small>${esc(idea.strength)}</small><h3>${esc(idea.title)}</h3></div></div>
     <p class="idea-summary">${esc(idea.summary)}</p>
-    <div class="idea-candidates">${idea.candidates.map(candidateRow).join('')}</div>
-    <div class="idea-checks"><div><b>다음 확인</b><span>${esc(idea.confirm)}</span></div><div><b>반대 신호</b><span>${esc(idea.invalidate)}</span></div></div>
+    <div class="idea-checks"><div><b>다음 확인</b><span>${esc(idea.confirm)}</span></div><div><b>반대 신호</b><span>${esc(idea.invalidate)}</span></div></div><div class="idea-candidates">${idea.candidates.map(candidateRow).join('')}</div>
   </article>`;
 }
 
@@ -137,7 +136,7 @@ export async function renderIdeaView({shell,bindNav}){
     <section class="idea-hero">
       <span class="page-kicker">IDEA LAB · BETA</span>
       <h2>조건에 맞는 종목을 찾고<br><em>근거를 확인해요</em></h2>
-      <p>거래가 활발한 종목의 기술 신호와 공시·산업 자료를 이어서 살펴봐요.</p>
+      <p>관찰 패턴에서 질문을 얻는 곳이에요. 직접 조건을 고르려면 조건별 종목 찾기를 이용하세요.</p>
     </section>
     <details class="idea-guide"><summary>선정 기준과 분석 흐름 보기</summary><div><strong>분석 흐름</strong><span>기술 신호 → 실제 매출 구조 → 최근 5거래일 비교군 → 거래 단서</span></div><p>20일 평균 거래대금 10억원 이상을 대상으로 해요. 상세 자료는 종목을 펼칠 때 불러와요.</p></details>
     <div id="idea-body" class="idea-grid" aria-busy="true">${loadingIndicator('조건에 맞는 종목을 찾고 있어요')}<div class="idea-loading-preview" aria-hidden="true"><div class="skeleton idea-skeleton-title"></div><div class="skeleton idea-skeleton-row"></div><div class="skeleton idea-skeleton-row"></div></div></div>

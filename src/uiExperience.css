@@ -121,3 +121,19 @@ html:not([data-ait-runtime="true"]) .app-shell .page-intro{background:transparen
 .app-shell .industry-section{background:#fff;box-shadow:none}
 
 .app-shell .quote-asof,.app-shell .market-section.home-primary .quote-asof,.app-shell .market-section.home-primary #market-time,.app-shell .source-line,.app-shell .macro-meta-line{font-size:12px;color:var(--cv-secondary)}
+
+/* Observation → question → evidence. Existing data and financial colors are retained. */
+.app-shell .home-change-question{padding:10px 12px;background:#f4f7fc;border-left:3px solid #3972c8;color:#333d4b;font-size:14px;line-height:1.6}
+.home-change-question b{display:block;font-size:12px;color:#4e5968;margin-bottom:3px}
+.app-shell .home-change-limit summary{min-height:44px;display:flex;align-items:center;font-size:12px;color:#4e5968;cursor:pointer}
+.app-shell .home-change-limit p{font-size:12px;line-height:1.6;color:#4e5968}
+.app-shell .price-basis-note{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:4px;font-size:12px;line-height:1.6;color:#4e5968;margin:0 0 5px}
+.app-shell .price-basis-note button{min-height:44px;font-size:12px;padding:5px 8px}
+.app-shell .pick-ledger-status-stack{display:flex;flex-wrap:wrap;gap:6px}
+.app-shell .pick-ledger-tech-status{background:#fff3e0;color:#744315;padding:4px 8px;border-radius:8px;line-height:1.5}
+.app-shell .idea-checks{margin:12px 0;padding:12px;border-left:3px solid #3972c8}
+.app-shell .saved-research .revisit-observation{display:grid;gap:3px;padding:10px 12px;background:#f4f7fc;border-radius:10px;margin:8px 0}
+.revisit-observation b{font-size:14px;color:#333d4b;line-height:1.6}
+.app-shell .revisit-observation small,.app-shell .revisit-refresh-status{font-size:12px;line-height:1.6;color:#4e5968}
+.app-shell .revisit-observation[data-revisit-kind="new"],.app-shell .revisit-observation[data-revisit-kind="corrected"],.app-shell .revisit-observation[data-revisit-kind="conditionChanged"]{border-left:3px solid #956428;background:#fff8ec}
+.app-shell [data-refresh-saved-research]{min-height:44px;font-size:14px}

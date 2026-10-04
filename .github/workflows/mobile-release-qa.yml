@@ -68,6 +68,9 @@ jobs:
       - name: Verify export to research, saved evidence and voluntary comparison
         if: ${{ !cancelled() && steps.start-preview.outcome == 'success' }}
         run: QA_BASE_URL=http://127.0.0.1:4173 node tests/insight_research_qa.mjs
+      - name: Verify saved report revisits and price-basis filters
+        if: ${{ !cancelled() && steps.start-preview.outcome == 'success' }}
+        run: QA_BASE_URL=http://127.0.0.1:4173 node tests/insight_followup_qa.mjs
       - name: Verify search identity, stale disclosure, detail context and empty macro recovery
         if: ${{ !cancelled() && steps.start-preview.outcome == 'success' }}
         run: node tests/review_validation_qa.mjs
@@ -93,6 +96,7 @@ jobs:
         with:
           name: mobile-release-qa-screenshots
           path: |
+            artifacts/insight-followup
             artifacts/mobile-qa
             artifacts/strategy-report
             artifacts/home-journey

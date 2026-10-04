@@ -1,6 +1,7 @@
 import './investmentReview.css';
 import {financialHistoryData} from './api.js';
 import {filingSnapshot,filingChanges,evaluateCondition} from './investmentReview.js';
+import {reviewObservation} from './reviewRevisit.js';
 import {readReview,updateReview} from './reviewStorage.js';
 import {loadingIndicator} from './loadingView.js';
 import {esc,money,sources,bindSources} from './quarterView.js';
@@ -19,6 +20,7 @@ export function mountReportReview(host,{symbol,data,onNotice}){
   if(!host.isConnected)return;
   let saved;try{saved=readReview(symbol);}catch{saved={conditions:[],readError:true};}
   const snapshot=filingSnapshot(data),change=filingChanges(saved.filing,snapshot);
+  if(!data?.pending&&!saved.readError&&(saved.filing||saved.conditions?.length)){try{updateReview(symbol,{observation:reviewObservation(saved,data)});}catch{saved.readError=true;}}
   const previous=change.previous,keys=[['revenue','매출액'],['operatingProfit','영업이익'],['netIncome','순이익'],['operatingCashFlow','영업현금흐름'],['inventories','재고자산'],['receivables','매출채권 등']];
   host.innerHTML=`<div class="report-review"><h3>공시에서 달라진 점</h3><span class="review-status">${data?.pending?'최근 공시 확인 중':statusLabels[change.kind]}</span>${snapshot?`<p class="review-note">${esc(snapshot.label)} · ${esc(snapshot.basis)} · ${esc(snapshot.currency)}</p>`:''}
    ${['incompatible','older'].includes(change.kind)?'<p class="review-note">마지막으로 확인한 수치와 직접 비교하지 않아요. 두 보고서의 기준을 먼저 확인해주세요.</p>':snapshot?`<details class="review-change-details" ${['new','corrected'].includes(change.kind)?'open':''}><summary>${change.kind==='corrected'?'마지막 확인한 수치와 비교':'전년 같은 기간·전년 말과 비교'}</summary>${keys.map(([key,label])=>{
@@ -45,6 +47,7 @@ export function mountReportReview(host,{symbol,data,onNotice}){
    const symbols=[symbol,...new Set(conditions.map(c=>c.peer?.symbol).filter(Boolean))];
    const reports=await Promise.all(symbols.map(s=>s===symbol&&!force?Promise.resolve(data):financialHistoryData(s,{force}).catch(()=>({available:false,loadError:true}))));
    if(seq!==run||!host.isConnected)return;
+   try{const latest=readReview(symbol);updateReview(symbol,{observation:reviewObservation(latest,reports[0],{peers:Object.fromEntries(symbols.slice(1).map((s,i)=>[s,reports[i+1]]))})});}catch{host.querySelector('[data-review-announce]').textContent='이번 확인 결과를 기기에 저장하지 못했어요.';}
    target.innerHTML=conditions.map((condition,i)=>{
     const observed=evaluateCondition(condition,[reports[0],condition.peer?reports[symbols.indexOf(condition.peer.symbol)]:null]);
     return conditionHtml(condition,i,observed);

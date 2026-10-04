@@ -439,3 +439,7 @@ Classification: new behavior, plus malformed/null macro crash bug fix. 사용자
 변화 섹션이 앞에 와 기존 관찰 source인 screener가 viewport 근처에서 불러와질 수 있다. 기존 IntersectionObserver와 단일 API 캐시를 재사용하며 시장/입구/성공한 수출 자료는 기다리지 않는다. 홈에서 full heatmap·품목 상세 선행 요청 금지는 유지한다. 부분 완료 시 포커스와 해당 버튼의 화면 위치를 보존한다.
 수출 상세의 기업 CTA/분류 후보를 요약 다음에 두고 HS·국가·전체 주요제품은 펼친다. 검증된 제품 구절·출처·날짜·기업 수혜 미확인 한계는 기본 영역에 남긴다. 종목 상세는 관찰 1–2개/핵심 한계/다음 행동과 전체 근거 펼침을 제공한다. 이동 메뉴는 가격 다음, 현재 위치는 버튼 순서가 아닌 실제 문서 위치로 판단한다. 사업 매출을 공시 단위가 확인된 경우에만 조·억 원으로 바꾸고 원값·단위·조정 분모를 보존한다.
 목록에는 주요 조건 근거 두 개를 표시하고 전체 적용 조건은 상세 맥락으로 전달한다. 기술 경고는 회사·선정일별 이유와 해당 기록 링크를 제공한다. 동일 투자논리만 중복을 줄이며 상태 계산은 유지한다. 히트맵 목록은 지도와 같은 payload/대상/날짜/등락을 사용한다. 관심0개에서는 단일 추가 버튼, 저장 조사0개에서는 검색 입구를 제공한다. 기존 저장/공유/네이티브/API/TTL/시세 freshness 계약은 유지한다.
+
+
+## 2026-10-04 — 사용자 승인: 변화 해석과 근거 재점검 (0.15.0)
+Classification: new behavior following actual 78/100 product review. Implement questions beside dated Home observations, separate source fundamental/technical labels and hide uncalibrated selection score in detail; preserve every raw value and combined priority arithmetic. Manual priceBasis include/exclude/only is additive to public filters; warn threshold is not an error diagnosis. LAB next/counter-checks precede candidates. Existing saved report/conditions drive explicit Home revisit, not automatic background polling or invented visit notifications. Keep device/account keys and acknowledged baselines. Observed320×693warning card bottom601.1<nav615, all model and release gates required; native/5-user remain external. See INSIGHT_FOLLOWUP_2026-10-04.md.

@@ -28,11 +28,12 @@ test('cap values retain currency and independent source time, without replacing 
  assert.match(metricBasis({period:'TTM',source:'DART'}),/자료 기준시각 미제공/);
  assert.match(metricBasis({period:'provider forward period (not independently verified)'}),/미검증/);
 });
-test('detail reuses exact dated PICK matching and its combined status, without inventing an untracked signal',()=>{
+test('detail reuses exact dated PICK matching and separate fundamental/technical status, without inventing an untracked signal',()=>{
  const rec={symbol:'005930.KS',code:'005930',recommendedDate:'2026-09-25',returnPct:0,lastUpdatedTradeDate:'2026-10-02'};
  const bootstrap={recommendations:[rec]};
  const monitor={picks:[{pickId:'2026-09-25:005930',monitor:{status:'KEEP'},technical:{score:70,signal:'TECH_SELL_REVIEW',rsi14:76}}]};
- assert.match(detailReviewHtml(rec.symbol,bootstrap,monitor,null),/매도검토/);
+ const html=detailReviewHtml(rec.symbol,bootstrap,monitor,null);
+ assert.match(html,/기업 근거 · 유지/);assert.match(html,/강한 기술 경고/);assert.doesNotMatch(html,/기업 근거 재점검/);
  assert.match(detailReviewHtml(rec.symbol,bootstrap,monitor,null),/0\.00%/);
  assert.match(detailReviewHtml(rec.symbol,bootstrap,{picks:[{...monitor.picks[0],pickId:'2026-09-24:005930'}]},null),/검토 대기/);
  assert.match(detailReviewHtml('ZZZZZZ',bootstrap,monitor,null),/선정 기록이 없는/);

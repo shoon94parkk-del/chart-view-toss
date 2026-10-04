@@ -278,6 +278,20 @@ function bindNav(){
  document.querySelectorAll('[data-stock-detail]').forEach(b=>b.onclick=()=>navigate('detail',b.dataset.stockDetail,b.dataset.stockName||''));
  document.querySelectorAll('[data-open-stock-search]').forEach(button=>button.onclick=openHomeSearch);
  document.querySelectorAll('[data-saved-research]').forEach(button=>button.onclick=()=>navigate('detail',button.dataset.savedResearch,'',{kind:'saved',symbol:button.dataset.savedResearch,jump:button.dataset.savedJump}));
+ document.querySelectorAll('[data-refresh-saved-research]').forEach(button=>button.onclick=async()=>{
+  const host=button.closest('.saved-research'),status=host.querySelector('.revisit-refresh-status');
+  button.disabled=true;status.textContent='저장한 기업의 최신 공시를 확인하고 있어요…';
+  try{
+   const {refreshSavedReviews}=await import('./revisitRefresh.js');
+   await refreshSavedReviews(()=>host.isConnected);
+   if(!host.isConnected)return;
+   const compact=host.dataset.revisitCompact==='true';
+   const holder=document.createElement('div');holder.innerHTML=savedResearchHtml(symbol=>displayName(symbol),{compact});
+   const replacement=holder.firstElementChild;host.replaceWith(replacement);bindNav();
+   replacement.querySelector('.revisit-refresh-status').textContent='확인한 보고서 기준으로 표시했어요. 미제공 자료는 확인 불가로 남겨요.';
+   replacement.querySelector('[data-refresh-saved-research]')?.focus({preventScroll:true});
+  }catch{if(host.isConnected){status.textContent='일부 근거를 확인하지 못했어요. 저장 기준은 유지했어요. 다시 시도해주세요.';button.disabled=false;}}
+ });
  document.querySelectorAll('[data-retry-detail]').forEach(b=>b.onclick=renderDetail);
  document.querySelectorAll('[data-back]').forEach(b=>b.onclick=goBack);
  document.querySelectorAll('[data-external-url]').forEach(b=>b.onclick=async()=>{
@@ -1475,7 +1489,7 @@ function renderMore(){
    <details class="calculation-guide tab-usage-guide"><summary>각 탭에서는 무엇을 볼 수 있나요?</summary><dl><div><dt>홈</dt><dd>주요 시장과 내 관심종목, 분석 요약</dd></div><div><dt>수익률</dt><dd>최대 6개 종목의 기간 수익률 비교</dd></div><div><dt>관심</dt><dd>기기에 저장한 내 종목 관리</dd></div><div><dt>분석</dt><dd>조건 검색, 선정 기록, 재무·수출·경제 데이터</dd></div></dl></details>
    <section class="menu-group" id="analysis-find"><h3><i class="section-symbol" aria-hidden="true">${uiIcon('filter',18)}</i>종목 찾기</h3><div class="feature-menu">
      <button class="feature-row" data-tab="discover"><span class="feature-icon yellow">${iconSvg('discover',22)}</span><span><strong>${featureLabel('discover')}</strong><small>조건으로 종목 찾기</small></span><b>${iconSvg('arrow',19)}</b></button>
-     <button class="feature-row" data-tab="ideas"><span class="feature-icon yellow">${iconSvg('ideas',22)}</span><span><strong>투자 아이디어 LAB</strong><small>거래가 활발한 종목의 관찰 패턴 보기</small></span><b>${iconSvg('arrow',19)}</b></button>
+     <button class="feature-row" data-tab="ideas"><span class="feature-icon yellow">${iconSvg('ideas',22)}</span><span><strong>투자 아이디어 LAB</strong><small>관찰 패턴과 다음 확인 질문 보기</small></span><b>${iconSvg('arrow',19)}</b></button>
      <button class="feature-row" data-tab="heatmap"><span class="feature-icon coral">${iconSvg('heatmap',22)}</span><span><strong>시장 히트맵</strong><small>대표 종목의 당일 등락 보기</small></span><b>${iconSvg('arrow',19)}</b></button>
    </div></section>
    ${SHOW_SPOTLIGHT?'<section class="menu-group" id="analysis-records"><h3><i class="section-symbol" aria-hidden="true">'+uiIcon('ledger',18)+'</i>선정 기록 점검</h3><p class="menu-group-copy">과거에 선정한 이유와 이후 결과를 확인해요. 실시간 인기 순위가 아니에요.</p><div class="feature-menu">':''}

@@ -80,11 +80,13 @@ function sortRows(rows,sort){
  });
 }
 
-export function filterScreener(rows,{query='',market='',rsiMin='',rsiMax='',volumeMin='',ret20Min='',valueMin='',trend='',signal='',sort='name'}={}){
+export function filterScreener(rows,{query='',market='',rsiMin='',rsiMax='',volumeMin='',ret20Min='',valueMin='',trend='',signal='',sort='name',priceBasis=''}={}){
  const q=query.trim().toLowerCase(),rsi=finiteNumber(rsiMax),rsiFloor=finiteNumber(rsiMin),volume=finiteNumber(volumeMin),retFloor=finiteNumber(ret20Min),valueFloor=finiteNumber(valueMin);
  const filtered=rows.filter(row=>{
   if(q&&!`${row.name} ${row.symbol} ${row.code}`.toLowerCase().includes(q))return false;
   if(market&&row.market!==market)return false;
+  const flagged=screenerDataWarnings(row).length>0;
+  if(priceBasis==='exclude'&&flagged||priceBasis==='only'&&!flagged)return false;
   if(!trendMatch(row,trend)||!signalMatch(row,signal))return false;
   const r=finiteNumber(row.rsi14),v=finiteNumber(row.volumeRatio),ret=finiteNumber(row.ret20),value=finiteNumber(row.avgValue20);
   return (rsi===null||(r!==null&&r<=rsi))&&(rsiFloor===null||(r!==null&&r>=rsiFloor))&&(volume===null||(v!==null&&v>=volume))&&(retFloor===null||(ret!==null&&ret>=retFloor))&&(valueFloor===null||(value!==null&&value>=valueFloor*100000000));

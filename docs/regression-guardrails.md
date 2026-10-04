@@ -350,3 +350,7 @@ Saved investment baselines are device records: show them before network completi
 - Web automated validation is separate from Android/iOS Toss and five-user usability gates. Do not claim those external gates were completed by browser tests.
 
 - US detail must not initiate an additional KR universe request after any Home observation request. Browser suites continue independently after earlier failures if preview started; overall failure remains failure.
+
+
+## Insight follow-up contract — 0.15.0
+Keep original actionStatus priority/count/filter arithmetic but label combined priority explicitly. Do not turn TECH_SELL_REVIEW into a fundamental SELL_REVIEW display. Scores, zero and raw status values remain accessible in detail. Price-basis filtering is optional and URL-restorable; unknown daily moves are not flagged. Revisit observation cannot acknowledge a report or overwrite saved condition baselines. Older/incompatible/missing peer reports never imply a satisfied condition. No automated Home financial fetch. Only explicit check/detail observation persists while the owning view is connected; account-scoped REVIEW_KEY remains unchanged.

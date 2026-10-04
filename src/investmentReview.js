@@ -1,3 +1,4 @@
+export {filingChanges} from './filingComparison.js';
 import {compareReports,number} from './researchAnalysis.js';
 import {qualitySlice} from './financialQuality.js';
 const period=s=>s.year*4+(s.type==='annual'?4:s.quarter||0);
@@ -8,17 +9,6 @@ export function filingSnapshot(data){
  const s=qualitySlice(data,comparison.selection,comparison.slices[0]);
  const values=row=>Object.fromEntries(['revenue','operatingProfit','netIncome','operatingCashFlow','inventories','receivables'].map(key=>[key,number(row[key])]));
  return {type:comparison.selection.type,year:s.year,quarter:s.type==='interim'?data.interim.quarter:null,label:comparison.selection.label,basis:s.basis,currency:s.currency,sourceUrl:s.sourceUrl,current:values(s.current),previous:values(s.previous)};
-}
-export function filingChanges(old,current){
- if(!current)return {kind:'unavailable'};
- if(!old)return {kind:'first',previous:current.previous};
- if(old.currency!==current.currency||old.basis!==current.basis)return {kind:'incompatible'};
- if(period(current)<period(old))return {kind:'older'};
- if(old.type!==current.type||old.year!==current.year||old.quarter!==current.quarter)return {kind:'new',previous:current.previous};
- if(receipt(old.sourceUrl)&&receipt(current.sourceUrl)&&receipt(current.sourceUrl)<receipt(old.sourceUrl))return {kind:'older'};
- const priorChanged=Object.keys(current.previous||{}).filter(key=>(old.previous||{})[key]!==current.previous[key]);
- if(old.sourceUrl===current.sourceUrl&&JSON.stringify(old.current)===JSON.stringify(current.current)&&!priorChanged.length)return {kind:'same',previous:current.previous};
- return {kind:'corrected',previous:old.current,priorChanged};
 }
 export function evaluateCondition(condition,reports){
  const comparison=compareReports(reports[0],condition.peer?reports[1]||{available:false}:null);
