@@ -71,7 +71,7 @@ try {
   assert.match(await page.locator('.surface-label').innerText(),/목적별 분석/);
   await page.screenshot({path:`artifacts/home-journey/${width}-${scenario}-analysis.png`});
   await page.locator('.tab-usage-guide summary').click();
-  assert.deepEqual(await page.locator('.tab-usage-guide dt').allTextContents(),['홈','차트','관심','분석']);
+  assert.deepEqual(await page.locator('.tab-usage-guide dt').allTextContents(),['홈','수익률','관심','분석']);
   assert.match(await page.locator('.tab-usage-guide').innerText(),/기간 수익률 비교.*기기에 저장한 내 종목 관리/s);
   const menuHash=new URL(page.url()).hash;
   for(const id of ['analysis-find','analysis-records','analysis-compare','analysis-evidence']){

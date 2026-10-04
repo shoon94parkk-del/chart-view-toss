@@ -35,3 +35,6 @@ export function surfaceIdentity(route) {
  const [icon, label, tone] = identities[route] || ['evidence', '종목과 데이터', 'neutral'];
  return {icon, label, tone};
 }
+export function featureLabel(route) {
+ return {chart:'수익률 비교',discover:'조건별 종목 찾기',exports:'수출 데이터',picks:'선정 기록·성과'}[route] || '';
+}

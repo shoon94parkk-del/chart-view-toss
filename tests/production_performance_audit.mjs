@@ -12,7 +12,7 @@ const routes=[
   {route:'watch',label:'관심종목',ready:()=>Boolean(document.querySelector('#watch-rich-list'))&&document.querySelectorAll('#watch-rich-list .skeleton').length===0},
   {route:'valuation',label:'밸류에이션',ready:()=>Boolean(document.querySelector('#valuation-list'))&&document.querySelectorAll('#valuation-list .skeleton').length===0},
   {route:'macro',label:'경제지표',ready:()=>Boolean(document.querySelector('#macro-groups'))&&document.querySelectorAll('#macro-groups .skeleton').length===0&&Boolean(document.querySelector('#macro-groups .macro-group,#macro-groups .empty'))},
-  {route:'discover',label:'시장 스크리너',ready:()=>Boolean(document.querySelector('#analysis-body'))&&document.querySelectorAll('#analysis-body .skeleton').length===0&&Boolean(document.querySelector('#analysis-body .analysis-list,#analysis-body .empty'))},
+  {route:'discover',label:'조건별 종목 찾기',ready:()=>Boolean(document.querySelector('#analysis-body'))&&document.querySelectorAll('#analysis-body .skeleton').length===0&&Boolean(document.querySelector('#analysis-body .analysis-list,#analysis-body .empty'))},
   {route:'news',label:'관심종목 뉴스',ready:()=>Boolean(document.querySelector('#news-list'))&&document.querySelectorAll('#news-list .skeleton').length===0},
   {route:'heatmap',label:'시장 히트맵',ready:()=>document.querySelectorAll('#analysis-body .home-heatmap-cell').length>=18||Boolean(document.querySelector('#analysis-body .empty'))},
   {route:'consensus',label:'실적 전망',ready:()=>Boolean(document.querySelector('#analysis-body'))&&document.querySelectorAll('#analysis-body [role="status"]').length===0&&document.querySelectorAll('#analysis-body .skeleton').length===0},

@@ -1,4 +1,4 @@
-import {uiIcon, surfaceIdentity} from './uiIdentity.js';
+import {uiIcon, surfaceIdentity,featureLabel} from './uiIdentity.js';
 import { valueEntriesMarkup } from './valueDiscovery.js';
 import {marketBrief} from './insightModel.js';
 import {investigationHtml} from './insightView.js';
@@ -14,6 +14,7 @@ import './homeExtras.js';
 import './experience.css';
 import './valueDiscovery.css';
 import './visualIdentity.css';
+import './uiExperience.css';
 import { SHOW_SPOTLIGHT } from './releaseScope.js';
 import { ANALYSIS_ROUTES, renderAnalysis } from './analysisViews.js';
 import packageInfo from '../package.json';
@@ -200,7 +201,7 @@ function shell(content,title='차트뷰'){
  const leading=secondary?`<button class="icon-button back-button" aria-label="뒤로가기" data-back>${iconSvg('back',22)}</button>`:`<span class="brand-mark">${(state.tab==='home'?iconSvg('spark',18):uiIcon(identity.icon,18))}</span>`;
  const offline=typeof navigator!=='undefined'&&navigator.onLine===false;
  const topAction=state.tab==='detail'?'':`<button class="icon-button" aria-label="관심종목" data-tab="watch">${iconSvg('heart',22)}</button>`;
- return `<main class="app-shell" data-surface="${esc(state.tab)}" data-ui-tone="${identity.tone}">${offline?'<div class="network-banner" role="status">인터넷 연결이 끊어졌어요. 연결되면 다시 시도해주세요.</div>':''}<header class="topbar"><div class="brand-lockup">${leading}<div class="brand-title">${state.tab==='home'?'':`<span class="surface-label">${identity.label}</span>`}<h1${state.tab==='detail'?' id="detail-top-title"':''}>${esc(title)}</h1></div></div><div class="topbar-actions"><button class="icon-button" data-share-current type="button" aria-label="현재 화면 공유">${iconSvg('share',21)}</button>${topAction}</div></header><section class="content"><div class="ait-share-row"><button type="button" data-share-current>${iconSvg('share',17)} 현재 화면 공유</button></div>${content}${state.tab==='info'?'':dataDisclosure()}</section><nav class="bottom-nav" aria-label="주요 메뉴">${[['home','홈'],['chart','차트'],['watch','관심'],['more','분석']].map(([id,label])=>`<button data-tab="${id}" class="${navTab===id?'active':''}" ${navTab===id?'aria-current="page"':''}><i>${iconSvg(id,22)}</i><span>${label}</span></button>`).join('')}</nav></main>`;
+ return `<main class="app-shell" data-surface="${esc(state.tab)}" data-ui-tone="${identity.tone}">${offline?'<div class="network-banner" role="status">인터넷 연결이 끊어졌어요. 연결되면 다시 시도해주세요.</div>':''}<header class="topbar"><div class="brand-lockup">${leading}<div class="brand-title">${state.tab==='home'?'':`<span class="surface-label">${identity.label}</span>`}<h1${state.tab==='detail'?' id="detail-top-title"':''}>${esc(title)}</h1></div></div><div class="topbar-actions"><button class="icon-button" data-share-current type="button" aria-label="현재 화면 공유">${iconSvg('share',21)}</button>${topAction}</div></header><section class="content"><div class="ait-share-row"><button type="button" data-share-current>${iconSvg('share',17)} 현재 화면 공유</button></div>${content}${state.tab==='info'?'':dataDisclosure()}</section><nav class="bottom-nav" aria-label="주요 메뉴">${[['home','홈'],['chart','수익률'],['watch','관심'],['more','분석']].map(([id,label])=>`<button data-tab="${id}" class="${navTab===id?'active':''}" ${navTab===id?'aria-current="page"':''}><i>${iconSvg(id,22)}</i><span>${label}</span></button>`).join('')}</nav></main>`;
 }
 function shareDetails(){
  const tab=state.tab;
@@ -213,7 +214,7 @@ function shareDetails(){
  if(tab==='detail'&&symbol)url.hash=`detail/${encodeURIComponent(symbol)}`;
  else if(tab==='news'&&state.newsSymbol)url.hash=`news/${encodeURIComponent(state.newsSymbol)}`;
  else if(tab!=='home')url.hash=tab;
- const titleByTab={home:'차트뷰',chart:'수익률 비교 | 차트뷰',watch:'관심종목 | 차트뷰',valuation:'밸류에이션 | 차트뷰',macro:'경제 지표 | 차트뷰',exports:'수출 모멘텀 | 차트뷰',discover:'시장 스크리너 | 차트뷰',heatmap:'시장 히트맵 | 차트뷰',consensus:'실적 전망 | 차트뷰',bands:'역사적 밸류에이션 | 차트뷰',ideas:'투자 아이디어 LAB | 차트뷰',picks:'PICK 관리 | 차트뷰',news:'관심종목 뉴스 | 차트뷰',more:'차트뷰',info:'데이터 안내 | 차트뷰',tools:'투자 도구 | 차트뷰'};
+ const titleByTab={home:'차트뷰',chart:'수익률 비교 | 차트뷰',watch:'관심종목 | 차트뷰',valuation:'밸류에이션 | 차트뷰',macro:'경제 지표 | 차트뷰',exports:'수출 데이터 | 차트뷰',discover:'조건별 종목 찾기 | 차트뷰',heatmap:'시장 히트맵 | 차트뷰',consensus:'실적 전망 | 차트뷰',bands:'역사적 밸류에이션 | 차트뷰',ideas:'투자 아이디어 LAB | 차트뷰',picks:'PICK 관리 | 차트뷰',news:'관심종목 뉴스 | 차트뷰',more:'차트뷰',info:'데이터 안내 | 차트뷰',tools:'투자 도구 | 차트뷰'};
  return {url:url.toString(),title:tab==='detail'?`${name} (${symbol}) | 차트뷰`:titleByTab[tab]||'차트뷰',text:tab==='detail'?`${name} 종목의 차트와 기업 정보를 확인해보세요.`:'차트뷰에서 시장 데이터와 종목 정보를 확인해보세요.'};
 }
 async function shareCurrent(){
@@ -1456,9 +1457,9 @@ function renderMore(){
  document.querySelector('#app').innerHTML=shell(`
    <section class="page-intro more-intro"><h2>분석과 도구</h2><p>종목 찾기, 기록 점검, 비교, 시장 근거를 목적별로 골라보세요.</p></section>
    <nav class="analysis-category-nav" aria-label="분석 목적 바로가기"><a href="#analysis-find" data-menu-jump="analysis-find">${uiIcon('filter',15)}종목 찾기</a>${SHOW_SPOTLIGHT?'<a href="#analysis-records" data-menu-jump="analysis-records">'+uiIcon('ledger',15)+'선정 기록</a>':''}<a href="#analysis-compare" data-menu-jump="analysis-compare">${uiIcon('compare',15)}종목 비교</a><a href="#analysis-evidence" data-menu-jump="analysis-evidence">${uiIcon('evidence',15)}시장 근거</a></nav>
-   <details class="calculation-guide tab-usage-guide"><summary>각 탭에서는 무엇을 볼 수 있나요?</summary><dl><div><dt>홈</dt><dd>주요 시장과 내 관심종목, 분석 요약</dd></div><div><dt>차트</dt><dd>최대 6개 종목의 기간 수익률 비교</dd></div><div><dt>관심</dt><dd>기기에 저장한 내 종목 관리</dd></div><div><dt>분석</dt><dd>조건 검색, 선정 기록, 재무·수출·경제 데이터</dd></div></dl></details>
+   <details class="calculation-guide tab-usage-guide"><summary>각 탭에서는 무엇을 볼 수 있나요?</summary><dl><div><dt>홈</dt><dd>주요 시장과 내 관심종목, 분석 요약</dd></div><div><dt>수익률</dt><dd>최대 6개 종목의 기간 수익률 비교</dd></div><div><dt>관심</dt><dd>기기에 저장한 내 종목 관리</dd></div><div><dt>분석</dt><dd>조건 검색, 선정 기록, 재무·수출·경제 데이터</dd></div></dl></details>
    <section class="menu-group" id="analysis-find"><h3><i class="section-symbol" aria-hidden="true">${uiIcon('filter',18)}</i>종목 찾기</h3><div class="feature-menu">
-     <button class="feature-row" data-tab="discover"><span class="feature-icon yellow">${iconSvg('discover',22)}</span><span><strong>시장 스크리너</strong><small>조건으로 종목 찾기</small></span><b>${iconSvg('arrow',19)}</b></button>
+     <button class="feature-row" data-tab="discover"><span class="feature-icon yellow">${iconSvg('discover',22)}</span><span><strong>${featureLabel('discover')}</strong><small>조건으로 종목 찾기</small></span><b>${iconSvg('arrow',19)}</b></button>
      <button class="feature-row" data-tab="ideas"><span class="feature-icon yellow">${iconSvg('ideas',22)}</span><span><strong>투자 아이디어 LAB</strong><small>거래가 활발한 종목의 관찰 패턴 보기</small></span><b>${iconSvg('arrow',19)}</b></button>
      <button class="feature-row" data-tab="heatmap"><span class="feature-icon coral">${iconSvg('heatmap',22)}</span><span><strong>시장 히트맵</strong><small>대표 종목의 당일 등락 보기</small></span><b>${iconSvg('arrow',19)}</b></button>
    </div></section>
@@ -1474,7 +1475,7 @@ function renderMore(){
    <section class="menu-group" id="analysis-evidence"><h3><i class="section-symbol" aria-hidden="true">${uiIcon('evidence',18)}</i>근거와 시장 환경 확인</h3><div class="feature-menu">
      <button class="feature-row" data-tab="news"><span class="feature-icon coral">${iconSvg('news',22)}</span><span><strong>관심종목 뉴스</strong><small>직접 관련 기사와 업종 기사 구분</small></span><b>${iconSvg('arrow',19)}</b></button>
      <button class="feature-row" data-tab="macro"><span class="feature-icon green">${iconSvg('macro',22)}</span><span><strong>경제 지표</strong><small>관측일·단위·변화 기준 확인</small></span><b>${iconSvg('arrow',19)}</b></button>
-     <button class="feature-row" data-tab="exports"><span class="feature-icon blue">${iconSvg('exports',22)}</span><span><strong>수출 모멘텀</strong><small>수출 실적·품목·지역 흐름을 그래프로 확인</small></span><b>${iconSvg('arrow',19)}</b></button>
+     <button class="feature-row" data-tab="exports"><span class="feature-icon blue">${iconSvg('exports',22)}</span><span><strong>${featureLabel('exports')}</strong><small>수출 실적·품목·지역 흐름을 그래프로 확인</small></span><b>${iconSvg('arrow',19)}</b></button>
    </div></section>
    <section class="menu-group"><h3>이용 및 지원</h3><div class="feature-menu">
      <button class="feature-row" data-tab="watch"><span class="feature-icon slate">${iconSvg('star',22)}</span><span><strong>관심종목 관리</strong><small>현재 기기에 저장된 종목 관리</small></span><b>${iconSvg('arrow',19)}</b></button>

@@ -752,7 +752,7 @@ function paint(host,snapshot,bindNav,onItemOpen){
 
 export function renderExportMomentumView({shell,bindNav,focus=null,state={}}){
   const app=document.querySelector('#app');
-  app.innerHTML=shell(`<nav class="export-topic-nav" aria-label="수출 분석 바로가기">${[['history','수출 흐름'],['items','품목별'],['countries','국가별'],['memory','메모리 보고서'],['provisional','잠정 레이더'],['breadth','상승 확산도'],['quadrant','물량·단위가치']].map(([key,label])=>`<button type="button" data-export-topic="${key}" disabled>${label}</button>`).join('')}</nav><div id="export-momentum-root" class="export-momentum-view">${loading()}</div>`,'수출 모멘텀');
+  app.innerHTML=shell(`<nav class="export-topic-nav" aria-label="수출 분석 바로가기">${[['history','수출 흐름'],['items','품목별'],['countries','국가별'],['memory','메모리 보고서'],['provisional','잠정 레이더'],['breadth','상승 확산도'],['quadrant','물량·단위가치']].map(([key,label])=>`<button type="button" data-export-topic="${key}" disabled>${label}</button>`).join('')}</nav><div id="export-momentum-root" class="export-momentum-view">${loading()}</div>`,'수출 데이터');
   bindNav();
   const host=app.querySelector('#export-momentum-root');
   let seq=0;

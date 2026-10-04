@@ -10,6 +10,7 @@ import { investmentToolsMarkup, bindInvestmentToolLogos } from './investmentTool
 import {alignHeatmapQuotes} from './heatmapAlignment.js';
 import {bandCoverage,discoveryContext} from './insightModel.js';
 import {encodeSharedView} from './experienceState.js';
+import {featureLabel} from './uiIdentity.js';
 
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const number=(v,suffix='')=>finiteNumber(v)===null?'—':Number(v).toLocaleString('ko-KR',{maximumFractionDigits:2})+suffix;
@@ -19,7 +20,7 @@ const alignFullHeatmapWithHome=alignHeatmapQuotes;
 export const ANALYSIS_ROUTES=new Set(['discover','heatmap','consensus','bands','tools']);
 export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareSheet}){
  let disposed=false,chart,observer;
- const titles={discover:'시장 스크리너',heatmap:'시장 히트맵',consensus:'실적 전망 조회',bands:'역사적 밸류에이션',tools:'투자 도구'};
+ const titles={discover:featureLabel('discover'),heatmap:'시장 히트맵',consensus:'실적 전망 조회',bands:'역사적 밸류에이션',tools:'투자 도구'};
  const descriptions={discover:'장마감 조건 검색 · 추천 순위가 아니에요.',heatmap:'홈보다 넓은 한국·미국 주요 종목의 당일 등락을 시가총액 비중으로 비교해요.',consensus:'선택한 종목의 애널리스트 추정치와 변경 내역을 확인해요.',bands:'과거 가격과 재무자료로 재구성한 PER·PBR을 확인해요.',tools:'차트·공시·거시 데이터를 확인할 수 있는 12개 외부 사이트예요.'};
  const selection=['consensus','bands'].includes(tab);
  document.querySelector('#app').innerHTML=shell(`<section class="task-head ${tab==='discover'?'discovery-task-head':''}"><div><h2>${titles[tab]}</h2><p>${descriptions[tab]}</p></div>${selection?'<button id="analysis-select" class="primary-subtle">종목 변경</button>':''}</section><div id="analysis-controls"></div><div id="analysis-body" class="analysis-body ${tab==='discover'?'discovery-results':''}">${loadingIndicator(`${titles[tab]} 데이터를 불러오고 있어요`)}<div class="skeleton quote"></div></div>`,titles[tab]);
