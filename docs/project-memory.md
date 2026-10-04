@@ -269,3 +269,11 @@ User-approved new behavior. Home cards include dated observations, questions and
 - Three visible series: DDR5 16Gb, DDR4 16Gb, DDR4 8Gb. Cards show session average, daily high/low, provider source date, and Chart View accumulated history.
 - The chart is inline SVG; no extra chart runtime is loaded. Home/bootstrap/quotes/heatmap receive no new request.
 - Spot provider failure is isolated and retryable; ready Customs sections remain visible. The UI discloses that paid historical TrendForce data is not backfilled and links the source page.
+
+
+## 2026-10-04 — Export tabs + memory price catalog
+- Export default screen is `전체 요약`; long analysis sections are no longer stacked on first paint.
+- Tabs: `전체 요약`, `품목`, `국가`, `반도체`, `속보·추세`.
+- Products keeps amount/volume/unit-value cards, breadth, quadrant and 12-month drilldown. Semiconductor keeps DRAM/Flash/MCP/DRAM-module Customs report plus lazy market prices. Trend keeps provisional radar, 12-month total trend and checkpoints.
+- Memory prices load from `/api/memory-prices` only when Semiconductor is opened. Price-family chips show one family at a time: DRAM chip, NAND chip, NAND wafer, DRAM module, GDDR.
+- HBM/MCP/eMMC-UFS without public numeric price are disclosed as unavailable; MCP export evidence remains in the Customs report.
