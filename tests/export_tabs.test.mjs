@@ -19,7 +19,7 @@ test('기존 세부 분석 기능은 삭제하지 않고 관련 탭으로 이동
   assert.match(view,/exportPanel\('products',items\(snapshot\)\+breadth\(snapshot\)\+quadrant\(snapshot\)\)/);
   assert.match(view,/exportPanel\('countries',regions\(snapshot\)\)/);
   assert.match(view,/exportPanel\('semiconductor',memorySpotPlaceholder\(\)\+semiconductorReport\(snapshot\)\)/);
-  assert.match(view,/exportPanel\('trend',provisionalPlaceholder\(\)\+history\(snapshot\)\+checkpoints\(snapshot\)\)/);
+  assert.match(view,/exportPanel\('trend',provisionalPlaceholder\(\)\+history\(snapshot\)\+cumulativeSummary\(snapshot\)\+checkpoints\(snapshot\)\)/);
 });
 
 test('무거운 반도체 가격과 잠정 레이더는 해당 탭을 열 때만 시작한다',()=>{
