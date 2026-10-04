@@ -61,7 +61,7 @@ export async function loadExportProvisionalRadar({force=false}={}){
 
 
 export async function loadMemorySpot({force=false}={}){
-  const raw=await api('/api/memory-spot',{
+  const raw=await api('/api/memory-prices',{
     ttlMs:900000,
     timeoutMs:12000,
     retries:0,
