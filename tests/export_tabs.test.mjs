@@ -34,3 +34,4 @@ test('기존 focus 딥링크는 새 탭으로 매핑된다',()=>{
   assert.match(view,/items:'products',breadth:'products',quadrant:'products'/);
   assert.match(view,/countries:'countries',memory:'semiconductor'/);
 });
+
