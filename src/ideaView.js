@@ -116,18 +116,18 @@ function bindLazyIdeaContext(host,ideas,bindNav){
         current.dataset.enrichmentState=loading?'loading':'loaded';
         current.classList.toggle('is-enriching',loading);
         bindNav();
+        current.querySelectorAll('[data-industry-retry]').forEach(button=>button.onclick=()=>void loadPart(button.dataset.industryRetry,true));
       };
-      repaint();
-      await Promise.all([
-        businessReportData(symbol,name).then(report=>{
-          result.report=report?.available?report:null;
-          result.reportState=report?.available?'ready':'unavailable';
-        },()=>{result.reportState='error';}).then(repaint),
-        relationshipEvidenceData(symbol,name).then(evidence=>{
-          result.directRelations=evidence?.available?evidence.relations||[]:[];
-          result.relationsState=['provider_timeout','news_provider_unavailable'].includes(evidence?.reason)?'unavailable':'ready';
-        },()=>{result.relationsState='error';}).then(repaint),
-      ]);
+      async function loadPart(kind,force=false){
+        result[kind+'State']='loading';repaint();
+        try{
+          const data=await (kind==='report'?businessReportData(symbol,name,{force}):relationshipEvidenceData(symbol,name,{force}));
+          if(kind==='report'){if(data?.available)result.report=data;result.reportState=data?.available?'ready':'unavailable';}
+          else{if(data?.available)result.directRelations=data.relations||[];result.relationsState=['provider_timeout','news_provider_unavailable'].includes(data?.reason)?'unavailable':'ready';}
+        }catch{result[kind+'State']='error';}
+        repaint();
+      }
+      await Promise.all([loadPart('report'),loadPart('relations')]);
     });
   }
 }
@@ -175,8 +175,16 @@ export async function renderIdeaView({shell,bindNav}){
       <div class="idea-card-list">${ideas.map(ideaCard).join('')}</div>
       <section class="idea-next"><strong>현재 분석 방식</strong><span>아이디어 패턴과 추천 사후점검은 다른 차원의 정보예요. 과거 선정 이력이 있는 종목은 사후점검 상태를 같은 카드에 함께 표시해 모순처럼 보이지 않게 했어요. DART 사업보고서·원문 근거도 함께 확인해주세요.</span></section>
     `;
-    bindNav();
-    bindLazyIdeaContext(host,ideas,bindNav);
+    const bindIdeaNavigation=()=>{
+      bindNav();
+      for(const [index,idea] of ideas.entries())for(const row of idea.candidates){
+        const wrap=host.querySelectorAll('.idea-card')[index]?.querySelector(`[data-idea-symbol="${CSS.escape(row.symbol)}"]`);
+        const button=wrap?.querySelector('.idea-candidate');
+        if(button)button.onclick=()=>window.__chartviewInvestigate?.(row.symbol,row.name,{kind:'discovery',symbol:row.symbol,title:idea.title,basisDate:row.date||coverage.tradeDate,observations:row.reasons,warnings:row.dataWarnings,challenge:idea.invalidate,next:idea.confirm});
+      }
+    };
+    bindIdeaNavigation();
+    bindLazyIdeaContext(host,ideas,bindIdeaNavigation);
     void monitorPromise.then(payload=>applyMonitorStatuses(host,ideas,payload));
   }catch(error){
     if(!host?.isConnected)return;

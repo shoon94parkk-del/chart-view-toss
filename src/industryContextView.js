@@ -95,7 +95,7 @@ const enrichmentMessage=(state,kind)=>{
 };
 const enrichmentStatus=(state,kind)=>{
   const message=enrichmentMessage(state,kind);
-  return message?`<p class="industry-enrichment-status ${state}" role="status" aria-live="polite">${message}</p>`:'';
+  return message?`<div class="industry-enrichment-status ${state}" role="status" aria-live="polite"><p>${message}</p>${state==='error'||(kind==='relations'&&state==='unavailable')?`<button type="button" class="text-button" data-industry-retry="${kind}">${kind==='report'?'사업 공시':'관계 근거'} 다시 확인</button>`:''}</div>`:'';
 };
 
 export function industryContextHtml(context,{collapsible=false,open=false,businessReport=null,directRelations=[],reportState='idle',relationsState='idle'}={}){

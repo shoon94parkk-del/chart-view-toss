@@ -52,6 +52,10 @@ jobs:
         run: node tests/reliability_audit_qa.mjs
       - name: Verify independent export recovery and closed-panel response guards
         run: node tests/export_recovery_qa.mjs
+      - name: Verify insight navigation, source dates and partial recovery
+        run: QA_BASE_URL=http://127.0.0.1:4173 node tests/insight_flow_qa.mjs
+      - name: Verify export to research, saved evidence and voluntary comparison
+        run: QA_BASE_URL=http://127.0.0.1:4173 node tests/insight_research_qa.mjs
       - name: Verify search identity, stale disclosure, detail context and empty macro recovery
         run: node tests/review_validation_qa.mjs
       - name: Verify unusual screener data and combined-filter recovery
@@ -79,4 +83,5 @@ jobs:
             artifacts/sector-heatmap
             artifacts/redesign-review
             output/playwright/experience-audit
+            output/playwright/insight
           if-no-files-found: warn

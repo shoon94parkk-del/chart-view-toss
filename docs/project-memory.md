@@ -237,3 +237,13 @@ DIRECT search rows are syntactic fallback candidates: require a positive quote b
 
 ## 2026-10-04 — 목적별 시각적 구분 0.12.1
 Home/analysis entries share local semantic SVGs and purposeful teal/export, blue/find, violet/records colors. Visible text remains meaningful without color; financial red/blue and status warnings retain data semantics. Route category, section symbols and active navigation styling preserve 0.12.0 first-fold/order, native safe area/back, exact dated records and request/cache/storage contracts. No external icon/image/font dependency.
+
+
+## Insight flow contract — 2026-10-04
+- Retain market-first Home and lazy export/detail loading; change cards are at most three, each with its own data date.
+- Discovery context uses actual values/conditions; lazy LAB retry must rebind the contextual navigation, not replace it with generic detail navigation.
+- Actual screener conditions survive reload/shared links; advanced panel open state is restored only from the session and survives detail/back.
+- Export classification candidates require dated products evidence; show statistical/issuer exposure limits.
+- Saved research reuses existing device-local keys; raw questions/evidence never enter public share.
+- Price comparison list changes only on explicit user action.
+- Retry just the failed optional provider; preserve ready siblings and normal cache TTL.

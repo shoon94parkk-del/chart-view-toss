@@ -327,3 +327,13 @@ Saved investment baselines are device records: show them before network completi
 - Keep core tool icons decorative with readable action names; disabled PICK scope must omit its action and graphic. Export, screening and record entry graphics/colors must match their menu destination.
 - Purpose tones are not price/return, recommendation or technical status. Preserve financial red/blue, warnings, provenance and all calculations.
 - Decoration must not push markets/core entries below the 320×693 first fold or change native header visibility, fixed navigation, safe areas, routes, storage or lazy fetches.
+
+
+## Insight flow contract — 2026-10-04
+- Retain market-first Home and lazy export/detail loading; change cards are at most three, each with its own data date.
+- Discovery context uses actual values/conditions; lazy LAB retry must rebind the contextual navigation, not replace it with generic detail navigation.
+- Actual screener conditions survive reload/shared links; advanced panel open state is restored only from the session and survives detail/back.
+- Export classification candidates require dated products evidence; show statistical/issuer exposure limits.
+- Saved research reuses existing device-local keys; raw questions/evidence never enter public share.
+- Price comparison list changes only on explicit user action.
+- Retry just the failed optional provider; preserve ready siblings and normal cache TTL.

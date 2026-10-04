@@ -181,14 +181,10 @@ function createSections(marketSection) {
   if (picks) document.querySelector('#home-discovery-feed').append(picks);
   document.querySelector('#home-discovery-feed').insertAdjacentElement('afterend', heatmap);
   const discovery=document.querySelector('#home-discovery-feed');
-  const quick=document.createElement('section');
-  quick.className='section home-screening-preview';
-  quick.innerHTML='<div class="section-head"><h2><i class="section-symbol" aria-hidden="true">' + uiIcon('filter',16) + '</i>지금 조건으로 찾아보기</h2></div><div class="home-preset-links"><button type="button" data-feature-route="discover" data-feature-target="volume-surge">거래량 2배 이상</button><button type="button" data-feature-route="discover" data-feature-target="uptrend">상승추세</button><button type="button" data-feature-route="discover" data-feature-target="rsi-oversold">RSI 과매도</button></div><small>장마감 지표로 조건에 맞는 실제 종목을 확인해요.</small>';
-  discovery.append(quick);
-  const exportPreview=document.createElement('section');exportPreview.className='home-export-preview';
-  exportPreview.innerHTML='<div class="section-head"><h2><i class="section-symbol" aria-hidden="true">' + uiIcon('exports',16) + '</i>수출에서 산업 흐름 찾기</h2><button type="button" class="text-button" data-feature-route="exports">분석 보기</button></div><p data-export-preview-summary>총수출과 품목·국가별 흐름을 확인해보세요.</p><div class="home-preset-links"><button type="button" data-feature-route="exports" data-feature-target="items">품목별 분석</button><button type="button" data-feature-route="exports" data-feature-target="countries">국가별 분석</button><button type="button" data-feature-route="exports" data-feature-target="memory">메모리 보고서</button><button type="button" data-export-preview-retry hidden>요약 다시 시도</button></div>';
+  const exportPreview=document.createElement('section');exportPreview.className='home-export-preview home-changes';
+  exportPreview.innerHTML='<div class="home-changes-title"><h2><i class="section-symbol" aria-hidden="true">' + uiIcon('evidence',16) + '</i>이번 자료에서 확인할 변화</h2><p>관찰한 변화에서 다음 확인으로 · 자료마다 기준일이 달라요.</p></div><div class="home-change-grid" data-home-changes></div><p role="status" data-home-change-status></p><button type="button" class="text-button" data-home-change-retry hidden>변화 자료 다시 확인</button>';
   discovery.append(exportPreview);
-  const loadPreview=()=>void import('./homeExportPreview.js').then(module=>{if(exportPreview.isConnected)void module.mountHomeExportPreview(exportPreview);}).catch(()=>{if(exportPreview.isConnected)exportPreview.querySelector('[data-export-preview-summary]').textContent='분석 보기에서 수출 흐름을 확인해주세요.';});
+  const loadPreview=()=>void import('./homeChangesView.js').then(module=>{if(exportPreview.isConnected)void module.mountHomeChanges(exportPreview);}).catch(()=>{if(exportPreview.isConnected)exportPreview.querySelector('[data-home-changes]').textContent='수출·조건 검색 화면에서 자료를 확인해주세요.';});
   const previewObserver=new IntersectionObserver(entries=>{if(entries.some(entry=>entry.isIntersecting)){previewObserver.disconnect();loadPreview();}else if(!exportPreview.isConnected)previewObserver.disconnect();},{rootMargin:'120px'});
   previewObserver.observe(exportPreview);
   heatmap.querySelector('.home-extra-caption').textContent='한 시장의 대표 6종목 미리보기예요. 전체 화면에서 더 많은 종목과 섹터를 탐색해요.';
@@ -248,8 +244,8 @@ function paintPicks(host, payload) {
   const dateLabel = tradeDate ? (tradeDate === kstDateKey() ? '오늘 선정 · ' : '최근 선정 · ') + tradeDate : '선정일 확인 중';
 
   host.innerHTML =
-    performance + '<div class="home-pick-meta">' + esc(dateLabel) + ' · 종목을 눌러 기록 확인</div>' +
-    recentSelections(payload).map(row=>selectionCardMarkup(row)).join('');
+    '<div class="home-pick-meta">' + esc(dateLabel) + ' · 종목을 눌러 기록 확인</div>' +
+    recentSelections(payload).map(row=>selectionCardMarkup(row)).join('') + performance;
   window.__chartviewBindNav?.();
   const paintToken=host._pickPaintToken=(host._pickPaintToken||0)+1;
   const refreshStatuses=async()=>{

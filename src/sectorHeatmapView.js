@@ -3,8 +3,9 @@ import {loadingIndicator} from './loadingView.js';
 import './sectorHeatmap.css';
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const pct=v=>`${v>0?'+':''}${v.toFixed(2)}%`;
-export function mountSectorHeatmap(host,{onStock=()=>{},retry=()=>{}}={}){
- let payload={},market='KR',selected=null;
+export function mountSectorHeatmap(host,{onStock=()=>{},retry=()=>{},state={}}={}){
+ let payload={},market=state.market==='US'?'US':'KR',selected=state.selected||null;
+ const remember=()=>{state.market=market;state.selected=selected;};
  function paint(){
   if(!host.isConnected)return;
   const focus=host.contains(document.activeElement)?document.activeElement?.dataset:null;
@@ -15,10 +16,10 @@ export function mountSectorHeatmap(host,{onStock=()=>{},retry=()=>{}}={}){
  }
  host.onclick=event=>{
   const button=event.target.closest('button');if(!button)return;
-  if(button.dataset.sectorMarket){market=button.dataset.sectorMarket;selected=null;paint();}
-  else if(button.dataset.sectorName){selected=selected===button.dataset.sectorName?null:button.dataset.sectorName;paint();}
+  if(button.dataset.sectorMarket){market=button.dataset.sectorMarket;selected=null;remember();paint();}
+  else if(button.dataset.sectorName){selected=selected===button.dataset.sectorName?null:button.dataset.sectorName;remember();paint();}
   else if(button.dataset.sectorStock)onStock(button.dataset.sectorStock);
   else if(button.hasAttribute('data-sector-retry'))retry();
  };
- return {update(next){payload=next||{};paint();},loading(){payload={...payload,error:false,refreshing:true};paint();},error(){payload={...payload,refreshing:false,error:true};paint();}};
+ return {setMarket(next){if(next!==market){market=next==='US'?'US':'KR';selected=null;remember();}paint();},update(next){payload=next||{};paint();},loading(){payload={...payload,error:false,refreshing:true};paint();},error(){payload={...payload,refreshing:false,error:true};paint();}};
 }

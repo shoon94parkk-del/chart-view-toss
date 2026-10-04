@@ -22,7 +22,7 @@ test('tool identity separates export analysis from past records and comparison',
  assert.equal(surfaceIdentity('more').icon,'analysis');
  assert.equal(new Set(['exports','picks','chart','watch'].map(route=>surfaceIdentity(route).tone)).size,4);
  assert.match(surfaceIdentity('picks').label,/과거.*기록/);
- assert.match(surfaceIdentity('consensus').label,/연간/);
+ assert.match(surfaceIdentity('consensus').label,/기간별/);
  assert.notEqual(uiIcon('exports'),uiIcon('filter'));
  assert.notEqual(uiIcon('filter'),uiIcon('ledger'));
 });
