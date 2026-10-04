@@ -12,7 +12,8 @@ test('수출 데이터 기본 진입은 전체 요약 탭이며 상세 섹션은
   assert.match(view,/\['semiconductor','반도체'\]/);
   assert.match(view,/\['trend','속보·추세'\]/);
   assert.match(view,/exportPanel\('overview',summary\(snapshot\)\+facts\(snapshot\)\+sources\(snapshot\)\)/);
-  assert.match(styles,/\.export-tab-panel\[hidden\]\{display:none\}/);\n  assert.match(view,/<details class="export-source">/);
+  assert.match(styles,/\.export-tab-panel\[hidden\]\{display:none\}/);
+  assert.match(view,/<details class="export-source">/);
 });
 
 test('기존 세부 분석 기능은 삭제하지 않고 관련 탭으로 이동한다',()=>{
