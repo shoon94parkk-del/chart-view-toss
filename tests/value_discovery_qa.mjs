@@ -39,16 +39,18 @@ try {
   }
   await page.locator('.home-selection-link[data-feature-route=picks]').click();await page.locator('[data-pick-key="2026-10-02:005930"] [data-pick-detail]').waitFor({state:'visible'});
   assert.match(await page.locator('[data-pick-key="2026-10-02:005930"] [data-pick-detail]').innerText(),new RegExp(record.reason));
+  const pickRowHeight=await page.locator('.pick-ledger-row').first().evaluate(el=>el.getBoundingClientRect().height);assert.ok(pickRowHeight<=82,`mobile pick row is too tall: ${pickRowHeight}`);
   await page.locator('.pick-ledger-overview summary').click();
   assert.match(await page.locator('.pick-ledger-summary').innerText(),/11.10%/,'unevaluated records do not dilute mean');
   assert.equal(await page.locator('[data-pick-key="2026-09-01:005930"] [data-pick-detail]').isVisible(),false);assert.match(page.url(),/2026-10-02%3A005930/);
   await page.getByRole('button',{name:'홈',exact:true}).click();await page.locator('.home-value-entries [data-feature-route=discover]').click();await page.locator('.analysis-stock').waitFor();
   assert.equal(await page.locator('.analysis-stock').count(),1);assert.equal(await page.locator('.screener-advanced').getAttribute('open'),null);assert.ok(await page.locator('.analysis-stock').first().evaluate(el=>el.getBoundingClientRect().bottom<document.querySelector('.bottom-nav').getBoundingClientRect().top-6),'entire first preset result is readable above the fixed navigation');
   assert.match(await page.locator('.analysis-stock .data-quality-warning').innerText(),/일간 변동 ±35% 이상.*가격 기준과 기업 공시 등 원자료/,'the complete unusual-move warning stays visible');
+  const screenerCardHeight=await page.locator('.analysis-stock').first().evaluate(el=>el.getBoundingClientRect().height);assert.ok(screenerCardHeight<=118,`mobile screener card is too tall even with warning: ${screenerCardHeight}`);
   await page.screenshot({path:`artifacts/value-discovery/${width}-screener.png`});
   await page.locator('.screener-advanced summary').click();await page.locator('[name=volumeMin]').fill('4');assert.equal(await page.locator('.analysis-stock').count(),0);
   await page.locator('[name=volumeMin]').fill('2');await page.locator('.analysis-stock').first().click();await page.locator('#detail-price').waitFor();await page.goBack();await page.locator('.analysis-stock').waitFor();assert.equal(await page.locator('[name=volumeMin]').inputValue(),'2');assert.equal(await page.locator('.screener-advanced').getAttribute('open'),'');
-  await page.goto(base+'/#exports');await page.locator('#export-items').waitFor();await page.locator('[data-export-topic=countries]').click();assert.equal(new URL(page.url()).hash,'#exports');await page.waitForFunction(()=>{const r=document.querySelector('#export-countries h3').getBoundingClientRect();return r.top>=0&&r.bottom<innerHeight-90;});
+  await page.goto(base+'/#exports');await page.locator('[data-export-panel=overview]:not([hidden])').waitFor();await page.getByRole('tab',{name:'국가',exact:true}).click();assert.equal(new URL(page.url()).hash,'#exports');await page.waitForFunction(()=>{const r=document.querySelector('#export-countries h3').getBoundingClientRect();return r.top>=0&&r.bottom<innerHeight-90;});
   await page.goto(base+'/#picks/2026-10-01%3A005930');await page.locator('.pick-ledger-item').first().waitFor();assert.match(await page.locator('.pick-ledger-focus-note').innerText(),/찾지 못/);assert.equal(await page.locator('[data-pick-expand][aria-expanded=true]').count(),0);
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);assert.deepEqual(errors,[]);await context.close();console.log(`${width}px value entry, exact record, preset result, back-state and export jump passed`);
  }
