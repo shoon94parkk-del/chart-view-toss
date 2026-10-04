@@ -105,7 +105,7 @@ function rowMarkup(row,index,displayName){
   return `<article class="pick-ledger-item ${meta.cls}" data-pick-key="${esc(selectionKey(row))}">
     <button type="button" class="pick-ledger-row" data-pick-expand="${esc(id)}" aria-expanded="false">
       <span class="pick-ledger-stock"><strong>${esc(name)}</strong><small>${esc(symbol||row?.code||'')} · ${esc(row?.recommendedDate||'추천일 미제공')}</small></span>
-      <span class="pick-ledger-status-stack"><span class="pick-ledger-status ${meta.cls}">${meta.icon} 기업 근거 · ${meta.label}</span>${pick?.technical?.signal&&technical.order<2?`<span class="pick-ledger-tech-status ${technical.cls}">가격·거래 · ${technical.label}</span>`:''}</span>
+      <span class="pick-ledger-status-stack"><span class="pick-ledger-status ${meta.cls}" aria-label="기업 근거 상태 · ${esc(meta.label)}">${meta.icon} ${meta.label}</span>${pick?.technical?.signal&&technical.order<2?`<span class="pick-ledger-tech-status ${technical.cls}" aria-label="가격·거래 기술 신호 · ${esc(technical.label)}">기술 · ${technical.label}</span>`:''}</span>
       <span class="pick-ledger-return ${tone(row?.returnPct)}">${pct(row?.returnPct)}</span>
       <span class="pick-ledger-prices"><small>추천 ${esc(price(row?.recommendedPrice,row))}</small><b>→</b><small>점검가 ${esc(price(row?.currentPrice,row))}</small></span>
       <span class="pick-ledger-secondary"><em class="${tone(row?.bestReturnPct)}">최고 ${pct(row?.bestReturnPct)}</em></span>
