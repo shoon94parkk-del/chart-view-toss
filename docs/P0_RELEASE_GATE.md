@@ -45,3 +45,5 @@ See `FREE_HOSTING_AND_RELEASE.md` for current rights findings, free-hosting prep
 ## Release rule
 
 Do not submit the public release until every blocking item above is checked. The web preview is a validation surface; the final release decision is based on the Apps in Toss `.ait` bundle running inside the Toss app runtime.
+
+2026-10-04 재심사 보완: Apps in Toss 20260927-6 반려 사유인 “투자 권유가 아님/참고용임을 명확하게 인지할 수 있는 면책 문구”에 대응해 Toss 런타임 첫 콘텐츠 행에 즉시 보이는 면책을 추가하고, 전역 데이터 안내와 정보 화면의 문구를 강화했다. 이 보완은 면책 가시성 대응이며, 위의 `최근 주목받는 종목`/PICK/IDEA LAB 추천성 범위 확인 항목을 승인된 것으로 간주하지 않는다.
