@@ -281,5 +281,5 @@ User-approved new behavior. Home cards include dated observations, questions and
 
 ## 2026-10-05 — mobile density contract
 - User preference: mobile research lists should prioritize scan density. Screener and pick rows should show several stocks per viewport rather than one large card per stock.
-- Current compact targets: screener row min-height 68px before optional warnings; pick ledger collapsed row min-height 70px. Export cards use <=600px density overrides.
+- Current compact targets: screener row min-height 68px before optional warnings; pick ledger collapsed row min-height 62px. Export cards use <=600px density overrides.
 - Preserve all trust metadata and warnings; compact by typography/layout, not by deleting evidence or basis text.
