@@ -43,3 +43,25 @@ test('selection thesis is shown once only when equal and warnings link to their 
  assert.match(html,/2026-10-02:005930[^>]*>.*RSI 하락/s);assert.match(html,/2026-10-02:000660[^>]*>.*거래량 약화/s);
  assert.doesNotMatch(html.split('data-pick-alert-key="2026-10-02:000660"')[1],/RSI 하락/);
 });
+
+test('heatmap list reuses map targets and retains exact prices, changes and source dates',()=>{
+ const view=loadView('heatmapView.js',{HOME_LOGOS:{}}),payload={generatedAt:'2026-10-02T06:30:00Z',results:[{ticker:'005930.KS',price:100000,change:2,marketCap:300,sessionDate:'2026-10-02'},{ticker:'NVDA',price:150.5,change:-1,marketCap:400,sessionDate:'2026-10-01'}]};
+ for(const market of ['KR','US']){
+  const map=view.renderSharedHeatmap(payload,{scope:'full',market});
+  const list=view.renderHeatmapList(payload,{market});
+  const expected=market==='KR'?'005930.KS':'NVDA';assert.match(list,new RegExp('data-stock-detail="'+expected+'"'));assert.match(map,new RegExp('data-stock-detail="'+expected+'"'));
+  assert.match(list,market==='KR'?/100,000원.*\+2\.00%.*2026-10-02/s:/150\.5.*-1\.00%.*2026-10-01/s);
+  assert.doesNotMatch(list,new RegExp('data-stock-detail="'+(market==='KR'?'NVDA':'005930.KS')+'"'));
+ }
+});
+test('empty saved research provides one action to start investigating a stock',()=>{
+ const view=loadView('savedResearchView.js',{savedResearch:()=>({rows:[],error:false})});
+ assert.match(view.savedResearchHtml(x=>x),/data-open-stock-search/);assert.equal(view.savedResearchHtml(x=>x,{compact:true}),'');
+});
+
+import {recentSelections,selectionCardMarkup} from '../src/valueDiscovery.js';
+test('Home shows two recent records even when the source supplies three',()=>{
+ const view=loadView('homeExtras.js',{HOME_STOCK_META:{},recentSelections,selectionCardMarkup,window:{},document:{readyState:'loading',addEventListener(){}},MutationObserver:class{}});
+ const host={isConnected:true,innerHTML:'',querySelectorAll:()=>[]};view.paintPicks(host,{day:{tradeDate:'2026-10-02',top3:['005930.KS','000660.KS','373220.KS'].map(symbol=>({symbol,name:symbol}))}});
+ assert.equal((host.innerHTML.match(/home-selection-link/g)||[]).length,2);
+});

@@ -37,6 +37,7 @@ try{
   assert.equal(calls.monthly,1,'radar retry preserves monthly request');
   await page.locator('[data-export-item="semiconductor"]').first().click();
   await page.locator('[data-export-item-retry]').click();
+  await page.getByText('반도체 세부 HS·국가 비교 보기',{exact:true}).click();
   await page.locator('[data-export-country-retry]').waitFor();
   assert.equal(calls.item,2,'item retry bypasses cached unavailable payload');
   const previous=await page.locator('.export-detail-chart-stack').innerHTML();

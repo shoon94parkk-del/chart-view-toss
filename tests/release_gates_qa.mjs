@@ -9,13 +9,13 @@ try {
  const base=process.env.QA_BASE_URL||'http://127.0.0.1:4173';
  for(const [path,title] of [['chartviewHome','수익률 비교'],['chartview/chartviewHome','수익률 비교'],['heatmap','시장 히트맵'],['consensus','실적 전망 조회'],['bands','역사적 밸류에이션'],['discover','조건별 종목 찾기']]){
   await page.goto(`${base}/${path}?diagnostics=1`);
-  await page.getByRole('heading',{name:title,exact:true,level:2}).waitFor();
+  await page.getByRole('heading',{name:title,exact:true,level:1}).waitFor();
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true,`${path} overflow`);
  }
  await page.goto(`${base}/?diagnostics=1#detail/%ZZ`);
  await page.locator('[data-tab="more"]').first().click();
  await page.getByRole('heading',{name:'분석',exact:true,level:1}).waitFor();
- await page.getByRole('heading',{name:'분석과 도구',exact:true,level:2}).waitFor();
+ assert.equal(await page.getByRole('heading',{name:'분석',exact:true,level:1}).count(),1);
  // Large text and long labels must remain reachable at the narrow supported width.
  await page.addStyleTag({content:'body,button,input,select{font-size:24px!important}'});
  await page.locator('[data-tab="info"]').first().click();

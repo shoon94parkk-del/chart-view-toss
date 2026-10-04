@@ -218,7 +218,7 @@ function paintPicks(host, payload) {
 
   host.innerHTML =
     '<div class="home-pick-meta">' + esc(dateLabel) + ' · 종목을 눌러 기록 확인</div>' +
-    recentSelections(payload).map(row=>selectionCardMarkup(row)).join('');
+    recentSelections(payload).slice(0,2).map(row=>selectionCardMarkup(row)).join('');
   window.__chartviewBindNav?.();
   const paintToken=host._pickPaintToken=(host._pickPaintToken||0)+1;
   const refreshStatuses=async()=>{

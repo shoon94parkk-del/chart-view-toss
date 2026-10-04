@@ -7,10 +7,11 @@ const quote={ticker:'005930.KS',name:'삼성전자',price:100000,change:2,curren
 const record={...quote,symbol:quote.ticker,code:'005930',recommendedDate:'2026-10-02',recommendedPrice:90000,currentPrice:100000,returnPct:11.1,reason:'해당 날짜에 기록된 실제 선정 이유'};
 await fs.mkdir('artifacts/home-journey',{recursive:true});
 try {
- for(const width of [320,390,430])for(const scenario of ['ready-empty','ready-saved','failed','null-macro']){
+ for(const width of [320,390,430,1280])for(const scenario of ['ready-empty','ready-saved','watch-20','failed','null-macro']){
   const height=width===320?693:844;
   const context=await browser.newContext({viewport:{width,height}}),page=await context.newPage(),errors=[];
   page.on('pageerror',e=>errors.push(e.message));
+  if(scenario==='watch-20')await page.addInitScript(()=>localStorage.setItem('chartview-toss-watchlist-v1',JSON.stringify(Array.from({length:20},(_,i)=>({symbol:i===0?'005930.KS':'QA'+i,name:i===0?'삼성전자':'관심 '+i})))));
   if(scenario==='ready-saved')await page.addInitScript(()=>localStorage.setItem('chartview-toss-watchlist-v1',JSON.stringify([{symbol:'005930.KS',name:'삼성전자'}])));
   await page.route('https://chart-view-pkv8.onrender.com/**',async route=>{
    const path=new URL(route.request().url()).pathname;let body={results:[],items:[]};
@@ -35,6 +36,8 @@ try {
   }
   if(scenario==='failed')await page.locator('#retry-market').waitFor();
   else await page.locator('#market-card .quote-card').first().waitFor();
+  await page.locator('.home-change-card').first().waitFor();
+  if(scenario==='watch-20'){assert.equal(await page.locator('#home-watchlist .watch-rich-row').count(),3);assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('chartview-toss-watchlist-v1')).length),20);}
   const geometry=await page.evaluate(()=>{
    const rect=s=>{const r=document.querySelector(s).getBoundingClientRect();return {top:r.top,bottom:r.bottom};};
    return {market:rect('.market-section'),entries:rect('.home-value-entries'),changes:rect('.home-changes'),watch:rect('.watch-section'),records:rect('#home-top-picks-section'),nav:rect('.bottom-nav')};
@@ -51,7 +54,7 @@ try {
   assert.equal(await page.locator('.bottom-nav [aria-current="page"]').innerText(),'홈');
   assert.equal(await page.locator('.home-pick-performance').count(),0,'aggregate performance belongs in records');
   assert.match(await page.locator('.home-selection-reason').first().innerText(),new RegExp(record.reason));
-  assert.ok(geometry.changes.top<height*2,'first observation arrives within two screens');
+  assert.ok(await page.locator('.home-change-card').first().evaluate(el=>el.getBoundingClientRect().bottom+scrollY)<height*2,'first observation arrives within two screens');
   if(scenario==='ready-saved')assert.match(await page.locator('#home-watchlist').innerText(),/삼성전자/);
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
   await page.goto(base+'/#home');await page.locator('.home-selection-link').waitFor();

@@ -23,7 +23,7 @@ try{
   await page.goto(base+'/#home');await page.locator('#market-card .quote-card').first().waitFor();await page.waitForTimeout(500);
   assert.equal(calls,0,'sector API is not requested on initial Home');
   assert.equal(await page.locator('[data-home-sectors]').count(),0,'Home offers a stock preview, full sector exploration is on the full screen');
-  await page.goto(base+'/#heatmap');await page.locator('[data-heatmap-view=sectors]').click();
+  await page.goto(base+'/#heatmap');await page.locator('[data-heatmap-display=list]').click();await page.locator('.heatmap-readable-list button').first().waitFor();assert.match(await page.locator('.heatmap-readable-list').innerText(),/삼성전자.*100,000원.*2026-10-01/s);await page.locator('[data-full-market=US]').click();assert.match(await page.locator('.heatmap-readable-list').innerText(),/엔비디아/);await page.locator('[data-full-market=KR]').click();await page.locator('[data-heatmap-display=map]').click();await page.locator('[data-heatmap-view=sectors]').click();
   const host=page.locator('[data-full-sectors]');await host.scrollIntoViewIfNeeded();await host.locator('.sector-tile').first().waitFor();
   assert.match(await host.innerText(),/\+1\.00%/,'KR cap-weighted mean');
   await host.locator('[data-sector-market="US"]').click();assert.equal(await host.locator('.sector-tile').count(),11);
