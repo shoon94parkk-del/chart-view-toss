@@ -354,3 +354,11 @@ Saved investment baselines are device records: show them before network completi
 
 ## Insight follow-up contract — 0.15.0
 Keep original actionStatus priority/count/filter arithmetic but label combined priority explicitly. Do not turn TECH_SELL_REVIEW into a fundamental SELL_REVIEW display. Scores, zero and raw status values remain accessible in detail. Price-basis filtering is optional and URL-restorable; unknown daily moves are not flagged. Revisit observation cannot acknowledge a report or overwrite saved condition baselines. Older/incompatible/missing peer reports never imply a satisfied condition. No automated Home financial fetch. Only explicit check/detail observation persists while the owning view is connected; account-scoped REVIEW_KEY remains unchanged.
+
+
+## DRAM spot price in exports
+- `/api/memory-spot` is lazy and scoped to the Exports memory section. Do not move it into Home, startup, quote polling, heatmap, or stock-detail work.
+- A TrendForce/memory-spot failure must not blank or delay valid Customs export sections. Retry only the failed spot module.
+- Keep provider observation date, stale/latest state and source link visible. Do not label Chart View collection time as the spot-price observation date.
+- Do not add paid historical TrendForce backfill to make the chart look longer. Trend means Chart View's own accumulated public-latest observations.
+- Keep the mini trend graph lightweight (inline SVG or equivalent); do not force the shared heavyweight chart runtime onto the exports first paint for this feature.
