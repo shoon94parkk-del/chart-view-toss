@@ -902,7 +902,7 @@ async function renderMacro({force=false}={}){
 
    const summary=document.querySelector('#macro-summary');summary.classList.remove('skeleton');
    const level=s.level||'yellow';const label=level==='red'?'위험 신호 많음':level==='green'?'안정 신호 많음':'신호 혼재';
-   summary.innerHTML=`<div class="macro-signal-orb ${esc(level)}"><span></span></div><div class="macro-summary-copy"><span>규칙 기반 지표 요약 <b class="status-badge ${esc(level)}">${label}</b></span><strong>${esc(s.text||'개별 지표를 확인해주세요.')}</strong><small>${staleCount?'일부 값은 최근 관측이 아닐 수 있어요. 관측일과 출처를 함께 확인해주세요. ':''}${esc(s.notice||'시장 환경 설명용 요약이며 투자 행동을 권유하지 않아요.')}</small></div>`;
+   summary.innerHTML=`<div class="macro-signal-orb ${esc(level)}"><span></span></div><div class="macro-summary-copy"><span>규칙 기반 지표 요약 <b class="status-badge ${esc(level)}">${label}</b></span>${String(s.text||'').includes('|')?`<ul class="macro-observations">${String(s.text).split('|').map(part=>`<li>${esc(part.trim())}</li>`).join('')}</ul>`:`<details class="macro-summary-details"><summary>지표 요약 원문 보기</summary><p>${esc(s.text||'개별 지표를 확인해주세요.')}</p></details>`}<small>${staleCount?'일부 값은 최근 관측이 아닐 수 있어요. 관측일과 출처를 함께 확인해주세요. ':''}${esc(s.notice||'시장 환경 설명용 요약이며 투자 행동을 권유하지 않아요.')}</small></div>`;
 
    const groups=new Map();
    (d?.results||[]).forEach(row=>{const category=macroCategory(row);if(!groups.has(category))groups.set(category,[]);groups.get(category).push(row)});
