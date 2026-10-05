@@ -19,12 +19,13 @@ test('수출 데이터는 전체 요약 중심 4개 탭으로 구성한다',()=>
 test('세부 분석은 품목 국가 반도체 탭으로 유지한다',()=>{
   assert.match(view,/exportPanel\('products',items\(snapshot\)\+breadth\(snapshot\)\+quadrant\(snapshot\)\)/);
   assert.match(view,/exportPanel\('countries',regions\(snapshot\)\)/);
-  assert.match(view,/exportPanel\('semiconductor',memorySpotPlaceholder\(\)\+semiconductorReport\(snapshot\)\)/);
+  assert.match(view,/exportPanel\('semiconductor',[^\n]*semiconductorReport\(snapshot\)/);
   assert.doesNotMatch(view,/exportPanel\('trend'/);
 });
 
-test('잠정 레이더는 전체 요약이 열릴 때 비동기로 시작하고 반도체 가격은 반도체 탭에서 시작한다',()=>{
-  assert.match(view,/panelKey==='semiconductor'&&!memorySpotCleanup/);
+test('잠정 레이더는 전체 요약에서 시작하고 반도체 가격은 별도 화면으로 연결한다',()=>{
+  assert.doesNotMatch(view,/mountMemorySpot|memorySpotCleanup/);
+  assert.match(view,/data-tab="memory"/);
   assert.match(view,/panelKey==='overview'&&!provisionalLoaded/);
   assert.doesNotMatch(view,/paint\(host,snapshot,bindNav,openItemDetail\);\s*memorySpotCleanup=mountMemorySpot/);
 });

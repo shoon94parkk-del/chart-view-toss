@@ -410,3 +410,9 @@ Keep original actionStatus priority/count/filter arithmetic but label combined p
 - Do not restore tall educational question/limit blocks inside Home change cards. Home should show date + key numeric change + one secondary observation + a compact route action.
 - Home selection preview should expose aggregate performance and recent row status/return without recreating the full PICK ledger. Keep each recent selection row compact and preserve exact date/code routing.
 - In the provisional export radar, checkpoint bars/amounts are semiconductor figures. Any 1~10d, 1~20d or full-month checkpoint label must explicitly say semiconductor; the separate top-level total-export figure must remain distinguishable.
+
+
+## 2026-10-05 User-approved compact analysis changes
+- Price API is requested only from the independent Analysis semiconductor-price screen, never Export tabs or Home. TrendForce source/date/original link and five price families remain; legacy family URLs hand off to the new route.
+- Full-map control surface is KR/US only. Grouped stocks retain the complete payload, including unknown classifications; no classification exclusion may silently shrink the stock universe. Group area is a readability layout, not official sector return/share. Small cells have sector-header member disclosure.
+- Combined PICK status must match counts/filter/row. Keep technical warnings only in expanded records and preserve warnings even if the score is missing. Core performance/KPI and compact 64px rows remain visible. Do not confuse combined red status with fundamental SELL_REVIEW in expanded details.

@@ -23,22 +23,24 @@ try{
   await page.goto(base+'/#home');await page.locator('#market-card .quote-card').first().waitFor();await page.waitForTimeout(500);
   assert.equal(calls,0,'sector API is not requested on initial Home');
   assert.equal(await page.locator('[data-home-sectors]').count(),0,'Home offers a stock preview, full sector exploration is on the full screen');
-  await page.goto(base+'/#heatmap');await page.locator('[data-heatmap-display=list]').click();await page.locator('.heatmap-readable-list button').first().waitFor();assert.match(await page.locator('.heatmap-readable-list').innerText(),/삼성전자.*100,000원.*2026-10-01/s);await page.locator('[data-full-market=US]').click();assert.match(await page.locator('.heatmap-readable-list').innerText(),/엔비디아/);await page.locator('[data-full-market=KR]').click();await page.locator('[data-heatmap-display=map]').click();await page.locator('[data-heatmap-view=sectors]').click();
-  const host=page.locator('[data-full-sectors]');await host.scrollIntoViewIfNeeded();await host.locator('.sector-tile').first().waitFor();
-  assert.match(await host.innerText(),/\+1\.00%/,'KR cap-weighted mean');
-  await host.locator('[data-sector-market="US"]').click();assert.equal(await host.locator('.sector-tile').count(),11);
-  await host.locator('[data-sector-name="기술"]').click();
-  if(width===390){await page.waitForTimeout(3300);assert.equal(await host.locator('.sector-tile').count(),11,'empty refresh cannot blank cached tiles');assert.equal(await host.locator('.sector-members').count(),1,'empty refresh retains expanded members');}
-  await page.waitForFunction(()=>document.querySelector('[data-full-sectors] .sector-load-status')?.textContent.trim()==='',{},{timeout:10000});
-  assert.equal(await host.locator('[data-sector-market="US"]').getAttribute('aria-pressed'),'true');assert.equal(await host.locator('.sector-members').count(),1,'poll retains expanded sector');
+  await page.goto(base+'/#heatmap');const host=page.locator('.shared-heatmap-analysis');await host.locator('.market-map-stock').first().waitFor();
+  assert.equal(await page.locator('[data-heatmap-view],[data-heatmap-display]').count(),0,'only market selector remains');
+  assert.equal(await host.locator('.market-map-stock').count(),2);assert.match(await host.innerText(),/삼성전자.*\+2\.00%/s);
+  await host.locator('[data-map-sector="반도체"]').click();assert.match(await host.locator('.market-map-members').innerText(),/삼성전자.*100,000원.*\+2\.00%/s);
+  await page.locator('[data-full-market=US]').click();assert.equal(await host.locator('.market-map-sector').count(),11);
+  await host.locator('[data-map-sector="기술"]').click();
+  if(width===390){await page.waitForTimeout(3300);assert.equal(await host.locator('.market-map-stock').count(),11,'empty refresh cannot blank cached tiles');assert.equal(await host.locator('.market-map-members').count(),1,'empty refresh retains expanded members');}
+  await page.waitForTimeout(6500);
+  assert.equal(await page.locator('[data-full-market=US]').getAttribute('aria-pressed'),'true');assert.equal(await host.locator('.market-map-members').count(),1,'poll retains expanded sector');
+  assert.doesNotMatch(await host.innerText(),/-8\.00%/,'older Home quote must not overwrite full quotes');
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
   await host.screenshot({path:`artifacts/sector-heatmap/${width}-US.png`});
-  const beforeDetailScreens=screenCalls;await host.locator('[data-sector-stock="NVDA"]').click();await page.locator('.quote-main').waitFor();await page.waitForTimeout(300);
+  const beforeDetailScreens=screenCalls;await host.locator('.market-map-members [data-stock-detail="NVDA"]').click();await page.locator('.quote-main').waitFor();await page.waitForTimeout(300);
   assert.equal(screenCalls,beforeDetailScreens,'US detail does not download additional KR universe');
-  const before=calls;await page.goto(base+'/#heatmap');await page.locator('[data-heatmap-view=sectors]').click();await page.locator('[data-full-sectors] .sector-tile').first().waitFor();
-  assert.ok(calls<=before+1,'stock and sector maps share one payload or reuse fresh client cache');
-  await page.locator('[data-full-sectors]').scrollIntoViewIfNeeded();await page.locator('[data-full-sectors]').screenshot({path:`artifacts/sector-heatmap/${width}-KR.png`});
-  if(width===320){fail=true;await page.goto(base+'/#home');await page.goto(base+'/#heatmap');await page.reload();await page.locator('[data-heatmap-view=sectors]').click();await page.locator('[data-full-sectors]').scrollIntoViewIfNeeded();await page.locator('[data-sector-retry]').waitFor({timeout:10000});assert.ok(await page.locator('[data-full-sectors] .sector-tile').count()>0,'retain cached sectors on error');fail=false;await page.locator('[data-sector-retry]').click();await page.waitForFunction(()=>!document.querySelector('[data-sector-retry]'));}
+  const before=calls;await page.goto(base+'/#heatmap');await page.locator('.market-map-stock').first().waitFor();
+  assert.ok(calls<=before+1,'grouped map reuses one payload or fresh client cache');
+  await page.locator('[data-full-market=KR]').click();await host.screenshot({path:`artifacts/sector-heatmap/${width}-KR.png`});
+  if(width===320){fail=true;await page.goto(base+'/#home');await page.goto(base+'/#heatmap');await page.reload();await page.locator('[data-full-heatmap-retry]').waitFor({timeout:10000});assert.ok(await host.locator('.market-map-stock').count()>0,'retain cached map on error');fail=false;await page.locator('[data-full-heatmap-retry]').click();await page.waitForFunction(()=>!document.querySelector('[data-full-heatmap-retry]'));}
   assert.deepEqual(errors,[]);await ctx.close();console.log(`${width}px sector loading, weighting, selection, cache, navigation and overflow passed`);
  }
 }finally{await browser.close();}

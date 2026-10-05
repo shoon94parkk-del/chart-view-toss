@@ -74,7 +74,7 @@ const toneClass = (value) => {
   return (numeric > 0 ? 'home-hm-up-' : 'home-hm-down-') + level;
 };
 
-const layoutTreemap = (items, x = 0, y = 0, width = 1, height = 1, output = []) => {
+export const layoutTreemap = (items, x = 0, y = 0, width = 1, height = 1, output = []) => {
   if (!items.length) return output;
   if (items.length === 1) {
     output.push({ item: items[0].item, x, y, width, height });
@@ -119,7 +119,7 @@ const compactLabel = (ticker, name) => {
   return clean;
 };
 
-const marketRows = (payload, market, scope = 'home') => {
+export const marketRows = (payload, market, scope = 'home') => {
   const rows = Array.isArray(payload?.results) ? payload.results : [];
   return rows
     .map((row) => {

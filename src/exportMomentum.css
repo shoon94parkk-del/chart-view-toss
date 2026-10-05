@@ -439,3 +439,6 @@
   .export-source-body{padding-top:7px}
   .export-source-body>p{font-size:8.5px;line-height:1.4}
 }
+
+.memory-price-attribution{font-size:11px;color:#167c75;margin:0 0 10px;line-height:1.6}
+.memory-price-page .dram-spot-intro{margin:10px 0;padding:10px;font-size:11px}

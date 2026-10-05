@@ -28,3 +28,9 @@ test('new full quotes cannot roll back to older Home observations',()=>{
  assert.equal(payload.results[0].change,5);assert.equal(payload.results[0].sessionDate,'2026-10-01');
  clearLiveQuotes();
 });
+test('primary product and industry distinguish diversified electronics and holding companies from keyword exposure',()=>{
+ assert.equal(sectorForRow({market:'KR',industry:'전자부품 제조업',mainProducts:'수동소자 (MLCC), 카메라모듈, 반도체패키지 기판'}),'전기·전자');
+ assert.equal(sectorForRow({market:'KR',industry:'통신 및 방송 장비 제조업',mainProducts:'플라즈마 디스플레이 패널 TV,전자제품(세탁기외)'}),'전기·전자');
+ assert.equal(sectorForRow({market:'KR',industry:'기타 금융업',mainProducts:'지주회사'}),'지주회사');
+ assert.equal(sectorForRow({market:'KR',industry:'금융업',mainProducts:'은행 금융지주'}),'금융');
+});

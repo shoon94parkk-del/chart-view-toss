@@ -34,11 +34,11 @@ test('narrow analysis headers reduce title size instead of wrapping by default',
 });
 
 
-test('pick alerts stay collapsed so the list starts early on mobile',()=>{
+test('pick warning details live inside individual records',()=>{
   const js=readFileSync(new URL('../src/pickLedger.js',import.meta.url),'utf8');
-  assert.match(js,/<details class="pick-ledger-tech-alert"/);
+  assert.doesNotMatch(js,/<details class="pick-ledger-tech-alert"/);
   assert.match(js,/<details class="pick-ledger-policy"/);
-  assert.match(js,/data-pick-tech-alert-summary/);
+  assert.doesNotMatch(js,/pick-ledger-tech-status/);
   assert.doesNotMatch(js,/<details class="pick-ledger-tech-alert"[^>]* open/);
   assert.doesNotMatch(js,/<details class="pick-ledger-policy"[^>]* open/);
 });

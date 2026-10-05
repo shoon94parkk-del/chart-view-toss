@@ -33,15 +33,19 @@ test('business report uses readable KRW units while retaining original public va
 
 import {selectionKey} from '../src/valueDiscovery.js';
 import {exportCompanyCandidates,technicalWarning} from '../src/insightModel.js';
-test('selection thesis is shown once only when equal and warnings link to their own dated records',()=>{
+test('selection thesis is shown once and technical warnings are inside their own dated record',()=>{
  const view=loadView('pickLedger.js',{selectionKey,technicalWarning});
  const a={symbol:'005930.KS',recommendedDate:'2026-10-02',name:'삼성전자',reason:'메모리 수요',monitor:{originalThesis:{summary:'메모리 수요'},technical:{reasons:['RSI 하락']}}};
  assert.equal((view.rowMarkup(a,0,()=>a.name).match(/메모리 수요/g)||[]).length,1);
  assert.match(view.rowMarkup({...a,monitor:{originalThesis:{summary:'재고 개선'}}},0,()=>a.name),/메모리 수요.*재고 개선/s);
  const b={...a,symbol:'000660.KS',name:'SK하이닉스',monitor:{technical:{reasons:['거래량 약화']}}};
- const html=view.technicalAlertRows([a,b],x=>x);
- assert.match(html,/2026-10-02:005930[^>]*>.*RSI 하락/s);assert.match(html,/2026-10-02:000660[^>]*>.*거래량 약화/s);
- assert.doesNotMatch(html.split('data-pick-alert-key="2026-10-02:000660"')[1],/RSI 하락/);
+ const html=view.rowMarkup(a,0,x=>x),other=view.rowMarkup(b,1,x=>x);
+ assert.match(html,/data-pick-detail[^>]*hidden>.*RSI 하락/s);assert.match(other,/data-pick-detail[^>]*hidden>.*거래량 약화/s);
+ assert.doesNotMatch(other,/RSI 하락/);
+ const warned=view.rowMarkup({...a,monitor:{status:'KEEP',technical:{signal:'TECH_SELL_REVIEW',reasons:['RSI 하락']}}},0,x=>x);
+ const collapsed=warned.slice(0,warned.indexOf('pick-ledger-detail"'));
+ assert.match(collapsed,/재점검/);assert.doesNotMatch(collapsed,/기술|강한 경고/);assert.match(warned,/강한 기술 경고/);
+
 });
 
 test('heatmap list reuses map targets and retains exact prices, changes and source dates',()=>{
