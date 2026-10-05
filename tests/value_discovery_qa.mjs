@@ -39,7 +39,7 @@ try {
   }
   await page.locator('.home-selection-link[data-feature-route=picks]').click();await page.locator('[data-pick-key="2026-10-02:005930"] [data-pick-detail]').waitFor({state:'visible'});
   assert.match(await page.locator('[data-pick-key="2026-10-02:005930"] [data-pick-detail]').innerText(),new RegExp(record.reason));
-  const pickRowHeight=await page.locator('.pick-ledger-row').first().evaluate(el=>el.getBoundingClientRect().height);assert.ok(pickRowHeight<=96,`mobile pick row exceeds dense layout target: ${pickRowHeight}`);
+  const pickRowHeight=await page.locator('.pick-ledger-row').first().evaluate(el=>el.getBoundingClientRect().height);assert.ok(pickRowHeight<=64,`mobile pick row exceeds two-line density target: ${pickRowHeight}`);
   await page.locator('.pick-ledger-overview summary').click();
   assert.match(await page.locator('.pick-ledger-summary').innerText(),/11.10%/,'unevaluated records do not dilute mean');
   assert.equal(await page.locator('[data-pick-key="2026-09-01:005930"] [data-pick-detail]').isVisible(),false);assert.match(page.url(),/2026-10-02%3A005930/);
