@@ -150,6 +150,13 @@ export function formatUsdBillion(value,{digits=1}={}){
   })+'억달러';
 }
 
+export function formatSignedUsdBillion(value,{digits=1}={}){
+  const number=finite(value);
+  if(number===null)return '-';
+  const formatted=formatUsdBillion(Math.abs(number),{digits});
+  return `${number>0?'+':number<0?'-':''}${formatted}`;
+}
+
 export function formatSignedPct(value,{digits=1}={}){
   const number=finite(value);
   if(number===null)return '-';
@@ -258,6 +265,8 @@ export function normalizeExportItemDetail(raw={}){
   const history=(Array.isArray(raw.history)?raw.history:[]).map(row=>({
     period:text(row?.period),
     exportsUsdBillion:finite(row?.exportsUsdBillion),
+    priorExportsUsdBillion:finite(row?.priorExportsUsdBillion),
+    deltaUsdBillion:finite(row?.deltaUsdBillion),
     exportYoY:finite(row?.exportYoY),
     exportMoM:finite(row?.exportMoM),
     exportWeightKg:finite(row?.exportWeightKg),
