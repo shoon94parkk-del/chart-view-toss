@@ -5,7 +5,7 @@ export const GURU_STRATEGIES={
  lynch:{name:'린치',label:'성장과 가격',intro:'과거 주당이익 성장과 연간 실적 대비 가격을 함께 확인해요.',limits:'과거 성장은 미래 성장을 보장하지 않아요. 예상 실적이나 TTM 기준 PEG가 아니에요.',questions:['최근 성장은 본업에서 발생했나요?','향후에도 이익이 늘 근거가 있나요?','재고·매출채권이 매출보다 빠르게 늘고 있나요?']},
  oneil:{name:'오닐',label:'실적·돌파',intro:'실적 성장과 거래량을 동반한 최근 돌파를 함께 확인해요.',limits:'CAN SLIM의 정량 일부예요. 신제품·기관 수급·차트 패턴·시장 추세는 확인하지 않아요.',questions:['실적 성장이 일회성 이익 때문인가요?','돌파 후 가격과 거래량이 유지되고 있나요?','전체 시장과 업종 흐름도 뒷받침하나요?']},
  minervini:{name:'미너비니',label:'강한 추세',intro:'이동평균의 상승 정렬과 시장 안에서 강한 가격 흐름을 찾아요.',limits:'추세 조건 조회예요. VCP 패턴·매수 시점·손절·실적을 판단하지 않아요. 상대강도는 RSI나 IBD RS Rating이 아니에요.',questions:['상승 추세가 실적 변화와 연결되나요?','변동성과 거래량이 안정되고 있나요?','추세가 꺾였다고 판단할 조건은 무엇인가요?']},
- greenblatt:{name:'그린블라트',label:'수익성·가격',intro:'수익성 좋은 기업 중 실적 대비 가격이 낮은 기업을 살펴봐요.',limits:'ROA·PER 대안이에요. EBIT/EV 매직포뮬러가 아니며, 영업 외·일회성 이익도 포함될 수 있어요.',questions:['높은 ROA가 일회성 이익에서 나왔나요?','낮은 PER에 구조적 이유가 있나요?','이익에 비해 부채·현금과 투자 부담은 어떤가요?']},
+ greenblatt:{name:'그린블라트',label:'수익성·가격',intro:'수익성 좋은 기업 중 실적 대비 가격이 낮은 기업을 살펴봐요.',limits:'ROA·PER 대안이에요. 선정은 확정 연간 실적 기준이며, 현재 TTM·예상 지표는 별도 재확인 값이에요. EBIT/EV 매직포뮬러가 아니며 영업 외·일회성 이익도 포함될 수 있어요.',questions:['높은 ROA가 일회성 이익에서 나왔나요?','최근 TTM 이익도 연간 선정 당시 수준을 유지하나요?','낮은 PER에 구조적 이유가 있나요?']},
 };
 export const guruRowMetrics={buffett:['roeAvg3','debtRatio'],lynch:['epsCagr3','historicalPEG'],oneil:['quarterEpsGrowth','breakoutVolumeRatio'],minervini:['relativeStrengthPercentile','distance52HighPct'],greenblatt:['annualROA','annualPE']};
 export function validateGuruSnapshot(data){
@@ -21,6 +21,12 @@ export function validateGuruSnapshot(data){
 export function filterGuruResults(rows,{query='',market=''}={},strategy=''){
  const q=String(query).trim().toLocaleLowerCase('ko-KR');
  return rows.filter(r=>(!market||r.market===market)&&(!q||`${r.name} ${r.symbol}`.toLocaleLowerCase('ko-KR').includes(q))).sort((a,b)=>strategy==='greenblatt'?(a.metrics.annualPE-b.metrics.annualPE||a.symbol.localeCompare(b.symbol)):(a.name.localeCompare(b.name,'ko-KR')||a.symbol.localeCompare(b.symbol)));
+}
+export function greenblattCurrentCheck(value){
+ const roa=Number.isFinite(value?.roa)?value.roa:null,pe=Number.isFinite(value?.trailingPE)?value.trailingPE:null,forwardPE=Number.isFinite(value?.forwardPE)?value.forwardPE:null,trailingEPS=Number.isFinite(value?.trailingEPS)?value.trailingEPS:null;
+ const provenFailure=(roa!==null&&roa<25)||(pe!==null&&(pe<5||pe>20))||(trailingEPS!==null&&trailingEPS<=0);
+ const status=provenFailure?'failed':roa===null||pe===null?'unknown':'matched';
+ return {status,roa,trailingPE:pe,forwardPE,trailingEPS};
 }
 export function guruViewStatus(s){
  if(s.matchedCount>0)return {status:'ready'};
