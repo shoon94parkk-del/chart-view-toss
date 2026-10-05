@@ -336,6 +336,35 @@ export function normalizeExportItemDetail(raw={}){
   };
 }
 
+export function normalizeExportMomentumMap(raw={}){
+  const validSignals=new Set(['acceleration','turnaround','slowing','weak','steady','unknown']);
+  const items=(Array.isArray(raw.items)?raw.items:[]).map(row=>{
+    const signal=text(row?.signal);
+    return {
+      key:text(row?.key),
+      name:text(row?.name),
+      period:text(row?.period),
+      exportsUsdBillion:finite(row?.exportsUsdBillion),
+      exportYoY:finite(row?.exportYoY),
+      previousExportYoY:finite(row?.previousExportYoY),
+      deltaYoYPp:finite(row?.deltaYoYPp),
+      avg3mYoY:finite(row?.avg3mYoY),
+      acceleration3mPp:finite(row?.acceleration3mPp),
+      latestPhase:text(row?.latestPhase),
+      signal:validSignals.has(signal)?signal:'unknown',
+      signalLabel:text(row?.signalLabel)||'판단 보류',
+      note:text(row?.note),
+    };
+  }).filter(row=>row.key&&row.name&&row.exportYoY!==null);
+  return {
+    schemaVersion:Number(raw.schemaVersion)||1,
+    period:text(raw.period),
+    items,
+    meta:raw.meta&&typeof raw.meta==='object'?raw.meta:{},
+  };
+}
+
+
 export function normalizeExportProvisionalRadar(raw={}){
   const normalizeRadarMetric=(metric={})=>({
     exportsUsdBillion:finite(metric?.exportsUsdBillion),
