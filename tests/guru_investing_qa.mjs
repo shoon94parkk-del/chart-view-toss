@@ -66,12 +66,13 @@ try{
    assert.match(page.url(),new RegExp('gurus/'+name));
    assert.equal(await page.locator(`[data-guru-strategy=${name}]`).getAttribute('aria-pressed'),'true');
    assert.ok((await page.locator('.guru-row').first().boundingBox()).height<=88,`${name} row must stay compact`);
-   const text=await page.locator('.guru-evidence').innerText();
-   assert.match(text,name==='oneil'?/단일3개월/:name==='minervini'?/253|273거래일/:/ROA\/PER 대안/);
+    let text=await page.locator('.guru-evidence').innerText();
+    assert.match(text,name==='oneil'?/단일3개월/:name==='minervini'?/253|273거래일/:/ROA\/PER 대안/);
     if(name==='greenblatt'){
-     await page.locator('.guru-current-summary').waitFor();
+     await page.waitForFunction(()=>document.querySelector('.guru-current-summary')?.textContent?.includes('TTM 재확인 · 충족'));
      assert.match(await page.locator('.guru-current-summary').innerText(),/TTM 재확인.*충족/);
      assert.match(await page.locator('.guru-reason-label').first().innerText(),/2025 연간.*TTM 충족/);
+     text=await page.locator('.guru-evidence').innerText();
      assert.match(text,/2025년 확정 실적 \+ 2026-10-02 종가/);
      assert.match(text,/TTM ROA 30%.*TTM PER 12배.*Forward PER 10배/);
     }
