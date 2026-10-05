@@ -378,3 +378,9 @@ Keep original actionStatus priority/count/filter arithmetic but label combined p
 - Pick ledger collapsed row stays <=96px in the mobile QA fixture while preserving name, date/symbol, status, return, recommended/current prices and best return. Detailed thesis/evidence remains expandable below the row.
 - Export mobile cards use compact spacing under 600px. Do not restore desktop-sized 20px+ headings or 15px+ card padding broadly on mobile.
 - Compactness must not reduce primary interactive targets below 44px when the control itself is the touch target; entire stock rows remain larger than 44px.
+
+
+## Pick advisory density
+- The picks page should reach the record list quickly on 320~430px screens. Technical-warning details and the automatic-sell disclaimer remain accessible but default collapsed.
+- Do not expand advisory panels by default just to surface explanatory copy. Keep the warning counts/summary visible in the collapsed summary and full evidence inside the expandable body.
+- Never remove the underlying technical warning or sell-review disclaimer to save space.

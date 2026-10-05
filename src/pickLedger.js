@@ -129,8 +129,8 @@ export async function renderPickLedger({shell,bindNav,displayName,focusKey=null}
     <section class="task-head pick-ledger-head"><div><span class="page-kicker">CHARTVIEW</span><h2>선정 기록·성과</h2><p>과거에 선정한 이유와 이후 성과·점검 내용을 확인해요. 실시간 인기 순위가 아니에요.</p></div></section>
     <details class="pick-ledger-overview"><summary>전체 성과·상태 요약 보기</summary><section class="pick-ledger-summary" id="pick-ledger-summary">${loadingIndicator('선정 기록을 불러오고 있어요')}<div class="skeleton quote"></div></section>
     <section class="pick-ledger-status-strip" id="pick-ledger-status-strip">${loadingIndicator('점검 상태를 확인하고 있어요')}<div class="skeleton quote"></div></section>
-    </details><section class="pick-ledger-tech-alert" id="pick-ledger-tech-alert" hidden></section>
-    <p class="pick-ledger-policy" id="pick-ledger-policy">매도검토는 자동 매도 확정이 아니며 가격·차트만으로 판정하지 않아요. 단기 기술 경고는 펀더멘털 매도검토와 별도이며 기술 경고만으로 자동 매도 확정하지 않아요.</p>
+    </details><details class="pick-ledger-tech-alert" id="pick-ledger-tech-alert" hidden><summary data-pick-tech-alert-summary>가격·거래 경고</summary><div data-pick-tech-alert-body></div></details>
+    <details class="pick-ledger-policy" id="pick-ledger-policy"><summary>신호 안내 · 자동 매도 확정 아님</summary><p>매도검토는 자동 매도 확정이 아니며 가격·차트만으로 판정하지 않아요. 단기 기술 경고는 펀더멘털 매도검토와 별도이며 기술 경고만으로 자동 매도 확정하지 않아요.</p></details>
     <details class="pick-ledger-search-options"><summary>기록 검색·필터</summary><section class="pick-ledger-toolbar" id="pick-ledger-toolbar" hidden>
       <label class="pick-ledger-search"><span>종목 검색</span><input id="pick-ledger-search" type="search" placeholder="종목명 · 코드" autocomplete="off"></label>
       <div class="pick-ledger-filters">
@@ -190,7 +190,10 @@ export async function renderPickLedger({shell,bindNav,displayName,focusKey=null}
     const warningRows=rows.filter(row=>['TECH_SELL_REVIEW','TECH_CAUTION'].includes(row.monitor?.technical?.signal));
     techAlert.hidden=!warningRows.length;
     techAlert.classList.toggle('caution',!techSell.length);
-    techAlert.innerHTML=warningRows.length?`<strong>가격·거래 경고 · 강한 경고 ${techSell.length}개 · 기술 경고 ${techCaution.length}개</strong>${technicalAlertRows(warningRows,displayName)}`:'';
+    const techAlertSummary=techAlert.querySelector('[data-pick-tech-alert-summary]');
+    const techAlertBody=techAlert.querySelector('[data-pick-tech-alert-body]');
+    if(techAlertSummary)techAlertSummary.innerHTML=warningRows.length?`<strong>가격·거래 경고</strong><span>강한 경고 ${techSell.length} · 기술 경고 ${techCaution.length}</span>`:'가격·거래 경고';
+    if(techAlertBody)techAlertBody.innerHTML=warningRows.length?technicalAlertRows(warningRows,displayName):'';
     toolbar.hidden=false;
 
     const search=document.querySelector('#pick-ledger-search');
