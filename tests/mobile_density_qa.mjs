@@ -47,7 +47,7 @@ try{for(const width of [320,390,430]){
  await page.goto(base+'/#exports');await page.getByRole('tab',{name:'반도체',exact:true}).click();assert.equal(spotCalls,0,'export semiconductor tab must not fetch prices');
  await page.locator('[data-export-panel="semiconductor"] [data-tab="memory"]').click();await page.locator('[data-memory-price-group="nand-chip"]').click();
  assert.equal(new URL(page.url()).hash,'#memory/nand-chip');await page.reload();
- await page.locator('[data-memory-price-group="nand-chip"][aria-selected="true"]').waitFor();assert.match(await page.locator('.memory-price-source').innerText(),/TrendForce/);
+ await page.locator('[data-memory-price-group="nand-chip"][aria-selected="true"]').waitFor();assert.match(await page.locator('.memory-price-attribution').innerText(),/TrendForce/);
  assert.match(await page.locator('.memory-price-group-head').innerText(),/2026/);
  await page.locator('[data-memory-price-group="dram-chip"]').click();await page.goBack();await page.locator('[data-memory-price-group="nand-chip"][aria-selected="true"]').waitFor();
  await page.goto(base+'/#exports');
