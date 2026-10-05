@@ -19,6 +19,7 @@ const identities = {
  watch: ['watch', '내 종목 관리', 'watch'],
  more: ['analysis', '목적별 분석 도구', 'analysis'],
  discover: ['filter', '조건으로 종목 찾기', 'find'],
+ gurus: ['guide', '투자 원칙으로 재무 조건 확인', 'find'],
  ideas: ['filter', '거래 패턴 관찰', 'find'],
  picks: ['ledger', '과거 선정 기록 점검', 'records'],
  exports: ['exports', '품목·국가별 수출 분석', 'exports'],

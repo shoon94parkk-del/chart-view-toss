@@ -77,6 +77,9 @@ jobs:
       - name: Verify mobile hierarchy continuity and readable evidence
         if: ${{ !cancelled() && steps.start-preview.outcome == 'success' }}
         run: node tests/mobile_continuity_qa.mjs
+      - name: Verify guru investing evidence and compact mobile navigation
+        if: ${{ !cancelled() && steps.start-preview.outcome == 'success' }}
+        run: node tests/guru_investing_qa.mjs
       - name: Verify search identity, stale disclosure, detail context and empty macro recovery
         if: ${{ !cancelled() && steps.start-preview.outcome == 'success' }}
         run: node tests/review_validation_qa.mjs
@@ -113,4 +116,5 @@ jobs:
             artifacts/redesign-review
             output/playwright/experience-audit
             output/playwright/insight
+            output/playwright/gurus
           if-no-files-found: warn

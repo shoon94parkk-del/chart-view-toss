@@ -218,8 +218,9 @@ function shareDetails(){
  if(tab==='detail'&&symbol)url.hash=`detail/${encodeURIComponent(symbol)}`;
  else if(tab==='news'&&state.newsSymbol)url.hash=`news/${encodeURIComponent(state.newsSymbol)}`;
  else if(tab==='memory'&&state.memoryPriceGroup)url.hash=`memory/${state.memoryPriceGroup}`;
+ else if(tab==='gurus')url.hash=`gurus/${state.guruStrategy||'buffett'}`;
  else if(tab!=='home')url.hash=tab;
- const titleByTab={home:'차트뷰',chart:'수익률 비교 | 차트뷰',watch:'관심종목 | 차트뷰',valuation:'밸류에이션 | 차트뷰',macro:'경제 지표 | 차트뷰',exports:'수출 데이터 | 차트뷰',memory:'반도체 가격 추적 | 차트뷰',discover:'조건별 종목 찾기 | 차트뷰',heatmap:'시장 히트맵 | 차트뷰',consensus:'실적 전망 | 차트뷰',bands:'역사적 밸류에이션 | 차트뷰',ideas:'투자 아이디어 LAB | 차트뷰',picks:'선정 기록·성과 | 차트뷰',news:'관심종목 뉴스 | 차트뷰',more:'차트뷰',info:'데이터 안내 | 차트뷰',tools:'투자 도구 | 차트뷰'};
+ const titleByTab={gurus:'거장 투자법 | 차트뷰',home:'차트뷰',chart:'수익률 비교 | 차트뷰',watch:'관심종목 | 차트뷰',valuation:'밸류에이션 | 차트뷰',macro:'경제 지표 | 차트뷰',exports:'수출 데이터 | 차트뷰',memory:'반도체 가격 추적 | 차트뷰',discover:'조건별 종목 찾기 | 차트뷰',heatmap:'시장 히트맵 | 차트뷰',consensus:'실적 전망 | 차트뷰',bands:'역사적 밸류에이션 | 차트뷰',ideas:'투자 아이디어 LAB | 차트뷰',picks:'선정 기록·성과 | 차트뷰',news:'관심종목 뉴스 | 차트뷰',more:'차트뷰',info:'데이터 안내 | 차트뷰',tools:'투자 도구 | 차트뷰'};
  return {url:url.toString(),title:tab==='detail'?`${name} (${symbol}) | 차트뷰`:titleByTab[tab]||'차트뷰',text:tab==='detail'?`${name} 종목의 차트와 기업 정보를 확인해보세요.`:'차트뷰에서 시장 데이터와 종목 정보를 확인해보세요.'};
 }
 async function shareCurrent(){
@@ -242,7 +243,7 @@ function esc(v=''){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt
 function navigate(tab,detailSymbol=null,detailName='',investigation=null){
  if(tab==='picks'&&!SHOW_SPOTLIGHT)tab='home';
  const hash=detailSymbol?`#${tab}/${tab==='exports'?String(detailSymbol).split('/').map(encodeURIComponent).join('/'):encodeURIComponent(detailSymbol)}`:`#${tab}`;
- const featureTab=['discover','picks','exports','memory'].includes(tab);
+ const featureTab=['discover','picks','exports','memory','gurus'].includes(tab);
  if(tab===state.tab&&(!featureTab||location.hash===hash)&&(tab==='detail'?(!detailSymbol||detailSymbol===state.detailSymbol):tab==='news'?(detailSymbol||null)===state.newsSymbol:true)){
    if(detailSymbol&&detailName)state.detailName=detailName;
    window.scrollTo(0,0);
@@ -1493,6 +1494,7 @@ function renderMore(){
    <details class="calculation-guide tab-usage-guide"><summary>각 탭에서는 무엇을 볼 수 있나요?</summary><dl><div><dt>홈</dt><dd>주요 시장과 내 관심종목, 분석 요약</dd></div><div><dt>수익률</dt><dd>최대 6개 종목의 기간 수익률 비교</dd></div><div><dt>관심</dt><dd>기기에 저장한 내 종목 관리</dd></div><div><dt>분석</dt><dd>조건 검색, 선정 기록, 재무·수출·경제 데이터</dd></div></dl></details>
    <section class="menu-group" id="analysis-find"><h3><i class="section-symbol" aria-hidden="true">${uiIcon('filter',18)}</i>종목 찾기</h3><div class="feature-menu">
      <button class="feature-row" data-tab="discover" data-tool-tone="${surfaceIdentity('discover').tone}"><span class="feature-icon yellow">${iconSvg('discover',22)}</span><span><strong>${featureLabel('discover')}</strong><small>조건으로 종목 찾기</small></span><b>${iconSvg('arrow',19)}</b></button>
+     <button class="feature-row" data-tab="gurus" data-tool-tone="${surfaceIdentity('gurus').tone}"><span class="feature-icon blue">${uiIcon('guide',22)}</span><span><strong>거장 투자법</strong><small>버핏·린치 원칙으로 재무 조건 확인</small></span><b>${iconSvg('arrow',19)}</b></button>
      <button class="feature-row" data-tab="ideas" data-tool-tone="${surfaceIdentity('ideas').tone}"><span class="feature-icon yellow">${iconSvg('ideas',22)}</span><span><strong>투자 아이디어 LAB</strong><small>관찰 패턴과 다음 확인 질문 보기</small></span><b>${iconSvg('arrow',19)}</b></button>
      <button class="feature-row" data-tab="heatmap" data-tool-tone="${surfaceIdentity('heatmap').tone}"><span class="feature-icon coral">${iconSvg('heatmap',22)}</span><span><strong>시장 히트맵</strong><small>업종별 종목 등락 지도</small></span><b>${iconSvg('arrow',19)}</b></button>
    </div></section>
@@ -1552,6 +1554,15 @@ function render(){
    void import('./memoryPriceView.js').then(view=>{
      if(state.tab==='memory')analysisCleanup=view.renderMemoryPriceView({shell,bindNav,activeGroup:state.memoryPriceGroup,onGroupChange:group=>navigate('memory',group)});
    });
+   return;
+ }
+ if(state.tab==='gurus'){
+   cleanupChart();
+   const epoch=viewEpoch;
+   document.querySelector('#app').innerHTML=shell(loadingIndicator('거장 투자법을 불러오고 있어요'),'거장 투자법');bindNav();
+   void Promise.all([import('./guruInvestingView.js'),import('./guruInvestingView.css')]).then(([view])=>{
+     if(epoch===viewEpoch&&state.tab==='gurus')analysisCleanup=view.renderGuruInvesting({state,shell,bindNav,navigate,isCurrent:()=>epoch===viewEpoch&&state.tab==='gurus'});
+   }).catch(()=>{if(epoch===viewEpoch&&state.tab==='gurus'){document.querySelector('#app').innerHTML=shell('<div class="empty"><strong>화면을 불러오지 못했어요.</strong><button data-tab="more">분석 메뉴로</button></div>','거장 투자법');bindNav();}});
    return;
  }
  if(state.tab==='ideas'){
@@ -1634,3 +1645,4 @@ startApp();
 if(new URLSearchParams(location.search).get('diagnostics')==='1') {
  Object.defineProperty(window,'chartviewDiagnostics',{value:()=>({version:packageInfo.version,metrics:diagnosticSummary()}),configurable:true});
 }
+

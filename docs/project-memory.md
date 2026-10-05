@@ -318,3 +318,6 @@ TrendForce semiconductor prices moved to Analysis > 반도체 가격 추적; Cus
 
 ### 2026-10-05 — Compact experience continuity
 `mobileContinuity.css` extends the approved compact hierarchy to estimates, macro, valuation/bands, chart controls, analysis menu and detail header. Menu tones derive from destination identity; evidence screens use teal without replacing status colors. Keep 44px price-family/export tabs, 12px relevant evidence metadata, full observations/raw estimates, native content titles and existing navigation. News and LAB headings match their scope/menu. Data guide describes current grouped-map geometry and separately attributes Customs exports and TrendForce accumulated prices. The historical tools-menu removal was checked and is preserved. Mobile CI includes `mobile_continuity_qa.mjs` at 320/390/430px.
+
+## 2026-10-05 — Guru principles screen
+Public routes #gurus/buffett and #gurus/lynch, /gurus direct entry. Existing technical screening remains independent. Selected financial metrics come only from shared dated snapshot/evidence, never frontend recomputation at live price. source criteria distinguish original principles from Chart View thresholds. sessionStorage stores view filters only, and failures there do not block viewing. New browser QA is tests/guru_investing_qa.mjs, included in mobile CI.

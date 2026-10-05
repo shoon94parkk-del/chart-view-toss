@@ -50,6 +50,8 @@ export const macroData=({force=false}={})=>api('/api/macro',{ttlMs:300000,force}
 export const homeInsights=(tickers=[])=>api(`/api/home-insights?tickers=${list(tickers)}`,{ttlMs:60000});
 export const personalizedNews=(tickers=[],names=[])=>api(`/api/personalized-news?tickers=${list(tickers)}&names=${encodeURIComponent(names.join('|'))}`,{timeoutMs:10000,retries:0,ttlMs:60000});
 export const screenerData=()=>staticData('screener.json',()=>api('/static/data/screener.json',{ttlMs:60000}));
+export const guruScreeningData=({force=false}={})=>force?api('/static/data/guru_screening.json',{ttlMs:60000,force:true}):staticData('guru_screening.json',()=>api('/static/data/guru_screening.json',{ttlMs:60000}));
+export const guruEvidenceData=(ticker,version,{force=false}={})=>api(`/api/guru-investing/${encodeURIComponent(ticker)}?version=${encodeURIComponent(version)}`,{ttlMs:300000,force,timeoutMs:8000,retries:0});
 export const companyContextData=()=>staticData('company_context.json',()=>api('/static/data/company_context.json',{ttlMs:3600000}));
 export const businessReportData=(ticker,name='',{force=false}={})=>api(`/api/business-report?ticker=${encodeURIComponent(ticker)}&name=${encodeURIComponent(name)}`,{ttlMs:300000,timeoutMs:45000,retries:0,force});
 export const financialHistoryData=(ticker,{force=false}={})=>api(`/api/financial-history?ticker=${encodeURIComponent(ticker)}`,{ttlMs:300000,timeoutMs:35000,retries:0,force});
