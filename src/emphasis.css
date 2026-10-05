@@ -387,9 +387,9 @@
 .app-shell .home-pick-summary>span{min-width:0;padding:6px 5px;border-radius:9px;background:#fff;text-align:center}
 .app-shell .home-pick-summary small{display:block;font-size:7.5px;line-height:1.15;color:#8a819c;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .app-shell .home-pick-summary strong{display:block;margin-top:3px;font-size:12px;line-height:1.05;color:#342b4d;white-space:nowrap}
-.app-shell .home-pick-summary strong.up{color:#e54855}.app-shell .home-pick-summary strong.down{color:#3182f6}
+.app-shell .home-pick-summary strong[class~="up"]{color:#e54855}.app-shell .home-pick-summary strong[class~="down"]{color:#3182f6}
 .app-shell .home-selection-return{font-style:normal;font-size:12px;font-weight:900;white-space:nowrap;color:#6b7684}
-.app-shell .home-selection-return.up{color:#e54855}.app-shell .home-selection-return.down{color:#3182f6}
+.app-shell .home-selection-return[class~="up"]{color:#e54855}.app-shell .home-selection-return[class~="down"]{color:#3182f6}
 .app-shell .home-selection-sub{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:6px;align-items:center;margin-top:5px}
 .app-shell .home-selection-sub>span{padding:3px 5px;border-radius:999px;background:#f1ecfa;color:#67558e;font-size:8px;font-weight:850;white-space:nowrap}
 .app-shell .home-selection-sub small{min-width:0;font-size:9.5px;line-height:1.25;color:#6b7684;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
