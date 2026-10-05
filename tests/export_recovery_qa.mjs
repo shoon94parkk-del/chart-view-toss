@@ -8,13 +8,27 @@ const momentumMap={period:'2026-09',items:[
  {key:'semiconductor',name:'반도체',period:'2026-09',exportYoY:25,previousExportYoY:15,deltaYoYPp:10,avg3mYoY:20,acceleration3mPp:6,signal:'acceleration',signalLabel:'가속'},
  {key:'passenger-car',name:'승용차',period:'2026-09',exportYoY:-4,previousExportYoY:2,deltaYoYPp:-6,avg3mYoY:-1,acceleration3mPp:-4,signal:'weak',signalLabel:'부진'},
 ]};
+const semiconductorTrends={period:'2026-09',total:{name:'반도체',exportsUsdBillion:30,priorExportsUsdBillion:20,deltaUsdBillion:10,exportYoY:50},memoryTotalDeltaUsdBillion:4,segments:[
+ {key:'memory-total',name:'메모리 IC',code:'854232',group:'memory',note:'HS 854232 메모리 전체',exportsUsdBillion:12,priorExportsUsdBillion:8,deltaUsdBillion:4,exportYoY:50,overallContributionPct:40,memoryContributionPct:null,history:[{period:'2026-08',exportsUsdBillion:11,priorExportsUsdBillion:8,deltaUsdBillion:3,exportYoY:37.5},{period:'2026-09',exportsUsdBillion:12,priorExportsUsdBillion:8,deltaUsdBillion:4,exportYoY:50}]},
+ {key:'dram',name:'DRAM',code:'8542321010',group:'memory',note:'HBM 별도 HSK 없음',exportsUsdBillion:7,priorExportsUsdBillion:5,deltaUsdBillion:2,exportYoY:40,overallContributionPct:null,memoryContributionPct:50,history:[{period:'2026-08',exportsUsdBillion:6,priorExportsUsdBillion:5,deltaUsdBillion:1,exportYoY:20},{period:'2026-09',exportsUsdBillion:7,priorExportsUsdBillion:5,deltaUsdBillion:2,exportYoY:40}]},
+ {key:'flash',name:'Flash memory',code:'8542321030',group:'memory',note:'NAND/NOR 포함',exportsUsdBillion:3,priorExportsUsdBillion:2.5,deltaUsdBillion:.5,exportYoY:20,overallContributionPct:null,memoryContributionPct:12.5,history:[{period:'2026-08',exportsUsdBillion:2.8,priorExportsUsdBillion:2.5,deltaUsdBillion:.3,exportYoY:12},{period:'2026-09',exportsUsdBillion:3,priorExportsUsdBillion:2.5,deltaUsdBillion:.5,exportYoY:20}]},
+ {key:'sram',name:'SRAM',code:'8542321020',group:'memory',note:'HSK 8542321020',exportsUsdBillion:.5,priorExportsUsdBillion:.7,deltaUsdBillion:-.2,exportYoY:-28.6,overallContributionPct:null,memoryContributionPct:-5,history:[{period:'2026-08',exportsUsdBillion:.6,priorExportsUsdBillion:.7,deltaUsdBillion:-.1,exportYoY:-14.3},{period:'2026-09',exportsUsdBillion:.5,priorExportsUsdBillion:.7,deltaUsdBillion:-.2,exportYoY:-28.6}]},
+ {key:'mcp-memory',name:'MCP',code:'8542323000',group:'memory',note:'복합구조칩 메모리',exportsUsdBillion:4,priorExportsUsdBillion:2.8,deltaUsdBillion:1.2,exportYoY:42.9,overallContributionPct:null,memoryContributionPct:30,history:[{period:'2026-08',exportsUsdBillion:3.5,priorExportsUsdBillion:2.8,deltaUsdBillion:.7,exportYoY:25},{period:'2026-09',exportsUsdBillion:4,priorExportsUsdBillion:2.8,deltaUsdBillion:1.2,exportYoY:42.9}]},
+ {key:'processor-controller',name:'프로세서·컨트롤러',code:'854231',group:'logic',note:'HS 854231',exportsUsdBillion:8,priorExportsUsdBillion:6.5,deltaUsdBillion:1.5,exportYoY:23.1,overallContributionPct:15,memoryContributionPct:null,history:[{period:'2026-08',exportsUsdBillion:7.5,priorExportsUsdBillion:6.4,deltaUsdBillion:1.1,exportYoY:17.2},{period:'2026-09',exportsUsdBillion:8,priorExportsUsdBillion:6.5,deltaUsdBillion:1.5,exportYoY:23.1}]},
+ {key:'other-ic',name:'기타 IC',code:'854239',group:'logic',note:'HS 854239',exportsUsdBillion:4,priorExportsUsdBillion:3.5,deltaUsdBillion:.5,exportYoY:14.3,overallContributionPct:5,memoryContributionPct:null,history:[{period:'2026-08',exportsUsdBillion:3.8,priorExportsUsdBillion:3.5,deltaUsdBillion:.3,exportYoY:8.6},{period:'2026-09',exportsUsdBillion:4,priorExportsUsdBillion:3.5,deltaUsdBillion:.5,exportYoY:14.3}]},
+ {key:'dram-module',name:'DRAM 모듈',code:'8473304060',group:'module',note:'반도체 총계 외 별도 HSK',exportsUsdBillion:3,priorExportsUsdBillion:2.2,deltaUsdBillion:.8,exportYoY:36.4,overallContributionPct:null,memoryContributionPct:null,history:[{period:'2026-08',exportsUsdBillion:2.5,priorExportsUsdBillion:2.1,deltaUsdBillion:.4,exportYoY:19},{period:'2026-09',exportsUsdBillion:3,priorExportsUsdBillion:2.2,deltaUsdBillion:.8,exportYoY:36.4}]},
+]};
+const companyContext={source:'KRX 주요제품',updated:'2026-10-05',companies:[
+ {symbol:'005930.KS',name:'삼성전자',industry:'반도체 제조업',mainProducts:'DRAM, NAND'},
+ {symbol:'000660.KS',name:'SK하이닉스',industry:'반도체 제조업',mainProducts:'DRAM, NAND, MCP'},
+]};
 const detail={key:'semiconductor',name:'반도체',period:'2026-09',history:[{period:'2026-09',exportsUsdBillion:20,exportYoY:15}],countries:[]};
 const matrix={period:'2026-09',segments:[{key:'dram',code:'8542321010',name:'DRAM',exportsUsdBillion:10,countries:[{code:'CN',name:'중국',exportsUsdBillion:5,sharePct:50}]}]};
 try{
  for(const width of [320,390,430]){
   const context=await browser.newContext({viewport:{width,height:844}});
   const page=await context.newPage();
-  const calls={monthly:0,momentum:0,radar:0,item:0,country:0};
+  const calls={monthly:0,momentum:0,radar:0,item:0,country:0,trends:0,company:0};
   const errors=[];
   page.on('pageerror',e=>errors.push(e.message));
   // Match monthly and child endpoints explicitly across Playwright versions.
@@ -22,12 +36,17 @@ try{
     const path=new URL(route.request().url()).pathname;
     let body;
     if(path.endsWith('/momentum-map')){calls.momentum++;body=momentumMap;}
+    else if(path.endsWith('/semiconductor-trends')){calls.trends++;body=semiconductorTrends;}
     else if(path.endsWith('/provisional'))body=++calls.radar===1?{period:'2026-09',checkpoints:[]}:radar;
     else if(path.endsWith('/item-detail'))body=++calls.item===1?{key:'semiconductor',history:[]}:detail;
     else if(path.endsWith('/semiconductor-countries'))body=++calls.country===1?{period:'2026-09',segments:[]}:matrix;
     else {calls.monthly++;body=snapshot;}
     const failed503=(width===390&&path.endsWith('/semiconductor-countries')&&calls.country===1)||(width===430&&path.endsWith('/provisional')&&calls.radar===1);
     await route.fulfill({status:failed503?503:200,contentType:'application/json',body:JSON.stringify(body)});
+  });
+  await page.route('**/static/data/company_context.json',async route=>{
+    calls.company++;
+    await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(companyContext)});
   });
   await page.goto(base+'/#exports',{waitUntil:'domcontentloaded'});
   await page.getByText('가속',{exact:true}).first().waitFor();
@@ -72,8 +91,28 @@ try{
   release();
   await response;
   assert.equal(await page.locator('#export-item-detail').isVisible(),false);
+
+  const countriesBeforeSemiconductor=calls.country;
+  await page.getByRole('tab',{name:'반도체',exact:true}).click();
+  await page.getByRole('heading',{name:'반도체 품목별 수출액 증감',exact:true}).waitFor();
+  await page.locator('[data-export-semi-segment="dram"]').waitFor();
+  assert.equal(calls.trends,1,'semiconductor trend data loads only after opening semiconductor tab');
+  assert.equal(calls.monthly,1,'semiconductor analysis does not reload monthly snapshot');
+  assert.equal(await page.locator('[data-export-semi-metric="delta"]').getAttribute('class'),'is-active');
+  await page.locator('[data-export-semi-metric="yoy"]').click();
+  assert.equal(await page.locator('[data-export-semi-metric="yoy"]').getAttribute('class'),'is-active');
+  await page.locator('[data-export-semi-segment="dram"]').click();
+  await page.getByText('메모리 IC 증가액 중',{exact:true}).waitFor();
+  assert.match(await page.locator('.export-semi-contribution').innerText(),/50\.0%/);
+  assert.ok(await page.locator('.export-semi-trend-bar').count()>=2,'selected segment shows recent history');
+  await page.getByText('중국',{exact:true}).first().waitFor();
+  assert.equal(calls.country,countriesBeforeSemiconductor+1,'country matrix is reused as one independent semiconductor-tab request');
+  await page.getByText('삼성전자',{exact:true}).first().waitFor();
+  assert.ok(calls.company>=1,'verified KRX product metadata is loaded for company investigation candidates');
+  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'semiconductor drilldown stays inside mobile viewport');
+
   assert.deepEqual(errors,[]);
-  console.log(`${width}px: independent radar/item/country recovery, empty-cache bypass, preserved charts, no overflow/errors`);
+  console.log(`${width}px: export recovery plus semiconductor delta/yoy, contribution, history, country and company drilldown passed`);
   await context.close();
  }
 }finally{await Promise.race([browser.close(),new Promise(r=>setTimeout(r,2000))]);}
