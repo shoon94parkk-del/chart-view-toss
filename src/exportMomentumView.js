@@ -8,6 +8,7 @@ import {
   exportDriverLabel,
   formatPp,
   formatSignedPct,
+  formatSignedUsdBillion,
   formatUnitValue,
   formatUsdBillion,
   formatWeightKg,
@@ -399,20 +400,20 @@ function semiconductorTrendView(trends,{metric='delta',selectedKey='',countryMat
       </div>
       <div class="export-semi-delta-summary">
         <div><span>반도체 수출</span><strong>${esc(formatUsdBillion(trends.total.exportsUsdBillion,{digits:1}))}</strong><small class="${yoyTone(trends.total.exportYoY)}">YoY ${esc(formatSignedPct(trends.total.exportYoY))}</small></div>
-        <div><span>전년동월 대비 증감</span><strong class="${yoyTone(trends.total.deltaUsdBillion)}">${esc(formatUsdBillion(trends.total.deltaUsdBillion,{digits:1}))}</strong><small>HS 8541+8542</small></div>
+        <div><span>전년동월 대비 증감</span><strong class="${yoyTone(trends.total.deltaUsdBillion)}">${esc(formatSignedUsdBillion(trends.total.deltaUsdBillion,{digits:1}))}</strong><small>HS 8541+8542</small></div>
       </div>
       <div class="export-semi-delta-toolbar" role="group" aria-label="반도체 품목 그래프 기준">
         <button type="button" data-export-semi-metric="delta" class="${metric==='delta'?'is-active':''}">증감액</button>
         <button type="button" data-export-semi-metric="yoy" class="${metric==='yoy'?'is-active':''}">증감률</button>
       </div>
-      <div class="export-semi-delta-chart" role="img" aria-label="반도체 품목별 ${metric==='delta'?'수출액 증감':'수출 증가율'} 그래프">
+      <div class="export-semi-delta-chart" role="group" aria-label="반도체 품목별 ${metric==='delta'?'수출액 증감':'수출 증가율'} 그래프">
         ${rows.map(row=>{
           const value=metricValue(row);
           const width=Number.isFinite(value)?Math.max(1,Math.abs(value)/maxAbs*50):0;
           const left=Number.isFinite(value)&&value<0?50-width:50;
           return `
             <button type="button" class="export-semi-delta-row ${row.key===selected?.key?'is-selected':''}" data-export-semi-segment="${esc(row.key)}">
-              <div class="export-semi-delta-label"><strong>${esc(row.name)}</strong><span>${metric==='delta'?esc(formatUsdBillion(row.deltaUsdBillion,{digits:1})):esc(formatSignedPct(row.exportYoY))}</span></div>
+              <div class="export-semi-delta-label"><strong>${esc(row.name)}</strong><span>${metric==='delta'?esc(formatSignedUsdBillion(row.deltaUsdBillion,{digits:1})):esc(formatSignedPct(row.exportYoY))}</span></div>
               <div class="export-semi-delta-track"><i class="zero"></i><b class="${yoyTone(value)}" style="left:${left.toFixed(1)}%;width:${width.toFixed(1)}%"></b></div>
               <small>현재 ${esc(formatUsdBillion(row.exportsUsdBillion,{digits:1}))} · 전년 ${esc(formatUsdBillion(row.priorExportsUsdBillion,{digits:1}))} · YoY <em class="${yoyTone(row.exportYoY)}">${esc(formatSignedPct(row.exportYoY))}</em></small>
             </button>
@@ -424,7 +425,7 @@ function semiconductorTrendView(trends,{metric='delta',selectedKey='',countryMat
         <div class="export-semi-selected">
           <div class="export-semi-selected-head">
             <div><span>선택 품목 · HS ${esc(selected.code)}</span><h4>${esc(selected.name)}</h4><small>${esc(selected.note)}</small></div>
-            <div><strong class="${yoyTone(selected.deltaUsdBillion)}">${esc(formatUsdBillion(selected.deltaUsdBillion,{digits:1}))}</strong><span>YoY ${esc(formatSignedPct(selected.exportYoY))}</span></div>
+            <div><strong class="${yoyTone(selected.deltaUsdBillion)}">${esc(formatSignedUsdBillion(selected.deltaUsdBillion,{digits:1}))}</strong><span>YoY ${esc(formatSignedPct(selected.exportYoY))}</span></div>
           </div>
           ${contribution?`<div class="export-semi-contribution"><span>${esc(contribution.label)}</span><strong class="${yoyTone(contribution.value)}">${esc(contribution.value.toFixed(1))}%</strong><small>${esc(contribution.note)} · 다른 품목 감소가 있으면 100%를 넘거나 음수가 될 수 있어요.</small></div>`:`<div class="export-semi-contribution is-muted"><span>증가액 기여도</span><strong>-</strong><small>${selected.key==='dram-module'?'DRAM 모듈은 반도체 총계 HS 8541+8542 밖이라 전체 기여도를 계산하지 않습니다.':'상위 분류와 중복되지 않는 기여 기준이 없어 임의 계산하지 않습니다.'}</small></div>`}
           ${semiconductorTrendHistory(selected)}
@@ -433,7 +434,7 @@ function semiconductorTrendView(trends,{metric='delta',selectedKey='',countryMat
             ${countrySegment?`
               <div class="export-semi-country-mini">
                 ${[...countrySegment.countries].sort((a,b)=>Math.abs(b.deltaUsdBillion||0)-Math.abs(a.deltaUsdBillion||0)).map(row=>`
-                  <div><strong>${esc(row.name)}</strong><span>${esc(formatUsdBillion(row.exportsUsdBillion,{digits:1}))}</span><em class="${yoyTone(row.deltaUsdBillion)}">${esc(formatUsdBillion(row.deltaUsdBillion,{digits:1}))}</em><small>YoY ${esc(formatSignedPct(row.exportYoY))}</small></div>
+                  <div><strong>${esc(row.name)}</strong><span>${esc(formatUsdBillion(row.exportsUsdBillion,{digits:1}))}</span><em class="${yoyTone(row.deltaUsdBillion)}">${esc(formatSignedUsdBillion(row.deltaUsdBillion,{digits:1}))}</em><small>YoY ${esc(formatSignedPct(row.exportYoY))}</small></div>
                 `).join('')}
               </div>
               <p class="export-chart-note">중국·홍콩·베트남·대만·미국·일본 지정 시장 비교이며 전세계 국가 순위가 아닙니다.</p>
@@ -457,7 +458,7 @@ function breadth(snapshot){
   const moverRows=(rows,tone)=>rows.map(row=>`
     <div class="export-breadth-mover">
       <div><span>HS ${esc(row.code)}</span><strong>${esc(row.name)}</strong></div>
-      <div><b class="${tone}">${esc(formatUsdBillion(row.deltaUsdBillion,{digits:1}))}</b><small class="${yoyTone(row.exportYoY)}">${esc(formatSignedPct(row.exportYoY))}</small></div>
+      <div><b class="${tone}">${esc(formatSignedUsdBillion(row.deltaUsdBillion,{digits:1}))}</b><small class="${yoyTone(row.exportYoY)}">${esc(formatSignedPct(row.exportYoY))}</small></div>
     </div>
   `).join('');
   return `
@@ -652,7 +653,7 @@ function renderSemiconductorCountryMatrix(matrix){
               <div class="export-semi-country-metrics">
                 <span>비중 ${row.sharePct===null?'-':esc(row.sharePct.toFixed(1)+'%')}</span>
                 <span class="${yoyTone(row.exportYoY)}">YoY ${esc(formatSignedPct(row.exportYoY))}</span>
-                <span class="${yoyTone(row.deltaUsdBillion)}">증감 ${esc(formatUsdBillion(row.deltaUsdBillion,{digits:1}))}</span>
+                <span class="${yoyTone(row.deltaUsdBillion)}">증감 ${esc(formatSignedUsdBillion(row.deltaUsdBillion,{digits:1}))}</span>
               </div>
             </div>
           `).join('')}
@@ -1024,8 +1025,8 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={},onSe
           title:`${selected.name} 수출 변화에서 출발`,
           basisDate:trends.period,
           observations:[
-            `수출액 증감 ${formatUsdBillion(selected.deltaUsdBillion,{digits:1})} · YoY ${formatSignedPct(selected.exportYoY)}`,
-            country?`${country.name} 지정시장 증감 ${formatUsdBillion(country.deltaUsdBillion,{digits:1})}`:'국가별 지정시장 근거 미제공',
+            `수출액 증감 ${formatSignedUsdBillion(selected.deltaUsdBillion,{digits:1})} · YoY ${formatSignedPct(selected.exportYoY)}`,
+            country?`${country.name} 지정시장 증감 ${formatSignedUsdBillion(country.deltaUsdBillion,{digits:1})}`:'국가별 지정시장 근거 미제공',
           ],
           source:row.source,
           productDate:row.basisDate,
