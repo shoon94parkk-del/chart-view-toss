@@ -448,3 +448,11 @@ Classification: new behavior following actual 78/100 product review. Implement q
 ## 2026-10-04 — 수출 메모리 화면에 DRAM 현물가 추가
 Classification: new behavior. 수출 데이터 > 메모리 진입에 독립 `/api/memory-spot` lazy 요청을 추가하고 DDR5 16Gb, DDR4 16Gb, DDR4 8Gb의 공개 최신 평균가·당일 고저가·차트뷰 자체 누적 추이를 표시한다. 기존 관세청 수출 snapshot과 현물가 요청은 서로 실패 격리하며 한쪽 실패가 다른 쪽을 지우지 않는다.
 그래프는 inline SVG를 사용해 Lightweight Charts를 추가 로딩하지 않는다. Home/시장/시세/히트맵 경로에는 새 요청을 추가하지 않는다. 공급자 기준일·원문 링크·stale 상태와 “유료 과거 이력 미사용, 수집 시작일부터 누적” 기준을 화면에 명시한다.
+
+
+## 2026-10-04 — 수출 데이터 정보구조 단순화
+Classification: intentional UX redesign. 수출 데이터 첫 진입은 `전체 요약`만 표시하며 최근 총수출·수입·무역수지·누적·핵심 사실과 데이터 기준만 보여준다. 기존 상세 분석은 삭제하지 않고 `품목 / 국가 / 반도체 / 속보·추세` 탭으로 이동한다. 반도체 가격과 잠정 레이더는 해당 탭을 열 때만 lazy load한다. 기존 focus deep link(history/items/countries/memory/provisional/breadth/quadrant)는 새 탭으로 매핑한다.
+
+
+## 2026-10-05 — 모바일 정보 밀도 정리
+수출 데이터·스크리너·선정 기록에서 모바일 카드가 과도하게 큰 문제를 줄인다. 기능/정보는 삭제하지 않고 폰트·패딩·행간·카드 간격·보조 메타 배치를 압축한다. 스크리너 종목 행은 일반적으로 약 68px 이상, 선정 기록 행은 CSS 최소 62px, 실제 핵심정보 포함 행 96px 이하을 목표로 하며 전체 카드가 터치 대상이므로 44px 최소 터치 영역은 유지한다. 수출 데이터는 탭 구조와 함께 요약/품목/반도체 가격 카드의 모바일 패딩과 제목 크기를 15~25% 줄인다.

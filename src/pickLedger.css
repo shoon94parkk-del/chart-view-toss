@@ -38,3 +38,55 @@
 @media(max-width:350px){.pick-ledger-tech-status{font-size:8px;padding:3px 5px}.pick-ledger-tech-metrics{grid-template-columns:1fr 1fr}}
 
 .pick-ledger-secondary{flex-wrap:wrap}.pick-score-note{display:inline-block;margin-left:4px;font-size:9px;color:#6b7684}
+
+
+/* 2026-10-05 mobile density: keep multiple selection records visible per screen. */
+@media(max-width:600px){
+  .pick-ledger-head{margin-bottom:8px}
+  .pick-ledger-head .page-kicker{margin-bottom:3px;font-size:8px}
+  .pick-ledger-head h2{font-size:18px;margin-bottom:4px}
+  .pick-ledger-head p{font-size:10px;line-height:1.4}
+  .pick-ledger-policy{margin:1px 2px 6px;font-size:8px;line-height:1.35}
+  .pick-ledger-count{margin:5px 2px;font-size:9px}
+  .pick-ledger-list{border-radius:12px}
+  .pick-ledger-row{
+    min-height:70px;
+    padding:7px 9px;
+    column-gap:7px;
+    row-gap:3px;
+    grid-template-areas:'stock status' 'prices ret' 'meta chev';
+  }
+  .pick-ledger-stock strong{font-size:12.5px;line-height:1.2}
+  .pick-ledger-stock small{margin-top:1px;font-size:8px;line-height:1.2}
+  .pick-ledger-status-stack{gap:2px}
+  .pick-ledger-status{padding:3px 5px;font-size:7.5px}
+  .pick-ledger-tech-status{padding:3px 5px;font-size:7px}
+  .pick-ledger-return{font-size:13px}
+  .pick-ledger-prices{gap:4px}
+  .pick-ledger-prices small{font-size:8.5px}
+  .pick-ledger-prices b{font-size:8px}
+  .pick-ledger-secondary{gap:5px}
+  .pick-ledger-secondary em{font-size:8px}
+  .pick-ledger-chevron{font-size:11px}
+  .pick-ledger-detail{padding:8px 9px 10px}
+  .pick-ledger-detail-grid{gap:5px}
+  .pick-ledger-detail-grid section{padding:7px 8px}
+  .pick-ledger-detail-grid p{font-size:9px;line-height:1.4}
+  .pick-ledger-tech-alert{margin-bottom:6px;padding:7px 9px}
+  .pick-ledger-tech-alert strong{font-size:9px}
+  .pick-ledger-tech-alert span{font-size:9px}
+  .pick-ledger-tech-alert small{font-size:8px}
+  .pick-ledger-overview>summary,.pick-ledger-search-options>summary{font-size:10px;min-height:36px}
+}
+
+
+/* Compact two-row record layout. Performance, best return and chevron share one cell. */
+.pick-ledger-row{grid-template-areas:'stock status' 'prices performance'}
+.pick-ledger-performance{grid-area:performance;align-self:center;justify-self:end;display:flex;align-items:center;justify-content:flex-end;gap:7px;white-space:nowrap}
+.pick-ledger-performance .pick-ledger-return,.pick-ledger-performance .pick-ledger-secondary,.pick-ledger-performance .pick-ledger-chevron{grid-area:auto;justify-self:auto}
+.pick-ledger-performance .pick-ledger-secondary{display:block}
+@media(max-width:600px){
+  .pick-ledger-row{min-height:62px}
+  .pick-ledger-performance{gap:4px}
+  .pick-ledger-secondary em{font-size:7.5px}
+}

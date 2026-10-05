@@ -238,10 +238,23 @@ function summary(snapshot){
       <div class="export-summary-grid">
         <div><span>수입</span><strong>${esc(formatUsdBillion(data.importsUsdBillion))}</strong><small>${esc(formatSignedPct(data.importYoY))} YoY</small></div>
         <div><span>무역수지</span><strong>${esc(formatUsdBillion(data.balanceUsdBillion))}</strong><small>${esc(tradeBalanceLabel(data.balanceUsdBillion))}</small></div>
-        <div><span>${esc(cumulativeLabel(snapshot.period))}</span><strong>${esc(formatUsdBillion(data.cumulativeExportsUsdBillion))}</strong><small>해당 연도 누적</small></div>
         ${semiShare!==null
           ?`<div><span>반도체 비중</span><strong>${semiShare.toFixed(1)}%</strong><small>당월 총수출 대비</small></div>`
           :`<div><span>품목 상세</span><strong>${esc(monthLabel(snapshot.itemPeriod))}</strong><small>${itemLag?'총괄보다 후행':'HS 기준'}</small></div>`}
+      </div>
+    </section>
+  `;
+}
+
+function cumulativeSummary(snapshot){
+  const data=snapshot.summary||{};
+  if(!Number.isFinite(Number(data.cumulativeExportsUsdBillion)))return '';
+  return `
+    <section class="export-section export-cumulative">
+      <div class="export-section-head"><div><span>연간 누적</span><h3>${esc(cumulativeLabel(snapshot.period))}</h3></div><small>속보·추세</small></div>
+      <div class="export-summary-grid">
+        <div><span>누적 수출</span><strong>${esc(formatUsdBillion(data.cumulativeExportsUsdBillion))}</strong><small>해당 연도 누적</small></div>
+        <div><span>누적 무역수지</span><strong>${esc(formatUsdBillion(data.cumulativeBalanceUsdBillion))}</strong><small>해당 연도 누적</small></div>
       </div>
     </section>
   `;
@@ -450,7 +463,6 @@ function items(snapshot){
           </article>
         `).join('')}
       </div>
-      <div id="export-item-detail" class="export-item-detail" hidden></div>
       <p class="export-chart-note">kg당 신고금액은 개별 제품 판매가격이 아닙니다. 같은 HS 그룹 안의 제품 구성·고부가가치 비중 변화가 함께 반영되는 ‘평균 단위가치’로 해석해야 합니다.</p>
     </section>
   `;
@@ -736,30 +748,51 @@ function sources(snapshot){
     snapshot.updatedAt?`데이터 갱신 ${dateLabel(snapshot.updatedAt)}`:'',
   ].filter(Boolean).join(' · ');
   return `
-    <section class="export-source">
-      <div><strong>데이터 기준</strong><p>${apiBacked?'관세청 공공데이터 API를 차트뷰 서버에서 수집·캐시해 표시합니다. 인증키는 서버에서만 사용하며 브라우저에는 전달하지 않습니다. 총괄과 HS 상세의 최신 기준월이 다르면 각각의 기준월을 따로 표시합니다.':'공식 발표 수치를 저장한 스냅샷입니다.'}</p></div>
-      <div class="export-source-links">
-        ${snapshot.sources.map(source=>`<button type="button" data-external-url="${esc(source.url)}"><span>${esc(source.name)}</span><small>${esc(source.role)}</small></button>`).join('')}
+    <details class="export-source">
+      <summary><strong>데이터 기준</strong><span>${apiBacked?'관세청 API · 자세히 보기':'공식 스냅샷 · 자세히 보기'}</span></summary>
+      <div class="export-source-body">
+        <p>${apiBacked?'관세청 공공데이터 API를 차트뷰 서버에서 수집·캐시해 표시합니다. 인증키는 서버에서만 사용하며 브라우저에는 전달하지 않습니다. 총괄과 HS 상세의 최신 기준월이 다르면 각각의 기준월을 따로 표시합니다.':'공식 발표 수치를 저장한 스냅샷입니다.'}</p>
+        <div class="export-source-links">
+          ${snapshot.sources.map(source=>`<button type="button" data-external-url="${esc(source.url)}"><span>${esc(source.name)}</span><small>${esc(source.role)}</small></button>`).join('')}
+        </div>
+        ${dates?`<small>${esc(dates)}</small>`:''}
       </div>
-      ${dates?`<small>${esc(dates)}</small>`:''}
-    </section>
+    </details>
   `;
 }
 
+function exportPanel(key,content){
+  return `<div class="export-tab-panel" data-export-panel="${key}" hidden>${content}</div>`;
+}
+
 function paint(host,snapshot,bindNav,onItemOpen){
-  host.innerHTML=`${summary(snapshot)}${provisionalPlaceholder()}${history(snapshot)}${checkpoints(snapshot)}${facts(snapshot)}${memorySpotPlaceholder()}${semiconductorReport(snapshot)}${breadth(snapshot)}${quadrant(snapshot)}${items(snapshot)}${regions(snapshot)}${sources(snapshot)}`;
+  host.innerHTML=[
+    exportPanel('overview',summary(snapshot)+facts(snapshot)+sources(snapshot)),
+    exportPanel('products',items(snapshot)+breadth(snapshot)+quadrant(snapshot)),
+    exportPanel('countries',regions(snapshot)),
+    exportPanel('semiconductor',memorySpotPlaceholder()+semiconductorReport(snapshot)),
+    exportPanel('trend',provisionalPlaceholder()+history(snapshot)+cumulativeSummary(snapshot)+checkpoints(snapshot)),
+    '<div id="export-item-detail" class="export-item-detail" hidden></div>',
+  ].join('');
   bindNav();
   host.querySelectorAll('[data-export-item]').forEach(button=>button.addEventListener('click',()=>onItemOpen(button.dataset.exportItem)));
 }
 
 export function renderExportMomentumView({shell,bindNav,focus=null,state={}}){
   const app=document.querySelector('#app');
-  app.innerHTML=shell(`<nav class="export-topic-nav" aria-label="수출 분석 바로가기">${[['history','수출 흐름'],['items','품목별'],['countries','국가별'],['memory','메모리 가격·수출'],['provisional','잠정 레이더'],['breadth','상승 확산도'],['quadrant','물량·단위가치']].map(([key,label])=>`<button type="button" data-export-topic="${key}" disabled>${label}</button>`).join('')}</nav><div id="export-momentum-root" class="export-momentum-view">${loading()}</div>`,'수출 데이터');
+  const tabs=[['overview','전체 요약'],['products','품목'],['countries','국가'],['semiconductor','반도체'],['trend','속보·추세']];
+  const panelForFocus=key=>({
+    history:'trend',provisional:'trend',
+    items:'products',breadth:'products',quadrant:'products',
+    countries:'countries',memory:'semiconductor',
+  }[key]||'overview');
+  app.innerHTML=shell(`<nav class="export-topic-nav" role="tablist" aria-label="수출 데이터 분류">${tabs.map(([key,label])=>`<button type="button" role="tab" data-export-topic="${key}" aria-selected="false" disabled>${label}</button>`).join('')}</nav><div id="export-momentum-root" class="export-momentum-view">${loading()}</div>`,'수출 데이터');
   bindNav();
   const host=app.querySelector('#export-momentum-root');
   let seq=0;
   let detailSeq=0;
   let provisionalSeq=0;
+  let provisionalLoaded=false;
   let memorySpotCleanup=null;
 
   const openItemDetail=async(key,{force=false,restore=false}={})=>{
@@ -845,19 +878,74 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={}}){
     const token=++seq;
     app.querySelectorAll('[data-export-topic]').forEach(button=>{button.disabled=true;});
     memorySpotCleanup?.();memorySpotCleanup=null;
+    provisionalLoaded=false;
     host.innerHTML=loading();
     try{
       const snapshot=await loadExportMomentumSnapshot({force});
       if(token!==seq||!host.isConnected)return;
       paint(host,snapshot,bindNav,openItemDetail);
-      memorySpotCleanup=mountMemorySpot(host.querySelector('#export-memory-spot'),{bindNav});
+
+      const focusTarget=key=>{
+        const selector={
+          history:'#export-history',
+          provisional:'#export-provisional-radar',
+          items:'#export-items',
+          countries:'#export-countries',
+          memory:'#export-memory-spot',
+          breadth:'.export-breadth-card',
+          quadrant:'.export-quadrant-point',
+        }[key];
+        return selector?host.querySelector(selector)?.closest('section'):null;
+      };
+
+      const activatePanel=(panelKey,{scroll=false,closeDetail=false}={})=>{
+        const panel=host.querySelector('[data-export-panel="'+panelKey+'"]');
+        if(!panel)return;
+        if(closeDetail){
+          const detailPanel=host.querySelector('#export-item-detail');
+          if(detailPanel&&!detailPanel.hidden){
+            detailSeq+=1;
+            state.itemKey=null;
+            detailPanel.hidden=true;
+            detailPanel.innerHTML='';
+          }
+        }
+        state.exportSection=panelKey;
+        host.querySelectorAll('[data-export-panel]').forEach(node=>{node.hidden=node!==panel;});
+        app.querySelectorAll('[data-export-topic]').forEach(button=>{
+          const selected=button.dataset.exportTopic===panelKey;
+          button.disabled=false;
+          button.setAttribute('aria-selected',String(selected));
+          button.classList.toggle('is-active',selected);
+        });
+        if(panelKey==='semiconductor'&&!memorySpotCleanup){
+          memorySpotCleanup=mountMemorySpot(host.querySelector('#export-memory-spot'),{bindNav});
+        }
+        if(panelKey==='trend'&&!provisionalLoaded){
+          provisionalLoaded=true;
+          void loadProvisional(token,force);
+        }
+        if(scroll)panel.scrollIntoView({behavior:'smooth',block:'start'});
+      };
+
+      app.querySelectorAll('[data-export-topic]').forEach(button=>{
+        button.onclick=()=>activatePanel(button.dataset.exportTopic,{scroll:true,closeDetail:true});
+      });
+
+      const requestedFocus=focus;
+      const initialPanel=requestedFocus?panelForFocus(requestedFocus):'overview';
+      activatePanel(initialPanel);
+      if(requestedFocus){
+        const target=focusTarget(requestedFocus);
+        if(target){
+          target.tabIndex=-1;
+          target.scrollIntoView({block:'start'});
+          target.focus({preventScroll:true});
+        }
+        focus=null;
+      }
       if(state.itemKey)void openItemDetail(state.itemKey,{restore:true});
       window.__chartviewRestoreScroll?.();
-      const targetFor=key=>{const selector={memory:'#export-memory-spot',provisional:'#export-provisional-radar',breadth:'.export-breadth-card',quadrant:'.export-quadrant-point'}[key]||'#export-'+key;return host.querySelector(selector)?.closest('section');};
-      const jump=key=>{const target=targetFor(key);if(target){target.tabIndex=-1;target.scrollIntoView({block:'start'});target.focus({preventScroll:true});}};
-      app.querySelectorAll('[data-export-topic]').forEach(button=>{button.disabled=!targetFor(button.dataset.exportTopic);button.onclick=()=>jump(button.dataset.exportTopic);});
-      if(focus){jump(focus);focus=null;}
-      void loadProvisional(token,force);
     }catch(error){
       if(token!==seq||!host.isConnected)return;
       host.innerHTML=errorView(error?.message);

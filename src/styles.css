@@ -441,3 +441,5 @@ input::placeholder,textarea::placeholder {
   .detail-actions{gap:6px}
   .detail-actions button{font-size:11px;padding:0 5px}
 }
+
+@media(max-width:360px){.brand-lockup h1{font-size:17px;letter-spacing:-.55px}.topbar-actions{gap:4px}.icon-button{width:38px;height:38px}}
