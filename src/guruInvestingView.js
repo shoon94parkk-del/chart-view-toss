@@ -14,8 +14,9 @@ function criteria(strategy){
 function metric(key,value){return `<span><small>${esc(guruMetricLabels[key])}</small><b>${num(value,guruMetricUnits[key]||'%')}</b></span>`;}
 function candidate(row,strategy,expanded,currentCheck=null,currentState='idle'){
  const keys=guruRowMetrics[strategy];
- const ttmLabel=currentCheck?.status==='matched'?'TTM 충족':currentCheck?.status==='failed'?'TTM 미충족':currentCheck?.status==='unknown'?'TTM 자료 부족':currentState==='loading'?'TTM 확인 중':currentState==='error'?'TTM 확인 실패':'TTM 확인 전';
- const reason=strategy==='greenblatt'?`${row.annualReportYear} 연간 · ${ttmLabel} · 근거 ${expanded?'⌃':'⌄'}`:`${row.checks.length}개 조건 충족 · 선정 근거 ${expanded?'⌃':'⌄'}`;
+ const ttmLabel=currentCheck?.status==='matched'?'TTM충족':currentCheck?.status==='failed'?'TTM미충족':currentCheck?.status==='unknown'?'TTM자료없음':currentState==='loading'?'TTM확인중':currentState==='error'?'TTM실패':'TTM확인전';
+ const annualYear=String(row.annualReportYear||'').slice(-2);
+ const reason=strategy==='greenblatt'?`${annualYear}년 · ${ttmLabel} · 근거 ${expanded?'⌃':'⌄'}`:`${row.checks.length}개 조건 충족 · 선정 근거 ${expanded?'⌃':'⌄'}`;
  return `<article class="guru-candidate" data-guru-symbol="${esc(row.symbol)}"><div class="guru-row"><button class="guru-stock" data-stock-detail="${esc(row.symbol)}" data-stock-name="${esc(row.name)}" aria-label="${esc(row.name)} 종목 상세"><strong>${esc(row.name)}</strong><small>${esc(row.market)} · ${esc(row.symbol.split('.')[0])}</small></button><button class="guru-expand" data-guru-expand="${esc(row.symbol)}" aria-expanded="${expanded}" aria-label="${esc(row.name)} 선정 근거"><span class="guru-metrics">${keys.map(k=>metric(k,row.metrics[k])).join('')}</span><span class="guru-reason-label">${esc(reason)}</span></button></div>${expanded?'<section class="guru-evidence" aria-live="polite">'+loadingIndicator('공시 근거를 확인하고 있어요')+'</section>':''}</article>`;
 }
 function evidenceMarkup(evidence,strategy,row,currentCheck=null){
