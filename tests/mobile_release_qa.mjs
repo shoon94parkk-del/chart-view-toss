@@ -389,7 +389,7 @@ try{
         if(await page.locator('#market-card .market-extra-card').count()) throw new Error(`${width}px Home market did not collapse`);
 
         await page.waitForSelector('#home-top-picks .home-pick-row');
-        if(await page.locator('#home-top-picks .home-pick-row').count()!==2) throw new Error(`${width}px spotlight selection missing`);
+        if(await page.locator('#home-top-picks .home-pick-row').count()!==3) throw new Error(`${width}px compact spotlight selections missing`);
         if(!(await page.locator('#home-top-picks-section').innerText()).includes('선정 기록·성과')) throw new Error(`${width}px spotlight title missing`);
         await page.waitForSelector('#home-daily-heatmap .home-heatmap-cell');
         if(await page.locator('#home-daily-heatmap .home-heatmap-cell:visible').count()!==6) throw new Error(`${width}px home heatmap representative set mismatch`);
@@ -478,7 +478,7 @@ try{
       if(await page.locator('.export-provisional-stage').count()!==3) throw new Error('10-day radar must show 10d 20d and month-end checkpoints');
       if(await page.locator('.export-provisional-item').count()!==10) throw new Error('10-day radar must show ten official product groups');
       const provisionalText=await page.locator('#export-provisional-radar').innerText();
-      for(const label of ['10일 단위 잠정 수출 레이더','1~10일','1~20일','월 전체','전년 같은 구간','전월 같은 구간','증가율 가속','증가액 기여','반도체','컴퓨터주변기기']) if(!provisionalText.includes(label)) throw new Error(`10-day radar label missing: ${label}`);
+      for(const label of ['10일 단위 잠정 수출 레이더','반도체 수출 누적','반도체 · 1~10일','반도체 · 1~20일','반도체 · 월 전체','전년 같은 구간','전월 같은 구간','증가율 가속','증가액 기여','컴퓨터주변기기']) if(!provisionalText.includes(label)) throw new Error(`10-day radar label missing: ${label}`);
       if(await page.locator('.export-landing,.export-landing-card').count()) throw new Error('month-end landing projection UI should not remain');
 
       if(await page.locator('.export-combo-column').count()!==12) throw new Error('export dual-axis chart must show 12 official monthly observations');

@@ -25,7 +25,7 @@ test('Home observations render independent sources and retain ready cards during
  vm.runInContext(readFileSync(new URL('../src/homeChangesView.js',import.meta.url),'utf8').replace(/^import .*;\r?\n/gm,'').replaceAll('export ',''),context);
  const mounted=context.mountHomeChanges(host);
  await new Promise(resolve=>setImmediate(resolve));
- assert.match(nodes['data-home-changes'].innerHTML,/평균보다 거래량이 늘어난 종목/,'ready screener never waits for Customs');
+ assert.match(nodes['data-home-changes'].innerHTML,/거래량 2배 이상/,'ready screener never waits for Customs');
  pending[0].reject(Error('Customs timeout'));await mounted;
  assert.equal(nodes['data-home-change-retry'].hidden,false);
  const cards=nodes['data-home-changes'].innerHTML;
@@ -34,7 +34,7 @@ test('Home observations render independent sources and retain ready cards during
  assert.equal(nodes['data-home-changes'].innerHTML,cards,'ready observations stay while another provider retries');
  assert.equal(pending[1].options.force,true);
  pending[1].resolve({period:'2026-09',summary:{exportYoY:4},items:[]});await new Promise(resolve=>setImmediate(resolve));
- assert.match(nodes['data-home-changes'].innerHTML,/전체 수출.*평균보다 거래량이 늘어난 종목/s);
+ assert.match(nodes['data-home-changes'].innerHTML,/전체 수출.*거래량 2배 이상/s);
  assert.equal(nodes['data-home-change-retry'].hidden,true);
 });
 

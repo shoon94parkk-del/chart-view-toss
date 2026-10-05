@@ -300,3 +300,9 @@ User-approved new behavior. Home cards include dated observations, questions and
 - On <=600px, collapsed PICK rows target <=64px and remain a two-row layout.
 - The 390x844 release QA must show at least three PICK records above the fixed bottom navigation where fixture content permits.
 - Later global accessibility typography must not inflate PICK metadata/status text back to desktop-like sizes.
+
+
+## 2026-10-05 — Home density + provisional labeling
+- Home is a glance dashboard, not a duplicate of detail pages. Export/change cards show dated numeric observations first; questions/limits belong in the destination analysis.
+- Home pick block shows compact aggregate performance plus three recent selections. Preserve exact record routing and one-line thesis text.
+- Export provisional checkpoint rows (1~10d / 1~20d / full month) use semiconductor amounts. Always label those rows as semiconductor so they cannot be mistaken for total exports.

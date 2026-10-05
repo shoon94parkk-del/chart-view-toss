@@ -30,7 +30,7 @@ test('recent spotlight restores existing selection and PICK navigation',()=>{
   assert.ok(home.includes('선정 기록·성과'));
   assert.ok(main.includes('<strong>선정 기록·성과</strong>'));
   assert.ok(ledger.includes('<h2>선정 기록·성과</h2>'));
-  assert.ok(home.includes('선정 당시 이유와 이후 결과를 기록해요.'));
+  assert.ok(home.includes('성과 요약과 최근 선정 3종목을 바로 확인해요.'));
   assert.ok(home.includes('data-home-extra-route="picks">전체 기록 →</button>'));
 });
 

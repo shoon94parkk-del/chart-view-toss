@@ -166,7 +166,7 @@ function createSections(marketSection) {
     picks.id = 'home-top-picks-section';
     picks.innerHTML =
       '<div class="section-head"><h2><i class="section-symbol" aria-hidden="true">' + uiIcon('ledger',16) + '</i>선정 기록·성과</h2><div class="home-pick-head-actions"><button type="button" class="text-button" data-home-extra-route="picks">전체 기록 →</button></div></div>' +
-      '<p class="home-records-caption">선정 당시 이유와 이후 결과를 기록해요. 종목을 누르면 근거·점검 내용을 열어요.</p>' +
+      '<p class="home-records-caption">성과 요약과 최근 선정 3종목을 바로 확인해요.</p>' +
       `<div id="home-top-picks" class="home-pick-list">${loadingIndicator('최근 선정 종목을 불러오고 있어요')}<div class="skeleton home-extra-skeleton"></div></div>`;
   }
 
@@ -183,7 +183,7 @@ function createSections(marketSection) {
   revisit.insertAdjacentElement('afterend',heatmap);
   const discovery=document.querySelector('#home-discovery-feed');
   const exportPreview=document.createElement('section');exportPreview.className='home-export-preview home-changes';
-  exportPreview.innerHTML='<div class="home-changes-title"><h2><i class="section-symbol" aria-hidden="true">' + uiIcon('evidence',16) + '</i>이번 자료에서 확인할 변화</h2><p>관찰한 변화에서 다음 확인으로 · 자료마다 기준일이 달라요.</p></div><div class="home-change-grid" data-home-changes></div><button type="button" class="text-button" data-home-change-toggle aria-expanded="false" hidden>변화 모두 보기</button><p role="status" data-home-change-status></p><button type="button" class="text-button" data-home-change-retry hidden>변화 자료 다시 확인</button>';
+  exportPreview.innerHTML='<div class="home-changes-title"><h2><i class="section-symbol" aria-hidden="true">' + uiIcon('evidence',16) + '</i>지금 확인할 변화</h2><p>핵심 숫자만 보고, 필요할 때 상세로 들어가요.</p></div><div class="home-change-grid" data-home-changes></div><button type="button" class="text-button" data-home-change-toggle aria-expanded="false" hidden>변화 더 보기</button><p role="status" data-home-change-status></p><button type="button" class="text-button" data-home-change-retry hidden>변화 자료 다시 확인</button>';
   discovery.prepend(exportPreview);
   const loadPreview=()=>void import('./homeChangesView.js').then(module=>{if(exportPreview.isConnected)void module.mountHomeChanges(exportPreview);}).catch(()=>{if(exportPreview.isConnected)exportPreview.querySelector('[data-home-changes]').textContent='수출·조건 검색 화면에서 자료를 확인해주세요.';});
   const previewObserver=new IntersectionObserver(entries=>{if(entries.some(entry=>entry.isIntersecting)){previewObserver.disconnect();loadPreview();}else if(!exportPreview.isConnected)previewObserver.disconnect();},{rootMargin:'120px'});
@@ -216,22 +216,45 @@ function paintPicks(host, payload) {
   const tradeDate = day && day.tradeDate || '';
   const dateLabel = tradeDate ? (tradeDate === kstDateKey() ? '오늘 선정 · ' : '최근 선정 · ') + tradeDate : '선정일 확인 중';
 
+  const allRecords=Array.isArray(payload?.recommendations)?payload.recommendations:[];
+  const evaluated=allRecords.filter(row=>finite(row?.returnPct)!==null);
+  const avg=evaluated.length?evaluated.reduce((sum,row)=>sum+Number(row.returnPct),0)/evaluated.length:null;
+  const wins=evaluated.filter(row=>Number(row.returnPct)>0).length;
+  const winRate=evaluated.length?Math.round(wins/evaluated.length*100):null;
   host.innerHTML =
-    '<div class="home-pick-meta">' + esc(dateLabel) + ' · 종목을 눌러 기록 확인</div>' +
-    recentSelections(payload).slice(0,2).map(row=>selectionCardMarkup(row)).join('');
+    '<div class="home-pick-summary">' +
+      '<span><small>평균 수익률</small><strong class="' + returnTone(avg) + '">' + esc(signedPct(avg)) + '</strong></span>' +
+      '<span><small>플러스 비율</small><strong>' + esc(winRate===null?'—':winRate+'%') + '</strong></span>' +
+      '<span><small>평가 기록</small><strong>' + esc(evaluated.length+'/'+allRecords.length) + '</strong></span>' +
+      '<span><small>재점검</small><strong data-home-pick-risk>—</strong></span>' +
+    '</div>' +
+    '<div class="home-pick-meta">' + esc(dateLabel) + ' · 최근 3종목</div>' +
+    recentSelections(payload).slice(0,3).map(row=>selectionCardMarkup(row)).join('');
   window.__chartviewBindNav?.();
   const paintToken=host._pickPaintToken=(host._pickPaintToken||0)+1;
   const refreshStatuses=async()=>{
     try{
       const [{pickMonitor},{monitorFor,actionStatus,statusMeta}]=await Promise.all([import('./api.js'),import('./pickLedger.js')]);
       const monitor=await pickMonitor();if(!host.isConnected||host._pickPaintToken!==paintToken)return;
+      const picks=monitor.picks||[];
       for(const row of recentSelections(payload)){
-        const pick=monitorFor(row,monitor.picks||[]);
+        const pick=monitorFor(row,picks);
         const status=pick?statusMeta(actionStatus({monitor:pick})).label:'점검 기록 미제공';
         const node=[...host.querySelectorAll('[data-selection-status]')].find(el=>el.dataset.selectionStatus===row.key);
         if(node)node.textContent=status;
       }
-    }catch{if(host.isConnected&&host._pickPaintToken===paintToken)host.querySelectorAll('[data-selection-status]').forEach(el=>el.textContent='점검 상태 조회 실패');}
+      const risk=allRecords.reduce((count,row)=>{
+        const pick=monitorFor(row,picks);
+        return count+(pick&&actionStatus({monitor:pick})==='SELL_REVIEW'?1:0);
+      },0);
+      const riskNode=host.querySelector?.('[data-home-pick-risk]');
+      if(riskNode)riskNode.textContent=String(risk);
+    }catch{
+      if(host.isConnected&&host._pickPaintToken===paintToken){
+        host.querySelectorAll('[data-selection-status]').forEach(el=>el.textContent='점검 상태 조회 실패');
+        const riskNode=host.querySelector?.('[data-home-pick-risk]');if(riskNode)riskNode.textContent='—';
+      }
+    }
   };
   void refreshStatuses();
 }

@@ -29,7 +29,7 @@ try{
   assert.equal(calls.radar,1,'initial unavailable radar response must be intercepted');
   await page.locator('[data-export-provisional-retry]').click();
   await page.locator('#export-provisional-radar .export-provisional-error').waitFor({state:'detached'});
-  await page.getByText('1~20일',{exact:true}).first().waitFor().catch(async error=>{
+  await page.getByText('반도체 · 1~20일',{exact:true}).first().waitFor().catch(async error=>{
     console.error(JSON.stringify({width,calls,errors,radar:await page.locator('#export-provisional-radar').innerText(),url:page.url()}));
     throw error;
   });

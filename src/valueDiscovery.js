@@ -20,5 +20,8 @@ export function valueEntriesMarkup(showPicks = true) {
   </nav>`;
 }
 export function selectionCardMarkup(row, status = '점검 상태 확인 중') {
-  return `<article class="home-pick-row"><button type="button" class="home-selection-link" data-feature-route="picks" data-feature-target="${esc(row.key)}" aria-label="${esc((row.name || row.symbol) + ' ' + row.recommendedDate + ' 선정 근거·점검 보기')}"><span class="home-selection-heading"><strong>${esc(row.name || row.symbol)}</strong><small>${esc(row.recommendedDate || '선정일 미제공')} 선정</small></span><span class="home-selection-reason">${esc(row.reason||'선정 이유 확인하기')}</span><span class="home-selection-actions"><span data-selection-status="${esc(row.key)}">${esc(status)}</span><span class="home-selection-open">기록 열기 →</span></span></button></article>`;
+  const value=Number(row?.returnPct);
+  const returnText=Number.isFinite(value)?`${value>0?'+':''}${value.toFixed(2)}%`:'—';
+  const returnTone=Number.isFinite(value)?(value>0?'up':value<0?'down':'flat'):'flat';
+  return `<article class="home-pick-row"><button type="button" class="home-selection-link" data-feature-route="picks" data-feature-target="${esc(row.key)}" aria-label="${esc((row.name || row.symbol) + ' ' + row.recommendedDate + ' 선정 근거·점검 보기')}"><span class="home-selection-heading"><strong>${esc(row.name || row.symbol)}</strong><em class="home-selection-return ${returnTone}">${esc(returnText)}</em></span><span class="home-selection-sub"><span data-selection-status="${esc(row.key)}">${esc(status)}</span><small>${esc(row.reason||'선정 이유 확인하기')}</small><i aria-hidden="true">›</i></span></button></article>`;
 }
