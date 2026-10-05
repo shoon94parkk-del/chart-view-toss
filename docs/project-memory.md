@@ -283,3 +283,10 @@ User-approved new behavior. Home cards include dated observations, questions and
 - User preference: mobile research lists should prioritize scan density. Screener and pick rows should show several stocks per viewport rather than one large card per stock.
 - Current compact targets: screener row min-height 68px before optional warnings; pick ledger CSS min-height 62px; measured content row target <=96px. Export cards use <=600px density overrides.
 - Preserve all trust metadata and warnings; compact by typography/layout, not by deleting evidence or basis text.
+
+
+## 2026-10-05 — semantic emphasis contract
+- `src/emphasis.css` is loaded after `uiExperience.css` so later accessibility/experience overrides do not flatten the visual hierarchy.
+- Semantic identities are stable across Home and detail surfaces: export/evidence teal, discovery blue, picks purple, watch gold.
+- Home change cards use their actual kind: export evidence teal, stock-finding/technical observation blue.
+- The system must not recolor semantic market/status meanings such as up/down or keep/watch/sell.

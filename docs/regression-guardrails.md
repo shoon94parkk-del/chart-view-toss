@@ -384,3 +384,12 @@ Keep original actionStatus priority/count/filter arithmetic but label combined p
 - The picks page should reach the record list quickly on 320~430px screens. Technical-warning details and the automatic-sell disclaimer remain accessible but default collapsed.
 - Do not expand advisory panels by default just to surface explanatory copy. Keep the warning counts/summary visible in the collapsed summary and full evidence inside the expandable body.
 - Never remove the underlying technical warning or sell-review disclaimer to save space.
+
+
+## Visual hierarchy continuity
+- Do not introduce unrelated accent colors per screen. Reuse the semantic identities: export/evidence=teal, discovery=blue, picks=purple, watch=gold.
+- A section accent communicates where the user is and what kind of information they are viewing. It must not override data/status meaning.
+- Up/down market colors and keep/watch/sell warning colors remain semantic and take precedence over section accents.
+- Home cards and their destination surface should share the same accent family so navigation feels continuous.
+- Keep emphasis restrained: soft surface + accent icon/badge/CTA/keyline. Do not turn every card into a saturated block.
+- Mobile density contracts remain in force; visual emphasis must not increase collapsed row/card heights materially.

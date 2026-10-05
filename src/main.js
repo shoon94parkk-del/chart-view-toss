@@ -15,6 +15,7 @@ import './experience.css';
 import './valueDiscovery.css';
 import './visualIdentity.css';
 import './uiExperience.css';
+import './emphasis.css';
 import { SHOW_SPOTLIGHT } from './releaseScope.js';
 import { ANALYSIS_ROUTES, renderAnalysis } from './analysisViews.js';
 import packageInfo from '../package.json';
