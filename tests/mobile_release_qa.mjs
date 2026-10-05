@@ -470,18 +470,16 @@ try{
     await page.waitForTimeout(120);
     if(tab==='exports'){
       await page.waitForSelector('[data-export-panel="overview"]:not([hidden])');
-      if(await page.locator('[data-export-panel="products"]:visible,[data-export-panel="semiconductor"]:visible,[data-export-panel="trend"]:visible').count()) throw new Error('export detail panels must stay hidden on first entry');
-      await page.getByRole('tab',{name:'속보·추세',exact:true}).click();
+      if(await page.locator('[data-export-panel="products"]:visible,[data-export-panel="countries"]:visible,[data-export-panel="semiconductor"]:visible').count()) throw new Error('export detail panels must stay hidden on first entry');
+      if(await page.getByRole('tab',{name:'속보·추세',exact:true}).count()) throw new Error('separate trend tab should be removed');
+      if(await page.locator('.export-topic-nav [role="tab"]').count()!==4) throw new Error('export navigation should contain four tabs');
       await page.waitForSelector('.export-combo-plot');
       await page.waitForSelector('.export-provisional-hero');
       if(await page.locator('.export-provisional-stage').count()!==3) throw new Error('10-day radar must show 10d 20d and month-end checkpoints');
       if(await page.locator('.export-provisional-item').count()!==10) throw new Error('10-day radar must show ten official product groups');
       const provisionalText=await page.locator('#export-provisional-radar').innerText();
       for(const label of ['10일 단위 잠정 수출 레이더','1~10일','1~20일','월 전체','전년 같은 구간','전월 같은 구간','증가율 가속','증가액 기여','반도체','컴퓨터주변기기']) if(!provisionalText.includes(label)) throw new Error(`10-day radar label missing: ${label}`);
-
-      if(await page.locator('.export-landing-card').count()!==2) throw new Error('month-end landing must show total and semiconductor cards');
-      const landingText=await page.locator('.export-landing').innerText();
-      for(const label of ['월말 착지 범위','추정 vs 실제 마감','전체 수출','반도체','당시 월말 중앙 추정','실제 마감','추정 오차','과거 완성률 중앙값','최근 백테스트','중앙 절대오차','범위 적중']) if(!landingText.includes(label)) throw new Error(`month-end landing label missing: ${label}`);
+      if(await page.locator('.export-landing,.export-landing-card').count()) throw new Error('month-end landing projection UI should not remain');
 
       if(await page.locator('.export-combo-column').count()!==12) throw new Error('export dual-axis chart must show 12 official monthly observations');
       if(await page.locator('.export-combo-dot').count()!==12) throw new Error('export dual-axis YoY overlay must show 12 points');
@@ -598,7 +596,7 @@ try{
       await page.waitForSelector('.pick-ledger-item');
       const body=await page.locator('body').innerText();
       if(!body.includes('선정 기록·성과')||!body.includes('추천 81,000원')||!body.includes('점검가 87,480원')||!body.includes('+8.00%')) throw new Error('Restored spotlight history missing');
-      if(await page.locator('.pick-ledger-overview').evaluate(node=>node.open)) throw new Error('mobile PICK performance overview must start collapsed');
+      if(!await page.locator('.pick-ledger-summary').isVisible()||!await page.locator('.pick-ledger-status-strip').isVisible()) throw new Error('mobile PICK performance and status summary must always be visible');
       const pickRows=page.locator('.pick-ledger-row');
       const rowHeights=await pickRows.evaluateAll(rows=>rows.slice(0,3).map(row=>row.getBoundingClientRect().height));
       if(rowHeights.length<3||rowHeights.some(height=>height>64)) throw new Error(`mobile PICK rows must stay near two-line density: ${JSON.stringify(rowHeights)}`);
