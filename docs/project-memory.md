@@ -331,3 +331,11 @@ Full first-market collection is complete: 2,652 checked records, pending0, snaps
 ## 2026-10-05 — Five principles and portable development
 
 User approved three additional methods and GitHub documentation for changing PCs. Five public strategies now include oneil/minervini/greenblatt; original Buffett/Lynch math remains intact. Horizontal44px controls preserve first-result density; each strategy has its own metrics and evidence. v1 remains readable during the coordinated v2 rollout, while v2 requires all five valid partitions. Greenblatt uses the published ROA/PER alternative, explicit and separate from EBIT/EV Magic Formula. Minervini uses dated 253-session OHLCV and a same-date verified-close cohort's 252-session midrank, not RSI or IBD ratings. O'Neil does not pretend to implement CAN SLIM qualitative elements. `docs/CODEX_HANDOFF.md` is the new-PC entry point, linking both repositories and distinguishing manual deployment from unconnected daily publication/native release gates.
+
+## 2026-10-06 — Export momentum map contract
+- Exports overview now leads with a compact momentum map after the monthly hero; it does not replace the existing four export tabs or deeper Customs analysis.
+- The map uses a separate cached backend endpoint so the main monthly snapshot and provisional radar keep independent loading/failure behavior.
+- Visible metrics are latest item YoY, month-to-month change in YoY (ΔYoY), and recent 3-month average YoY. Do not label volume/unit-value changes as YoY acceleration.
+- Signals are acceleration, turnaround, slowing growth, weak, or steady. Turnaround requires crossing above zero; weak means latest YoY<=0; +/-5pp monthly YoY change is the primary acceleration/slowing threshold.
+- Scope is the existing six explicit HS proxy item groups, not all Korean exports. Tapping a row opens the existing item-detail evidence path.
+- Preserve compact mobile density: two-column buckets normally, one column <=360px, and keep data/status colors semantically separate from the teal evidence identity.
