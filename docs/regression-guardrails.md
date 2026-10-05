@@ -425,3 +425,7 @@ Keep original actionStatus priority/count/filter arithmetic but label combined p
 
 ## Guru investing
 Keep small two-strategy controls, collapsed criteria, 72–88px candidate rows and >=12px relevant metadata. Result and evidence snapshotVersion and symbol must match; 409 recovery refreshes dated results. Missing cache, ongoing collection and no matches are distinct states. Source/detail/discover are separate actions; existing detail Back/native root exit stay unchanged. No guru provider calls on Home/detail startup.
+## Guru strategy deep links
+
+- The static preview export must include `/gurus/`, `/gurus/buffett/` and `/gurus/lynch/`, each with the root hashed app entry. Parser-only support does not establish deployment support; verify real HTTP200 and selected strategy after deployment.
+
