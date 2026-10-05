@@ -545,3 +545,12 @@ Classification: user-approved new behavior. Add O'Neil, Minervini and Greenblatt
 Actual production 320px data exposed a 91px Lynch row because its EPS label wrapped. Shorten metric labels to 3년 EPS 성장, 과거 PEG, 연간 PER and 52주 고가; preserve calculation periods and full criteria disclosure. Strengthen mobile QA to bound Lynch and all new strategy row heights at 88px. No data/threshold/layout changes.
 
 CI also reproduced an O'Neil caption wrap with Linux Korean fonts. Use 분기 EPS↑ for the percent-growth caption, retaining single-quarter YoY EPS wording and thresholds in the expanded criteria/evidence.
+
+## 2026-10-06 — 그린블라트 연간 선정값과 현재 TTM 재확인 분리
+
+Classification: data-interpretation correction plus additive current cross-check. 기존 cv-gurus-v2의 전체시장 선정 수학(최근 확정 연간 ROA, 기준일 종가/연간 EPS PER)은 바꾸지 않는다.
+
+- 화면 상단과 후보 행에서 연간 선정 기준을 즉시 드러내고, 각 기업의 실적 연도와 가격 기준일을 섞어 현재 TTM 지표처럼 보이지 않게 한다.
+- 연간 기준으로 선정된 후보만 별도 `/api/valuation` 조회로 현재 TTM ROA·TTM PER를 재확인한다. Forward PER은 참고값이며 선정 판정에 쓰지 않는다.
+- TTM 재확인은 annual 후보의 보수적 교차확인이지 전체 KIND 시장을 TTM으로 다시 스크리닝한 결과가 아니다. 전체 TTM 선정으로 전환하려면 버전이 있는 bulk TTM 데이터셋과 백엔드 기준 변경이 먼저 필요하다.
+- TTM 자료 실패/누락은 연간 선정값을 지우거나 임의 수치로 채우지 않는다. Home/detail 시작 요청, 기존 quote/cache/freshness, 네이티브 이동 계약은 변경하지 않는다.
