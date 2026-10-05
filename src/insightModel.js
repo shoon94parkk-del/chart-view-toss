@@ -25,15 +25,31 @@ export function bandCoverage(stats,years,providedYears){
 }
 // Initial rollout deliberately covers one product family only. KRX products
 // establish classification candidates, never issuer export exposure/contracts.
-export function exportCompanyCandidates(key,metadata={}){
+export function exportCompanyCandidates(key,metadata={},segmentKey=''){
  if(key!=='semiconductor')return [];
- const productEvidence=row=>String(row.mainProducts||'').split(/[,;\n]/).find(part=>{
-  const product=part.trim();
-  if(!/(?:반도체|DRAM|NAND|메모리)/i.test(product)||/장비|검사|테스트|캐리어|소재|재료|부품|기판|유통|설계/i.test(product))return false;
-  return /제조|제품/.test(product)||(/반도체 제조업/.test(row.industry||'')&&/^(?:반도체|DRAM|NAND)(?:\s+(?:DRAM|NAND))*$/i.test(product));
- });
- const candidates=(metadata.companies||[]).filter(row=>/^[A-Z0-9]{6}\.(KS|KQ)$/.test(row.symbol||'')&&productEvidence(row));
- return candidates.sort((a,b)=>Number(b.symbol==='005930.KS'||b.symbol==='000660.KS')-Number(a.symbol==='005930.KS'||a.symbol==='000660.KS')||a.name.localeCompare(b.name,'ko')).slice(0,3).map(row=>({...row,productEvidence:productEvidence(row).trim(),source:metadata.source||'KRX 주요제품',basisDate:String(metadata.updated||metadata.asOf||'기준일 미제공').slice(0,10)}));
+ const segmentPatterns={
+  'memory-total':/(?:DRAM|NAND|Flash|플래시|SRAM|MCP|메모리)/i,
+  dram:/(?:DRAM|디램|메모리)/i,
+  flash:/(?:NAND|Flash|플래시|메모리)/i,
+  sram:/(?:SRAM|메모리)/i,
+  'mcp-memory':/(?:MCP|멀티.?칩|복합구조|메모리)/i,
+  'dram-module':/(?:DRAM|모듈|메모리)/i,
+  'processor-controller':/(?:프로세서|컨트롤러|시스템반도체|반도체)/i,
+  'other-ic':/(?:IC|집적회로|시스템반도체|반도체)/i,
+ };
+ const validProduct=(part,row)=>{
+  const product=String(part||'').trim();
+  if(!/(?:반도체|DRAM|NAND|Flash|플래시|SRAM|MCP|메모리|프로세서|컨트롤러|집적회로|IC)/i.test(product)||/장비|검사|테스트|캐리어|소재|재료|부품|기판|유통|설계/i.test(product))return false;
+  return /제조|제품/.test(product)||(/반도체 제조업/.test(row.industry||'')&&/^(?:반도체|DRAM|NAND|Flash|SRAM|MCP|메모리|IC)(?:\s+(?:DRAM|NAND|Flash|SRAM|MCP|메모리|IC))*$/i.test(product));
+ };
+ const evidence=row=>{
+  const parts=String(row.mainProducts||'').split(/[,;\n]/).filter(part=>validProduct(part,row));
+  const exact=segmentPatterns[segmentKey]?parts.find(part=>segmentPatterns[segmentKey].test(part.trim())):null;
+  const product=exact||parts[0];
+  return product?{text:product.trim(),matchScope:exact?'segment':'semiconductor'}:null;
+ };
+ const candidates=(metadata.companies||[]).map(row=>({row,evidence:evidence(row)})).filter(entry=>/^[A-Z0-9]{6}\.(KS|KQ)$/.test(entry.row.symbol||'')&&entry.evidence);
+ return candidates.sort((a,b)=>Number(b.evidence.matchScope==='segment')-Number(a.evidence.matchScope==='segment')||Number(b.row.symbol==='005930.KS'||b.row.symbol==='000660.KS')-Number(a.row.symbol==='005930.KS'||a.row.symbol==='000660.KS')||a.row.name.localeCompare(b.row.name,'ko')).slice(0,3).map(({row,evidence})=>({...row,productEvidence:evidence.text,matchScope:evidence.matchScope,source:metadata.source||'KRX 주요제품',basisDate:String(metadata.updated||metadata.asOf||'기준일 미제공').slice(0,10)}));
 }
 export function comparisonExample(symbol,rows=[],selected=null){
  if(selected?.symbol!==symbol&&/^[A-Z0-9]{6}\.(KS|KQ)$/.test(selected?.symbol||''))return selected;
