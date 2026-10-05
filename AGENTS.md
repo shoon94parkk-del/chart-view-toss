@@ -3,6 +3,7 @@
 This repository is the Apps in Toss client for Chart View. Do not rely on chat memory alone.
 
 ## Read before editing
+0. `docs/CODEX_HANDOFF.md` (new-PC entry point and current product direction)
 1. `docs/no-repeat-regression-policy.md`
 2. `docs/project-memory.md`
 3. `docs/regression-guardrails.md`

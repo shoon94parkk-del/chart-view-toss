@@ -1,5 +1,7 @@
 # Chart View for Apps in Toss
 
+**새 PC에서 Codex 작업을 이어갈 때:** [현재 구조·UI 선호·실행·배포 인수인계](docs/CODEX_HANDOFF.md)를 먼저 읽으세요. 대화 기록 없이 최신 `main`에서 시작할 수 있습니다.
+
 ![차트뷰 토스 홍보 이미지](public/marketing/chartview-toss-instagram-20260930.png)
 
 **숫자만 보지 말고, 공시까지 같이 보세요.**  
