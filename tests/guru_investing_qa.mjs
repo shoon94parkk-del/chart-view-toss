@@ -57,12 +57,14 @@ try{
   assert.equal(await page.getByRole('searchbox').inputValue(),'000001');assert.equal(await page.locator('.guru-expand').getAttribute('aria-expanded'),'true');
   await page.reload();await page.locator('.guru-candidate').waitFor();assert.equal(await page.getByRole('searchbox').inputValue(),'000001');
   await page.locator('[data-guru-strategy=lynch]').click();await page.locator('.guru-table-wrap').waitFor();
+  assert.ok((await page.locator('.guru-row').first().boundingBox()).height<=88,'Lynch metric labels must fit a compact mobile row');
   assert.match(page.url(),/gurus\/lynch/);assert.match(await page.locator('.guru-evidence').innerText(),/연간 실적 PER 16배/);
   await noOverflow();await page.screenshot({path:`output/playwright/gurus/${width}-lynch-evidence.png`});
   for(const name of names.slice(2)){
    await page.locator(`[data-guru-strategy=${name}]`).click();await page.locator('.guru-table-wrap').first().waitFor();
    assert.match(page.url(),new RegExp('gurus/'+name));
    assert.equal(await page.locator(`[data-guru-strategy=${name}]`).getAttribute('aria-pressed'),'true');
+   assert.ok((await page.locator('.guru-row').first().boundingBox()).height<=88,`${name} row must stay compact`);
    const text=await page.locator('.guru-evidence').innerText();
    assert.match(text,name==='oneil'?/단일3개월/:name==='minervini'?/253|273거래일/:/ROA\/PER 대안/);
    await noOverflow();await page.reload();await page.locator('.guru-table-wrap').first().waitFor();
