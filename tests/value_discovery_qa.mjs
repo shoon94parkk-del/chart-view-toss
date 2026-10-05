@@ -29,8 +29,8 @@ try {
   for(const button of await page.locator('.home-value-entries button').all())assert.ok(await button.evaluate(el=>{const r=el.getBoundingClientRect();return r.top>=0&&r.bottom<innerHeight-90;}),'core entry above fixed bottom nav');
   assert.ok(calls.filter(path=>path==='/static/data/screener.json').length<=1,'visible Home observations reuse one shared request');await page.locator('.home-change-card [data-feature-target=items]').waitFor();await page.locator('.home-change-card [data-feature-target=items]').focus();releaseScreener();await page.waitForFunction(()=>document.querySelectorAll('.home-change-card').length===3);assert.equal(await page.evaluate(()=>document.activeElement?.dataset.featureTarget),'items','late screener preserves export CTA focus');assert.equal(calls.includes('/api/heatmap/full'),false,'Home does not fetch full market');assert.equal(calls.includes('/api/export-momentum/item-detail'),false);
   assert.match(await page.locator('.home-selection-link').innerText(),/삼성전자/);await page.waitForFunction(()=>document.querySelector('[data-selection-status]')?.textContent==='경계');
-  assert.equal(await page.locator('.home-pick-performance').count(),0);
-  assert.match(await page.locator('.home-selection-reason').first().textContent(),new RegExp(record.reason));
+  assert.equal(await page.locator('.home-pick-summary').count(),1);
+  assert.match(await page.locator('.home-selection-sub small').first().textContent(),new RegExp(record.reason));
   await page.screenshot({path:`artifacts/value-discovery/${width}-home.png`});
   if(width===390){
    await page.addStyleTag({content:'.home-value-entries strong{font-size:21px!important}.home-value-entries small{font-size:16px!important}.home-compact-head h2{font-size:33px!important}'});
