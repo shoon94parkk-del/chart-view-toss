@@ -63,9 +63,9 @@ VITE_CHARTVIEW_STATIC_DATA_BASE=https://raw.githubusercontent.com/shoon94parkk-d
 ```powershell
 npm test
 npm run build
-npx playwright install chromium
 # 모바일 QA용 playwright는 CI와 같은 버전으로 별도 준비
 npm install --no-save --package-lock=false playwright@1.55.0
+npx playwright install chromium
 npm run preview -- --port 4173
 # 다른 터미널
 node tests/guru_investing_qa.mjs
