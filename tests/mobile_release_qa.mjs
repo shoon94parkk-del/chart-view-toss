@@ -598,6 +598,13 @@ try{
       await page.waitForSelector('.pick-ledger-item');
       const body=await page.locator('body').innerText();
       if(!body.includes('선정 기록·성과')||!body.includes('추천 81,000원')||!body.includes('점검가 87,480원')||!body.includes('+8.00%')) throw new Error('Restored spotlight history missing');
+      if(await page.locator('.pick-ledger-overview').evaluate(node=>node.open)) throw new Error('mobile PICK performance overview must start collapsed');
+      const pickRows=page.locator('.pick-ledger-row');
+      const rowHeights=await pickRows.evaluateAll(rows=>rows.slice(0,3).map(row=>row.getBoundingClientRect().height));
+      if(rowHeights.length<3||rowHeights.some(height=>height>64)) throw new Error(`mobile PICK rows must stay near two-line density: ${JSON.stringify(rowHeights)}`);
+      const thirdBox=await pickRows.nth(2).boundingBox();
+      const bottomBox=await page.locator('.bottom-nav').boundingBox();
+      if(!thirdBox||!bottomBox||thirdBox.y+thirdBox.height>bottomBox.y-6) throw new Error(`at least three PICK records must be visible above bottom nav: ${JSON.stringify({thirdBox,bottomBox})}`);
       await page.locator('.pick-ledger-row').first().click();
       if(await page.locator('.pick-ledger-detail').first().isHidden()) throw new Error('Spotlight detail did not expand');
     }
