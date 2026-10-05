@@ -6,6 +6,7 @@ await fs.mkdir('artifacts/mobile-continuity',{recursive:true});
 const browser=await chromium.launch({headless:true});
 try{for(const width of [320,390,430]){
  const page=await browser.newPage({viewport:{width,height:844}}),errors=[];
+ await page.clock.setFixedTime(new Date('2026-10-03T06:00:00Z'));
  page.on('pageerror',e=>errors.push(e.message));
  await page.route('https://chart-view-pkv8.onrender.com/**',route=>{
   const path=new URL(route.request().url()).pathname;let body={};
@@ -21,7 +22,9 @@ try{for(const width of [320,390,430]){
  await page.goto(base+'/#more');
  assert.ok(await height('.tab-usage-guide')<=48,'tab help must be one compact 44px disclosure');
  for(const tab of ['discover','ideas','heatmap','chart','valuation','consensus','bands','exports','memory','macro','news','picks','watch']){
-  const row=page.locator(`.feature-row[data-tab="${tab}"]`);if(!await row.count())continue;
+  const row=page.locator(`.feature-row[data-tab="${tab}"]`);
+  if(tab==='picks'&&!await row.count())continue; // Intentionally gated by SHOW_SPOTLIGHT.
+  assert.equal(await row.count(),1,`${tab} required menu entry must exist`);
   assert.ok(await row.evaluate(x=>x.getBoundingClientRect().height)>=44,'menu touch target');
   const color=await row.locator('.feature-icon').evaluate(x=>getComputedStyle(x).color);
   const expected=['exports','memory','macro','news'].includes(tab)?'rgb(8, 123, 119)':tab==='picks'?'rgb(102, 80, 172)':tab==='watch'?'rgb(147, 96, 24)':'rgb(36, 102, 208)';
