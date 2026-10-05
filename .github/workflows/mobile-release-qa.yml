@@ -71,6 +71,9 @@ jobs:
       - name: Verify saved report revisits and price-basis filters
         if: ${{ !cancelled() && steps.start-preview.outcome == 'success' }}
         run: QA_BASE_URL=http://127.0.0.1:4173 node tests/insight_followup_qa.mjs
+      - name: Verify compact mobile views and export/recheck navigation
+        if: ${{ !cancelled() && steps.start-preview.outcome == 'success' }}
+        run: node tests/mobile_density_qa.mjs
       - name: Verify search identity, stale disclosure, detail context and empty macro recovery
         if: ${{ !cancelled() && steps.start-preview.outcome == 'success' }}
         run: node tests/review_validation_qa.mjs
@@ -97,6 +100,7 @@ jobs:
           name: mobile-release-qa-screenshots
           path: |
             artifacts/insight-followup
+            artifacts/mobile-density
             artifacts/mobile-qa
             artifacts/strategy-report
             artifacts/home-journey

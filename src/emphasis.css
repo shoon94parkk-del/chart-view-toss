@@ -332,8 +332,9 @@
     padding:3px 5px!important;font-size:0!important;line-height:1!important;white-space:nowrap!important;
   }
   .app-shell[data-surface="picks"] .pick-ledger-tech-status:after{
-    content:'기술';font-size:7px;font-weight:900;
+    content:'기술 주의';font-size:8px;font-weight:900;
   }
+  .app-shell[data-surface="picks"] .pick-ledger-tech-status.tech-sell:after{content:'강한 경고'}
   .app-shell[data-surface="picks"] .pick-ledger-prices{
     gap:3px!important;min-width:0!important;white-space:nowrap!important;overflow:hidden;
   }
@@ -366,6 +367,90 @@
   .app-shell[data-surface="picks"] .pick-ledger-detail p{
     font-size:10px!important;line-height:1.45!important;
   }
+}
+
+/* Mobile scan density: keep primary numbers visible; expand supporting evidence. */
+.pick-ledger-list-tools{position:relative}
+.pick-ledger-calculation{margin-left:auto}
+.pick-ledger-calculation>summary{display:flex;align-items:center;min-height:44px;padding:0 7px;font-size:11px;color:#66558a;cursor:pointer;white-space:nowrap}
+.pick-ledger-calculation>div{position:absolute;left:0;right:0;top:100%;z-index:5;padding:10px 12px;border:1px solid #dcd4ec;border-radius:10px;background:#fff;box-shadow:0 5px 18px #30234620}
+.pick-ledger-calculation p{margin:4px 0;font-size:12px;line-height:1.5;color:#4e5968}
+.idea-check-details>summary{min-height:44px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-size:12px;color:#3863a2}
+.idea-check-details>summary:after{content:'⌄'}
+.idea-check-details[open]>summary:after{content:'⌃'}
+.saved-research-heading{display:flex!important;align-items:center;justify-content:space-between;gap:8px}
+.saved-research-heading>b{flex:none}
+.revisit-refresh-status:empty{display:none}
+
+@media(max-width:600px){
+  .app-shell .home-compact-head{margin-bottom:8px}
+  .app-shell .market-section.home-primary{margin:10px 0 8px}
+  .app-shell .market-section.home-primary .market-head{margin-bottom:5px}
+  .app-shell .market-section.home-primary .quote-card{min-height:80px;padding:8px 9px;border-radius:12px}
+  .app-shell .market-section.home-primary .quote-card>strong{font-size:17px;margin-top:4px;line-height:1.15}
+  .app-shell .market-section.home-primary .quote-card>em{font-size:11px;margin-top:3px;line-height:1.2}
+  .app-shell .market-section.home-primary .quote-card>small,.app-shell .market-section.home-primary .quote-asof{font-size:9px;line-height:1.25;margin-top:3px}
+  .app-shell .home-value-entries{gap:5px;margin-bottom:12px}
+  .app-shell .home-value-entries button{min-height:78px;padding:8px 7px;border-radius:12px}
+  .app-shell .home-value-entries strong{font-size:12px;line-height:1.25}
+  .app-shell .home-value-entries small{font-size:10px;line-height:1.3;margin-top:4px}
+  .app-shell .home-value-entries .tool-symbol{width:23px;height:23px;margin-bottom:4px}
+  .app-shell .home-analysis-heading h2,.app-shell .market-head h2{font-size:17px}
+
+  .app-shell .home-change-open{grid-template-columns:minmax(0,1fr) 12px;gap:5px}
+  .app-shell .home-change-copy>small{white-space:normal;overflow:visible;text-overflow:clip;line-height:1.3}
+  .app-shell .home-change-next{font-size:14px!important}
+
+  .app-shell .saved-research[data-revisit-compact="true"]{padding:9px 10px;margin:12px 0;border-radius:13px}
+  .app-shell [data-revisit-compact="true"] .section-head{margin:0;gap:8px}
+  .app-shell [data-revisit-compact="true"] h2{font-size:17px;margin:0}
+  .app-shell [data-revisit-compact="true"] [data-refresh-saved-research]{font-size:10px;padding:0 4px}
+  .app-shell [data-revisit-compact="true"] .saved-research-row{padding:5px 0 0}
+  .app-shell [data-revisit-compact="true"] .saved-research-row>button{margin:0;padding:7px 8px;line-height:1.3;min-height:64px}
+  .app-shell [data-revisit-compact="true"] .saved-research-heading strong{font-size:13px}
+  .app-shell [data-revisit-compact="true"] .saved-research-heading b{font-size:10px;margin:0}
+  .app-shell [data-revisit-compact="true"] .revisit-observation{padding:0;margin:5px 0 0;gap:2px;border:0;background:transparent}
+  .app-shell [data-revisit-compact="true"] .revisit-observation b{font-size:11px;line-height:1.3}
+  .app-shell [data-revisit-compact="true"] .revisit-observation small,.app-shell [data-revisit-compact="true"] .saved-research-row>small{font-size:9px;line-height:1.4;margin-top:3px}
+  .app-shell [data-revisit-compact="true"] .saved-question-preview{margin-top:5px;font-size:11px;line-height:1.4}
+  .app-shell [data-revisit-compact="true"] .revisit-refresh-status{font-size:10px;line-height:1.4;margin:4px 0}
+
+  .app-shell .idea-hero{padding:6px 0 8px}
+  .app-shell .idea-hero .page-kicker{font-size:9px;margin-bottom:4px}
+  .app-shell .idea-hero h2{font-size:18px;line-height:1.25}
+  .app-shell .idea-hero p{font-size:11px;line-height:1.35;margin:5px 0 0}
+  .app-shell .idea-guide{margin-bottom:8px;border-radius:10px}
+  .app-shell .idea-guide summary{font-size:11px;padding:5px 9px}
+  .app-shell .idea-grid{gap:5px}
+  .app-shell .idea-results-head{flex-direction:row;align-items:baseline;gap:5px}
+  .app-shell .idea-results-head strong{font-size:13px}
+  .app-shell .idea-results-head span,.app-shell .idea-meta{font-size:9px;line-height:1.35}
+  .app-shell .idea-card-list{gap:8px}
+  .app-shell .idea-card{padding:10px;border-radius:13px;box-shadow:none}
+  .app-shell .idea-card-head{gap:7px}
+  .app-shell .idea-icon{width:28px;height:28px;font-size:15px;border-radius:9px}
+  .app-shell .idea-card h3{font-size:14px;line-height:1.3;margin:2px 0 0}
+  .app-shell .idea-card-head small{font-size:9px}
+  .app-shell .idea-summary{padding:0;background:transparent;margin:6px 0 8px;font-size:10px;line-height:1.4}
+  .app-shell .idea-candidates{gap:5px}
+  .app-shell .idea-candidate-wrap{border-radius:10px;box-shadow:none}
+  .app-shell .idea-candidate{padding:7px 8px;gap:4px 7px;min-height:64px}
+  .app-shell .idea-candidate-main strong{font-size:13px;line-height:1.2}
+  .app-shell .idea-candidate-main small{font-size:9px;line-height:1.25}
+  .app-shell .idea-candidate-price strong{font-size:12px}
+  .app-shell .idea-candidate-price em{font-size:10px}
+  .app-shell .idea-reasons{gap:4px}
+  .app-shell .idea-reasons i{font-size:9px;padding:2px 4px;line-height:1.25}
+  .app-shell .idea-monitor-status{padding:4px 6px;gap:2px;margin:0;border-radius:6px}
+  .app-shell .idea-monitor-status b{font-size:9px}
+  .app-shell .idea-monitor-status small{font-size:9px;line-height:1.35}
+  .app-shell .idea-context summary{padding:5px 8px;min-height:44px;box-sizing:border-box;font-size:10px}
+  .app-shell .idea-context summary span{font-size:9px}
+  .app-shell .idea-check-details>summary{font-size:11px}
+  .app-shell .idea-checks{margin:0 0 6px;padding:0;border:0;grid-template-columns:1fr;gap:5px}
+  .app-shell .idea-checks div{padding:7px 8px}
+  .app-shell .idea-checks b,.app-shell .idea-checks span{font-size:11px;line-height:1.45}
+  .app-shell[data-surface="picks"] .pick-ledger-list-tools{min-height:44px}
 }
 
 

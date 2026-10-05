@@ -499,3 +499,16 @@ Classification: intentional mobile UX correction.
 - 수출 홈 요약은 전체 수출 YoY와 반도체 수출 YoY를 함께 보여주고, 별도 행에서 반도체 물량 YoY와 평균 단위가치 YoY를 보여준다. 서로 기준월이 다를 수 있으므로 각 행의 기준일을 유지한다.
 - 선정 홈은 최근 선정 이유만 크게 보여주던 구조를 대체하고, 전체 평가 기록의 평균 수익률/플러스 비율/평가 건수/재점검 건수를 상단 압축 KPI로 제공한다. 최근 3종목은 종목명/현재 단순수익률/점검 상태/선정 이유 1줄만 표시한다.
 - 수출 잠정 레이더의 1~10일/1~20일/월 전체 체크포인트 금액은 반도체 수출액이므로 각 행에 `반도체 ·`를 명시하고 별도 설명을 추가한다. 상단 전체 수출 카드와 혼동하지 않게 한다.
+
+## 2026-10-05 — 사용자 최신 모바일 밀도를 기준으로 후속 개선
+
+Classification: approved new mobile layout behavior plus existing export-selection restoration/empty-condition action bugs. Latest base `ac51d79` and prior mobile density decisions were checked before editing. The user's compact PICK, persistent KPIs, four export tabs and restrained semantic colors are the baseline.
+
+- LAB uses a short introduction and shows candidates before expandable next-check/counter-signal evidence. Home market/entry spacing and filing-only revisit summaries are compact; full saved research remains in Watch/detail using existing device keys.
+- Home export summaries retain both actual observation months and the unit-value figure. Remove the long visible CTA and repeated headline percentage; the whole row and accessible label still describe the destination. Essential metadata wraps instead of ellipsizing.
+- PICK gains a list-toolbar calculation disclosure for the hidden long mobile basis; existing KPI/count arithmetic and <=64px collapsed records are preserved. Technical caution and strong-warning badges have different visible words.
+- Exports preserves tabs/families in `#exports/items`, `#exports/countries`, `#exports/memory/{family}`. Existing quadrant/breadth/provisional focus links are now recognized as well. User tab/family changes use existing push navigation, not replacement of native history; reload and Back restore the selected view. Memory requests remain semiconductor-only.
+- With zero saved conditions the report-review action jumps to `detail-research-card`; with conditions it retains explicit force revalidation.
+- `tests/mobile_density_qa.mjs` covers 320/390/430px geometry, basis access, tab/family reload and Back, zero-condition jump and saved-condition refresh. Route/month tests supplement it. Existing mobile QA stays enabled; `value_discovery_qa` now expects the selected-country route.
+
+Local browser before CI: at 390px LAB first candidate ~302px (was ~688px), four candidate buttons visible; market cards ~93px and three Home entry tiles 78px. At 320px essential export metadata is no longer clipped, with no horizontal overflow. Validation/deployment status is recorded in the task deliverable after CI; web checks do not fulfill native Toss release gates.

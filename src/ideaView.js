@@ -54,7 +54,8 @@ function ideaCard(idea,index){
   return `<article class="idea-card tone-${index%4}">
     <div class="idea-card-head"><span class="idea-icon">${esc(idea.icon)}</span><div><small>${esc(idea.strength)}</small><h3>${esc(idea.title)}</h3></div></div>
     <p class="idea-summary">${esc(idea.summary)}</p>
-    <div class="idea-checks"><div><b>다음 확인</b><span>${esc(idea.confirm)}</span></div><div><b>반대 신호</b><span>${esc(idea.invalidate)}</span></div></div><div class="idea-candidates">${idea.candidates.map(candidateRow).join('')}</div>
+    <div class="idea-candidates">${idea.candidates.map(candidateRow).join('')}</div>
+    <details class="idea-check-details"><summary>다음 확인 · 반대 신호</summary><div class="idea-checks"><div><b>다음 확인</b><span>${esc(idea.confirm)}</span></div><div><b>반대 신호</b><span>${esc(idea.invalidate)}</span></div></div></details>
   </article>`;
 }
 
@@ -135,10 +136,10 @@ export async function renderIdeaView({shell,bindNav}){
   document.querySelector('#app').innerHTML=shell(`
     <section class="idea-hero">
       <span class="page-kicker">IDEA LAB · BETA</span>
-      <h2>조건에 맞는 종목을 찾고<br><em>근거를 확인해요</em></h2>
-      <p>관찰 패턴에서 질문을 얻는 곳이에요. 직접 조건을 고르려면 조건별 종목 찾기를 이용하세요.</p>
+      <h2>관찰 패턴으로 종목 찾기</h2>
+      <p>후보를 비교하고 공시에서 근거를 확인해요.</p>
     </section>
-    <details class="idea-guide"><summary>선정 기준과 분석 흐름 보기</summary><div><strong>분석 흐름</strong><span>기술 신호 → 실제 매출 구조 → 최근 5거래일 비교군 → 거래 단서</span></div><p>20일 평균 거래대금 10억원 이상을 대상으로 해요. 상세 자료는 종목을 펼칠 때 불러와요.</p></details>
+    <details class="idea-guide"><summary>선정 기준과 분석 흐름 보기</summary><div><strong>분석 흐름</strong><span>기술 신호 → 실제 매출 구조 → 최근 5거래일 비교군 → 거래 단서</span></div><p>20일 평균 거래대금 10억원 이상을 대상으로 해요. 상세 자료는 종목을 펼칠 때 불러와요. 직접 조건을 고르려면 조건별 종목 찾기를 이용하세요.</p></details>
     <div id="idea-body" class="idea-grid" aria-busy="true">${loadingIndicator('조건에 맞는 종목을 찾고 있어요')}<div class="idea-loading-preview" aria-hidden="true"><div class="skeleton idea-skeleton-title"></div><div class="skeleton idea-skeleton-row"></div><div class="skeleton idea-skeleton-row"></div></div></div>
   `,'투자 아이디어');
   bindNav();

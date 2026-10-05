@@ -11,6 +11,12 @@ test('Home observations carry questions and limits without claiming a company be
  assert.equal(rows.length,3);for(const row of rows){assert.ok(row.question);assert.ok(row.limit);}
  assert.equal(rows[0].value,'-4.0%');assert.equal(rows[1].basisDate,'2026-08');assert.match(rows[1].observation,/미제공/);
 });
+test('compact export observations retain different months and unit-value nulls',()=>{
+ const rows=homeChanges({period:'2026-09',summary:{exportYoY:83.5},itemPeriod:'2026-08',items:[{key:'semiconductor',exportYoY:200,exportWeightYoY:61.1,unitValueYoY:null}]});
+ assert.match(rows[0].compactObservation,/2026-09.*2026-08.*\+200\.0%/);
+ assert.match(rows[1].compactObservation,/2026-08.*단위가치 미제공/);
+ assert.equal(rows[1].value,'+61.1%');
+});
 test('price-basis warnings are an opt-in filter, keep null moves and exact original sorting',()=>{
  const rows=[{symbol:'A',name:'A',change1d:-91.07,volumeRatio:20},{symbol:'B',name:'B',change1d:2,volumeRatio:4},{symbol:'C',name:'C',change1d:null,volumeRatio:3}];
  assert.deepEqual(filterScreener(rows,{sort:'volumeRatio'}).map(x=>x.symbol),['A','B','C']);

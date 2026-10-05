@@ -239,7 +239,7 @@ function esc(v=''){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt
 
 function navigate(tab,detailSymbol=null,detailName='',investigation=null){
  if(tab==='picks'&&!SHOW_SPOTLIGHT)tab='home';
- const hash=detailSymbol?`#${tab}/${encodeURIComponent(detailSymbol)}`:`#${tab}`;
+ const hash=detailSymbol?`#${tab}/${tab==='exports'?String(detailSymbol).split('/').map(encodeURIComponent).join('/'):encodeURIComponent(detailSymbol)}`:`#${tab}`;
  const featureTab=['discover','picks','exports'].includes(tab);
  if(tab===state.tab&&(!featureTab||location.hash===hash)&&(tab==='detail'?(!detailSymbol||detailSymbol===state.detailSymbol):tab==='news'?(detailSymbol||null)===state.newsSymbol:true)){
    if(detailSymbol&&detailName)state.detailName=detailName;
@@ -1294,7 +1294,7 @@ async function renderDetail(){
    const reviewHost=document.createElement('div');reviewHost.id='detail-report-review';reviewHost.className='report-review-host';
    document.querySelector('#detail-financial-history').after(reviewHost);
    const reviewReady=import('./reportReviewView.js').then(view=>{
-     if(epoch===viewEpoch){view.mountReportReview(reviewHost,{symbol,data:{available:false,pending:true},onNotice:showToast});restoreInvestigationJump();}
+     if(epoch===viewEpoch){view.mountReportReview(reviewHost,{symbol,data:{available:false,pending:true},onNotice:showToast,onJump:jumpToDetail});restoreInvestigationJump();}
      return view;
    }).catch(()=>{
      if(epoch===viewEpoch){reviewHost.innerHTML='<div class="financial-empty">저장한 투자 근거 화면을 불러오지 못했어요. 저장한 내용은 이 기기에 보관되어 있어요. <button type="button" class="retry" data-reload-review>화면 새로고침</button></div>';reviewHost.querySelector('button').onclick=()=>location.reload();}
@@ -1307,7 +1307,7 @@ async function renderDetail(){
        const target=document.querySelector('#detail-financial-history');
        if(!target)return;
        if(result.status!=='fulfilled'){target.innerHTML='<div class="financial-empty">DART 재무제표를 불러오지 못했어요. <button type="button" class="retry" data-retry-financial>다시 시도</button></div>';}
-       else{const [data,view,review]=result.value;target.innerHTML=view.financialHistoryHtml(data);review?.mountReportReview(reviewHost,{symbol,data,onNotice:showToast});}
+       else{const [data,view,review]=result.value;target.innerHTML=view.financialHistoryHtml(data);review?.mountReportReview(reviewHost,{symbol,data,onNotice:showToast,onJump:jumpToDetail});}
        target.querySelector('[data-retry-financial]')?.addEventListener('click',loadFinancial);
      });
    };
@@ -1536,7 +1536,10 @@ function render(){
  if(state.tab==='exports'){
    cleanupChart();
    void Promise.all([import('./exportMomentumView.js'),import('./exportMomentum.css')]).then(([exportsView])=>{
-     if(state.tab==='exports'){state.exports ||= {};analysisCleanup=exportsView.renderExportMomentumView({shell,bindNav,focus:state.exportFocus,state:state.exports});}
+     if(state.tab==='exports'){state.exports ||= {};analysisCleanup=exportsView.renderExportMomentumView({shell,bindNav,focus:state.exportFocus,memoryPriceGroup:state.memoryPriceGroup,state:state.exports,onSelectionChange:(panel,group)=>{
+       const focus={overview:null,products:'items',countries:'countries',semiconductor:'memory'}[panel];
+       navigate('exports',focus?focus+(panel==='semiconductor'&&group?'/'+group:''):null);
+     }});}
    });
    return;
  }
