@@ -543,3 +543,5 @@ Classification: user-approved new behavior. Add O'Neil, Minervini and Greenblatt
 
 ## 2026-10-05 — Narrow guru row label regression
 Actual production 320px data exposed a 91px Lynch row because its EPS label wrapped. Shorten metric labels to 3년 EPS 성장, 과거 PEG, 연간 PER and 52주 고가; preserve calculation periods and full criteria disclosure. Strengthen mobile QA to bound Lynch and all new strategy row heights at 88px. No data/threshold/layout changes.
+
+CI also reproduced an O'Neil caption wrap with Linux Korean fonts. Use 분기 EPS↑ for the percent-growth caption, retaining single-quarter YoY EPS wording and thresholds in the expanded criteria/evidence.
