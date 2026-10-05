@@ -4,6 +4,11 @@ import {sectorForRow} from './sectorHeatmap.js';
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const pct=v=>`${v>0?'+':''}${Number(v).toFixed(2)}%`;
 const tone=v=>Math.abs(v)<.25?'flat':(v>0?'up':'down')+'-'+(Math.abs(v)>=3?3:Math.abs(v)>=1?2:1);
+const rowBasis=row=>{
+ if(row.sessionDate)return '거래일 '+row.sessionDate;
+ if(row.asOf&&Number.isFinite(Date.parse(row.asOf)))return '시세 기준 '+new Intl.DateTimeFormat('ko-KR',{timeZone:'Asia/Seoul',month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date(row.asOf))+' KST';
+ return '기준일 미제공';
+};
 export function marketMapGroups(payload,market){
  const groups=new Map();
  for(const row of marketRows(payload,market,'full')){
@@ -33,6 +38,6 @@ export function renderMarketMap(payload,{market='KR',cached=false,selected=null}
   }).join('')}</div></section>`;
  }).join('')}</div>
  <div class="market-map-legend" aria-label="등락 색상 범례"><span>하락</span>${[-3,-2,-1,0,1,2,3].map(v=>`<i class="map-${tone(v)}">${v>0?'+':''}${v}%</i>`).join('')}<span>상승</span></div>
- ${group?`<section class="market-map-members"><div><h3>${esc(group.label)} · ${group.members.length}종목</h3><button class="text-button" data-map-sector="${esc(group.label)}">닫기</button></div>${group.members.map(row=>`<button type="button" data-stock-detail="${esc(row.ticker)}" data-stock-name="${esc(row.name)}"><span><strong>${esc(row.name)}</strong><small>${esc(row.sessionDate||'기준일 미제공')} · ${row.price==null?'가격 미제공':Number(row.price).toLocaleString('ko-KR',{maximumFractionDigits:2})+(market==='KR'?'원':' 달러')}</small></span><b class="${row.change>0?'up':row.change<0?'down':''}">${pct(row.change)}</b></button>`).join('')}</section>`:''}
+ ${group?`<section class="market-map-members"><div><h3>${esc(group.label)} · ${group.members.length}종목</h3><button class="text-button" data-map-sector="${esc(group.label)}">닫기</button></div>${group.members.map(row=>`<button type="button" data-stock-detail="${esc(row.ticker)}" data-stock-name="${esc(row.name)}"><span><strong>${esc(row.name)}</strong><small>${esc(rowBasis(row))} · ${row.price==null?'가격 미제공':Number(row.price).toLocaleString('ko-KR',{maximumFractionDigits:2})+(market==='KR'?'원':' 달러')}</small></span><b class="${row.change>0?'up':row.change<0?'down':''}">${pct(row.change)}</b></button>`).join('')}</section>`:''}
  <details class="market-map-basis"><summary>지도 기준 · 주요 종목만 표시</summary><p>전일 기준 대비 개별 종목 등락이에요. 업종은 위치를 묶는 기준이며 공식 섹터 지수가 아니에요. 업종 영역은 가독성을 위해 시총 영향을 완화해요. 각 업종 안의 타일 크기는 한국 시총 0.58승, 미국 시총 비중이에요. 전체 상장 종목을 포함하지 않아요. 업종 이름을 누르면 작은 타일까지 이름·가격·기준일을 확인할 수 있어요.</p></details>`;
 }

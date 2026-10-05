@@ -21,3 +21,7 @@ test('sector frame geometry fills the map and remains bounded for highly uneven 
  assert.ok(Math.abs(cells.reduce((sum,c)=>sum+c.width*c.height,0)-340*680)<.001);
  assert.match(renderMarketMap({results},{market:'US',cached:true}),/저장 시세/);
 });
+test('observation time is disclosed without inventing a missing trading-session date',()=>{
+ const html=renderMarketMap({results:[{...results[0],sessionDate:null,asOf:'2026-10-02T20:20:21+09:00'}]},{market:'US',selected:'기술'});
+ assert.match(html,/시세 기준 10\. 2\. 20:20 KST/);assert.doesNotMatch(html,/거래일 2026/);
+});

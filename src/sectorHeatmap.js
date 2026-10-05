@@ -5,9 +5,13 @@ export function sectorForRow(row){
  if(row.market==='US')return US[row.sector]||null;
  if(row.market!=='KR')return null;
  if(comparisonGroup(row)?.key==='memory-chip')return '반도체';
+ const industry=String(row.industry||'');
+ const products=String(row.mainProducts||'').trim();
+ // A product keyword identifies exposure, not necessarily the company's primary map sector.
+ if(products==='지주회사')return '지주회사';
+ if(/전자부품 제조업/.test(industry)||/세탁기|냉장고|가전/.test(products))return '전기·전자';
  const chain=classifySupplyChain(row);
  if(chain)return chain.chainLabel;
- const industry=String(row.industry||'');
  for(const [pattern,label] of [[/금융|은행|보험|증권/,'금융'],[/자료처리|소프트웨어|인터넷|정보서비스|컴퓨터 프로그래밍|시스템 통합/,'인터넷·SW'],[/화학|철강|금속/,'화학·소재'],[/전자|전기장비|영상|방송 장비/,'전기·전자'],[/건설/,'건설'],[/도매|소매/,'상사·유통'],[/전기 공급|가스 공급/,'유틸리티'],[/석유|정유/,'에너지']])if(pattern.test(industry))return label;
  return industry&&industry!=='-'?industry:null;
 }
