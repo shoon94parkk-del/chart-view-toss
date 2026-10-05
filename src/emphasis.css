@@ -165,6 +165,65 @@
   border-color:#9ed4ca!important;background:#e4f5f1!important;color:#076d69!important;
 }
 
+.app-shell[data-surface="exports"] .export-momentum-map{
+  margin:12px 0 16px;padding:14px;border:1px solid var(--cv-teal-line);border-radius:18px;
+  background:linear-gradient(145deg,#f4fbf9,#fff);
+}
+.app-shell[data-surface="exports"] .export-momentum-buckets{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;
+}
+.app-shell[data-surface="exports"] .export-momentum-bucket{
+  min-width:0;border:1px solid #e3ecea;border-radius:14px;background:#fff;overflow:hidden;
+}
+.app-shell[data-surface="exports"] .export-momentum-bucket>header{
+  min-height:44px;padding:8px 9px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:7px;
+  border-bottom:1px solid #edf2f1;background:#fafcfc;
+}
+.app-shell[data-surface="exports"] .export-momentum-bucket>header>div{min-width:0}
+.app-shell[data-surface="exports"] .export-momentum-bucket>header strong{display:block;font-size:12px;line-height:1.2}
+.app-shell[data-surface="exports"] .export-momentum-bucket>header small{display:block;margin-top:2px;font-size:9px;line-height:1.2;color:#71807e;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.app-shell[data-surface="exports"] .export-momentum-bucket>header>b{
+  min-width:20px;height:20px;padding:0 5px;border-radius:999px;display:grid;place-items:center;background:#f1f4f3;color:#596a68;font-size:9px;
+}
+.app-shell[data-surface="exports"] .export-momentum-mark{
+  width:24px;height:24px;border-radius:8px;display:grid;place-items:center;font-size:11px;font-weight:900;background:#edf6f3;color:var(--cv-teal);
+}
+.app-shell[data-surface="exports"] .export-momentum-bucket.is-turnaround .export-momentum-mark{background:#eef5ff;color:var(--cv-blue)}
+.app-shell[data-surface="exports"] .export-momentum-bucket.is-slowing .export-momentum-mark{background:var(--cv-amber-soft);color:var(--cv-amber)}
+.app-shell[data-surface="exports"] .export-momentum-bucket.is-weak .export-momentum-mark{background:var(--cv-red-soft);color:var(--cv-red)}
+.app-shell[data-surface="exports"] .export-momentum-bucket.is-steady .export-momentum-mark,
+.app-shell[data-surface="exports"] .export-momentum-bucket.is-unknown .export-momentum-mark{background:#f1f3f5;color:#6b7684}
+.app-shell[data-surface="exports"] .export-momentum-list{display:grid}
+.app-shell[data-surface="exports"] .export-momentum-list button{
+  min-width:0;min-height:52px;padding:8px 9px;border:0;border-top:1px solid #f0f3f2;background:#fff;text-align:left;
+  display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:7px;
+}
+.app-shell[data-surface="exports"] .export-momentum-list button:first-child{border-top:0}
+.app-shell[data-surface="exports"] .export-momentum-list button:active{background:#f6faf9}
+.app-shell[data-surface="exports"] .export-momentum-name{min-width:0}
+.app-shell[data-surface="exports"] .export-momentum-name strong{
+  display:block;font-size:12px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#273432;
+}
+.app-shell[data-surface="exports"] .export-momentum-name small{
+  display:block;margin-top:3px;font-size:9px;line-height:1.2;color:#7a8583;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.app-shell[data-surface="exports"] .export-momentum-values{text-align:right;white-space:nowrap}
+.app-shell[data-surface="exports"] .export-momentum-values b{display:block;font-size:12px;line-height:1.15}
+.app-shell[data-surface="exports"] .export-momentum-values em{display:block;margin-top:3px;font-size:9px;line-height:1.1;font-style:normal}
+.app-shell[data-surface="exports"] .export-momentum-map-loading,
+.app-shell[data-surface="exports"] .export-momentum-map-error{
+  min-height:72px;padding:12px;border-radius:12px;background:#fff;display:flex;align-items:center;gap:8px;color:#536461;
+}
+.app-shell[data-surface="exports"] .export-momentum-map-loading>span{
+  width:16px;height:16px;border:2px solid #cce9e3;border-top-color:var(--cv-teal);border-radius:50%;animation:loading-spin .8s linear infinite;flex:none;
+}
+.app-shell[data-surface="exports"] .export-momentum-map-error{align-items:flex-start;flex-wrap:wrap}
+.app-shell[data-surface="exports"] .export-momentum-map-error strong{width:100%;font-size:12px}
+.app-shell[data-surface="exports"] .export-momentum-map-error span{flex:1;min-width:160px;font-size:11px;line-height:1.4}
+.app-shell[data-surface="exports"] .export-momentum-map-error button{
+  min-height:36px;border:1px solid var(--cv-teal-line);border-radius:9px;background:var(--cv-teal-soft);color:var(--cv-teal);font-size:11px;font-weight:800;padding:0 10px;
+}
+
 /* Small screens: preserve density while keeping the emphasis visible. */
 @media(max-width:600px){
   .app-shell .home-changes{padding:11px;border-radius:17px}
@@ -176,6 +235,13 @@
   .app-shell[data-surface="discover"] .screener-preset-panel{padding:0!important}
   .app-shell[data-surface="discover"] .analysis-stock:before{top:8px;bottom:8px}
   .app-shell[data-surface="picks"] .pick-ledger-summary{padding:6px}
+  .app-shell[data-surface="exports"] .export-momentum-map{padding:10px;border-radius:15px}
+  .app-shell[data-surface="exports"] .export-momentum-buckets{gap:6px}
+  .app-shell[data-surface="exports"] .export-momentum-bucket>header{min-height:40px;padding:7px}
+  .app-shell[data-surface="exports"] .export-momentum-list button{min-height:48px;padding:7px}
+}
+@media(max-width:360px){
+  .app-shell[data-surface="exports"] .export-momentum-buckets{grid-template-columns:1fr}
 }
 
 
