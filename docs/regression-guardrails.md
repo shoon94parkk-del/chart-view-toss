@@ -404,3 +404,9 @@ Keep original actionStatus priority/count/filter arithmetic but label combined p
 - Collapsed record rows must remain <=64px at <=600px and preserve name, status, recommendation/check price and return.
 - At 390x844, preserve the multi-record first viewport; current QA targets at least three fixture records above the fixed bottom navigation.
 - Do not satisfy density by deleting evidence or status semantics; move record-level detail behind expansion instead.
+
+
+## Home dashboard density
+- Do not restore tall educational question/limit blocks inside Home change cards. Home should show date + key numeric change + one secondary observation + a compact route action.
+- Home selection preview should expose aggregate performance and recent row status/return without recreating the full PICK ledger. Keep each recent selection row compact and preserve exact date/code routing.
+- In the provisional export radar, checkpoint bars/amounts are semiconductor figures. Any 1~10d, 1~20d or full-month checkpoint label must explicitly say semiconductor; the separate top-level total-export figure must remain distinguishable.
