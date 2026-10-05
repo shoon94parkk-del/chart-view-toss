@@ -24,6 +24,8 @@ test('Greenblatt current cross-check keeps annual selection separate from TTM an
  assert.equal(greenblattCurrentCheck({roa:30,trailingPE:12,forwardPE:10}).status,'matched');
  assert.equal(greenblattCurrentCheck({roa:10,trailingPE:12,forwardPE:8}).status,'failed');
  assert.equal(greenblattCurrentCheck({roa:30,trailingPE:40}).status,'failed');
+ assert.equal(greenblattCurrentCheck({roa:10,trailingPE:null}).status,'failed');
+ assert.equal(greenblattCurrentCheck({roa:30,trailingPE:null,trailingEPS:-1}).status,'failed');
  assert.equal(greenblattCurrentCheck({roa:null,trailingPE:12}).status,'unknown');
  const guide=extensionCriteria('greenblatt');
  assert.match(guide,/확정 연간/);
