@@ -7,6 +7,7 @@ import {
   exportDriverLabel,
   formatPp,
   formatSignedPct,
+  formatSignedUsdBillion,
   formatUnitValue,
   formatUsdBillion,
   formatWeightKg,
@@ -32,6 +33,12 @@ const fixture={
   ],
   items:[{key:'semiconductor',name:'반도체',exportsUsdBillion:60.3,exportYoY:262.8,exportWeightKg:12000000,exportWeightYoY:15,unitValueUsdPerKg:5025,unitValueYoY:215,importsUsdBillion:8.5,importYoY:11,importWeightKg:3200000,tradeBalanceUsdBillion:51.8}],
 };
+
+test('signed export delta formatter keeps direction explicit',()=>{
+  assert.equal(formatSignedUsdBillion(1.25,{digits:1}),'+12.5억달러');
+  assert.equal(formatSignedUsdBillion(-.4,{digits:1}),'-4억달러');
+  assert.equal(formatSignedUsdBillion(0,{digits:1}),'0억달러');
+});
 
 test('export snapshot normalizes official numeric fields without inventing missing values',()=>{
   const value=normalizeExportSnapshot({...fixture,items:[...fixture.items,{name:'자동차',exportYoY:-5,exportsUsdBillion:null}]});
