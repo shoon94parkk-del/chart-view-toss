@@ -52,14 +52,18 @@ test('pick ledger mobile chrome keeps notices and filtering in compact rows',()=
   assert.match(js,/<summary>검색·필터<\/summary>/);
   assert.match(emphasis,/\.pick-ledger-notices\{[\s\S]*grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/);
   assert.match(emphasis,/\.pick-ledger-list-tools\{[\s\S]*min-height:34px/);
-  assert.match(emphasis,/\.pick-ledger-overview>summary\{[\s\S]*min-height:32px!important/);
+  assert.match(js,/<section class="pick-ledger-overview" aria-label="성과·상태 요약">/);
+  assert.doesNotMatch(js,/<details class="pick-ledger-overview"/);
 });
 
-test('expanded pick overview remains compact on mobile',()=>{
+test('always-visible pick overview remains compact on mobile',()=>{
   const emphasis=readFileSync(new URL('../src/emphasis.css',import.meta.url),'utf8');
+  assert.match(emphasis,/\.pick-ledger-overview\{[\s\S]*padding:6px 8px 5px!important/);
   assert.match(emphasis,/\.pick-ledger-kpis>div\{[\s\S]*min-height:45px!important/);
   assert.match(emphasis,/\.pick-ledger-status-kpis\{[\s\S]*display:flex!important/);
   assert.match(emphasis,/\.pick-ledger-status-kpis>div\{[\s\S]*min-height:28px!important/);
+  assert.match(emphasis,/\.pick-ledger-summary>\.pick-ledger-basis\{display:none!important\}/);
+  assert.match(emphasis,/\.pick-ledger-status-strip>\.pick-ledger-basis\{display:none!important\}/);
 });
 
 
