@@ -306,3 +306,8 @@ User-approved new behavior. Home cards include dated observations, questions and
 - Home is a glance dashboard, not a duplicate of detail pages. Export/change cards show dated numeric observations first; questions/limits belong in the destination analysis.
 - Home pick block shows compact aggregate performance plus three recent selections. Preserve exact record routing and one-line thesis text.
 - Export provisional checkpoint rows (1~10d / 1~20d / full month) use semiconductor amounts. Always label those rows as semiconductor so they cannot be mistaken for total exports.
+
+## 2026-10-05 — compact mobile follow-up
+- Treat the user's recent compact UI as the baseline. LAB candidates precede optional next/counter checks; Home filing revisit is a single compact row while Watch/detail expose full saved content.
+- Essential Home export months and unit-value metadata may wrap; they must not be ellipsized away. PICK hidden long calculation basis remains accessible through the compact toolbar disclosure, and technical severity has distinct visible words.
+- Export tab and memory-family selections are public hash routes through normal native-compatible navigation. Preserve lazy memory loading and existing focus deep links. An empty tracked-condition action goes to DART comparison; saved conditions still explicitly revalidate.

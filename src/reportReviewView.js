@@ -13,7 +13,7 @@ function conditionHtml(condition,i,observed,{pending=false}={}){
  const value=(n,currency=observed.currency)=>n==null?'확인 불가':condition.key==='operatingCashFlow'?money(n,currency):Number(n).toFixed(1)+'%';
  return `<article class="tracked-condition"><strong>${esc(condition.label)}</strong>${condition.peer?`<p>비교 회사 · ${esc(condition.peer.name)}</p>`:''}<span class="review-status">${status}</span><p>${pending?loadingIndicator('최신 공시와 비교하고 있어요'):`${esc(observed.label||'기간 확인 불가')} · ${observed.matched===null?esc(observed.reason):`현재 조건 ${observed.matched?'충족':'미충족'} · ${value(observed.value)} / ${condition.peer?'비교 회사':'기준'} ${value(observed.reference)}`}`}</p><p>저장 당시 ${esc(baseline.label||'')} · ${value(baseline.value,baseline.currency)} / ${value(baseline.reference,baseline.currency)} · ${baseline.matched?'충족':'미충족'}</p>${sources(pending?baseline.sourceUrls:observed.sourceUrls)}${pending?'':`<button type="button" class="review-remove" data-remove-condition="${i}">근거 삭제</button>`}</article>`;
 }
-export function mountReportReview(host,{symbol,data,onNotice}){
+export function mountReportReview(host,{symbol,data,onNotice,onJump}){
  if(!host)return;
  let run=0;
  const paint=()=>{
@@ -31,10 +31,10 @@ export function mountReportReview(host,{symbol,data,onNotice}){
    ${change.priorChanged?.length?`<div class="review-note"><strong>이전 비교기간 수치도 달라졌어요</strong>${change.priorChanged.map(key=>`<p>${esc(keys.find(([k])=>k===key)?.[1]||key)} · 마지막 확인 ${money(saved.filing.previous?.[key],snapshot.currency)} → 이번 공시 ${money(snapshot.previous[key],snapshot.currency)}</p>`).join('')}</div>`:''}
    ${sources([snapshot?.sourceUrl,...(['corrected','incompatible','older'].includes(change.kind)?[saved.filing?.sourceUrl]:[])])}
    ${snapshot&&!['same','older'].includes(change.kind)&&!saved.readError?'<button type="button" class="review-ack" data-review-ack>이 공시 확인 완료</button>':''}<p class="review-note">확인 완료를 누르면 이 기기에 기준 보고서가 저장돼요. 새 기간은 전년 같은 기간과, 정정은 마지막 확인한 같은 기간과 비교해요. 원인과 전망을 추정하지 않아요.</p></div>
-   <div class="tracked-conditions"><h3>내 투자 근거 다시 확인</h3><p class="review-note">공시 비교 결과에서 근거를 골라 최대 3개까지 저장할 수 있어요. 저장한 질문과 별도로 이 기기에만 보관해요.</p><div data-tracked-results>${(saved.conditions||[]).length?loadingIndicator('저장한 근거의 공시를 확인하고 있어요'):'아직 저장한 근거가 없어요. 아래 공시 비교를 해보세요.'}</div><button type="button" class="review-check" data-tracked-check>공시로 다시 확인</button><div class="review-announce" role="status" data-review-announce>${saved.readError?'저장한 근거를 읽지 못했어요. 기기 저장 상태를 확인해주세요.':''}</div></div>`;
+   <div class="tracked-conditions"><h3>내 투자 근거 다시 확인</h3><p class="review-note">공시 비교 결과에서 근거를 골라 최대 3개까지 저장할 수 있어요. 저장한 질문과 별도로 이 기기에만 보관해요.</p><div data-tracked-results>${(saved.conditions||[]).length?loadingIndicator('저장한 근거의 공시를 확인하고 있어요'):'아직 저장한 근거가 없어요. 아래 공시 비교를 해보세요.'}</div><button type="button" class="review-check" data-tracked-check>${(saved.conditions||[]).length?'공시로 다시 확인':'공시 비교에서 근거 고르기'}</button><div class="review-announce" role="status" data-review-announce>${saved.readError?'저장한 근거를 읽지 못했어요. 기기 저장 상태를 확인해주세요.':''}</div></div>`;
   bindSources(host);
   host.querySelector('[data-review-ack]')?.addEventListener('click',()=>{try{updateReview(symbol,{filing:snapshot,reviewedAt:new Date().toISOString()});onNotice?.('이 공시를 확인한 기준으로 저장했어요.');paint();}catch{host.querySelector('[data-review-announce]').textContent='기준 보고서를 저장하지 못했어요.';}});
-  host.querySelector('[data-tracked-check]').onclick=()=>check(saved.conditions||[],true);
+  host.querySelector('[data-tracked-check]').onclick=()=>saved.conditions?.length?check(saved.conditions,true):onJump?.('detail-research-card');
   void check(saved.conditions||[]);
  };
  const check=async(conditions,force=false)=>{

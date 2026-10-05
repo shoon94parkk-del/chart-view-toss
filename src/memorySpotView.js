@@ -157,11 +157,11 @@ function renderError(message){
   ].join('');
 }
 
-export function mountMemorySpot(host,{bindNav}={}){
+export function mountMemorySpot(host,{bindNav,activeGroup='dram-chip',onGroupChange}={}){
   if(!host)return ()=>{};
   let seq=0;
   let data=null;
-  let activeKey='dram-chip';
+  let activeKey=GROUP_ORDER.includes(activeGroup)?activeGroup:'dram-chip';
 
   const bindGroupTabs=()=>{
     host.querySelectorAll('[data-memory-price-group]').forEach(button=>{
@@ -170,6 +170,7 @@ export function mountMemorySpot(host,{bindNav}={}){
         host.innerHTML=renderShell(data,activeKey);
         bindGroupTabs();
         bindNav?.();
+        onGroupChange?.(activeKey);
       });
     });
   };

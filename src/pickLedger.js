@@ -138,6 +138,7 @@ export async function renderPickLedger({shell,bindNav,displayName,focusKey=null}
     <p class="pick-ledger-focus-note" role="status"></p>
     <div class="pick-ledger-list-tools">
       <p class="pick-ledger-count" id="pick-ledger-count"></p>
+      <details class="pick-ledger-calculation"><summary>집계 기준</summary><div data-pick-calculation></div></details>
       <details class="pick-ledger-search-options"><summary>검색·필터</summary><section class="pick-ledger-toolbar" id="pick-ledger-toolbar" hidden>
         <label class="pick-ledger-search"><span>종목 검색</span><input id="pick-ledger-search" type="search" placeholder="종목명 · 코드" autocomplete="off"></label>
         <div class="pick-ledger-filters">
@@ -194,6 +195,7 @@ export async function renderPickLedger({shell,bindNav,displayName,focusKey=null}
       <div class="sell"><span>🔴 재점검 우선</span><b>${counts.SELL_REVIEW}</b></div>
       <div><span>⚪ 검토 대기</span><b>${counts.PENDING_REVIEW}</b></div>
     </div><p class="pick-ledger-basis">${monitorResult.ok?esc(`사후점검 ${String(monitorResult.value?.generatedAt||'').slice(0,10)||'기준일 미확인'} 기준 · 신호등은 펀더멘털과 단기 기술신호 중 더 높은 위험도를 반영 · 자동 점검 실행 ${reviewed}/${rows.length}건 · 근거 검토 대기는 별도 표시`):'사후점검 데이터를 불러오지 못해 성과 기록만 표시 중이에요.'}</p>`;
+    document.querySelector('[data-pick-calculation]').innerHTML=[summary,statusStrip].map(node=>`<p>${esc(node.querySelector('.pick-ledger-basis').textContent)}</p>`).join('');
     const warningRows=rows.filter(row=>['TECH_SELL_REVIEW','TECH_CAUTION'].includes(row.monitor?.technical?.signal));
     techAlert.hidden=!warningRows.length;
     techAlert.classList.toggle('caution',!techSell.length);

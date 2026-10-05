@@ -20,6 +20,6 @@ export function resolveRoute({pathname='/',hash=''}) {
   if(tab==='news')return {tab,detailSymbol:null,newsSymbol:null};
   if(tab==='discover')return {tab,detailSymbol:null,screenerPreset:['volume-surge','rsi-oversold','momentum','golden-cross','uptrend','near-high','pullback','macd-bullish'].includes(parts[1])?parts[1]:null};
   if(tab==='picks')return {tab,detailSymbol:null,pickFocusKey:/^\d{4}-\d{2}-\d{2}:[A-Z0-9.^=\-]{1,30}$/.test(parts[1]||'')?parts[1]:null};
-  if(tab==='exports')return {tab,detailSymbol:null,exportFocus:['history','items','countries','memory'].includes(parts[1])?parts[1]:null};
+  if(tab==='exports')return {tab,detailSymbol:null,exportFocus:['history','provisional','items','breadth','quadrant','countries','memory'].includes(parts[1])?parts[1]:null,memoryPriceGroup:parts[1]==='memory'&&['dram-chip','nand-chip','nand-wafer','dram-module','gddr'].includes(parts[2])?parts[2]:null};
   return {tab,detailSymbol:null};
 }

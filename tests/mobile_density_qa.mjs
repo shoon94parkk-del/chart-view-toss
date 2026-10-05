@@ -1,0 +1,54 @@
+import {chromium} from 'playwright';
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+const base=process.env.QA_BASE_URL||'http://127.0.0.1:4173';
+await fs.mkdir('artifacts/mobile-density',{recursive:true});
+const browser=await chromium.launch({headless:true});
+const records=Array.from({length:8},(_,i)=>({symbol:`${String(5930+i).padStart(6,'0')}.KS`,code:String(5930+i).padStart(6,'0'),name:i?'후보 종목 '+i:'삼성전자',recommendedDate:'2026-10-02',recommendedPrice:100,currentPrice:120,returnPct:20,lastUpdatedTradeDate:'2026-10-02',reason:'원문 선정 근거'}));
+const snapshot={period:'2026-09',itemPeriod:'2026-08',regionPeriod:'2026-08',summary:{exportsUsdBillion:60,exportYoY:83.5},items:[{key:'semiconductor',name:'반도체',exportsUsdBillion:20,exportYoY:200,exportWeightYoY:61.1,unitValueYoY:86.2}],regions:[{name:'미국',exportsUsdBillion:5,exportYoY:20}]};
+try{for(const width of [320,390,430]){
+ const height=width===320?693:844;
+ const context=await browser.newContext({viewport:{width,height}}),page=await context.newPage(),errors=[];
+ page.on('pageerror',e=>errors.push(e.message));
+ let spotCalls=0,financialCalls=0;
+ const mock=async route=>{
+  const path=new URL(route.request().url()).pathname.replace(/^\/backend/,'');let body={};
+  if(path==='/api/home-bootstrap')body={recommendations:records,day:{tradeDate:'2026-10-02',top3:records.slice(0,3)}};
+  if(path.endsWith('/pick_monitor.json'))body={generatedAt:'2026-10-02',picks:records.map((r,i)=>({pickId:r.recommendedDate+':'+r.code,symbol:r.symbol,status:'KEEP',technical:{signal:i%2?'TECH_CAUTION':'TECH_SELL_REVIEW',tradeDate:'2026-10-02',reasons:['거래량 신호 확인']},monitor:{lastReviewedTradeDate:'2026-10-02'}}))};
+  if(path==='/api/market-now')body={results:['^KS11','^KQ11','^GSPC','^IXIC'].map(ticker=>({ticker,price:3000,change:1,asOf:'2026-10-02T07:00:00Z'}))};
+  if(path==='/api/quotes')body={results:[{ticker:'005930.KS',name:'삼성전자',price:120000,change:2,currency:'KRW'}]};
+  if(path.endsWith('/screener.json'))body={tradeDate:'2026-10-02',stocks:records.map(r=>({...r,market:'KOSPI',date:'2026-10-02',price:120000,change1d:2,volumeRatio:3,avgValue20:2e9,rsi14:50,trend2060:true,industry:'반도체'}))};
+  if(path==='/api/export-momentum')body=snapshot;
+  if(path==='/api/memory-prices'){spotCalls++;body={available:true,items:[{key:'dram-chip',average:3}],groups:['dram-chip','nand-chip'].map(key=>({key,name:key==='dram-chip'?'DRAM 칩':'NAND 칩',sourceDate:'2026-10-02',items:[{key,name:key,average:3,changePct:1}]}))};}
+  if(path==='/api/financial-history'){financialCalls++;body={available:true,basis:'연결재무제표',currency:'KRW',interim:{year:2026,quarter:2,revenue:120,priorRevenue:80,operatingProfit:12,priorOperatingProfit:8},interimSourceUrl:'https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260814001146'};}
+  return route.fulfill({contentType:'application/json',body:JSON.stringify(body)});
+ };
+ await page.route('https://chart-view-pkv8.onrender.com/**',mock);await page.route('**/backend/**',mock);
+ await page.goto(base+'/#home');await page.locator('.market-grid .quote-card').first().waitFor();
+ const marketHeight=await page.locator('.market-grid .quote-card').first().evaluate(el=>el.getBoundingClientRect().height);assert.ok(marketHeight<=96,`market ${width}px: ${marketHeight}`);
+ await page.locator('.home-changes').scrollIntoViewIfNeeded();await page.locator('.home-change-copy small').first().waitFor();
+ for(const meta of await page.locator('.home-change-copy small').all())assert.ok(await meta.evaluate(el=>el.scrollWidth<=el.clientWidth+1),'essential month/value must not be clipped');
+ assert.match(await page.locator('.home-change-copy').first().innerText(),/2026-09.*2026-08/s);
+ assert.equal(financialCalls,0);assert.equal(spotCalls,0);
+ await page.goto(base+'/#ideas');await page.locator('.idea-candidate').first().waitFor();
+ const lab=await page.evaluate(()=>({first:document.querySelector('.idea-candidate').getBoundingClientRect().top+scrollY,visible:[...document.querySelectorAll('.idea-card:first-child .idea-candidate')].filter(el=>el.getBoundingClientRect().bottom<=document.querySelector('.bottom-nav').getBoundingClientRect().top).length}));
+ assert.ok(lab.first<=400,JSON.stringify({width,lab}));if(width>=390)assert.ok(lab.visible>=3,JSON.stringify({width,lab}));
+ await page.locator('.idea-check-details summary').first().click();assert.match(await page.locator('.idea-checks').first().innerText(),/다음 확인.*반대 신호/s);
+ await page.locator('.idea-check-details summary').first().click();await page.screenshot({path:`artifacts/mobile-density/${width}-lab.png`});
+ await page.goto(base+'/#picks');await page.locator('[data-pick-expand]').first().waitFor();
+ for(const row of await page.locator('[data-pick-expand]').all())assert.ok(await row.evaluate(el=>el.getBoundingClientRect().height)<=64.5,'keep compact PICK rows');
+ await page.locator('.pick-ledger-calculation summary').click();assert.match(await page.locator('[data-pick-calculation]').innerText(),/2026-10-02.*단순 수익률/s);assert.match(await page.locator('[data-pick-calculation]').innerText(),/더 높은 위험도/);await page.locator('.pick-ledger-calculation summary').click();
+ assert.equal(await page.locator('.pick-ledger-tech-status.tech-sell').first().evaluate(el=>getComputedStyle(el,'::after').content),'"강한 경고"');
+ assert.equal(await page.locator('.pick-ledger-tech-status.tech-caution').first().evaluate(el=>getComputedStyle(el,'::after').content),'"기술 주의"');
+ await page.goto(base+'/#exports');await page.getByRole('tab',{name:'반도체',exact:true}).click();await page.locator('[data-memory-price-group="nand-chip"]').click();
+ assert.equal(new URL(page.url()).hash,'#exports/memory/nand-chip');await page.reload();
+ await page.locator('[data-memory-price-group="nand-chip"][aria-selected="true"]').waitFor();
+ await page.getByRole('tab',{name:'국가',exact:true}).click();await page.reload();await page.locator('[data-export-topic="countries"][aria-selected="true"]').waitFor();
+ await page.getByRole('tab',{name:'품목',exact:true}).click();await page.goBack();await page.locator('[data-export-topic="countries"][aria-selected="true"]').waitFor();
+ await page.goto(base+'/#detail/005930.KS');await page.getByRole('button',{name:'공시 비교에서 근거 고르기',exact:true}).waitFor();
+ await page.getByRole('button',{name:'공시 비교에서 근거 고르기',exact:true}).click();assert.equal(await page.evaluate(()=>document.activeElement.id),'detail-research-card');
+ await page.locator('#research-question').fill('매출과 영업이익 증가율을 확인해줘');await page.locator('.research-analyze').click();await page.locator('[data-track-condition="0"]').click();
+ await page.getByRole('button',{name:'공시로 다시 확인',exact:true}).waitFor();const calls=financialCalls;await page.getByRole('button',{name:'공시로 다시 확인',exact:true}).click();await page.locator('[data-tracked-results][aria-busy="false"]').waitFor();assert.ok(financialCalls>calls,'saved condition recheck actually fetches');
+ assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);assert.deepEqual(errors,[]);
+ await context.close();console.log(`${width}px: density, source dates, PICK basis, export reload/back and empty/saved recheck passed`);
+}}finally{await browser.close();}

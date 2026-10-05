@@ -702,7 +702,7 @@ function paint(host,snapshot,bindNav,onItemOpen){
   host.querySelectorAll('[data-export-item]').forEach(button=>button.addEventListener('click',()=>onItemOpen(button.dataset.exportItem)));
 }
 
-export function renderExportMomentumView({shell,bindNav,focus=null,state={}}){
+export function renderExportMomentumView({shell,bindNav,focus=null,state={},memoryPriceGroup=null,onSelectionChange}){
   const app=document.querySelector('#app');
   const tabs=[['overview','전체 요약'],['products','품목'],['countries','국가'],['semiconductor','반도체']];
   const panelForFocus=key=>({
@@ -718,6 +718,7 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={}}){
   let provisionalSeq=0;
   let provisionalLoaded=false;
   let memorySpotCleanup=null;
+  if(memoryPriceGroup)state.memoryPriceGroup=memoryPriceGroup;
 
   const openItemDetail=async(key,{force=false,restore=false}={})=>{
     const panel=host.querySelector('#export-item-detail');
@@ -843,7 +844,7 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={}}){
           button.classList.toggle('is-active',selected);
         });
         if(panelKey==='semiconductor'&&!memorySpotCleanup){
-          memorySpotCleanup=mountMemorySpot(host.querySelector('#export-memory-spot'),{bindNav});
+          memorySpotCleanup=mountMemorySpot(host.querySelector('#export-memory-spot'),{bindNav,activeGroup:state.memoryPriceGroup,onGroupChange:key=>{state.memoryPriceGroup=key;onSelectionChange?.('semiconductor',key);}});
         }
         if(panelKey==='overview'&&!provisionalLoaded){
           provisionalLoaded=true;
@@ -853,7 +854,7 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={}}){
       };
 
       app.querySelectorAll('[data-export-topic]').forEach(button=>{
-        button.onclick=()=>activatePanel(button.dataset.exportTopic,{scroll:true,closeDetail:true});
+        button.onclick=()=>{if(onSelectionChange)onSelectionChange(button.dataset.exportTopic,state.memoryPriceGroup);else activatePanel(button.dataset.exportTopic,{scroll:true,closeDetail:true});};
       });
 
       const requestedFocus=focus;
