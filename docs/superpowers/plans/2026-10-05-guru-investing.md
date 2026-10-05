@@ -8,7 +8,7 @@
 
 **Tech Stack:** Python 3.11/FastAPI/requests 및 기존 Yahoo 수집, GitHub Actions, Node 24.21.0/Vite/vanilla JS, Node test/pytest/Playwright. 새 제품 라이브러리는 추가하지 않는다.
 
-**Spec:** [승인된 설계](../specs/2026-10-05-guru-investing-design.md). 상태: 계획 작성 완료, 사용자 검토 대기. 아직 제품 코드·배포를 변경하지 않았다.
+**Spec:** [승인된 설계](../specs/2026-10-05-guru-investing-design.md). 상태: 사용자 계획 승인, 직접 구현 진행. Tasks 1–5 구현·회귀 검증 완료; Task 6 실공시 대조·운영 배포 검증 진행.
 
 ## Global Constraints
 
@@ -124,3 +124,4 @@
 Task 1은 출처/기간/EPS, Task 2는 수치 기준, Task 3은 전 시장·수집 예산·정정·범위, Task 4는 버전 근거, Task 5는 모든 승인 동선·모바일·실패 상태, Task 6은 실제 데이터·회귀·순차 배포를 담당한다. 인터페이스·status·버전 이름을 통일했고 Review Focus 5개를 해당 테스트에 연결했다. 테스트 fixture와 실데이터 경로는 분리한다.
 
 **실행 제안:** 이 대화에서 주 개발 에이전트가 `executing-plans`로 순서대로 직접 구현한다. 재무→결과→근거→화면의 의존성이 강하므로 먼저 계약을 확정하고 한 단계씩 검증하는 방식이 적합하다. 사용자에게 계획 검토와 실행 방식을 확인받은 뒤 제품 구현을 시작한다.
+
