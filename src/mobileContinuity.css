@@ -1,0 +1,117 @@
+/* Continue the approved compact mobile hierarchy on the remaining screens.
+   Data/status colors and the dense PICK/screener/Home layouts are independent. */
+.app-shell[data-ui-tone="evidence"]{--purpose:var(--cv-teal);--purpose-soft:var(--cv-teal-soft);--purpose-line:var(--cv-teal-line)}
+.app-shell:is([data-ui-tone="find"],[data-ui-tone="market"],[data-ui-tone="compare"],[data-ui-tone="analysis"]){--purpose:var(--cv-blue);--purpose-soft:var(--cv-blue-soft);--purpose-line:var(--cv-blue-line)}
+.feature-row[data-tool-tone="find"],.feature-row[data-tool-tone="market"],.feature-row[data-tool-tone="compare"],.feature-row[data-tool-tone="analysis"]{--tool-color:var(--cv-blue);--tool-soft:var(--cv-blue-soft)}
+.feature-row[data-tool-tone="evidence"],.feature-row[data-tool-tone="exports"]{--tool-color:var(--cv-teal);--tool-soft:var(--cv-teal-soft)}
+.feature-row[data-tool-tone="records"]{--tool-color:var(--cv-purple);--tool-soft:var(--cv-purple-soft)}
+.feature-row[data-tool-tone="watch"]{--tool-color:var(--cv-gold);--tool-soft:var(--cv-gold-soft)}
+.app-shell .feature-row[data-tool-tone] .feature-icon{color:var(--tool-color,var(--purpose));background:var(--tool-soft,var(--purpose-soft))}
+.app-shell .analysis-category-nav a[data-menu-jump="analysis-evidence"]{color:var(--cv-teal);background:var(--cv-teal-soft);border-color:var(--cv-teal-line)}
+.app-shell #analysis-evidence{--purpose:var(--cv-teal);--purpose-soft:var(--cv-teal-soft)}
+.app-shell .metric-bar i{background:var(--cv-blue)}
+
+@media(max-width:600px){
+ .app-shell:is([data-surface="chart"],[data-surface="watch"],[data-surface="valuation"],[data-surface="consensus"],[data-surface="bands"],[data-surface="macro"],[data-surface="news"],[data-surface="tools"]) .task-head{padding:8px 10px;margin:0 0 8px;gap:8px;align-items:center;min-height:44px;box-sizing:border-box}
+ .app-shell .task-head>div{min-width:0}
+ .app-shell:is([data-surface="chart"],[data-surface="watch"],[data-surface="valuation"],[data-surface="consensus"],[data-surface="bands"],[data-surface="macro"],[data-surface="news"],[data-surface="tools"]) .task-head p{margin:0;font-size:12px;line-height:1.5}
+ html[data-ait-runtime="true"] .app-shell .task-head h2{font-size:19px;line-height:1.3;margin:0 0 4px}
+ .app-shell .primary-subtle,.app-shell .neutral-action{padding:0 10px;font-size:12px;border-radius:10px}
+
+ /* Purpose menu: same identity as its destination, with one compact help row. */
+ .app-shell[data-surface="more"] .more-intro{padding:7px 0;margin:0 0 8px}
+ .app-shell[data-surface="more"] .more-intro p{font-size:12px;line-height:1.5}
+ .app-shell[data-surface="more"] .analysis-category-nav{margin:0 0 8px}
+ .app-shell[data-surface="more"] .analysis-category-nav a{min-height:44px;box-sizing:border-box}
+ .app-shell[data-surface="more"] .menu-group{margin-top:16px}
+ .app-shell[data-surface="more"] .menu-group>h3{font-size:14px;margin-bottom:8px}
+ .app-shell[data-surface="more"] .menu-group-copy{font-size:12px;line-height:1.5;margin:5px 0 8px}
+ .app-shell[data-surface="more"] .feature-row{min-height:62px;padding:8px 0;gap:9px}
+ .app-shell[data-surface="more"] .feature-icon{width:32px;height:32px;border-radius:10px}
+ .app-shell[data-surface="more"] .feature-row strong{font-size:14px}
+ .app-shell[data-surface="more"] .feature-row small{font-size:12px;line-height:1.4;margin-top:3px}
+ .app-shell:is([data-surface="more"],[data-surface="chart"]) .calculation-guide{padding:0 10px;margin:8px 0 12px;border-radius:12px}
+ .app-shell:is([data-surface="more"],[data-surface="chart"]) .calculation-guide>summary{min-height:44px;font-size:12px;box-sizing:border-box}
+ .app-shell .tab-usage-guide[open]{padding-bottom:8px}
+
+ /* Comparable values lead; original estimates, currency and source remain visible. */
+ .app-shell[data-surface="consensus"] .consensus-caution{padding:9px 10px;margin:8px 0;font-size:12px;line-height:1.5}
+ .app-shell[data-surface="consensus"] .analysis-card{padding:11px 12px;border-radius:14px;margin-bottom:9px}
+ .app-shell[data-surface="consensus"] .analysis-card .text-button{font-size:14px}
+ .app-shell[data-surface="consensus"] .analysis-card p{font-size:12px;line-height:1.5;margin:7px 0}
+ .app-shell[data-surface="consensus"] .analysis-meta{font-size:12px;white-space:normal;color:#596575}
+ .app-shell:is([data-surface="consensus"],[data-surface="bands"]) .analysis-metrics{gap:10px 12px;margin:10px 0 0}
+ .app-shell:is([data-surface="consensus"],[data-surface="bands"]) .analysis-metrics dt{font-size:12px;margin-bottom:3px}
+ .app-shell:is([data-surface="consensus"],[data-surface="bands"]) .analysis-metrics dd{font-size:14px;line-height:1.4;font-variant-numeric:tabular-nums}
+ .app-shell .analysis-metrics dd small{font-size:12px;line-height:1.5}
+ .app-shell[data-surface="bands"] .analysis-filters{grid-template-columns:minmax(0,1.8fr) repeat(2,minmax(0,1fr));gap:8px;margin:8px 0}
+ .app-shell[data-surface="bands"] .analysis-filters label{font-size:12px;gap:4px}
+ .app-shell:is([data-surface="bands"],[data-surface="consensus"]) select{min-height:44px;padding:8px 6px}
+ .app-shell[data-surface="valuation"] .valuation-compare-row{padding:10px;gap:8px}
+ .app-shell[data-surface="valuation"] .valuation-row-copy em{font-size:12px;line-height:1.4;white-space:normal;overflow:visible}
+ .app-shell[data-surface="valuation"] .valuation-row-value small{font-size:12px;line-height:1.4}
+ .app-shell[data-surface="valuation"] .metric-explain{padding:10px;margin-bottom:9px;border-radius:12px}
+ .app-shell[data-surface="valuation"] .metric-explain>div{gap:8px;flex-wrap:wrap}
+
+ /* Economic context uses the evidence surface; warning severity stays in its badge. */
+ .app-shell[data-surface="macro"] .rich-macro-summary{padding:12px;gap:8px;min-height:0;border-radius:14px;box-shadow:none;background:var(--cv-teal-soft);border:1px solid var(--cv-teal-line);color:#263b3a}
+ .app-shell[data-surface="macro"] .macro-signal-orb{width:20px;height:24px;background:transparent;border-radius:0}
+ .app-shell[data-surface="macro"] .macro-signal-orb.red{color:#d54855}
+ .app-shell[data-surface="macro"] .macro-signal-orb.yellow{color:#9a6500}
+ .app-shell[data-surface="macro"] .macro-signal-orb.green{color:#087b77}
+ .app-shell[data-surface="macro"] .macro-summary-copy>span{font-size:12px;color:#395d59;flex-wrap:wrap}
+ .app-shell[data-surface="macro"] .macro-summary-copy>small{font-size:12px;line-height:1.5;color:#4e5968}
+ .app-shell[data-surface="macro"] .macro-observations{font-size:13px;line-height:1.5;margin:8px 0;padding-left:17px}
+ .app-shell[data-surface="macro"] .macro-observations li+li{margin-top:3px}
+ .app-shell[data-surface="macro"] .freshness-card{padding:9px 10px;gap:8px;min-height:0}
+ .app-shell[data-surface="macro"] .freshness-card span{font-size:12px;line-height:1.4}
+ .app-shell[data-surface="macro"] .freshness-card button{flex:none;padding:0 5px;color:var(--cv-teal)}
+ .app-shell[data-surface="macro"] .macro-groups{gap:16px;margin-top:16px}
+ .app-shell[data-surface="macro"] .macro-grid{grid-template-columns:1fr;gap:8px}
+ .app-shell[data-surface="macro"] .neutral-macro{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 10px;min-height:0;padding:12px;border:1px solid #e5eceb;border-radius:14px}
+ .app-shell[data-surface="macro"] .macro-tile-top{grid-column:1/-1;gap:8px;flex-wrap:wrap}
+ .app-shell[data-surface="macro"] .macro-tile-top small{font-size:12px}
+ .app-shell[data-surface="macro"] .neutral-macro>strong{margin:0;font-size:13px;line-height:1.4}
+ .app-shell[data-surface="macro"] .macro-value{grid-column:2;grid-row:2/4;margin:0;text-align:right}
+ .app-shell[data-surface="macro"] .macro-value b{font-size:19px}
+ .app-shell[data-surface="macro"] .macro-value em{font-size:12px;margin-top:2px}
+ .app-shell[data-surface="macro"] :is(.macro-mini-chart,.macro-mini-dates,.macro-meta-line,.source-row,.neutral-macro>p){grid-column:1/-1}
+ .app-shell[data-surface="macro"] .macro-mini-chart{height:36px;margin:4px 0 0}
+ .app-shell[data-surface="macro"] .macro-mini-dates{font-size:12px;color:#596575;margin:0}
+ .app-shell[data-surface="macro"] .neutral-macro>p{font-size:12px;line-height:1.5;margin:2px 0}
+ .app-shell[data-surface="macro"] .source-row .source-line{white-space:normal;overflow:visible;font-size:12px;line-height:1.4}
+ .app-shell[data-surface="macro"] .source-row button{flex:none;color:var(--cv-teal)}
+
+ /* Preserve compact cards while making the independently selected price family usable. */
+ .app-shell[data-surface="memory"] .memory-price-tabs button{min-height:44px;font-size:11px;padding:6px 9px}
+ .app-shell[data-surface="memory"] .memory-price-tabs button[aria-selected="true"]{color:var(--cv-teal);background:var(--cv-teal-soft);border-color:var(--cv-teal-line)}
+ .app-shell[data-surface="memory"] :is(.memory-price-attribution,.memory-price-group-head span,.dram-spot-chart-labels){font-size:12px;line-height:1.5}
+ .app-shell[data-surface="memory"] :is(.memory-price-group-head span,.dram-spot-chart-labels){color:#596575}
+ .app-shell[data-surface="memory"] .dram-spot-chart-labels{margin-top:-8px;gap:4px}
+ .app-shell[data-surface="memory"] .dram-spot-chart-labels b{font-size:11px}
+ .app-shell[data-surface="memory"] .dram-spot-basis span{font-size:12px;line-height:1.5}
+ .app-shell[data-surface="memory"] .dram-spot-basis button{min-height:44px;color:var(--cv-teal);background:var(--cv-teal-soft)}
+ .app-shell[data-surface="exports"] .export-topic-nav button{min-height:44px}
+
+ .app-shell[data-surface="watch"] .saved-research{padding:12px;border-radius:14px}
+ .app-shell[data-surface="watch"] .saved-research h2{font-size:17px}
+ .app-shell[data-surface="watch"] .saved-research>p{font-size:12px;line-height:1.5}
+ .app-shell[data-surface="news"] .sort-toggle button{min-height:44px}
+ .app-shell[data-surface="info"] .info-hero{padding:10px 12px;min-height:0;border-radius:12px}
+ .app-shell[data-surface="info"] .info-hero:after{display:none}
+ .app-shell[data-surface="info"] .info-hero p{font-size:12px;line-height:1.5}
+ html[data-ait-runtime="true"] .app-shell[data-surface="info"] .info-hero h2{font-size:19px}
+ .app-shell[data-surface="info"] .info-card{padding:12px;gap:10px;border-radius:14px}
+ .app-shell[data-surface="info"] .info-icon{width:32px;height:32px;border-radius:10px}
+ .app-shell[data-surface="info"] .info-icon.purple{color:var(--cv-blue);background:var(--cv-blue-soft)}
+ .app-shell[data-surface="info"] :is(.info-icon.green,.info-icon.coral){color:var(--cv-teal);background:var(--cv-teal-soft)}
+ .app-shell[data-surface="info"] .release-notice{padding:12px;background:#f5f7fa;color:#263442;box-shadow:none;border:1px solid #e4e9ef;border-radius:14px}
+ .app-shell[data-surface="info"] .release-notice p{font-size:12px;color:#4e5968}
+ .app-shell[data-surface="detail"] .detail-brand h2{font-size:20px}
+ .app-shell[data-surface="detail"] .detail-brand .stock-logo{width:42px;height:42px;font-size:20px}
+ .app-shell[data-surface="detail"] .detail-actions{margin-top:10px}
+ .app-shell[data-surface="detail"] .detail-actions button{height:44px;border-radius:11px}
+ .app-shell[data-surface="detail"] .detail-price.quote-compact{padding:12px;border-radius:16px}
+ .app-shell[data-surface="detail"] .detail-price.quote-compact .quote-main strong{font-size:24px}
+ .app-shell[data-surface="detail"] .detail-price.quote-compact .quote-change strong{font-size:18px}
+}

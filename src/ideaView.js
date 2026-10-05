@@ -141,7 +141,7 @@ export async function renderIdeaView({shell,bindNav}){
     </section>
     <details class="idea-guide"><summary>선정 기준과 분석 흐름 보기</summary><div><strong>분석 흐름</strong><span>기술 신호 → 실제 매출 구조 → 최근 5거래일 비교군 → 거래 단서</span></div><p>20일 평균 거래대금 10억원 이상을 대상으로 해요. 상세 자료는 종목을 펼칠 때 불러와요. 직접 조건을 고르려면 조건별 종목 찾기를 이용하세요.</p></details>
     <div id="idea-body" class="idea-grid" aria-busy="true">${loadingIndicator('조건에 맞는 종목을 찾고 있어요')}<div class="idea-loading-preview" aria-hidden="true"><div class="skeleton idea-skeleton-title"></div><div class="skeleton idea-skeleton-row"></div><div class="skeleton idea-skeleton-row"></div></div></div>
-  `,'투자 아이디어');
+  `,'투자 아이디어 LAB');
   bindNav();
   const host=document.querySelector('#idea-body');
   try{

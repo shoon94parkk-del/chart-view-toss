@@ -416,3 +416,9 @@ Keep original actionStatus priority/count/filter arithmetic but label combined p
 - Price API is requested only from the independent Analysis semiconductor-price screen, never Export tabs or Home. TrendForce source/date/original link and five price families remain; legacy family URLs hand off to the new route.
 - Full-map control surface is KR/US only. Grouped stocks retain the complete payload, including unknown classifications; no classification exclusion may silently shrink the stock universe. Group area is a readability layout, not official sector return/share. Small cells have sector-header member disclosure.
 - Combined PICK status must match counts/filter/row. Keep technical warnings only in expanded records and preserve warnings even if the score is missing. Core performance/KPI and compact 64px rows remain visible. Do not confuse combined red status with fundamental SELL_REVIEW in expanded details.
+
+## Mobile analysis continuity
+- Menu icon purpose follows the same `surfaceIdentity` tone as its destination; guide cards cannot invent unrelated warning/recommendation meanings.
+- Compact remaining analysis surfaces without increasing the approved Home/PICK/screener dimensions. Price families and export tabs are standalone 44px targets, with contained horizontal family scrolling permitted.
+- Keep estimate currency/raw revenue, full macro observations/severity, dates, provider names and original links visible. Evidence metadata in these surfaces is at least 12px and long original provider names wrap.
+- Public guidance describes the current grouped individual-stock map, not the retired aggregate-sector board; unknown classified stocks remain included and layout area is not official sector return.
