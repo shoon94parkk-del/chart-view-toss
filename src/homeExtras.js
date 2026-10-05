@@ -247,12 +247,12 @@ function paintPicks(host, payload) {
         const pick=monitorFor(row,picks);
         return count+(pick&&actionStatus({monitor:pick})==='SELL_REVIEW'?1:0);
       },0);
-      const riskNode=host.querySelector('[data-home-pick-risk]');
+      const riskNode=host.querySelector?.('[data-home-pick-risk]');
       if(riskNode)riskNode.textContent=String(risk);
     }catch{
       if(host.isConnected&&host._pickPaintToken===paintToken){
         host.querySelectorAll('[data-selection-status]').forEach(el=>el.textContent='점검 상태 조회 실패');
-        const riskNode=host.querySelector('[data-home-pick-risk]');if(riskNode)riskNode.textContent='—';
+        const riskNode=host.querySelector?.('[data-home-pick-risk]');if(riskNode)riskNode.textContent='—';
       }
     }
   };
