@@ -19,7 +19,11 @@ test('수출 데이터는 전체 요약 중심 4개 탭으로 구성한다',()=>
 test('세부 분석은 품목 국가 반도체 탭으로 유지한다',()=>{
   assert.match(view,/exportPanel\('products',items\(snapshot\)\+breadth\(snapshot\)\+quadrant\(snapshot\)\)/);
   assert.match(view,/exportPanel\('countries',regions\(snapshot\)\)/);
-  assert.match(view,/exportPanel\('semiconductor',[^\n]*semiconductorReport\(snapshot\)/);
+  assert.match(view,/exportPanel\('semiconductor',[^\n]*semiconductorReport\(snapshot\)\+semiconductorTrendPlaceholder\(\)/);
+  assert.match(view,/panelKey==='semiconductor'&&!semiconductorLoaded/);
+  assert.match(view,/loadSemiconductorTrends/);
+  assert.match(view,/data-export-semi-metric="delta"/);
+  assert.match(view,/data-export-semi-metric="yoy"/);
   assert.doesNotMatch(view,/exportPanel\('trend'/);
 });
 
