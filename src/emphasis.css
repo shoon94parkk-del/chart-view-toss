@@ -115,6 +115,10 @@
   background:#edf5ff!important;color:#245fae!important;border:1px solid #dbe9fb;
 }
 .app-shell[data-surface="discover"] .analysis-stock>span:nth-child(2) b{color:#273b57}
+.app-shell[data-surface="discover"] .data-quality-warning{
+  background:var(--cv-amber-soft)!important;color:var(--cv-amber)!important;
+  border:1px solid var(--cv-amber-line);
+}
 .app-shell[data-surface="discover"] .price-basis-note span{color:#59697e;font-weight:750}
 
 /* PICKS — page identity remains purple; action statuses keep green/amber/red meaning. */
