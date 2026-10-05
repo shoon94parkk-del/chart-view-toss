@@ -52,8 +52,8 @@ try {
   assert.ok(visual.every(x=>x.icons===1&&x.height>=44),'graphics stay decorative and controls remain touchable');
   assert.equal(await page.locator('.bottom-nav [data-tab="more"] svg rect').count(),3,'analysis has a tool dashboard icon');
   assert.equal(await page.locator('.bottom-nav [aria-current="page"]').innerText(),'홈');
-  assert.equal(await page.locator('.home-pick-performance').count(),0,'aggregate performance belongs in records');
-  assert.match(await page.locator('.home-selection-reason').first().innerText(),new RegExp(record.reason));
+  assert.equal(await page.locator('.home-pick-summary').count(),1,'compact aggregate performance summary belongs on Home');
+  assert.match(await page.locator('.home-selection-sub small').first().innerText(),new RegExp(record.reason));
   assert.ok(await page.locator('.home-change-card').first().evaluate(el=>el.getBoundingClientRect().bottom+scrollY)<height*2,'first observation arrives within two screens');
   if(scenario==='ready-saved')assert.match(await page.locator('#home-watchlist').innerText(),/삼성전자/);
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
