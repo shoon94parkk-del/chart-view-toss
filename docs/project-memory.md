@@ -321,3 +321,9 @@ TrendForce semiconductor prices moved to Analysis > 반도체 가격 추적; Cus
 
 ## 2026-10-05 — Guru principles screen
 Public routes #gurus/buffett and #gurus/lynch, /gurus direct entry. Existing technical screening remains independent. Selected financial metrics come only from shared dated snapshot/evidence, never frontend recomputation at live price. source criteria distinguish original principles from Chart View thresholds. sessionStorage stores view filters only, and failures there do not block viewing. New browser QA is tests/guru_investing_qa.mjs, included in mobile CI.
+
+## 2026-10-05 — Guru deployment follow-up
+
+Separate strategy preview files are required for `/gurus/buffett/` and `/gurus/lynch/`. Both have real HTTP200 after PR108. Real mobile candidate/evidence/source/detail/Back/Reload/technical-search flows passed at320/390/430px; native Sandbox validation remains separate. The dated result/evidence API never mixes versions; when static CDN data is ahead of deployed backend, latest-result recovery uses the backend snapshot.
+
+Full first-market collection is complete: 2,652 checked records, pending0, snapshot0290089a34f002975408, Buffett54/Lynch37 matches. Missing financial comparability remains insufficient, never filled heuristically. Backend c9205cc was tested and manually deployed through Edge with exact /health/asset/evidence verification. Daily GitHub collection is configured; daily Render publication still needs the correct Git Provider connection or approved existing hook registration. See guru-investing-verification-2026-10-05.md for counts and release limits.
