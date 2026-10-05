@@ -28,7 +28,7 @@ function evidenceMarkup(evidence,strategy,row){
 
 export function renderGuruInvesting({state,shell,bindNav,navigate,isCurrent}){
  let disposed=false,sequence=0,data=state.guruSnapshot||null;
- let saved={};try{saved=JSON.parse(sessionStorage.getItem('cv-guru-session-v1')||'{}');}catch{}
+ let saved={};try{saved=JSON.parse(sessionStorage.getItem('cv-guru-session-v1')||'{}')||{};}catch{}
  const session=state.gurus ||= {query:typeof saved.query==='string'?saved.query:'',market:['KOSPI','KOSDAQ'].includes(saved.market)?saved.market:'',count:Number.isInteger(saved.count)&&saved.count>=30?saved.count:30,expandedSymbol:/^\d{6}\.(KS|KQ)$/.test(saved.expandedSymbol||'')?saved.expandedSymbol:null};
  const save=()=>{try{sessionStorage.setItem('cv-guru-session-v1',JSON.stringify(session));}catch{}};
  const strategy=state.guruStrategy||'buffett';

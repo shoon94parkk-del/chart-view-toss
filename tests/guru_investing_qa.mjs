@@ -36,6 +36,7 @@ try{
    return route.fulfill({contentType:'application/json',body:JSON.stringify(body)});
   });
   const noOverflow=async()=>assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),`${width}px overflow`);
+  await page.goto(base+'/');await page.evaluate(()=>sessionStorage.setItem('cv-guru-session-v1','null'));
   await page.goto(base+'/gurus/');await page.locator('.guru-candidate').first().waitFor();
   assert.equal(await page.locator('.guru-candidate').count(),30);
   const first=await page.locator('.guru-row').first().boundingBox();
