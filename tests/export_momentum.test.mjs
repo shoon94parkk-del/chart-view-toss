@@ -11,6 +11,7 @@ import {
   formatUsdBillion,
   formatWeightKg,
   normalizeExportItemDetail,
+  normalizeExportMomentumMap,
   normalizeExportProvisionalRadar,
   normalizeExportSnapshot,
   normalizeSemiconductorCountryMatrix,
@@ -241,6 +242,25 @@ test('semiconductor country matrix preserves configured-market shares and deltas
   assert.equal(matrix.segments[0].countries[1].deltaUsdBillion,1.8);
   assert.equal(matrix.segments[0].growthLeaderCountry,'홍콩');
   assert.equal(matrix.markets[1].code,'HK');
+});
+
+
+test('momentum map keeps YoY acceleration and backend signal labels without inventing values',()=>{
+  const map=normalizeExportMomentumMap({
+    schemaVersion:1,
+    period:'2026-09',
+    items:[
+      {key:'semiconductor',name:'반도체',period:'2026-09',exportsUsdBillion:60.3,exportYoY:262.8,previousExportYoY:209.1,deltaYoYPp:53.7,avg3mYoY:210.4,acceleration3mPp:40.2,signal:'acceleration',signalLabel:'가속'},
+      {key:'cosmetics',name:'화장품',period:'2026-09',exportsUsdBillion:1.2,exportYoY:31.4,previousExportYoY:52.0,deltaYoYPp:-20.6,avg3mYoY:38.0,acceleration3mPp:-12.0,signal:'slowing',signalLabel:'성장 둔화'},
+    ],
+    meta:{scope:'six explicit HS proxy groups'},
+  });
+  assert.equal(map.period,'2026-09');
+  assert.equal(map.items.length,2);
+  assert.equal(map.items[0].signal,'acceleration');
+  assert.equal(map.items[0].deltaYoYPp,53.7);
+  assert.equal(map.items[1].signalLabel,'성장 둔화');
+  assert.equal(map.items[1].acceleration3mPp,-12);
 });
 
 
