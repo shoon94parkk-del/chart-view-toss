@@ -13,7 +13,10 @@ try{for(const width of [320,390,430]){
   if(path==='/api/consensus')body={name:'검증 기업',source:'Yahoo Finance earningsTrend · cached fallback',currency:'KRW',asOf:'2026-10-02T06:00:00Z',periods:{'0y':{endDate:'2026-12-31',earnings:{avg:47789,low:40609,high:60367,analysts:33},revenue:{avg:723269936280000},epsTrend:{current:47789,'30daysAgo':48589},revisions:{up30:5,down30:7}}}};
   if(path==='/api/macro')body={generatedAt:'2026-10-02T06:00:00Z',summary:{level:'red',text:'물가 압력 높음(PCE 3.4%) | Fed 3.75~4.00% · 최근 +25bp · EFFR 3.88% | 신용스프레드 안정 | VIX 16 안정 → 현재는 물가·정책·금융 스트레스 중 부정 압력이 넓게 나타납니다.',notice:'시장 환경을 설명하기 위한 요약이며 투자 행동을 권유하지 않습니다. 향후 FOMC 결정을 예측하는 신호도 아닙니다.'},results:[{symbol:'T10Y2Y',name:'장단기 금리차 (10Y-2Y)',value:0.45,delta:-0.01,unit:'%',asOf:'2026-10-02',source:'Federal Reserve / FRED mirror · 긴 제공처 이름',sourceUrl:'https://fred.stlouisfed.org/series/T10Y2Y',desc:'10년-2년 미국 국채 금리차입니다.',chart_data:[{time:'2026-09-01',value:0.5},{time:'2026-10-02',value:0.45}]}]};
   if(path==='/api/valuation-band')body={source:'Yahoo Finance',generatedAt:'2026-10-02',method:'재무자료 시차 적용',per:{points:[{time:'2025-01-01',value:10},{time:'2026-01-01',value:20}],stats:{current:20,median:15,p20:12,p80:18,observations:2,start:'2025-01-01',end:'2026-01-01'}}};
-  if(path==='/api/memory-prices')body={available:true,source:'TrendForce',groups:[{key:'dram-chip',name:'DRAM 칩',sourceDate:'2026-10-02',sourceUrl:'https://www.trendforce.com/price/dram/dram_spot',items:[{key:'ddr5',name:'DDR5 16Gb (2Gx8) 4800/5600',average:58,changePct:1,dailyLow:43.5,dailyHigh:69.5}]}],history:[{date:'2026-10-02',values:{ddr5:58}}]};
+  if(path==='/api/memory-prices'){
+   const items=[{key:'ddr5',name:'DDR5 16Gb (2Gx8) 4800/5600',average:58,changePct:1,dailyLow:43.5,dailyHigh:69.5}];
+   body={available:true,source:'TrendForce',items,groups:[{key:'dram-chip',name:'DRAM 칩',sourceDate:'2026-10-02',sourceUrl:'https://www.trendforce.com/price/dram/dram_spot',items}],history:[{date:'2026-10-02',values:{ddr5:58}}]};
+  }
   return route.fulfill({contentType:'application/json',body:JSON.stringify(body)});
  });
  const noOverflow=async()=>assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),`${width}px outer overflow`);
