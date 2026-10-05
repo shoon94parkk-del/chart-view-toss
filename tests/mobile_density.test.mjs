@@ -30,3 +30,13 @@ test('mobile export views use reduced card spacing and chart height',()=>{
 test('narrow analysis headers reduce title size instead of wrapping by default',()=>{
   assert.match(styles,/@media\(max-width:360px\)\{\.brand-lockup h1\{font-size:17px/);
 });
+
+
+test('pick alerts stay collapsed so the list starts early on mobile',()=>{
+  const js=readFileSync(new URL('../src/pickLedger.js',import.meta.url),'utf8');
+  assert.match(js,/<details class="pick-ledger-tech-alert"/);
+  assert.match(js,/<details class="pick-ledger-policy"/);
+  assert.match(js,/data-pick-tech-alert-summary/);
+  assert.doesNotMatch(js,/<details class="pick-ledger-tech-alert"[^>]* open/);
+  assert.doesNotMatch(js,/<details class="pick-ledger-policy"[^>]* open/);
+});
