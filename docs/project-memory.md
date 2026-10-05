@@ -290,3 +290,11 @@ User-approved new behavior. Home cards include dated observations, questions and
 - Semantic identities are stable across Home and detail surfaces: export/evidence teal, discovery blue, picks purple, watch gold.
 - Home change cards use their actual kind: export evidence teal, stock-finding/technical observation blue.
 - The system must not recolor semantic market/status meanings such as up/down or keep/watch/sell.
+
+
+## 2026-10-05 — mobile PICK ledger contract
+- Chart View Toss is mobile-first. The PICK ledger should prioritize the actual record list over dashboard summaries.
+- Performance overview, warning/policy details and filters start collapsed/compact. Expanded content remains available.
+- On <=600px, collapsed PICK rows target <=64px and remain a two-row layout.
+- The 390x844 release QA must show at least three PICK records above the fixed bottom navigation.
+- Later global accessibility typography must not inflate PICK metadata/status text back to desktop-like sizes.
