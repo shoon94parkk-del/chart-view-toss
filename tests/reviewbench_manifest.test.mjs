@@ -2,8 +2,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const root = path.resolve(new URL('..', import.meta.url).pathname);
+const root = fileURLToPath(new URL('..', import.meta.url));
 const manifestPath = path.join(root, '.reviewbench', 'chartview-golden.json');
 
 test('ChartView ReviewBench golden set is valid and points to real regression evidence', () => {
