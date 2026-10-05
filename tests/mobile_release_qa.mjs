@@ -607,43 +607,27 @@ try{
       if(await page.locator('.pick-ledger-detail').first().isHidden()) throw new Error('Spotlight detail did not expand');
     }
     if(tab==='heatmap'){
-      await page.waitForSelector('#analysis-body .home-heatmap-cell');
-      if(await page.locator('#analysis-body .home-heatmap-cell').count()!==60) throw new Error('full heatmap must show expanded 60-stock set');
+      await page.waitForSelector('#analysis-body .market-map-stock');
+      if(await page.locator('#analysis-body .market-map-stock').count()!==20) throw new Error('full KR map must retain 20-stock set');
       const krFullText=await page.locator('#analysis-body').innerText();
+      const krLabels=await page.locator('.market-map-stock').evaluateAll(nodes=>nodes.map(n=>n.getAttribute('aria-label')).join(' '));
       await page.locator('[data-full-market=US]').click();
+      if(await page.locator('#analysis-body .market-map-stock').count()!==40) throw new Error('full US map must retain 40-stock set');
       const fullText=krFullText+' '+await page.locator('#analysis-body').innerText();
+      const usLabels=await page.locator('.market-map-stock').evaluateAll(nodes=>nodes.map(n=>n.getAttribute('aria-label')).join(' '));
       if(!fullText.includes('한국 주요 20종목')||!fullText.includes('미국 시총 상위 40종목')) throw new Error('full heatmap market counts missing');
       if(fullText.includes('+99.99%')||fullText.includes('-88.88%')) throw new Error('full heatmap leaked stale server values instead of Home parity values');
-      if(!fullText.includes('엔비디아')||!fullText.includes('+0.22%')||!fullText.includes('삼성전자')||!fullText.includes('+3.62%')) throw new Error('full heatmap did not align overlapping symbols to Home snapshot');
-      const fullGeometry=await page.locator('#analysis-body .home-heatmap-treemap:visible').evaluateAll(boards=>boards.map(board=>{
-        const cells=[...board.querySelectorAll('.home-heatmap-cell')];
-        const box=board.getBoundingClientRect();
-        const rects=cells.map(cell=>cell.getBoundingClientRect());
-        return {
-          topBands:new Set(cells.map(cell=>Math.round(cell.offsetTop))).size,
-          bottomGap:Math.abs(box.bottom-Math.max(...rects.map(rect=>rect.bottom))),
-          rightGap:Math.abs(box.right-Math.max(...rects.map(rect=>rect.right))),
-        };
+      if(!usLabels.includes('엔비디아 +0.22%')||!krLabels.includes('삼성전자 +3.62%')) throw new Error('full heatmap did not align overlapping symbols to Home snapshot');
+      const fullGeometry=await page.locator('.market-map-sector-body').evaluateAll(boards=>boards.map(board=>{
+        const cells=[...board.querySelectorAll('.market-map-stock')],box=board.getBoundingClientRect(),rects=cells.map(cell=>cell.getBoundingClientRect());
+        return {bottomGap:Math.abs(box.bottom-Math.max(...rects.map(rect=>rect.bottom))),rightGap:Math.abs(box.right-Math.max(...rects.map(rect=>rect.right)))};
       }));
-      if(fullGeometry.some(board=>board.topBands<2||board.bottomGap>2||board.rightGap>2)) throw new Error(`full heatmap geometry regression: ${JSON.stringify(fullGeometry)}`);
-      const denseLabels=await page.locator('#analysis-body .home-heatmap-cell:visible').evaluateAll(cells=>{
-        const tiny=cells.filter(cell=>cell.clientWidth<52||cell.clientHeight<34);
-        const oversized=tiny.filter(cell=>{
-          const label=cell.querySelector('.home-heatmap-ticker,.home-heatmap-name strong');
-          return label&&parseFloat(getComputedStyle(label).fontSize)>8;
-        }).map(cell=>({label:cell.getAttribute('aria-label'),width:cell.clientWidth,height:cell.clientHeight,font:parseFloat(getComputedStyle(cell.querySelector('.home-heatmap-ticker,.home-heatmap-name strong')).fontSize)}));
-        return {
-          tiny:tiny.length,
-          reduced:tiny.filter(cell=>cell.classList.contains('is-micro')||cell.classList.contains('is-label-hidden')||cell.classList.contains('is-ticker-only')).length,
-          oversized,
-        };
-      });
-      if(denseLabels.tiny&&!denseLabels.reduced) throw new Error(`full heatmap tiny labels were not reduced: ${JSON.stringify(denseLabels)}`);
-      if(denseLabels.oversized.length) throw new Error(`full heatmap tiny labels oversized: ${JSON.stringify(denseLabels.oversized)}`);
-      const krVisible=krFullText;
-      if(/\b\d{6}\b/.test(krVisible)) throw new Error(`Korean heatmap must show company names instead of numeric ticker labels: ${krVisible}`);
-      const usReturns=await page.locator('#analysis-body .market-us .home-heatmap-change').count();
-      if(usReturns<24) throw new Error(`US heatmap should keep return percentages visible on most readable cells; found ${usReturns}`);
+      if(fullGeometry.some(board=>board.bottomGap>2||board.rightGap>2)) throw new Error(`grouped heatmap geometry regression: ${JSON.stringify(fullGeometry)}`);
+      const denseLabels=await page.locator('.market-map-stock').evaluateAll(cells=>cells.filter(cell=>cell.clientWidth<52||cell.clientHeight<34).map(cell=>({label:cell.getAttribute('aria-label'),font:parseFloat(getComputedStyle(cell.querySelector('strong')).fontSize),compact:cell.classList.contains('is-tight')})));
+      if(denseLabels.some(cell=>!cell.compact||cell.font>8)) throw new Error(`full heatmap tiny labels oversized: ${JSON.stringify(denseLabels)}`);
+      if(/\b\d{6}\b/.test(krFullText)) throw new Error(`Korean heatmap must show company names instead of numeric ticker labels: ${krFullText}`);
+      if(await page.locator('.market-map-stock span').count()<24) throw new Error('US heatmap should keep most return percentages available');
+
     }
     await assertNoHorizontalOverflow(page,`390px ${tab}`);
     await page.screenshot({path:`${OUT}/390-${tab.replaceAll('/','-')}.png`,fullPage:true});

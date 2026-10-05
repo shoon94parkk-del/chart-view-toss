@@ -310,7 +310,7 @@
   /* The record itself is the primary mobile surface: two rows, no desktop font inflation. */
   .app-shell[data-surface="picks"] .pick-ledger-list{border-radius:12px!important}
   .app-shell[data-surface="picks"] .pick-ledger-row{
-    min-height:56px!important;padding:7px 9px!important;column-gap:7px!important;row-gap:2px!important;
+    min-height:56px!important;padding:6px 9px!important;column-gap:7px!important;row-gap:2px!important;
     grid-template-columns:minmax(0,1fr) auto!important;
     grid-template-areas:'stock status' 'prices performance'!important;
   }

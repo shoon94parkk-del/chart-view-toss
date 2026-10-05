@@ -15,7 +15,7 @@
 .market-map-stock{position:absolute;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:2px;border:1px solid #202a38;border-radius:0;color:white;overflow:hidden;line-height:1.15;font-variant-numeric:tabular-nums}
 .market-map-stock strong{display:block;max-width:100%;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700}
 .market-map-stock span{font-size:11px;color:#fff;opacity:.94;white-space:nowrap}
-.market-map-stock.is-tight{gap:2px}.market-map-stock.is-tight strong{font-size:9px}.market-map-stock.is-tight span{font-size:8px}
+.market-map-stock.is-tight{gap:2px}.market-map-stock.is-tight strong{font-size:8px}.market-map-stock.is-tight span{font-size:8px}
 .map-up-1{background:#a95062}.map-up-2{background:#cb405c}.map-up-3{background:#e32b50}
 .map-down-1{background:#4a729f}.map-down-2{background:#346ead}.map-down-3{background:#1e65bd}.map-flat{background:#4a5566}
 .market-map-stock:focus-visible,.market-map-sector-head:focus-visible{outline:2px solid #fff;outline-offset:-3px;z-index:2}
