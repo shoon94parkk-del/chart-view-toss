@@ -17,7 +17,7 @@ export function extensionEvidence(evidence,strategy,row,current=null){
  if(strategy!=='minervini')for(const accounts of Object.values(evidence.sources||{}))for(const s of Object.values(accounts||{}))if(/^https:\/\/dart\.fss\.or\.kr\/dsaf001\/main\.do\?rcpNo=\d{14}$/.test(s.sourceUrl||''))sources.set(s.receiptNo,s);
  let details='';
  if(strategy==='greenblatt'){
-   const currentStatus=current?.status==='matched'?'충족':current?.status==='failed'?'미충족':'자료 부족';
+   const currentStatus=current?.status==='matched'?'충족':current?.status==='failed'?'미충족':current?.status==='loading'?'확인 중':current?.status==='error'?'확인 실패':'자료 부족';
    const currentMetrics=`<div class="guru-current-check"><p><b>현재 TTM 재확인 · ${currentStatus}</b></p><p>TTM ROA ${num(current?.roa,'%')} · TTM PER ${num(current?.trailingPE,'배')} · Forward PER ${num(current?.forwardPE,'배')}</p><small>TTM ROA는 최근12개월 순이익 ÷ 최근 보고 총자산, TTM PER은 제공처 최근12개월 기준이에요. Forward PER은 제공처 예상치라 선정 판정에 쓰지 않아요.</small></div>`;
    details=`<p class="guru-evidence-basis">${evidence.basis==='CFS'?'연결':'별도'}재무제표 · ROA/PER 대안 · EV 매직포뮬러 아님</p><p><b>선정값</b> · ${esc(row.annualReportYear)}년 확정 실적 + ${esc(evidence.tradeDate)} 종가</p><p>낮은 연간 PER 순 ${num(selected.metrics.valueRank||row.metrics.valueRank)}위 · ${esc(evidence.tradeDate)} 종가 ÷ ${esc(row.annualReportYear)}년 기본 EPS</p>`+currentMetrics+table(['연도','순이익(억원)','자산(억원)','EPS(원)'],(evidence.annual||[]).map(r=>[r.year,num(r.netIncome/1e8),num(r.assets/1e8),num(r.basicEps)]));
  }else{
