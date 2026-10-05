@@ -554,3 +554,13 @@ Classification: data-interpretation correction plus additive current cross-check
 - 연간 기준으로 선정된 후보만 별도 `/api/valuation` 조회로 현재 TTM ROA·TTM PER를 재확인한다. Forward PER은 참고값이며 선정 판정에 쓰지 않는다.
 - TTM 재확인은 annual 후보의 보수적 교차확인이지 전체 KIND 시장을 TTM으로 다시 스크리닝한 결과가 아니다. 전체 TTM 선정으로 전환하려면 버전이 있는 bulk TTM 데이터셋과 백엔드 기준 변경이 먼저 필요하다.
 - TTM 자료 실패/누락은 연간 선정값을 지우거나 임의 수치로 채우지 않는다. Home/detail 시작 요청, 기존 quote/cache/freshness, 네이티브 이동 계약은 변경하지 않는다.
+
+## 2026-10-06 — 수출 전체 요약에 모멘텀 지도 추가
+
+Classification: new behavior. 기존 수출 전체 요약·품목·국가·반도체 4탭, 관세청 월간 스냅샷, 10일 잠정 레이더와 상세 분석은 유지한다.
+
+- 전체 요약의 월간 hero 바로 아래에 `수출 모멘텀 지도`를 추가한다. 품목별 최신 YoY, 전월 YoY 대비 변화(ΔYoY), 최근 3개월 평균 YoY를 먼저 보여주고 가속 / 턴어라운드 / 성장 둔화 / 부진 / 성장 유지로 분류한다.
+- 분류는 백엔드의 12개월 품목 이력을 사용한다. 턴어라운드는 YoY가 음수·0에서 플러스로 전환된 경우, 부진은 최신 YoY<=0, 가속/둔화는 최신 YoY 변화가 각각 +5%p 이상 / -5%p 이하이며 월간 변화가 작을 때만 3개월 가속도를 보조로 사용한다.
+- 메인 `/api/export-momentum`은 변경하지 않는다. 별도 `/api/export-momentum/momentum-map`을 6시간 캐시하고 overview 진입 시 독립 lazy-load하여 기존 월간 첫 화면과 잠정 레이더 실패 격리를 유지한다.
+- 현재 지도 범위는 기존 Chart View의 6개 명시적 HS 프록시 품목이며 전체 한국 수출 품목 순위가 아니다. 각 품목 행을 누르면 기존 12개월 품목 상세·물량·단위가치·국가·기업 조사 흐름으로 이어진다.
+- 모바일에서는 2열 compact bucket을 사용하고 360px 이하에서는 1열로 바꾼다. 금융 상승/하락 색과 evidence teal identity, 44px 수준의 터치 계약을 유지한다.
