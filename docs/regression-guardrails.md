@@ -424,8 +424,8 @@ Keep original actionStatus priority/count/filter arithmetic but label combined p
 - Public guidance describes the current grouped individual-stock map, not the retired aggregate-sector board; unknown classified stocks remain included and layout area is not official sector return.
 
 ## Guru investing
-Keep small two-strategy controls, collapsed criteria, 72–88px candidate rows and >=12px relevant metadata. Result and evidence snapshotVersion and symbol must match; 409 recovery refreshes dated results. Missing cache, ongoing collection and no matches are distinct states. Source/detail/discover are separate actions; existing detail Back/native root exit stay unchanged. No guru provider calls on Home/detail startup.
+Keep compact five-strategy horizontal controls, collapsed criteria, 72–88px candidate rows and >=12px relevant metadata. Never stack five large cards/tabs before the list. Result and evidence snapshotVersion and symbol must match; 409 recovery refreshes dated results. Missing cache, ongoing collection and no matches are distinct states. Source/detail/discover are separate actions; existing detail Back/native root exit stay unchanged. No guru provider calls on Home/detail startup. Greenblatt remains explicitly ROA/PER alternative; Minervini RS is a dated return percentile, never RSI/IBD rating. O'Neil uses reported single-quarter EPS/revenue, never cumulative EPS subtraction.
 
 ## Guru strategy deep links
 
-- The static preview export must include `/gurus/`, `/gurus/buffett/` and `/gurus/lynch/`, each with the root hashed app entry. Parser-only support does not establish deployment support; verify real HTTP200 and selected strategy after deployment.
+- The static preview export must include `/gurus/` and all five `/gurus/buffett/`, `/gurus/lynch/`, `/gurus/oneil/`, `/gurus/minervini/`, `/gurus/greenblatt/`, each with the root hashed app entry. Parser-only support does not establish deployment support; verify real HTTP200 and selected strategy after deployment.

@@ -3,10 +3,11 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 const base=process.env.QA_BASE_URL||'http://127.0.0.1:4173';
 const version='0123456789abcdef0123';
-const row=i=>({symbol:`${String(i+1).padStart(6,'0')}.KS`,name:`검증용 기업 ${String(i).padStart(2,'0')}`,market:'KOSPI',tradeDate:'2026-10-02',annualReportYear:2025,metrics:{roeAvg3:18,debtRatio:35,epsCagr3:20,historicalPEG:.8,annualPE:16,basicEps:100},checks:[{id:'roe',label:'꾸준한 자본수익성',value:18,threshold:'평균 ≥15%',passed:true}]});
+const row=i=>({symbol:`${String(i+1).padStart(6,'0')}.KS`,name:`검증용 기업 ${String(i).padStart(2,'0')}`,market:'KOSPI',tradeDate:'2026-10-02',annualReportYear:2025,metrics:{roeAvg3:18,debtRatio:35,epsCagr3:20,historicalPEG:.8,annualPE:16,basicEps:100,quarterEpsGrowth:30,breakoutVolumeRatio:1.8,relativeStrengthPercentile:90,distance52HighPct:-5,annualROA:30,valueRank:i+1},checks:[{id:'roe',label:'꾸준한 자본수익성',value:18,threshold:'평균 ≥15%',passed:true}]});
 const strategy=()=>({universeCount:65,unsupportedCount:1,pendingCount:1,insufficientCount:1,evaluatedCount:62,failedCount:0,matchedCount:62,results:Array.from({length:62},(_,i)=>row(i))});
-const snapshot=()=>({schemaVersion:1,criteriaVersion:'cv-gurus-v1',snapshotVersion:version,tradeDate:'2026-10-02',generatedAt:'2026-10-05T06:00:00+09:00',financialAsOf:'2026-10-05T05:00:00+09:00',strategies:{buffett:strategy(),lynch:strategy()}});
-const proof=symbol=>({symbol,snapshotVersion:version,basis:'CFS',annual:[2022,2023,2024,2025].map(year=>({year,netIncome:1e9,operatingCashFlow:2e9,equity:5e9,basicEps:100})),sources:{2025:{equity:{receiptNo:'20260312000123',reportYear:2025,filingDate:'2026-03-12',sourceUrl:'https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260312000123'}}},strategies:{buffett:{status:'matched',checks:row(0).checks},lynch:{status:'matched',checks:row(0).checks,metrics:row(0).metrics}}});
+const names=['buffett','lynch','oneil','minervini','greenblatt'];
+const snapshot=()=>({schemaVersion:1,criteriaVersion:'cv-gurus-v2',snapshotVersion:version,tradeDate:'2026-10-02',generatedAt:'2026-10-05T06:00:00+09:00',financialAsOf:'2026-10-05T05:00:00+09:00',strategies:Object.fromEntries(names.map(n=>[n,strategy()]))});
+const proof=symbol=>({symbol,snapshotVersion:version,tradeDate:'2026-10-02',basis:'CFS',annual:[2022,2023,2024,2025].map(year=>({year,netIncome:1e9,assets:3e9,operatingCashFlow:2e9,equity:5e9,basicEps:100})),sources:{2025:{equity:{receiptNo:'20260312000123',reportYear:2025,filingDate:'2026-03-12',sourceUrl:'https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260312000123'}}},quarter:{year:2026,quarter:2,basicEps:130,priorBasicEps:100,revenue:2e9,priorRevenue:1e9,receiptNo:'20260814000123',filingDate:'2026-08-14',sourceUrl:'https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260814000123'},technical:{tradeDate:'2026-10-02',barCount:273,price:1600,sma50:1500,sma150:1400,sma200:1300,sma200Prior20:1200,high52:1650,low52:900,return252:60,relativeStrengthPercentile:90,rsObservedCount:2400,rsUniverseCount:2600,breakoutDate:'2026-10-01',breakoutLevel:1580,breakoutExtensionPct:1.3},strategies:Object.fromEntries(names.map(n=>[n,{status:'matched',checks:row(0).checks,metrics:row(0).metrics}]))});
 await fs.mkdir('output/playwright/gurus',{recursive:true});
 const browser=await chromium.launch({headless:true});
 try{
@@ -58,6 +59,17 @@ try{
   await page.locator('[data-guru-strategy=lynch]').click();await page.locator('.guru-table-wrap').waitFor();
   assert.match(page.url(),/gurus\/lynch/);assert.match(await page.locator('.guru-evidence').innerText(),/연간 실적 PER 16배/);
   await noOverflow();await page.screenshot({path:`output/playwright/gurus/${width}-lynch-evidence.png`});
+  for(const name of names.slice(2)){
+   await page.locator(`[data-guru-strategy=${name}]`).click();await page.locator('.guru-table-wrap').first().waitFor();
+   assert.match(page.url(),new RegExp('gurus/'+name));
+   assert.equal(await page.locator(`[data-guru-strategy=${name}]`).getAttribute('aria-pressed'),'true');
+   const text=await page.locator('.guru-evidence').innerText();
+   assert.match(text,name==='oneil'?/단일3개월/:name==='minervini'?/253|273거래일/:/ROA\/PER 대안/);
+   await noOverflow();await page.reload();await page.locator('.guru-table-wrap').first().waitFor();
+   await page.locator('.guru-evidence-actions [data-stock-detail]').click();await page.locator('.quote-main').waitFor();
+   await page.getByRole('button',{name:'뒤로가기',exact:true}).click();await page.locator('.guru-table-wrap').first().waitFor();
+   await page.screenshot({path:`output/playwright/gurus/${width}-${name}.png`});
+  }
   await page.locator('.guru-evidence-actions [data-tab=discover]').click();await page.locator('.screener-preset-panel').waitFor();
   await page.getByRole('button',{name:'뒤로가기',exact:true}).click();await page.locator('.guru-candidate').waitFor();
   await page.getByRole('searchbox').fill('없는 기업');assert.match(await page.locator('.guru-empty').innerText(),/검색 조건/);

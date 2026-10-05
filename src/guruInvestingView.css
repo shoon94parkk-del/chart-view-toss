@@ -1,5 +1,6 @@
 .guru-page{font-size:13px;color:var(--text,#17212b)}
-.guru-strategies{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.guru-strategies{display:flex;gap:6px;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:thin;max-width:100%;padding-bottom:2px}
+.guru-strategies button{flex:0 0 auto;padding:4px 10px;white-space:nowrap}
 .guru-strategies button{min-height:44px;border:1px solid var(--border,#e4e9ef);border-radius:10px;background:var(--card,#fff);display:flex;align-items:center;justify-content:center;gap:6px;font-size:12px;color:var(--muted,#68768a)}
 .guru-strategies button b{font-size:14px;color:var(--text,#17212b)}
 .guru-strategies button[aria-pressed=true]{background:#edf4ff;border-color:#9ec3fb;color:#2465b0}
