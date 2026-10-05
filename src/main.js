@@ -241,7 +241,7 @@ function esc(v=''){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt
 function navigate(tab,detailSymbol=null,detailName='',investigation=null){
  if(tab==='picks'&&!SHOW_SPOTLIGHT)tab='home';
  const hash=detailSymbol?`#${tab}/${tab==='exports'?String(detailSymbol).split('/').map(encodeURIComponent).join('/'):encodeURIComponent(detailSymbol)}`:`#${tab}`;
- const featureTab=['discover','picks','exports'].includes(tab);
+ const featureTab=['discover','picks','exports','memory'].includes(tab);
  if(tab===state.tab&&(!featureTab||location.hash===hash)&&(tab==='detail'?(!detailSymbol||detailSymbol===state.detailSymbol):tab==='news'?(detailSymbol||null)===state.newsSymbol:true)){
    if(detailSymbol&&detailName)state.detailName=detailName;
    window.scrollTo(0,0);

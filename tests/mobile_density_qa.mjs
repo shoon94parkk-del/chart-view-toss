@@ -49,6 +49,7 @@ try{for(const width of [320,390,430]){
  assert.equal(new URL(page.url()).hash,'#memory/nand-chip');await page.reload();
  await page.locator('[data-memory-price-group="nand-chip"][aria-selected="true"]').waitFor();assert.match(await page.locator('.memory-price-source').innerText(),/TrendForce/);
  assert.match(await page.locator('.memory-price-group-head').innerText(),/2026/);
+ await page.locator('[data-memory-price-group="dram-chip"]').click();await page.goBack();await page.locator('[data-memory-price-group="nand-chip"][aria-selected="true"]').waitFor();
  await page.goto(base+'/#exports');
  await page.getByRole('tab',{name:'국가',exact:true}).click();await page.reload();await page.locator('[data-export-topic="countries"][aria-selected="true"]').waitFor();
  await page.getByRole('tab',{name:'품목',exact:true}).click();await page.goBack();await page.locator('[data-export-topic="countries"][aria-selected="true"]').waitFor();

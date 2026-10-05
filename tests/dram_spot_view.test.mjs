@@ -13,6 +13,7 @@ test('메모리 가격은 분석의 독립 화면에서만 lazy API로 불러온
   assert.match(data,/api\('\/api\/memory-prices'/);
   assert.doesNotMatch(view,/mountMemorySpot|memorySpotPlaceholder/);
   assert.match(main,/state.tab==='memory'/);
+  assert.match(main,/featureTab=\['discover','picks','exports','memory'\]/);
   assert.match(page,/mountMemorySpot/);
   assert.match(page,/출처: TrendForce/);
 });
