@@ -177,3 +177,201 @@
   .app-shell[data-surface="discover"] .analysis-stock:before{top:8px;bottom:8px}
   .app-shell[data-surface="picks"] .pick-ledger-summary{padding:6px}
 }
+
+
+/* Pick ledger: mobile app first. Keep records above dashboard density. */
+.pick-ledger-notices{display:grid;gap:6px}
+.pick-ledger-list-tools{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.pick-ledger-list-tools .pick-ledger-search-options{min-width:0}
+.pick-ledger-list-tools .pick-ledger-count{flex:1;min-width:0}
+
+@media(max-width:600px){
+  .app-shell[data-surface="picks"] .pick-ledger-head{
+    margin:0 0 6px!important;padding-top:0!important;padding-bottom:0!important;
+  }
+  .app-shell[data-surface="picks"] .pick-ledger-head .page-kicker{display:none}
+  .app-shell[data-surface="picks"] .pick-ledger-head h2{
+    font-size:19px!important;line-height:1.25!important;margin:0 0 2px!important;
+  }
+  .app-shell[data-surface="picks"] .pick-ledger-head p{
+    margin:0!important;font-size:10px!important;line-height:1.35!important;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+
+  /* Closed overview is a single compact control; expanded data stays compact too. */
+  .app-shell[data-surface="picks"] .pick-ledger-overview{
+    margin:0 0 5px!important;padding:0 9px!important;border-radius:11px!important;
+    border-color:var(--cv-purple-line)!important;background:#faf8ff;
+  }
+  .app-shell[data-surface="picks"] .pick-ledger-overview>summary{
+    min-height:32px!important;padding:0!important;font-size:9.5px!important;
+    color:#5f4e89!important;font-weight:850!important;
+  }
+  .app-shell[data-surface="picks"] .pick-ledger-summary{
+    padding:6px 0 4px!important;margin:0!important;border-radius:0!important;background:transparent!important;
+  }
+  .app-shell[data-surface="picks"] .pick-ledger-kpis{
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:4px!important;
+  }
+  .app-shell[data-surface="picks"] .pick-ledger-kpis>div{
+    min-height:45px!important;padding:6px 5px!important;border-radius:9px!important;
+    display:flex;flex-direction:column;justify-content:center;
+  }
+  .app-shell[data-surface="picks"] .pick-ledger-kpis span{
+    font-size:7.5px!important;line-height:1.15!important;white-space:nowrap!important;
+    overflow:hidden;text-overflow:ellipsis;color:#756c88!important;
+  }
+  .app-shell[data-surface="picks"] .pick-ledger-kpis b{
+    margin-top:3px!important;font-size:13px!important;line-height:1.05!important;
+  }
+  .app-shell[data-surface="picks"] .pick-ledger-kpis small{
+    margin-top:2px!important;font-size:7px!important;line-height:1.1!important;
+    white-space:nowrap!important;overflow:hidden;text-overflow:ellipsis;
+  }
+  .app-shell[data-surface="picks"] .pick-ledger-summary>.pick-ledger-basis{
+    margin:4px 1px 0!important;font-size:7.5px!important;line-height:1.2!important;
+    white-space:nowrap!important;overflow:hidden;text-overflow:ellipsis;
+  }
+  .app-shell[data-surface="picks"] .pick-ledger-status-strip{
+    margin:4px 0 5px!important;
+  }
+  .app-shell[data-surface="picks"] .pick-ledger-status-kpis{
+    display:flex!important;gap:4px!important;overflow-x:auto;scrollbar-width:none;
+  }
+  .app-shell[data-surface="picks"] .pick-ledger-status-kpis::-webkit-scrollbar{display:none}
+  .app-shell[data-surface="picks"] .pick-ledger-status-kpis>div{
+    flex:1 0 auto;min-width:70px!important;min-height:28px!important;
+    padding:5px 7px!important;border-radius:999px!important;
+    display:flex;align-items:center;justify-content:space-between;gap:5px;
+  }
+  .app-shell[data-surface="picks"] .pick-ledger-status-kpis span{
+    display:block!important;font-size:7.5px!important;line-height:1!important;
+    white-space:nowrap!important;color:inherit!important;
+  }
+  .app-shell[data-surface="picks"] .pick-ledger-status-kpis b{
+    display:block!important;margin:0!important;font-size:10px!important;line-height:1!important;
+  }
+  .app-shell[data-surface="picks"] .pick-ledger-status-strip>.pick-ledger-basis{
+    margin:4px 1px 0!important;font-size:7.5px!important;line-height:1.25!important;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  }
+
+  /* Warning + policy share one row instead of consuming two rows. */
+  .app-shell[data-surface="picks"] .pick-ledger-notices{
+    grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;margin-bottom:5px;
+  }
+  .app-shell[data-surface="picks"] .pick-ledger-notices>:only-child{grid-column:1/-1}
+  .app-shell[data-surface="picks"] .pick-ledger-tech-alert,
+  .app-shell[data-surface="picks"] .pick-ledger-policy{
+    margin:0!important;min-width:0;border-radius:10px!important;
+  }
+  .app-shell[data-surface="picks"] .pick-ledger-tech-alert>summary,
+  .app-shell[data-surface="picks"] .pick-ledger-policy>summary{
+    min-height:30px!important;padding:0 7px!important;gap:4px!important;
+    font-size:7.5px!important;line-height:1.1!important;white-space:nowrap;overflow:hidden;
+  }
+  .app-shell[data-surface="picks"] .pick-ledger-tech-alert>summary strong{
+    font-size:7.5px!important;white-space:nowrap;
+  }
+  .app-shell[data-surface="picks"] .pick-ledger-tech-alert>summary span{
+    font-size:6.5px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .app-shell[data-surface="picks"] .pick-ledger-policy>p{
+    padding:0 7px 7px!important;font-size:8px!important;line-height:1.35!important;
+  }
+
+  /* Count + filter share one line. */
+  .app-shell[data-surface="picks"] .pick-ledger-list-tools{
+    min-height:34px;margin:0 0 4px;padding:0 2px;
+  }
+  .app-shell[data-surface="picks"] .pick-ledger-count{
+    margin:0!important;font-size:11px!important;line-height:1.2!important;
+    color:#5f4e89!important;font-weight:900!important;white-space:nowrap;
+  }
+  .app-shell[data-surface="picks"] .pick-ledger-search-options{
+    margin:0!important;padding:0!important;border:0!important;
+  }
+  .app-shell[data-surface="picks"] .pick-ledger-search-options>summary{
+    min-height:30px!important;padding:0 9px!important;border-radius:9px;
+    background:#f1ecfa;color:#6650ac!important;font-size:9px!important;font-weight:850!important;
+    display:flex;align-items:center;white-space:nowrap;
+  }
+  .app-shell[data-surface="picks"] .pick-ledger-search-options[open]{
+    position:relative;flex-basis:100%;
+  }
+  .app-shell[data-surface="picks"] .pick-ledger-list-tools:has(.pick-ledger-search-options[open]){
+    flex-wrap:wrap;align-items:flex-start;
+  }
+  .app-shell[data-surface="picks"] .pick-ledger-search-options[open] .pick-ledger-toolbar{
+    position:absolute;z-index:8;right:0;top:34px;width:min(340px,calc(100vw - 32px));
+    margin:0!important;padding:10px;border:1px solid var(--cv-purple-line);
+    border-radius:12px;background:#fff;box-shadow:0 10px 30px rgba(46,35,78,.14);
+  }
+  .app-shell[data-surface="picks"] .pick-ledger-search input,
+  .app-shell[data-surface="picks"] .pick-ledger-filters select{
+    min-height:38px!important;font-size:11px!important;
+  }
+  .app-shell[data-surface="picks"] .pick-ledger-search span{
+    font-size:9px!important;line-height:1.2!important;
+  }
+
+  /* The record itself is the primary mobile surface: two rows, no desktop font inflation. */
+  .app-shell[data-surface="picks"] .pick-ledger-list{border-radius:12px!important}
+  .app-shell[data-surface="picks"] .pick-ledger-row{
+    min-height:56px!important;padding:7px 9px!important;column-gap:7px!important;row-gap:2px!important;
+    grid-template-columns:minmax(0,1fr) auto!important;
+    grid-template-areas:'stock status' 'prices performance'!important;
+  }
+  .app-shell[data-surface="picks"] .pick-ledger-stock strong{
+    font-size:13.5px!important;line-height:1.15!important;font-weight:900!important;
+  }
+  .app-shell[data-surface="picks"] .pick-ledger-stock small{
+    margin-top:2px!important;font-size:8.5px!important;line-height:1.1!important;
+    white-space:nowrap!important;overflow:hidden;text-overflow:ellipsis;
+  }
+  .app-shell[data-surface="picks"] .pick-ledger-status-stack{
+    flex-direction:row!important;align-items:center!important;justify-content:flex-end!important;gap:3px!important;
+  }
+  .app-shell[data-surface="picks"] .pick-ledger-status{
+    padding:3px 6px!important;font-size:8.5px!important;line-height:1!important;
+    white-space:nowrap!important;border-radius:999px!important;
+  }
+  .app-shell[data-surface="picks"] .pick-ledger-tech-status{
+    padding:3px 5px!important;font-size:0!important;line-height:1!important;white-space:nowrap!important;
+  }
+  .app-shell[data-surface="picks"] .pick-ledger-tech-status:after{
+    content:'기술';font-size:7px;font-weight:900;
+  }
+  .app-shell[data-surface="picks"] .pick-ledger-prices{
+    gap:3px!important;min-width:0!important;white-space:nowrap!important;overflow:hidden;
+  }
+  .app-shell[data-surface="picks"] .pick-ledger-prices small{
+    font-size:9px!important;line-height:1.1!important;white-space:nowrap!important;
+  }
+  .app-shell[data-surface="picks"] .pick-ledger-prices b{font-size:7px!important}
+  .app-shell[data-surface="picks"] .pick-ledger-performance{gap:3px!important}
+  .app-shell[data-surface="picks"] .pick-ledger-return{
+    font-size:11.5px!important;line-height:1!important;font-weight:900!important;
+  }
+  .app-shell[data-surface="picks"] .pick-ledger-secondary{
+    display:block!important;flex-wrap:nowrap!important;
+  }
+  .app-shell[data-surface="picks"] .pick-ledger-secondary em{
+    font-size:7.5px!important;line-height:1!important;white-space:nowrap!important;
+  }
+  .app-shell[data-surface="picks"] .pick-ledger-chevron{font-size:8px!important}
+  .app-shell[data-surface="picks"] .pick-ledger-item+.pick-ledger-item{border-top-color:#eeeaf5}
+
+  .app-shell[data-surface="picks"] .pick-ledger-detail{
+    padding:8px 9px 10px!important;
+  }
+  .app-shell[data-surface="picks"] .pick-ledger-detail-grid section{
+    padding:7px 8px!important;border-radius:9px!important;
+  }
+  .app-shell[data-surface="picks"] .pick-ledger-detail-grid section>strong{
+    font-size:9px!important;line-height:1.2!important;
+  }
+  .app-shell[data-surface="picks"] .pick-ledger-detail p{
+    font-size:10px!important;line-height:1.45!important;
+  }
+}
