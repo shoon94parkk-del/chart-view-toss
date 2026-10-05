@@ -61,3 +61,10 @@ test('expanded pick overview remains compact on mobile',()=>{
   assert.match(emphasis,/\.pick-ledger-status-kpis\{[\s\S]*display:flex!important/);
   assert.match(emphasis,/\.pick-ledger-status-kpis>div\{[\s\S]*min-height:28px!important/);
 });
+
+
+test('pick header remains constrained to the mobile viewport',()=>{
+  const emphasis=readFileSync(new URL('../src/emphasis.css',import.meta.url),'utf8');
+  assert.match(emphasis,/\.pick-ledger-head>div\{min-width:0!important;width:100%!important;max-width:100%!important\}/);
+  assert.match(emphasis,/\.pick-ledger-head p\{[\s\S]*max-width:100%!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis/);
+});
