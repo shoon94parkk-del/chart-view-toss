@@ -4,20 +4,25 @@ const browser=await chromium.launch({headless:true,...(process.env.QA_BROWSER_CH
 const base=process.env.QA_BASE_URL||'http://127.0.0.1:4173';
 const snapshot={period:'2026-09',summary:{exportsUsdBillion:60,exportYoY:10},items:[{key:'semiconductor',name:'반도체',exportsUsdBillion:20,exportYoY:15},{key:'passenger-car',name:'승용차',exportsUsdBillion:5,exportYoY:10}],history:[{period:'2026-08',exportsUsdBillion:50,exportYoY:null},{period:'2026-09',exportsUsdBillion:60,exportYoY:10}]};
 const radar={period:'2026-09',latestStage:20,checkpoints:[{stage:20,label:'1~20일',total:{exportsUsdBillion:40},semiconductor:{exportsUsdBillion:10}}]};
+const momentumMap={period:'2026-09',items:[
+ {key:'semiconductor',name:'반도체',period:'2026-09',exportYoY:25,previousExportYoY:15,deltaYoYPp:10,avg3mYoY:20,acceleration3mPp:6,signal:'acceleration',signalLabel:'가속'},
+ {key:'passenger-car',name:'승용차',period:'2026-09',exportYoY:-4,previousExportYoY:2,deltaYoYPp:-6,avg3mYoY:-1,acceleration3mPp:-4,signal:'weak',signalLabel:'부진'},
+]};
 const detail={key:'semiconductor',name:'반도체',period:'2026-09',history:[{period:'2026-09',exportsUsdBillion:20,exportYoY:15}],countries:[]};
 const matrix={period:'2026-09',segments:[{key:'dram',code:'8542321010',name:'DRAM',exportsUsdBillion:10,countries:[{code:'CN',name:'중국',exportsUsdBillion:5,sharePct:50}]}]};
 try{
  for(const width of [320,390,430]){
   const context=await browser.newContext({viewport:{width,height:844}});
   const page=await context.newPage();
-  const calls={monthly:0,radar:0,item:0,country:0};
+  const calls={monthly:0,momentum:0,radar:0,item:0,country:0};
   const errors=[];
   page.on('pageerror',e=>errors.push(e.message));
   // Match monthly and child endpoints explicitly across Playwright versions.
   await page.route(/\/api\/export-momentum(?:[/?]|$)/,async route=>{
     const path=new URL(route.request().url()).pathname;
     let body;
-    if(path.endsWith('/provisional'))body=++calls.radar===1?{period:'2026-09',checkpoints:[]}:radar;
+    if(path.endsWith('/momentum-map')){calls.momentum++;body=momentumMap;}
+    else if(path.endsWith('/provisional'))body=++calls.radar===1?{period:'2026-09',checkpoints:[]}:radar;
     else if(path.endsWith('/item-detail'))body=++calls.item===1?{key:'semiconductor',history:[]}:detail;
     else if(path.endsWith('/semiconductor-countries'))body=++calls.country===1?{period:'2026-09',segments:[]}:matrix;
     else {calls.monthly++;body=snapshot;}
@@ -25,6 +30,8 @@ try{
     await route.fulfill({status:failed503?503:200,contentType:'application/json',body:JSON.stringify(body)});
   });
   await page.goto(base+'/#exports',{waitUntil:'domcontentloaded'});
+  await page.getByText('가속',{exact:true}).first().waitFor();
+  assert.equal(calls.momentum,1,'momentum map loads independently from monthly snapshot');
   await page.locator('[data-export-provisional-retry]').waitFor();
   assert.equal(calls.radar,1,'initial unavailable radar response must be intercepted');
   await page.locator('[data-export-provisional-retry]').click();
@@ -35,6 +42,7 @@ try{
   });
   assert.equal(calls.radar,2,'retry bypasses cached empty HTTP200');
   assert.equal(calls.monthly,1,'radar retry preserves monthly request');
+  assert.equal(calls.momentum,1,'radar retry does not reload momentum map');
   await page.getByRole('tab',{name:'품목',exact:true}).click();
   await page.locator('[data-export-item="semiconductor"]').first().click();
   await page.locator('[data-export-item-retry]').click();
