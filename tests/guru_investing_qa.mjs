@@ -32,6 +32,7 @@ try{
     body=proof(decodeURIComponent(p.split('/').at(-1)));
    }
    if(p==='/api/quotes')body={results:[{ticker:u.searchParams.get('tickers'),name:row(0).name,price:1600,currency:'KRW',date:'2026-10-02',asOf:'2026-10-02T06:00:00Z'}]};
+   if(p==='/api/valuation'){const tickers=(u.searchParams.get('tickers')||'').split(',').filter(Boolean);body={stocks:tickers.map(ticker=>({ticker,roa:30,trailingPE:12,forwardPE:10,fieldMeta:{roa:{period:'TTM net income / latest reported assets'},trailingPE:{period:'TTM'}}}))};}
    if(p==='/api/compare')body={stocks:[]};
    if(p==='/static/data/screener.json')body={tradeDate:'2026-10-02',stocks:[]};
    return route.fulfill({contentType:'application/json',body:JSON.stringify(body)});
@@ -67,6 +68,13 @@ try{
    assert.ok((await page.locator('.guru-row').first().boundingBox()).height<=88,`${name} row must stay compact`);
    const text=await page.locator('.guru-evidence').innerText();
    assert.match(text,name==='oneil'?/단일3개월/:name==='minervini'?/253|273거래일/:/ROA\/PER 대안/);
+    if(name==='greenblatt'){
+     await page.locator('.guru-current-summary').waitFor();
+     assert.match(await page.locator('.guru-current-summary').innerText(),/TTM 재확인.*충족/);
+     assert.match(await page.locator('.guru-reason-label').first().innerText(),/2025 연간.*TTM 충족/);
+     assert.match(text,/2025년 확정 실적 \+ 2026-10-02 종가/);
+     assert.match(text,/TTM ROA 30%.*TTM PER 12배.*Forward PER 10배/);
+    }
    await noOverflow();await page.reload();await page.locator('.guru-table-wrap').first().waitFor();
    await page.locator('.guru-evidence-actions [data-stock-detail]').click();await page.locator('.quote-main').waitFor();
    await page.getByRole('button',{name:'뒤로가기',exact:true}).click();await page.locator('.guru-table-wrap').first().waitFor();
