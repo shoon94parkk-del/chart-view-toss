@@ -4,20 +4,22 @@ const num=(v,unit='')=>typeof v==='number'&&Number.isFinite(v)?v.toLocaleString(
 const guides={
  oneil:{source:'https://shop.investors.com/images/promotional/20-Rules_102808.pdf',rows:[['연간','4년 양수 기본 EPS · 최근3년 각각 ≥25% 성장 · 최근 ROE ≥17%'],['분기','최근 대상 단일 분기 EPS·매출 각각 전년 동기 ≥25%'],['돌파','최근5거래일 내 이전55일 고가 돌파 · 거래량 ≥이전50일 평균의1.4배'],['위치','현재 종가가 돌파선 위0~5% · 상대강도 ≥80백분위']],basis:'누적 EPS를 빼서 분기 EPS를 만들지 않아요. 분기 원공시의 3개월 EPS·매출을 사용해요. 돌파 기간·거래량·가격 범위는 차트뷰 기준이에요.'},
  minervini:{source:'https://www.minervini.com/1MTPreview.pdf',rows:[['정렬','종가 >50일선 >150일선 >200일선'],['상승','200일선이20거래일 전보다 상승'],['위치','52주 저가 대비 ≥30% · 고가에서 하락 ≤25%'],['강도','252거래일 수익률이 한국 비교시장 ≥70백분위']],basis:'253거래일 이상의 Yahoo 일봉을 사용해요. 상대강도는 같은 기준일 종가가 검증된 한국 일반기업의 단순 수익률 백분위예요. 이 비교 대상의 일봉 자료90% 미만이면 결과를 표시하지 않아요. 종가·이력 부족 기업은 전체 검증 범위에서 따로 표시해요. 차트뷰가 정한 수치 기준이에요.'},
- greenblatt:{source:'https://www.aaii.com/journal/article/the-magic-formula-approach-to-stockpicking',rows:[['대안','EV 대신 검증 가능한 연간 ROA·PER 활용'],['수익성','최근 연간 순이익 / 기말 총자산 ≥25%'],['가격','기준일 종가 / 연간 기본 EPS · PER5~20배'],['정렬','금융·유틸리티 제외 · 낮은 PER 순 최대30개']],basis:'공개 자료에 소개된 ROA·PER 대안을 참고했어요. PER 상한20배·최대30개는 차트뷰 기준이에요. EBIT/EV·투하자본수익률을 계산한 매직포뮬러와 구분해요.'},
+ greenblatt:{source:'https://www.aaii.com/journal/article/the-magic-formula-approach-to-stockpicking',rows:[['대안','EV 대신 검증 가능한 연간 ROA·PER 활용'],['수익성','최근 확정 연간 순이익 / 기말 총자산 ≥25%'],['가격','기준일 종가 / 최근 확정 연간 기본 EPS · PER5~20배'],['현재 확인','연간 후보는 TTM ROA·TTM PER로 다시 확인 · Forward PER은 참고'],['정렬','금융·유틸리티 제외 · 낮은 연간 PER 순 최대30개']],basis:'선정 자체는 확정 연간 실적과 기준일 종가를 사용해요. TTM·예상 실적은 선정값과 섞지 않고 별도 재확인해요. 공개 자료에 소개된 ROA·PER 대안을 참고했으며 PER 상한20배·최대30개는 차트뷰 기준이에요. EBIT/EV·투하자본수익률을 계산한 매직포뮬러와 구분해요.'},
 };
 export function extensionCriteria(strategy){
  const g=guides[strategy];
  return `<details class="guru-guide"><summary>선정 기준 · 투자 원칙 보기</summary><div><p>투자 원칙을 참고해 <b>차트뷰가 정한 수치 기준</b>이에요. 해당 투자자가 선정한 종목이 아니에요.</p><dl>${g.rows.map(([a,b])=>`<div><dt>${a}</dt><dd>${b}</dd></div>`).join('')}</dl><p>${g.basis}</p><p>${GURU_STRATEGIES[strategy].limits}</p><button class="guru-text-action" data-external-url="${esc(g.source)}">투자 원칙 출처 확인 ↗</button></div></details>`;
 }
 function table(head,rows){return `<div class="guru-table-wrap"><table><thead><tr>${head.map(h=>`<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map((v,i)=>`<${i?'td':'th'}>${esc(v)}</${i?'td':'th'}>`).join('')}</tr>`).join('')}</tbody></table></div>`;}
-export function extensionEvidence(evidence,strategy,row){
+export function extensionEvidence(evidence,strategy,row,current=null){
  const selected=evidence.strategies?.[strategy];if(!selected||selected.status!=='matched')throw new Error('같은 선정 기준의 근거를 확인하지 못했어요.');
  const sources=new Map();
  if(strategy!=='minervini')for(const accounts of Object.values(evidence.sources||{}))for(const s of Object.values(accounts||{}))if(/^https:\/\/dart\.fss\.or\.kr\/dsaf001\/main\.do\?rcpNo=\d{14}$/.test(s.sourceUrl||''))sources.set(s.receiptNo,s);
  let details='';
  if(strategy==='greenblatt'){
-  details=`<p class="guru-evidence-basis">${evidence.basis==='CFS'?'연결':'별도'}재무제표 · ROA/PER 대안 · EV 매직포뮬러 아님</p><p>낮은 PER 순 ${num(selected.metrics.valueRank||row.metrics.valueRank)}위 · 기준일 종가 ÷ 최근 연간 EPS</p>`+table(['연도','순이익(억원)','자산(억원)','EPS(원)'],(evidence.annual||[]).map(r=>[r.year,num(r.netIncome/1e8),num(r.assets/1e8),num(r.basicEps)]));
+   const currentStatus=current?.status==='matched'?'충족':current?.status==='failed'?'미충족':'자료 부족';
+   const currentMetrics=`<div class="guru-current-check"><p><b>현재 TTM 재확인 · ${currentStatus}</b></p><p>TTM ROA ${num(current?.roa,'%')} · TTM PER ${num(current?.trailingPE,'배')} · Forward PER ${num(current?.forwardPE,'배')}</p><small>TTM ROA는 최근12개월 순이익 ÷ 최근 보고 총자산, TTM PER은 제공처 최근12개월 기준이에요. Forward PER은 제공처 예상치라 선정 판정에 쓰지 않아요.</small></div>`;
+   details=`<p class="guru-evidence-basis">${evidence.basis==='CFS'?'연결':'별도'}재무제표 · ROA/PER 대안 · EV 매직포뮬러 아님</p><p><b>선정값</b> · ${esc(row.annualReportYear)}년 확정 실적 + ${esc(evidence.tradeDate)} 종가</p><p>낮은 연간 PER 순 ${num(selected.metrics.valueRank||row.metrics.valueRank)}위 · ${esc(evidence.tradeDate)} 종가 ÷ ${esc(row.annualReportYear)}년 기본 EPS</p>`+currentMetrics+table(['연도','순이익(억원)','자산(억원)','EPS(원)'],(evidence.annual||[]).map(r=>[r.year,num(r.netIncome/1e8),num(r.assets/1e8),num(r.basicEps)]));
  }else{
   const t=evidence.technical;if(!t||t.tradeDate!==evidence.tradeDate)throw new Error('같은 기준일의 일봉 근거를 확인하지 못했어요.');
   details=`<p class="guru-evidence-basis">${esc(t.tradeDate)} 종가 · ${t.barCount}거래일 · Yahoo 종가(분할 반영·배당 미조정)</p>`;
