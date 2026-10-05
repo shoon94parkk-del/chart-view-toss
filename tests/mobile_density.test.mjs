@@ -14,9 +14,11 @@ test('mobile screener rows keep a compact base height and typography',()=>{
 });
 
 test('mobile pick ledger keeps collapsed records compact without hiding core fields',()=>{
-  assert.match(picks,/@media\(max-width:600px\)[\s\S]*\.pick-ledger-row\{[\s\S]*min-height:62px/);
-  assert.match(picks,/\.pick-ledger-stock strong\{font-size:12\.5px/);
-  assert.match(picks,/\.pick-ledger-return\{font-size:13px/);
+  const emphasis=readFileSync(new URL('../src/emphasis.css',import.meta.url),'utf8');
+  assert.match(emphasis,/data-surface="picks"[\s\S]*\.pick-ledger-row\{[\s\S]*min-height:56px!important/);
+  assert.match(emphasis,/\.pick-ledger-stock strong\{[\s\S]*font-size:13\.5px!important/);
+  assert.match(emphasis,/\.pick-ledger-return\{[\s\S]*font-size:11\.5px!important/);
+  assert.match(emphasis,/grid-template-areas:'stock status' 'prices performance'!important/);
 });
 
 test('mobile export views use reduced card spacing and chart height',()=>{
@@ -39,4 +41,23 @@ test('pick alerts stay collapsed so the list starts early on mobile',()=>{
   assert.match(js,/data-pick-tech-alert-summary/);
   assert.doesNotMatch(js,/<details class="pick-ledger-tech-alert"[^>]* open/);
   assert.doesNotMatch(js,/<details class="pick-ledger-policy"[^>]* open/);
+});
+
+
+test('pick ledger mobile chrome keeps notices and filtering in compact rows',()=>{
+  const js=readFileSync(new URL('../src/pickLedger.js',import.meta.url),'utf8');
+  const emphasis=readFileSync(new URL('../src/emphasis.css',import.meta.url),'utf8');
+  assert.match(js,/class="pick-ledger-notices"/);
+  assert.match(js,/class="pick-ledger-list-tools"/);
+  assert.match(js,/<summary>검색·필터<\/summary>/);
+  assert.match(emphasis,/\.pick-ledger-notices\{[\s\S]*grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/);
+  assert.match(emphasis,/\.pick-ledger-list-tools\{[\s\S]*min-height:34px/);
+  assert.match(emphasis,/\.pick-ledger-overview>summary\{[\s\S]*min-height:32px!important/);
+});
+
+test('expanded pick overview remains compact on mobile',()=>{
+  const emphasis=readFileSync(new URL('../src/emphasis.css',import.meta.url),'utf8');
+  assert.match(emphasis,/\.pick-ledger-kpis>div\{[\s\S]*min-height:45px!important/);
+  assert.match(emphasis,/\.pick-ledger-status-kpis\{[\s\S]*display:flex!important/);
+  assert.match(emphasis,/\.pick-ledger-status-kpis>div\{[\s\S]*min-height:28px!important/);
 });
