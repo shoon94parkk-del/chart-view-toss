@@ -188,14 +188,16 @@
 @media(max-width:600px){
   .app-shell[data-surface="picks"] .pick-ledger-head{
     margin:0 0 6px!important;padding-top:0!important;padding-bottom:0!important;
+    min-width:0!important;max-width:100%!important;overflow:hidden;
   }
+  .app-shell[data-surface="picks"] .pick-ledger-head>div{min-width:0!important;width:100%!important;max-width:100%!important}
   .app-shell[data-surface="picks"] .pick-ledger-head .page-kicker{display:none}
   .app-shell[data-surface="picks"] .pick-ledger-head h2{
     font-size:19px!important;line-height:1.25!important;margin:0 0 2px!important;
   }
   .app-shell[data-surface="picks"] .pick-ledger-head p{
     margin:0!important;font-size:10px!important;line-height:1.35!important;
-    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    display:block;max-width:100%!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   }
 
   /* Closed overview is a single compact control; expanded data stays compact too. */
