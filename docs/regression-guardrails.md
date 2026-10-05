@@ -422,3 +422,6 @@ Keep original actionStatus priority/count/filter arithmetic but label combined p
 - Compact remaining analysis surfaces without increasing the approved Home/PICK/screener dimensions. Price families and export tabs are standalone 44px targets, with contained horizontal family scrolling permitted.
 - Keep estimate currency/raw revenue, full macro observations/severity, dates, provider names and original links visible. Evidence metadata in these surfaces is at least 12px and long original provider names wrap.
 - Public guidance describes the current grouped individual-stock map, not the retired aggregate-sector board; unknown classified stocks remain included and layout area is not official sector return.
+
+## Guru investing
+Keep small two-strategy controls, collapsed criteria, 72–88px candidate rows and >=12px relevant metadata. Result and evidence snapshotVersion and symbol must match; 409 recovery refreshes dated results. Missing cache, ongoing collection and no matches are distinct states. Source/detail/discover are separate actions; existing detail Back/native root exit stay unchanged. No guru provider calls on Home/detail startup.
