@@ -47,17 +47,19 @@ export function homeChanges(snapshot={},screener={}){
  if(snapshot.period&&finiteNumber(snapshot.summary?.exportYoY)!==null)cards.push({
    kind:'exports',title:'전체 수출',value:percent(snapshot.summary.exportYoY),basisDate:snapshot.period,
    observation:`YoY ${percent(snapshot.summary.exportYoY)}${finiteNumber(semi?.exportYoY)!==null?` · 반도체 ${percent(semi.exportYoY)} (${snapshot.itemPeriod||'기준월 미제공'})`:''}`,
+   question:'어떤 품목이 전체 변화를 이끌었을까요?',limit:'전체 증가율만으로 개별 기업의 실적을 알 수 없어요.',
    next:'품목별 기여 확인',route:'exports',target:'items'
  });
  if(snapshot.itemPeriod&&finiteNumber(semi?.exportWeightYoY)!==null)cards.push({
    kind:'exports',title:'반도체 물량·단위가치',value:percent(semi.exportWeightYoY),basisDate:snapshot.itemPeriod,
    observation:`물량 ${percent(semi.exportWeightYoY)} · 단위가치 ${finiteNumber(semi.unitValueYoY)===null?'미제공':percent(semi.unitValueYoY)}`,
+   question:'물량과 단위가치의 방향이 같나요? 기업 매출·재고에서도 확인될까요?',limit:'kg당 평균 신고금액은 기업 판매가격이 아니며 제품 구성에도 영향을 받아요.',
    next:'반도체 상세 확인',route:'exports',target:'quadrant'
  });
  const matches=(screener.stocks||[]).filter(row=>finiteNumber(row.volumeRatio)!==null&&row.volumeRatio>=2);
  if((screener.tradeDate||screener.updated)&&matches.length)cards.push({
    kind:'discovery',title:'거래량 2배 이상',value:`${matches.length}개`,basisDate:screener.tradeDate||screener.updated,
-   observation:'20일 평균 대비 거래량 급증 종목',next:'해당 종목 보기',route:'discover',target:'volume-surge'
+   observation:'20일 평균 대비 거래량 급증 종목',question:'가격 기준과 기업 공시에서도 달라진 근거를 찾을 수 있을까요?',limit:'거래량 증가는 실적 개선이나 상승 지속을 보장하지 않아요.',next:'해당 종목 보기',route:'discover',target:'volume-surge'
  });
  return cards.slice(0,3);
 }
