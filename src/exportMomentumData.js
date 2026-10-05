@@ -1,5 +1,5 @@
 import { api } from './api.js';
-import { normalizeExportItemDetail, normalizeExportMomentumMap, normalizeExportProvisionalRadar, normalizeExportSnapshot, normalizeSemiconductorCountryMatrix } from './exportMomentumModel.js';
+import { normalizeExportItemDetail, normalizeExportMomentumMap, normalizeExportProvisionalRadar, normalizeExportSnapshot, normalizeSemiconductorCountryMatrix, normalizeSemiconductorTrends } from './exportMomentumModel.js';
 
 export async function loadExportMomentumSnapshot({force=false}={}){
   // Separate corrected signed balances from browser HTTP caches of the old calculation.
@@ -43,6 +43,19 @@ export async function loadExportItemDetail(key,{force=false}={}){
   });
   const payload=normalizeExportItemDetail(raw);
   if(!payload.key||!payload.history.length)throw new Error('품목 상세 데이터가 아직 준비되지 않았어요.');
+  return payload;
+}
+
+
+export async function loadSemiconductorTrends({force=false}={}){
+  const raw=await api('/api/export-momentum/semiconductor-trends',{
+    ttlMs:900000,
+    timeoutMs:60000,
+    retries:0,
+    force,
+  });
+  const payload=normalizeSemiconductorTrends(raw);
+  if(!payload.period||!payload.segments.length)throw new Error('반도체 품목별 추이 데이터가 아직 준비되지 않았어요.');
   return payload;
 }
 
