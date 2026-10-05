@@ -11,7 +11,7 @@ test('수출 데이터는 전체 요약 중심 4개 탭으로 구성한다',()=>
   assert.match(view,/\['countries','국가'\]/);
   assert.match(view,/\['semiconductor','반도체'\]/);
   assert.doesNotMatch(view,/\['trend','속보·추세'\]/);
-  assert.match(view,/exportPanel\('overview',summary\(snapshot\)\+provisionalPlaceholder\(\)\+history\(snapshot\)\+cumulativeSummary\(snapshot\)\+checkpoints\(snapshot\)\+facts\(snapshot\)\+sources\(snapshot\)\)/);
+  assert.match(view,/exportPanel\('overview',summary\(snapshot\)\+momentumMapPlaceholder\(\)\+provisionalPlaceholder\(\)\+history\(snapshot\)\+cumulativeSummary\(snapshot\)\+checkpoints\(snapshot\)\+facts\(snapshot\)\+sources\(snapshot\)\)/);
   assert.match(styles,/\.export-tab-panel\[hidden\]\{display:none\}/);
   assert.match(view,/<details class="export-source">/);
 });
@@ -26,7 +26,9 @@ test('세부 분석은 품목 국가 반도체 탭으로 유지한다',()=>{
 test('잠정 레이더는 전체 요약에서 시작하고 반도체 가격은 별도 화면으로 연결한다',()=>{
   assert.doesNotMatch(view,/mountMemorySpot|memorySpotCleanup/);
   assert.match(view,/data-tab="memory"/);
+  assert.match(view,/panelKey==='overview'&&!momentumLoaded/);
   assert.match(view,/panelKey==='overview'&&!provisionalLoaded/);
+  assert.match(view,/loadExportMomentumMap/);
   assert.doesNotMatch(view,/paint\(host,snapshot,bindNav,openItemDetail\);\s*memorySpotCleanup=mountMemorySpot/);
 });
 

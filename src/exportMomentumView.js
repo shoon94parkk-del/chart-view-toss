@@ -1,4 +1,4 @@
-import { loadExportItemDetail, loadExportMomentumSnapshot, loadExportProvisionalRadar, loadSemiconductorCountryMatrix } from './exportMomentumData.js';
+import { loadExportItemDetail, loadExportMomentumMap, loadExportMomentumSnapshot, loadExportProvisionalRadar, loadSemiconductorCountryMatrix } from './exportMomentumData.js';
 import {memoryMovements} from './insightModel.js';
 import {
   balanceTone,
@@ -135,6 +135,63 @@ function provisionalError(message){
 
 function errorView(message){
   return `<section class="export-error"><strong>수출 데이터를 표시하지 못했어요.</strong><p>${esc(message||'잠시 후 다시 시도해주세요.')}</p><button type="button" data-export-retry>다시 시도</button></section>`;
+}
+
+function momentumMapPlaceholder(){
+  return `
+    <section id="export-momentum-map" class="export-section export-momentum-map">
+      <div class="export-section-head"><div><span>모멘텀 지도</span><h3>지금 수출에서 볼 변화</h3></div><small>품목 흐름 계산 중</small></div>
+      <div class="export-momentum-map-loading" role="status"><span></span><strong>YoY와 가속도를 비교하고 있어요.</strong></div>
+    </section>
+  `;
+}
+
+function renderMomentumMap(map){
+  const definitions=[
+    {key:'acceleration',label:'가속',mark:'↑↑',hint:'YoY 강화'},
+    {key:'turnaround',label:'턴어라운드',mark:'↗',hint:'YoY 플러스 전환'},
+    {key:'slowing',label:'성장 둔화',mark:'↘',hint:'성장률 약화'},
+    {key:'weak',label:'부진',mark:'↓',hint:'YoY 마이너스'},
+    {key:'steady',label:'성장 유지',mark:'→',hint:'큰 변화 없음'},
+    {key:'unknown',label:'판단 보류',mark:'·',hint:'비교 데이터 부족'},
+  ];
+  const buckets=definitions.map(def=>({...def,rows:map.items.filter(row=>row.signal===def.key)})).filter(def=>def.rows.length);
+  return `
+    <section id="export-momentum-map" class="export-section export-momentum-map">
+      <div class="export-section-head">
+        <div><span>모멘텀 지도</span><h3>지금 수출에서 볼 변화</h3></div>
+        <small>${esc(monthLabel(map.period))} · 최신 YoY vs 전월 YoY</small>
+      </div>
+      <div class="export-momentum-buckets">
+        ${buckets.map(bucket=>`
+          <article class="export-momentum-bucket is-${esc(bucket.key)}">
+            <header><span class="export-momentum-mark">${esc(bucket.mark)}</span><div><strong>${esc(bucket.label)}</strong><small>${esc(bucket.hint)}</small></div><b>${bucket.rows.length}</b></header>
+            <div class="export-momentum-list">
+              ${bucket.rows.map(row=>`
+                <button type="button" data-export-momentum-item="${esc(row.key)}" aria-label="${esc(row.name)} 상세 보기">
+                  <span class="export-momentum-name"><strong>${esc(row.name)}</strong><small>3개월 평균 ${esc(formatSignedPct(row.avg3mYoY))}</small></span>
+                  <span class="export-momentum-values">
+                    <b class="${yoyTone(row.exportYoY)}">${esc(formatSignedPct(row.exportYoY))}</b>
+                    <em class="${yoyTone(row.deltaYoYPp)}">Δ ${esc(formatPp(row.deltaYoYPp))}</em>
+                  </span>
+                </button>
+              `).join('')}
+            </div>
+          </article>
+        `).join('')}
+      </div>
+      <p class="export-chart-note">ΔYoY는 최신월 전년동월비에서 전월 전년동월비를 뺀 값입니다. 차트뷰의 6개 HS 프록시 품목만 분류하며, 기업 실적이나 투자 순위를 뜻하지 않습니다.</p>
+    </section>
+  `;
+}
+
+function momentumMapError(message){
+  return `
+    <section id="export-momentum-map" class="export-section export-momentum-map">
+      <div class="export-section-head"><div><span>모멘텀 지도</span><h3>지금 수출에서 볼 변화</h3></div><small>별도 로딩</small></div>
+      <div class="export-momentum-map-error"><strong>품목 모멘텀을 불러오지 못했어요.</strong><span>${esc(message||'월간 수출 요약은 계속 볼 수 있습니다.')}</span><button type="button" data-export-momentum-retry>다시 시도</button></div>
+    </section>
+  `;
 }
 
 function summary(snapshot){
@@ -691,7 +748,7 @@ function exportPanel(key,content){
 
 function paint(host,snapshot,bindNav,onItemOpen){
   host.innerHTML=[
-    exportPanel('overview',summary(snapshot)+provisionalPlaceholder()+history(snapshot)+cumulativeSummary(snapshot)+checkpoints(snapshot)+facts(snapshot)+sources(snapshot)),
+    exportPanel('overview',summary(snapshot)+momentumMapPlaceholder()+provisionalPlaceholder()+history(snapshot)+cumulativeSummary(snapshot)+checkpoints(snapshot)+facts(snapshot)+sources(snapshot)),
     exportPanel('products',items(snapshot)+breadth(snapshot)+quadrant(snapshot)),
     exportPanel('countries',regions(snapshot)),
     exportPanel('semiconductor','<button type="button" class="text-button" data-tab="memory">TrendForce 반도체 가격 추적 →</button>'+semiconductorReport(snapshot)),
@@ -715,7 +772,9 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={},onSe
   let seq=0;
   let detailSeq=0;
   let provisionalSeq=0;
+  let momentumSeq=0;
   let provisionalLoaded=false;
+  let momentumLoaded=false;
 
   const openItemDetail=async(key,{force=false,restore=false}={})=>{
     const panel=host.querySelector('#export-item-detail');
@@ -778,6 +837,27 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={},onSe
     }
   };
 
+  const loadMomentumMap=async(parentToken,force=false)=>{
+    const node=host.querySelector('#export-momentum-map');
+    if(parentToken!==seq||!node?.isConnected)return;
+    const token=++momentumSeq;
+    node.outerHTML=momentumMapPlaceholder();
+    try{
+      const map=await loadExportMomentumMap({force});
+      const current=host.querySelector('#export-momentum-map');
+      if(parentToken!==seq||token!==momentumSeq||!current?.isConnected)return;
+      current.outerHTML=renderMomentumMap(map);
+      host.querySelectorAll('[data-export-momentum-item]').forEach(button=>{
+        button.addEventListener('click',()=>void openItemDetail(button.dataset.exportMomentumItem));
+      });
+    }catch(error){
+      const current=host.querySelector('#export-momentum-map');
+      if(parentToken!==seq||token!==momentumSeq||!current?.isConnected)return;
+      current.outerHTML=momentumMapError(error?.message);
+      host.querySelector('[data-export-momentum-retry]')?.addEventListener('click',()=>void loadMomentumMap(parentToken,true));
+    }
+  };
+
   const loadProvisional=async(parentToken,force=false)=>{
     const node=host.querySelector('#export-provisional-radar');
     if(parentToken!==seq||!node?.isConnected)return;
@@ -800,6 +880,7 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={},onSe
     const token=++seq;
     app.querySelectorAll('[data-export-topic]').forEach(button=>{button.disabled=true;});
     provisionalLoaded=false;
+    momentumLoaded=false;
     host.innerHTML=loading();
     try{
       const snapshot=await loadExportMomentumSnapshot({force});
@@ -840,6 +921,10 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={},onSe
           button.classList.toggle('is-active',selected);
         });
 
+        if(panelKey==='overview'&&!momentumLoaded){
+          momentumLoaded=true;
+          void loadMomentumMap(token,force);
+        }
         if(panelKey==='overview'&&!provisionalLoaded){
           provisionalLoaded=true;
           void loadProvisional(token,force);
@@ -873,5 +958,5 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={},onSe
   };
 
   void load();
-  return ()=>{seq+=1;detailSeq+=1;provisionalSeq+=1;};
+  return ()=>{seq+=1;detailSeq+=1;provisionalSeq+=1;momentumSeq+=1;};
 }

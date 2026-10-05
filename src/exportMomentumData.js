@@ -1,5 +1,5 @@
 import { api } from './api.js';
-import { normalizeExportItemDetail, normalizeExportProvisionalRadar, normalizeExportSnapshot, normalizeSemiconductorCountryMatrix } from './exportMomentumModel.js';
+import { normalizeExportItemDetail, normalizeExportMomentumMap, normalizeExportProvisionalRadar, normalizeExportSnapshot, normalizeSemiconductorCountryMatrix } from './exportMomentumModel.js';
 
 export async function loadExportMomentumSnapshot({force=false}={}){
   // Separate corrected signed balances from browser HTTP caches of the old calculation.
@@ -17,6 +17,19 @@ export async function loadExportMomentumSnapshot({force=false}={}){
 }
 
 export const exportMomentumApiPath='/api/export-momentum';
+
+
+export async function loadExportMomentumMap({force=false}={}){
+  const raw=await api('/api/export-momentum/momentum-map',{
+    ttlMs:600000,
+    timeoutMs:45000,
+    retries:0,
+    force,
+  });
+  const payload=normalizeExportMomentumMap(raw);
+  if(!payload.period||!payload.items.length)throw new Error('품목 모멘텀 데이터가 아직 준비되지 않았어요.');
+  return payload;
+}
 
 
 export async function loadExportItemDetail(key,{force=false}={}){
