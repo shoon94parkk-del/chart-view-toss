@@ -23,9 +23,10 @@ export function filterGuruResults(rows,{query='',market=''}={},strategy=''){
  return rows.filter(r=>(!market||r.market===market)&&(!q||`${r.name} ${r.symbol}`.toLocaleLowerCase('ko-KR').includes(q))).sort((a,b)=>strategy==='greenblatt'?(a.metrics.annualPE-b.metrics.annualPE||a.symbol.localeCompare(b.symbol)):(a.name.localeCompare(b.name,'ko-KR')||a.symbol.localeCompare(b.symbol)));
 }
 export function greenblattCurrentCheck(value){
- const roa=Number.isFinite(value?.roa)?value.roa:null,pe=Number.isFinite(value?.trailingPE)?value.trailingPE:null,forwardPE=Number.isFinite(value?.forwardPE)?value.forwardPE:null;
- const status=roa===null||pe===null?'unknown':(roa>=25&&pe>=5&&pe<=20?'matched':'failed');
- return {status,roa,trailingPE:pe,forwardPE};
+ const roa=Number.isFinite(value?.roa)?value.roa:null,pe=Number.isFinite(value?.trailingPE)?value.trailingPE:null,forwardPE=Number.isFinite(value?.forwardPE)?value.forwardPE:null,trailingEPS=Number.isFinite(value?.trailingEPS)?value.trailingEPS:null;
+ const provenFailure=(roa!==null&&roa<25)||(pe!==null&&(pe<5||pe>20))||(trailingEPS!==null&&trailingEPS<=0);
+ const status=provenFailure?'failed':roa===null||pe===null?'unknown':'matched';
+ return {status,roa,trailingPE:pe,forwardPE,trailingEPS};
 }
 export function guruViewStatus(s){
  if(s.matchedCount>0)return {status:'ready'};
