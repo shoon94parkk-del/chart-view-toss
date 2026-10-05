@@ -272,9 +272,10 @@ User-approved new behavior. Home cards include dated observations, questions and
 
 
 ## 2026-10-04 — Export tabs + memory price catalog
-- Export default screen is `전체 요약`; long analysis sections are no longer stacked on first paint.
-- Tabs: `전체 요약`, `품목`, `국가`, `반도체`, `속보·추세`.
-- Products keeps amount/volume/unit-value cards, breadth, quadrant and 12-month drilldown. Semiconductor keeps DRAM/Flash/MCP/DRAM-module Customs report plus lazy market prices. Trend keeps provisional radar, 12-month total trend and checkpoints.
+- Export default screen is `전체 요약`.
+- Current tabs: `전체 요약`, `품목`, `국가`, `반도체`. The former `속보·추세` tab was merged into Overview on 2026-10-05.
+- Overview keeps the official monthly summary plus provisional 10/20-day radar, 12-month total trend, annual cumulative figures and checkpoint flow. The month-end landing estimate / estimate-vs-actual review UI is intentionally not shown.
+- Products keeps amount/volume/unit-value cards, breadth, quadrant and 12-month drilldown. Semiconductor keeps DRAM/Flash/MCP/DRAM-module Customs report plus lazy market prices.
 - Memory prices load from `/api/memory-prices` only when Semiconductor is opened. Price-family chips show one family at a time: DRAM chip, NAND chip, NAND wafer, DRAM module, GDDR.
 - HBM/MCP/eMMC-UFS without public numeric price are disclosed as unavailable; MCP export evidence remains in the Customs report.
 
@@ -293,8 +294,9 @@ User-approved new behavior. Home cards include dated observations, questions and
 
 
 ## 2026-10-05 — mobile PICK ledger contract
-- Chart View Toss is mobile-first. The PICK ledger should prioritize the actual record list over dashboard summaries.
-- Performance overview, warning/policy details and filters start collapsed/compact. Expanded content remains available.
+- Chart View Toss is mobile-first. The PICK ledger should prioritize scan density without hiding the aggregate state.
+- Performance and status summaries are always visible, but compressed into a four-KPI row plus compact status pills; long basis copy is hidden on mobile.
+- Warning/policy details and filters stay collapsed/compact.
 - On <=600px, collapsed PICK rows target <=64px and remain a two-row layout.
-- The 390x844 release QA must show at least three PICK records above the fixed bottom navigation.
+- The 390x844 release QA must show at least three PICK records above the fixed bottom navigation where fixture content permits.
 - Later global accessibility typography must not inflate PICK metadata/status text back to desktop-like sizes.

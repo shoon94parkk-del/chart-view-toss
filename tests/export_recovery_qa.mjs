@@ -25,7 +25,6 @@ try{
     await route.fulfill({status:failed503?503:200,contentType:'application/json',body:JSON.stringify(body)});
   });
   await page.goto(base+'/#exports',{waitUntil:'domcontentloaded'});
-  await page.getByRole('tab',{name:'속보·추세',exact:true}).click();
   await page.locator('[data-export-provisional-retry]').waitFor();
   assert.equal(calls.radar,1,'initial unavailable radar response must be intercepted');
   await page.locator('[data-export-provisional-retry]').click();

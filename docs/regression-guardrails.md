@@ -365,10 +365,11 @@ Keep original actionStatus priority/count/filter arithmetic but label combined p
 
 
 ## Export tab information architecture
-- Clean Export entry shows only the recent overall summary/facts/source basis. Do not re-stack every detailed section on the default screen.
-- Detailed sections remain reachable under five tabs: overview/products/countries/semiconductor/trend. Moving a section is allowed; deleting an existing analysis is not.
-- Memory price network work starts only after Semiconductor is activated. Provisional radar network work starts only after Trend is activated.
-- Existing focus deep links map to the corresponding new tab: history/provisional→trend, items/breadth/quadrant→products, countries→countries, memory→semiconductor.
+- Export uses four tabs: overview/products/countries/semiconductor. Do not reintroduce a separate trend tab unless explicitly approved.
+- Overview combines the monthly headline, provisional 10/20-day radar, 12-month total trend, annual cumulative values and checkpoint flow. Products/countries/semiconductor remain separate drill-downs.
+- Do not render the month-end landing estimate, estimate range, or estimate-vs-actual review UI. Keep the underlying official provisional/actual observations.
+- Memory price network work starts only after Semiconductor is activated. Provisional radar may load asynchronously as part of Overview and must not block the monthly summary.
+- Existing focus deep links map as history/provisional→overview, items/breadth/quadrant→products, countries→countries, memory→semiconductor.
 - The memory-price UI shows one price family at a time to avoid recreating a long dashboard inside the Semiconductor tab.
 
 
@@ -397,9 +398,9 @@ Keep original actionStatus priority/count/filter arithmetic but label combined p
 
 ## Mobile PICK ledger viewport density
 - Treat the PICKS screen as a mobile record browser, not a desktop dashboard squeezed into a phone.
-- Keep the performance/status overview collapsed by default and compact when expanded.
+- Keep the performance and status overview always visible, but compressed into mobile-sized KPI/status rows. Do not restore the old tall dashboard cards.
 - Warning and policy summaries should share one mobile row where both exist.
 - Keep count and search/filter entry on one row; filter controls may expand without pushing the normal list permanently downward.
 - Collapsed record rows must remain <=64px at <=600px and preserve name, status, recommendation/check price and return.
-- At 390x844, at least the first three PICK records must fit above the fixed bottom navigation before opening any record.
-- Do not satisfy density by deleting evidence or status semantics; move detail behind expansion instead.
+- At 390x844, preserve the multi-record first viewport; current QA targets at least three fixture records above the fixed bottom navigation.
+- Do not satisfy density by deleting evidence or status semantics; move record-level detail behind expansion instead.

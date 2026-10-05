@@ -65,81 +65,6 @@ function provisionalPlaceholder(){
   `;
 }
 
-function renderLandingProjection(landing){
-  if(!landing)return '';
-  const metricCard=(title,metric)=>{
-    if(!metric)return `
-      <article class="export-landing-card is-empty">
-        <span>${esc(title)}</span>
-        <strong>추정 대기</strong>
-        <small>과거 비교 표본이 충분하지 않습니다.</small>
-      </article>
-    `;
-    const isReview=landing.status==='final-review';
-    const backtest=metric.backtest||{};
-    return `
-      <article class="export-landing-card">
-        <div class="export-landing-card-head">
-          <span>${esc(title)}</span>
-          <em>${esc(landing.stageLabel)} 기준</em>
-        </div>
-        <div class="export-landing-main">
-          <small>${isReview?'당시 월말 중앙 추정':'월말 중앙 추정'}</small>
-          <strong>${esc(formatUsdBillion(metric.estimateUsdBillion,{digits:1}))}</strong>
-          <span>${esc(formatUsdBillion(metric.rangeLowUsdBillion,{digits:1}))} ~ ${esc(formatUsdBillion(metric.rangeHighUsdBillion,{digits:1}))}</span>
-        </div>
-        <div class="export-landing-stats">
-          ${isReview&&metric.actualUsdBillion!==null?`
-            <div><span>실제 마감</span><strong>${esc(formatUsdBillion(metric.actualUsdBillion,{digits:1}))}</strong></div>
-            <div><span>추정 오차</span><strong class="${yoyTone(-Math.abs(metric.actualErrorPct||0))}">${metric.actualErrorPct===null?'-':esc((metric.actualErrorPct>0?'+':'')+metric.actualErrorPct.toFixed(1)+'%')}</strong></div>
-          `:`
-            <div><span>예상 YoY</span><strong class="${yoyTone(metric.projectedYoY)}">${esc(formatSignedPct(metric.projectedYoY))}</strong></div>
-            <div><span>YoY 범위</span><strong>${esc(formatSignedPct(metric.rangeYoYLow))} ~ ${esc(formatSignedPct(metric.rangeYoYHigh))}</strong></div>
-          `}
-          <div><span>과거 완성률 중앙값</span><strong>${metric.medianCompletionPct===null?'-':esc(metric.medianCompletionPct.toFixed(1)+'%')}</strong></div>
-          <div><span>과거 표본</span><strong>${metric.historySampleCount===null?'-':esc(String(metric.historySampleCount)+'개월')}</strong></div>
-        </div>
-        <div class="export-landing-backtest">
-          <span>최근 백테스트</span>
-          <b>중앙 절대오차 ${backtest.medianAbsErrorPct===null?'-':esc(backtest.medianAbsErrorPct.toFixed(1)+'%')}</b>
-          <b>범위 적중 ${backtest.rangeHitPct===null?'-':esc(backtest.rangeHitPct.toFixed(1)+'%')}</b>
-          <small>${backtest.sampleCount===null?'-':esc(String(backtest.sampleCount))}개월</small>
-        </div>
-      </article>
-    `;
-  };
-  if(landing.status==='final'&&!landing.total&&!landing.semiconductor){
-    return `
-      <div class="export-landing">
-        <div class="export-landing-head">
-          <div><span>월말 착지 범위</span><strong>마감 완료</strong></div>
-          <small>실제 월말 잠정치가 발표됐습니다.</small>
-        </div>
-      </div>
-    `;
-  }
-  return `
-    <div class="export-landing">
-      <div class="export-landing-head">
-        <div>
-          <span>월말 착지 범위</span>
-          <strong>${landing.status==='final-review'?'추정 vs 실제 마감':'현재 속도로 월말은 어디쯤?'}</strong>
-        </div>
-        <small>${esc(landing.stageLabel)} · 과거 완성률 기반</small>
-      </div>
-      <p>${esc(landing.message)}</p>
-      <div class="export-landing-grid">
-        ${metricCard('전체 수출',landing.total)}
-        ${metricCard('반도체',landing.semiconductor)}
-      </div>
-      <div class="export-landing-method">
-        <strong>계산 방식</strong>
-        <span>최근 최대 60개월의 같은 단계 완성률 중앙값으로 중앙 추정을 계산하고, 25~75% 분위수로 범위를 만듭니다. 최근 최대 24개월은 과거 시점 기준으로 다시 계산해 오차와 범위 적중률을 검증합니다.</span>
-      </div>
-    </div>
-  `;
-}
-
 function renderProvisionalRadar(radar){
   const latest=radar.checkpoints.at(-1)||{};
   const latestSemi=latest.semiconductor||{};
@@ -170,7 +95,6 @@ function renderProvisionalRadar(radar){
         <div><span>증가율 가속</span><strong class="${yoyTone(latest.semiconductorYoYAccelerationPp)}">${esc(formatPp(latest.semiconductorYoYAccelerationPp))}</strong><small>직전 체크포인트 YoY 대비</small></div>
         <div><span>증가액 기여</span><strong>${latest.semiconductorContributionPct===null?'-':esc(latest.semiconductorContributionPct.toFixed(1)+'%')}</strong><small>전체 수출 YoY 증가액 중 반도체</small></div>
       </div>
-      ${renderLandingProjection(radar.landingProjection)}
       <div class="export-provisional-flow">
         ${radar.checkpoints.map((row,index)=>`
           <article class="export-provisional-stage ${index===radar.checkpoints.length-1?'is-latest':''}">
@@ -251,7 +175,7 @@ function cumulativeSummary(snapshot){
   if(!Number.isFinite(Number(data.cumulativeExportsUsdBillion)))return '';
   return `
     <section class="export-section export-cumulative">
-      <div class="export-section-head"><div><span>연간 누적</span><h3>${esc(cumulativeLabel(snapshot.period))}</h3></div><small>속보·추세</small></div>
+      <div class="export-section-head"><div><span>연간 누적</span><h3>${esc(cumulativeLabel(snapshot.period))}</h3></div><small>전체 요약</small></div>
       <div class="export-summary-grid">
         <div><span>누적 수출</span><strong>${esc(formatUsdBillion(data.cumulativeExportsUsdBillion))}</strong><small>해당 연도 누적</small></div>
         <div><span>누적 무역수지</span><strong>${esc(formatUsdBillion(data.cumulativeBalanceUsdBillion))}</strong><small>해당 연도 누적</small></div>
@@ -767,11 +691,10 @@ function exportPanel(key,content){
 
 function paint(host,snapshot,bindNav,onItemOpen){
   host.innerHTML=[
-    exportPanel('overview',summary(snapshot)+facts(snapshot)+sources(snapshot)),
+    exportPanel('overview',summary(snapshot)+provisionalPlaceholder()+history(snapshot)+cumulativeSummary(snapshot)+checkpoints(snapshot)+facts(snapshot)+sources(snapshot)),
     exportPanel('products',items(snapshot)+breadth(snapshot)+quadrant(snapshot)),
     exportPanel('countries',regions(snapshot)),
     exportPanel('semiconductor',memorySpotPlaceholder()+semiconductorReport(snapshot)),
-    exportPanel('trend',provisionalPlaceholder()+history(snapshot)+cumulativeSummary(snapshot)+checkpoints(snapshot)),
     '<div id="export-item-detail" class="export-item-detail" hidden></div>',
   ].join('');
   bindNav();
@@ -780,9 +703,9 @@ function paint(host,snapshot,bindNav,onItemOpen){
 
 export function renderExportMomentumView({shell,bindNav,focus=null,state={}}){
   const app=document.querySelector('#app');
-  const tabs=[['overview','전체 요약'],['products','품목'],['countries','국가'],['semiconductor','반도체'],['trend','속보·추세']];
+  const tabs=[['overview','전체 요약'],['products','품목'],['countries','국가'],['semiconductor','반도체']];
   const panelForFocus=key=>({
-    history:'trend',provisional:'trend',
+    history:'overview',provisional:'overview',
     items:'products',breadth:'products',quadrant:'products',
     countries:'countries',memory:'semiconductor',
   }[key]||'overview');
@@ -921,7 +844,7 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={}}){
         if(panelKey==='semiconductor'&&!memorySpotCleanup){
           memorySpotCleanup=mountMemorySpot(host.querySelector('#export-memory-spot'),{bindNav});
         }
-        if(panelKey==='trend'&&!provisionalLoaded){
+        if(panelKey==='overview'&&!provisionalLoaded){
           provisionalLoaded=true;
           void loadProvisional(token,force);
         }

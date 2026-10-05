@@ -127,9 +127,10 @@ function rowMarkup(row,index,displayName){
 export async function renderPickLedger({shell,bindNav,displayName,focusKey=null}){
   document.querySelector('#app').innerHTML=shell(`
     <section class="task-head pick-ledger-head"><div><span class="page-kicker">CHARTVIEW</span><h2>선정 기록·성과</h2><p>과거에 선정한 이유와 이후 성과·점검 내용을 확인해요. 실시간 인기 순위가 아니에요.</p></div></section>
-    <details class="pick-ledger-overview"><summary>성과·상태 요약</summary><section class="pick-ledger-summary" id="pick-ledger-summary">${loadingIndicator('선정 기록을 불러오고 있어요')}<div class="skeleton quote"></div></section>
-    <section class="pick-ledger-status-strip" id="pick-ledger-status-strip">${loadingIndicator('점검 상태를 확인하고 있어요')}<div class="skeleton quote"></div></section>
-    </details>
+    <section class="pick-ledger-overview" aria-label="성과·상태 요약">
+      <section class="pick-ledger-summary" id="pick-ledger-summary">${loadingIndicator('선정 기록을 불러오고 있어요')}<div class="skeleton quote"></div></section>
+      <section class="pick-ledger-status-strip" id="pick-ledger-status-strip">${loadingIndicator('점검 상태를 확인하고 있어요')}<div class="skeleton quote"></div></section>
+    </section>
     <div class="pick-ledger-notices">
       <details class="pick-ledger-tech-alert" id="pick-ledger-tech-alert" hidden><summary data-pick-tech-alert-summary>가격·거래 경고</summary><div data-pick-tech-alert-body></div></details>
       <details class="pick-ledger-policy" id="pick-ledger-policy"><summary>신호 안내 · 자동 매도 아님</summary><p>매도검토는 자동 매도 확정이 아니며 가격·차트만으로 판정하지 않아요. 단기 기술 경고는 펀더멘털 매도검토와 별도이며 기술 경고만으로 자동 매도 확정하지 않아요.</p></details>

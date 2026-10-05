@@ -200,17 +200,13 @@
     display:block;max-width:100%!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   }
 
-  /* Closed overview is a single compact control; expanded data stays compact too. */
+  /* Performance + status are always visible, but stay compact enough for a mobile record browser. */
   .app-shell[data-surface="picks"] .pick-ledger-overview{
-    margin:0 0 5px!important;padding:0 9px!important;border-radius:11px!important;
-    border-color:var(--cv-purple-line)!important;background:#faf8ff;
-  }
-  .app-shell[data-surface="picks"] .pick-ledger-overview>summary{
-    min-height:32px!important;padding:0!important;font-size:9.5px!important;
-    color:#5f4e89!important;font-weight:850!important;
+    margin:0 0 5px!important;padding:6px 8px 5px!important;border-radius:11px!important;
+    border:1px solid var(--cv-purple-line)!important;background:#faf8ff;
   }
   .app-shell[data-surface="picks"] .pick-ledger-summary{
-    padding:6px 0 4px!important;margin:0!important;border-radius:0!important;background:transparent!important;
+    padding:0!important;margin:0!important;border-radius:0!important;background:transparent!important;
   }
   .app-shell[data-surface="picks"] .pick-ledger-kpis{
     grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:4px!important;
@@ -230,12 +226,9 @@
     margin-top:2px!important;font-size:7px!important;line-height:1.1!important;
     white-space:nowrap!important;overflow:hidden;text-overflow:ellipsis;
   }
-  .app-shell[data-surface="picks"] .pick-ledger-summary>.pick-ledger-basis{
-    margin:4px 1px 0!important;font-size:7.5px!important;line-height:1.2!important;
-    white-space:nowrap!important;overflow:hidden;text-overflow:ellipsis;
-  }
+  .app-shell[data-surface="picks"] .pick-ledger-summary>.pick-ledger-basis{display:none!important}
   .app-shell[data-surface="picks"] .pick-ledger-status-strip{
-    margin:4px 0 5px!important;
+    margin:4px 0 0!important;
   }
   .app-shell[data-surface="picks"] .pick-ledger-status-kpis{
     display:flex!important;gap:4px!important;overflow-x:auto;scrollbar-width:none;
@@ -253,10 +246,7 @@
   .app-shell[data-surface="picks"] .pick-ledger-status-kpis b{
     display:block!important;margin:0!important;font-size:10px!important;line-height:1!important;
   }
-  .app-shell[data-surface="picks"] .pick-ledger-status-strip>.pick-ledger-basis{
-    margin:4px 1px 0!important;font-size:7.5px!important;line-height:1.25!important;
-    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
-  }
+  .app-shell[data-surface="picks"] .pick-ledger-status-strip>.pick-ledger-basis{display:none!important}
 
   /* Warning + policy share one row instead of consuming two rows. */
   .app-shell[data-surface="picks"] .pick-ledger-notices{

@@ -480,3 +480,13 @@ Classification: intentional UX redesign. 수출 데이터 첫 진입은 `전체 
 - collapsed PICK 행은 종목/상태 + 추천가/점검가/수익률의 2행 구조로 최대 64px를 목표로 한다.
 - 390px 높이 844px 기준 최소 3개 PICK 기록이 고정 하단 네비게이션 위에 동시에 보여야 한다.
 정보 삭제가 아니라 기본 화면의 우선순위를 기록 목록으로 이동하는 변경이다.
+
+
+## 2026-10-05 — 선정 요약 상시 노출 + 수출 추세 통합
+Classification: intentional mobile UX simplification, superseding the earlier same-day decision that collapsed the PICK overview and kept a separate export trend tab.
+
+- 선정 기록의 집계 성과·상태는 사용자가 항상 확인할 수 있어야 하므로 `pick-ledger-overview`를 접힘 `details`가 아닌 상시 노출 section으로 전환한다. 모바일에서는 4개 KPI와 상태 pill을 압축하고 긴 기준 설명만 숨겨 목록 밀도를 유지한다.
+- 가격·거래 경고, 신호 안내, 검색·필터는 기존처럼 접힘/압축 상태를 유지한다. PICK 행 <=64px 및 다중 종목 첫 화면 목표도 유지한다.
+- 수출 데이터의 `속보·추세` 탭은 제거하고 해당 내용을 `전체 요약`에 통합한다. 전체 요약은 월간 총괄 뒤에 10일 단위 잠정 레이더, 12개월 수출액·YoY 추이, 연간 누적, 10/20일/월전체 체크포인트를 이어서 보여준다.
+- `월말 착지 범위`, `추정 vs 실제 마감`, 추정 오차/백테스트 카드는 화면에서 제거한다. 공식 잠정·실적 원자료는 유지하며 백엔드/정규화 모델을 억지로 삭제하지 않는다.
+- history/provisional focus 딥링크는 이제 overview로 매핑한다. 잠정 레이더는 overview 진입 후 비동기로 로드하며 월간 요약을 막지 않는다.
