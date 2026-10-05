@@ -393,3 +393,13 @@ Keep original actionStatus priority/count/filter arithmetic but label combined p
 - Home cards and their destination surface should share the same accent family so navigation feels continuous.
 - Keep emphasis restrained: soft surface + accent icon/badge/CTA/keyline. Do not turn every card into a saturated block.
 - Mobile density contracts remain in force; visual emphasis must not increase collapsed row/card heights materially.
+
+
+## Mobile PICK ledger viewport density
+- Treat the PICKS screen as a mobile record browser, not a desktop dashboard squeezed into a phone.
+- Keep the performance/status overview collapsed by default and compact when expanded.
+- Warning and policy summaries should share one mobile row where both exist.
+- Keep count and search/filter entry on one row; filter controls may expand without pushing the normal list permanently downward.
+- Collapsed record rows must remain <=64px at <=600px and preserve name, status, recommendation/check price and return.
+- At 390x844, at least the first three PICK records must fit above the fixed bottom navigation before opening any record.
+- Do not satisfy density by deleting evidence or status semantics; move detail behind expansion instead.
