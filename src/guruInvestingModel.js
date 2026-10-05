@@ -1,4 +1,4 @@
-export const guruMetricLabels={roeAvg3:'3년 평균 ROE',debtRatio:'부채비율',epsCagr3:'3년 EPS 성장률',annualPE:'연간 실적 PER',historicalPEG:'과거 실적 PEG',quarterEpsGrowth:'분기 EPS 성장',breakoutVolumeRatio:'돌파 거래량',relativeStrengthPercentile:'상대강도',distance52HighPct:'52주 고가 대비',annualROA:'연간 ROA'};
+export const guruMetricLabels={roeAvg3:'3년 평균 ROE',debtRatio:'부채비율',epsCagr3:'3년 EPS 성장',annualPE:'연간 PER',historicalPEG:'과거 PEG',quarterEpsGrowth:'분기 EPS 성장',breakoutVolumeRatio:'돌파 거래량',relativeStrengthPercentile:'상대강도',distance52HighPct:'52주 고가',annualROA:'연간 ROA'};
 export const guruMetricUnits={annualPE:'배',historicalPEG:'배',breakoutVolumeRatio:'배',relativeStrengthPercentile:'백분위'};
 export const GURU_STRATEGIES={
  buffett:{name:'버핏',label:'우량기업',intro:'꾸준한 수익성과 현금흐름, 부채 부담을 확인해요.',limits:'경제적 해자·경영진·적정 매수가격은 이 조건만으로 판단할 수 없어요.',questions:['높은 수익성이 일시적인 요인 때문인가요?','유지·성장 투자에 필요한 현금은 얼마인가요?','현재 가격에도 보유할 근거가 있나요?']},
