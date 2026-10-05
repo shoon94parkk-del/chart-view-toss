@@ -311,3 +311,7 @@ User-approved new behavior. Home cards include dated observations, questions and
 - Treat the user's recent compact UI as the baseline. LAB candidates precede optional next/counter checks; Home filing revisit is a single compact row while Watch/detail expose full saved content.
 - Essential Home export months and unit-value metadata may wrap; they must not be ellipsized away. PICK hidden long calculation basis remains accessible through the compact toolbar disclosure, and technical severity has distinct visible words.
 - Export tab and memory-family selections are public hash routes through normal native-compatible navigation. Preserve lazy memory loading and existing focus deep links. An empty tracked-condition action goes to DART comparison; saved conditions still explicitly revalidate.
+
+
+### 2026-10-05 — User prefers fewer analysis modes
+TrendForce semiconductor prices moved to Analysis > 반도체 가격 추적; Customs remains in Exports. Full heatmap now uses sector-grouped individual-stock rectangles with one market selector, inspired by Finviz's grouping/hierarchy and adapted for mobile. PICK collapsed rows show a single combined priority state; technical warnings appear in expanded records. These are intentional replacements of previous UI decisions, not restoration bugs. Preserve live-quote, source-date, cache/retry and mobile density contracts.

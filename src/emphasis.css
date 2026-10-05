@@ -235,9 +235,9 @@
   }
   .app-shell[data-surface="picks"] .pick-ledger-status-kpis::-webkit-scrollbar{display:none}
   .app-shell[data-surface="picks"] .pick-ledger-status-kpis>div{
-    flex:1 0 auto;min-width:70px!important;min-height:28px!important;
-    padding:5px 7px!important;border-radius:999px!important;
-    display:flex;align-items:center;justify-content:space-between;gap:5px;
+    flex:1 1 0;min-width:0!important;min-height:28px!important;
+    padding:5px 4px!important;border-radius:999px!important;
+    display:flex;align-items:center;justify-content:space-between;gap:3px;
   }
   .app-shell[data-surface="picks"] .pick-ledger-status-kpis span{
     display:block!important;font-size:7.5px!important;line-height:1!important;

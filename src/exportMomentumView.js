@@ -1,6 +1,5 @@
 import { loadExportItemDetail, loadExportMomentumSnapshot, loadExportProvisionalRadar, loadSemiconductorCountryMatrix } from './exportMomentumData.js';
 import {memoryMovements} from './insightModel.js';
-import { memorySpotPlaceholder, mountMemorySpot } from './memorySpotView.js';
 import {
   balanceTone,
   chartExtent,
@@ -695,14 +694,14 @@ function paint(host,snapshot,bindNav,onItemOpen){
     exportPanel('overview',summary(snapshot)+provisionalPlaceholder()+history(snapshot)+cumulativeSummary(snapshot)+checkpoints(snapshot)+facts(snapshot)+sources(snapshot)),
     exportPanel('products',items(snapshot)+breadth(snapshot)+quadrant(snapshot)),
     exportPanel('countries',regions(snapshot)),
-    exportPanel('semiconductor',memorySpotPlaceholder()+semiconductorReport(snapshot)),
+    exportPanel('semiconductor','<button type="button" class="text-button" data-tab="memory">TrendForce 반도체 가격 추적 →</button>'+semiconductorReport(snapshot)),
     '<div id="export-item-detail" class="export-item-detail" hidden></div>',
   ].join('');
   bindNav();
   host.querySelectorAll('[data-export-item]').forEach(button=>button.addEventListener('click',()=>onItemOpen(button.dataset.exportItem)));
 }
 
-export function renderExportMomentumView({shell,bindNav,focus=null,state={},memoryPriceGroup=null,onSelectionChange}){
+export function renderExportMomentumView({shell,bindNav,focus=null,state={},onSelectionChange}){
   const app=document.querySelector('#app');
   const tabs=[['overview','전체 요약'],['products','품목'],['countries','국가'],['semiconductor','반도체']];
   const panelForFocus=key=>({
@@ -717,8 +716,6 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={},memo
   let detailSeq=0;
   let provisionalSeq=0;
   let provisionalLoaded=false;
-  let memorySpotCleanup=null;
-  if(memoryPriceGroup)state.memoryPriceGroup=memoryPriceGroup;
 
   const openItemDetail=async(key,{force=false,restore=false}={})=>{
     const panel=host.querySelector('#export-item-detail');
@@ -802,7 +799,6 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={},memo
   const load=async(force=false)=>{
     const token=++seq;
     app.querySelectorAll('[data-export-topic]').forEach(button=>{button.disabled=true;});
-    memorySpotCleanup?.();memorySpotCleanup=null;
     provisionalLoaded=false;
     host.innerHTML=loading();
     try{
@@ -816,7 +812,7 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={},memo
           provisional:'#export-provisional-radar',
           items:'#export-items',
           countries:'#export-countries',
-          memory:'#export-memory-spot',
+          memory:'#export-memory',
           breadth:'.export-breadth-card',
           quadrant:'.export-quadrant-point',
         }[key];
@@ -843,9 +839,7 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={},memo
           button.setAttribute('aria-selected',String(selected));
           button.classList.toggle('is-active',selected);
         });
-        if(panelKey==='semiconductor'&&!memorySpotCleanup){
-          memorySpotCleanup=mountMemorySpot(host.querySelector('#export-memory-spot'),{bindNav,activeGroup:state.memoryPriceGroup,onGroupChange:key=>{state.memoryPriceGroup=key;onSelectionChange?.('semiconductor',key);}});
-        }
+
         if(panelKey==='overview'&&!provisionalLoaded){
           provisionalLoaded=true;
           void loadProvisional(token,force);
@@ -854,7 +848,7 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={},memo
       };
 
       app.querySelectorAll('[data-export-topic]').forEach(button=>{
-        button.onclick=()=>{if(onSelectionChange)onSelectionChange(button.dataset.exportTopic,state.memoryPriceGroup);else activatePanel(button.dataset.exportTopic,{scroll:true,closeDetail:true});};
+        button.onclick=()=>{if(onSelectionChange)onSelectionChange(button.dataset.exportTopic);else activatePanel(button.dataset.exportTopic,{scroll:true,closeDetail:true});};
       });
 
       const requestedFocus=focus;
@@ -879,5 +873,5 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={},memo
   };
 
   void load();
-  return ()=>{seq+=1;detailSeq+=1;provisionalSeq+=1;memorySpotCleanup?.();memorySpotCleanup=null;};
+  return ()=>{seq+=1;detailSeq+=1;provisionalSeq+=1;};
 }

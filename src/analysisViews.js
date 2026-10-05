@@ -1,7 +1,6 @@
 import { screenerData, fullHeatmap, homeSnapshot, consensusData, valuationBandData } from './api.js';
 import { SCREENER_PRESETS, screenerPreset, screenerMatchReasons, screenerDataWarnings, screenerEmptyState, filterScreener, finiteNumber, estimateRevision } from './analysisData.js';
 import { formatKst,formatFinancialAmount,formatDataSource } from './dataPresentation.js';
-import { renderSharedHeatmap,renderHeatmapList } from './heatmapView.js';
 import { loadChartRuntime } from './chartRuntime.js';
 import { readHomeFast, writeHomeFast } from './homeFastCache.js';
 import { seedWatchQuoteCache } from './watchQuoteCache.js';
@@ -21,7 +20,7 @@ export const ANALYSIS_ROUTES=new Set(['discover','heatmap','consensus','bands','
 export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareSheet}){
  let disposed=false,chart,observer;
  const titles={discover:featureLabel('discover'),heatmap:'시장 히트맵',consensus:'실적 전망 조회',bands:'역사적 밸류에이션',tools:'투자 도구'};
- const descriptions={discover:'내가 고른 조건으로 찾기 · 장마감 자료예요.',heatmap:'홈보다 넓은 한국·미국 주요 종목의 전일 대비 등락을 지도·읽기 쉬운 목록으로 비교해요.',consensus:'선택한 종목의 애널리스트 추정치와 변경 내역을 확인해요.',bands:'과거 가격과 재무자료로 재구성한 PER·PBR을 확인해요.',tools:'차트·공시·거시 데이터를 확인할 수 있는 12개 외부 사이트예요.'};
+ const descriptions={discover:'내가 고른 조건으로 찾기 · 장마감 자료예요.',heatmap:'업종별로 묶은 주요 종목의 전일 대비 등락 · 종목을 누르면 상세로 이동해요.',consensus:'선택한 종목의 애널리스트 추정치와 변경 내역을 확인해요.',bands:'과거 가격과 재무자료로 재구성한 PER·PBR을 확인해요.',tools:'차트·공시·거시 데이터를 확인할 수 있는 12개 외부 사이트예요.'};
  const selection=['consensus','bands'].includes(tab);
  document.querySelector('#app').innerHTML=shell(`<section class="task-head ${tab==='discover'?'discovery-task-head':''}"><div><h2>${titles[tab]}</h2><p>${descriptions[tab]}</p></div>${selection?'<button id="analysis-select" class="primary-subtle">종목 변경</button>':''}</section><div id="analysis-controls"></div><div id="analysis-body" class="analysis-body ${tab==='discover'?'discovery-results':''}">${loadingIndicator(`${titles[tab]} 데이터를 불러오고 있어요`)}<div class="skeleton quote"></div></div>`,titles[tab]);
  const host=document.querySelector('#analysis-body'),controls=document.querySelector('#analysis-controls');
@@ -94,37 +93,38 @@ export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareS
       state.screener.appliedRoutePreset=state.screenerPreset;setPreset(state.screenerPreset);
     }else{syncPresetUi();paint();}
    }else if(tab==='heatmap'){
-    const {mountSectorHeatmap}=await import('./sectorHeatmapView.js');if(!current())return;
+    const [{renderMarketMap}]=await Promise.all([import('./marketMapView.js'),import('./marketMap.css')]);if(!current())return;
     seedWatchQuoteCache(state.watchlist.map(x=>x.symbol));
     let latestHome=readHomeFast('snapshot',6*60*60*1000);
     let shownFull=readHomeFast('full-heatmap',6*60*60*1000);
     let fullCached=Boolean(shownFull);
     let fullError=false;
-    host.innerHTML=`<div class="shared-heatmap-analysis">${loadingIndicator('전체 히트맵 데이터를 불러오고 있어요')}</div><section class="section sector-heatmap-section"><div class="section-head"><h2>섹터별 등락 히트맵</h2></div><div data-full-sectors></div></section>`;
-    state.heatmap ||= {view:'stocks',market:'KR'};
-    const sectorView=mountSectorHeatmap(host.querySelector('[data-full-sectors]'),{state:state.heatmap,onStock:symbol=>window.__chartviewNavigate?.('detail',symbol),retry:()=>void refreshFull(true)});
-    sectorView.loading();
-    controls.innerHTML='<div class="heatmap-explore-controls"><div role="group" aria-label="히트맵 보기"><button type="button" data-heatmap-view="stocks">종목</button><button type="button" data-heatmap-view="sectors">섹터</button></div><div role="group" aria-label="종목 히트맵 시장"><button type="button" data-full-market="KR">한국</button><button type="button" data-full-market="US">미국</button></div><div role="group" aria-label="종목 표시 방식" data-heatmap-display-controls><button type="button" data-heatmap-display="map">지도</button><button type="button" data-heatmap-display="list">목록</button></div><small>종목은 개별 등락, 섹터는 업종과 구성 종목을 보여줘요.</small></div>';
-    function syncView(){
-      const sector=state.heatmap.view==='sectors';
-      controls.querySelector('[data-heatmap-display-controls]').hidden=sector;
-      controls.querySelectorAll('[data-heatmap-display]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.heatmapDisplay===(state.heatmap.display||'map'))));
-      host.querySelector('.shared-heatmap-analysis').hidden=sector;
-      host.querySelector('.sector-heatmap-section').hidden=!sector;
-      controls.querySelectorAll('[data-full-market]').forEach(b=>{b.hidden=sector;b.setAttribute('aria-pressed',String(b.dataset.fullMarket===state.heatmap.market));});
-      controls.querySelectorAll('[data-heatmap-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.heatmapView===state.heatmap.view)));
-    }
-    controls.querySelectorAll('[data-heatmap-view]').forEach(b=>b.onclick=()=>{state.heatmap.view=b.dataset.heatmapView;sectorView.setMarket(state.heatmap.market);syncView();if(shownFull)paintFull(shownFull);});syncView();
-    controls.querySelectorAll('[data-full-market]').forEach(b=>b.onclick=()=>{state.heatmap.market=b.dataset.fullMarket;sectorView.setMarket(state.heatmap.market);syncView();if(shownFull)paintFull(shownFull);});
-    controls.querySelectorAll('[data-heatmap-display]').forEach(b=>b.onclick=()=>{state.heatmap.display=b.dataset.heatmapDisplay;syncView();if(shownFull)paintFull(shownFull);});
+    host.innerHTML=`<div class="shared-heatmap-analysis">${loadingIndicator('전체 히트맵 데이터를 불러오고 있어요')}</div>`;
+    state.heatmap ||= {market:'KR'};
+    controls.innerHTML='<div class="market-map-controls" role="group" aria-label="히트맵 시장"><button type="button" data-full-market="KR">한국</button><button type="button" data-full-market="US">미국</button></div>';
+    function syncView(){controls.querySelectorAll('[data-full-market]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.fullMarket===state.heatmap.market)));}
+    controls.querySelectorAll('[data-full-market]').forEach(b=>b.onclick=()=>{state.heatmap.market=b.dataset.fullMarket;state.heatmap.selected=null;syncView();if(shownFull)paintFull(shownFull);});syncView();
     const paintFull=(full,{save=false}={})=>{
       if(!current()||!full?.results?.length)return;
       shownFull=full;
       const payload=alignFullHeatmapWithHome(full,latestHome);
-      host.querySelector('.shared-heatmap-analysis').innerHTML=(fullError?'<p class="muted-copy" role="status">새 시세 조회에 실패해 이전 수집 시세를 표시해요.</p>':'')+(state.heatmap.display==='list'?renderHeatmapList(payload,{cached:fullCached,market:state.heatmap.market}):renderSharedHeatmap(payload,{scope:'full',cached:fullCached,market:state.heatmap.market}));
-      sectorView.update({...payload,error:fullError});
+      const mapHost=host.querySelector('.shared-heatmap-analysis');
+      const active=mapHost.contains(document.activeElement)?document.activeElement:null;
+      const focus=active?{sector:active.dataset.mapSector,stock:active.dataset.stockDetail,members:Boolean(active.closest('.market-map-members'))}:null;
+      mapHost.innerHTML=(fullError?'<p class="muted-copy" role="status">새 시세 조회에 실패해 이전 수집 시세를 표시해요.</p><button class="text-button" data-full-heatmap-retry>다시 시도</button>':'')+renderMarketMap(payload,{cached:fullCached,market:state.heatmap.market,selected:state.heatmap.selected});
+      mapHost.querySelector('[data-full-heatmap-retry]')?.addEventListener('click',()=>void refreshFull(true));
+      mapHost.querySelectorAll('[data-map-sector]').forEach(button=>button.onclick=()=>{
+        const key=button.dataset.mapSector;state.heatmap.selected=state.heatmap.selected===key?null:key;
+        paintFull(shownFull);
+        if(state.heatmap.selected){const members=mapHost.querySelector('.market-map-members');members?.scrollIntoView({block:'nearest'});members?.querySelector('button')?.focus({preventScroll:true});}
+        else mapHost.querySelector(`[data-map-sector="${CSS.escape(key)}"]`)?.focus({preventScroll:true});
+      });
       if(save)writeHomeFast('full-heatmap',payload);
       bindNav();
+      if(focus){
+        const selector=focus.sector?`[data-map-sector="${CSS.escape(focus.sector)}"]`:focus.stock?`${focus.members?'.market-map-members ':'.market-map '}[data-stock-detail="${CSS.escape(focus.stock)}"]`:null;
+        if(selector)mapHost.querySelector(selector)?.focus({preventScroll:true});
+      }
       window.__chartviewRestoreScroll?.();
     };
     if(shownFull)paintFull(shownFull);
@@ -135,7 +135,7 @@ export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareS
     }).catch(()=>{});
     async function refreshFull(force=false){
       fullError=false;
-      sectorView?.loading();
+
       try{
         let full=await fullHeatmap({force});if(!current())return;
           if(!full?.results?.length)throw new Error('전체 히트맵 데이터를 아직 확인하지 못했어요.');
@@ -150,12 +150,12 @@ export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareS
           }
           if(current())paintFull(full,{save:true});
         }
-        if(full?.refreshing&&current())sectorView?.error();
+        if(full?.refreshing&&current()){fullError=true;paintFull(shownFull);}
       }catch(error){
         if(!current())return;
         fullError=true;
         if(shownFull)paintFull(shownFull);
-        sectorView.error();
+
         if(!shownFull){
           const fullHost=host.querySelector('.shared-heatmap-analysis');
           if(fullHost){

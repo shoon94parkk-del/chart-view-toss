@@ -2,7 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {resolveRoute} from '../src/routes.js';
 test('feature paths and hash re-entry resolve to the same page',()=>{
-  for(const tab of ['home','chart','watch','valuation','macro','exports','discover','ideas','picks','news','info','more','heatmap','consensus','bands','tools']) {
+  for(const tab of ['home','chart','watch','valuation','macro','exports','memory','discover','ideas','picks','news','info','more','heatmap','consensus','bands','tools']) {
     for(const location of [{pathname:`/${tab}`},{pathname:`/chartview/${tab}`},{hash:`#${tab}`}]) assert.equal(resolveRoute(location).tab,tab);
   }
   assert.equal(resolveRoute({pathname:'/chartviewHome'}).tab,'chart');
@@ -24,6 +24,8 @@ test('export tab and price-family routes survive reload while rejecting unknown 
  for(const family of ['dram-chip','nand-chip','nand-wafer','dram-module','gddr']){
   const hash='#exports/memory/'+family;
   assert.equal(resolveRoute({hash}).memoryPriceGroup,family);
+  assert.equal(resolveRoute({hash}).tab,'memory');
+  assert.deepEqual(resolveRoute({hash:'#memory/'+family}),resolveRoute({hash}));
   assert.deepEqual(resolveRoute({pathname:hash.slice(1)}),resolveRoute({hash}));
  }
  assert.equal(resolveRoute({hash:'#exports/memory/unknown'}).memoryPriceGroup,null);

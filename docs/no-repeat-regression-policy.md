@@ -38,7 +38,7 @@ Relevant frontend files include:
 
 ### Heatmap parity and availability
 - Home and full heatmap overlapping symbols must show the same newest price/change.
-- Sector heatmap UI must remain visible even when its data request is loading or failed; loading/error/retry belongs inside the mounted section.
+- Grouped full-map UI must remain mounted when data is loading or failed; loading/error/retry belongs inside the map section, and valid cached stock tiles are retained. The 2026-10-05 user-approved grouped map supersedes the separate sector mode.
 - Full heatmap must not disappear because one provider or optional module fails.
 - Heatmap work must remain non-blocking for initial Home paint.
 

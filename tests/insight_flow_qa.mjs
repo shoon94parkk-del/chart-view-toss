@@ -26,11 +26,11 @@ try{
    if(path==='/api/valuation-band')body={years:3,pbr:{stats:{start:'2023-10-06',end:'2026-10-02',observations:157},points:[]}};
    return route.fulfill({contentType:'application/json',body:JSON.stringify(body)});
   });
-  await page.goto(base+'/#heatmap');await page.locator('[data-full-market=US]').click();await page.locator('[data-heatmap-view=sectors]').click();await page.locator('.sector-tile').first().waitFor();
-  assert.equal(await page.locator('[data-sector-market=US]').getAttribute('aria-pressed'),'true','US stock view carries into sector view');
-  await page.locator('[data-sector-name="기술"]').click();await page.locator('[data-sector-stock=NVDA]').click();await page.locator('.quote-main').waitFor();await page.getByRole('button',{name:'뒤로가기',exact:true}).click();
-  await page.locator('[data-sector-name="기술"]').waitFor();assert.equal(await page.locator('[data-sector-market=US]').getAttribute('aria-pressed'),'true');assert.equal(await page.locator('.sector-members').count(),1);
-  await page.locator('[data-heatmap-view=stocks]').click();await page.locator('[data-full-market=KR]').click();await page.locator('[data-heatmap-view=sectors]').click();await page.locator('[data-sector-market=US]').click();await page.locator('[data-heatmap-view=stocks]').click();assert.equal(await page.locator('.shared-heatmap-analysis [data-stock-detail=NVDA]').isVisible(),true,'sector market also carries into the already-rendered stock view');assert.equal(await page.locator('.shared-heatmap-analysis [data-stock-detail="005930.KS"]').isVisible(),false);
+  await page.goto(base+'/#heatmap');await page.locator('[data-full-market=US]').click();await page.locator('.market-map-stock').first().waitFor();
+  await page.locator('[data-map-sector="기술"]').click();await page.locator('.market-map-members [data-stock-detail=NVDA]').click();await page.locator('.quote-main').waitFor();await page.getByRole('button',{name:'뒤로가기',exact:true}).click();
+  await page.locator('[data-map-sector="기술"]').first().waitFor();assert.equal(await page.locator('[data-full-market=US]').getAttribute('aria-pressed'),'true');assert.equal(await page.locator('.market-map-members').count(),1);
+  await page.locator('[data-full-market=KR]').click();assert.equal(await page.locator('.market-map-stock[data-stock-detail="005930.KS"]').isVisible(),true);
+  await page.locator('[data-full-market=US]').click();assert.equal(await page.locator('.market-map-stock[data-stock-detail=NVDA]').isVisible(),true);assert.equal(await page.locator('.market-map-stock[data-stock-detail="005930.KS"]').count(),0);
   await page.goto(base+'/#home');await page.locator('#brief-card[data-state=ready]').waitFor();assert.match(await page.locator('#brief-card').innerText(),/넓게 나타납니다\..*VIX 관측 2026-09-30/s);
   await page.goto(base+'/#discover/volume-surge');await page.locator('.analysis-stock').click();await page.locator('#detail-investigation').waitFor();assert.match(await page.locator('#detail-investigation').innerText(),/2\.3배.*2026-10-02|2026-10-02.*2\.3배/s);
   await page.locator('[data-industry-retry=relations]').click();await page.waitForFunction(()=>!document.querySelector('[data-industry-retry=relations]'));assert.equal(relationsCalls,2);

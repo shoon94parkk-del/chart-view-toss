@@ -5,7 +5,7 @@ const html=await readFile(new URL('index.html',dist),'utf8');
 const paths=[
   'chartviewHome','chartview/chartviewHome',
   'home','chart','watch','favorites','valuation','macro','exports','discover','ideas','picks','news',
-  'heatmap','consensus','bands','tools','info','more',
+  'heatmap','memory','consensus','bands','tools','info','more',
 ];
 for(const path of paths){
   const directory=new URL(`${path}/`,dist);

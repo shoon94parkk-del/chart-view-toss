@@ -8,12 +8,13 @@ const spot = readFileSync(new URL('../src/memorySpotView.js', import.meta.url), 
 const styles = readFileSync(new URL('../src/exportMomentum.css', import.meta.url), 'utf8');
 const main = readFileSync(new URL('../src/main.js', import.meta.url), 'utf8');
 
-test('메모리 가격은 반도체 탭에서만 lazy API로 불러온다',()=>{
+test('메모리 가격은 분석의 독립 화면에서만 lazy API로 불러온다',()=>{
+  const page=readFileSync(new URL('../src/memoryPriceView.js',import.meta.url),'utf8');
   assert.match(data,/api\('\/api\/memory-prices'/);
-  assert.match(view,/exportPanel\('semiconductor',memorySpotPlaceholder\(\)\+semiconductorReport\(snapshot\)\)/);
-  assert.match(view,/panelKey==='semiconductor'&&!memorySpotCleanup/);
-  assert.match(view,/mountMemorySpot\(host\.querySelector\('#export-memory-spot'\)/);
-  assert.doesNotMatch(main,/memory-prices/);
+  assert.doesNotMatch(view,/mountMemorySpot|memorySpotPlaceholder/);
+  assert.match(main,/state.tab==='memory'/);
+  assert.match(page,/mountMemorySpot/);
+  assert.match(page,/출처: TrendForce/);
 });
 
 test('메모리 가격 화면은 DRAM NAND 계열을 그룹으로 나누고 한 그룹씩 보여준다',()=>{
@@ -31,10 +32,10 @@ test('공개되지 않은 HBM MCP 가격은 추정하지 않는다고 화면에 
   assert.match(spot,/unavailablePriceSeries/);
 });
 
-test('메모리 가격 실패는 관세청 수출 화면을 대체하지 않고 독립 재시도를 제공한다',()=>{
-  assert.match(spot,/관세청 수출 데이터는 계속 이용할 수 있습니다/);
+test('메모리 가격 실패는 독립 재시도를 제공한다',()=>{
+  assert.match(spot,/잠시 후 가격 다시 시도를 눌러주세요/);
   assert.match(spot,/data-memory-spot-retry/);
-  assert.match(view,/memorySpotCleanup/);
+  assert.doesNotMatch(view,/memorySpotCleanup/);
 });
 
 test('가격 추세는 별도 heavyweight chart runtime 없이 SVG로 렌더링한다',()=>{
