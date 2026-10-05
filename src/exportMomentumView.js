@@ -96,9 +96,10 @@ function renderProvisionalRadar(radar){
         <div><span>증가액 기여</span><strong>${latest.semiconductorContributionPct===null?'-':esc(latest.semiconductorContributionPct.toFixed(1)+'%')}</strong><small>전체 수출 YoY 증가액 중 반도체</small></div>
       </div>
       <div class="export-provisional-flow">
+        <div class="export-provisional-flow-head"><strong>반도체 수출 누적</strong><small>아래 1~10일 · 1~20일 · 월 전체는 모두 반도체 기준</small></div>
         ${radar.checkpoints.map((row,index)=>`
           <article class="export-provisional-stage ${index===radar.checkpoints.length-1?'is-latest':''}">
-            <div class="export-provisional-stage-head"><strong>${esc(row.label)}</strong><span>${esc(formatUsdBillion(row.semiconductor.exportsUsdBillion,{digits:1}))}</span></div>
+            <div class="export-provisional-stage-head"><strong>반도체 · ${esc(row.label)}</strong><span>${esc(formatUsdBillion(row.semiconductor.exportsUsdBillion,{digits:1}))}</span></div>
             <div class="export-provisional-progress"><i style="width:${stageWidth(row.stage).toFixed(1)}%"></i></div>
             <div class="export-provisional-stage-metrics">
               <span class="${yoyTone(row.semiconductor.exportYoY)}">YoY ${esc(formatSignedPct(row.semiconductor.exportYoY))}</span>
