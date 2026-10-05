@@ -1,0 +1,170 @@
+/* Unified semantic emphasis layer.
+   Loaded after uiExperience.css so the same visual language survives all surfaces. */
+
+:root{
+  --cv-blue:#2466d0;--cv-blue-soft:#eef5ff;--cv-blue-line:#d8e7fb;
+  --cv-teal:#087b77;--cv-teal-soft:#ecf8f5;--cv-teal-line:#cce9e3;
+  --cv-purple:#6650ac;--cv-purple-soft:#f4f0fb;--cv-purple-line:#e2daf3;
+  --cv-gold:#936018;--cv-gold-soft:#fff7e8;--cv-gold-line:#efdfc1;
+  --cv-amber:#9a6500;--cv-amber-soft:#fff7df;--cv-amber-line:#f2dfab;
+  --cv-red:#d54855;--cv-red-soft:#fff1f2;
+}
+
+/* Shared section-title grammar: colored tile + stronger title + matching CTA. */
+.app-shell .section-head h2 .section-symbol,
+.app-shell .home-analysis-heading h2 .section-symbol{
+  width:28px;height:28px;border-radius:9px;
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,currentColor 12%,transparent);
+}
+.app-shell .section-head h2,
+.app-shell .home-analysis-heading h2{font-weight:850;color:#202936}
+.app-shell .text-button{font-weight:800}
+
+/* HOME — evidence/export uses teal. */
+.app-shell .home-changes{
+  --purpose:var(--cv-teal);--purpose-soft:var(--cv-teal-soft);
+  padding:15px;border:1px solid var(--cv-teal-line);border-radius:20px;
+  background:linear-gradient(145deg,#f5fcfa 0%,#fff 56%);
+}
+.app-shell .home-changes-title h2{display:flex;align-items:center;gap:8px}
+.app-shell .home-changes-title .section-symbol{background:#dff4ee;color:var(--cv-teal)}
+.app-shell .home-changes-title p{margin:5px 0 0;color:#5b6d6b}
+.app-shell .home-change-grid{gap:10px}
+.app-shell .home-change-card{
+  position:relative;padding:14px 14px 13px 17px!important;
+  border:1px solid #dce9e6!important;border-radius:16px!important;
+  background:#fff!important;box-shadow:0 5px 16px rgba(35,82,78,.045);
+}
+.app-shell .home-change-card:before{
+  content:"";position:absolute;left:0;top:13px;bottom:13px;width:3px;border-radius:0 3px 3px 0;
+  background:var(--card-accent,var(--cv-blue));
+}
+.app-shell .home-change-card.tool-exports{--card-accent:var(--cv-teal);--card-soft:var(--cv-teal-soft)}
+.app-shell .home-change-card.tool-find{--card-accent:var(--cv-blue);--card-soft:var(--cv-blue-soft)}
+.app-shell .home-change-card header strong{color:var(--card-accent);font-weight:900;letter-spacing:-.04em}
+.app-shell .home-change-card>small{display:inline-block;margin-top:5px;color:#71807e}
+.app-shell .home-change-card>p:not(.home-change-question){margin:8px 0;color:#4b5b5a}
+.app-shell .home-change-question{
+  margin:9px 0!important;padding:9px 10px;border-radius:11px;
+  background:var(--card-soft);color:#3e4c59!important;
+}
+.app-shell .home-change-question b{
+  display:inline-block;margin:0 7px 0 0;color:var(--card-accent);font-size:10px;font-weight:900;
+}
+.app-shell .home-change-limit{margin:2px 0 7px}
+.app-shell .home-change-limit>summary{
+  min-height:36px;display:flex;align-items:center;color:#6b7684;font-size:11px;font-weight:750;cursor:pointer;
+}
+.app-shell .home-change-card button{
+  border-color:color-mix(in srgb,var(--card-accent) 22%,#fff)!important;
+  background:var(--card-soft)!important;color:var(--card-accent)!important;font-weight:850;
+}
+
+/* HOME — selection record uses purple consistently. */
+.app-shell .home-pick-section{--purpose:var(--cv-purple);--purpose-soft:var(--cv-purple-soft)}
+.app-shell .home-pick-section .section-symbol{background:#eee8fb;color:var(--cv-purple)}
+.app-shell .home-pick-section .text-button{color:var(--cv-purple)}
+.app-shell .home-pick-list{border-color:var(--cv-purple-line);box-shadow:0 5px 16px rgba(102,80,172,.045)}
+.app-shell .home-pick-meta{background:var(--cv-purple-soft);color:#66558d;border-bottom-color:var(--cv-purple-line)}
+.app-shell .home-selection-link{position:relative}
+.app-shell .home-selection-link:before{
+  content:"";position:absolute;left:0;top:12px;bottom:12px;width:3px;border-radius:0 3px 3px 0;background:#9b88d5;
+}
+.app-shell .home-selection-heading strong{color:#31284d}
+.app-shell .home-selection-open{background:#eee8fb!important;color:var(--cv-purple)!important;font-weight:800!important}
+
+/* HOME — watchlist keeps warm gold identity. */
+.app-shell .watch-section{--purpose:var(--cv-gold);--purpose-soft:var(--cv-gold-soft)}
+.app-shell .watch-section .section-symbol{background:#fff0d2;color:var(--cv-gold)}
+.app-shell .watch-section .text-button{color:var(--cv-gold)}
+.app-shell .watch-card{border-color:var(--cv-gold-line);background:linear-gradient(145deg,#fffdf8,#fff)}
+.app-shell .watch-rich-row{background:transparent}
+.app-shell .watch-rich-row:active{background:#fff8ea}
+.app-shell .watch-section .stock-copy strong{color:#33291c}
+
+/* SCREENER — analysis blue is the interaction color; warning amber stays semantic. */
+.app-shell[data-surface="discover"]{--purpose:var(--cv-blue);--purpose-soft:var(--cv-blue-soft)}
+.app-shell[data-surface="discover"] .discovery-task-head{
+  border-left-color:var(--cv-blue)!important;
+  background:linear-gradient(90deg,var(--cv-blue-soft),#fff)!important;
+}
+.app-shell[data-surface="discover"] .screener-preset-panel{
+  padding:10px!important;border:1px solid var(--cv-blue-line);
+  border-radius:16px;background:linear-gradient(145deg,#f7faff,#fff);
+}
+.app-shell[data-surface="discover"] .screener-preset{
+  border-color:#dfe7f3;background:#fff;box-shadow:0 2px 8px rgba(36,102,208,.035);
+}
+.app-shell[data-surface="discover"] .screener-preset.active{
+  border-color:#90b9f3!important;background:#eaf3ff!important;
+  box-shadow:inset 0 0 0 1px #bed7fa,0 5px 14px rgba(36,102,208,.08)!important;
+}
+.app-shell[data-surface="discover"] .screener-preset.active b{color:#174f9f!important}
+.app-shell[data-surface="discover"] .screener-active-preset{
+  border:1px solid #cfe0f8;background:#edf5ff!important;color:#174f9f!important;
+}
+.app-shell[data-surface="discover"] .analysis-stock{
+  position:relative;border-color:#dfe7f2!important;background:#fff;
+  box-shadow:0 3px 10px rgba(31,54,86,.035);
+}
+.app-shell[data-surface="discover"] .analysis-stock:before{
+  content:"";position:absolute;left:0;top:10px;bottom:10px;width:3px;border-radius:0 3px 3px 0;background:#c4dafa;
+}
+.app-shell[data-surface="discover"] .analysis-stock:active{background:#f7faff}
+.app-shell[data-surface="discover"] .analysis-match-reasons i{
+  background:#edf5ff!important;color:#245fae!important;border:1px solid #dbe9fb;
+}
+.app-shell[data-surface="discover"] .analysis-stock>span:nth-child(2) b{color:#273b57}
+.app-shell[data-surface="discover"] .price-basis-note span{color:#59697e;font-weight:750}
+
+/* PICKS — page identity remains purple; action statuses keep green/amber/red meaning. */
+.app-shell[data-surface="picks"]{--purpose:var(--cv-purple);--purpose-soft:var(--cv-purple-soft)}
+.app-shell[data-surface="picks"] .pick-ledger-head .page-kicker{color:var(--cv-purple)}
+.app-shell[data-surface="picks"] .pick-ledger-kpis>div{
+  border-color:var(--cv-purple-line);background:linear-gradient(145deg,#fbf9ff,#fff);
+}
+.app-shell[data-surface="picks"] .pick-ledger-summary{padding:8px;border-radius:16px;background:var(--cv-purple-soft)}
+.app-shell[data-surface="picks"] .pick-ledger-count{color:#6d5d93;font-weight:850}
+.app-shell[data-surface="picks"] .pick-ledger-list{border-color:var(--cv-purple-line)}
+.app-shell[data-surface="picks"] .pick-ledger-item:not(.sell):not(.watch){background:#fff}
+.app-shell[data-surface="picks"] .pick-ledger-item:not(.sell):not(.watch) .pick-ledger-row:active{background:#faf8ff}
+
+/* EXPORT — same teal identity from Home evidence cards through detailed data. */
+.app-shell[data-surface="exports"]{--purpose:var(--cv-teal);--purpose-soft:var(--cv-teal-soft)}
+.app-shell[data-surface="exports"] .export-topic-nav button{
+  border-color:#dce8e6;background:#f6faf9;color:#516765;
+}
+.app-shell[data-surface="exports"] .export-topic-nav button[aria-selected="true"],
+.app-shell[data-surface="exports"] .export-topic-nav button.is-active{
+  border-color:#9ed4ca!important;background:#dff3ee!important;color:#076d69!important;
+  box-shadow:inset 0 0 0 1px #c2e6de;
+}
+.app-shell[data-surface="exports"] .export-hero{
+  background:linear-gradient(145deg,#eaf8f4,#f7fbfa)!important;
+  border-color:#cce8e2!important;box-shadow:0 8px 24px rgba(8,123,119,.07)!important;
+}
+.app-shell[data-surface="exports"] .export-kicker,
+.app-shell[data-surface="exports"] .export-section-head span{color:var(--cv-teal)!important}
+.app-shell[data-surface="exports"] .export-status{
+  background:#fff;color:#076d69;border-color:#c9e5df;
+}
+.app-shell[data-surface="exports"] .export-main-number{border-top-color:#c9e5df}
+.app-shell[data-surface="exports"] .export-summary-grid>div{
+  border:1px solid #dcebe8;background:rgba(255,255,255,.84);
+}
+.app-shell[data-surface="exports"] .memory-price-tabs button[aria-selected="true"]{
+  border-color:#9ed4ca!important;background:#e4f5f1!important;color:#076d69!important;
+}
+
+/* Small screens: preserve density while keeping the emphasis visible. */
+@media(max-width:600px){
+  .app-shell .home-changes{padding:11px;border-radius:17px}
+  .app-shell .home-change-card{padding:11px 11px 10px 14px!important}
+  .app-shell .home-change-card:before{top:10px;bottom:10px}
+  .app-shell .home-change-question{padding:7px 8px}
+  .app-shell .section-head h2 .section-symbol,
+  .app-shell .home-analysis-heading h2 .section-symbol{width:25px;height:25px}
+  .app-shell[data-surface="discover"] .screener-preset-panel{padding:8px!important}
+  .app-shell[data-surface="discover"] .analysis-stock:before{top:8px;bottom:8px}
+  .app-shell[data-surface="picks"] .pick-ledger-summary{padding:6px}
+}
