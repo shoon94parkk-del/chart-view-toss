@@ -1,5 +1,5 @@
-import {guruScreeningData,guruEvidenceData} from './api.js';
-import {GURU_STRATEGIES,guruMetricLabels,guruMetricUnits,guruRowMetrics,validateGuruSnapshot,filterGuruResults,guruViewStatus} from './guruInvestingModel.js';
+import {guruScreeningData,guruEvidenceData,valuationStocks} from './api.js';
+import {GURU_STRATEGIES,guruMetricLabels,guruMetricUnits,guruRowMetrics,validateGuruSnapshot,filterGuruResults,guruViewStatus,greenblattCurrentCheck} from './guruInvestingModel.js';
 import {extensionCriteria,extensionEvidence} from './guruInvestingExtensions.js';
 import {loadingIndicator} from './loadingView.js';
 
@@ -12,12 +12,14 @@ function criteria(strategy){
  return `<details class="guru-guide"><summary>선정 기준 · 투자 원칙 보기</summary><div><p>투자 원칙을 참고해 <b>차트뷰가 정한 수치 기준</b>이에요. 해당 투자자가 선정한 종목이 아니에요.</p><dl>${rows.map(([a,b])=>`<div><dt>${a}</dt><dd>${b}</dd></div>`).join('')}</dl><p>${strategy==='buffett'?'ROE는 총순이익 ÷ 평균 총자본이에요. 부채총계는 차입금과 다르고, OCF는 영업현금흐름이며 오너이익이 아니에요.':'PER은 기준일 종가 ÷ 최근 연간 EPS예요. PEG는 이 PER ÷ 과거 3년 EPS 성장률(20%는 20)이에요. TTM·예상 지표와 구분해요.'}</p><p>${GURU_STRATEGIES[strategy].limits}</p><button class="guru-text-action" data-external-url="${esc(source)}">투자 원칙 출처 확인 ↗</button></div></details>`;
 }
 function metric(key,value){return `<span><small>${esc(guruMetricLabels[key])}</small><b>${num(value,guruMetricUnits[key]||'%')}</b></span>`;}
-function candidate(row,strategy,expanded){
+function candidate(row,strategy,expanded,currentCheck=null,currentState='idle'){
  const keys=guruRowMetrics[strategy];
- return `<article class="guru-candidate" data-guru-symbol="${esc(row.symbol)}"><div class="guru-row"><button class="guru-stock" data-stock-detail="${esc(row.symbol)}" data-stock-name="${esc(row.name)}" aria-label="${esc(row.name)} 종목 상세"><strong>${esc(row.name)}</strong><small>${esc(row.market)} · ${esc(row.symbol.split('.')[0])}</small></button><button class="guru-expand" data-guru-expand="${esc(row.symbol)}" aria-expanded="${expanded}" aria-label="${esc(row.name)} 선정 근거"><span class="guru-metrics">${keys.map(k=>metric(k,row.metrics[k])).join('')}</span><span class="guru-reason-label">${row.checks.length}개 조건 충족 · 선정 근거 ${expanded?'⌃':'⌄'}</span></button></div>${expanded?'<section class="guru-evidence" aria-live="polite">'+loadingIndicator('공시 근거를 확인하고 있어요')+'</section>':''}</article>`;
+ const ttmLabel=currentCheck?.status==='matched'?'TTM 충족':currentCheck?.status==='failed'?'TTM 미충족':currentCheck?.status==='unknown'?'TTM 자료 부족':currentState==='loading'?'TTM 확인 중':currentState==='error'?'TTM 확인 실패':'TTM 확인 전';
+ const reason=strategy==='greenblatt'?`${row.annualReportYear} 연간 · ${ttmLabel} · 근거 ${expanded?'⌃':'⌄'}`:`${row.checks.length}개 조건 충족 · 선정 근거 ${expanded?'⌃':'⌄'}`;
+ return `<article class="guru-candidate" data-guru-symbol="${esc(row.symbol)}"><div class="guru-row"><button class="guru-stock" data-stock-detail="${esc(row.symbol)}" data-stock-name="${esc(row.name)}" aria-label="${esc(row.name)} 종목 상세"><strong>${esc(row.name)}</strong><small>${esc(row.market)} · ${esc(row.symbol.split('.')[0])}</small></button><button class="guru-expand" data-guru-expand="${esc(row.symbol)}" aria-expanded="${expanded}" aria-label="${esc(row.name)} 선정 근거"><span class="guru-metrics">${keys.map(k=>metric(k,row.metrics[k])).join('')}</span><span class="guru-reason-label">${esc(reason)}</span></button></div>${expanded?'<section class="guru-evidence" aria-live="polite">'+loadingIndicator('공시 근거를 확인하고 있어요')+'</section>':''}</article>`;
 }
-function evidenceMarkup(evidence,strategy,row){
- if(!['buffett','lynch'].includes(strategy))return extensionEvidence(evidence,strategy,row);
+function evidenceMarkup(evidence,strategy,row,currentCheck=null){
+ if(!['buffett','lynch'].includes(strategy))return extensionEvidence(evidence,strategy,row,currentCheck);
  const selected=evidence.strategies?.[strategy];
  if(!selected||selected.status!=='matched')throw new Error('같은 선정 기준의 근거를 확인하지 못했어요.');
  const keys=strategy==='buffett'?['netIncome','operatingCashFlow','equity']:['basicEps','operatingCashFlow','equity'];
