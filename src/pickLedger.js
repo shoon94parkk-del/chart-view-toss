@@ -127,20 +127,26 @@ function rowMarkup(row,index,displayName){
 export async function renderPickLedger({shell,bindNav,displayName,focusKey=null}){
   document.querySelector('#app').innerHTML=shell(`
     <section class="task-head pick-ledger-head"><div><span class="page-kicker">CHARTVIEW</span><h2>선정 기록·성과</h2><p>과거에 선정한 이유와 이후 성과·점검 내용을 확인해요. 실시간 인기 순위가 아니에요.</p></div></section>
-    <details class="pick-ledger-overview"><summary>전체 성과·상태 요약 보기</summary><section class="pick-ledger-summary" id="pick-ledger-summary">${loadingIndicator('선정 기록을 불러오고 있어요')}<div class="skeleton quote"></div></section>
+    <details class="pick-ledger-overview"><summary>성과·상태 요약</summary><section class="pick-ledger-summary" id="pick-ledger-summary">${loadingIndicator('선정 기록을 불러오고 있어요')}<div class="skeleton quote"></div></section>
     <section class="pick-ledger-status-strip" id="pick-ledger-status-strip">${loadingIndicator('점검 상태를 확인하고 있어요')}<div class="skeleton quote"></div></section>
-    </details><details class="pick-ledger-tech-alert" id="pick-ledger-tech-alert" hidden><summary data-pick-tech-alert-summary>가격·거래 경고</summary><div data-pick-tech-alert-body></div></details>
-    <details class="pick-ledger-policy" id="pick-ledger-policy"><summary>신호 안내 · 자동 매도 확정 아님</summary><p>매도검토는 자동 매도 확정이 아니며 가격·차트만으로 판정하지 않아요. 단기 기술 경고는 펀더멘털 매도검토와 별도이며 기술 경고만으로 자동 매도 확정하지 않아요.</p></details>
-    <details class="pick-ledger-search-options"><summary>기록 검색·필터</summary><section class="pick-ledger-toolbar" id="pick-ledger-toolbar" hidden>
-      <label class="pick-ledger-search"><span>종목 검색</span><input id="pick-ledger-search" type="search" placeholder="종목명 · 코드" autocomplete="off"></label>
-      <div class="pick-ledger-filters">
-        <select id="pick-ledger-period" aria-label="기간 필터"><option value="all">기간 전체</option><option value="7">최근 7일</option><option value="30">최근 30일</option></select>
-        <select id="pick-ledger-performance" aria-label="성과 필터"><option value="all">성과 전체</option><option value="win">수익 종목</option><option value="loss">손실 종목</option></select>
-        <select id="pick-ledger-status" aria-label="점검 우선순위 필터"><option value="all">기업·기술 신호 전체</option><option value="SELL_REVIEW">기업 근거 재점검 / 강한 기술 경고</option><option value="WATCH">🟡 경계</option><option value="KEEP">🟢 유지</option><option value="PENDING_REVIEW">⚪ 검토 대기</option><option value="EXIT">종료</option></select>
-        <select id="pick-ledger-sort" aria-label="정렬"><option value="latest">최신 추천순</option><option value="technical">단기 경고 우선</option><option value="status">기업·기술 점검 우선순</option><option value="return">수익률 높은순</option><option value="best">최고수익률 높은순</option><option value="score">과거 선정 점수순</option></select>
-      </div>
-    </section>
-    </details><p class="pick-ledger-focus-note" role="status"></p><p class="pick-ledger-count" id="pick-ledger-count"></p>
+    </details>
+    <div class="pick-ledger-notices">
+      <details class="pick-ledger-tech-alert" id="pick-ledger-tech-alert" hidden><summary data-pick-tech-alert-summary>가격·거래 경고</summary><div data-pick-tech-alert-body></div></details>
+      <details class="pick-ledger-policy" id="pick-ledger-policy"><summary>신호 안내 · 자동 매도 아님</summary><p>매도검토는 자동 매도 확정이 아니며 가격·차트만으로 판정하지 않아요. 단기 기술 경고는 펀더멘털 매도검토와 별도이며 기술 경고만으로 자동 매도 확정하지 않아요.</p></details>
+    </div>
+    <p class="pick-ledger-focus-note" role="status"></p>
+    <div class="pick-ledger-list-tools">
+      <p class="pick-ledger-count" id="pick-ledger-count"></p>
+      <details class="pick-ledger-search-options"><summary>검색·필터</summary><section class="pick-ledger-toolbar" id="pick-ledger-toolbar" hidden>
+        <label class="pick-ledger-search"><span>종목 검색</span><input id="pick-ledger-search" type="search" placeholder="종목명 · 코드" autocomplete="off"></label>
+        <div class="pick-ledger-filters">
+          <select id="pick-ledger-period" aria-label="기간 필터"><option value="all">기간 전체</option><option value="7">최근 7일</option><option value="30">최근 30일</option></select>
+          <select id="pick-ledger-performance" aria-label="성과 필터"><option value="all">성과 전체</option><option value="win">수익 종목</option><option value="loss">손실 종목</option></select>
+          <select id="pick-ledger-status" aria-label="점검 우선순위 필터"><option value="all">기업·기술 신호 전체</option><option value="SELL_REVIEW">기업 근거 재점검 / 강한 기술 경고</option><option value="WATCH">🟡 경계</option><option value="KEEP">🟢 유지</option><option value="PENDING_REVIEW">⚪ 검토 대기</option><option value="EXIT">종료</option></select>
+          <select id="pick-ledger-sort" aria-label="정렬"><option value="latest">최신 추천순</option><option value="technical">단기 경고 우선</option><option value="status">기업·기술 점검 우선순</option><option value="return">수익률 높은순</option><option value="best">최고수익률 높은순</option><option value="score">과거 선정 점수순</option></select>
+        </div>
+      </section></details>
+    </div>
     <section class="pick-ledger-list" id="pick-ledger-list">${loadingIndicator('종목 목록을 불러오고 있어요')}<div class="skeleton watch"></div><div class="skeleton watch"></div></section>
   `,'선정 기록·성과');
   bindNav();
