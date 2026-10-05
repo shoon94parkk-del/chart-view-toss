@@ -380,9 +380,14 @@ function semiconductorTrendHistory(segment){
 
 function semiconductorTrendView(trends,{metric='delta',selectedKey='',countryMatrix=null,countryState='loading',metadata=null,companyState='loading'}={}){
   const preferred=['memory-total','dram','flash','sram','mcp-memory','processor-controller','other-ic','dram-module'];
-  const rows=preferred.map(key=>trends.segments.find(row=>row.key===key)).filter(Boolean);
-  const selected=rows.find(row=>row.key===selectedKey)||rows.find(row=>row.key==='dram')||rows[0];
+  const sourceRows=preferred.map(key=>trends.segments.find(row=>row.key===key)).filter(Boolean);
   const metricValue=row=>metric==='yoy'?row.exportYoY:row.deltaUsdBillion;
+  const rows=[...sourceRows].sort((a,b)=>{
+    const av=metricValue(a),bv=metricValue(b);
+    if(Number.isFinite(av)&&Number.isFinite(bv))return bv-av;
+    return Number.isFinite(bv)?1:Number.isFinite(av)?-1:0;
+  });
+  const selected=sourceRows.find(row=>row.key===selectedKey)||sourceRows.find(row=>row.key==='dram')||sourceRows[0];
   const values=rows.map(metricValue).filter(Number.isFinite);
   const maxAbs=Math.max(...values.map(value=>Math.abs(value)),1);
   const countrySegment=countryMatrix?.segments?.find(row=>row.key===selected?.key)||null;
