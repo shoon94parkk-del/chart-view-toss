@@ -39,3 +39,12 @@ test('export tab and price-family routes survive reload while rejecting unknown 
  assert.equal(resolveRoute({hash:'#exports'}).exportFocus,null);
  assert.equal(resolveRoute({hash:'#exports'}).memoryPriceGroup,null);
 });
+
+
+test('dedicated export industry routes restore their focus',()=>{
+  for(const focus of ['passenger-car','petroleum','cosmetics','ships','steel']){
+    const route=resolveRoute({hash:'#exports/'+focus});
+    assert.equal(route.tab,'exports');
+    assert.equal(route.exportFocus,focus);
+  }
+});
