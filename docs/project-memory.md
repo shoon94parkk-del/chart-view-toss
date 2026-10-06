@@ -339,3 +339,11 @@ User approved three additional methods and GitHub documentation for changing PCs
 - Signals are acceleration, turnaround, slowing growth, weak, or steady. Turnaround requires crossing above zero; weak means latest YoY<=0; +/-5pp monthly YoY change is the primary acceleration/slowing threshold.
 - Scope is the existing six explicit HS proxy item groups, not all Korean exports. Tapping a row opens the existing item-detail evidence path.
 - Preserve compact mobile density: two-column buckets normally, one column <=360px, and keep data/status colors semantically separate from the teal evidence identity.
+
+## 2026-10-06 — Semiconductor export delta drilldown contract
+- The semiconductor tab has a lazy-loaded item delta view with delta-amount / YoY toggle, current-vs-prior values, and a selectable 12-month HSK history.
+- Never sum memory-total with DRAM/SRAM/Flash/MCP. Overall semiconductor contribution is only a partial observed decomposition; memory child contribution uses HS 854232 as its own denominator.
+- DRAM module 8473304060 is outside the HS 8541+8542 semiconductor total and must not receive a semiconductor-total contribution percentage.
+- Country decomposition reuses the configured six-market matrix and remains explicitly not a global ranking.
+- Company links are investigation candidates from verified KRX mainProducts only; never relabel them as exporters, beneficiaries, customers or suppliers without separate evidence.
+- The new 12-month segment endpoint is loaded only when the semiconductor tab opens; it must not add work to Home or the initial export overview.

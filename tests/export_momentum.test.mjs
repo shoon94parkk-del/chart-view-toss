@@ -7,6 +7,7 @@ import {
   exportDriverLabel,
   formatPp,
   formatSignedPct,
+  formatSignedUsdBillion,
   formatUnitValue,
   formatUsdBillion,
   formatWeightKg,
@@ -15,6 +16,7 @@ import {
   normalizeExportProvisionalRadar,
   normalizeExportSnapshot,
   normalizeSemiconductorCountryMatrix,
+  normalizeSemiconductorTrends,
   semiconductorShare,
   tradeBalanceLabel,
   yoyLabel,
@@ -31,6 +33,12 @@ const fixture={
   ],
   items:[{key:'semiconductor',name:'반도체',exportsUsdBillion:60.3,exportYoY:262.8,exportWeightKg:12000000,exportWeightYoY:15,unitValueUsdPerKg:5025,unitValueYoY:215,importsUsdBillion:8.5,importYoY:11,importWeightKg:3200000,tradeBalanceUsdBillion:51.8}],
 };
+
+test('signed export delta formatter keeps direction explicit',()=>{
+  assert.equal(formatSignedUsdBillion(1.25,{digits:1}),'+12.5억달러');
+  assert.equal(formatSignedUsdBillion(-.4,{digits:1}),'-4억달러');
+  assert.equal(formatSignedUsdBillion(0,{digits:1}),'0억달러');
+});
 
 test('export snapshot normalizes official numeric fields without inventing missing values',()=>{
   const value=normalizeExportSnapshot({...fixture,items:[...fixture.items,{name:'자동차',exportYoY:-5,exportsUsdBillion:null}]});
@@ -217,6 +225,28 @@ test('semiconductor report keeps YoY MoM unit-value and official MCP/module code
   assert.equal(mcp.exportMoM,20);
   assert.equal(module.code,'8473304060');
   assert.equal(module.unitValueMoM,15);
+});
+
+
+test('semiconductor trends preserve delta contribution bases and 12-month history',()=>{
+  const trends=normalizeSemiconductorTrends({
+    schemaVersion:1,
+    period:'2026-09',
+    total:{name:'반도체',exportsUsdBillion:30,priorExportsUsdBillion:20,deltaUsdBillion:10,exportYoY:50},
+    memoryTotalDeltaUsdBillion:4,
+    segments:[
+      {key:'memory-total',name:'메모리 IC',code:'854232',group:'memory',exportsUsdBillion:12,priorExportsUsdBillion:8,deltaUsdBillion:4,exportYoY:50,overallContributionPct:40,history:[{period:'2026-09',exportsUsdBillion:12,priorExportsUsdBillion:8,deltaUsdBillion:4,exportYoY:50}]},
+      {key:'dram',name:'DRAM',code:'8542321010',group:'memory',exportsUsdBillion:7,priorExportsUsdBillion:5,deltaUsdBillion:2,exportYoY:40,memoryContributionPct:50,history:[{period:'2026-09',exportsUsdBillion:7,priorExportsUsdBillion:5,deltaUsdBillion:2,exportYoY:40}]},
+      {key:'dram-module',name:'DRAM 모듈',code:'8473304060',group:'module',exportsUsdBillion:3,priorExportsUsdBillion:2.2,deltaUsdBillion:.8,exportYoY:36.4,overallContributionPct:null,memoryContributionPct:null,history:[]},
+    ],
+    meta:{moduleCaution:'outside HS 8541+8542'},
+  });
+  assert.equal(trends.total.deltaUsdBillion,10);
+  assert.equal(trends.segments[0].overallContributionPct,40);
+  assert.equal(trends.segments[1].memoryContributionPct,50);
+  assert.equal(trends.segments[1].history[0].priorExportsUsdBillion,5);
+  assert.equal(trends.segments[2].overallContributionPct,null);
+  assert.match(trends.meta.moduleCaution,/8541/);
 });
 
 

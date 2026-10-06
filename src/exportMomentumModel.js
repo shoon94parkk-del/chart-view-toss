@@ -38,6 +38,8 @@ export function normalizeExportSnapshot(raw={}){
       key:text(row?.key),
       name:text(row?.name),
       exportsUsdBillion:finite(row?.exportsUsdBillion),
+      priorExportsUsdBillion:finite(row?.priorExportsUsdBillion),
+      deltaUsdBillion:finite(row?.deltaUsdBillion),
       exportYoY:finite(row?.exportYoY),
       exportWeightKg:finite(row?.exportWeightKg),
       exportWeightYoY:finite(row?.exportWeightYoY),
@@ -100,6 +102,8 @@ export function normalizeExportSnapshot(raw={}){
     note:text(row?.note),
     period:text(row?.period),
     exportsUsdBillion:finite(row?.exportsUsdBillion),
+    priorExportsUsdBillion:finite(row?.priorExportsUsdBillion),
+    deltaUsdBillion:finite(row?.deltaUsdBillion),
     exportYoY:finite(row?.exportYoY),
     exportMoM:finite(row?.exportMoM),
     exportWeightKg:finite(row?.exportWeightKg),
@@ -144,6 +148,13 @@ export function formatUsdBillion(value,{digits=1}={}){
     maximumFractionDigits:digits,
     minimumFractionDigits:Number.isInteger(hundredMillion)?0:Math.min(1,digits),
   })+'억달러';
+}
+
+export function formatSignedUsdBillion(value,{digits=1}={}){
+  const number=finite(value);
+  if(number===null)return '-';
+  const formatted=formatUsdBillion(Math.abs(number),{digits});
+  return `${number>0?'+':number<0?'-':''}${formatted}`;
 }
 
 export function formatSignedPct(value,{digits=1}={}){
@@ -254,6 +265,8 @@ export function normalizeExportItemDetail(raw={}){
   const history=(Array.isArray(raw.history)?raw.history:[]).map(row=>({
     period:text(row?.period),
     exportsUsdBillion:finite(row?.exportsUsdBillion),
+    priorExportsUsdBillion:finite(row?.priorExportsUsdBillion),
+    deltaUsdBillion:finite(row?.deltaUsdBillion),
     exportYoY:finite(row?.exportYoY),
     exportMoM:finite(row?.exportMoM),
     exportWeightKg:finite(row?.exportWeightKg),
@@ -437,6 +450,48 @@ export function normalizeExportProvisionalRadar(raw={}){
       name:text(raw.source.name),
       url:text(raw.source.url),
     }:{name:'',url:''},
+  };
+}
+
+
+export function normalizeSemiconductorTrends(raw={}){
+  const total=raw.total&&typeof raw.total==='object'?{
+    name:text(raw.total.name)||'반도체',
+    exportsUsdBillion:finite(raw.total.exportsUsdBillion),
+    priorExportsUsdBillion:finite(raw.total.priorExportsUsdBillion),
+    deltaUsdBillion:finite(raw.total.deltaUsdBillion),
+    exportYoY:finite(raw.total.exportYoY),
+  }:{name:'반도체',exportsUsdBillion:null,priorExportsUsdBillion:null,deltaUsdBillion:null,exportYoY:null};
+
+  const segments=(Array.isArray(raw.segments)?raw.segments:[]).map(row=>({
+    key:text(row?.key),
+    name:text(row?.name),
+    code:text(row?.code),
+    group:text(row?.group),
+    note:text(row?.note),
+    period:text(row?.period),
+    exportsUsdBillion:finite(row?.exportsUsdBillion),
+    priorExportsUsdBillion:finite(row?.priorExportsUsdBillion),
+    deltaUsdBillion:finite(row?.deltaUsdBillion),
+    exportYoY:finite(row?.exportYoY),
+    overallContributionPct:finite(row?.overallContributionPct),
+    memoryContributionPct:finite(row?.memoryContributionPct),
+    history:(Array.isArray(row?.history)?row.history:[]).map(point=>({
+      period:text(point?.period),
+      exportsUsdBillion:finite(point?.exportsUsdBillion),
+      priorExportsUsdBillion:finite(point?.priorExportsUsdBillion),
+      deltaUsdBillion:finite(point?.deltaUsdBillion),
+      exportYoY:finite(point?.exportYoY),
+    })).filter(point=>point.period&&point.exportsUsdBillion!==null),
+  })).filter(row=>row.key&&row.name);
+
+  return {
+    schemaVersion:Number(raw.schemaVersion)||1,
+    period:text(raw.period),
+    total,
+    memoryTotalDeltaUsdBillion:finite(raw.memoryTotalDeltaUsdBillion),
+    segments,
+    meta:raw.meta&&typeof raw.meta==='object'?raw.meta:{},
   };
 }
 

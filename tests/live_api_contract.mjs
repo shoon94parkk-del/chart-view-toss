@@ -99,6 +99,22 @@ for (const key of ['dram','flash','mcp-memory','dram-module']) {
 }
 assert(String(semiconductorCountries.meta?.scope || '').includes('not a global ranking'), 'semiconductor country scope warning missing');
 
+const semiconductorTrends = await get('/api/export-momentum/semiconductor-trends', 120000);
+assert(semiconductorTrends.period === exportsSnapshot.itemPeriod, 'semiconductor trend period must match item period');
+assert(Number(semiconductorTrends.total?.exportsUsdBillion) >= 0, 'semiconductor trend total exports missing');
+assert(Number.isFinite(Number(semiconductorTrends.total?.deltaUsdBillion)), 'semiconductor trend total delta missing');
+assert(Array.isArray(semiconductorTrends.segments) && semiconductorTrends.segments.length >= 8, 'semiconductor trend segments missing');
+const trendMemory = semiconductorTrends.segments.find((row) => row.key === 'memory-total');
+const trendDram = semiconductorTrends.segments.find((row) => row.key === 'dram');
+const trendModule = semiconductorTrends.segments.find((row) => row.key === 'dram-module');
+assert(trendMemory && Number.isFinite(Number(trendMemory.overallContributionPct)), 'memory overall semiconductor contribution missing');
+assert(trendDram && Number.isFinite(Number(trendDram.memoryContributionPct)), 'DRAM memory contribution missing');
+assert(Array.isArray(trendDram.history) && trendDram.history.length === 12, 'DRAM 12-month export history missing');
+assert(trendDram.history.every((row) => row.period && Number(row.exportsUsdBillion) >= 0 && Number.isFinite(Number(row.deltaUsdBillion))), 'DRAM history delta contract invalid');
+assert(trendModule && trendModule.overallContributionPct == null && trendModule.memoryContributionPct == null, 'DRAM module must not receive overlapping contribution percentage');
+assert(String(semiconductorTrends.meta?.moduleCaution || '').includes('8541+8542'), 'DRAM module contribution caution missing');
+assert(String(semiconductorTrends.meta?.overallContributionBasis || '').includes('non-exhaustive'), 'semiconductor partial contribution warning missing');
+
 const provisional = await get('/api/export-momentum/provisional', 90000);
 assert(Number(provisional.schemaVersion) >= 2, 'provisional export schema v2 missing');
 assert(provisional.status === 'official_preliminary_api', 'provisional export status mismatch');
@@ -216,6 +232,9 @@ console.log('Live backend contract smoke passed', {
   dramModuleExports: semiDramModule.exportsUsdBillion,
   semiconductorCountrySegments: semiconductorCountries.segments.length,
   semiconductorCountryMarkets: semiconductorCountries.markets.length,
+  semiconductorTrendSegments: semiconductorTrends.segments.length,
+  semiconductorTrendPeriod: semiconductorTrends.period,
+  dramMemoryContributionPct: trendDram.memoryContributionPct,
   memoryPriceGroups: memorySpot.groups.length,
   memoryPriceHistoryCount: memorySpot.history.length,
 });
