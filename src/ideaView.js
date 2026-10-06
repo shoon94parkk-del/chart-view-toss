@@ -3,6 +3,9 @@ import { buildInvestmentIdeas, ideaCoverage } from './ideaEngine.js';
 import { industryContextHtml } from './industryContextView.js';
 import { loadingIndicator } from './loadingView.js';
 
+import {retainIdeaDisclosures} from './auditExperience.js';
+const ideaVisits=new Map();
+
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const pct=v=>Number.isFinite(Number(v))?`${Number(v)>0?'+':''}${Number(v).toFixed(2)}%`:'—';
 const price=v=>Number.isFinite(Number(v))?Number(v).toLocaleString('ko-KR',{maximumFractionDigits:2}):'—';
@@ -185,6 +188,8 @@ export async function renderIdeaView({shell,bindNav}){
     };
     bindIdeaNavigation();
     bindLazyIdeaContext(host,ideas,bindIdeaNavigation);
+    retainIdeaDisclosures(host,ideaVisits);
+    window.__chartviewRestoreScroll?.();
     void monitorPromise.then(payload=>applyMonitorStatuses(host,ideas,payload));
   }catch(error){
     if(!host?.isConnected)return;

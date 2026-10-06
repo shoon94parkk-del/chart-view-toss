@@ -69,6 +69,7 @@ try {
     assert.match(await page.locator('.research-quality-details').innerText(),/ifrs-full_CashFlowsFromUsedInOperatingActivities/);
     assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+2));
     await page.locator('.research-table').screenshot({path:`${output}/${width}-${symbol}-quality-table.png`});
+    await page.locator('.financial-subnav [data-detail-jump="detail-quality"]').click();
     await page.locator('#detail-financial-history .financial-quality').screenshot({path:`${output}/${width}-${symbol}-quality-detail.png`});
     if(width===390){
       await page.locator('[data-research-prices]').click();

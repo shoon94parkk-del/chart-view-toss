@@ -26,9 +26,9 @@ try{
   await page.goto(base+'/#heatmap');const host=page.locator('.shared-heatmap-analysis');await host.locator('.market-map-stock').first().waitFor();
   assert.equal(await page.locator('[data-heatmap-view],[data-heatmap-display]').count(),0,'only market selector remains');
   assert.equal(await host.locator('.market-map-stock').count(),2);assert.match(await host.innerText(),/삼성전자.*\+2\.00%/s);
-  await host.locator('[data-map-sector="반도체"]').click();assert.match(await host.locator('.market-map-members').innerText(),/삼성전자.*100,000원.*\+2\.00%/s);
+  await host.locator('.market-map-sector-head[data-map-sector="반도체"]').click();assert.match(await host.locator('.market-map-members').innerText(),/삼성전자.*100,000원.*\+2\.00%/s);
   await page.locator('[data-full-market=US]').click();assert.equal(await host.locator('.market-map-sector').count(),11);
-  await host.locator('[data-map-sector="기술"]').click();
+  await host.locator('.market-map-sector-head[data-map-sector="기술"]').click();
   if(width===390){await page.waitForTimeout(3300);assert.equal(await host.locator('.market-map-stock').count(),11,'empty refresh cannot blank cached tiles');assert.equal(await host.locator('.market-map-members').count(),1,'empty refresh retains expanded members');}
   await page.waitForTimeout(6500);
   assert.equal(await page.locator('[data-full-market=US]').getAttribute('aria-pressed'),'true');assert.equal(await host.locator('.market-map-members').count(),1,'poll retains expanded sector');

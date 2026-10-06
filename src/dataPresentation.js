@@ -171,7 +171,7 @@ export function macroCategory(row) {
 }
 
 export function newsRelation(row) {
-  if (row?.relationType === 'direct') return { label: '직접 관련', className: 'direct' };
+  if (row?.relationType === 'direct') return { label: /기업명|제목|entity|company name/i.test(row.relationBasis||'')?'기업명 언급':'직접 관련', className: 'direct' };
   if (row?.relationType === 'related') return { label: '업종 관련', className: 'related' };
   return { label: '관련 기사', className: 'related' };
 }

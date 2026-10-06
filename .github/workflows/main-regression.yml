@@ -16,3 +16,34 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
+
+  audit-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.21.0'
+          cache: npm
+      - run: npm ci
+      - name: Install isolated QA browser
+        run: |
+          npm install --no-save --package-lock=false playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - run: npm run build
+      - name: Verify approved audit journeys on main
+        run: |
+          npm run preview -- --host 127.0.0.1 --port 4173 > /tmp/chartview-audit-preview.log 2>&1 &
+          for i in {1..30}; do
+            if curl -fsS http://127.0.0.1:4173/ >/dev/null; then break; fi
+            sleep 1
+          done
+          QA_BASE_URL=http://127.0.0.1:4173 node tests/audit_plan_qa.mjs
+      - name: Upload audit screenshots and results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: approved-audit-journeys
+          path: output/playwright/audit-plan
+          if-no-files-found: warn

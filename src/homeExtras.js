@@ -192,7 +192,8 @@ function createSections(marketSection) {
   const marketTabs=document.createElement('div');marketTabs.className='market-tabs home-preview-markets';
   marketTabs.innerHTML='<button type="button" data-preview-market="KR" aria-pressed="true">한국</button><button type="button" data-preview-market="US" aria-pressed="false">미국</button>';
   heatmap.querySelector('#home-daily-heatmap').before(marketTabs);
-  heatmap.dataset.previewMarket='KR';
+  heatmap.dataset.previewMarket=window.__chartviewHeatmapMarket?.()||'KR';
+  marketTabs.querySelectorAll('[data-preview-market]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.previewMarket===heatmap.dataset.previewMarket)));
   marketTabs.addEventListener('click',event=>{
     const button=event.target.closest('[data-preview-market]');if(!button)return;
     heatmap.dataset.previewMarket=button.dataset.previewMarket;
@@ -371,6 +372,7 @@ function navigate(tab, symbol, name = '') {
 document.addEventListener('click', (event) => {
   const routeButton = event.target.closest('[data-home-extra-route]');
   if (routeButton) {
+    if(routeButton.dataset.homeExtraRoute==='heatmap')window.__chartviewSetHeatmapMarket?.(routeButton.closest('.home-heatmap-section')?.dataset.previewMarket||'KR');
     navigate(routeButton.dataset.homeExtraRoute);
     return;
   }

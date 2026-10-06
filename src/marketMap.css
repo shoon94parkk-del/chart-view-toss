@@ -25,3 +25,10 @@
 .market-map-basis{font-size:10px;color:#8390a1;line-height:1.6;margin:12px 0}.market-map-basis summary{cursor:pointer}.market-map-basis p{margin:6px 0}
 .market-map-members{margin:10px 0;padding:10px;background:#f6f8fb;border-radius:9px}.market-map-members>div{display:flex;justify-content:space-between;align-items:center}.market-map-members h3{font-size:12px;margin:0}
 .market-map-members>button{display:flex;justify-content:space-between;align-items:center;width:100%;padding:9px 0;min-height:44px;border:0;border-bottom:1px solid #e7ebf1;background:none;text-align:left;font-size:12px}.market-map-members>button span{display:grid;gap:3px}.market-map-members small{font-size:10px;color:#7d8797}
+.market-map-sector-list{display:flex;gap:6px;overflow-x:auto;margin:8px 0 10px;scrollbar-width:thin}
+.market-map-sector-list button{flex:0 0 auto;min-height:44px;padding:8px 11px;font-size:12px;border:1px solid #dce5ef;border-radius:9px;background:#f6f8fc;color:#245ba5}
+.market-map-sector-list button[aria-expanded="true"]{background:#e8f3ff;border-color:#3182f6}
+.market-map-members{scroll-margin-top:85px;margin-bottom:12px}
+.market-map-members small,.market-map-meta,.market-map-meta strong,.market-map-basis{font-size:12px;color:#4e5968}
+.market-map-controls button{min-height:44px}
+.market-map-members .text-button{min-height:44px;font-size:13px}

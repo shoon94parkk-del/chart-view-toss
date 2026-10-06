@@ -429,3 +429,12 @@ Keep compact five-strategy horizontal controls, collapsed criteria, 72–88px ca
 ## Guru strategy deep links
 
 - The static preview export must include `/gurus/` and all five `/gurus/buffett/`, `/gurus/lynch/`, `/gurus/oneil/`, `/gurus/minervini/`, `/gurus/greenblatt/`, each with the root hashed app entry. Parser-only support does not establish deployment support; verify real HTTP200 and selected strategy after deployment.
+## 2026-10-06 audit continuity
+
+- Custom compare returns must be calculated only from observations within the requested market-calendar dates; valid resubmission clears an old form error. Show requested and actual observed dates.
+- A provider_latest quote never becomes regular_close through a legacy sessionType. Preserve canonical fresh validation and timestamp-guarded merging.
+- Upgrade HTTP news only for HTTPS publishers verified on real article paths. Unknown/unsafe/malformed URLs have accurate terminal explanations; retain noopener/noreferrer and native bridge handling.
+- Keep the user-approved grouped single map. Home-selected market, selected group and detail/back survive. Small tiles have equivalent 44px group/list access above the map; no competing quote request/cache.
+- Financial subsection jumps open their disclosure. Saved conditions remain mounted even while new filings are pending/failed; only optional exposition is collapsed. Public links never include personal questions/conditions.
+- IDEA disclosure state uses pattern + symbol + kind, not changing row positions. Additional screener inputs keep their actual filters and show applied counts.
+- PICK scope must explain all records, active records and EXIT count. Internal status codes/technical scores are explained without changing the underlying decision math.

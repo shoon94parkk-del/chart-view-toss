@@ -1,5 +1,7 @@
 import { Device, Environment, Screen, graniteEvent, openURL as tossOpenURL } from '@apps-in-toss/web-framework';
 
+import {externalLinkTarget} from './externalLinks.js';
+
 let backCleanup = null;
 
 export function isAppsInTossRuntime() {
@@ -33,10 +35,9 @@ export async function haptic(type = 'tickWeak') {
 }
 
 export async function openExternal(url) {
-  if (!url) return false;
-  let target;
-  try { target = new URL(url, location.href); } catch { return false; }
-  if (target.protocol !== 'https:') return false;
+  const resolved=externalLinkTarget(url,location.href);
+  if(resolved.error)return false;
+  const target=new URL(resolved.url);
   if (isAppsInTossRuntime()) {
     try {
       await tossOpenURL(target.href);

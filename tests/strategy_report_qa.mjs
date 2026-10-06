@@ -39,7 +39,7 @@ try{
   await page.locator('[data-clear-preset]').click();
   const clearedRsi=await page.locator('[name="rsiMax"]').inputValue();
   if(!observe)assert.equal(clearedRsi,'','technical clear must clear the actual form condition');
-  await page.locator('.screener-advanced summary').click();
+  await page.locator('.screener-advanced>summary').click();
   await page.locator('#screener-filters button[type="reset"]').click();
   await page.locator('[name="query"]').fill('삼성');
   await page.locator('[name="market"]').selectOption('KOSPI');

@@ -1,0 +1,34 @@
+/* Scoped refinements: preserve safe areas, native shell and existing quote caches. */
+.app-shell .financial-subnav{display:flex;gap:6px;overflow-x:auto;margin:10px 0;scrollbar-width:thin}
+.app-shell .financial-subnav button{flex:0 0 auto;min-height:44px;border:1px solid #dce5ef;background:#f6f8fc;border-radius:9px;padding:8px 10px;font-size:13px;color:#245ba5}
+.app-shell :is(.financial-annual,.financial-quality-disclosure,.detail-industry-disclosure)>summary{min-height:44px;display:flex;align-items:center;cursor:pointer;font-size:14px;color:#333d4b;font-weight:600;gap:8px}
+.app-shell :is(.financial-annual,.financial-quality-disclosure,.detail-industry-disclosure)>summary::before{content:'›';font-size:19px;color:#3182f6}
+.app-shell :is(.financial-annual,.financial-quality-disclosure,.detail-industry-disclosure)[open]>summary::before{content:'⌄'}
+.app-shell .financial-quality-disclosure{margin-top:12px;border-top:1px solid #edf0f3;padding-top:6px}
+.app-shell .financial-subnav~#detail-financial-history :is(.financial-annual,.financial-quality-disclosure){scroll-margin-top:130px}
+.app-shell :is(#detail-tracked-conditions,#detail-report-review,#detail-financial-quarters,#detail-quality){scroll-margin-top:130px}
+.app-shell .requested-range{font-size:12px;line-height:1.6;color:#4e5968;margin:0 0 12px}
+.app-shell .quote-provenance p,.app-shell .detail-closing-reference small{color:#4e5968;font-size:12px;line-height:1.6}
+.app-shell .pick-ledger-status-scope{font-size:12px;color:#4e5968;line-height:1.6;margin:8px 0}
+.app-shell .screener-extra{grid-column:1/-1;border-top:1px solid #e8edf3;padding-top:8px}
+.app-shell .screener-extra>summary{min-height:44px;display:flex;align-items:center;cursor:pointer;color:#245ba5;font-size:13px}
+.app-shell .screener-extra-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.app-shell #screener-filters :is(input,select){min-height:44px;font-size:14px;width:100%;min-width:0}
+.app-shell #screener-filters>label:has(input[name="query"]){grid-column:1/-1}
+.app-shell .research-table{table-layout:auto}
+.app-shell .research-table th:first-child{width:30%;word-break:keep-all;overflow-wrap:normal}
+.app-shell .research-table :is(th,td){padding:10px 5px;word-break:normal;overflow-wrap:break-word}
+.app-shell .research-examples button{word-break:keep-all;font-size:13px}
+.app-shell .quality-raw{overflow-x:auto}
+.app-shell .quality-raw>summary{min-height:44px}
+.app-shell .quality-raw[open]::after{content:'표가 화면보다 넓으면 좌우로 밀어서 확인해요.';display:block;color:#4e5968;font-size:12px;margin-top:8px}
+@media(min-width:1100px){
+ html:not([data-ait-runtime="true"]) .app-shell:is([data-surface="ideas"],[data-surface="picks"],[data-surface="chart"],[data-surface="valuation"]){max-width:1080px}
+ html:not([data-ait-runtime="true"]) .app-shell[data-surface="ideas"] .idea-card-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;align-items:start}
+ html:not([data-ait-runtime="true"]) .app-shell[data-surface="chart"] .chart-canvas{height:440px}
+}
+@media(max-width:360px){
+ .app-shell .research-table :is(th,td){font-size:12px}
+ .app-shell .research-table td strong{font-size:13px}
+ .app-shell .detail-actions button span{font-size:12px}
+}

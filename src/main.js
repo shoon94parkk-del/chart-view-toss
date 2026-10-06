@@ -34,6 +34,10 @@ import { seedWatchQuoteCache, saveWatchQuoteCache } from './watchQuoteCache.js';
 import { loadingIndicator, chartLoadingPreview } from './loadingView.js';
 import { formatKst, formatDataSource, formatFinancialAmount, formatChartDate, formatMetricPeriod, formatCurrencyPrice, formatMacroValue, formatMacroChange, macroFreshness, observationLabel, macroCategory, macroPublicationLabel, macroSourceUrl, changeBasisLabel, relationBasisLabel, newsRelation, translatedTag, titleLanguage, formatMarketCap } from './dataPresentation.js';
 
+import {externalLinkTarget} from './externalLinks.js';
+import {rangeError,requestedRangeNote,financialNavigationHtml} from './auditExperience.js';
+import './auditExperience.css';
+
 const WATCHLIST_KEY='chartview-toss-watchlist-v1';
 const SELECTED_KEY='chartview-toss-selected-v1';
 const DEFAULTS=[{symbol:'005930.KS',name:'삼성전자'},{symbol:'NVDA',name:'엔비디아'},{symbol:'AAPL',name:'애플'}];
@@ -63,6 +67,9 @@ const fmtChange=(value)=>{const n=finiteNumber(value);if(n===null)return '-';ret
 const state={tab:'home',watchlist:load(WATCHLIST_KEY,[]),selected:load(SELECTED_KEY,DEFAULTS.map(x=>x.symbol)),period:'1mo',customRange:null,detailSymbol:null,detailName:'',detailOrigin:'home',valuationMetric:'forwardPE',watchSort:'manual',newsSort:'major',detailPeriod:'3mo'};
 const resolvedNames=new Map();
 const researchDrafts=new Map();
+state.heatmap={market:'KR',selected:null};
+window.__chartviewSetHeatmapMarket=market=>{if(['KR','US'].includes(market))state.heatmap={market,selected:null};};
+window.__chartviewHeatmapMarket=()=>state.heatmap.market;
 state.screener={filters:{},count:30,activePreset:''};state.newsSymbol=null;state.researchPeer=null;
 function comparisonStockName(symbol){
  const saved=state.watchlist.find(row=>row.symbol===symbol)?.name;
@@ -300,7 +307,9 @@ function bindNav(){
  document.querySelectorAll('[data-back]').forEach(b=>b.onclick=goBack);
  document.querySelectorAll('[data-external-url]').forEach(b=>b.onclick=async()=>{
    haptic('tickWeak');
-   const opened=await openExternal(b.dataset.externalUrl);
+   const link=externalLinkTarget(b.dataset.externalUrl,location.href);
+   if(link.error){showToast(link.error);return;}
+   const opened=await openExternal(link.url);
    if(!opened)showToast('외부 링크를 열지 못했어요. 잠시 후 다시 시도해주세요.');
  });
 }
@@ -592,7 +601,7 @@ async function renderChart(){
  bindNav();
  document.querySelector('#open-compare-selector')?.addEventListener('click',()=>openCompareSheet(()=>renderChart()));
  document.querySelectorAll('[data-period]').forEach(b=>b.onclick=()=>{haptic('tickWeak');refreshChart({period:b.dataset.period,range:null})});
- document.querySelector('#custom-range').onsubmit=e=>{e.preventDefault();const values=Object.fromEntries(new FormData(e.currentTarget));if(!values.start||!values.end||values.start>values.end){document.querySelector('#range-error').textContent='시작일이 종료일보다 늦지 않게 선택해주세요.';return;}refreshChart({period:state.period,range:values});};
+ document.querySelector('#custom-range').onsubmit=e=>{e.preventDefault();const values=Object.fromEntries(new FormData(e.currentTarget));const error=rangeError(values);document.querySelector('#range-error').textContent=error;if(error)return;refreshChart({period:state.period,range:values});};
  await loadChart();
 }
 
@@ -717,7 +726,7 @@ async function loadChart({retainPrevious=false,force=false}={}){
      tooltip.style.left=`${desiredX}px`;
      tooltip.style.top=`${desiredY}px`;
    });
-   table.innerHTML=`<div class="section-head"><h2>종목별 결과</h2><small>${esc(formatKst(data.fetchedAt))} 조회</small></div><div class="return-table">${stocks.map((s,i)=>`<button data-stock-detail="${esc(s.ticker)}"><span><i style="background:${COLORS[i%COLORS.length]}"></i><strong>${esc(displayName(s.ticker,s.name))}</strong><small>${esc(s.startDate||'-')} → ${esc(s.endDate||'-')} · ${esc(currencyLabel(s.currency))}</small></span><b class="${Number(s.return)>=0?'up':'down'}">${Number(s.return)>=0?'+':''}${esc(s.return)}%</b></button>`).join('')}</div>`;
+   table.innerHTML=`${requestedRangeNote(state.customRange)}<div class="section-head"><h2>종목별 결과</h2><small>${esc(formatKst(data.fetchedAt))} 조회</small></div><div class="return-table">${stocks.map((s,i)=>`<button data-stock-detail="${esc(s.ticker)}"><span><i style="background:${COLORS[i%COLORS.length]}"></i><strong>${esc(displayName(s.ticker,s.name))}</strong><small>${esc(s.startDate||'-')} → ${esc(s.endDate||'-')} · ${esc(currencyLabel(s.currency))}</small></span><b class="${Number(s.return)>=0?'up':'down'}">${Number(s.return)>=0?'+':''}${esc(s.return)}%</b></button>`).join('')}</div>`;
    const basis=data?.comparisonBasis||{};
    const currencies=[...new Set(stocks.map(s=>s.currency).filter(Boolean))];
    guide.innerHTML=`<p><strong>통화:</strong> ${currencies.length>1?'종목별 현지통화 기준이며 환율 변환을 하지 않아요.':'표시 종목의 현지통화 기준이에요.'}</p><p><strong>가격:</strong> 제공처의 조정종가가 있으면 사용하고 없으면 종가를 사용해요. 총수익률로 별도 검증된 값은 아니에요.</p><p><strong>시작일:</strong> 각 종목이 선택 기간 안에서 처음 가진 실제 관측값을 사용해요. 서로 다른 휴장일 때문에 시작일이 다를 수 있어요.</p><p><strong>결측:</strong> 없는 거래일을 보간하지 않고 관측값만 연결해요.</p>${data.errors?.length?`<p class="warning-copy">일부 종목 오류: ${data.errors.map(e=>esc(e.ticker)).join(', ')}</p>`:''}`;
@@ -1050,9 +1059,9 @@ async function renderDetail(){
    ${!isIndex?'<details class="detail-block detail-review" id="detail-review"><summary>선정 기록 · 기술 지표 확인</summary><div id="detail-review-body">펼치면 기존 선정 기록의 신호등·성과와 수집된 기술 지표를 확인해요.</div></details>':''}
    ${!isIndex&&!koreanDetail?'<p class="detail-support-note">DART 공시 비교와 KRX 산업 맥락은 국내 종목에서 제공해요. 미국 종목은 시세·차트·핵심 지표·관련 뉴스를 제공해요.</p>':''}
 
-   ${/\.(KS|KQ)$/i.test(symbol)?`<section class="detail-block" id="detail-financial-block"><div class="section-head"><div><h2>공시 재무 흐름</h2><p>DART 보고서의 실적·현금흐름·재무상태</p></div><span class="detail-context-badge">DART</span></div><div id="detail-financial-history">${loadingIndicator('최근 재무제표를 확인하고 있어요')}</div></section>`:''}
-   ${koreanDetail?`<section class="detail-block detail-industry-block" id="detail-industry-block"><div class="section-head"><div><h2>회사 · 산업 맥락</h2><p>사업, 관련 기업, 산업 연결을 살펴봐요</p></div><span class="detail-context-badge">KRX</span></div><div id="detail-industry-context" class="detail-industry-context">${loadingIndicator('회사·산업 정보를 불러오고 있어요')}<div class="skeleton detail-context-skeleton"></div></div></section>
-   <section class="research-card" id="detail-research-card" aria-labelledby="research-card-title"><div class="research-card-head"><span>공시로 확인하기</span><h2 id="research-card-title">DART 공시 비교</h2><p>보고서에 나온 실적을 이전 기간이나 다른 회사와 비교해보세요.</p></div><div id="research-card-body">${loadingIndicator('공시 비교를 열고 있어요')}</div></section>`:''}
+   ${/\.(KS|KQ)$/i.test(symbol)?`<section class="detail-block" id="detail-financial-block"><div class="section-head"><div><h2>공시 재무 흐름</h2><p>DART 보고서의 실적·현금흐름·재무상태</p></div><span class="detail-context-badge">DART</span></div>${financialNavigationHtml()}<div id="detail-financial-history">${loadingIndicator('최근 재무제표를 확인하고 있어요')}</div></section>`:''}
+   ${koreanDetail?`   <section class="research-card" id="detail-research-card" aria-labelledby="research-card-title"><div class="research-card-head"><span>공시로 확인하기</span><h2 id="research-card-title">DART 공시 비교</h2><p>보고서에 나온 실적을 이전 기간이나 다른 회사와 비교해보세요.</p></div><div id="research-card-body">${loadingIndicator('공시 비교를 열고 있어요')}</div></section>
+   <section class="detail-block detail-industry-block" id="detail-industry-block"><details class="detail-industry-disclosure"><summary>회사·산업 근거 자세히 보기</summary><div class="section-head"><div><h2>회사 · 산업 맥락</h2><p>사업, 관련 기업, 산업 연결을 살펴봐요</p></div><span class="detail-context-badge">KRX</span></div><div id="detail-industry-context" class="detail-industry-context">${loadingIndicator('회사·산업 정보를 불러오고 있어요')}<div class="skeleton detail-context-skeleton"></div></div></details></section>`:''}
    <section class="detail-block" id="detail-metrics-section"><div class="section-head"><h2>핵심 지표</h2><button class="text-button" data-tab="valuation">같은 지표 비교</button></div><div id="detail-metrics" class="detail-metrics">${loadingIndicator('핵심 지표를 불러오고 있어요')}<div class="skeleton metric"></div><div class="skeleton metric"></div><div class="skeleton metric"></div><div class="skeleton metric"></div></div><div id="detail-metric-meta" class="detail-metric-meta"></div></section>
    <section class="detail-block" id="detail-news-section"><div class="section-head"><h2>관련 뉴스</h2><button class="text-button" data-stock-news="${esc(symbol)}" data-stock-name="${esc(knownName)}">이 종목 뉴스 더 보기</button></div><div id="detail-news" class="detail-news">${loadingIndicator('관련 뉴스를 불러오고 있어요')}<div class="skeleton news"></div><div class="skeleton news"></div></div></section>
  `,headingName);
@@ -1067,7 +1076,9 @@ async function renderDetail(){
  });
  const jumpToDetail=id=>{
    const target=document.getElementById(id);
-   if(!target)return false;
+   if(!target){showToast('이 항목이 아직 표시되지 않았어요. 공시 제공 여부와 화면 상태를 확인해주세요.');return false;}
+   const childDisclosure=target.querySelector(':scope > details');if(childDisclosure)childDisclosure.open=true;
+   for(let parent=target.closest('details');parent;parent=parent.parentElement?.closest('details'))parent.open=true;
    target.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});
    target.setAttribute('tabindex','-1');target.focus({preventScroll:true});
    return true;
@@ -1316,7 +1327,7 @@ async function renderDetail(){
    };
    jobs.push(loadFinancial());
    const quarters=document.createElement('div');quarters.id='detail-financial-quarters';quarters.className='financial-quarters';
-   document.querySelector('#detail-financial-history').before(quarters);
+   document.querySelector('#detail-financial-history').after(quarters);
    quarters.innerHTML=loadingIndicator('분기 실적 화면을 준비하고 있어요');
    import('./quarterView.js').then(({mountQuarters})=>{if(epoch===viewEpoch)mountQuarters(quarters,symbol);}).catch(()=>{if(epoch===viewEpoch)quarters.textContent='분기 실적 화면을 불러오지 못했어요. 화면을 다시 열어주세요.';});
  }

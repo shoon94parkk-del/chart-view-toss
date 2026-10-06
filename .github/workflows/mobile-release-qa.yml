@@ -99,6 +99,11 @@ jobs:
       - name: Verify deep links, large text and local performance diagnostics
         if: ${{ !cancelled() && steps.start-preview.outcome == 'success' }}
         run: node tests/release_gates_qa.mjs
+      - name: Verify audit fixes and navigation continuity
+        if: ${{ !cancelled() && steps.start-preview.outcome == 'success' }}
+        env:
+          QA_BASE_URL: http://127.0.0.1:4173
+        run: node tests/audit_plan_qa.mjs
       - name: Upload mobile QA screenshots
         if: always()
         uses: actions/upload-artifact@v4
@@ -117,4 +122,5 @@ jobs:
             output/playwright/experience-audit
             output/playwright/insight
             output/playwright/gurus
+            output/playwright/audit-plan
           if-no-files-found: warn

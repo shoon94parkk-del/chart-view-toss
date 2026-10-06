@@ -361,3 +361,6 @@ User approved three additional methods and GitHub documentation for changing PCs
 - Non-semiconductor industry tabs show amount, net-weight volume, average unit value, 3-month momentum, 12-month histories, configured five-country comparison, and evidence-backed company investigation.
 - Company candidates require direct KRX mainProducts evidence and remain classification/research candidates, never exporter/beneficiary/customer claims.
 - Preserve the semiconductor-specific HSK breakdown, contribution bases, six-market matrix, and mobile chart picker separately from the generic industry tabs.
+## 2026-10-06 — Audit plan implementation 0.15.1
+
+See AUDIT_IMPLEMENTATION_2026-10-06.md and audit_plan_qa.mjs before revisiting dates, external news, grouped maps, financial disclosures, IDEA back state or filter density. Preserve October 5's grouped map (not the older map/list/sector modes). Public heatmap shares carry only market/sector. Reuse all current quote/cache paths; presentation changes must not cause rollback, new provider work or blocking DART. New tests are in mobile-release CI.

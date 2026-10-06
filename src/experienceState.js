@@ -1,7 +1,7 @@
 // Only public view conditions belong in links. Device notes and watchlists never do.
 const symbolPattern=/^[A-Z0-9^][A-Z0-9.^=\-]{0,29}$/;
 const periods=new Set(['1mo','3mo','6mo','1y','5y','max']);
-const shareTabs=new Set(['chart','detail','discover','valuation','consensus','bands','news']);
+const shareTabs=new Set(['chart','detail','discover','valuation','consensus','bands','news','heatmap']);
 const filterKeys=['query','market','rsiMin','rsiMax','volumeMin','ret20Min','valueMin','trend','signal','sort','priceBasis'];
 export function encodeSharedView(state){
  if(!shareTabs.has(state.tab))return '';
@@ -13,6 +13,7 @@ export function encodeSharedView(state){
  if(state.tab==='valuation')view.valuationMetric=state.valuationMetric;
  if(state.tab==='consensus')view.consensusPeriod=state.consensusPeriod;
  if(state.tab==='bands')view.band=state.band;
+ if(state.tab==='heatmap')view.heatmap={market:state.heatmap?.market||'KR',selected:state.heatmap?.selected||null};
  if(state.tab==='news'){view.newsSymbol=state.newsSymbol;view.newsSort=state.newsSort;}
  return JSON.stringify(view);
 }
@@ -32,6 +33,7 @@ export function decodeSharedView(raw){
   if(['forwardPE','trailingPE','pbr','roe','dividendYield'].includes(x.valuationMetric))view.valuationMetric=x.valuationMetric;
   if(['0y','+1y','0q','+1q'].includes(x.consensusPeriod))view.consensusPeriod=x.consensusPeriod;
   if(x.band&&symbolPattern.test(x.band.symbol||'')&&[3,5,10].includes(x.band.years)&&['per','pbr'].includes(x.band.metric))view.band={symbol:x.band.symbol,years:x.band.years,metric:x.band.metric};
+  if(x.tab==='heatmap'){if(!['KR','US'].includes(x.heatmap?.market))return null;view.heatmap={market:x.heatmap.market,selected:typeof x.heatmap.selected==='string'?x.heatmap.selected.slice(0,50):null};}
   if(['major','latest'].includes(x.newsSort))view.newsSort=x.newsSort;
   return view;
  }catch{return null;}
@@ -49,6 +51,7 @@ export function revenueMixBasis(report={}){
 }
 export function quoteBasisLabel(quote={}){
  if(!quote)return '시세 확인 필요';
+ if(quote.priceBasis==='provider_latest')return '제공처 최신 시세';
  if(quote.priceBasis==='regular_close')return '정규장 종가';
  if(quote.sessionType==='after_hours')return '시간외 시세';
  if(quote.sessionType==='regular')return '정규장 시세';

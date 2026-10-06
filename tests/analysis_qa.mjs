@@ -27,7 +27,7 @@ try{
    if(tab==='discover'){
     assert.equal(await page.locator('.analysis-stock').count(),30);
     await page.click('#screener-more');assert.equal(await page.locator('.analysis-stock').count(),60);
-    await page.locator('.screener-advanced summary').click();
+    await page.locator('.screener-advanced>summary').click();
     await page.locator('[name=market]').selectOption('KOSDAQ');assert.match(await page.locator('.analysis-meta').innerText(),/42개/);
     await page.locator('[name=query]').fill('없는 종목');assert.equal(await page.locator('.analysis-stock').count(),0);
     await page.getByRole('button',{name:'초기화',exact:true}).click();assert.equal(await page.locator('.analysis-stock').count(),30);

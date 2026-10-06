@@ -1,14 +1,14 @@
 import {chromium} from 'playwright';
 import fs from 'node:fs/promises';
 
-const base='https://chart-view-toss.onrender.com';
+const base=process.env.QA_BASE_URL||'https://chart-view-toss.onrender.com';
 const routes=[
   ['home','#home','#market-card .quote-card strong'],
   ['detail','#detail/005930.KS','.quote-main strong'],
   ['US-detail','#detail/NVDA','.quote-main strong'],
   ['index','#detail/%5EKS11','.quote-main strong'],
   ['bands','#bands','#band-chart canvas'],
-  ['heatmap','#heatmap','.home-heatmap-cell']
+  ['heatmap','#heatmap','.market-map-stock']
 ];
 
 const browser=await chromium.launch({headless:true});
@@ -41,5 +41,5 @@ try{
   await browser.close();
 }
 await fs.mkdir('docs',{recursive:true});
-await fs.writeFile('docs/performance-targeted-final.json',JSON.stringify({base,measuredAt:new Date().toISOString(),results},null,2));
+await fs.writeFile(process.env.QA_TIMING_OUTPUT||'docs/performance-targeted-final.json',JSON.stringify({base,measuredAt:new Date().toISOString(),results},null,2));
 console.log(JSON.stringify(results));

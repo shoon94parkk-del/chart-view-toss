@@ -61,7 +61,7 @@ export function technicalMarkup(pick){
     <div class="pick-ledger-tech-line"><strong>${meta.icon} ${esc(meta.label)}</strong><span>${current===null?'기술점수 미제공':previous===null?current+'점 · 전일 비교 없음':Math.round(previous)+' → '+current+'점'}${delta===null||current===null?'':` (${delta>0?'+':''}${delta.toFixed(0)})`}</span></div>
     <div class="pick-ledger-tech-metrics"><span>RSI ${finite(tech?.rsi14)===null?'—':Number(tech.rsi14).toFixed(1)}</span><span>5일 ${pct(tech?.ret5)}</span><span>20일 ${pct(tech?.ret20)}</span><span>당일 ${pct(tech?.change1d)}</span></div>
     ${reasons.length?`<p>${esc(reasons.join(' · '))}</p>`:''}
-    <small>펀더멘털 점검 상태와 별도인 단기 기술 신호예요.</small>
+    <small>전일 → 이번 수집 기술점수예요. 차트뷰 내부 점수의 변화이며 기업가치나 매매 확정 점수가 아니에요. 펀더멘털 점검 상태와 별도인 단기 기술 신호예요.</small>
   </div>`;
 }
 
@@ -107,9 +107,9 @@ function rowMarkup(row,index,displayName){
       <div class="pick-ledger-detail-grid">
         <section><strong>추천 당시 이유</strong><p>${esc(row?.reason||'추천 사유가 기록되지 않았어요.')}</p></section>
         ${thesis.trim()!==String(row?.reason||'').trim()?`<section><strong>투자논리 기준선</strong><p>${esc(thesis)}</p></section>`:''}
-        <section><strong>기업 근거 점검</strong><p>원자료 상태 · ${esc(pick?.status||pick?.monitor?.status||'PENDING_REVIEW')} ${(pick?.status||pick?.monitor?.status)==='SELL_REVIEW'?'· 매도검토':''}</p></section><section><strong>최근 점검</strong><p>${esc(review)}</p></section>
+        <section><strong>기업 근거 점검</strong><p>기업 근거 상태 · ${esc(statusMeta(pick?.status||pick?.monitor?.status||'PENDING_REVIEW').label)} ${(pick?.status||pick?.monitor?.status)==='SELL_REVIEW'?'· 매도검토':''}</p></section><section><strong>최근 점검</strong><p>${esc(review)}</p></section>
         <section data-pick-score-basis><strong>선정 점수 · 출처</strong><p>${esc(score.label)} · ${esc(score.source)}</p><p>${esc(score.note)}</p></section>
-        <section><strong>단기 기술 신호</strong><p>원자료 신호 · ${esc(pick?.technical?.signal||'TECH_NORMAL')} ${pick?.technical?.signal==='TECH_SELL_REVIEW'?'· 단기 매도 검토':''}</p>${technicalMarkup(pick)}</section>
+        <section><strong>단기 기술 신호</strong><p>기술 점검 · ${esc(technicalMeta(pick?.technical?.signal).label)} ${pick?.technical?.signal==='TECH_SELL_REVIEW'?'· 단기 매도 검토':''}</p>${technicalMarkup(pick)}</section>
         <section><strong>검증 근거</strong>${evidenceMarkup(pick)}</section>
       </div>
       <div class="pick-ledger-detail-foot"><span>마지막 점검 ${esc(reviewed)} · 시세기준 ${esc(row?.lastUpdatedTradeDate||'—')}</span>${pick?.needsUserReview?'<strong>사용자 확인 필요</strong>':''}</div>
@@ -184,7 +184,7 @@ export async function renderPickLedger({shell,bindNav,displayName,focusKey=null}
       <div class="watch"><span>🟡 경계</span><b>${counts.WATCH}</b></div>
       <div class="sell"><span>🔴 재점검</span><b>${counts.SELL_REVIEW}</b></div>
       <div><span>⚪ 검토대기</span><b>${counts.PENDING_REVIEW}</b></div>
-    </div><p class="pick-ledger-basis">${monitorResult.ok?esc(`사후점검 ${String(monitorResult.value?.generatedAt||'').slice(0,10)||'기준일 미확인'} 기준 · 신호등은 펀더멘털과 단기 기술신호 중 더 높은 위험도를 반영 · 자동 점검 실행 ${reviewed}/${rows.length}건 · 근거 검토 대기는 별도 표시`):'사후점검 데이터를 불러오지 못해 성과 기록만 표시 중이에요.'}</p>`;
+    </div><p class="pick-ledger-status-scope">전체 ${rows.length}건 · 진행 중 ${rows.length-counts.EXIT}건 · 종료 ${counts.EXIT}건 · 위 4개 상태는 진행 중 기록이에요.</p><p class="pick-ledger-basis">${monitorResult.ok?esc(`사후점검 ${String(monitorResult.value?.generatedAt||'').slice(0,10)||'기준일 미확인'} 기준 · 신호등은 펀더멘털과 단기 기술신호 중 더 높은 위험도를 반영 · 자동 점검 실행 ${reviewed}/${rows.length}건 · 근거 검토 대기는 별도 표시`):'사후점검 데이터를 불러오지 못해 성과 기록만 표시 중이에요.'}</p>`;
     document.querySelector('[data-pick-calculation]').innerHTML=[summary,statusStrip].map(node=>`<p>${esc(node.querySelector('.pick-ledger-basis').textContent)}</p>`).join('');
     toolbar.hidden=false;
 

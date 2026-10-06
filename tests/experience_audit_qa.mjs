@@ -46,7 +46,7 @@ try{
   await page.locator('#brief-card .loading-spinner').waitFor();
   await page.locator('#brief-card[data-state="error"]').waitFor({timeout:20000});
   homeMode='ready';await page.locator('[data-retry-brief]').click();await page.locator('#brief-card[data-state="ready"]').waitFor();
-  await nav('discover');await page.locator('.screener-advanced summary').click();await page.locator('#screener-filters').waitFor();
+  await nav('discover');await page.locator('.screener-advanced>summary').click();await page.locator('#screener-filters').waitFor();
   await page.locator('[name="query"]').fill('삼성');await page.locator('[name="market"]').selectOption('KOSPI');
   await page.locator('[data-stock-detail="005930.KS"]').click();
   await page.locator('#research-question').waitFor().catch(async error=>{console.log({url:page.url(),errors,body:(await page.locator('body').innerText()).slice(0,2200)});throw error;});
@@ -55,12 +55,13 @@ try{
   await page.locator('#detail-price .quote-provenance summary').click();
   assert.match(await page.locator('.detail-closing-reference').innerText(),/84,000원/);
   assert.match(await page.locator('#detail-price').innerText(),/제공처 최신 시세/);
+  await page.locator('.detail-jump-nav [data-detail-jump="detail-industry-block"]').click();
   await page.locator('.industry-revenue-basis').waitFor();
   assert.match(await page.locator('.industry-revenue-basis').innerText(),/108.9%/);
   assert.match(await page.locator('.industry-revenue-basis').innerText(),/연결 조정/);
   assert.equal(await page.locator('.research-guide').getAttribute('open'),null);
-  const positions=await page.evaluate(()=>['detail-financial-block','detail-industry-block','detail-research-card'].map(id=>document.getElementById(id).offsetTop));
-  assert.ok(positions[0]<positions[1]&&positions[1]<positions[2],'facts precede industry and comparison');
+  const positions=await page.evaluate(()=>['detail-financial-block','detail-research-card','detail-industry-block'].map(id=>document.getElementById(id).offsetTop));
+  assert.ok(positions[0]<positions[1]&&positions[1]<positions[2],'facts precede comparison, long industry evidence follows');
   await page.locator('[data-back]').click();await page.locator('#screener-filters').waitFor();
   assert.equal(await page.locator('[name="query"]').inputValue(),'삼성');assert.equal(await page.locator('[name="market"]').inputValue(),'KOSPI');
   await page.waitForFunction(()=>document.activeElement?.dataset.stockDetail==='005930.KS');
@@ -102,7 +103,7 @@ try{
   chartLink.host=new URL(base).host;chartLink.protocol=new URL(base).protocol;
   await receiver.goto(chartLink.href);await receiver.locator('[data-period="1y"][aria-pressed="true"]').waitFor();
   screenerLink.host=new URL(base).host;screenerLink.protocol=new URL(base).protocol;
-  await receiver.goto(screenerLink.href);await receiver.locator('.screener-advanced summary').click();await receiver.locator('#screener-filters').waitFor();assert.equal(await receiver.locator('[name="query"]').inputValue(),'삼성');
+  await receiver.goto(screenerLink.href);await receiver.locator('.screener-advanced>summary').click();await receiver.locator('#screener-filters').waitFor();assert.equal(await receiver.locator('[name="query"]').inputValue(),'삼성');
   detailLink.host=new URL(base).host;detailLink.protocol=new URL(base).protocol;
   await receiver.goto(detailLink.href);await receiver.locator('#research-question').waitFor();assert.match(await receiver.locator('#research-peer-selection').textContent(),/SK하이닉스/);
   assert.equal(await receiver.locator('.bottom-nav [aria-current="page"]').count(),1);

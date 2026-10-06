@@ -13,6 +13,8 @@ test('grouped map retains classified and unclassified full-universe stocks with 
  assert.match(html,/엔비디아.*2026-10-02.*140 달러.*\+2\.00%/s);
  assert.match(html,/map-up-2/);assert.match(html,/map-down-2/);assert.match(html,/분류 미확인/);
  assert.doesNotMatch(html,/data-heatmap-view|data-heatmap-display/);
+ assert.ok(html.indexOf('id="market-map-members"')<html.indexOf('class="market-map"'));
+ assert.match(html,/기술 종목 목록/);
 });
 test('sector frame geometry fills the map and remains bounded for highly uneven capitalization',()=>{
  const groups=marketMapGroups({results},'US');
