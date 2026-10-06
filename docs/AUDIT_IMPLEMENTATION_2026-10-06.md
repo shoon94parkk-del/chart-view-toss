@@ -35,3 +35,5 @@
 로컬 증거: `output/audit-timing-before.json`, `output/audit-timing-after.json`, `output/playwright/audit-plan/results.json`, 배포 후 실제 동작 산출물. Render 서비스 상태, 백엔드 `/health`의 정확한 revision, 프런트 실제 asset/버전과 화면 조작을 함께 확인한다.
 
 네이티브 Android/iOS 출시 검증은 웹 배포 검증과 별개다. 별도 서비스·유료 API·두 번째 시세 캐시를 추가하지 않았다.
+
+배포 직전 Render 브랜치에만 있던 `c65513c`의 사용자 확정 EXIT 우선순위 수정을 main에 보존했다. 종료 기록은 기술 경고로 다시 진행 중이 되지 않으며, 새 회귀 검사가 모든 기술 경고와 조합해 확인한다.

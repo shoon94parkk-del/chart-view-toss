@@ -29,3 +29,9 @@ test('provider_latest stays latest even if a legacy payload claims a regular ses
  assert.equal(quoteBasisLabel({priceBasis:'provider_latest',sessionType:'regular'}),'제공처 최신 시세');
  assert.equal(quoteBasisLabel({priceBasis:'regular_close'}),'정규장 종가');
 });
+
+import {actionStatus} from '../src/pickLedger.js';
+test('user-confirmed EXIT survives every later technical warning',()=>{
+ for(const signal of ['TECH_NORMAL','TECH_CAUTION','TECH_SELL_REVIEW'])assert.equal(actionStatus({monitor:{status:'EXIT',technical:{signal}}}),'EXIT');
+ assert.equal(actionStatus({monitor:{status:'KEEP',technical:{signal:'TECH_SELL_REVIEW'}}}),'SELL_REVIEW');
+});

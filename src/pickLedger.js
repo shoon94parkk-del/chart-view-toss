@@ -30,9 +30,9 @@ function technicalOrder(row){return technicalMeta(row?.monitor?.technical?.signa
 export function actionStatus(row){
   const fundamental=row?.monitor?.status||'PENDING_REVIEW';
   const technical=row?.monitor?.technical?.signal||'TECH_NORMAL';
+  if(fundamental==='EXIT')return 'EXIT';
   if(fundamental==='SELL_REVIEW'||technical==='TECH_SELL_REVIEW')return 'SELL_REVIEW';
   if(fundamental==='WATCH'||technical==='TECH_CAUTION')return 'WATCH';
-  if(fundamental==='EXIT')return 'EXIT';
   if(fundamental==='KEEP')return 'KEEP';
   return 'PENDING_REVIEW';
 }
