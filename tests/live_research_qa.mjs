@@ -19,9 +19,12 @@ try {
     assert.equal(response.status(), 200);
     await page.locator('#research-question').waitFor({ timeout: 30000 });
     const readyMs = Date.now() - start;
+    await page.locator('.research-guide>summary').click();
     assert.match(await page.locator('.research-guide').innerText(), /전년 대비 증가율/);
     assert.match(await page.locator('.research-guide').innerText(), /앞으로의 전망.*지원하지 않아요/);
     await page.locator('[data-detail-jump="detail-research-card"]').click();
+    await page.locator('.research-peer-picker>summary').click();
+    await page.locator(`[data-peer-symbol="${symbol==='005930.KS'?'000660.KS':'005930.KS'}"]`).click();
     await page.locator('[data-research-example="2"]').click();
     assert.ok((await page.locator('#research-question').inputValue()).includes(peer));
     assert.equal(await page.locator('.research-table').count(), 0);
@@ -48,6 +51,7 @@ try {
     const table = await page.locator('.research-table').innerText();
     await page.locator('#detail-research-card').screenshot({ path: `${output}/${width}-${symbol}.png` });
     await page.locator('.research-table').screenshot({ path: `${output}/${width}-${symbol}-table.png` });
+    await page.locator('.financial-subnav [data-detail-jump="detail-quality"]').click();
     await page.locator('#detail-financial-history .financial-quality').waitFor({timeout:60000});
     assert.match(await page.locator('#detail-financial-history .financial-quality').innerText(),/확장 항목 7\/7개 확인/);
     const peerSymbol=symbol==='005930.KS'?'000660.KS':'005930.KS';

@@ -438,3 +438,5 @@ Keep compact five-strategy horizontal controls, collapsed criteria, 72–88px ca
 - Financial subsection jumps open their disclosure. Saved conditions remain mounted even while new filings are pending/failed; only optional exposition is collapsed. Public links never include personal questions/conditions.
 - IDEA disclosure state uses pattern + symbol + kind, not changing row positions. Additional screener inputs keep their actual filters and show applied counts.
 - PICK scope must explain all records, active records and EXIT count. Internal status codes/technical scores are explained without changing the underlying decision math.
+
+2026-10-06 release sync invariant: never force-overwrite fixes that exist only on the Render branch. validate-render-sync checks ancestry; integrate missing fixes into main before the normal push. User-confirmed EXIT keeps priority over later technical warnings.

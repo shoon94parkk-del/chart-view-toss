@@ -24,5 +24,6 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          git fetch origin main
-          git push origin refs/remotes/origin/main:refs/heads/feat/apps-in-toss-mvp --force
+          git fetch origin main feat/apps-in-toss-mvp
+          node scripts/validate-render-sync.mjs
+          git push origin refs/remotes/origin/main:refs/heads/feat/apps-in-toss-mvp
