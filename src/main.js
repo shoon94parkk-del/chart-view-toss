@@ -1543,7 +1543,7 @@ function render(){
    cleanupChart();
    void Promise.all([import('./exportMomentumView.js'),import('./exportMomentum.css')]).then(([exportsView])=>{
      if(state.tab==='exports'){state.exports ||= {};analysisCleanup=exportsView.renderExportMomentumView({shell,bindNav,focus:state.exportFocus,state:state.exports,onSelectionChange:(panel)=>{
-       const focus={overview:null,products:'items',countries:'countries',semiconductor:'memory'}[panel];
+       const focus={overview:null,products:'items',countries:'countries',semiconductor:'memory','passenger-car':'passenger-car',petroleum:'petroleum',cosmetics:'cosmetics',ships:'ships',steel:'steel'}[panel];
        navigate('exports',focus);
      }});}
    });
