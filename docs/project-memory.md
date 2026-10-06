@@ -347,3 +347,9 @@ User approved three additional methods and GitHub documentation for changing PCs
 - Country decomposition reuses the configured six-market matrix and remains explicitly not a global ranking.
 - Company links are investigation candidates from verified KRX mainProducts only; never relabel them as exporters, beneficiaries, customers or suppliers without separate evidence.
 - The new 12-month segment endpoint is loaded only when the semiconductor tab opens; it must not add work to Home or the initial export overview.
+
+## 2026-10-06 — Mobile semiconductor graph control contract
+- On <=600px screens, semiconductor segment switching for the 12-month chart must be available immediately above the chart as a horizontally scrollable chip rail.
+- Tapping the larger ranked segment row should move the user to the chart-control area; subsequent segment changes must not require scrolling back to the ranking list.
+- The selected header, mobile chip rail, and 12-month chart are the primary interaction cluster. Contribution/country/company details stay below the chart.
+- Segment switching reuses loaded trend/country data and must not introduce duplicate API requests.

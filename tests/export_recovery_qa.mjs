@@ -103,8 +103,23 @@ try{
   assert.equal(await page.locator('[data-export-semi-metric="yoy"]').getAttribute('class'),'is-active');
   await page.locator('[data-export-semi-segment="dram"]').click();
   await page.getByText('메모리 IC 증가액 중',{exact:true}).waitFor();
+  await page.waitForFunction(()=>{
+    const picker=document.querySelector('.export-semi-chart-picker');
+    const chart=document.querySelector('.export-semi-trend-history');
+    if(!picker||!chart)return false;
+    const p=picker.getBoundingClientRect();
+    const g=chart.getBoundingClientRect();
+    return p.top>=0&&p.bottom<=innerHeight&&g.top<innerHeight-80&&g.bottom>0;
+  });
   assert.match(await page.locator('.export-semi-contribution').innerText(),/50\.0%/);
   assert.ok(await page.locator('.export-semi-trend-bar').count()>=2,'selected segment shows recent history');
+  assert.equal(await page.locator('[data-export-semi-chart-segment="dram"]').getAttribute('class'),'is-active');
+  await page.locator('[data-export-semi-chart-segment="flash"]').click();
+  await page.locator('.export-semi-selected-head h4').filter({hasText:'Flash memory'}).waitFor();
+  assert.match(await page.locator('.export-semi-trend-bars').getAttribute('aria-label'),/Flash memory/);
+  assert.match(await page.locator('[data-export-semi-segment="flash"]').getAttribute('class'),/is-selected/);
+  await page.locator('[data-export-semi-chart-segment="dram"]').click();
+  await page.locator('.export-semi-selected-head h4').filter({hasText:'DRAM'}).waitFor();
   await page.getByText('중국',{exact:true}).first().waitFor();
   assert.equal(calls.country,countriesBeforeSemiconductor,'semiconductor tab reuses the already-cached country matrix without a duplicate request');
   await page.getByText('삼성전자',{exact:true}).first().waitFor();
