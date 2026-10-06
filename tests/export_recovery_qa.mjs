@@ -106,7 +106,7 @@ try{
   assert.match(await page.locator('.export-semi-contribution').innerText(),/50\.0%/);
   assert.ok(await page.locator('.export-semi-trend-bar').count()>=2,'selected segment shows recent history');
   await page.getByText('중국',{exact:true}).first().waitFor();
-  assert.equal(calls.country,countriesBeforeSemiconductor+1,'country matrix is reused as one independent semiconductor-tab request');
+  assert.equal(calls.country,countriesBeforeSemiconductor,'semiconductor tab reuses the already-cached country matrix without a duplicate request');
   await page.getByText('삼성전자',{exact:true}).first().waitFor();
   assert.ok(calls.company>=1,'verified KRX product metadata is loaded for company investigation candidates');
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'semiconductor drilldown stays inside mobile viewport');
