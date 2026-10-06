@@ -52,6 +52,16 @@ const pctAxisLabel=(value)=>{
   return `${number>0?'+':''}${Math.round(number)}%`;
 };
 
+const INDUSTRY_TABS=[
+  {key:'passenger-car',label:'자동차',title:'승용차',scope:'HS 8703'},
+  {key:'petroleum',label:'석유제품',title:'석유제품',scope:'HS 2710'},
+  {key:'cosmetics',label:'화장품',title:'화장품',scope:'HS 3304'},
+  {key:'ships',label:'선박',title:'선박',scope:'HS 89'},
+  {key:'steel',label:'철강',title:'철강',scope:'HS 72'},
+];
+
+const industryTabConfig=key=>INDUSTRY_TABS.find(row=>row.key===key)||null;
+
 function loading(){
   return `<section class="export-loading" role="status"><span></span><strong>최신 수출 스냅샷을 확인하고 있어요.</strong></section>`;
 }
@@ -693,6 +703,75 @@ function semiconductorCountryPlaceholder(detail){
   return '<div id="export-semi-country-matrix" class="export-semi-country-section export-semi-country-loading" role="status"><span></span><strong>DRAM·Flash·MCP·DRAM 모듈의 국가별 수출을 분석하고 있어요.</strong><small>반도체 상세과 별도로 불러와 다른 그래프 로딩을 막지 않습니다.</small></div>';
 }
 
+function industryTabPlaceholder(config){
+  return `
+    <section class="export-section export-industry-tab-shell" data-export-industry-shell="${esc(config.key)}">
+      <div class="export-section-head"><div><span>산업별 수출</span><h3>${esc(config.label)} 수출 흐름</h3></div><small>${esc(config.scope)} · 별도 로딩</small></div>
+      <div class="export-industry-tab-loading" role="status"><span></span><strong>12개월 수출 흐름을 불러오고 있어요.</strong><small>금액·물량·단위가치·국가 데이터를 함께 확인합니다.</small></div>
+    </section>
+  `;
+}
+
+function industryTabError(config,message){
+  return `
+    <section class="export-section export-industry-tab-shell" data-export-industry-shell="${esc(config.key)}">
+      <div class="export-section-head"><div><span>산업별 수출</span><h3>${esc(config.label)} 수출 흐름</h3></div><small>${esc(config.scope)}</small></div>
+      <div class="export-industry-tab-error"><strong>산업 상세를 불러오지 못했어요.</strong><span>${esc(message||'잠시 후 다시 시도해주세요.')}</span><button type="button" data-export-industry-retry="${esc(config.key)}">다시 시도</button></div>
+    </section>
+  `;
+}
+
+function renderIndustryTab(detail){
+  const latest=detail.history.at(-1)||{};
+  const maxCountry=Math.max(...detail.countries.map(row=>row.exportsUsdBillion||0),1);
+  const phaseRows=(detail.momentum?.phaseHistory||[]).slice(-12);
+  const config=industryTabConfig(detail.key)||{label:detail.name,scope:detail.note};
+  return `
+    <section class="export-section export-industry-tab-shell" data-export-industry-shell="${esc(detail.key)}">
+      <div class="export-section-head">
+        <div><span>산업별 수출</span><h3>${esc(config.label)} 수출 흐름</h3></div>
+        <small>${esc(monthLabel(detail.period))} · ${esc(config.scope)}</small>
+      </div>
+      <div class="export-industry-hero">
+        <div><span>수출액</span><strong>${esc(formatUsdBillion(latest.exportsUsdBillion,{digits:1}))}</strong><small class="${yoyTone(latest.exportYoY)}">YoY ${esc(formatSignedPct(latest.exportYoY))}</small></div>
+        <div><span>물량 · 순중량</span><strong>${esc(formatWeightKg(latest.exportWeightKg))}</strong><small class="${yoyTone(latest.exportWeightYoY)}">YoY ${esc(formatSignedPct(latest.exportWeightYoY))}</small></div>
+        <div><span>kg당 평균 신고금액</span><strong>${esc(formatUnitValue(latest.unitValueUsdPerKg))}</strong><small class="${yoyTone(latest.unitValueYoY)}">YoY ${esc(formatSignedPct(latest.unitValueYoY))}</small></div>
+      </div>
+      <div class="export-industry-read">
+        <strong>${esc(exportDriverLabel(latest))}</strong>
+        <span>수출액 변화가 물량 변화인지, 평균 단위가치 변화인지 분리해서 봅니다. 평균 단위가치는 개별 제품 판매가격이 아닙니다.</span>
+      </div>
+      <div class="export-momentum-summary export-industry-momentum">
+        ${momentumCard('수출액 3개월 YoY',detail.momentum?.exports)}
+        ${momentumCard('물량 3개월 YoY',detail.momentum?.volume)}
+        ${momentumCard('단위가치 3개월 YoY',detail.momentum?.unitValue)}
+      </div>
+      ${phaseRows.length?`<div class="export-phase-card"><div><strong>12개월 국면 변화</strong><span>현재 · ${esc(detail.momentum.latestPhase||'-')}</span></div><div class="export-phase-strip">${phaseRows.map(row=>`<span class="phase ${row.phase.includes('↑·단위가치↑')?'both-up':row.phase.includes('↓·단위가치↓')?'both-down':row.phase.includes('물량↓')?'price-up':'volume-up'}" title="${esc(row.period+' '+row.phase)}"><i></i><small>${esc(row.period.slice(5))}</small></span>`).join('')}</div></div>`:''}
+      <div class="export-detail-chart-stack export-industry-charts">
+        ${detailMetricBars(detail.history,'exportsUsdBillion','12개월 수출액','억달러',value=>formatUsdBillion(value,{digits:1}))}
+        ${detailMetricBars(detail.history,'exportWeightKg','12개월 수출 물량','순중량',value=>formatWeightKg(value))}
+        ${detailMetricBars(detail.history,'unitValueUsdPerKg','12개월 kg당 평균 신고금액','$ / kg',value=>formatUnitValue(value))}
+      </div>
+      <div class="export-industry-country">
+        <div class="export-detail-country-head"><strong>어느 시장으로 수출되나</strong><small>미국·중국·베트남·일본·대만 지정 5개 시장</small></div>
+        <div class="export-industry-country-grid">
+          ${detail.countries.map(row=>`
+            <div>
+              <strong>${esc(row.name)}</strong>
+              <span>${esc(formatUsdBillion(row.exportsUsdBillion,{digits:1}))}</span>
+              <div><i style="width:${Math.max(2,(row.exportsUsdBillion/maxCountry)*100).toFixed(1)}%"></i></div>
+              <small>품목 총수출 대비 ${row.sharePct===null?'-':esc(row.sharePct.toFixed(1)+'%')}</small>
+            </div>
+          `).join('')}
+        </div>
+        <p class="export-chart-note">전세계 국가 순위가 아니라 지정 5개 시장 비교입니다. 수출은 최종목적국 기준입니다.</p>
+      </div>
+      <div class="export-industry-research-head"><strong>기업 실적으로 확인하기</strong><small>KRX 주요제품과 공시에서 교차확인</small></div>
+      <section class="export-research export-industry-research" tabindex="-1"></section>
+    </section>
+  `;
+}
+
 function renderItemDetail(detail){
   const latest=detail.history.at(-1)||{};
   const maxCountry=Math.max(...detail.countries.map(row=>row.exportsUsdBillion||0),1);
@@ -874,6 +953,7 @@ function paint(host,snapshot,bindNav,onItemOpen){
     exportPanel('products',items(snapshot)+breadth(snapshot)+quadrant(snapshot)),
     exportPanel('countries',regions(snapshot)),
     exportPanel('semiconductor','<button type="button" class="text-button" data-tab="memory">TrendForce 반도체 가격 추적 →</button>'+semiconductorReport(snapshot)+semiconductorTrendPlaceholder()),
+    ...INDUSTRY_TABS.map(config=>exportPanel(config.key,industryTabPlaceholder(config))),
     '<div id="export-item-detail" class="export-item-detail" hidden></div>',
   ].join('');
   bindNav();
@@ -882,8 +962,8 @@ function paint(host,snapshot,bindNav,onItemOpen){
 
 export function renderExportMomentumView({shell,bindNav,focus=null,state={},onSelectionChange}){
   const app=document.querySelector('#app');
-  const tabs=[['overview','전체 요약'],['products','품목'],['countries','국가'],['semiconductor','반도체']];
-  const panelForFocus=key=>({
+  const tabs=[['overview','전체 요약'],['products','품목'],['countries','국가'],['semiconductor','반도체'],...INDUSTRY_TABS.map(row=>[row.key,row.label])];
+  const panelForFocus=key=>industryTabConfig(key)?key:({
     history:'overview',provisional:'overview',
     items:'products',breadth:'products',quadrant:'products',
     countries:'countries',memory:'semiconductor',
@@ -896,9 +976,13 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={},onSe
   let provisionalSeq=0;
   let momentumSeq=0;
   let semiconductorSeq=0;
+  let industrySeq=0;
   let provisionalLoaded=false;
   let momentumLoaded=false;
   let semiconductorLoaded=false;
+  const industryLoaded=new Set();
+  const industryLoading=new Set();
+  const industryDetails=new Map();
   let semiconductorMetric=state.semiconductorMetric==='yoy'?'yoy':'delta';
   let semiconductorSegmentKey=state.semiconductorSegmentKey||'dram';
 
@@ -1088,6 +1172,38 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={},onSe
     }
   };
 
+  const loadIndustryAnalysis=async(key,parentToken,force=false)=>{
+    const config=industryTabConfig(key);
+    const panel=host.querySelector('[data-export-panel="'+key+'"]');
+    if(!config||parentToken!==seq||!panel?.isConnected)return;
+    const token=++industrySeq;
+    panel.innerHTML=industryTabPlaceholder(config);
+    try{
+      industryLoading.add(key);
+      const detail=force?await loadExportItemDetail(key,{force:true}):(industryDetails.get(key)||await loadExportItemDetail(key));
+      industryLoading.delete(key);
+      if(parentToken!==seq||token!==industrySeq||!panel.isConnected)return;
+      industryDetails.set(key,detail);
+      industryLoaded.add(key);
+      panel.innerHTML=renderIndustryTab(detail);
+      const researchHost=panel.querySelector('.export-industry-research');
+      if(researchHost){
+        void import('./exportResearchView.js').then(({mountExportResearch})=>{
+          if(parentToken===seq&&token===industrySeq&&researchHost.isConnected){
+            void mountExportResearch(researchHost,detail,{state,alive:()=>parentToken===seq&&token===industrySeq&&researchHost.isConnected});
+          }
+        }).catch(()=>{
+          if(researchHost.isConnected)researchHost.textContent='기업 연결을 열지 못했어요. 주요제품과 공시를 직접 확인해주세요.';
+        });
+      }
+    }catch(error){
+      industryLoading.delete(key);
+      if(parentToken!==seq||token!==industrySeq||!panel.isConnected)return;
+      panel.innerHTML=industryTabError(config,error?.message);
+      panel.querySelector('[data-export-industry-retry]')?.addEventListener('click',()=>void loadIndustryAnalysis(key,parentToken,true));
+    }
+  };
+
   const loadProvisional=async(parentToken,force=false)=>{
     const node=host.querySelector('#export-provisional-radar');
     if(parentToken!==seq||!node?.isConnected)return;
@@ -1112,6 +1228,9 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={},onSe
     provisionalLoaded=false;
     momentumLoaded=false;
     semiconductorLoaded=false;
+    industryLoaded.clear();
+    industryLoading.clear();
+    industryDetails.clear();
     host.innerHTML=loading();
     try{
       const snapshot=await loadExportMomentumSnapshot({force});
@@ -1164,6 +1283,9 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={},onSe
           semiconductorLoaded=true;
           void loadSemiconductorAnalysis(token,force);
         }
+        if(industryTabConfig(panelKey)&&!industryLoaded.has(panelKey)&&!industryLoading.has(panelKey)){
+          void loadIndustryAnalysis(panelKey,token,force);
+        }
         if(scroll)panel.scrollIntoView({behavior:'smooth',block:'start'});
       };
 
@@ -1193,5 +1315,5 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={},onSe
   };
 
   void load();
-  return ()=>{seq+=1;detailSeq+=1;provisionalSeq+=1;momentumSeq+=1;semiconductorSeq+=1;};
+  return ()=>{seq+=1;detailSeq+=1;provisionalSeq+=1;momentumSeq+=1;semiconductorSeq+=1;industrySeq+=1;};
 }

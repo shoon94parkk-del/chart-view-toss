@@ -26,7 +26,51 @@ export function bandCoverage(stats,years,providedYears){
 // Initial rollout deliberately covers one product family only. KRX products
 // establish classification candidates, never issuer export exposure/contracts.
 export function exportCompanyCandidates(key,metadata={},segmentKey=''){
- if(key!=='semiconductor')return [];
+ if(key!=='semiconductor'){
+  const profiles={
+   'passenger-car':{
+    include:/(?:승용차|완성차|자동차\s*제조|SUV|세단)/i,
+    exclude:/(?:부품|타이어|시트|모듈|전장|소재|장비|유통)/i,
+    industry:/(?:자동차.*제조|완성차)/i,
+   },
+   petroleum:{
+    include:/(?:석유제품|휘발유|가솔린|경유|디젤|등유|항공유|제트유|나프타|윤활유|정유)/i,
+    exclude:/(?:석유화학|화학제품|수지|플라스틱|장비|유통|탱크|배관)/i,
+    industry:/(?:정유|석유 정제|석유제품)/i,
+   },
+   cosmetics:{
+    include:/(?:화장품|기초화장|색조화장|스킨케어|메이크업|립스틱|선크림|선케어|마스크팩)/i,
+    exclude:/(?:용기|포장|부자재|원료|소재|유통|장비)/i,
+    industry:/(?:화장품.*제조|화장품)/i,
+   },
+   ships:{
+    include:/(?:선박|LNG선|LPG선|유조선|탱커|컨테이너선|벌크선|상선|조선)/i,
+    exclude:/(?:기자재|엔진|부품|블록|장비|도장|소재)/i,
+    industry:/(?:선박.*건조|조선)/i,
+   },
+   steel:{
+    include:/(?:철강|열연|냉연|후판|강판|선재|봉강|철근|스테인리스|합금강|형강)/i,
+    exclude:/(?:강관|파이프|튜브|철강.*유통|가공장비|장비|부품|소재 유통)/i,
+    industry:/(?:철강.*제조|제철|제강|압연)/i,
+   },
+  };
+  const profile=profiles[key];
+  if(!profile)return [];
+  const evidence=row=>{
+   const parts=String(row.mainProducts||'').split(/[,;\n]/).map(part=>part.trim()).filter(Boolean);
+   const product=parts.find(part=>profile.include.test(part)&&!profile.exclude.test(part));
+   if(!product)return null;
+   const industry=String(row.industry||'');
+   if(industry&&!profile.industry.test(industry)&&!/제조/i.test(product))return null;
+   return product;
+  };
+  return (metadata.companies||[])
+   .map(row=>({row,productEvidence:evidence(row)}))
+   .filter(entry=>/^[A-Z0-9]{6}\.(KS|KQ)$/.test(entry.row.symbol||'')&&entry.productEvidence)
+   .sort((a,b)=>a.row.name.localeCompare(b.row.name,'ko'))
+   .slice(0,4)
+   .map(({row,productEvidence})=>({...row,productEvidence,matchScope:'industry',source:metadata.source||'KRX 주요제품',basisDate:String(metadata.updated||metadata.asOf||'기준일 미제공').slice(0,10)}));
+ }
  const segmentPatterns={
   'memory-total':/(?:DRAM|NAND|Flash|플래시|SRAM|MCP|메모리)/i,
   dram:/(?:DRAM|디램|메모리)/i,

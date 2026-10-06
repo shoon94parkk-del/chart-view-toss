@@ -353,3 +353,11 @@ User approved three additional methods and GitHub documentation for changing PCs
 - Tapping the larger ranked segment row should move the user to the chart-control area; subsequent segment changes must not require scrolling back to the ranking list.
 - The selected header, mobile chip rail, and 12-month chart are the primary interaction cluster. Contribution/country/company details stay below the chart.
 - Segment switching reuses loaded trend/country data and must not introduce duplicate API requests.
+
+## 2026-10-06 — Export industry tab contract
+- Export navigation includes overview/products/countries plus dedicated semiconductor, passenger-car, petroleum, cosmetics, ships, and steel tabs.
+- Dedicated non-semiconductor tabs reuse the existing item-detail endpoint and load only on first entry; do not add industry-detail requests to Home or export overview first paint.
+- Industry scopes are explicit HS proxies: passenger-car 8703, petroleum 2710, cosmetics 3304, ships 89, steel 72.
+- Non-semiconductor industry tabs show amount, net-weight volume, average unit value, 3-month momentum, 12-month histories, configured five-country comparison, and evidence-backed company investigation.
+- Company candidates require direct KRX mainProducts evidence and remain classification/research candidates, never exporter/beneficiary/customer claims.
+- Preserve the semiconductor-specific HSK breakdown, contribution bases, six-market matrix, and mobile chart picker separately from the generic industry tabs.

@@ -24,6 +24,6 @@ export function resolveRoute({pathname='/',hash=''}) {
   const families=['dram-chip','nand-chip','nand-wafer','dram-module','gddr'];
   if(tab==='memory')return {tab,detailSymbol:null,memoryPriceGroup:families.includes(parts[1])?parts[1]:null};
   if(tab==='exports'&&parts[1]==='memory'&&families.includes(parts[2]))return {tab:'memory',detailSymbol:null,memoryPriceGroup:parts[2]};
-  if(tab==='exports')return {tab,detailSymbol:null,exportFocus:['history','provisional','items','breadth','quadrant','countries','memory'].includes(parts[1])?parts[1]:null,memoryPriceGroup:null};
+  if(tab==='exports')return {tab,detailSymbol:null,exportFocus:['history','provisional','items','breadth','quadrant','countries','memory','passenger-car','petroleum','cosmetics','ships','steel'].includes(parts[1])?parts[1]:null,memoryPriceGroup:null};
   return {tab,detailSymbol:null};
 }
