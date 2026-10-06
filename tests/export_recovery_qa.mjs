@@ -21,8 +21,44 @@ const semiconductorTrends={period:'2026-09',total:{name:'반도체',exportsUsdBi
 const companyContext={source:'KRX 주요제품',updated:'2026-10-05',companies:[
  {symbol:'005930.KS',name:'삼성전자',industry:'반도체 제조업',mainProducts:'DRAM, NAND'},
  {symbol:'000660.KS',name:'SK하이닉스',industry:'반도체 제조업',mainProducts:'DRAM, NAND, MCP'},
+ {symbol:'111111.KS',name:'완성차A',industry:'자동차 제조업',mainProducts:'승용차, SUV'},
+ {symbol:'222221.KS',name:'정유A',industry:'석유 정제품 제조업',mainProducts:'휘발유, 경유, 항공유'},
+ {symbol:'333331.KS',name:'화장품A',industry:'화장품 제조업',mainProducts:'기초화장품, 색조화장품'},
+ {symbol:'444441.KS',name:'조선A',industry:'선박 건조업',mainProducts:'LNG선, 컨테이너선'},
+ {symbol:'555551.KS',name:'철강A',industry:'제철 및 제강업',mainProducts:'열연강판, 냉연강판, 후판'},
 ]};
 const detail={key:'semiconductor',name:'반도체',period:'2026-09',history:[{period:'2026-09',exportsUsdBillion:20,exportYoY:15}],countries:[]};
+const makeIndustryDetail=(key,name,note)=>({
+ key,name,note,period:'2026-09',
+ history:[
+  {period:'2026-08',exportsUsdBillion:4.2,priorExportsUsdBillion:3.8,deltaUsdBillion:.4,exportYoY:10.5,exportWeightKg:920000000,exportWeightYoY:4,unitValueUsdPerKg:4.6,unitValueYoY:6,importsUsdBillion:1.1,importYoY:2,tradeBalanceUsdBillion:3.1},
+  {period:'2026-09',exportsUsdBillion:4.8,priorExportsUsdBillion:4.0,deltaUsdBillion:.8,exportYoY:20,exportWeightKg:980000000,exportWeightYoY:8,unitValueUsdPerKg:4.9,unitValueYoY:11,importsUsdBillion:1.2,importYoY:3,tradeBalanceUsdBillion:3.6},
+ ],
+ momentum:{
+  exports:{avg3mYoY:18,previous3mYoY:12,accelerationPp:6,label:'증가세 강화'},
+  volume:{avg3mYoY:7,previous3mYoY:4,accelerationPp:3,label:'증가세 강화'},
+  unitValue:{avg3mYoY:9,previous3mYoY:6,accelerationPp:3,label:'증가세 강화'},
+  latestPhase:'물량↑·단위가치↑',
+  phaseHistory:[
+   {period:'2026-08',phase:'물량↑·단위가치↑',volumeYoY:4,unitValueYoY:6},
+   {period:'2026-09',phase:'물량↑·단위가치↑',volumeYoY:8,unitValueYoY:11},
+  ],
+ },
+ countries:[
+  {code:'US',name:'미국',exportsUsdBillion:1.2,sharePct:25},
+  {code:'CN',name:'중국',exportsUsdBillion:1.0,sharePct:20.8},
+  {code:'VN',name:'베트남',exportsUsdBillion:.7,sharePct:14.6},
+  {code:'JP',name:'일본',exportsUsdBillion:.4,sharePct:8.3},
+  {code:'TW',name:'대만',exportsUsdBillion:.3,sharePct:6.3},
+ ],
+});
+const industryDetails={
+ 'passenger-car':makeIndustryDetail('passenger-car','승용차','HS 8703 기준'),
+ petroleum:makeIndustryDetail('petroleum','석유제품','HS 2710 정제 석유제품 기준'),
+ cosmetics:makeIndustryDetail('cosmetics','화장품','HS 3304 미용·기초화장품 기준'),
+ ships:makeIndustryDetail('ships','선박','HS 89 선박·보트류 기준'),
+ steel:makeIndustryDetail('steel','철강','HS 72 철강 기준'),
+};
 const matrix={period:'2026-09',segments:[{key:'dram',code:'8542321010',name:'DRAM',exportsUsdBillion:10,countries:[{code:'CN',name:'중국',exportsUsdBillion:5,sharePct:50}]}]};
 try{
  for(const width of [320,390,430]){
@@ -38,7 +74,11 @@ try{
     if(path.endsWith('/momentum-map')){calls.momentum++;body=momentumMap;}
     else if(path.endsWith('/semiconductor-trends')){calls.trends++;body=semiconductorTrends;}
     else if(path.endsWith('/provisional'))body=++calls.radar===1?{period:'2026-09',checkpoints:[]}:radar;
-    else if(path.endsWith('/item-detail'))body=++calls.item===1?{key:'semiconductor',history:[]}:detail;
+    else if(path.endsWith('/item-detail')){
+      const requested=new URL(route.request().url()).searchParams.get('key');
+      if(industryDetails[requested]){calls.item++;body=industryDetails[requested];}
+      else body=++calls.item===1?{key:'semiconductor',history:[]}:detail;
+    }
     else if(path.endsWith('/semiconductor-countries'))body=++calls.country===1?{period:'2026-09',segments:[]}:matrix;
     else {calls.monthly++;body=snapshot;}
     const failed503=(width===390&&path.endsWith('/semiconductor-countries')&&calls.country===1)||(width===430&&path.endsWith('/provisional')&&calls.radar===1);
@@ -125,6 +165,24 @@ try{
   await page.getByText('삼성전자',{exact:true}).first().waitFor();
   assert.ok(calls.company>=1,'verified KRX product metadata is loaded for company investigation candidates');
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'semiconductor drilldown stays inside mobile viewport');
+
+  const industryCallsBefore=calls.item;
+  for(const [label,heading,company] of [
+    ['화장품','화장품 수출 흐름','화장품A'],
+    ['철강','철강 수출 흐름','철강A'],
+    ['석유제품','석유제품 수출 흐름','정유A'],
+    ['자동차','자동차 수출 흐름','완성차A'],
+    ['선박','선박 수출 흐름','조선A'],
+  ]){
+    await page.getByRole('tab',{name:label,exact:true}).click();
+    await page.getByRole('heading',{name:heading,exact:true}).waitFor();
+    await page.getByText('12개월 수출액',{exact:true}).waitFor();
+    await page.getByText(company,{exact:true}).first().waitFor();
+    assert.ok(await page.locator('[data-export-industry-shell]').isVisible(),label+' industry shell is visible');
+    assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),label+' tab stays inside mobile viewport');
+  }
+  assert.equal(calls.item,industryCallsBefore+5,'each dedicated industry tab lazy-loads its own existing item detail once');
+  assert.equal(calls.monthly,1,'industry tabs do not reload the monthly snapshot');
 
   assert.deepEqual(errors,[]);
   console.log(`${width}px: export recovery plus semiconductor delta/yoy, contribution, history, country and company drilldown passed`);
