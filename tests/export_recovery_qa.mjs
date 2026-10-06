@@ -179,7 +179,8 @@ try{
     await page.getByRole('heading',{name:heading,exact:true}).waitFor();
     await page.getByText('12개월 수출액',{exact:true}).waitFor();
     await page.getByText(company,{exact:true}).first().waitFor();
-    assert.ok(await page.locator('[data-export-industry-shell]').isVisible(),label+' industry shell is visible');
+    const industryKey={'화장품':'cosmetics','철강':'steel','석유제품':'petroleum','자동차':'passenger-car','선박':'ships'}[label];
+    assert.ok(await page.locator(`[data-export-industry-shell="${industryKey}"]`).isVisible(),label+' industry shell is visible');
     assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),label+' tab stays inside mobile viewport');
   }
   assert.equal(calls.item,industryCallsBefore+4,'four uncached industry tabs fetch once; passenger-car reuses the previously cached item detail');
