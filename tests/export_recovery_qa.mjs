@@ -123,7 +123,7 @@ try{
   const held=new Promise(resolve=>{release=resolve});
   await page.route('**/api/export-momentum/item-detail?key=passenger-car*',async route=>{
     await held;
-    await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({...detail,key:'passenger-car',name:'승용차'})});
+    await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(industryDetails['passenger-car'])});
   });
   await page.locator('[data-export-item="passenger-car"]').first().click();
   await page.locator('[data-export-detail-close]').click();
@@ -182,7 +182,7 @@ try{
     assert.ok(await page.locator('[data-export-industry-shell]').isVisible(),label+' industry shell is visible');
     assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),label+' tab stays inside mobile viewport');
   }
-  assert.equal(calls.item,industryCallsBefore+5,'each dedicated industry tab lazy-loads its own existing item detail once');
+  assert.equal(calls.item,industryCallsBefore+4,'four uncached industry tabs fetch once; passenger-car reuses the previously cached item detail');
   assert.equal(calls.monthly,1,'industry tabs do not reload the monthly snapshot');
 
   assert.deepEqual(errors,[]);
