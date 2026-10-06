@@ -981,6 +981,7 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={},onSe
   let momentumLoaded=false;
   let semiconductorLoaded=false;
   const industryLoaded=new Set();
+  const industryLoading=new Set();
   const industryDetails=new Map();
   let semiconductorMetric=state.semiconductorMetric==='yoy'?'yoy':'delta';
   let semiconductorSegmentKey=state.semiconductorSegmentKey||'dram';
@@ -1178,9 +1179,12 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={},onSe
     const token=++industrySeq;
     panel.innerHTML=industryTabPlaceholder(config);
     try{
+      industryLoading.add(key);
       const detail=force?await loadExportItemDetail(key,{force:true}):(industryDetails.get(key)||await loadExportItemDetail(key));
+      industryLoading.delete(key);
       if(parentToken!==seq||token!==industrySeq||!panel.isConnected)return;
       industryDetails.set(key,detail);
+      industryLoaded.add(key);
       panel.innerHTML=renderIndustryTab(detail);
       const researchHost=panel.querySelector('.export-industry-research');
       if(researchHost){
@@ -1193,6 +1197,7 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={},onSe
         });
       }
     }catch(error){
+      industryLoading.delete(key);
       if(parentToken!==seq||token!==industrySeq||!panel.isConnected)return;
       panel.innerHTML=industryTabError(config,error?.message);
       panel.querySelector('[data-export-industry-retry]')?.addEventListener('click',()=>void loadIndustryAnalysis(key,parentToken,true));
@@ -1224,6 +1229,7 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={},onSe
     momentumLoaded=false;
     semiconductorLoaded=false;
     industryLoaded.clear();
+    industryLoading.clear();
     industryDetails.clear();
     host.innerHTML=loading();
     try{
@@ -1277,8 +1283,7 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={},onSe
           semiconductorLoaded=true;
           void loadSemiconductorAnalysis(token,force);
         }
-        if(industryTabConfig(panelKey)&&!industryLoaded.has(panelKey)){
-          industryLoaded.add(panelKey);
+        if(industryTabConfig(panelKey)&&!industryLoaded.has(panelKey)&&!industryLoading.has(panelKey)){
           void loadIndustryAnalysis(panelKey,token,force);
         }
         if(scroll)panel.scrollIntoView({behavior:'smooth',block:'start'});
