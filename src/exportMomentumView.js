@@ -427,13 +427,19 @@ function semiconductorTrendView(trends,{metric='delta',selectedKey='',countryMat
       </div>
       <p class="export-chart-note">메모리 IC는 DRAM·SRAM·Flash·MCP를 포함하는 상위 분류이므로 서로 합산하지 않습니다. DRAM 모듈(8473304060)은 HS 8541+8542 반도체 총계 밖의 별도 품목입니다.</p>
       ${selected?`
-        <div class="export-semi-selected">
+        <div class="export-semi-selected" id="export-semi-chart-focus">
           <div class="export-semi-selected-head">
             <div><span>선택 품목 · HS ${esc(selected.code)}</span><h4>${esc(selected.name)}</h4><small>${esc(selected.note)}</small></div>
             <div><strong class="${yoyTone(selected.deltaUsdBillion)}">${esc(formatSignedUsdBillion(selected.deltaUsdBillion,{digits:1}))}</strong><span>YoY ${esc(formatSignedPct(selected.exportYoY))}</span></div>
           </div>
-          ${contribution?`<div class="export-semi-contribution"><span>${esc(contribution.label)}</span><strong class="${yoyTone(contribution.value)}">${esc(contribution.value.toFixed(1))}%</strong><small>${esc(contribution.note)} · 다른 품목 감소가 있으면 100%를 넘거나 음수가 될 수 있어요.</small></div>`:`<div class="export-semi-contribution is-muted"><span>증가액 기여도</span><strong>-</strong><small>${selected.key==='dram-module'?'DRAM 모듈은 반도체 총계 HS 8541+8542 밖이라 전체 기여도를 계산하지 않습니다.':'상위 분류와 중복되지 않는 기여 기준이 없어 임의 계산하지 않습니다.'}</small></div>`}
+          <div class="export-semi-chart-picker" aria-label="12개월 그래프 품목 선택">
+            <div><strong>12개월 그래프 품목</strong><small>옆으로 밀어서 바로 비교</small></div>
+            <div class="export-semi-chart-picker-rail" role="group">
+              ${sourceRows.map(row=>`<button type="button" data-export-semi-chart-segment="${esc(row.key)}" class="${row.key===selected.key?'is-active':''}">${esc(row.name)}</button>`).join('')}
+            </div>
+          </div>
           ${semiconductorTrendHistory(selected)}
+          ${contribution?`<div class="export-semi-contribution"><span>${esc(contribution.label)}</span><strong class="${yoyTone(contribution.value)}">${esc(contribution.value.toFixed(1))}%</strong><small>${esc(contribution.note)} · 다른 품목 감소가 있으면 100%를 넘거나 음수가 될 수 있어요.</small></div>`:`<div class="export-semi-contribution is-muted"><span>증가액 기여도</span><strong>-</strong><small>${selected.key==='dram-module'?'DRAM 모듈은 반도체 총계 HS 8541+8542 밖이라 전체 기여도를 계산하지 않습니다.':'상위 분류와 중복되지 않는 기여 기준이 없어 임의 계산하지 않습니다.'}</small></div>`}
           <div class="export-semi-country-inline">
             <div class="export-detail-country-head"><strong>어느 나라가 증감을 만들었나</strong><small>지정 6개 시장 · 전년동월 대비</small></div>
             ${countrySegment?`
@@ -1011,6 +1017,16 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={},onSe
         semiconductorSegmentKey=button.dataset.exportSemiSegment||'dram';
         state.semiconductorSegmentKey=semiconductorSegmentKey;
         renderCurrent();
+        requestAnimationFrame(()=>host.querySelector('#export-semi-chart-focus')?.scrollIntoView({behavior:'smooth',block:'start'}));
+      }));
+      next.querySelectorAll('[data-export-semi-chart-segment]').forEach(button=>button.addEventListener('click',()=>{
+        semiconductorSegmentKey=button.dataset.exportSemiChartSegment||'dram';
+        state.semiconductorSegmentKey=semiconductorSegmentKey;
+        renderCurrent();
+        requestAnimationFrame(()=>{
+          const active=host.querySelector('[data-export-semi-chart-segment].is-active');
+          active?.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+        });
       }));
       next.querySelector('[data-export-semi-country-retry]')?.addEventListener('click',async()=>{
         countryState='loading';renderCurrent();
