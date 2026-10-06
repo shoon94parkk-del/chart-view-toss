@@ -497,3 +497,44 @@
   .export-semi-trend-bars{gap:2px;height:135px}
   .export-semi-trend-bar>span{font-size:6px}
 }
+
+
+/* Export V10: dedicated industry tabs reuse the existing monthly item-detail contract. */
+.export-industry-tab-shell{scroll-margin-top:58px}
+.export-industry-tab-loading,.export-industry-tab-error{min-height:132px;padding:14px;border:1px solid #e4ecea;border-radius:16px;background:#f8fbfa;display:grid;place-items:center;align-content:center;gap:7px;text-align:center}
+.export-industry-tab-loading>span{width:22px;height:22px;border:3px solid #d8ece8;border-top-color:#087b77;border-radius:50%;animation:export-spin .8s linear infinite}
+.export-industry-tab-loading strong,.export-industry-tab-error strong{font-size:11px;color:#273432}
+.export-industry-tab-loading small,.export-industry-tab-error span{font-size:8.5px;line-height:1.45;color:#7b8987}
+.export-industry-tab-error button{min-height:44px;border:0;border-radius:11px;background:#e4f5f1;color:#076d69;font-size:10px;font-weight:900;padding:0 14px}
+.export-industry-hero{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.export-industry-hero>div{min-width:0;padding:10px 9px;border:1px solid #e5eeec;border-radius:14px;background:#f8fbfa}
+.export-industry-hero span,.export-industry-hero small{display:block;color:#7b8987;font-size:7.5px;line-height:1.3}
+.export-industry-hero strong{display:block;margin:5px 0 3px;color:#273432;font-size:12px;line-height:1.2;overflow-wrap:anywhere}
+.export-industry-hero small.up{color:#e64a61}.export-industry-hero small.down{color:#3182f6}
+.export-industry-read{display:grid;gap:3px;margin-top:7px;padding:9px 10px;border-radius:13px;background:#f4faf8}
+.export-industry-read strong{font-size:9.5px;color:#076d69}.export-industry-read span{font-size:8px;line-height:1.45;color:#60706d}
+.export-industry-momentum{margin-top:8px}
+.export-industry-charts{margin-top:8px}
+.export-industry-country{margin-top:10px;padding:11px;border:1px solid #e8eeee;border-radius:14px;background:#fff}
+.export-industry-country-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}
+.export-industry-country-grid>div{min-width:0;padding:8px;border-radius:11px;background:#f8faf9}
+.export-industry-country-grid strong{display:block;font-size:9.5px;color:#273432}
+.export-industry-country-grid span{display:block;margin-top:2px;font-size:9px;color:#60706d}
+.export-industry-country-grid>div>div{height:5px;margin-top:6px;border-radius:999px;background:#e9efed;overflow:hidden}
+.export-industry-country-grid i{display:block;height:100%;border-radius:999px;background:#65b9ad}
+.export-industry-country-grid small{display:block;margin-top:4px;font-size:7.5px;color:#8b95a1}
+.export-industry-research-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:10px 0 5px;padding:0 2px}
+.export-industry-research-head strong{font-size:10px;color:#273432}.export-industry-research-head small{font-size:7.5px;color:#8b95a1;text-align:right}
+.export-industry-research{margin-top:0}
+@media(max-width:600px){
+  .export-industry-hero{grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+  .export-industry-hero>div{padding:9px 7px}
+  .export-industry-hero strong{font-size:10.5px}
+  .export-industry-country{padding:9px}
+  .export-industry-country-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}
+}
+@media(max-width:360px){
+  .export-industry-hero span,.export-industry-hero small{font-size:7px}
+  .export-industry-hero strong{font-size:9.5px}
+  .export-industry-country-grid{grid-template-columns:1fr}
+}
