@@ -472,7 +472,10 @@ try{
       await page.waitForSelector('[data-export-panel="overview"]:not([hidden])');
       if(await page.locator('[data-export-panel="products"]:visible,[data-export-panel="countries"]:visible,[data-export-panel="semiconductor"]:visible').count()) throw new Error('export detail panels must stay hidden on first entry');
       if(await page.getByRole('tab',{name:'속보·추세',exact:true}).count()) throw new Error('separate trend tab should be removed');
-      if(await page.locator('.export-topic-nav [role="tab"]').count()!==4) throw new Error('export navigation should contain four tabs');
+      if(await page.locator('.export-topic-nav [role="tab"]').count()!==9) throw new Error('export navigation should contain three common tabs plus six industry tabs');
+      for(const label of ['전체 요약','품목','국가','반도체','자동차','석유제품','화장품','선박','철강']){
+        if(await page.getByRole('tab',{name:label,exact:true}).count()!==1) throw new Error(`export industry tab missing: ${label}`);
+      }
       await page.waitForSelector('.export-combo-plot');
       await page.waitForSelector('.export-provisional-hero');
       if(await page.locator('.export-provisional-stage').count()!==3) throw new Error('10-day radar must show 10d 20d and month-end checkpoints');
