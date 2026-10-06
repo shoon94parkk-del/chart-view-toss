@@ -47,7 +47,8 @@ test('잠정 레이더는 전체 요약에서 시작하고 반도체 가격은 �
   assert.doesNotMatch(view,/paint\(host,snapshot,bindNav,openItemDetail\);\s*memorySpotCleanup=mountMemorySpot/);
 });
 
-test('기존 추세 focus 딥링크는 전체 요약으로 연결된다',()=>{
+test('기존 추세 focus와 산업 전용 focus가 올바른 탭으로 연결된다',()=>{
+  assert.match(view,/industryTabConfig\(key\)\?key:/);
   assert.match(view,/history:'overview',provisional:'overview'/);
   assert.match(view,/items:'products',breadth:'products',quadrant:'products'/);
   assert.match(view,/countries:'countries',memory:'semiconductor'/);
