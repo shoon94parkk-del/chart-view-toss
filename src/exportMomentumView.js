@@ -963,7 +963,7 @@ function paint(host,snapshot,bindNav,onItemOpen){
 export function renderExportMomentumView({shell,bindNav,focus=null,state={},onSelectionChange}){
   const app=document.querySelector('#app');
   const tabs=[['overview','전체 요약'],['products','품목'],['countries','국가'],['semiconductor','반도체'],...INDUSTRY_TABS.map(row=>[row.key,row.label])];
-  const panelForFocus=key=>({
+  const panelForFocus=key=>industryTabConfig(key)?key:({
     history:'overview',provisional:'overview',
     items:'products',breadth:'products',quadrant:'products',
     countries:'countries',memory:'semiconductor',
