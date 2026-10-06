@@ -130,6 +130,7 @@ try{
   const response=page.waitForResponse(response=>response.url().includes('key=passenger-car'));
   release();
   await response;
+  await page.unroute('**/api/export-momentum/item-detail?key=passenger-car*');
   assert.equal(await page.locator('#export-item-detail').isVisible(),false);
 
   const countriesBeforeSemiconductor=calls.country;
