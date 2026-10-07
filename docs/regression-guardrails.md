@@ -467,3 +467,9 @@ Keep compact five-strategy horizontal controls, collapsed criteria, 72–88px ca
 ### Korean live quote smoke must verify the observation, not status alone
 
 A CLOSE status by itself must never certify regular_close. Match shared realtime_korea.py: explicitly zoned asOf converted to KST 15:30 certifies regular_close/regular; other CLOSE remains provider_latest/unknown. OPEN still requires regular_live/regular. Keep tests/koreanQuoteContract.test.mjs and the shared test helper used by live_api_contract; both false close certification and incorrect latest downgrade must fail. Do not rewrite app/backend quote metadata to satisfy a status-only test.
+
+## Guru dates and partial full-map retention
+
+- A partial full-map batch cannot replace a larger valid dated map or shrink its saved cache. Preserve newest per-ticker observations and separate actual response count from previous retained tiles; no fake0% placeholders. A complete current universe may remove old members. Retained observations do not enter sector aggregates.
+- Guru force/evidence409 recovery cannot replace a newer tradeDate/generatedAt publication with an older one. Keep exact evidence version and tell the user to retry; accept newer real candidate decreases. Optional missingReasons includes insufficient+unsupported and must never be fabricated.
+- Shared backend canonical full warm seed is historical/stale until existing revalidation; legacy heatmap prices never become current quotes.

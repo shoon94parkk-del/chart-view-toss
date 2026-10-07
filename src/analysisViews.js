@@ -1,4 +1,4 @@
-import { screenerData, fullHeatmap, homeSnapshot, consensusData, valuationBandData } from './api.js';
+import { screenerData, fullHeatmap, fullHeatmapSnapshot, homeSnapshot, consensusData, valuationBandData } from './api.js';
 import { SCREENER_PRESETS, screenerPreset, screenerMatchReasons, screenerDataWarnings, screenerEmptyState, filterScreener, finiteNumber, estimateRevision } from './analysisData.js';
 import { formatKst,formatFinancialAmount,formatDataSource } from './dataPresentation.js';
 import { loadChartRuntime } from './chartRuntime.js';
@@ -6,7 +6,8 @@ import { readHomeFast, writeHomeFast } from './homeFastCache.js';
 import { seedWatchQuoteCache } from './watchQuoteCache.js';
 import { loadingIndicator } from './loadingView.js';
 import { investmentToolsMarkup, bindInvestmentToolLogos } from './investmentTools.js';
-import {alignHeatmapQuotes} from './heatmapAlignment.js';
+import {alignHeatmapQuotes,mergeHeatmapProgress} from './heatmapAlignment.js';
+import {validateFullHeatmapSnapshot} from './fullHeatmapSnapshot.js';
 import {bandCoverage,discoveryContext} from './insightModel.js';
 import {encodeSharedView} from './experienceState.js';
 import {featureLabel} from './uiIdentity.js';
@@ -112,8 +113,8 @@ export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareS
     controls.querySelectorAll('[data-full-market]').forEach(b=>b.onclick=()=>{state.heatmap.market=b.dataset.fullMarket;state.heatmap.selected=null;syncView();if(shownFull)paintFull(shownFull);});syncView();
     const paintFull=(full,{save=false}={})=>{
       if(!current()||!full?.results?.length)return;
-      shownFull=full;
       const payload=alignFullHeatmapWithHome(full,latestHome);
+      shownFull=payload;
       const mapHost=host.querySelector('.shared-heatmap-analysis');
       const active=mapHost.contains(document.activeElement)?document.activeElement:null;
       const focus=active?{sector:active.dataset.mapSector,stock:active.dataset.stockDetail,members:Boolean(active.closest('.market-map-members'))}:null;
@@ -134,6 +135,14 @@ export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareS
       window.__chartviewRestoreScroll?.();
     };
     if(shownFull)paintFull(shownFull);
+    // Data-only CDN warm seed is optional and never delays canonical validation.
+    // Late seeds can fill a partial map, but cannot replace a complete live batch.
+    void fullHeatmapSnapshot().then(raw=>{
+      const snapshot=validateFullHeatmapSnapshot(raw);
+      if(!current()||!snapshot||shownFull?.complete===true)return;
+      if(!shownFull)fullCached=true;
+      paintFull(shownFull?mergeHeatmapProgress(snapshot,shownFull):snapshot,{save:true});
+    }).catch(()=>{});
     void homeSnapshot().then(home=>{
       if(!current()||!home)return;
       latestHome=home;
@@ -146,7 +155,7 @@ export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareS
         let full=await fullHeatmap({force});if(!current())return;
           if(!full?.results?.length)throw new Error('전체 히트맵 데이터를 아직 확인하지 못했어요.');
           fullCached=false;
-        paintFull(full,{save:true});
+        paintFull(mergeHeatmapProgress(shownFull,full),{save:true});
         for(let i=0;full?.refreshing&&i<20&&current();i++){
           await new Promise(resolve=>setTimeout(resolve,3000));if(!current())return;
           full=await fullHeatmap({force:true});
@@ -154,7 +163,7 @@ export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareS
             if(full?.refreshing)continue;
             throw new Error('집계 시세를 확인하지 못했어요.');
           }
-          if(current())paintFull(full,{save:true});
+          if(current())paintFull(mergeHeatmapProgress(shownFull,full),{save:true});
         }
         if(full?.refreshing&&current()){fullError=true;paintFull(shownFull);}
       }catch(error){

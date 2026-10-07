@@ -81,6 +81,7 @@ export function payloadFor(url) {
     '/api/home-insights': { items: [] },
     '/api/heatmap': { results: quotes },
     '/api/heatmap/full': { generatedAt: asOf, results: quotes, complete: true },
+    '/static/data/full_heatmap_snapshot.json': null,
     '/api/quotes': { results: selected },
     '/api/search': { results: quotes.filter(row => `${row.name} ${row.ticker}`.includes(url.searchParams.get('q') || '')).map(row => ({ symbol: row.ticker, name: row.name, market: row.market, type: 'EQUITY' })) },
     '/api/compare': { stocks: selected.map(row => ({ ...row, return: 10, startDate: '2026-09-01', endDate: '2026-10-07', data: [{ time: '2026-09-01', value: 0, price: row.price / 1.1 }, { time: '2026-10-07', value: 10, price: row.price }] })) },

@@ -1,5 +1,5 @@
 import {guruScreeningData,guruEvidenceData,valuationStocks} from './api.js';
-import {GURU_STRATEGIES,guruMetricLabels,guruMetricUnits,guruRowMetrics,validateGuruSnapshot,filterGuruResults,guruViewStatus,greenblattCurrentCheck} from './guruInvestingModel.js';
+import {GURU_STRATEGIES,guruMetricLabels,guruMetricUnits,guruRowMetrics,validateGuruSnapshot,filterGuruResults,guruViewStatus,greenblattCurrentCheck,guruMissingReasons,isOlderGuruSnapshot} from './guruInvestingModel.js';
 import {extensionCriteria,extensionEvidence} from './guruInvestingExtensions.js';
 import {loadingIndicator} from './loadingView.js';
 
@@ -12,6 +12,10 @@ function criteria(strategy){
  return `<details class="guru-guide"><summary>선정 기준 · 투자 원칙 보기</summary><div><p>투자 원칙을 참고해 <b>차트뷰가 정한 수치 기준</b>이에요. 해당 투자자가 선정한 종목이 아니에요.</p><dl>${rows.map(([a,b])=>`<div><dt>${a}</dt><dd>${b}</dd></div>`).join('')}</dl><p>${strategy==='buffett'?'ROE는 총순이익 ÷ 평균 총자본이에요. 부채총계는 차입금과 다르고, OCF는 영업현금흐름이며 오너이익이 아니에요.':'PER은 기준일 종가 ÷ 최근 연간 EPS예요. PEG는 이 PER ÷ 과거 3년 EPS 성장률(20%는 20)이에요. TTM·예상 지표와 구분해요.'}</p><p>${GURU_STRATEGIES[strategy].limits}</p><button class="guru-text-action" data-external-url="${esc(source)}">투자 원칙 출처 확인 ↗</button></div></details>`;
 }
 function metric(key,value){return `<span><small>${esc(guruMetricLabels[key])}</small><b>${num(value,guruMetricUnits[key]||'%')}</b></span>`;}
+function missingReasonsMarkup(s){
+ const reasons=guruMissingReasons(s);
+ return reasons.length?`<details class="guru-guide guru-missing-reasons"><summary>검증 제외 사유 보기</summary><div><p>자료 부족과 지원 제외를 포함한 사유예요. 조건 미충족·수집 대기와 구분해요.</p><ul>${reasons.map(([reason,count])=>`<li>${esc(reason)} · ${num(count)}개</li>`).join('')}</ul></div></details>`:'';
+}
 function candidate(row,strategy,expanded,currentCheck=null,currentState='idle'){
  const keys=guruRowMetrics[strategy];
  const ttmLabel=currentCheck?.status==='matched'?'TTM충족':currentCheck?.status==='failed'?'TTM미충족':currentCheck?.status==='unknown'?'TTM자료없음':currentState==='loading'?'TTM확인중':currentState==='error'?'TTM실패':'TTM확인전';
@@ -87,7 +91,7 @@ export function renderGuruInvesting({state,shell,bindNav,navigate,isCurrent}){
   }catch(error){if(!current()||!target.isConnected)return;target.innerHTML=`<p>${error.status===409?'결과가 갱신되어 같은 버전의 근거를 확인할 수 없어요.':esc(error.message||'근거를 불러오지 못했어요.')}</p><button class="guru-retry-evidence">${error.status===409?'최신 결과 확인':'근거 다시 확인'}</button>`;target.querySelector('button').onclick=()=>error.status===409?load(true):showEvidence(row);}
  }
  function rowsMarkup(){
-  const s=data.strategies[strategy],rows=filterGuruResults(s.results,session,strategy),status=guruViewStatus(s);
+  const s=data.strategies[strategy],rows=filterGuruResults(s.results,session,strategy),status=guruViewStatus(s,strategy);
   return {rows,html:rows.length?rows.slice(0,session.count).map(r=>candidate(r,strategy,session.expandedSymbol===r.symbol,currentCheckFor(r),currentState)).join('')+(rows.length>session.count?'<button class="guru-more">더 보기</button>':''):`<div class="guru-empty"><strong>${status.status==='ready'?'검색 조건에 맞는 선정 기업이 없어요.':esc(status.title)}</strong><p>${status.status==='ready'?'선정된 결과 안에서 검색해요. 검색어나 시장 조건을 바꿔보세요.':esc(status.text)}</p></div>`};
  }
  function paintRows(){
@@ -105,7 +109,7 @@ export function renderGuruInvesting({state,shell,bindNav,navigate,isCurrent}){
   if(!s){host.innerHTML='<div class="guru-empty"><strong>새 기준의 결과가 아직 게시되지 않았어요.</strong><p>기존 버핏·린치 결과는 계속 확인할 수 있어요.</p><button class="guru-retry">최신 결과 확인</button></div>';host.querySelector('button').onclick=()=>load(true);return;}
   const basis=strategy==='minervini'?'253거래일 일봉 추세':strategy==='oneil'?'단일 분기·연간 공시와 일봉':strategy==='greenblatt'?'확정 연간 ROA·PER + 기준일 종가':'기업별 최근 연간 공시';
   const matchedLabel=strategy==='greenblatt'?'연간 조건 충족':'조건 충족';
-  host.innerHTML=`<div class="guru-coverage"><strong>${matchedLabel} ${s.matchedCount}개 <span>검증 ${s.evaluatedCount.toLocaleString()} / 대상 ${s.universeCount.toLocaleString()}</span></strong><small>${esc(data.tradeDate)} 종가 · ${basis}</small>${strategy==='greenblatt'?'<small class="guru-current-summary">TTM 재확인은 연간 선정과 분리해 표시해요.</small>':''}<small>수집 대기 ${s.pendingCount} · 자료 부족 ${s.insufficientCount} · 지원 제외 ${s.unsupportedCount}</small></div><form class="guru-filters"><input type="search" aria-label="선정 기업 이름 또는 코드" placeholder="선정 기업 이름·코드" value="${esc(session.query)}"><select aria-label="선정 기업 시장"><option value="">전체 시장</option><option ${session.market==='KOSPI'?'selected':''}>KOSPI</option><option ${session.market==='KOSDAQ'?'selected':''}>KOSDAQ</option></select></form><small class="guru-search-count"></small><div class="guru-list"></div><p class="guru-footnote">출처: ${strategy==='minervini'?'KIND · Yahoo Finance':'OpenDART · KIND · Yahoo Finance'}<br>${strategy==='minervini'?'일봉 기준 '+esc(data.tradeDate):'재무 확인 '+esc(String(data.financialAsOf).slice(0,10))} · 결과 생성 ${esc(String(data.generatedAt).slice(0,10))}<br>차트뷰의 조건 조회이며 투자 권유가 아니에요.</p>`;
+  host.innerHTML=`<div class="guru-coverage"><strong>${matchedLabel} ${s.matchedCount}개 <span>검증 ${s.evaluatedCount.toLocaleString()} / 대상 ${s.universeCount.toLocaleString()}</span></strong><small>${esc(data.tradeDate)} 종가 · ${basis}</small>${strategy==='greenblatt'?'<small class="guru-current-summary">TTM 재확인은 연간 선정과 분리해 표시해요.</small>':''}<small>수집 대기 ${s.pendingCount} · 자료 부족 ${s.insufficientCount} · 지원 제외 ${s.unsupportedCount}</small></div>${missingReasonsMarkup(s)}<form class="guru-filters"><input type="search" aria-label="선정 기업 이름 또는 코드" placeholder="선정 기업 이름·코드" value="${esc(session.query)}"><select aria-label="선정 기업 시장"><option value="">전체 시장</option><option ${session.market==='KOSPI'?'selected':''}>KOSPI</option><option ${session.market==='KOSDAQ'?'selected':''}>KOSDAQ</option></select></form><small class="guru-search-count"></small><div class="guru-list"></div><p class="guru-footnote">출처: ${strategy==='minervini'?'KIND · Yahoo Finance':'OpenDART · KIND · Yahoo Finance'}<br>${strategy==='minervini'?'일봉 기준 '+esc(data.tradeDate):'재무 확인 '+esc(String(data.financialAsOf).slice(0,10))} · 결과 생성 ${esc(String(data.generatedAt).slice(0,10))}<br>차트뷰의 조건 조회이며 투자 권유가 아니에요.</p>`;
   const form=host.querySelector('form');form.onsubmit=e=>e.preventDefault();
   form.querySelector('input').oninput=e=>{session.query=e.target.value;session.count=30;paintRows();};
   form.querySelector('select').onchange=e=>{session.market=e.target.value;session.count=30;paintRows();};
@@ -113,8 +117,8 @@ export function renderGuruInvesting({state,shell,bindNav,navigate,isCurrent}){
  }
  async function load(force=false){
   const seq=++sequence;
-  try{const fresh=validateGuruSnapshot(await guruScreeningData({force}));if(!current()||seq!==sequence)return;data=fresh;state.guruSnapshot=fresh;paint();}
-  catch(error){if(!current()||seq!==sequence)return;if(data){let notice=host.querySelector('.guru-refresh-error');if(!notice){notice=document.createElement('p');notice.className='guru-refresh-error';host.prepend(notice);}notice.innerHTML='결과 갱신을 확인하지 못했어요. 표시된 기준일의 자료를 유지해요. <button>다시 확인</button>';notice.querySelector('button').onclick=()=>load(true);}else{host.innerHTML=`<div class="guru-empty"><strong>재무 조건 결과를 불러오지 못했어요.</strong><p>${esc(error.message)}</p><button class="guru-retry">다시 확인</button></div>`;host.querySelector('button').onclick=()=>load(true);}}
+  try{const fresh=validateGuruSnapshot(await guruScreeningData({force}));if(!current()||seq!==sequence)return;if(isOlderGuruSnapshot(fresh,data)){const error=new Error('표시된 결과보다 기준일 또는 생성 시각이 이전인 자료가 응답했어요. 현재 결과를 유지하며 같은 버전의 근거가 게시되면 다시 확인할 수 있어요.');error.code='GURU_OLDER_SNAPSHOT';throw error;}data=fresh;state.guruSnapshot=fresh;paint();}
+  catch(error){if(!current()||seq!==sequence)return;if(data){let notice=host.querySelector('.guru-refresh-error');if(!notice){notice=document.createElement('p');notice.className='guru-refresh-error';notice.setAttribute('role','status');host.prepend(notice);}notice.innerHTML=`${error.code==='GURU_OLDER_SNAPSHOT'?esc(error.message):'결과 갱신을 확인하지 못했어요. 표시된 기준일의 자료를 유지해요.'} <button>다시 확인</button>`;notice.querySelector('button').onclick=()=>load(true);}else{host.innerHTML=`<div class="guru-empty"><strong>재무 조건 결과를 불러오지 못했어요.</strong><p>${esc(error.message)}</p><button class="guru-retry">다시 확인</button></div>`;host.querySelector('button').onclick=()=>load(true);}}
  }
  if(data){try{validateGuruSnapshot(data);paint();}catch{data=null;}}
  load();

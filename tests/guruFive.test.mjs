@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {GURU_STRATEGIES,validateGuruSnapshot,filterGuruResults,guruRowMetrics,guruMetricUnits,greenblattCurrentCheck} from '../src/guruInvestingModel.js';
+import {GURU_STRATEGIES,validateGuruSnapshot,filterGuruResults,guruRowMetrics,guruMetricUnits,greenblattCurrentCheck,guruViewStatus} from '../src/guruInvestingModel.js';
 import {resolveRoute} from '../src/routes.js';
 import {extensionCriteria} from '../src/guruInvestingExtensions.js';
 
@@ -37,4 +37,13 @@ test('Greenblatt PER ranking survives search and market filtering',()=>{
  const rows=[{name:'가',symbol:'000001.KS',market:'KOSPI',metrics:{annualPE:15}},{name:'나',symbol:'000002.KS',market:'KOSPI',metrics:{annualPE:8}}];
  assert.equal(filterGuruResults(rows,{},'greenblatt')[0].name,'나');
  assert.equal(filterGuruResults(rows,{query:'가'},'greenblatt')[0].name,'가');
+});
+test('Minervini missing, pending and empty states describe price history rather than EPS accounts',()=>{
+ const strategy={...s(),matchedCount:0,results:[],evaluatedCount:0,failedCount:0,insufficientCount:1};
+ const unavailable=guruViewStatus(strategy,'minervini');
+ assert.equal(unavailable.status,'unavailable');assert.match(unavailable.text,/253거래일.*상대강도.*90%/);assert.doesNotMatch(unavailable.text,/EPS|계정/);
+ assert.match(guruViewStatus({...strategy,pendingCount:1},'minervini').title,/일봉자료/);
+ assert.match(guruViewStatus({...strategy,evaluatedCount:1,failedCount:1},'minervini').text,/일봉자료/);
+ assert.match(guruViewStatus(strategy,'lynch').text,/EPS/);
+ assert.match(guruViewStatus({...strategy,pendingCount:1}).title,/재무자료/);
 });

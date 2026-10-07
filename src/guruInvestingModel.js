@@ -28,9 +28,24 @@ export function greenblattCurrentCheck(value){
  const status=provenFailure?'failed':roa===null||pe===null?'unknown':'matched';
  return {status,roa,trailingPE:pe,forwardPE,trailingEPS};
 }
-export function guruViewStatus(s){
+// missingReasons is optional in older publications. Its counts describe both
+// insufficient data and unsupported comparisons, not just insufficientCount.
+export function guruMissingReasons(s){
+ const reasons=s?.missingReasons;
+ if(!reasons||typeof reasons!=='object'||Array.isArray(reasons))return [];
+ return Object.entries(reasons).filter(([reason,count])=>reason.trim()&&Number.isInteger(count)&&count>0).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0],'ko-KR'));
+}
+export function isOlderGuruSnapshot(incoming,current){
+ if(!current)return false;
+ const incomingDay=Date.parse(incoming.tradeDate),currentDay=Date.parse(current.tradeDate);
+ if(Number.isFinite(incomingDay)&&Number.isFinite(currentDay)&&incomingDay!==currentDay)return incomingDay<currentDay;
+ const incomingTime=Date.parse(incoming.generatedAt),currentTime=Date.parse(current.generatedAt);
+ return Number.isFinite(incomingTime)&&Number.isFinite(currentTime)&&incomingTime<currentTime;
+}
+export function guruViewStatus(s,strategy=''){
  if(s.matchedCount>0)return {status:'ready'};
- if(s.evaluatedCount>0)return {status:'empty',title:'현재 조건을 모두 충족한 기업이 없어요.',text:'확인한 재무자료에서 차트뷰 기준에 맞는 기업을 찾지 못했어요. 조건을 자동으로 완화하지 않아요.'};
- if(s.pendingCount>0)return {status:'pending',title:'재무자료를 순차적으로 확인하고 있어요.',text:'검증을 마친 기업만 표시해요. 전체 대상과 수집 대기는 위에서 확인할 수 있어요.'};
+ if(s.evaluatedCount>0)return {status:'empty',title:'현재 조건을 모두 충족한 기업이 없어요.',text:`확인한 ${strategy==='minervini'?'일봉':'재무'}자료에서 차트뷰 기준에 맞는 기업을 찾지 못했어요. 조건을 자동으로 완화하지 않아요.`};
+ if(s.pendingCount>0)return {status:'pending',title:`${strategy==='minervini'?'일봉':'재무'}자료를 순차적으로 확인하고 있어요.`,text:'검증을 마친 기업만 표시해요. 전체 대상과 수집 대기는 위에서 확인할 수 있어요.'};
+ if(strategy==='minervini')return {status:'unavailable',title:'이 기준으로 검증할 수 있는 자료가 부족해요.',text:'같은 기준일의 253거래일 일봉과 상대강도 비교시장 자료를 확인해야 해요. 비교 대상의 일봉 자료가 90% 미만이면 결과를 표시하지 않아요.'};
  return {status:'unavailable',title:'이 기준으로 검증할 수 있는 자료가 부족해요.',text:'계정·기간·EPS 비교 기준을 확인하지 못한 기업은 결과에 넣지 않아요.'};
 }

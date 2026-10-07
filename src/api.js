@@ -58,6 +58,8 @@ export const visitorActivity=(visitorId,surface='other')=>api('/api/activity',{
 export const homeLive=()=>api('/api/home-live',{ttlMs:0,force:true,timeoutMs:5000,retries:0});
 export const homeHeatmap=()=>api('/api/heatmap',{ttlMs:60000});
 export const fullHeatmap=({force=false}={})=>api('/api/heatmap/full',{ttlMs:15000,force});
+// Optional, dated warm-start material; the full live API still revalidates it.
+export const fullHeatmapSnapshot=()=>staticData('full_heatmap_snapshot.json',()=>api('/static/data/full_heatmap_snapshot.json',{ttlMs:60000,timeoutMs:5000,retries:0}));
 export const valuationStocks=tickers=>api(`/api/valuation?tickers=${list(tickers)}`,{ttlMs:300000});
 export const macroData=({force=false}={})=>api('/api/macro',{ttlMs:300000,force});
 export const homeInsights=(tickers=[])=>api(`/api/home-insights?tickers=${list(tickers)}`,{ttlMs:60000});
