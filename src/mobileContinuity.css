@@ -91,7 +91,8 @@
  .app-shell[data-surface="memory"] .dram-spot-chart-labels b{font-size:11px}
  .app-shell[data-surface="memory"] .dram-spot-basis span{font-size:12px;line-height:1.5}
  .app-shell[data-surface="memory"] .dram-spot-basis button{min-height:44px;color:var(--cv-teal);background:var(--cv-teal-soft)}
- .app-shell[data-surface="exports"] .export-topic-nav button{min-height:44px}
+ .app-shell[data-surface="exports"] .export-topic-nav button{min-width:44px;min-height:44px}
+ .app-shell[data-surface="exports"] .export-semi-chart-picker-rail button{min-width:44px;min-height:44px}
 
  .app-shell[data-surface="watch"] .saved-research{padding:12px;border-radius:14px}
  .app-shell[data-surface="watch"] .saved-research h2{font-size:17px}

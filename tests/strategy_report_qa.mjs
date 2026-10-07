@@ -57,6 +57,9 @@ try{
    await page.locator('[data-back]').first().click();await page.locator('#screener-filters').waitFor();
    assert.equal(await page.locator('[name="query"]').inputValue(),'삼성');assert.equal(await page.locator('[name="market"]').inputValue(),'KOSPI');
    assert.equal(await page.locator('[name="rsiMax"]').inputValue(),'');
+   // Additional technical fields are intentionally collapsed after detail/back.
+   // Open the existing disclosure as a user would before editing RSI.
+   await page.locator('.screener-extra>summary').click();
    await page.locator('[name="rsiMax"]').fill('10');assert.match(await page.locator('#analysis-body').innerText(),/기술 조건/);
    await page.locator('[data-clear-preset]').click();await page.locator('.analysis-stock[data-stock-detail="005930.KS"]').waitFor();
    await page.locator('[name="query"]').fill('없는종목');assert.match(await page.locator('#analysis-body').innerText(),/종목명·코드와 시장/);

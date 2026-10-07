@@ -14,13 +14,19 @@
     "build": "npm test && vite build && node scripts/export-preview-routes.mjs && node tests/verify_preview_routes.mjs",
     "build:ait": "npm run build && ait build",
     "deploy:ait": "ait deploy",
-    "preview": "vite preview --host 0.0.0.0"
+    "preview": "vite preview --host 0.0.0.0",
+    "test:e2e": "playwright test",
+    "test:integration": "playwright test --grep integration",
+    "test:e2e:report": "playwright show-report",
+    "qa:prepush": "npm run build && npm run test:e2e",
+    "test:e2e:live": "playwright test --config playwright.live.config.mjs"
   },
   "dependencies": {
     "@apps-in-toss/web-framework": "3.5.0",
     "lightweight-charts": "^4.1.0"
   },
   "devDependencies": {
+    "@playwright/test": "1.55.0",
     "vite": "^7.0.0"
   }
 }

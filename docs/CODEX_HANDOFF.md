@@ -63,9 +63,9 @@ VITE_CHARTVIEW_STATIC_DATA_BASE=https://raw.githubusercontent.com/shoon94parkk-d
 ```powershell
 npm test
 npm run build
-# 모바일 QA용 playwright는 CI와 같은 버전으로 별도 준비
-npm install --no-save --package-lock=false playwright@1.55.0
-npx playwright install chromium
+# Playwright는 lockfile에 고정되어 npm ci로 설치됨
+npx playwright install --with-deps chromium webkit
+npm run qa:prepush
 npm run preview -- --port 4173
 # 다른 터미널
 node tests/guru_investing_qa.mjs
@@ -85,3 +85,7 @@ npm run build:ait
 ## 새 Codex 첫 메시지 예시
 
 > Chart View Toss 작업을 이어갑니다. 두 저장소 최신 main을 확인하고 AGENTS.md와 docs/CODEX_HANDOFF.md, project-memory/regression-guardrails/decision-log를 먼저 읽으세요. 모바일의 작은 행과 현재 분석 동선을 유지하세요. 거장 투자법 다섯 방법의 실제 데이터·운영 revision을 확인하고, 완료 기록과 외부 미완료 항목을 구분한 뒤 요청한 변경을 진행하세요. 기존 해결을 반복하거나 근거·날짜를 추정하지 마세요.
+
+## 배포 전 자동 QA
+
+[자동 QA 실행·테스트 추가·실패 분석](AUTOMATED_QA.md). PR 및 main의 결정론적 브라우저 검사를 먼저 통과해야 Render 브랜치가 갱신된다. Codex는 프런트 수정 후 push 전에 `npm run qa:prepush`를 실제 실행한다. 외부 LLM 키는 필요 없다.

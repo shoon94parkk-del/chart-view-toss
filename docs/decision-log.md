@@ -598,3 +598,14 @@ Classification: new behavior. 기존 반도체 월간 카드·가격 추적·품
 # 2026-10-06 — 실제 사용 점검 계획 0.15.1
 
 새 날짜/뉴스 이동 버그와 시세 의미 계약의 회귀를 구분하고 수정했다. 최신 시세 수렴·한 종목 fresh 검증·옵션별 독립 로딩·기존 캐시/SWR는 보존한다. 2026-10-05 단일 업종 지도를 기준으로 44px 업종 입구와 위쪽 종목 목록을 제공하며 과거 다중 모드를 복원하지 않는다. 공시 비교를 산업보다 먼저 두고 공시 하위 이동과 연간/품질/산업 펼침을 추가한다. IDEA 펼침을 회사/패턴 식별자로 복구한다. PICK 집계 범위/한국어 상태, 단계별 필터, 뉴스 언급 의미와 PC 비교 밀도를 정리했다. 모든 변경은 실제 데이터·계산·개인 저장과 원문 접근을 보존한다. 검사·분류·구현은 AUDIT_IMPLEMENTATION_2026-10-06.md, 자동 모바일 검사는 audit_plan_qa.mjs 및 CI에 기록한다.
+
+
+## 2026-10-07 — Deterministic pre-deploy E2E QA
+
+Classification: new QA behavior plus new touch-target bugs. Reuse the existing export recovery fixtures and retain every existing Node/mobile QA. Pin Playwright Test 1.55.0 beside the existing browser version; run twenty browser/integration tests across desktop Chromium, Pixel 5, 320×693 and small iPhone SE WebKit. Fixed API contracts, unexpected-request failures, actual response/normalizer/UI relations, held optional requests and source-specific retries require no LLM API keys. Separate optional live checks validate actual quotes, DRAM histories and PICK aggregates without hardcoded real-time numbers.
+
+Actual mobile defects: short export tabs measured 40px wide, and the nearby semiconductor chart selector measured 40px high against the existing 44px control contract. Add only min-width/min-height in the existing mobile stylesheet; no architecture, data arithmetic or UI redesign. Browser coverage checks every tab and the real chart picker, alongside overflow/hit testing and graph proximity.
+
+Deployment defect: Render sync previously ran independently of QA and promoted newly fetched main even when that commit was not the one tested. Reuse the PR regression workflow inside main sync, require every job to pass, promote exactly github.sha only while it is still current main, and retain deployed-fix ancestry/normal push protection. Retry-passing flaky tests fail CI. Existing release/native/provider gates stay separate. See AUTOMATED_QA.md and QA_2026-10-07.md for commands and execution evidence.
+
+GitHub validation exposed an outdated strategy_report_qa interaction: recent compact filters put RSI inside a collapsed nested technical disclosure, but the old test filled it immediately after detail/back. Open that disclosure with its existing summary before editing; preserve every warning/filter/restore assertion. The app's filter state and default collapsed UI remain unchanged. This is a test assumption correction, verified at 320/390/430px, rather than a data/UI bug fix.
