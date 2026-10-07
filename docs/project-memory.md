@@ -378,3 +378,7 @@ See AUDIT_IMPLEMENTATION_2026-10-06.md and audit_plan_qa.mjs before revisiting d
 - 46 browser/integration tests × desktop/Android/320px/iPhone WebKit = 184 executions. Existing 20 cases remain; 26 cases were added. New coverage includes 17 axe screens/states, manual keyboard tabs and focus across rerender/same-hash re-entry, accessible names and five public memory price families/503 retry.
 - Foreground-only contrast fixes preserve layout/font sizes and financial meaning. Selection labels track asynchronous DOM status; date/action descriptions and full company identity remain accessible.
 - Keep existing native pinch restriction and release/device gates. Only meta-viewport is explicitly excepted; axe incomplete results need human review. No added LLM/API cost or production axe import.
+
+## 2026-10-07 Cloud Codex local diagnostics
+
+Five optional GitHub tools are pinned independently in tools/codex; install with npm ci --prefix tools/codex --ignore-scripts. Browser exploration uses agent-browser's ordinary local commands, not its AI chat or provider mode. Lighthouse mobile-audit reuses tests/e2e/data.mjs, emits screenshots/HTML/JSON and distinguishes fixture performance from live data. Knip findings require source/test/prototype review before removal; dependency-cruiser emits an advisory import graph; fast-check generates seeded financial boundary cases. Root runtime packages and required CI gate stay unchanged. Fresh cloud environments need reinstall; see docs/CLOUD_CODEX_TOOLS.md and keep mandatory qa:prepush.

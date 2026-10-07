@@ -1,0 +1,11 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "entry": [
+    "src/main.js",
+    "scripts/*.{mjs,cjs}",
+    "tests/**/*.{mjs,cjs}",
+    "*.{js,mjs,cjs}"
+  ],
+  "project": ["src/**/*.js", "scripts/**/*.{mjs,cjs}", "tests/**/*.{mjs,cjs}", "*.{js,mjs,cjs}"],
+  "ignore": ["dist/**", "tools/codex/**", "output/**", "artifacts/**"]
+}

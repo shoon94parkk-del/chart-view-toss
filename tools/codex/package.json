@@ -1,0 +1,22 @@
+{
+  "name": "chartview-codex-tools",
+  "private": true,
+  "type": "module",
+  "description": "Optional local diagnostics for cloud Codex; separate from app and CI dependencies.",
+  "engines": { "node": "24.x" },
+  "scripts": {
+    "browser": "node run.mjs browser",
+    "lighthouse": "node run.mjs lighthouse",
+    "knip": "node run.mjs knip",
+    "deps": "node run.mjs deps",
+    "properties": "node properties.mjs",
+    "audit:mobile": "node mobile-audit.mjs"
+  },
+  "dependencies": {
+    "agent-browser": "0.38.2",
+    "lighthouse": "13.5.0",
+    "knip": "6.40.0",
+    "dependency-cruiser": "18.5.0",
+    "fast-check": "4.10.2"
+  }
+}
