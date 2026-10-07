@@ -1,0 +1,109 @@
+/* Readable text on the existing surfaces. Keep layout, backgrounds and market
+   heatmap tone bins unchanged; lazy-loaded views need the same final overrides. */
+.app-shell {
+  --cv-readable-muted: #5d6877;
+  --cv-readable-blue: #2466d0;
+  --cv-readable-red: #c93445;
+}
+
+/* Secondary observations and source/date captions on pale cards. */
+.app-shell :is(
+  .quote-top small, .quote-main > div > span, .quote-change > span,
+  .quote-time, .quote-provenance > summary, .data-disclosure span,
+  .home-change-copy > small, .home-pick-summary small,
+  .home-heatmap-meta, .home-heatmap-market-head > span, .home-heatmap-legend > span,
+  .watch-sort button:not(.active),
+  .market-map-controls button[aria-pressed="false"], .market-map-legend > span,
+  .detail-metric > span, .page-kicker,
+  .financial-subhead > span, .financial-pair small, .financial-year small,
+  .financial-note, .financial-empty, .financial-empty > p,
+  .period-tabs button:not(.active), .detail-period-tabs button:not(.active),
+  #detail-chart-status, .interactive-legend button > span,
+  .dram-spot-intro > span, .dram-spot-card-head > div > span,
+  .dram-spot-range > span, .dram-spot-basis > span,
+  .memory-price-group-head > div > span,
+  .dram-spot-error > span,
+  .export-momentum-bucket > header small, .export-momentum-name > small,
+  .export-provisional-summary span, .export-provisional-summary small,
+  .export-provisional-stage-metrics > span,
+  .export-combo-axis > span, .export-combo-column > small,
+  .export-semi-report-head span,
+  .export-semi-delta-summary span, .export-semi-delta-summary small,
+  .export-semi-delta-row > small, .export-semi-selected-head small,
+  .export-semi-chart-picker small, .export-semi-trend-bar > small,
+  .export-semi-contribution > small, .export-semi-country-mini small,
+  .export-semi-company-list small,
+  .export-industry-hero span, .export-phase-strip small,
+  .export-detail-y-axis > span, .export-industry-country-grid small,
+  .export-industry-research-head > small
+) {
+  color: var(--cv-readable-muted) !important;
+}
+
+/* Preserve blue actions and red/blue financial meaning with darker text. */
+.app-shell :is(
+  .text-button, #market-expand, [data-home-extra-route],
+  .data-disclosure button,
+  .news-meta > span, .review-ack, .review-check,
+  .export-source > summary > span,
+  .all-metrics-details > summary,
+  .memory-price-page .export-section-head > div > span
+) {
+  color: var(--cv-readable-blue) !important;
+}
+.selector-results button b {
+  color: #2466d0;
+}
+.selector-results button.selected b {
+  color: #087b56;
+}
+.app-shell .up:not(.financial-history .up) {
+  color: var(--cv-readable-red) !important;
+}
+.app-shell .down:not(.financial-history .down) {
+  color: var(--cv-readable-blue) !important;
+}
+.app-shell .quote-change.up > strong {
+  color: var(--cv-readable-red) !important;
+}
+.app-shell .quote-change.down > strong {
+  color: var(--cv-readable-blue) !important;
+}
+/* The watch heart keeps its existing red icon/state contract. */
+.app-shell #detail-watch.is-watched > span {
+  color: var(--cv-readable-red);
+}
+
+/* A dark foreground meets contrast on the unchanged bright primary blue. */
+.app-shell .retry {
+  color: #0f1c2e;
+}
+
+/* Middle heatmap colors are intentionally lighter than the strongest bins.
+   Use dark text there without changing the treemap, logos or bin colors. */
+.app-shell :is(.home-hm-up-1, .home-hm-up-2, .home-hm-down-1, .home-hm-down-2) {
+  color: #152840;
+  text-shadow: none;
+}
+.app-shell :is(.home-hm-up-1, .home-hm-up-2, .home-hm-down-1, .home-hm-down-2)
+  :is(.home-heatmap-name > strong, .home-heatmap-ticker, .home-heatmap-change) {
+  color: #152840;
+}
+/* The saturated bins also need a dark foreground at compact label sizes. */
+.app-shell :is(.home-hm-up-3, .home-hm-down-3) {
+  color: #081320;
+  text-shadow: none;
+}
+.app-shell :is(.home-hm-up-3, .home-hm-down-3)
+  :is(.home-heatmap-name > strong, .home-heatmap-ticker, .home-heatmap-change) {
+  color: #081320;
+}
+/* Keep the full market map's darker palette. Its red strongest bin needs
+   black text, while opacity-free white remains readable in the other bins. */
+.app-shell .market-map-stock > span {
+  opacity: 1;
+}
+.app-shell .market-map-stock.map-up-3 :is(strong, span),
+.app-shell .market-map-legend .map-up-3 {
+  color: #000;
+}

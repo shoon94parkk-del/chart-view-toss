@@ -116,7 +116,7 @@ Operational gates still required before public release:
 
 ## 배포 전 자동 E2E QA
 
-OpenAI API 키 없이 Playwright가 PR과 main push를 검사합니다. 홈·검색·관심·상세·수출/DRAM·산업 탭·선정 성과·이동·장애 대응을 데스크톱, Android, 320px, iPhone WebKit에서 검증합니다. 모든 핵심 QA가 통과한 정확한 main 커밋만 기존 Render 브랜치로 동기화합니다.
+OpenAI API 키 없이 Playwright가 PR과 main push를 검사합니다. 홈·검색·관심·상세·수출/DRAM·산업 탭·선정 성과·이동·장애 대응과 axe 접근성·키보드·메모리 가격 정합성을 데스크톱, Android, 320px, iPhone WebKit에서 검증합니다. 총 184회이며, 모든 핵심 QA가 통과한 정확한 main 커밋만 기존 Render 브랜치로 동기화합니다.
 
 ```bash
 npm ci

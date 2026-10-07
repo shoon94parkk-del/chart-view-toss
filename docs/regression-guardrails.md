@@ -447,3 +447,10 @@ Keep compact five-strategy horizontal controls, collapsed criteria, 72–88px ca
 - A flaky retry-pass must fail CI. Do not replace condition/response waits with fixed sleeps or lower mobile geometry assertions to hide a bug.
 - Render sync must depend on all release QA, promote its exact tested SHA only when still current main, and preserve deployed-branch ancestry. Fetching newer main never establishes that newer commit was tested.
 - Export short industry tabs and adjacent semiconductor chart chips must both reach 44px width/height on mobile.
+
+## 2026-10-07 OSS accessibility contracts
+- Preserve stable axe development-only checks and node-level evidence in the existing four-project CI gate. Do not hide contrast/ARIA failures with page exclusions or change backgrounds, geometry, fonts or thresholds for tests.
+- Accessible names must include the visible name, compact observation, financial result and current status. Asynchronous PICK status changes must update the name; preserve issuer identity and date/action descriptions.
+- Export, public memory price and valuation tabs use manual keyboard activation. Arrows/Home/End move focus without lazy API calls; Enter/Space activate and restore focus after rerender. Leave only one tab in the Tab order and label its panel. Same-hash reactivation must not leave a pending focus request for a later unrelated entry.
+- Toss's actual pinch rejection remains documented in REVIEW_FIXES_20260921.md. meta-viewport is the only explicit rule exception; default-disabled experimental heuristics are supplemented with direct name assertions. Passing axe never substitutes for native-device/VoiceOver/TalkBack review.
+- Home selection return and valuation comparison/expanded metrics must reuse finiteNumber so null/empty/nonfinite stays missing, not 0.00%/0배. Preserve actual 0 and numeric-string 0, original provider values and all financial arithmetic. Check both value text and the missing comparison bar.

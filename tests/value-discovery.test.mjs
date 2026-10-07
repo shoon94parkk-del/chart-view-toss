@@ -9,6 +9,14 @@ test('recent selection uses the exact date and code, not another thesis for the 
  const html=selectionCardMarkup(row);assert.ok(html.includes('real &lt;reason&gt;'));assert.ok(html.includes('선정 근거·점검 보기'));assert.ok(html.includes('data-feature-target="2026-10-02:005930"'));assert.ok(!html.includes('유지'));assert.equal(selectionKey({pickDate:'2026-10-02',code:'005930'}),row.key);
 });
 test('missing reason remains explicitly unavailable',()=>{assert.match(recentSelections({day:{top3:[{symbol:'NVDA'}]}})[0].reason,/아직 제공되지/);});
+test('selection return preserves missing values instead of reporting a fabricated zero',()=>{
+ for(const returnPct of [null,undefined,'','   ',NaN,Infinity]){
+  const html=selectionCardMarkup({name:'삼성전자',symbol:'005930.KS',returnPct});
+  assert.match(html,/home-selection-return flat">—<\/em>/);
+  assert.doesNotMatch(html,/0\.00%/);
+ }
+ for(const returnPct of [0,'0'])assert.match(selectionCardMarkup({name:'삼성전자',returnPct}),/home-selection-return flat">0\.00%<\/em>/);
+});
 test('feature entry parameters round-trip and malformed targets cannot open another record',()=>{
  for(const [path,key,value] of [['discover/volume-surge','screenerPreset','volume-surge'],['picks/2026-10-02%3A005930','pickFocusKey','2026-10-02:005930'],['exports/memory','exportFocus','memory']])assert.equal(resolveRoute({hash:'#'+path})[key],value);
  assert.equal(resolveRoute({hash:'#picks/wrong:005930'}).pickFocusKey,null);assert.equal(resolveRoute({hash:'#discover/unknown'}).screenerPreset,null);assert.equal(resolveRoute({hash:'#exports'}).exportFocus,null);

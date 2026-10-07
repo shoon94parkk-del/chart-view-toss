@@ -47,6 +47,24 @@ export const industryDetails = Object.fromEntries(Object.entries(existing.indust
   ...row, history: history12(row.history).map(point => ({ ...point, exportsUsdBillion: point.exportsUsdBillion + i })),
 }]));
 export const exportDetail = { ...existing.detail, history: history12(existing.detail.history) };
+// Explicit public-price contract: five independent families, not inferred HBM prices.
+const memoryGroups = [
+  ['dram-chip', 'DRAM 칩', 'ddr5', 'DDR5 16Gb', 58],
+  ['nand-chip', 'NAND 칩', 'nand', 'NAND 128Gb', 7.125],
+  ['nand-wafer', 'NAND 웨이퍼', 'wafer', 'NAND wafer 512Gb', 12.25],
+  ['dram-module', 'DRAM 모듈', 'module', 'DDR5 UDIMM 16GB', 85.5],
+  ['gddr', 'GDDR', 'gddr6', 'GDDR6 8Gb', 4.75],
+].map(([key, name, itemKey, itemName, average], i) => ({
+  key, name, sourceDate: '2026-10-07', sourceUrl: 'https://www.trendforce.com/price',
+  items: [{ key: itemKey, name: itemName, average, changePct: i - 2, dailyLow: average * .9, dailyHigh: average * 1.1 }],
+}));
+export const memoryPrices = {
+  available: true, source: 'TrendForce', groups: memoryGroups, items: memoryGroups[0].items,
+  history: ['2026-10-05', '2026-10-06', '2026-10-07'].map((date, i) => ({
+    date, values: Object.fromEntries(memoryGroups.map(group => [group.items[0].key, group.items[0].average * (.98 + i / 100)])),
+  })),
+  unavailablePriceSeries: [{ name: 'HBM', reason: '직접 공개 가격 미제공' }],
+};
 export { existing };
 
 export function payloadFor(url) {
@@ -79,6 +97,7 @@ export function payloadFor(url) {
     '/api/export-momentum/semiconductor-trends': trends,
     '/api/export-momentum/semiconductor-countries': existing.matrix,
     '/api/export-momentum/item-detail': industryDetails[url.searchParams.get('key')] || exportDetail,
+    '/api/memory-prices': memoryPrices,
     '/static/data/pick_monitor.json': monitor,
     '/static/data/screener.json': screener,
     '/static/data/company_context.json': existing.companyContext,

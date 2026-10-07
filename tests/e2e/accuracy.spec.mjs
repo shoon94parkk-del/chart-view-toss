@@ -55,3 +55,36 @@ test('integration 선정 성과: 개별 수익률·평균·분모·우선 상태
   await expect(nvda.locator('[data-pick-detail]')).toContainText('기업 근거 상태 · 유지');
   await expect(nvda.locator('[data-pick-detail]')).toContainText('단기 매도 검토');
 });
+
+for (const value of [null, '', 0]) {
+  test(`integration 결측과 실제 0 구분: 선정 성과·PER ${JSON.stringify(value)}`, async ({ page, qa }) => {
+    qa.overrides.set('/api/home-bootstrap', (route, url) => {
+      const payload = payloadFor(url);
+      payload.day.top3 = payload.day.top3.map(row => ({ ...row, returnPct: value }));
+      payload.recommendations = payload.recommendations.map(row => ({ ...row, returnPct: value }));
+      return route.fulfill({ json: payload });
+    });
+    qa.overrides.set('/api/valuation', (route, url) => {
+      const payload = payloadFor(url);
+      payload.stocks = payload.stocks.map(row => ({ ...row, forwardPE: value, trailingPE: value }));
+      return route.fulfill({ json: payload });
+    });
+    const homeResponse = page.waitForResponse(response => new URL(response.url()).pathname === '/api/home-bootstrap');
+    await openHome(page);
+    const rawPick = (await (await homeResponse).json()).day.top3[0];
+    const pickValue = rawPick.returnPct;
+    expect(pickValue).toBe(value);
+    await expect(page.locator('.home-selection-return').first()).toHaveText(pickValue === 0 ? '0.00%' : '—');
+    const valuationResponse = page.waitForResponse(response => new URL(response.url()).pathname === '/api/valuation');
+    await page.goto('/#valuation');
+    const rawMetric = (await (await valuationResponse).json()).stocks[0].forwardPE;
+    expect(rawMetric).toBe(value);
+    const row = page.locator(`.valuation-compare-row[data-stock-detail="${symbol}"]`);
+    await expect(row.locator('.valuation-row-value > strong')).toHaveText(rawMetric === 0 ? '0배' : '-');
+    await expect(row.locator('.metric-bar > i')).toHaveAttribute('style', rawMetric === 0 ? 'width:4%' : 'width:0%');
+    await page.getByRole('tab', { name: '실적 PER', exact: true }).click();
+    await expect(row.locator('.valuation-row-value > strong')).toHaveText(value === 0 ? '0배' : '-');
+    await page.getByText('종목별 전체 지표 보기', { exact: true }).click();
+    await expect(page.locator('.metric-cell strong').first()).toHaveText(value === 0 ? '0배' : '-');
+  });
+}

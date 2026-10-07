@@ -1,5 +1,6 @@
 import { loadExportItemDetail, loadExportMomentumMap, loadExportMomentumSnapshot, loadExportProvisionalRadar, loadSemiconductorCountryMatrix, loadSemiconductorTrends } from './exportMomentumData.js';
 import {exportCompanyCandidates,memoryMovements} from './insightModel.js';
+import { bindHorizontalTabs, focusSelectedTab } from './accessibleTabs.js';
 import {
   balanceTone,
   chartExtent,
@@ -179,7 +180,7 @@ function renderMomentumMap(map){
             <header><span class="export-momentum-mark">${esc(bucket.mark)}</span><div><strong>${esc(bucket.label)}</strong><small>${esc(bucket.hint)}</small></div><b>${bucket.rows.length}</b></header>
             <div class="export-momentum-list">
               ${bucket.rows.map(row=>`
-                <button type="button" data-export-momentum-item="${esc(row.key)}" aria-label="${esc(row.name)} 상세 보기">
+                <button type="button" data-export-momentum-item="${esc(row.key)}" aria-description="${esc(row.name)} 상세 보기">
                   <span class="export-momentum-name"><strong>${esc(row.name)}</strong><small>3개월 평균 ${esc(formatSignedPct(row.avg3mYoY))}</small></span>
                   <span class="export-momentum-values">
                     <b class="${yoyTone(row.exportYoY)}">${esc(formatSignedPct(row.exportYoY))}</b>
@@ -944,7 +945,7 @@ function sources(snapshot){
 }
 
 function exportPanel(key,content){
-  return `<div class="export-tab-panel" data-export-panel="${key}" hidden>${content}</div>`;
+  return `<div id="export-panel-${key}" class="export-tab-panel" role="tabpanel" aria-labelledby="export-tab-${key}" data-export-panel="${key}" hidden>${content}</div>`;
 }
 
 function paint(host,snapshot,bindNav,onItemOpen){
@@ -968,7 +969,7 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={},onSe
     items:'products',breadth:'products',quadrant:'products',
     countries:'countries',memory:'semiconductor',
   }[key]||'overview');
-  app.innerHTML=shell(`<nav class="export-topic-nav" role="tablist" aria-label="수출 데이터 분류">${tabs.map(([key,label])=>`<button type="button" role="tab" data-export-topic="${key}" aria-selected="false" disabled>${label}</button>`).join('')}</nav><div id="export-momentum-root" class="export-momentum-view">${loading()}</div>`,'수출 데이터');
+  app.innerHTML=shell(`<nav class="export-topic-nav" role="tablist" aria-label="수출 데이터 분류">${tabs.map(([key,label])=>`<button id="export-tab-${key}" type="button" role="tab" aria-controls="export-panel-${key}" tabindex="-1" data-export-topic="${key}" aria-selected="false" disabled>${label}</button>`).join('')}</nav><div id="export-momentum-root" class="export-momentum-view">${loading()}</div>`,'수출 데이터');
   bindNav();
   const host=app.querySelector('#export-momentum-root');
   let seq=0;
@@ -1268,6 +1269,7 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={},onSe
           const selected=button.dataset.exportTopic===panelKey;
           button.disabled=false;
           button.setAttribute('aria-selected',String(selected));
+          button.tabIndex=selected?0:-1;
           button.classList.toggle('is-active',selected);
         });
 
@@ -1290,12 +1292,17 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={},onSe
       };
 
       app.querySelectorAll('[data-export-topic]').forEach(button=>{
-        button.onclick=()=>{if(onSelectionChange)onSelectionChange(button.dataset.exportTopic);else activatePanel(button.dataset.exportTopic,{scroll:true,closeDetail:true});};
+        button.onclick=event=>{
+          state.restoreTabFocus=event.detail===0;
+          if(onSelectionChange)onSelectionChange(button.dataset.exportTopic);
+          else{activatePanel(button.dataset.exportTopic,{scroll:true,closeDetail:true});if(state.restoreTabFocus)focusSelectedTab(app.querySelector('.export-topic-nav'));}
+        };
       });
 
       const requestedFocus=focus;
       const initialPanel=requestedFocus?panelForFocus(requestedFocus):'overview';
       activatePanel(initialPanel);
+      bindHorizontalTabs(app.querySelector('.export-topic-nav'));
       if(requestedFocus){
         const target=focusTarget(requestedFocus);
         if(target){
@@ -1305,6 +1312,7 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={},onSe
         }
         focus=null;
       }
+      if(state.restoreTabFocus){focusSelectedTab(app.querySelector('.export-topic-nav'));state.restoreTabFocus=false;}
       if(state.itemKey)void openItemDetail(state.itemKey,{restore:true});
       window.__chartviewRestoreScroll?.();
     }catch(error){

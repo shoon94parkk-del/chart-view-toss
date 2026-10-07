@@ -17,6 +17,9 @@ export const test = base.extend({
     // The fixture is installed before navigation, including early requests in index.html.
     await page.clock.setFixedTime(new Date('2026-10-07T06:35:00Z'));
     await context.addInitScript(rows => {
+      // axe's result collector opens about:blank, where localStorage has no
+      // origin. Seed actual HTTP app pages only; app errors remain observable.
+      if (!['http:', 'https:'].includes(location.protocol)) return;
       localStorage.setItem('chartview-toss-watchlist-v1', JSON.stringify(rows.map(row => ({ symbol: row.ticker, name: row.name }))));
       localStorage.setItem('chartview-toss-selected-v1', JSON.stringify([rows[0].ticker]));
     }, quotes);

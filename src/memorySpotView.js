@@ -1,5 +1,6 @@
 import { loadMemorySpot } from './exportMomentumData.js';
 import { yoyTone } from './exportMomentumModel.js';
+import { bindHorizontalTabs, focusSelectedTab } from './accessibleTabs.js';
 
 const esc=(value='')=>String(value).replace(/[&<>"']/g,char=>({
   '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
@@ -138,9 +139,9 @@ function renderShell(data,activeKey){
       '<span>공개 숫자가 있는 제품만 표시하며 HBM·MCP처럼 직접 가격이 없는 품목은 추정하지 않습니다.</span>',
     '</div>',
     '<div class="memory-price-tabs" role="tablist" aria-label="메모리 가격 종류">',
-      groups.map(group=>'<button type="button" role="tab" data-memory-price-group="'+esc(group.key)+'" aria-selected="'+String(group.key===active?.key)+'">'+esc(group.name.replace(' 현물',''))+'</button>').join(''),
+      groups.map(group=>'<button id="memory-tab-'+esc(group.key)+'" type="button" role="tab" aria-controls="memory-price-panel" data-memory-price-group="'+esc(group.key)+'" aria-selected="'+String(group.key===active?.key)+'">'+esc(group.name.replace(' 현물',''))+'</button>').join(''),
     '</div>',
-    '<div class="memory-price-active" data-memory-price-active>'+groupView(active,history)+'</div>',
+    '<div id="memory-price-panel" class="memory-price-active" role="tabpanel" aria-labelledby="memory-tab-'+esc(active?.key||'')+'" data-memory-price-active>'+groupView(active,history)+'</div>',
     unavailableView(data?.unavailablePriceSeries),
     '<div class="dram-spot-basis"><span>유료 과거 이력은 가져오지 않으며, 공개 최신값을 확인한 공급자 기준일부터 차트뷰가 자체 누적합니다.</span></div>',
   ].join('');
@@ -157,7 +158,7 @@ function renderError(message){
   ].join('');
 }
 
-export function mountMemorySpot(host,{bindNav,activeGroup='dram-chip',onGroupChange}={}){
+export function mountMemorySpot(host,{bindNav,activeGroup='dram-chip',onGroupChange,restoreTabFocus=false}={}){
   if(!host)return ()=>{};
   let seq=0;
   let data=null;
@@ -165,14 +166,17 @@ export function mountMemorySpot(host,{bindNav,activeGroup='dram-chip',onGroupCha
 
   const bindGroupTabs=()=>{
     host.querySelectorAll('[data-memory-price-group]').forEach(button=>{
-      button.addEventListener('click',()=>{
+      button.addEventListener('click',event=>{
+        const restoreFocus=event.detail===0;
         activeKey=button.dataset.memoryPriceGroup;
         host.innerHTML=renderShell(data,activeKey);
         bindGroupTabs();
         bindNav?.();
-        onGroupChange?.(activeKey);
+        if(restoreFocus)focusSelectedTab(host.querySelector('.memory-price-tabs'));
+        onGroupChange?.(activeKey,{restoreFocus});
       });
     });
+    bindHorizontalTabs(host.querySelector('.memory-price-tabs'));
   };
 
   const load=async(force=false)=>{
@@ -189,6 +193,7 @@ export function mountMemorySpot(host,{bindNav,activeGroup='dram-chip',onGroupCha
       host.innerHTML=renderShell(data,activeKey);
       bindGroupTabs();
       bindNav?.();
+      if(restoreTabFocus){focusSelectedTab(host.querySelector('.memory-price-tabs'));restoreTabFocus=false;}
     }catch(error){
       if(token!==seq||!host.isConnected)return;
       host.removeAttribute('aria-busy');

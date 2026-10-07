@@ -372,3 +372,9 @@ See AUDIT_IMPLEMENTATION_2026-10-06.md and audit_plan_qa.mjs before revisiting d
 - Existing Render branch sync waits for all QA and promotes only the tested, still-current main SHA, preserving ancestry/no-force protection. No LLM API keys or new provider architecture.
 - Mobile export tabs and graph chips have both minimum width/height 44px. Keep the graph picker adjacent to its result.
 - Commands, optional real API diagnostics, required-check setup and remaining native-device scope: AUTOMATED_QA.md.
+
+## 2026-10-07 — Reviewed OSS accessibility integration
+- Six real GitHub candidates reviewed; fixed axe-core/core-npm sources downloaded and stable @axe-core/playwright 4.13.0 integrated only into development QA. Source/version/license and deferred candidates: OSS_REVIEW_2026-10-07.md.
+- 46 browser/integration tests × desktop/Android/320px/iPhone WebKit = 184 executions. Existing 20 cases remain; 26 cases were added. New coverage includes 17 axe screens/states, manual keyboard tabs and focus across rerender/same-hash re-entry, accessible names and five public memory price families/503 retry.
+- Foreground-only contrast fixes preserve layout/font sizes and financial meaning. Selection labels track asynchronous DOM status; date/action descriptions and full company identity remain accessible.
+- Keep existing native pinch restriction and release/device gates. Only meta-viewport is explicitly excepted; axe incomplete results need human review. No added LLM/API cost or production axe import.

@@ -189,7 +189,9 @@ const heatmapMarketMarkup = (payload, market, scope = 'home', limit = Infinity) 
           : !veryTight || (width >= 0.12 && height >= 0.20 && area >= 0.025)
     );
     const classes = [toneClass(item.change), size, market === 'KR' ? 'market-kr-cell' : 'market-us-cell', compact ? 'is-compact' : '', hideLabel ? 'is-label-hidden' : '', micro ? 'is-micro' : '', tickerOnly ? 'is-ticker-only' : ''].filter(Boolean).join(' ');
-    return `<div class="home-heatmap-cell ${classes}" style="left:${(x * 100).toFixed(3)}%;top:${(y * 100).toFixed(3)}%;width:${(width * 100).toFixed(3)}%;height:${(height * 100).toFixed(3)}%" role="button" tabindex="0" data-stock-detail="${esc(item.ticker)}" data-stock-name="${esc(item.name)}" aria-label="${esc(item.name)} ${esc(change)}">${labelMarkup}${showChange ? `<span class="home-heatmap-change">${esc(change)}</span>` : ''}</div>`;
+    const visibleText = [showFallback ? item.fallback : '', hideLabel ? '' : label, showChange ? change : ''].filter(Boolean).join(' ');
+    const accessibleName = [visibleText, !hideLabel && label === item.name ? '' : item.name, showChange ? '' : change].filter(Boolean).join(' ');
+    return `<div class="home-heatmap-cell ${classes}" style="left:${(x * 100).toFixed(3)}%;top:${(y * 100).toFixed(3)}%;width:${(width * 100).toFixed(3)}%;height:${(height * 100).toFixed(3)}%" role="button" tabindex="0" data-stock-detail="${esc(item.ticker)}" data-stock-name="${esc(item.name)}" aria-label="${esc(accessibleName)}">${labelMarkup}${showChange ? `<span class="home-heatmap-change">${esc(change)}</span>` : ''}</div>`;
   }).join('');
 };
 
