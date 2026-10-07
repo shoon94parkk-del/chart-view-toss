@@ -72,7 +72,7 @@ jobs:
         run: sudo apt-get install -y fonts-noto-cjk
       - name: Build the tested commit with production request behavior
         run: npm run build
-      - name: Run deterministic browser and data integration tests
+      - name: Run deterministic E2E, data integration and axe accessibility tests
         run: npm run test:e2e -- --project=${{ matrix.project }}
       - name: Upload report, screenshots, trace, video and request evidence
         if: always()

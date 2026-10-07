@@ -37,6 +37,8 @@ import { formatKst, formatDataSource, formatFinancialAmount, formatChartDate, fo
 import {externalLinkTarget} from './externalLinks.js';
 import {rangeError,requestedRangeNote,financialNavigationHtml} from './auditExperience.js';
 import './auditExperience.css';
+import './accessibility.css';
+import { bindHorizontalTabs } from './accessibleTabs.js';
 
 const WATCHLIST_KEY='chartview-toss-watchlist-v1';
 const SELECTED_KEY='chartview-toss-selected-v1';
@@ -836,9 +838,9 @@ async function renderValuation(){
  document.querySelector('#app').innerHTML=shell(`
    <section class="task-head"><div><h2>밸류에이션 비교</h2><p>같은 지표를 종목별로 나란히 비교해요.</p></div><button class="primary-subtle" id="valuation-select">종목 변경</button></section>
    <div class="selected-summary">${state.selected.length?`${state.selected.length}개 종목 · ${state.selected.map(x=>esc(displayName(x))).join(' · ')}`:'비교할 종목을 선택해주세요.'}</div>
-   <div class="metric-tabs" role="tablist">${Object.entries(metricDefs).map(([key,m])=>`<button role="tab" data-valuation-metric="${key}" aria-selected="${state.valuationMetric===key}" class="${state.valuationMetric===key?'active':''}">${m.label}</button>`).join('')}</div>
+   <div class="metric-tabs" role="tablist" aria-label="비교할 재무 지표">${Object.entries(metricDefs).map(([key,m])=>`<button id="valuation-tab-${key}" role="tab" aria-controls="valuation-list" data-valuation-metric="${key}" aria-selected="${state.valuationMetric===key}" class="${state.valuationMetric===key?'active':''}">${m.label}</button>`).join('')}</div>
    <section class="metric-explain" id="metric-explain"></section>
-   <div id="valuation-list" class="valuation-compare-list">${loadingIndicator('재무 지표를 불러오고 있어요')}<div class="skeleton valuation"></div><div class="skeleton valuation"></div></div>
+   <div id="valuation-list" role="tabpanel" aria-labelledby="valuation-tab-${state.valuationMetric}" class="valuation-compare-list">${loadingIndicator('재무 지표를 불러오고 있어요')}<div class="skeleton valuation"></div><div class="skeleton valuation"></div></div>
    <details class="all-metrics-details"><summary>종목별 전체 지표 보기</summary><div id="all-metrics-list"></div></details>
  `,'밸류에이션');
  bindNav();
@@ -870,20 +872,22 @@ async function renderValuation(){
 
    const paint=()=>{
      const def=metricDefs[state.valuationMetric];
-     document.querySelectorAll('[data-valuation-metric]').forEach(b=>{b.classList.toggle('active',b.dataset.valuationMetric===state.valuationMetric);b.setAttribute('aria-selected',String(b.dataset.valuationMetric===state.valuationMetric))});
+     document.querySelectorAll('[data-valuation-metric]').forEach(b=>{const selected=b.dataset.valuationMetric===state.valuationMetric;b.classList.toggle('active',selected);b.setAttribute('aria-selected',String(selected));b.tabIndex=selected?0:-1});
+     document.querySelector('#valuation-list').setAttribute('aria-labelledby',`valuation-tab-${state.valuationMetric}`);
      document.querySelector('#metric-explain').innerHTML=`<div><strong>${def.label}</strong><span>${def.desc}</span></div><small>값의 높고 낮음은 투자 판단이나 종목 우열을 뜻하지 않아요.</small>`;
-     const valid=rows.map(r=>Number(r[def.key])).filter(Number.isFinite);
+     const valid=rows.map(r=>finiteNumber(r[def.key])).filter(Number.isFinite);
      const maxAbs=Math.max(...valid.map(Math.abs),1);
      document.querySelector('#valuation-list').innerHTML=rows.map((s,i)=>{
-       const value=Number(s[def.key]);const meta=s.fieldMeta?.[def.key]||{};const pct=Number.isFinite(value)?Math.min(100,Math.max(4,Math.abs(value)/maxAbs*100)):0;
+       const value=finiteNumber(s[def.key]);const meta=s.fieldMeta?.[def.key]||{};const pct=Number.isFinite(value)?Math.min(100,Math.max(4,Math.abs(value)/maxAbs*100)):0;
        return `<button class="valuation-compare-row" data-stock-detail="${esc(s.ticker)}"><span class="stock-logo tone-${i%4}">${esc(displayName(s.ticker,s.name).slice(0,1))}</span><span class="valuation-row-copy"><strong>${esc(displayName(s.ticker,s.name))}</strong><small>${esc(s.ticker)} · ${esc(formatMetricPeriod(meta.period))}</small><span class="metric-bar"><i style="width:${pct}%"></i></span><em>${esc(formatDataSource(meta.source||s.dataSource||'출처 확인 필요'))}</em></span><span class="valuation-row-value"><strong>${Number.isFinite(value)?esc(value.toLocaleString('ko-KR',{maximumFractionDigits:2})+def.suffix):'-'}</strong><small>${s.generatedAt?esc(formatKst(s.generatedAt)):'조회시각 -'}</small>${iconSvg('arrow',17)}</span></button>`;
      }).join('');
      bindNav();
    };
    document.querySelectorAll('[data-valuation-metric]').forEach(b=>b.onclick=()=>{state.valuationMetric=b.dataset.valuationMetric;haptic('tickWeak');paint()});
+   bindHorizontalTabs(document.querySelector('.metric-tabs'));
    paint();
 
-   document.querySelector('#all-metrics-list').innerHTML=rows.map((s,i)=>{const quote=getLiveQuote(s.ticker);return `<section class="valuation-card rich-valuation-card"><button class="valuation-top" data-stock-detail="${esc(s.ticker)}"><span class="stock-logo tone-${i%4}">${esc(displayName(s.ticker,s.name).slice(0,1))}</span><span class="valuation-title-copy"><strong>${esc(displayName(s.ticker,s.name))}</strong><small>${esc(s.ticker)}${s.sector?' · '+esc(s.sector):''}</small></span><span class="valuation-price" data-valuation-price="${esc(s.ticker)}"><strong>${esc(formatCurrencyPrice(quote?.price??s.price,quote?.currency??s.currency))}</strong><small>${quote?.asOf?`시세 ${esc(formatKst(quote.asOf))}`:'지표 조회 시점 가격'}</small><i>${iconSvg('arrow',18)}</i></span></button><div class="metric-grid rich-metrics">${Object.values(metricDefs).map((m,j)=>`<div class="metric-cell tone-bg-${j%3}"><span>${m.label}</span><strong>${s[m.key]==null?'-':esc(Number(s[m.key]).toLocaleString('ko-KR',{maximumFractionDigits:2})+m.suffix)}</strong><small>${esc(formatMetricPeriod(s.fieldMeta?.[m.key]?.period||m.desc))}</small></div>`).join('')}</div></section>`}).join('');
+   document.querySelector('#all-metrics-list').innerHTML=rows.map((s,i)=>{const quote=getLiveQuote(s.ticker);return `<section class="valuation-card rich-valuation-card"><button class="valuation-top" data-stock-detail="${esc(s.ticker)}"><span class="stock-logo tone-${i%4}">${esc(displayName(s.ticker,s.name).slice(0,1))}</span><span class="valuation-title-copy"><strong>${esc(displayName(s.ticker,s.name))}</strong><small>${esc(s.ticker)}${s.sector?' · '+esc(s.sector):''}</small></span><span class="valuation-price" data-valuation-price="${esc(s.ticker)}"><strong>${esc(formatCurrencyPrice(quote?.price??s.price,quote?.currency??s.currency))}</strong><small>${quote?.asOf?`시세 ${esc(formatKst(quote.asOf))}`:'지표 조회 시점 가격'}</small><i>${iconSvg('arrow',18)}</i></span></button><div class="metric-grid rich-metrics">${Object.values(metricDefs).map((m,j)=>`<div class="metric-cell tone-bg-${j%3}"><span>${m.label}</span><strong>${Number.isFinite(finiteNumber(s[m.key]))?esc(finiteNumber(s[m.key]).toLocaleString('ko-KR',{maximumFractionDigits:2})+m.suffix):'-'}</strong><small>${esc(formatMetricPeriod(s.fieldMeta?.[m.key]?.period||m.desc))}</small></div>`).join('')}</div></section>`}).join('');
    bindNav();
  }catch(e){
    if(epoch!==viewEpoch)return;
@@ -1115,7 +1119,7 @@ async function renderDetail(){
      button.classList.toggle('is-watched',watched);
      button.disabled=!watched&&!verified;
      button.setAttribute('aria-pressed',String(watched));
-     button.setAttribute('aria-label',`${label} ${watched?'관심종목에서 해제':'관심종목에 등록'}`);
+     button.setAttribute('aria-label',`${label} ${watched?'관심 등록됨 · 관심종목에서 해제':'관심 등록 · 관심종목에 등록'}`);
    }
    const text=document.querySelector('#detail-watch span');
    if(text)text.textContent=watched?'관심 등록됨':'관심 등록';
@@ -1555,6 +1559,7 @@ function render(){
    void Promise.all([import('./exportMomentumView.js'),import('./exportMomentum.css')]).then(([exportsView])=>{
      if(state.tab==='exports'){state.exports ||= {};analysisCleanup=exportsView.renderExportMomentumView({shell,bindNav,focus:state.exportFocus,state:state.exports,onSelectionChange:(panel)=>{
        const focus={overview:null,products:'items',countries:'countries',semiconductor:'memory','passenger-car':'passenger-car',petroleum:'petroleum',cosmetics:'cosmetics',ships:'ships',steel:'steel'}[panel];
+       if(location.hash===(focus?`#exports/${encodeURIComponent(focus)}`:'#exports'))state.exports.restoreTabFocus=false;
        navigate('exports',focus);
      }});}
    });
@@ -1563,7 +1568,10 @@ function render(){
  if(state.tab==='memory'){
    cleanupChart();
    void import('./memoryPriceView.js').then(view=>{
-     if(state.tab==='memory')analysisCleanup=view.renderMemoryPriceView({shell,bindNav,activeGroup:state.memoryPriceGroup,onGroupChange:group=>navigate('memory',group)});
+     if(state.tab==='memory'){
+       const restoreTabFocus=state.memoryTabFocus;state.memoryTabFocus=false;
+       analysisCleanup=view.renderMemoryPriceView({shell,bindNav,activeGroup:state.memoryPriceGroup,restoreTabFocus,onGroupChange:(group,{restoreFocus=false}={})=>{state.memoryTabFocus=restoreFocus&&location.hash!==`#memory/${encodeURIComponent(group)}`;navigate('memory',group);}});
+     }
    });
    return;
  }
@@ -1656,4 +1664,3 @@ startApp();
 if(new URLSearchParams(location.search).get('diagnostics')==='1') {
  Object.defineProperty(window,'chartviewDiagnostics',{value:()=>({version:packageInfo.version,metrics:diagnosticSummary()}),configurable:true});
 }
-

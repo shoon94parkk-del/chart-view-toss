@@ -1,4 +1,5 @@
 import {uiIcon} from './uiIdentity.js';
+import {finiteNumber} from './analysisData.js';
 const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export const selectionKey = row => `${row?.recommendedDate || row?.pickDate || ''}:${row?.code || String(row?.symbol || row?.ticker || '').split('.')[0]}`;
 export function recentSelections(payload) {
@@ -20,8 +21,9 @@ export function valueEntriesMarkup(showPicks = true) {
   </nav>`;
 }
 export function selectionCardMarkup(row, status = '점검 상태 확인 중') {
-  const value=Number(row?.returnPct);
+  const value=finiteNumber(row?.returnPct);
   const returnText=Number.isFinite(value)?`${value>0?'+':''}${value.toFixed(2)}%`:'—';
   const returnTone=Number.isFinite(value)?(value>0?'up':value<0?'down':'flat'):'flat';
-  return `<article class="home-pick-row"><button type="button" class="home-selection-link" data-feature-route="picks" data-feature-target="${esc(row.key)}" aria-label="${esc((row.name || row.symbol) + ' ' + row.recommendedDate + ' 선정 근거·점검 보기')}"><span class="home-selection-heading"><strong>${esc(row.name || row.symbol)}</strong><em class="home-selection-return ${returnTone}">${esc(returnText)}</em></span><span class="home-selection-sub"><span data-selection-status="${esc(row.key)}">${esc(status)}</span><small>${esc(row.reason||'선정 이유 확인하기')}</small><i aria-hidden="true">›</i></span></button></article>`;
+  const contextId=`home-selection-context-${encodeURIComponent(String(row.key||selectionKey(row)))}`;
+  return `<article class="home-pick-row"><button type="button" class="home-selection-link" data-feature-route="picks" data-feature-target="${esc(row.key)}" aria-describedby="${esc(contextId)}"><span class="home-selection-heading"><strong>${esc(row.name || row.symbol)}</strong><em class="home-selection-return ${returnTone}">${esc(returnText)}</em></span><span class="home-selection-sub"><span data-selection-status="${esc(row.key)}">${esc(status)}</span><small>${esc(row.reason||'선정 이유 확인하기')}</small><i aria-hidden="true">›</i></span></button><span id="${esc(contextId)}" hidden>${esc(row.recommendedDate)} 선정 근거·점검 보기</span></article>`;
 }

@@ -17,6 +17,7 @@
     "preview": "vite preview --host 0.0.0.0",
     "test:e2e": "playwright test",
     "test:integration": "playwright test --grep integration",
+    "test:a11y": "playwright test tests/e2e/accessibility.spec.mjs",
     "test:e2e:report": "playwright show-report",
     "qa:prepush": "npm run build && npm run test:e2e",
     "test:e2e:live": "playwright test --config playwright.live.config.mjs"
@@ -26,6 +27,7 @@
     "lightweight-charts": "^4.1.0"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.13.0",
     "@playwright/test": "1.55.0",
     "vite": "^7.0.0"
   }
