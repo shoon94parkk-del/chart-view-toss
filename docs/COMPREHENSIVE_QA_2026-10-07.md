@@ -38,7 +38,7 @@ agency-agents에서 채택한 프로젝트 역할을 현재 Codex 하위 에이�
 
 사전 탐색: 27개 경로 × 4 viewport = 108회, 추가 48개 조작 영역과 11개 펼친 상태 검사. 사전 탐색의 가로 overflow·치명적 JS 오류·blank screen은 0이었지만 위 결측·부분 장애·대비·작은 조작 영역 반례는 별도 조작으로 재현됐다.
 
-기존 46개 브라우저 사례를 유지하고 21개를 추가했다. 전체 67개 × desktop Chromium / 320px Chromium / Android / iPhone SE WebKit = **268회**. 신규 3개 데이터 사례 안에서도 여러 결측/0/관측 구간 입력을 실제 API 응답으로 순회한다. 19개 Node 회귀를 추가해 총 **282개**다.
+기존 46개 브라우저 사례를 유지하고 21개를 추가했다. 전체 67개 × desktop Chromium / 320px Chromium / Android / iPhone SE WebKit = **268회**. 신규 3개 데이터 사례 안에서도 여러 결측/0/관측 구간 입력을 실제 API 응답으로 순회한다. 앱 문제에 대한 19개와 실제 시세 계약의 5개 Node 회귀를 추가해 총 **287개**다.
 
 ```bash
 npm run qa:prepush
@@ -64,7 +64,7 @@ PR와 main QA가 통과한 정확한 SHA만 기존 Render 브랜치로 정상 pu
 
 | 실행 | 결과 |
 | --- | --- |
-| npm run qa:prepush | Node 282/282, production build·26개 직접 진입 파일 검증, E2E 268/268 통과. 실패·flaky·skip 0 |
+| npm run qa:prepush | Node 287/287, production build·26개 직접 진입 파일 검증, E2E 268/268 통과. 실패·flaky·skip 0 |
 | 기존 추가 모바일 QA | financial_flow, mobile_continuity, guru_investing, review_validation, insight_research, insight_followup, watch_quote_parity 7개 모두 통과 |
 | 실제 shared API + 로컬 production 앱 | 삼성전자 검색/시세, DRAM 12개월, 실제 선정 성과 3/3 통과. 합성 응답 없음, TLS 검증 유지 |
 | 생성 데이터 | 전문 데이터 QA 16,000 사례 + 기존 도구의 4,000 사례 통과; 별도 실제 0 표시 검사 통과 |
@@ -80,9 +80,20 @@ Lighthouse는 같은 도구·글꼴·viewport·API fixture로 직렬 실행했�
 ## 추가/수정 파일
 
 - 앱: `src/main.js`, `src/api.js`, `src/searchIdentity.js`, `src/stockSelector.js`, `src/storedLists.js`(추가), `src/dataPresentation.js`, `src/memorySpotView.js`, `src/accessibility.css`.
-- Node 회귀 추가: `tests/dataPresentation.test.mjs`, `tests/searchReliability.test.mjs`, `tests/storedLists.test.mjs`.
+- Node 회귀 추가: `tests/dataPresentation.test.mjs`, `tests/searchReliability.test.mjs`, `tests/storedLists.test.mjs`, `tests/koreanQuoteContract.test.mjs`, `tests/helpers/koreanQuoteContract.mjs`.
 - E2E 추가: `tests/e2e/comprehensive-data.spec.mjs`, `tests/e2e/comprehensive-runtime.spec.mjs`, `tests/e2e/comprehensive-mobile.spec.mjs`.
-- 기존 QA 재사용/보완: `tests/e2e/fixtures.mjs`, `tests/financial_flow_qa.mjs`.
+- 기존 QA 재사용/보완: `tests/e2e/fixtures.mjs`, `tests/financial_flow_qa.mjs`, `tests/live_api_contract.mjs`.
 - 실행/맥락 기록: `README.md`, 이 문서, `docs/AUTOMATED_QA.md`, `docs/CODEX_HANDOFF.md`, `docs/project-memory.md`, `docs/decision-log.md`, `docs/regression-guardrails.md`.
 
 GitHub 최종 검증은 해당 PR의 Checks와 main의 Sync Render preview branch 실행에서 확인한다. 로컬 통과만으로 CI 또는 배포 완료를 주장하지 않는다. 기존 서비스의 실제 배포 SHA와 live 상태, 배포 앱의 실제 데이터 검사까지 별도로 확인한다.
+
+
+## GitHub에서 확인한 실제 시세 계약
+
+[PR #122](https://github.com/shoon94parkk-del/chart-view-toss/pull/122)의 첫 커밋 `ce86881`은 Node·4기기 E2E 268회·audit-browser·AIT build·기존 모바일 QA 8개 check 모두 통과했다. 실제 API smoke만 실패했다. 삼성전자 응답은 `CLOSE`, 거래 시각 `2026-10-07T20:20:23+09:00`, `provider_latest`, `unknown`이었다. 기존 smoke가 CLOSE만으로 regular_close/regular를 강제한 것이 원인이다.
+
+공유 backend main `dd893ba473672957bf3cd1cd9afa62c76cd26798`의 `realtime_korea.py::_quote_session_fields`와 기존 UI guardrail을 확인했다. 명시적 timezone을 가진 실제 관측 시각이 KST 15:30인 CLOSE만 정규장 종가로 인증한다. 그 밖의 CLOSE는 제공처 최신 시세·미확인 세션을 유지한다. OPEN은 기존 regular_live/regular를 유지한다. backend와 앱 시세를 바꾸지 않고 smoke를 이 계약과 일치시켰다.
+
+새 Node 5개는 KST/UTC/다른 offset의 동일 시각, 저녁 거래 시각, missing/invalid/offset 없는 시각, 잘못된 basis/session과 OPEN을 검사한다. 인증된 종가를 latest로 바꾸거나 미인증 최신 값을 종가로 바꾸는 양방향 오류 모두 실패한다. 실제 API smoke를 TLS 검증·기존 프록시로 실행해 전체 통과했다. 기존 provider_latest 표시 회귀와 API→화면 검사는 유지한다.
+
+최종 계약 수정 후 `qa:prepush`도 다시 전체 실행했다: Node **287/287**, build/직접 진입 26개, E2E **268/268**. 실패·flaky·skip 0. 파싱 경계 보완 후 Node 287개와 실제 API smoke도 추가 확인했다.

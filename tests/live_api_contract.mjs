@@ -1,3 +1,5 @@
+import { assertKoreanQuoteSession } from './helpers/koreanQuoteContract.mjs';
+
 const BASE = (process.env.VITE_CHARTVIEW_API_BASE || 'https://chart-view-pkv8.onrender.com').replace(/\/$/, '');
 
 async function get(path, timeoutMs = 25000) {
@@ -26,14 +28,7 @@ assert(quotes.results.every((row) => row.price == null || Number.isFinite(Number
 
 const samsungQuote = quotes.results.find((row) => String(row.ticker || '').toUpperCase() === '005930.KS');
 assert(samsungQuote, 'Samsung quote missing from live quote contract');
-if (String(samsungQuote.marketStatus || '').toUpperCase() === 'CLOSE') {
-  assert(samsungQuote.priceBasis === 'regular_close', 'closed Korean market must expose regular_close price basis');
-  assert(samsungQuote.sessionType === 'regular', 'closed Korean quote must stay on regular session');
-}
-if (String(samsungQuote.marketStatus || '').toUpperCase() === 'OPEN') {
-  assert(samsungQuote.priceBasis === 'regular_live', 'open Korean market must expose regular_live price basis');
-  assert(samsungQuote.sessionType === 'regular', 'open Korean quote must identify regular session');
-}
+assertKoreanQuoteSession(samsungQuote);
 
 const compare = await get('/api/compare?tickers=AAPL%2C005930.KS&period=1mo');
 assert(Array.isArray(compare.stocks) && compare.stocks.length >= 1, 'compare stocks missing');

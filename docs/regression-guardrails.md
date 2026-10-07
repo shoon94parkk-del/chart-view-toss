@@ -463,3 +463,7 @@ Keep compact five-strategy horizontal controls, collapsed criteria, 72–88px ca
 - Preserve independently verified search rows on auxiliary failure with a partial notice/retry. DIRECT-only verification failure, total failed lookup and AbortError cannot become successful matches or a false empty state. A canceled old query cannot overwrite the newest result.
 - Mobile independent watch/source/disclosure targets remain 44px with no price overlap. Compact PICK filters and the original watch icon/background are preserved. Whole-document axe from stable scroll position must be supplemented with actual fully visible controls between sticky/top and bottom navigation and a below-fold contrast check, not extra rule/region exemptions.
 - Regressions: tests/dataPresentation.test.mjs, tests/storedLists.test.mjs, tests/searchReliability.test.mjs and tests/e2e/comprehensive-{data,mobile,runtime}.spec.mjs. Existing 46 browser cases stay in place; the combined suite has 67 cases across four projects.
+
+### Korean live quote smoke must verify the observation, not status alone
+
+A CLOSE status by itself must never certify regular_close. Match shared realtime_korea.py: explicitly zoned asOf converted to KST 15:30 certifies regular_close/regular; other CLOSE remains provider_latest/unknown. OPEN still requires regular_live/regular. Keep tests/koreanQuoteContract.test.mjs and the shared test helper used by live_api_contract; both false close certification and incorrect latest downgrade must fail. Do not rewrite app/backend quote metadata to satisfy a status-only test.

@@ -93,3 +93,5 @@ npm run build:ait
 ## 전문 역할 전체 점검 후속
 
 [전체 점검·수정 기록](COMPREHENSIVE_QA_2026-10-07.md): 결측 지표/메모리 가격·macro 관측 공백, 손상 저장 목록, 검색 부분 장애와 취소, 펼친 근거 대비와 모바일 독립 조작 영역을 보호하는 회귀를 추가했다. 기존 46개에 21개를 더해 67개 × 4기기 = 268회다. 원 저장 데이터·출처/기준·수집·Render 구조는 유지한다. 같은 hash로 이동하는 테스트는 새 응답을 만들지 않으므로 입력 변형마다 실제 reload한다. 화면 위치를 정규화한 axe와 실제 고정 메뉴 사이에서의 조작/가림 검사를 모두 유지한다. e2e·claude-mem은 여전히 소스 조사 상태이며 새 LLM API/자동 hooks를 켜지 않는다.
+
+PR122 실제 API smoke의 CLOSE=regular_close 가정도 수정했다. timezone이 있는 거래 관측 시각 KST 15:30만 종가로 인증하고, 저녁/미인증 시각은 provider_latest/unknown을 유지한다. 기존 backend/UI 계약을 바꾸지 않는다. Node 총 287개, E2E 268회. 시세 metadata를 테스트에 맞춰 강제로 종가로 바꾸지 마라.
