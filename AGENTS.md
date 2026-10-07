@@ -25,6 +25,8 @@ This repository is the Apps in Toss client for Chart View. Do not rely on chat m
 
 Optional cloud Codex diagnostics: read `docs/CLOUD_CODEX_TOOLS.md` when browser exploration, mobile performance, dependency impact, or generated financial edge cases would help. Install the separate pinned `tools/codex` package with `--ignore-scripts`. Use its local wrappers; do not enable secondary LLM/provider/chat features, auto-delete Knip findings, or replace the required Playwright release gate with a diagnostic score.
 
+User-requested multi-agent work: use `docs/agents/ROLES.md` and `docs/AGENT_WORKFLOW.md` when independent development/research/QA/review would help. Assign project ID, current SHA, disjoint file ownership, role and completion evidence; keep reviewers read-only and serialize shared QA outputs/integration. Use only the needed roles rather than spawning every profile for simple edits. Preserve verified decisions and remaining work with `docs/agents/HANDOFF_TEMPLATE.md` and existing memory/handoff documents. Do not treat role prompts, unregistered MCP packages, or a temporary worker database as automatic long-term memory; do not enable external LLM/hooks/capture merely because upstream recommends it.
+
 ## Current production contract
 - Toss preview: https://chart-view-toss.onrender.com
 - Shared backend: https://chart-view-pkv8.onrender.com
