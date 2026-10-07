@@ -1,6 +1,6 @@
 import {fullHeatmap} from './api.js';
 import {readHomeFast,writeHomeFast} from './homeFastCache.js';
-import {alignHeatmapQuotes} from './heatmapAlignment.js';
+import {alignHeatmapQuotes,mergeHeatmapProgress} from './heatmapAlignment.js';
 import {loadingIndicator} from './loadingView.js';
 
 // Below-the-fold content never joins the Home critical request/paint path.
@@ -8,6 +8,7 @@ export function attachLazySectors(host,onStock){
  let started=false,seq=0;
  let view=null;
  const cached=readHomeFast('full-heatmap',6*60*60*1000);
+ let shown=cached;
  host.innerHTML='<p class="home-extra-caption">화면에 도달하면 한국·미국 섹터별 등락을 불러와요.</p>';
  async function load(force=false){
   const token=++seq;
@@ -20,7 +21,7 @@ export function attachLazySectors(host,onStock){
     const payload=await fullHeatmap({force:force||i>0});
     if(!host.isConnected||token!==seq)return;
     if(payload?.results?.length){
-     const next=alignHeatmapQuotes(payload);
+     const next=alignHeatmapQuotes(mergeHeatmapProgress(shown,payload));shown=next;
      writeHomeFast('full-heatmap',next);view.update(next);
     }else{
      view.loading();

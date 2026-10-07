@@ -20,7 +20,7 @@ export function aggregateSectors(payload,market){
  for(const row of payload?.results||[])if(row?.market===market&&row.ticker&&!unique.has(row.ticker))unique.set(row.ticker,row);
  const rows=[...unique.values()];
  const date=row=>String(row.sessionDate||row.asOf||'').slice(0,10);
- const eligible=rows.filter(row=>sectorForRow(row)&&num(row.change)!==null&&num(row.marketCap)>0&&!row.stale&&/^\d{4}-\d{2}-\d{2}$/.test(date(row)));
+ const eligible=rows.filter(row=>sectorForRow(row)&&num(row.change)!==null&&num(row.marketCap)>0&&!row.stale&&!row.retained&&/^\d{4}-\d{2}-\d{2}$/.test(date(row)));
  const dates=new Map();for(const row of eligible)dates.set(date(row),(dates.get(date(row))||0)+1);
  const session=[...dates].sort((a,b)=>b[1]-a[1]||b[0].localeCompare(a[0]))[0]?.[0]||null;
  const groups=new Map();let used=0;
