@@ -1,6 +1,7 @@
 import { loadMemorySpot } from './exportMomentumData.js';
 import { yoyTone } from './exportMomentumModel.js';
 import { bindHorizontalTabs, focusSelectedTab } from './accessibleTabs.js';
+import { finiteNumber } from './analysisData.js';
 
 const esc=(value='')=>String(value).replace(/[&<>"']/g,char=>({
   '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
@@ -13,11 +14,7 @@ const dateLabel=(value)=>{
   return new Intl.DateTimeFormat('ko-KR',{timeZone:'Asia/Seoul',year:'numeric',month:'numeric',day:'numeric'}).format(date);
 };
 
-const finite=(value)=>{
-  if(value===null||value===undefined||value==='')return null;
-  const number=Number(value);
-  return Number.isFinite(number)?number:null;
-};
+const finite=finiteNumber;
 
 const spotPrice=(value)=>{
   const number=finite(value);

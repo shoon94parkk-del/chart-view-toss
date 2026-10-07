@@ -27,12 +27,13 @@ import { API_BASE, quoteSnapshots, quoteSnapshotsLive, compareStocks, marketNow,
 import { applyRuntimeClass, haptic, openExternal, syncNativeBackHandler, closeMiniApp, isAppsInTossRuntime } from './tossBridge.js';
 import { openStockSelector, closeStockSelector, formatSelectedStockLabel } from './stockSelector.js';
 import { initializeStorage, readStored, writeStored, clearStored, getActivityVisitorId } from './storage.js';
+import { parseStoredList } from './storedLists.js';
 import { startHomeLiveSync, setLiveSurface } from './liveHomeSync.js';
 import { readHomeFast, writeHomeFast } from './homeFastCache.js';
 import { rememberLiveQuotes, getLiveQuote, mergeRowsWithLive, resolveLiveQuote } from './liveQuoteStore.js';
 import { seedWatchQuoteCache, saveWatchQuoteCache } from './watchQuoteCache.js';
 import { loadingIndicator, chartLoadingPreview } from './loadingView.js';
-import { formatKst, formatDataSource, formatFinancialAmount, formatChartDate, formatMetricPeriod, formatCurrencyPrice, formatMacroValue, formatMacroChange, macroFreshness, observationLabel, macroCategory, macroPublicationLabel, macroSourceUrl, changeBasisLabel, relationBasisLabel, newsRelation, translatedTag, titleLanguage, formatMarketCap } from './dataPresentation.js';
+import { formatKst, formatDataSource, formatFinancialAmount, formatChartDate, formatMetricPeriod, formatCurrencyPrice, formatMacroValue, formatMacroChange, macroSparklineSvg, macroFreshness, observationLabel, macroCategory, macroPublicationLabel, macroSourceUrl, changeBasisLabel, relationBasisLabel, newsRelation, translatedTag, titleLanguage, formatMarketCap } from './dataPresentation.js';
 
 import {externalLinkTarget} from './externalLinks.js';
 import {rangeError,requestedRangeNote,financialNavigationHtml} from './auditExperience.js';
@@ -123,8 +124,7 @@ function goBack(){
 
 function load(key,fallback){
  try{
-   const value=JSON.parse(readStored(key));
-   return Array.isArray(value)?value:fallback;
+   return parseStoredList(readStored(key),{kind:key===WATCHLIST_KEY?'watch':'selected',fallback});
  }catch{return fallback}
 }
 function persist(){
@@ -896,23 +896,6 @@ async function renderValuation(){
  }
 }
 
-function macroSparklineSvg(rows,isUp){
- const clean=(Array.isArray(rows)?rows:[]).map((row,index)=>({index,value:Number(row?.value)})).filter((row)=>Number.isFinite(row.value));
- if(clean.length<2)return '';
- const values=clean.map((row)=>row.value);
- let min=Math.min(...values),max=Math.max(...values);
- if(max===min){max+=0.5;min-=0.5}
- const pad=(max-min)*0.08;max+=pad;min-=pad;
- const width=100,height=38,yTop=3,yBottom=35;
- const line=clean.map((row,index)=>{
-   const x=(index/(clean.length-1))*width;
-   const y=yBottom-((row.value-min)/(max-min))*(yBottom-yTop);
-   return `${index?'L':'M'}${x.toFixed(2)},${y.toFixed(2)}`;
- }).join(' ');
- const tone=isUp?'var(--macro-up,#e54855)':'var(--macro-down,#3182f6)';
- return `<svg class="macro-sparkline" viewBox="0 0 100 38" preserveAspectRatio="none" aria-hidden="true"><path d="${line}" fill="none" stroke="${tone}" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-}
-
 async function renderMacro({force=false}={}){
  cleanupChart();
  const epoch=viewEpoch;
@@ -940,7 +923,7 @@ async function renderMacro({force=false}={}){
    const groups=new Map();
    (d?.results||[]).forEach(row=>{const category=macroCategory(row);if(!groups.has(category))groups.set(category,[]);groups.get(category).push(row)});
    const order=['금리','물가','유동성','위험','고용','경기','기타'];
-   document.querySelector('#macro-groups').innerHTML=order.filter(k=>groups.has(k)).map(category=>`<section class="macro-group"><div class="section-head"><h2>${category}</h2><small>${groups.get(category).length}개 지표</small></div><div class="macro-grid">${groups.get(category).map((r)=>{const change=formatMacroChange(r);const chart=Array.isArray(r.chart_data)?r.chart_data:[];const isUp=Number(r.delta??r.change)>=0;const spark=macroSparklineSvg(chart,isUp);const status=macroFreshness(r);return `<article class="macro-tile neutral-macro"><div class="macro-tile-top"><span class="macro-symbol">${esc(r.symbol||r.original_symbol||'')}</span><small class="${status.stale?'stale-text':''}">${status.stale?'관측일 확인 필요':'최근 관측'}</small></div><strong>${esc(r.name||r.symbol)}</strong><div class="macro-value"><b>${esc(formatMacroValue(r))}</b><em>${esc(change)}</em></div><div class="macro-mini-chart" aria-label="${esc(r.name||r.symbol)} 추세">${spark||'<span>시계열 없음</span>'}</div>${spark?`<div class="macro-mini-dates"><span>${esc(formatChartDate(chart[0]?.time||''))}</span><span>${esc(formatChartDate(chart.at(-1)?.time||r.asOf||''))}</span></div>`:''}<p>${esc(r.desc||'')}</p><div class="macro-meta-line"><span>${esc(observationLabel(r))}</span><span>${esc(changeBasisLabel(r.changeBasis))}</span>${macroPublicationLabel(r)?`<span>${esc(macroPublicationLabel(r))}</span>`:''}</div><div class="source-row"><small class="source-line">${esc(r.source||'출처 미제공')}</small>${macroSourceUrl(r)?`<button type="button" data-external-url="${esc(macroSourceUrl(r))}">원본 시리즈</button>`:''}</div></article>`}).join('')}</div></section>`).join('');
+   document.querySelector('#macro-groups').innerHTML=order.filter(k=>groups.has(k)).map(category=>`<section class="macro-group"><div class="section-head"><h2>${category}</h2><small>${groups.get(category).length}개 지표</small></div><div class="macro-grid">${groups.get(category).map((r)=>{const change=formatMacroChange(r);const chart=Array.isArray(r.chart_data)?r.chart_data:[];const isUp=Number(r.delta??r.change)>=0;const spark=macroSparklineSvg(chart,isUp);const status=macroFreshness(r);return `<article class="macro-tile neutral-macro"><div class="macro-tile-top"><span class="macro-symbol">${esc(r.symbol||r.original_symbol||'')}</span><small class="${status.stale?'stale-text':''}">${status.stale?'관측일 확인 필요':'최근 관측'}</small></div><strong>${esc(r.name||r.symbol)}</strong><div class="macro-value"><b>${esc(formatMacroValue(r))}</b><em>${esc(change)}</em></div><div class="macro-mini-chart" role="img" aria-label="${esc(r.name||r.symbol)} ${spark?'추세':'시계열 없음'}">${spark||'<span>시계열 없음</span>'}</div>${spark?`<div class="macro-mini-dates"><span>${esc(formatChartDate(chart[0]?.time||''))}</span><span>${esc(formatChartDate(chart.at(-1)?.time||r.asOf||''))}</span></div>`:''}<p>${esc(r.desc||'')}</p><div class="macro-meta-line"><span>${esc(observationLabel(r))}</span><span>${esc(changeBasisLabel(r.changeBasis))}</span>${macroPublicationLabel(r)?`<span>${esc(macroPublicationLabel(r))}</span>`:''}</div><div class="source-row"><small class="source-line">${esc(r.source||'출처 미제공')}</small>${macroSourceUrl(r)?`<button type="button" data-external-url="${esc(macroSourceUrl(r))}">원본 시리즈</button>`:''}</div></article>`}).join('')}</div></section>`).join('');
    bindNav();
  }catch(e){
    if(epoch!==viewEpoch)return;
@@ -1388,7 +1371,7 @@ async function renderDetail(){
  const valuation=valRes.status==='fulfilled'?valRes.value?.stocks?.[0]:null;
  document.querySelector('#detail-cap').innerHTML=marketCapHtml(valuation);
  const metricDefs=[['예상 PER','forwardPE','배'],['실적 PER','trailingPE','배'],['PBR','pbr','배'],['ROE','roe','%'],['영업이익률','operatingMargin','%'],['배당수익률','dividendYield','%']];
-   document.querySelector('#detail-metrics').innerHTML=metricDefs.map(([label,key,suffix],i)=>{const v=valuation?.[key];return `<div class="detail-metric tone-bg-${i%3}"><span>${label}</span><strong>${v==null?'-':esc(Number(v).toLocaleString('ko-KR',{maximumFractionDigits:2})+suffix)}</strong><small>${esc(metricBasis(valuation?.fieldMeta?.[key]))}</small></div>`}).join('');
+   document.querySelector('#detail-metrics').innerHTML=metricDefs.map(([label,key,suffix],i)=>{const v=finiteNumber(valuation?.[key]);return `<div class="detail-metric tone-bg-${i%3}"><span>${label}</span><strong>${v==null?'-':esc(Number(v).toLocaleString('ko-KR',{maximumFractionDigits:2})+suffix)}</strong><small>${esc(metricBasis(valuation?.fieldMeta?.[key]))}</small></div>`}).join('');
  document.querySelector('#detail-metric-meta').innerHTML=valuation?`재무 데이터 조회 ${esc(formatKst(valuation.generatedAt))}<p>예상 PER은 제공처의 예상 이익, 실적 PER은 최근 12개월 이익을 사용해요. ROE는 제공처의 기간·회계 기준이며 DART 누적 실적·현금 비율과 직접 같은 값으로 비교하지 않아요. 배당수익률은 제공처 표시·보고 기준으로 미래 배당을 보장하지 않아요.</p>`:'재무 데이터를 불러오지 못했어요. <button class="retry" data-retry-detail>다시 시도</button>';
 
  }));

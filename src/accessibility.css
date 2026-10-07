@@ -107,3 +107,45 @@
 .app-shell .market-map-legend .map-up-3 {
   color: #000;
 }
+
+/* Additional task states: inactive news sort, saved evidence and expanded
+   financial/guru results keep their existing surfaces and financial meaning. */
+.app-shell :is(
+  [data-news-sort][aria-pressed="false"], .local-data-card p,
+  .saved-research-row > small,
+  .guru-evidence-basis, .guru-evidence > .guru-footnote, .guru-next > p
+) {
+  color: var(--cv-readable-muted);
+}
+.app-shell .research-track-options button,
+.app-shell .freshness-card button {
+  color: var(--cv-readable-blue);
+}
+.app-shell .status-badge.red {
+  color: #b72c3a;
+}
+
+@media (max-width: 600px) {
+  /* The larger watch hit box keeps the original 32px circle, icon position,
+     stock row height and price column. Its left edge clears the price gutter. */
+  .app-shell .watch-remove {
+    width: 44px;
+    height: 44px;
+    right: 0;
+    top: 2px;
+    background: radial-gradient(circle at 20px 50%, #fff0f1 16px, transparent 16px);
+  }
+  .app-shell .watch-remove > svg {
+    transform: translateX(-2px);
+  }
+  .app-shell .financial-source {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .app-shell :is(
+    .quote-provenance > summary, .detail-review > summary,
+    .memory-price-source, .memory-price-unavailable > summary
+  ) {
+    min-height: 44px;
+  }
+}

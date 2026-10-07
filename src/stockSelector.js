@@ -165,7 +165,8 @@ export function openStockSelector({
       resultEl.insertAdjacentHTML('beforeend', '<div class="selector-empty" role="status">검색을 완료하지 못했어요. 관심종목은 계속 선택할 수 있어요.<button type="button" class="selector-retry" data-selector-retry>검색 다시 시도</button></div>');
       resultEl.querySelector('[data-selector-retry]').onclick = () => searchQuery(true);
     }
-    if(searchState === 'idle')resultEl.querySelector('[data-selector-retry]')?.addEventListener('click',()=>searchQuery(true));
+    if (searchState === 'partial') resultEl.insertAdjacentHTML('beforeend', '<div class="selector-empty" role="status">일부 검색 자료를 확인하지 못했어요. 확인된 종목은 선택할 수 있어요.<button type="button" class="selector-retry" data-selector-retry>검색 다시 확인</button></div>');
+    if(['idle','partial'].includes(searchState))resultEl.querySelector('[data-selector-retry]')?.addEventListener('click',()=>searchQuery(true));
 
     resultEl.querySelectorAll('[data-selector-symbol]').forEach((button) => {
       button.onclick = () => {
@@ -240,7 +241,7 @@ export function openStockSelector({
       try {
         const data = await searchStocks(query, {force: immediate, signal: searchController.signal});
         if (seq !== querySeq || !overlay.isConnected) return;
-        searchState = 'idle';
+        searchState = data?.partialFailure ? 'partial' : 'idle';
         // 운영자 수정 2026-10-03: 백엔드가 미확인 입력을 그대로 돌려주는 DIRECT 에코는
         // 검증된 종목명이 없으면 결과에서 제외 → '상세 보기' 폴백 버튼 생성 억제
         const verified = (data?.results || []).filter(isVerifiableSearchRow);

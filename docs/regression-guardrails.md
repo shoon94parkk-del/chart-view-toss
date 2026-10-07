@@ -454,3 +454,16 @@ Keep compact five-strategy horizontal controls, collapsed criteria, 72–88px ca
 - Export, public memory price and valuation tabs use manual keyboard activation. Arrows/Home/End move focus without lazy API calls; Enter/Space activate and restore focus after rerender. Leave only one tab in the Tab order and label its panel. Same-hash reactivation must not leave a pending focus request for a later unrelated entry.
 - Toss's actual pinch rejection remains documented in REVIEW_FIXES_20260921.md. meta-viewport is the only explicit rule exception; default-disabled experimental heuristics are supplemented with direct name assertions. Passing axe never substitutes for native-device/VoiceOver/TalkBack review.
 - Home selection return and valuation comparison/expanded metrics must reuse finiteNumber so null/empty/nonfinite stays missing, not 0.00%/0배. Preserve actual 0 and numeric-string 0, original provider values and all financial arithmetic. Check both value text and the missing comparison bar.
+
+## Comprehensive QA: missing values, damaged lists and partial search (2026-10-07)
+
+- All six detail metrics and memory average/change/range/history must distinguish null/blank/nonfinite from actual 0, using the existing finiteNumber contract. Source API fields, units and as-of labels remain unchanged.
+- Macro missing observations cannot create zeroes, compress observation positions or bridge a gap. Two isolated valid observations must still display actual points. Preserve the normal series' geometry/colors and immutable raw response.
+- Stored watch/selected arrays need element validation at read time. Keep valid names/metadata/order and true empty choices; never rewrite original device storage merely to recover the view.
+- Preserve independently verified search rows on auxiliary failure with a partial notice/retry. DIRECT-only verification failure, total failed lookup and AbortError cannot become successful matches or a false empty state. A canceled old query cannot overwrite the newest result.
+- Mobile independent watch/source/disclosure targets remain 44px with no price overlap. Compact PICK filters and the original watch icon/background are preserved. Whole-document axe from stable scroll position must be supplemented with actual fully visible controls between sticky/top and bottom navigation and a below-fold contrast check, not extra rule/region exemptions.
+- Regressions: tests/dataPresentation.test.mjs, tests/storedLists.test.mjs, tests/searchReliability.test.mjs and tests/e2e/comprehensive-{data,mobile,runtime}.spec.mjs. Existing 46 browser cases stay in place; the combined suite has 67 cases across four projects.
+
+### Korean live quote smoke must verify the observation, not status alone
+
+A CLOSE status by itself must never certify regular_close. Match shared realtime_korea.py: explicitly zoned asOf converted to KST 15:30 certifies regular_close/regular; other CLOSE remains provider_latest/unknown. OPEN still requires regular_live/regular. Keep tests/koreanQuoteContract.test.mjs and the shared test helper used by live_api_contract; both false close certification and incorrect latest downgrade must fail. Do not rewrite app/backend quote metadata to satisfy a status-only test.

@@ -45,6 +45,8 @@ try{
   await page.locator('.financial-history').waitFor({timeout:45000});
   assert.match(await page.locator('#detail-financial-history').innerText(),/2026년 반기 누적/);
   assert.match(await page.locator('#detail-financial-history').innerText(),/연간 실적/);
+  assert.equal(await page.locator('.detail-industry-disclosure').evaluate(el=>el.open),false,'industry evidence keeps the approved collapsed default');
+  await page.locator('[data-detail-jump="detail-industry-block"]').click();
   await page.locator('.industry-context-card').waitFor({timeout:45000});
   assert.ok((await page.locator('.industry-name').innerText()).includes('반도체'));
   assert.match(await page.locator('.industry-section.sector').innerText(),/5거래일 상승/);
@@ -57,7 +59,7 @@ try{
   await page.evaluate(()=>window.__chartviewNavigate('detail','005930.KS','삼성전자'));
   assert.ok(await page.locator('.bottom-nav [data-tab="chart"]').evaluate(el=>el.classList.contains('active')),'detail retains Chart origin');
   await page.goto(`${base}/#more`);
-  await page.waitForTimeout(200);
+  await page.locator('.page-intro h2').waitFor();
   assert.match(await page.locator('.page-intro h2').innerText(),/분석과 도구/);
   await page.screenshot({path:`artifacts/financial-flow/${width}-more.png`,fullPage:true});
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+2),`${width}px more overflow`);

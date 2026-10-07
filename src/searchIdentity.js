@@ -4,9 +4,19 @@ export function searchAlias(query) {
   return aliases.has(String(query).replace(/\s/g, '').toLowerCase()) ? 'MU' : '';
 }
 
-export async function verifiedSearchRows(rows, loadQuotes) {
+export async function verifiedSearchRows(rows, loadQuotes, {onVerificationError} = {}) {
   const direct = [...new Set(rows.filter(row => row?.type === 'DIRECT').map(row => row.symbol))];
-  const quotes = direct.length ? (await loadQuotes(direct))?.results || [] : [];
+  let quotes = [];
+  if (direct.length) {
+    try { quotes = (await loadQuotes(direct))?.results || []; }
+    catch (error) {
+      // Known listings are independent of a syntactic DIRECT guess. Preserve
+      // them when its provider fails, but never hide cancellation or convert a
+      // DIRECT-only transport failure into a valid empty search.
+      if (error?.name === 'AbortError' || !rows.some(row => row?.symbol && row.type !== 'DIRECT')) throw error;
+      onVerificationError?.(error);
+    }
+  }
   const result = new Map();
   for (const row of rows) {
     if (!row?.symbol) continue;
