@@ -23,6 +23,8 @@ This repository is the Apps in Toss client for Chart View. Do not rely on chat m
 8. Do not call Apps in Toss release complete from web preview alone; real Android/iOS Sandbox/QR validation remains a gate.
 9. Update `docs/decision-log.md` and, when relevant, project memory/guardrails.
 
+Optional cloud Codex diagnostics: read `docs/CLOUD_CODEX_TOOLS.md` when browser exploration, mobile performance, dependency impact, or generated financial edge cases would help. Install the separate pinned `tools/codex` package with `--ignore-scripts`. Use its local wrappers; do not enable secondary LLM/provider/chat features, auto-delete Knip findings, or replace the required Playwright release gate with a diagnostic score.
+
 ## Current production contract
 - Toss preview: https://chart-view-toss.onrender.com
 - Shared backend: https://chart-view-pkv8.onrender.com
