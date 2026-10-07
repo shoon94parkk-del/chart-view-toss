@@ -17,10 +17,8 @@ jobs:
           cache: npm
       - name: Install app dependencies
         run: npm ci
-      - name: Install QA browser without changing lockfile
-        run: |
-          npm install --no-save --package-lock=false playwright@1.55.0
-          npx playwright install --with-deps chromium
+      - name: Install pinned QA browser
+        run: npx playwright install --with-deps chromium
       - name: Build preview with short QA timeout
         env:
           VITE_CHARTVIEW_API_TIMEOUT_MS: '300'

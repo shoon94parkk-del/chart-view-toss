@@ -172,14 +172,14 @@ export async function renderPickLedger({shell,bindNav,displayName,focusKey=null}
     rows.forEach((row)=>{const status=actionStatus(row);counts[status]=(counts[status]||0)+1;});
     const reviewed=rows.filter((row)=>row.monitor?.monitor?.lastReviewedTradeDate).length;
 
-    summary.innerHTML=`<div class="pick-ledger-kpis">
+    summary.innerHTML=`<div class="pick-ledger-kpis" data-testid="pick-performance">
       <div><span>누적 추천일</span><b>${dayCount.toLocaleString('ko-KR')}</b></div>
       <div><span>누적 추천</span><b>${rows.length.toLocaleString('ko-KR')}건</b></div>
       <div><span>플러스 비율</span><b>${winRate===null?'—':winRate+'%'}</b><small>평가 ${evaluated.length}/${rows.length}건</small></div>
       <div><span>평균 수익률</span><b class="${tone(avg)}">${pct(avg)}</b><small>미평가 제외</small></div>
     </div><p class="pick-ledger-basis">${esc(latest||payload?.day?.tradeDate||'기준일 미확인')} 종가 기준 · 추천가 대비 현재가 단순 수익률</p>`;
 
-    statusStrip.innerHTML=`<div class="pick-ledger-status-kpis">
+    statusStrip.innerHTML=`<div class="pick-ledger-status-kpis" data-testid="pick-status">
       <div class="keep"><span>🟢 유지</span><b>${counts.KEEP}</b></div>
       <div class="watch"><span>🟡 경계</span><b>${counts.WATCH}</b></div>
       <div class="sell"><span>🔴 재점검</span><b>${counts.SELL_REVIEW}</b></div>

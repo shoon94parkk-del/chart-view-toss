@@ -19,7 +19,7 @@ This repository is the Apps in Toss client for Chart View. Do not rely on chat m
 4. Keep Toss-specific UI isolated in this repository. Do not rewrite the Web Chart View UI from here.
 5. Preserve the shared backend API contract unless the web backend change is explicitly coordinated.
 6. Add/update a regression test for every behavioral fix. A repeated bug without a new/strengthened regression test is not complete.
-7. Run `npm test`; for release-sensitive work also run `npm run build` and the relevant mobile QA.
+7. Before pushing a frontend change, run `npm run qa:prepush` (existing Node tests + production build + deterministic Playwright on desktop/Android/narrow/iPhone WebKit), plus the relevant existing mobile QA. Add a browser regression and API→processing→UI assertions for changed data flows. See `docs/AUTOMATED_QA.md`; do not use LLM APIs in CI or weaken failing tests.
 8. Do not call Apps in Toss release complete from web preview alone; real Android/iOS Sandbox/QR validation remains a gate.
 9. Update `docs/decision-log.md` and, when relevant, project memory/guardrails.
 

@@ -364,3 +364,11 @@ User approved three additional methods and GitHub documentation for changing PCs
 ## 2026-10-06 — Audit plan implementation 0.15.1
 
 See AUDIT_IMPLEMENTATION_2026-10-06.md and audit_plan_qa.mjs before revisiting dates, external news, grouped maps, financial disclosures, IDEA back state or filter density. Preserve October 5's grouped map (not the older map/list/sector modes). Public heatmap shares carry only market/sector. Reuse all current quote/cache paths; presentation changes must not cause rollback, new provider work or blocking DART. New tests are in mobile-release CI.
+
+
+## 2026-10-07 — Pre-deploy QA contract
+- Codex runs `npm run qa:prepush` before frontend pushes. Pinned Playwright Test reuses the existing export recovery fixtures and supplements existing Node/mobile QA.
+- PR and main promotion run the same deterministic desktop/Android/320px/iPhone WebKit suite, with data response→model→UI assertions and failure screenshot/trace/video/report.
+- Existing Render branch sync waits for all QA and promotes only the tested, still-current main SHA, preserving ancestry/no-force protection. No LLM API keys or new provider architecture.
+- Mobile export tabs and graph chips have both minimum width/height 44px. Keep the graph picker adjacent to its result.
+- Commands, optional real API diagnostics, required-check setup and remaining native-device scope: AUTOMATED_QA.md.

@@ -6,3 +6,6 @@ dist/
 *.ait
 artifacts/
 output/playwright/
+
+playwright-report/
+test-results/

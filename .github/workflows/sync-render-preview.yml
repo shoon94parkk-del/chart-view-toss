@@ -6,24 +6,39 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: sync-render-preview-branch
   cancel-in-progress: true
 
 jobs:
+  qa:
+    # The same suite checks PRs and the exact main push. No API keys/secrets.
+    uses: ./.github/workflows/main-regression.yml
+
   sync:
+    needs: qa
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: ${{ github.sha }}
           fetch-depth: 0
 
-      - name: Keep Render branch identical to main
+      - name: Promote only the tested main commit
         shell: bash
+        env:
+          TESTED_SHA: ${{ github.sha }}
         run: |
           set -euo pipefail
           git fetch origin main feat/apps-in-toss-mvp
+          if [ "$(git rev-parse origin/main)" != "$TESTED_SHA" ]; then
+            echo "main advanced during QA; the newer run must verify and promote its own commit."
+            exit 0
+          fi
           node scripts/validate-render-sync.mjs
-          git push origin refs/remotes/origin/main:refs/heads/feat/apps-in-toss-mvp
+          git push origin "$TESTED_SHA:refs/heads/feat/apps-in-toss-mvp"

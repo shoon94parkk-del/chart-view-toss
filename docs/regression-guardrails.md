@@ -440,3 +440,10 @@ Keep compact five-strategy horizontal controls, collapsed criteria, 72–88px ca
 - PICK scope must explain all records, active records and EXIT count. Internal status codes/technical scores are explained without changing the underlying decision math.
 
 2026-10-06 release sync invariant: never force-overwrite fixes that exist only on the Render branch. validate-render-sync checks ancestry; integrate missing fixes into main before the normal push. User-confirmed EXIT keeps priority over later technical warnings.
+
+
+## 2026-10-07 Automated release QA
+- Preserve the deterministic Playwright release gate without OpenAI/external LLM API dependencies. A fixture cannot authorize a request to an unmocked provider.
+- A flaky retry-pass must fail CI. Do not replace condition/response waits with fixed sleeps or lower mobile geometry assertions to hide a bug.
+- Render sync must depend on all release QA, promote its exact tested SHA only when still current main, and preserve deployed-branch ancestry. Fetching newer main never establishes that newer commit was tested.
+- Export short industry tabs and adjacent semiconductor chart chips must both reach 44px width/height on mobile.

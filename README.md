@@ -113,3 +113,15 @@ Operational gates still required before public release:
 - Apps in Toss 외부 링크는 `Device.openURL`이 아니라 SDK top-level `openURL(url)`을 사용한다.
 - 개인정보/서비스 이용/데이터 기준 안내는 `.ait` 런타임 origin에 의존하지 않고 `https://chart-view-toss.onrender.com`의 고정 HTTPS 페이지를 연다.
 - 외부 링크 열기 실패는 조용히 무시하지 않고 사용자에게 재시도 안내를 표시한다.
+
+## 배포 전 자동 E2E QA
+
+OpenAI API 키 없이 Playwright가 PR과 main push를 검사합니다. 홈·검색·관심·상세·수출/DRAM·산업 탭·선정 성과·이동·장애 대응을 데스크톱, Android, 320px, iPhone WebKit에서 검증합니다. 모든 핵심 QA가 통과한 정확한 main 커밋만 기존 Render 브랜치로 동기화합니다.
+
+```bash
+npm ci
+npx playwright install --with-deps chromium webkit
+npm run qa:prepush
+```
+
+실행/실패 screenshot·trace·HTML report/새 테스트 추가/실 API 검사/남은 실기기 gate는 [자동 QA 안내](docs/AUTOMATED_QA.md)를 참고하세요.

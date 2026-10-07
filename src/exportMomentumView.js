@@ -377,7 +377,7 @@ function semiconductorTrendHistory(segment){
       <div class="export-detail-country-head"><strong>최근 12개월 수출액</strong><small>막대 · 억달러</small></div>
       <div class="export-semi-trend-bars" role="img" aria-label="${esc(segment.name)} 최근 12개월 수출액 추이">
         ${rows.map(row=>`
-          <div class="export-semi-trend-bar" aria-label="${esc(row.period)} ${esc(formatUsdBillion(row.exportsUsdBillion,{digits:1}))}">
+          <div class="export-semi-trend-bar" data-testid="semiconductor-month" aria-label="${esc(row.period)} ${esc(formatUsdBillion(row.exportsUsdBillion,{digits:1}))}">
             <span class="${yoyTone(row.exportYoY)}">${esc(formatSignedPct(row.exportYoY,{digits:0}))}</span>
             <div><i style="height:${Math.max(4,(row.exportsUsdBillion/max)*100).toFixed(1)}%"></i></div>
             <small>${esc(row.period.slice(5))}</small>
@@ -442,7 +442,7 @@ function semiconductorTrendView(trends,{metric='delta',selectedKey='',countryMat
             <div><span>선택 품목 · HS ${esc(selected.code)}</span><h4>${esc(selected.name)}</h4><small>${esc(selected.note)}</small></div>
             <div><strong class="${yoyTone(selected.deltaUsdBillion)}">${esc(formatSignedUsdBillion(selected.deltaUsdBillion,{digits:1}))}</strong><span>YoY ${esc(formatSignedPct(selected.exportYoY))}</span></div>
           </div>
-          <div class="export-semi-chart-picker" aria-label="12개월 그래프 품목 선택">
+          <div class="export-semi-chart-picker" data-testid="semiconductor-picker" aria-label="12개월 그래프 품목 선택">
             <div><strong>12개월 그래프 품목</strong><small>옆으로 밀어서 바로 비교</small></div>
             <div class="export-semi-chart-picker-rail" role="group">
               ${sourceRows.map(row=>`<button type="button" data-export-semi-chart-segment="${esc(row.key)}" class="${row.key===selected.key?'is-active':''}">${esc(row.name)}</button>`).join('')}
@@ -601,7 +601,7 @@ function detailMetricBars(history,field,title,unit,formatter){
           ${history.map(row=>{
             const value=Number(row[field]);
             const height=Number.isFinite(value)?Math.max(3,Math.min(100,value/max*100)):0;
-            return `<div class="export-detail-bar" aria-label="${esc(row.period)} ${esc(formatter(row[field]))}"><i class="bar" style="height:${height.toFixed(1)}%"></i><small>${esc(row.period.slice(5))}</small></div>`;
+            return `<div class="export-detail-bar" data-testid="export-month" aria-label="${esc(row.period)} ${esc(formatter(row[field]))}"><i class="bar" style="height:${height.toFixed(1)}%"></i><small>${esc(row.period.slice(5))}</small></div>`;
           }).join('')}
         </div>
       </div>
@@ -732,7 +732,7 @@ function renderIndustryTab(detail){
         <div><span>산업별 수출</span><h3>${esc(config.label)} 수출 흐름</h3></div>
         <small>${esc(monthLabel(detail.period))} · ${esc(config.scope)}</small>
       </div>
-      <div class="export-industry-hero">
+      <div class="export-industry-hero" data-testid="industry-metrics">
         <div><span>수출액</span><strong>${esc(formatUsdBillion(latest.exportsUsdBillion,{digits:1}))}</strong><small class="${yoyTone(latest.exportYoY)}">YoY ${esc(formatSignedPct(latest.exportYoY))}</small></div>
         <div><span>물량 · 순중량</span><strong>${esc(formatWeightKg(latest.exportWeightKg))}</strong><small class="${yoyTone(latest.exportWeightYoY)}">YoY ${esc(formatSignedPct(latest.exportWeightYoY))}</small></div>
         <div><span>kg당 평균 신고금액</span><strong>${esc(formatUnitValue(latest.unitValueUsdPerKg))}</strong><small class="${yoyTone(latest.unitValueYoY)}">YoY ${esc(formatSignedPct(latest.unitValueYoY))}</small></div>
