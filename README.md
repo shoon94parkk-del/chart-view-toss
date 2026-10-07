@@ -127,3 +127,5 @@ npm run qa:prepush
 실행/실패 screenshot·trace·HTML report/새 테스트 추가/실 API 검사/남은 실기기 gate는 [자동 QA 안내](docs/AUTOMATED_QA.md)를 참고하세요.
 
 클라우드 Codex에서 브라우저 탐색·모바일 성능·코드 영향·데이터 경계값을 진단하는 선택 도구는 [클라우드 Codex 도구 안내](docs/CLOUD_CODEX_TOOLS.md)를 참고하세요. `npm ci --prefix tools/codex --ignore-scripts`로 별도 설치하며 앱 번들과 필수 CI 의존성은 유지합니다.
+
+전문 개발·데이터 QA·모바일 QA·독립 검토와 검증된 장기 기록은 [Codex 에이전트 협업](docs/AGENT_WORKFLOW.md)을 참고하세요. agency-agents에서 선별한 역할과 기존 Playwright/프로젝트 기억을 연결하며 e2e·claude-mem의 실제 Codex 지원 및 추가 연결 조건도 기록합니다.
