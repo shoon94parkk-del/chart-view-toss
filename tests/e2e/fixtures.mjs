@@ -3,7 +3,8 @@ import { payloadFor, quotes } from './data.mjs';
 
 export { expect };
 export const test = base.extend({
-  qa: [async ({ context, page }, use, testInfo) => {
+  storedLists: [{ watchlist: quotes.map(row => ({ symbol: row.ticker, name: row.name })), selected: [quotes[0].ticker] }, { option: true }],
+  qa: [async ({ context, page, storedLists }, use, testInfo) => {
     const errors = [], unexpected = [], calls = [];
     const overrides = new Map();
     const observe = opened => {
@@ -16,13 +17,13 @@ export const test = base.extend({
     context.on('page', observe);
     // The fixture is installed before navigation, including early requests in index.html.
     await page.clock.setFixedTime(new Date('2026-10-07T06:35:00Z'));
-    await context.addInitScript(rows => {
+    await context.addInitScript(lists => {
       // axe's result collector opens about:blank, where localStorage has no
       // origin. Seed actual HTTP app pages only; app errors remain observable.
       if (!['http:', 'https:'].includes(location.protocol)) return;
-      localStorage.setItem('chartview-toss-watchlist-v1', JSON.stringify(rows.map(row => ({ symbol: row.ticker, name: row.name }))));
-      localStorage.setItem('chartview-toss-selected-v1', JSON.stringify([rows[0].ticker]));
-    }, quotes);
+      localStorage.setItem('chartview-toss-watchlist-v1', JSON.stringify(lists.watchlist));
+      localStorage.setItem('chartview-toss-selected-v1', JSON.stringify(lists.selected));
+    }, storedLists);
     await context.route('**/*', async route => {
       const url = new URL(route.request().url());
       const path = url.pathname.replace(/^\/backend/, '');

@@ -218,3 +218,30 @@ export function changeBasisLabel(value) {
   };
   return map[String(value || '').toLowerCase()] || value || '이전 관측 대비';
 }
+
+export function macroSparklineSvg(rows,isUp){
+ const observations=(Array.isArray(rows)?rows:[]).map(row=>finiteNumber(row?.value));
+ const values=observations.filter(value=>value!==null);
+ if(values.length<2)return '';
+ let min=Math.min(...values),max=Math.max(...values);
+ if(max===min){max+=0.5;min-=0.5}
+ const pad=(max-min)*0.08;max+=pad;min-=pad;
+ const width=100,height=38,yTop=3,yBottom=35;
+ let connected=false;
+ const line=observations.map((value,index)=>{
+   if(value===null){connected=false;return '';}
+   const x=(index/(observations.length-1))*width;
+   const y=yBottom-((value-min)/(max-min))*(yBottom-yTop);
+   const point=`${connected?'L':'M'}${x.toFixed(2)},${y.toFixed(2)}`;
+   connected=true;
+   return point;
+ }).filter(Boolean).join(' ');
+ const tone=isUp?'var(--macro-up,#e54855)':'var(--macro-down,#3182f6)';
+ const isolated=observations.map((value,index)=>{
+   if(value===null||(index>0&&observations[index-1]!==null)||(index<observations.length-1&&observations[index+1]!==null))return '';
+   const x=(index/(observations.length-1))*width;
+   const y=yBottom-((value-min)/(max-min))*(yBottom-yTop);
+   return `<circle cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" r="1.5" fill="${tone}"/>`;
+ }).join('');
+ return `<svg class="macro-sparkline" viewBox="0 0 100 38" preserveAspectRatio="none" aria-hidden="true"><path d="${line}" fill="none" stroke="${tone}" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round"/>${isolated}</svg>`;
+}

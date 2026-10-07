@@ -46,7 +46,7 @@ npx playwright show-trace test-results/<실패한-test>/trace.zip
 | 9. 이동 | 실제 하단/분석 메뉴를 통한 수익률·수출·발굴·LAB·기록 순회; 직접 진입 HTTP200, 알 수 없는 경로 안내 |
 | 10. 지연/실패 | held 공시 응답·503·결측, 시세/뉴스 독립 렌더, 해당 요청만 복구; 수출 일부 실패와 전체 홈 API 장애 복구 |
 
-46개 test × 4개 프로젝트 = 184회. 기존 20개 시나리오를 유지하고 접근성·키보드·메모리 가격/복구 23개와 결측·실제 0 구분 3개를 추가했다. 데스크톱 Chromium 1440×900, Android Pixel 5 393×851, 좁은 Chromium 320×693, 작은 iPhone SE WebKit 320×568. 기기 설정에는 touch/device scale/mobile 동작도 포함된다.
+67개 test × 4개 프로젝트 = 268회. 기존 46개를 유지하고 전체 점검에서 데이터 3개·모바일/펼친 접근성 10개·저장 손상/부분 검색/취소 8개 회귀를 추가했다. 데스크톱 Chromium 1440×900, Android Pixel 5 393×851, 좁은 Chromium 320×693, 작은 iPhone SE WebKit 320×568. 기기 설정에는 touch/device scale/mobile 동작도 포함된다.
 
 `tests/e2e/accessibility.spec.mjs`는 실제 GitHub 오픈소스 `@axe-core/playwright` 4.13.0으로 17개 화면/상태의 WCAG 2 A/AA·2.1·2.2 AA 규칙을 검사한다. 홈, 검색 dialog, 관심, 상세, 수익률, 밸류에이션, 전체 히트맵, 선정, 발굴, LAB, 분석 메뉴, 메모리 가격, 수출 요약/반도체/화장품/철강/석유제품이 대상이다. 메모리 503 상태도 검사한다. 대비·ARIA 위반을 숨기는 화면 제외는 없다.
 
@@ -112,7 +112,9 @@ E2E_BASE_URL=https://chart-view-toss.onrender.com npm run test:e2e:live
 
 ## 남은 범위와 비용
 
-브라우저의 Android/iPhone 에뮬레이션은 실제 Toss Sandbox/WebView 검증을 대신하지 않는다. 네이티브 SDK back/root exit, 계정 분리, 키보드/백그라운드 복귀는 기존 실기기 release gate에 남는다. 백엔드 provider 수집/정합성 전체와 모든 분석 도구의 UI를 이 184회만으로 보장하지 않는다. 기존 관련 QA를 계속 유지한다.
+브라우저의 Android/iPhone 에뮬레이션은 실제 Toss Sandbox/WebView 검증을 대신하지 않는다. 네이티브 SDK back/root exit, 계정 분리, 키보드/백그라운드 복귀는 기존 실기기 release gate에 남는다. 백엔드 provider 수집/정합성 전체와 모든 분석 도구의 UI를 이 268회만으로 보장하지 않는다. 기존 관련 QA를 계속 유지한다.
+
+추가 전체 점검의 반례·수정·검증 범위는 [전문 역할 QA 기록](COMPREHENSIVE_QA_2026-10-07.md)을 참고한다.
 
 이번 작업은 핵심 화면 screenshot을 증거로 저장하고 geometry 회귀를 자동 비교한다. OS/글꼴 차이를 숨기는 임의 허용치를 두는 픽셀 baseline 시각 비교는 추가하지 않았다.
 

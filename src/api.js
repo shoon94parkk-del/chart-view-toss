@@ -22,13 +22,26 @@ export const compareStocks=(tickers,period='1mo',range={}, {force=false}={})=>ap
 export const searchStocks=async(query,{force=false,signal}={})=>{
  const options={timeoutMs:8000,retries:0,ttlMs:60000,force,signal};
  const alias=searchAlias(query);
- const [data,aliased]=await Promise.all([
+ const requests=[
    api(`/api/search?q=${encodeURIComponent(query)}`,options),
-   alias?api(`/api/search?q=${alias}`,options):Promise.resolve(null),
- ]);
- const results=await verifiedSearchRows([...(aliased?.results||[]),...(data?.results||[])],tickers=>api(`/api/quotes?tickers=${list(tickers)}`,{timeoutMs:5000,retries:0,ttlMs:60000,force,signal}));
- const unverifiedDirect=[...(aliased?.results||[]),...(data?.results||[])].filter(row=>row.type==='DIRECT'&&!results.some(result=>result.symbol===row.symbol)).map(row=>row.symbol);
- return {...data,results,unverifiedDirect};
+ ];
+ if(alias)requests.push(api(`/api/search?q=${alias}`,options));
+ const settled=await Promise.allSettled(requests);
+ if(signal?.aborted)throw new DOMException('Aborted','AbortError');
+ const failures=settled.filter(result=>result.status==='rejected').map(result=>result.reason);
+ const aborted=failures.find(error=>error?.name==='AbortError');
+ if(aborted)throw aborted;
+ const [original,aliasResult]=settled.map(result=>result.status==='fulfilled'?result.value:null);
+ if(settled.every(result=>result.status==='rejected'))throw failures[0];
+ let verificationError=null;
+ const rows=[...(aliasResult?.results||[]),...(original?.results||[])];
+ const results=await verifiedSearchRows(rows,tickers=>api(`/api/quotes?tickers=${list(tickers)}`,{timeoutMs:5000,retries:0,ttlMs:60000,force,signal}),{onVerificationError:error=>{verificationError=error;}});
+ if(signal?.aborted)throw new DOMException('Aborted','AbortError');
+ // An empty surviving response cannot establish that the failed source also
+ // had no matches. Keep a real retryable error instead of a false empty state.
+ if(failures.length&&!results.length)throw failures[0];
+ const unverifiedDirect=rows.filter(row=>row.type==='DIRECT'&&!results.some(result=>result.symbol===row.symbol)).map(row=>row.symbol);
+ return {...(original||aliasResult),results,unverifiedDirect,...(failures.length||verificationError?{partialFailure:true}:{})};
 };
 export const marketNow=()=>earlyHome('market',()=>api('/api/market-now',{ttlMs:15000}));
 export const marketNowLive=()=>api('/api/market-now',{ttlMs:0,force:true,timeoutMs:5000,retries:0});
