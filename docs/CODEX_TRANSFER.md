@@ -64,19 +64,26 @@ Codex CLI의 저장소 skill 경로는 `.agents/skills/<name>/SKILL.md`다. clon
 
 ## 3. 실행과 실제 QA
 
-공개 개발 설정은 [.env.example](../.env.example)을 `.env.local`로 복사해 사용한다. Bash는 `cp`, PowerShell은 `Copy-Item`이다.
+[.env.example](../.env.example)은 아래 **API-only** 개발 설정이다. `.env.local`로 복사해 사용한다. Bash는 `cp`, PowerShell은 `Copy-Item`이다.
 
 ```dotenv
 VITE_CHARTVIEW_API_BASE=https://chart-view-pkv8.onrender.com
-VITE_CHARTVIEW_STATIC_DATA_BASE=https://raw.githubusercontent.com/shoon94parkk-del/chart_View/main/static/data
 ```
 
+결정론적 fixture QA에서는 `VITE_CHARTVIEW_STATIC_DATA_BASE`가 unset 또는 빈 문자열이어야 한다. `.env.local`/다른 Vite env 파일이나 현재 터미널에 raw CDN 주소가 있으면 fixture 경로와 다른 외부 요청이 생긴다. 기존 공개 설정을 지우는 대신 다음처럼 **QA build와 자식 테스트 process에서만** 빈 값으로 덮는다.
+
 ```bash
-# 필수: Node → build → desktop/Android/320px/iPhone WebKit
-npm run qa:prepush
-# 이미 빌드한 앱의 선택 도구 진단 (별도 터미널에서 preview 시작)
-npm run preview -- --host 127.0.0.1 --port 4173 --strictPort
+# Bash: 필수 Node → build → desktop/Android/320px/iPhone WebKit
+VITE_CHARTVIEW_STATIC_DATA_BASE='' npm run qa:prepush
 ```
+
+PowerShell도 정확한 빈 값을 Node 자식 환경에 전달한다. 일부 PowerShell 버전의 `$env:...=''`는 변수를 삭제하므로 `.env.local`의 CDN 주소를 차단하는 방법으로 사용하지 않는다.
+
+```powershell
+node -e "require('node:child_process').execSync('npm run qa:prepush', {stdio: 'inherit', env: {...process.env, VITE_CHARTVIEW_STATIC_DATA_BASE: ''}})"
+```
+
+두 예시는 부모 터미널/설정 파일을 바꾸지 않는다. QA가 만든 `dist`는 raw CDN을 끈 API-only build이며, fixture 주입은 테스트에서만 한다. 이미 빌드한 앱의 선택 도구 진단은 별도 터미널에서 `npm run preview -- --host 127.0.0.1 --port 4173 --strictPort`로 시작한다.
 
 다른 터미널에서:
 
@@ -90,6 +97,14 @@ npm run --prefix tools/codex audit:mobile
 ```
 
 `audit:mobile`은 기존 고정 E2E 응답을 사용하는 진단이고 실제 공급자 검증이 아니다. `knip`은 정리 후보가 있으면 exit1일 수 있다. 의존성 그래프는 관계 설명이며 무결성 증명이 아니다. Lighthouse 비교는 다른 브라우저/QA를 종료하고 같은 build·viewport·데이터·CPU/네트워크로 수행한다. `run.mjs browser`의 namespace/session은 Chart View 전용 고정값이므로 여러 프로젝트의 동시 탐색에 그대로 공유하지 않는다.
+
+공개 Render/live 모드에서 사용하는 아래 CDN 값은 비밀 키가 아닌 공개 build 설정이며 fixture QA와 별개다.
+
+```dotenv
+VITE_CHARTVIEW_STATIC_DATA_BASE=https://raw.githubusercontent.com/shoon94parkk-del/chart_View/main/static/data
+```
+
+로컬에서 실제 공개 설정을 확인할 때는 원래 `.env.local`을 유지한 새 터미널에서 `npm run build`로 다시 만든 뒤 preview한다. 터미널 설정을 직접 바꾸었다면 원래 공개 값을 복원하고 rebuild한다. 같은 source도 API-only build와 CDN-enabled build는 JS hash가 다르므로 hash 차이만으로 코드 revision 불일치를 판단하지 않는다.
 
 실제 배포 API와 화면 관계는 `npm run test:e2e:live`를 사용한다. 배포 URL은 Bash에서 `E2E_BASE_URL=https://chart-view-toss.onrender.com npm run test:e2e:live`, PowerShell에서 `$env:E2E_BASE_URL='https://chart-view-toss.onrender.com'; npm run test:e2e:live`로 지정한다. 프록시 환경에서는 제공된 프록시 주소를 `E2E_PROXY_SERVER`로 지정하고 기존 CA 신뢰를 유지한다. 공급자 자료를 fixture로 바꾼 결과를 live 성공이라고 기록하지 않는다.
 

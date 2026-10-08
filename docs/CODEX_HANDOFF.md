@@ -53,7 +53,7 @@ Copy-Item .env.example .env.local
 npm run dev
 ```
 
-`.env.local`의 공개 설정:
+복사한 `.env.example`은 API-only다. 아래는 실제 공개 데이터 개발에 CDN을 추가할 때의 `.env.local` 설정이며, 결정론적 fixture QA용 설정과 구분한다:
 
 ```dotenv
 VITE_CHARTVIEW_API_BASE=https://chart-view-pkv8.onrender.com
@@ -62,16 +62,21 @@ VITE_CHARTVIEW_STATIC_DATA_BASE=https://raw.githubusercontent.com/shoon94parkk-d
 
 프런트 개발·저장된 데이터 조회에는 DART 키가 필요 없다. API 키/Render 훅/GitHub 토큰을 채팅·GitHub 문서·커밋에 넣지 않는다. 기존 GitHub Actions의 DART Secret은 새 PC로 복사할 필요 없이 서버 수집에 사용된다. 새 PC의 환경·로그인·브라우저 로컬 관심/메모는 저장소 복제로 옮겨지지 않는다.
 
-검증:
+검증: 결정론적 `qa:prepush`에서는 `VITE_CHARTVIEW_STATIC_DATA_BASE`가 unset/empty여야 한다. `.env.local`이나 터미널에 위 raw CDN 값을 설정했다면 [이관 가이드의 Bash/PowerShell process-only 빈 값 override](CODEX_TRANSFER.md#3-실행과-실제-qa)를 사용한다. 일부 PowerShell의 `$env:...=''`는 변수를 삭제하여 `.env.local`을 다시 읽을 수 있으므로 그 방법으로 CDN을 차단하지 않는다. Node 자식 환경 override는 원 공개 설정을 유지하며 fixture용으로 build와 테스트를 실행한다.
 
 ```powershell
 npm test
-npm run build
 # Playwright는 lockfile에 고정되어 npm ci로 설치됨
 npx playwright install --with-deps chromium webkit
-npm run qa:prepush
+# CODEX_TRANSFER.md의 PowerShell 빈 값 override로 qa:prepush 실행
+```
+
+실제 공개 데이터/live 또는 AIT 검증은 원 공개 설정을 복원하거나 새 터미널을 열어 **다시 build**한다. fixture QA 직후의 dist를 공개 CDN build라고 해석하지 않는다.
+
+```powershell
+npm run build
 npm run preview -- --port 4173
-# 다른 터미널
+# 다른 터미널: 현재 preview/live 계약에 맞는 기존 QA
 node tests/guru_investing_qa.mjs
 node tests/mobile_continuity_qa.mjs
 npm run build:ait

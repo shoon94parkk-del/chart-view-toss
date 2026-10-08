@@ -33,7 +33,13 @@ WebKit 수리는 정상 진입에 추가 API/asset 재조회가 없고, 현재 �
 
 ## 최종 회귀·배포 확인
 
-최종 `npm run qa:prepush` 실제 성공: **Node326/326·production build·Playwright348/348**, skipped0/flaky0/unexpected0, 브라우저6.7분. 신규 lazy 복구 브라우저36회와 Node23개, 진단 Node2개, 모바일 후속 브라우저12회를 기존 suite에 추가했다. 관련 기존 `mobile_continuity_qa`, `guru_investing_qa`, `audit_plan_qa`, `sector_heatmap_qa`도 각각3개 viewport에서 통과했다. GitHub CI/최종 프런트 배포 receipt는 이 변경의 PR에서 확인한다. 실행 명령·실패 screenshot/trace/video/HTML·4기기 matrix·exact-main Render 승격은 [AUTOMATED_QA](AUTOMATED_QA.md)에 있다. 기존 테스트와 flaky 배포 차단을 유지한다.
+최종 `npm run qa:prepush` 실제 성공: **Node326/326·production build·Playwright348/348**, skipped0/flaky0/unexpected0, 브라우저6.7분. 신규 lazy 복구 브라우저36회와 Node23개, 진단 Node2개, 모바일 후속 브라우저12회를 기존 suite에 추가했다. 관련 기존 `mobile_continuity_qa`, `guru_investing_qa`, `audit_plan_qa`, `sector_heatmap_qa`도 각각3개 viewport에서 통과했다. 실행 명령·실패 screenshot/trace/video/HTML·4기기 matrix·exact-main Render 승격은 [AUTOMATED_QA](AUTOMATED_QA.md)에 있다. 기존 테스트와 flaky 배포 차단을 유지한다.
+
+프런트 [PR124](https://github.com/shoon94parkk-del/chart-view-toss/pull/124)의 최종 head `bb14ac0629a80a168aed68e680c587494b20bedd`는 **GitHub 검사10/10 성공** 후 병합됐다. 동일한 앱 소스의 main `c4bc9a1919d07efda32bbf5b9c2f8ae4268b0f2e`도 **9/9 성공**했으며 [exact-main QA·승격 run](https://github.com/shoon94parkk-del/chart-view-toss/actions/runs/37713225204)이 Render 추적 브랜치를 갱신했다. 승격 뒤3분 이상 새 build/deploy 이벤트가 없고 이전 자산이 계속 제공되는 것을 확인한 다음 기존 수동 배포를 실행했다. 서비스·hook·Secret·배포 설정은 변경하지 않았다.
+
+실제 프런트 배포 `dep-db3f8959fdbs73dhir30`는 **2026-10-08 01:39:06 UTC live**, 위 c4bc9a1 revision이다. 공개 API/raw GitHub 정적 데이터 설정을 동일하게 지정해 별도 빌드한 뒤 HTML 자산 참조와 주요 JS/CSS **9개 SHA256·본문 bytes**가 실제 응답과 같음을 확인했다. 기본 로컬 fixture 빌드는 정적 데이터 base가 없어 main JS hash가 다르므로 이를 배포 불일치로 오인하지 않는다. 이 차이를 이관 가이드와 인수인계에 반영했으며 로컬 결정론적 QA는 정적 데이터 base를 비우고, 운영 설정과 실제 API 검증은 구분한다.
+
+이 배포 URL에서 **추가 live8/8 성공**: 실제 삼성전자 검색/시세→UI, 관세청 DRAM12개월 응답→단위/표시, 선정 성과의 실제 분모/평균/승률, 수출 탭 키보드/패널, PER 결측/0, 다섯 거장 응답/같은 버전 근거200, 미국 히트맵 첫40/시세/overflow, iPhone WebKit의 실제 수출 번들 첫 요청 실패→명시적 재시도→원래 품목 경로·저장 bytes 보존. 마지막 사례만 JS 요청 실패를 주입했으며 나머지 HTTP는 실제 공개 응답으로 확인했다. 이 배포 기록은 검증 시점의 revision을 가리키며 이후 문서/data commit을 자동으로 인증하지 않는다.
 
 백엔드 exact main의 pytest564개·Node38개·bundle check 통과 후 `/health.revision` 및 HTML/3개 hash 자산을 소스와 대조했다. 실제 deploy `dep-db3edc0m7kps73eb5tr0`가 위 revision이며 동일 snapshot 근거200/잘못된 version409까지 확인했다. Render의 live 표시만으로 소스 일치를 주장하지 않았다.
 
@@ -41,7 +47,7 @@ WebKit 수리는 정상 진입에 추가 API/asset 재조회가 없고, 현재 �
 
 두 번째 전체 실행도347통과/1실패였다. trace를 독립 대조하니 첫 홈 클릭의 WebKit 안정성 대기가28.933초·paint 프레임 공백이29.589초였다. 이후 재진입/mount1은 성공했으며 최종 클릭은 남은 전체 예산 때문에 종료됐다. 앱 마지막 클릭의 hang/overlay로 분류하지 않았다. 문서 load를 완료한 홈에서 실제 메뉴로 진입한 후 import를 보류하도록 **재진입 테스트4개만** 준비 조건을 분리했다. 실제 클릭·pending0→이탈/재진입→release→mount1·cleanup은 유지했고 별도 deep-link 실패/복구4개도 유지한다. 변경 후4기기×10회/workers3/retries0,40/40 통과와 독립 리뷰를 확인했다. 변경 전 단독40회도 통과했으므로 WebKit 내부 원인의 완전한 재현/확정을 주장하지 않는다. 최종 전체 suite와 CI를 통해 통합 안정성을 확인한다.
 
-프런트 [PR124](https://github.com/shoon94parkk-del/chart-view-toss/pull/124)의 첫 CI에서4기기 E2E·Node·AIT build·API smoke·audit-browser는 성공했다. 기존 `mobile_release_qa`만 수출 탭 클릭 직후 비동기 remount 전에 카드 수를 세어 실패했다. 실제 선택된 탭/표시 패널/첫 카드 준비를 기다리도록4개 전환을 동기화했으며 exact5 카드/행5/원문·수치 기준은 그대로다. CI와 동일한300ms API 설정의 격리 build에서 **해당 전체 script 성공·screenshot22개**, 독립 리뷰에서 약화 없음. 앱 소스·시간 제한·sleep은 바꾸지 않았다. 기존 production performance 진단도14경로 cold-browser/SPA 모두 ready였다. 여기의 cold는 새 브라우저 문맥이며 잠든 Render의 cold start를 뜻하지 않는다. 최신 PR/head/main 검사는 GitHub에서 별도로 확정한다.
+프런트 PR124의 첫 CI에서4기기 E2E·Node·AIT build·API smoke·audit-browser는 성공했다. 기존 `mobile_release_qa`만 수출 탭 클릭 직후 비동기 remount 전에 카드 수를 세어 실패했다. 실제 선택된 탭/표시 패널/첫 카드 준비를 기다리도록4개 전환을 동기화했으며 exact5 카드/행5/원문·수치 기준은 그대로다. CI와 동일한300ms API 설정의 격리 build에서 **해당 전체 script 성공·screenshot22개**, 독립 리뷰에서 약화 없음. 앱 소스·시간 제한·sleep은 바꾸지 않았다. 기존 production performance 진단도14경로 cold-browser/SPA 모두 ready였다. 여기의 cold는 새 브라우저 문맥이며 잠든 Render의 cold start를 뜻하지 않는다. 최종 PR/head/main 통과는 위 링크에 있다.
 
 최초 실패와 수정 증거는 작업 환경의 `scratch/chartview-transfer-audit-20261008/`에 보존했다. 이 로컬 폴더는 새 환경으로 자동 복제되지 않는다. 지속 가능한 회귀는 커밋된 Node/Playwright 테스트와 GitHub Actions artifact다.
 
