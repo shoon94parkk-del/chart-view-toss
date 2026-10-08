@@ -86,7 +86,7 @@ jobs:
             const mark=async(key,fn,timeout=15000)=>{
               const now=performance.now();
               try{
-                await page.waitForFunction(fn,{timeout,polling:40});
+                await page.waitForFunction(fn,null,{timeout,polling:40});
                 marks[key]=round(performance.now()-start);
               }catch{
                 marks[key]=null;

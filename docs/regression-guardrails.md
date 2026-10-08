@@ -473,3 +473,12 @@ A CLOSE status by itself must never certify regular_close. Match shared realtime
 - A partial full-map batch cannot replace a larger valid dated map or shrink its saved cache. Preserve newest per-ticker observations and separate actual response count from previous retained tiles; no fake0% placeholders. A complete current universe may remove old members. Retained observations do not enter sector aggregates.
 - Guru force/evidence409 recovery cannot replace a newer tradeDate/generatedAt publication with an older one. Keep exact evidence version and tell the user to retry; accept newer real candidate decreases. Optional missingReasons includes insufficient+unsupported and must never be fabricated.
 - Shared backend canonical full warm seed is historical/stale until existing revalidation; legacy heatmap prices never become current quotes.
+
+## Lazy analysis recovery and transferable QA
+
+- Lazy route mount/error/cleanup/reload must belong to the current view epoch. Fast exit/reentry cannot create duplicate mounts, clear a newer cleanup, or display an obsolete error.
+- Failed imports remain navigable and explicitly retryable. WebKit cached failed modulepreloads require bounded same-origin own-route JS revalidation/body consumption before document reload; never clear global caches or repeatedly reload automatically. Capture the link difference immediately around load(), max6 assets/four-second retry, abort on exit, and preserve device storage bytes. Normal route entry adds no repair requests.
+- Keep Node lazyAnalysisRoutes and four-browser lazy-analysis-recovery regressions. Actual failed preload retry, late completion/error, CSS failure, reentry and unobstructed44px navigation are contracts rather than browser-specific skips.
+- Expanded PICK explanatory text and tool favicon-failure letters remain readable without changing layout or adding axe rule/region exclusions. Retain the original-color negative oracle.
+- Performance probes use current market-map-stock readiness and third-argument Playwright options. A selector failure or default30-second timeout is not an app speed measurement. Keep performanceDiagnostics/review-followup regressions.
+- Transfer setup must not enable global MCP/hooks/workers/LLM APIs or copy account credentials/platform skills. Installed packages, source research, role prompts, Git memory and real skill catalog discovery are separate claims. Follow CODEX_TRANSFER.md and record actual new-environment checks.

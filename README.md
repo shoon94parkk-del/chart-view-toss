@@ -1,6 +1,6 @@
 # Chart View for Apps in Toss
 
-**새 PC에서 Codex 작업을 이어갈 때:** [현재 구조·UI 선호·실행·배포 인수인계](docs/CODEX_HANDOFF.md)를 먼저 읽으세요. 대화 기록 없이 최신 `main`에서 시작할 수 있습니다.
+**새 PC에서 Codex 작업을 이어갈 때:** [현재 구조·UI 선호·실행·배포 인수인계](docs/CODEX_HANDOFF.md)를 먼저 읽으세요. 대화 기록 없이 최신 `main`에서 시작할 수 있습니다. 다른 Codex로 GitHub 도구·skill을 옮길 때는 [이관 및 설치 안내](docs/CODEX_TRANSFER.md)를 따르세요.
 
 ![차트뷰 토스 홍보 이미지](public/marketing/chartview-toss-instagram-20260930.png)
 
@@ -95,8 +95,8 @@ Completed in code:
 - AIT contract validation and bundle pipeline
 
 Operational gates still required before public release:
-- package-lock.json committed and Apps in Toss CI uses `npm ci`
-- move the shared Chart View API off Render Free before public launch
+- confirm the remaining policy/data-provider conditions in `docs/P0_RELEASE_GATE.md`
+- remove unacceptable cold-start dependency through a validated free path or authorized non-sleeping service
 - run Android and iOS Sandbox/QR validation on real devices
 
 ## Next
@@ -116,7 +116,7 @@ Operational gates still required before public release:
 
 ## 배포 전 자동 E2E QA
 
-OpenAI API 키 없이 Playwright가 PR과 main push를 검사합니다. 홈·검색·관심·상세·수출/DRAM·산업 탭·선정 성과·이동·장애 대응과 axe 접근성·키보드·메모리 가격 정합성을 데스크톱, Android, 320px, iPhone WebKit에서 검증합니다. 총 268회이며, 모든 핵심 QA가 통과한 정확한 main 커밋만 기존 Render 브랜치로 동기화합니다.
+OpenAI API 키 없이 Playwright가 PR과 main push를 검사합니다. 홈·검색·관심·상세·수출/DRAM·산업 탭·선정 성과·이동·장애 대응과 axe 접근성·키보드·메모리 가격 정합성을 데스크톱, Android, 320px, iPhone WebKit에서 검증합니다. 현재 범위와 실행 결과는 [자동 QA](docs/AUTOMATED_QA.md), [Codex 이관·전체 점검](docs/CODEX_TRANSFER_AUDIT_2026-10-08.md)에 기록합니다. 모든 핵심 QA가 통과한 정확한 main 커밋만 기존 Render 브랜치로 동기화합니다.
 
 ```bash
 npm ci

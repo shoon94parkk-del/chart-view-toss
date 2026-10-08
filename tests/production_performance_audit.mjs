@@ -14,7 +14,7 @@ const routes=[
   {route:'macro',label:'경제지표',ready:()=>Boolean(document.querySelector('#macro-groups'))&&document.querySelectorAll('#macro-groups .skeleton').length===0&&Boolean(document.querySelector('#macro-groups .macro-group,#macro-groups .empty'))},
   {route:'discover',label:'조건별 종목 찾기',ready:()=>Boolean(document.querySelector('#analysis-body'))&&document.querySelectorAll('#analysis-body .skeleton').length===0&&Boolean(document.querySelector('#analysis-body .analysis-list,#analysis-body .empty'))},
   {route:'news',label:'관심종목 뉴스',ready:()=>Boolean(document.querySelector('#news-list'))&&document.querySelectorAll('#news-list .skeleton').length===0},
-  {route:'heatmap',label:'시장 히트맵',ready:()=>document.querySelectorAll('#analysis-body .home-heatmap-cell').length>=18||Boolean(document.querySelector('#analysis-body .empty'))},
+  {route:'heatmap',label:'시장 히트맵',ready:()=>document.querySelectorAll('#analysis-body .market-map-stock').length>=18||Boolean(document.querySelector('#analysis-body .empty'))},
   {route:'consensus',label:'실적 전망',ready:()=>Boolean(document.querySelector('#analysis-body'))&&document.querySelectorAll('#analysis-body [role="status"]').length===0&&document.querySelectorAll('#analysis-body .skeleton').length===0},
   {route:'bands',label:'역사적 밸류에이션',ready:()=>Boolean(document.querySelector('#analysis-body .analysis-metrics,#analysis-body .empty'))},
   {route:'detail/005930.KS',label:'종목 상세',ready:()=>Boolean(document.querySelector('#detail-price'))&&!document.querySelector('#detail-price')?.classList.contains('skeleton')},
@@ -72,7 +72,7 @@ async function waitReady(page,cfg){
   const started=performance.now();
   let state='ready';
   try{
-    await page.waitForFunction(cfg.ready,{timeout:TIMEOUT,polling:50});
+    await page.waitForFunction(cfg.ready,null,{timeout:TIMEOUT,polling:50});
   }catch{
     state='timeout';
   }
