@@ -41,6 +41,8 @@ WebKit 수리는 정상 진입에 추가 API/asset 재조회가 없고, 현재 �
 
 두 번째 전체 실행도347통과/1실패였다. trace를 독립 대조하니 첫 홈 클릭의 WebKit 안정성 대기가28.933초·paint 프레임 공백이29.589초였다. 이후 재진입/mount1은 성공했으며 최종 클릭은 남은 전체 예산 때문에 종료됐다. 앱 마지막 클릭의 hang/overlay로 분류하지 않았다. 문서 load를 완료한 홈에서 실제 메뉴로 진입한 후 import를 보류하도록 **재진입 테스트4개만** 준비 조건을 분리했다. 실제 클릭·pending0→이탈/재진입→release→mount1·cleanup은 유지했고 별도 deep-link 실패/복구4개도 유지한다. 변경 후4기기×10회/workers3/retries0,40/40 통과와 독립 리뷰를 확인했다. 변경 전 단독40회도 통과했으므로 WebKit 내부 원인의 완전한 재현/확정을 주장하지 않는다. 최종 전체 suite와 CI를 통해 통합 안정성을 확인한다.
 
+프런트 [PR124](https://github.com/shoon94parkk-del/chart-view-toss/pull/124)의 첫 CI에서4기기 E2E·Node·AIT build·API smoke·audit-browser는 성공했다. 기존 `mobile_release_qa`만 수출 탭 클릭 직후 비동기 remount 전에 카드 수를 세어 실패했다. 실제 선택된 탭/표시 패널/첫 카드 준비를 기다리도록4개 전환을 동기화했으며 exact5 카드/행5/원문·수치 기준은 그대로다. CI와 동일한300ms API 설정의 격리 build에서 **해당 전체 script 성공·screenshot22개**, 독립 리뷰에서 약화 없음. 앱 소스·시간 제한·sleep은 바꾸지 않았다. 기존 production performance 진단도14경로 cold-browser/SPA 모두 ready였다. 여기의 cold는 새 브라우저 문맥이며 잠든 Render의 cold start를 뜻하지 않는다. 최신 PR/head/main 검사는 GitHub에서 별도로 확정한다.
+
 최초 실패와 수정 증거는 작업 환경의 `scratch/chartview-transfer-audit-20261008/`에 보존했다. 이 로컬 폴더는 새 환경으로 자동 복제되지 않는다. 지속 가능한 회귀는 커밋된 Node/Playwright 테스트와 GitHub Actions artifact다.
 
 ## 변경 파일
@@ -52,7 +54,7 @@ WebKit 수리는 정상 진입에 추가 API/asset 재조회가 없고, 현재 �
 | 시작·맥락 | `AGENTS.md`, `README.md`, `docs/CODEX_HANDOFF.md`, `CLOUD_CODEX_TOOLS.md`, `AUTOMATED_QA.md`, `decision-log.md`, `project-memory.md`, `regression-guardrails.md` |
 | 실제 화면 복구/가독성 | `src/main.js`, `src/pickLedger.css`, `src/styles.css` |
 | 진단 | `scripts/measure-site.mjs`, `tests/production_performance_audit.mjs`, `.github/workflows/major-detail-stage-timing.yml` |
-| 회귀 | `tests/lazyAnalysisRoutes.test.mjs`, `performanceDiagnostics.test.mjs`, `tests/e2e/lazy-analysis-recovery.spec.mjs`, `review-followup.spec.mjs` |
+| 회귀 | `tests/lazyAnalysisRoutes.test.mjs`, `performanceDiagnostics.test.mjs`, `tests/e2e/lazy-analysis-recovery.spec.mjs`, `review-followup.spec.mjs`; 기존 `tests/mobile_release_qa.mjs` 준비 조건 정정 |
 | 별도 백엔드 PR136 | `docs/CODEX_HANDOFF.md`, `docs/decision-log.md`만 정정. 계산/수집/배포 설정 변경 없음 |
 
 ## 남은 범위·다음 작업

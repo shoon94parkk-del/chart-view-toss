@@ -346,6 +346,12 @@ async function assertNoHorizontalOverflow(page,label) {
   if(result.scrollWidth>result.innerWidth+2||result.bodyWidth>result.innerWidth+2) throw new Error(`${label}: horizontal overflow ${JSON.stringify(result)}`);
 }
 
+async function waitForExportPanel(page,topic) {
+  // Topic changes navigate through an async mount, then load panel data.
+  await page.locator(`[data-export-topic="${topic}"][aria-selected="true"]`).waitFor();
+  await page.locator(`[data-export-panel="${topic}"]`).waitFor({state:'visible'});
+}
+
 async function seed(page) {
   await page.addInitScript(() => {
     localStorage.setItem('chartview-toss-watchlist-v1',JSON.stringify([
@@ -490,11 +496,14 @@ try{
       const chartText=await page.locator('.export-section').filter({hasText:'월별 수출액과 증가율'}).innerText();
       for(const label of ['수출액 · 왼쪽축','YoY · 오른쪽축','이중 Y축']) if(!chartText.includes(label)) throw new Error(`export dual-axis label missing: ${label}`);
       await page.getByRole('tab',{name:'반도체',exact:true}).click();
+      await waitForExportPanel(page,'semiconductor');
+      await page.locator('.export-semi-report-card').first().waitFor();
       if(await page.locator('.export-semi-report-card').count()!==5) throw new Error('semiconductor report must show five core segments');
       const semiReportText=await page.locator('.export-semi-report').innerText();
       for(const label of ['메모리 IC','DRAM','Flash memory','MCP','DRAM 모듈','YoY','MoM','kg당 평균 신고금액']) if(!semiReportText.includes(label)) throw new Error(`semiconductor report label missing: ${label}`);
       if(await page.locator('.export-semi-report-row').count()!==5) throw new Error('semiconductor report comparison chart must show five rows');
       await page.getByRole('tab',{name:'품목',exact:true}).click();
+      await waitForExportPanel(page,'products');
       if(await page.locator('.export-driver-card').count()<5) throw new Error('export value-volume-unit-value cards are missing major HS groups');
       const itemText=await page.locator('.export-driver-card').first().innerText();
       for(const label of ['수출액','물량 · 순중량','kg당 신고금액','수입','무역수지']) if(!itemText.includes(label)) throw new Error(`export decomposition metric missing: ${label}`);
@@ -522,9 +531,11 @@ try{
       if(await page.locator('#export-item-detail .export-phase-strip .phase').count()!==12) throw new Error('export item phase history must show 12 months');
       await assertNoHorizontalOverflow(page,'390px export item detail');
       await page.getByRole('tab',{name:'국가',exact:true}).click();
+      await waitForExportPanel(page,'countries');
       if(await page.locator('.export-horizontal-row').count()<5) throw new Error('export country chart is missing major destinations');
       if(await page.locator('.export-column-chart:visible').count()) throw new Error('monthly API must not fabricate 10-day/20-day checkpoint bars');
       await page.getByRole('tab',{name:'전체 요약',exact:true}).click();
+      await waitForExportPanel(page,'overview');
       const periodText=await page.locator('.export-period-split').innerText();
       for(const label of ['총괄 9월','품목 8월','국가 8월']) if(!periodText.includes(label)) throw new Error(`export source-period label missing: ${label}`);
       await assertNoHorizontalOverflow(page,'390px exports');
