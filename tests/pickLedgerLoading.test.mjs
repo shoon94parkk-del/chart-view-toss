@@ -178,6 +178,7 @@ test('PICK explicit dated forward entry clears stale detail-return filters while
   assert.equal(forward.window.scrollY, 0);
   const backward = harness();
   const backwardState = structuredClone(filtered);
+  backwardState.routeFocusKey=selectionKey(recommendations[0]);
   await backward.render({ viewState: backwardState, focusKey: selectionKey(recommendations[0]), restoreView: true });
   await nextTurn();
   assert.equal(backwardState.search, '엔비디아');
@@ -185,4 +186,14 @@ test('PICK explicit dated forward entry clears stale detail-return filters while
   assert.equal(backwardState.status, 'SELL_REVIEW');
   assert.equal(backward.node('#pick-ledger-count').textContent, '1개 PICK 기록');
   assert.equal(backward.window.scrollY, 300);
+});
+
+test('PICK popstate to a different dated key is not mistaken for detail Back',async()=>{
+ const app=harness();
+ const viewState={routeFocusKey:selectionKey(recommendations[0]),expandedKeys:[selectionKey(recommendations[0])],returnScroll:300};
+ await app.render({viewState,focusKey:'1900-01-01:005930',restoreView:true});
+ await nextTurn();
+ assert.match(app.node('.pick-ledger-focus-note').textContent,/찾지 못/);
+ assert.deepEqual(viewState.expandedKeys,[]);
+ assert.equal(viewState.returnScroll,undefined);
 });

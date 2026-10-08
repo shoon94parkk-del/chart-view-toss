@@ -6,7 +6,7 @@
 
 - **선정 기록**: 성과와 목록은 bootstrap만 준비되면 표시한다. 느리거나 실패한 사후점검은 별도 상태·재시도로 안내한다. 점검 미완료를 유지·검토대기 집계 0으로 꾸미지 않는다.
 - **수출**: 월간 요약을 기다리는 동안 산업 탭을 사용할 수 있다. 화장품·철강·석유제품 등의 상세와 반도체 DRAM 분석은 월간 요약 장애와 독립적으로 표시한다. 재시도는 실패한 요청 경로만 갱신한다.
-- **선정 목록 복귀**: 검색·필터·펼친 날짜별 기록·포커스·스크롤을 보존한다. 실제 뒤로 복귀와 홈에서 새 날짜 기록을 지정하는 진입을 구분한다. 지정 기록이 없으면 다른 기록을 대신 열지 않는다.
+- **선정 목록 복귀**: 검색·필터·펼친 날짜별 기록·포커스·스크롤을 보존한다. 실제 뒤로 복귀와 홈에서 새 날짜 기록을 지정하는 진입을 구분한다. 지정 기록이 없으면 다른 기록을 대신 열지 않는다. hash-only 이동도 같은 날짜 화면으로 복귀할 때만 상태를 복원한다.
 - **화면 모듈 장애**: 거장 투자법에 기존 분석 화면의 명시 재시도를 적용했다. 공시 비교·분기 실적의 모듈 장애는 해당 영역에만 표시해 가격과 차트를 보존한다. 재시도 버튼은 문서를 다시 불러오며 기기 저장 목록을 삭제하지 않는다.
 - **조건 검색**: 접힌 조건 설정에도 현재 적용한 검색·시장·기술 조건 개수를 표시한다. 기술 조건 해제 시 종목 검색어를 유지한다.
 - **성능 진단**: placeholder와 오류 fallback을 정상 데이터 표시 시간으로 집계하지 않는다. 자료 있음 / 빈 결과 / 자료 미제공 / 오류 / timeout을 구분하고 공개 CDN과 응답 body 완료를 측정한다. 새 브라우저 context 측정을 서버 cold start로 부르지 않는다.
@@ -50,7 +50,7 @@ npm run test:e2e -- tests/e2e/export-loading-isolation.spec.mjs
 npm run test:e2e -- tests/e2e/detail-module-recovery.spec.mjs
 ```
 
-로컬 최종 검증: Node 355/355, Playwright 106개 시나리오 × desktop/Android/320px/iPhone WebKit = 424/424 통과. skipped·unexpected·flaky 모두 0이다. 기존 approved audit 320/390/1440px와 mobile release QA(반응형·짧은 viewport·5xx·timeout·offline)도 통과했다. GitHub CI 및 실제 배포의 결과는 해당 PR과 완료 보고에 정확한 실행/배포 링크로 기록한다. 재시도·상태 분리 테스트는 기존 가격·등락률·수출/DRAM API→모델→UI 수치, 선정 분모/성과 계산, 접근성·터치·overflow 검사를 그대로 포함한다.
+로컬 최종 검증: Node 356/356, Playwright 106개 시나리오 × desktop/Android/320px/iPhone WebKit = 424/424 통과. skipped·unexpected·flaky 모두 0이다. 기존 approved audit 320/390/1440px와 mobile release QA(반응형·짧은 viewport·5xx·timeout·offline)도 통과했다. 이후 기존 value-discovery CI에서 발견한 hash-only 날짜 이동/Back 혼동을 수정했고 PICK 20/20 및 기존 320/360/390/430px 날짜 링크 검사를 재검증했다. GitHub CI 및 실제 배포의 결과는 해당 PR과 완료 보고에 정확한 실행/배포 링크로 기록한다. 재시도·상태 분리 테스트는 기존 가격·등락률·수출/DRAM API→모델→UI 수치, 선정 분모/성과 계산, 접근성·터치·overflow 검사를 그대로 포함한다.
 
 운영 응답을 사용하는 성능 CI에서 context 종료 시 진행 중인 body promise가 거부되는 진단 도구 버그도 수정했다. 종료 후 늦은 응답을 폐기하고 미완료 body를 정상 latency로 집계하지 않는다. 두 회귀를 추가했다. 실제 API smoke는 요청 경로·경과 시간·기존 timeout budget을 오류에 남기며 timeout 기준은 완화하지 않는다. 현재 운영 API 계약도 로컬 실제 응답으로 통과했다.
 

@@ -171,8 +171,8 @@ test('PICK explicit dated Home record overrides unrelated session filters but an
   await expect(page.locator('#pick-ledger-status')).toHaveValue('all');
   await expect(page.locator('.pick-ledger-focus-note')).toContainText('검색·필터를 해제');
   await expect(page.locator('.pick-ledger-search-options')).not.toHaveAttribute('open', '');
-  // A new external deep entry creates a document; hash-only goto is SPA history.
-  await page.goto('/picks/1900-01-01%3A005930');
+  // Hash-only entry emits popstate too, but a different dated key is not Back.
+  await page.goto('/#picks/1900-01-01%3A005930');
   await expect(page.locator('.pick-ledger-focus-note')).toContainText('요청한 날짜의 선정 기록을 찾지 못했어요');
   await expect(page.locator('[data-pick-expand][aria-expanded="true"]')).toHaveCount(0);
   await noOverflow(page);

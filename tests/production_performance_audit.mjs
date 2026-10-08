@@ -54,6 +54,7 @@ function apiCollector(page){
         meta={cacheHits:Number(body?.cacheHits??-1),providerFetches:Number(body?.providerFetches??-1)};
       }catch{}
     }
+    if(marker.generation!==generation)return;
     rows.push({path:url.pathname,ms:bodyError?null:round(performance.now()-start),headersMs,bodyComplete:!bodyError,status:res.status(),meta});
   };
   page.on('request',onRequest);

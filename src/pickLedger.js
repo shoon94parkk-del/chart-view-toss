@@ -120,6 +120,9 @@ function rowMarkup(row,index,displayName,monitorState='ready'){
 }
 
 export async function renderPickLedger({shell,bindNav,displayName,focusKey=null,viewState={},restoreView=false}){
+  // Hash-only navigation also emits popstate. Restore only the same dated view.
+  restoreView=restoreView&&viewState.routeFocusKey===focusKey;
+  viewState.routeFocusKey=focusKey;
   document.querySelector('#app').innerHTML=shell(`
     <section class="task-head pick-ledger-head"><div><span class="page-kicker">CHARTVIEW</span><h2>선정 기록·성과</h2><p>과거에 선정한 이유와 이후 성과·점검 내용을 확인해요. 실시간 인기 순위가 아니에요.</p></div></section>
     <section class="pick-ledger-overview" aria-label="성과·상태 요약">
@@ -161,6 +164,7 @@ export async function renderPickLedger({shell,bindNav,displayName,focusKey=null,
   const searchOptions=document.querySelector('.pick-ledger-search-options');
   const fields={search,period,performance:perf,status,sort};
   const expanded=new Set(Array.isArray(viewState.expandedKeys)?viewState.expandedKeys:[]);
+  if(focusKey&&!restoreView)expanded.clear();
   for(const [key,field] of Object.entries(fields))if(typeof viewState[key]==='string')field.value=viewState[key];
   searchOptions.open=Boolean(viewState.searchOpen);
   if(!restoreView)delete viewState.returnScroll;
