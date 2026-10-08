@@ -201,7 +201,7 @@ html[data-ait-runtime="true"] .topbar{display:none}
 .investment-tool-card{position:relative;min-width:0;min-height:120px;padding:14px 12px;border:1px solid #e5e8eb;border-radius:17px;background:#fff;color:#191f28;text-align:left;display:flex;flex-direction:column;align-items:flex-start;gap:5px;box-shadow:0 5px 18px rgba(25,31,40,.035)}
 .investment-tool-card:active{transform:scale(.985);background:#f7f8fa}
 .investment-tool-logo{position:relative;display:grid;place-items:center;width:42px;height:42px;margin-bottom:3px;border-radius:12px;font-size:13px;font-weight:800;letter-spacing:-.03em}
-.investment-tool-logo.blue{background:#e8f3ff;color:#1769dc}.investment-tool-logo.green{background:#e2f8ef;color:#008d62}.investment-tool-logo.purple{background:#eee9ff;color:#6b5ce7}.investment-tool-logo.orange{background:#fff0d9;color:#a75600}.investment-tool-logo.navy{background:#e9eef5;color:#243e63}
+.investment-tool-logo.blue{background:#e8f3ff;color:#1769dc}.investment-tool-logo.green{background:#e2f8ef;color:#007754}.investment-tool-logo.purple{background:#eee9ff;color:#5b49d1}.investment-tool-logo.orange{background:#fff0d9;color:#a75600}.investment-tool-logo.navy{background:#e9eef5;color:#243e63}
 .investment-tool-logo img{position:absolute;inset:4px;width:34px;height:34px;object-fit:contain;background:#fff;border-radius:8px}
 .investment-tool-logo img[hidden]{display:none}
 .investment-tool-card strong{max-width:100%;font-size:13px;overflow-wrap:anywhere}.investment-tool-card small{max-width:100%;color:#6b7684;font-size:11px;line-height:1.3;overflow-wrap:anywhere}.investment-tool-card i{position:absolute;top:13px;right:13px;color:#5b6573;font-size:15px;font-style:normal}

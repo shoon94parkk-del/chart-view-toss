@@ -100,6 +100,7 @@ let detailLiveTimer=null;
 let viewEpoch=0;
 let detailJumpCleanup=null;
 let analysisCleanup=null;
+const lazyAnalysisRetryAssets=new Map();
 let searchSeq=0;
 let chartLoadSeq=0;
 let detailChartLoadSeq=0;
@@ -1522,6 +1523,62 @@ function renderMore(){
  document.querySelectorAll('[data-menu-jump]').forEach(link=>link.addEventListener('click',event=>{event.preventDefault();const target=document.getElementById(link.dataset.menuJump);if(target){target.scrollIntoView({block:'start'});target.querySelector('button')?.focus({preventScroll:true});}}));
 }
 
+function renderLazyAnalysis({tab,title,load,mount}){
+ cleanupChart();
+ const epoch=viewEpoch;
+ const isCurrent=()=>epoch===viewEpoch&&state.tab===tab;
+ let addedAssets=[];
+ document.querySelector('#app').innerHTML=shell(loadingIndicator(`${title} 화면을 불러오고 있어요`),title);
+ bindNav();
+ void Promise.resolve().then(()=>{
+   const previousPreloads=new Set([...document.querySelectorAll('link[rel="modulepreload"]')].map(link=>link.href));
+   try{return load();}finally{
+     addedAssets=[...document.querySelectorAll('link[rel="modulepreload"]')].map(link=>link.href).filter(href=>{
+       try{const url=new URL(href);return !previousPreloads.has(href)&&url.origin===location.origin&&/^\/assets\/[^/]+\.js$/.test(url.pathname);}catch{return false;}
+     });
+   }
+ }).then(view=>{
+   if(isCurrent())return mount(view);
+ }).then(cleanup=>{
+   if(typeof cleanup!=='function')return;
+   if(isCurrent())analysisCleanup=cleanup;
+   else cleanup();
+ }).catch(()=>{
+   // Retain only assets this route actually added, so leaving/reentering after
+   // a failed preload can recover it without refetching unrelated old assets.
+   const retryAssets=[...new Set([...(lazyAnalysisRetryAssets.get(tab)||[]),...addedAssets])].slice(0,6);
+   lazyAnalysisRetryAssets.set(tab,retryAssets);
+   if(!isCurrent())return;
+   document.querySelector('#app').innerHTML=shell('<div class="empty" role="alert"><strong>화면을 불러오지 못했어요.</strong><span>연결을 확인하고 화면을 다시 불러와주세요. 저장한 목록은 그대로 보관돼요.</span><button type="button" class="retry" data-retry-analysis-view>다시 시도</button><button type="button" class="neutral-action" data-tab="more">분석 메뉴로</button></div>',title);
+   bindNav();
+   const retry=document.querySelector('[data-retry-analysis-view]');
+   retry.onclick=async()=>{
+     if(!isCurrent()||retry.disabled)return;
+     retry.disabled=true;
+     const controller=new AbortController();
+     const cancel=()=>controller.abort();
+     analysisCleanup=cancel;
+     const deadline=setTimeout(cancel,4000);
+     try{
+       // WebKit retains failed modulepreload resources across document reload.
+       // Repair only this route's bundled scripts, consume their bodies, then
+       // reopen the document. Ordinary navigation makes no extra requests.
+       await Promise.allSettled(retryAssets.map(async href=>{
+         const response=await fetch(href,{cache:'reload',signal:controller.signal});
+         if(!response.ok||!/(?:java|ecma)script/i.test(response.headers.get('content-type')||''))throw new Error('Bundled script is unavailable');
+         await response.arrayBuffer();
+       }));
+     }finally{
+       clearTimeout(deadline);
+       if(analysisCleanup===cancel)analysisCleanup=null;
+       // A deployment may have replaced missing old chunks with new filenames;
+       // the new document still gets a chance to use its current asset manifest.
+       if(isCurrent())location.reload();
+     }
+   };
+ });
+}
+
 function render(){
  setLiveSurface(state.tab);
  const started=performance.now();
@@ -1538,24 +1595,20 @@ function render(){
  if(state.tab==='valuation')return renderValuation();
  if(state.tab==='macro')return renderMacro();
  if(state.tab==='exports'){
-   cleanupChart();
-   void Promise.all([import('./exportMomentumView.js'),import('./exportMomentum.css')]).then(([exportsView])=>{
-     if(state.tab==='exports'){state.exports ||= {};analysisCleanup=exportsView.renderExportMomentumView({shell,bindNav,focus:state.exportFocus,state:state.exports,onSelectionChange:(panel)=>{
+   renderLazyAnalysis({tab:'exports',title:'수출 데이터',load:()=>Promise.all([import('./exportMomentumView.js'),import('./exportMomentum.css')]),mount:([exportsView])=>{
+     state.exports ||= {};return exportsView.renderExportMomentumView({shell,bindNav,focus:state.exportFocus,state:state.exports,onSelectionChange:(panel)=>{
        const focus={overview:null,products:'items',countries:'countries',semiconductor:'memory','passenger-car':'passenger-car',petroleum:'petroleum',cosmetics:'cosmetics',ships:'ships',steel:'steel'}[panel];
        if(location.hash===(focus?`#exports/${encodeURIComponent(focus)}`:'#exports'))state.exports.restoreTabFocus=false;
        navigate('exports',focus);
-     }});}
-   });
+     }});
+   }});
    return;
  }
  if(state.tab==='memory'){
-   cleanupChart();
-   void import('./memoryPriceView.js').then(view=>{
-     if(state.tab==='memory'){
+   renderLazyAnalysis({tab:'memory',title:'반도체 가격 추적',load:()=>import('./memoryPriceView.js'),mount:view=>{
        const restoreTabFocus=state.memoryTabFocus;state.memoryTabFocus=false;
-       analysisCleanup=view.renderMemoryPriceView({shell,bindNav,activeGroup:state.memoryPriceGroup,restoreTabFocus,onGroupChange:(group,{restoreFocus=false}={})=>{state.memoryTabFocus=restoreFocus&&location.hash!==`#memory/${encodeURIComponent(group)}`;navigate('memory',group);}});
-     }
-   });
+       return view.renderMemoryPriceView({shell,bindNav,activeGroup:state.memoryPriceGroup,restoreTabFocus,onGroupChange:(group,{restoreFocus=false}={})=>{state.memoryTabFocus=restoreFocus&&location.hash!==`#memory/${encodeURIComponent(group)}`;navigate('memory',group);}});
+   }});
    return;
  }
  if(state.tab==='gurus'){
@@ -1568,17 +1621,11 @@ function render(){
    return;
  }
  if(state.tab==='ideas'){
-   cleanupChart();
-   void Promise.all([import('./ideaView.js'),import('./ideaView.css')]).then(([ideas])=>{
-     if(state.tab==='ideas')ideas.renderIdeaView({shell,bindNav});
-   });
+   renderLazyAnalysis({tab:'ideas',title:'투자 아이디어 LAB',load:()=>Promise.all([import('./ideaView.js'),import('./ideaView.css')]),mount:([ideas])=>ideas.renderIdeaView({shell,bindNav})});
    return;
  }
  if(state.tab==='picks'&&SHOW_SPOTLIGHT){
-   cleanupChart();
-   void Promise.all([import('./pickLedger.js'),import('./pickLedger.css')]).then(([ledger])=>{
-     if(state.tab==='picks')ledger.renderPickLedger({shell,bindNav,displayName,focusKey:state.pickFocusKey});
-   });
+   renderLazyAnalysis({tab:'picks',title:'선정 기록·성과',load:()=>Promise.all([import('./pickLedger.js'),import('./pickLedger.css')]),mount:([ledger])=>ledger.renderPickLedger({shell,bindNav,displayName,focusKey:state.pickFocusKey})});
    return;
  }
  if(ANALYSIS_ROUTES.has(state.tab)){cleanupChart();analysisCleanup=renderAnalysis({tab:state.tab,state,shell,bindNav,displayName,openCompareSheet});return;}

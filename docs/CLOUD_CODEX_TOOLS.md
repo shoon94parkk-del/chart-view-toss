@@ -16,6 +16,8 @@
 
 기존 [Playwright](https://github.com/microsoft/playwright)는 **97,206 스타**, [axe-core](https://github.com/dequelabs/axe-core)는 **7,608 스타**이며 이미 필수 QA에 적용되어 있다. 이 도구 모음은 그 QA를 보완한다.
 
+다른 Codex로의 전체 이관, 프로젝트 skill과 connector 구분, 새 환경 검증은 [CODEX_TRANSFER.md](CODEX_TRANSFER.md)를 따른다.
+
 ## 새 클라우드 환경에서 재설치
 
 현재 환경에는 다섯 도구를 실제 설치했다. 새 클라우드 작업은 별도 머신일 수 있으므로 설치 상태의 자동 승계를 가정하지 않는다. 저장소를 받은 뒤 Node 24에서 실행한다.

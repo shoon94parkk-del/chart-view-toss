@@ -1,6 +1,6 @@
 # 새 PC에서 이어가기 — Chart View Toss
 
-최종 갱신: 2026-10-05 KST. 대화 기억 대신 이 문서와 저장소의 현재 `main`을 기준으로 시작한다.
+최종 갱신: 2026-10-08 KST. 대화 기억 대신 이 문서와 저장소의 현재 `main`을 기준으로 시작한다.
 
 ## 저장소와 운영 서비스
 
@@ -35,6 +35,10 @@
 코드: `src/guruInvestingModel.js`, `guruInvestingView.js`, `guruInvestingExtensions.js`, `guruInvestingView.css`, `routes.js`, `scripts/export-preview-routes.mjs`. 데이터 계산·수집은 공유 백엔드만 담당한다. 실시간 가격으로 재무 선정 지표를 재계산하지 않는다. 버전409는 명시적 최신 결과 확인으로 복구한다. Home/detail 시작 시 거장 요청·자산을 추가하지 않는다.
 
 기존 두 방법의 1차 실제 수집: 전체2,652 기록 확인, 버핏54·린치37(2026-10-02 종가). **추가 전략의 현재 개수는 운영 스냅샷을 확인**한다. 이 숫자를 실시간·오늘 날짜로 재표시하지 않는다.
+
+## 다른 Codex로 도구·skill 이관
+
+[CODEX_TRANSFER.md](CODEX_TRANSFER.md)에 현재 설치한 GitHub 도구·고정 버전·소스 조사만 한 프로젝트·플랫폼 skill/connector 재연결·실제 QA·기억 보존 절차를 정리했다. `node tools/codex/setup.mjs --install --with-browsers`와 `--check`로 새 클론을 준비한다. 저장소 `.agents/skills`의 `chartview-qa`, `chartview-agent-review`는 직접 작성한 이관용 skill이다. 새 Codex에서 실제 인식 여부를 확인하며 e2e/claude-mem 자동 연결을 가정하지 않는다.
 
 ## 새 PC 개발 시작
 
@@ -95,3 +99,9 @@ npm run build:ait
 [전체 점검·수정 기록](COMPREHENSIVE_QA_2026-10-07.md): 결측 지표/메모리 가격·macro 관측 공백, 손상 저장 목록, 검색 부분 장애와 취소, 펼친 근거 대비와 모바일 독립 조작 영역을 보호하는 회귀를 추가했다. 기존 46개에 21개를 더해 67개 × 4기기 = 268회다. 원 저장 데이터·출처/기준·수집·Render 구조는 유지한다. 같은 hash로 이동하는 테스트는 새 응답을 만들지 않으므로 입력 변형마다 실제 reload한다. 화면 위치를 정규화한 axe와 실제 고정 메뉴 사이에서의 조작/가림 검사를 모두 유지한다. e2e·claude-mem은 여전히 소스 조사 상태이며 새 LLM API/자동 hooks를 켜지 않는다.
 
 PR122 실제 API smoke의 CLOSE=regular_close 가정도 수정했다. timezone이 있는 거래 관측 시각 KST 15:30만 종가로 인증하고, 저녁/미인증 시각은 provider_latest/unknown을 유지한다. 기존 backend/UI 계약을 바꾸지 않는다. Node 총 287개, E2E 268회. 시세 metadata를 테스트에 맞춰 강제로 종가로 바꾸지 마라.
+
+## 2026-10-08 — Codex 이관과 전체 점검
+
+[이관 절차](CODEX_TRANSFER.md)의 setup과 자체 skill 2개를 사용한다. [전체 점검 기록](CODEX_TRANSFER_AUDIT_2026-10-08.md)에 이번 실제 근거와 한계를 보존했다. 위 10월7일 수치는 당시 기록이며 현재 브라우저 suite는87개×4기기=348회다. lazy 분석 번들 실패/빠른 재진입/WebKit 복구, 펼친 PICK·도구 fallback 대비, 실제 히트맵 성능 진단 회귀를 추가했다. 거장181행/선정35건 산술과 모바일81경로를 독립 검토했으며 새 계산 버그는 발견하지 않았다.
+
+최신 거장 CDN와 서버 근거의 버전 차이는 기존 수동 백엔드 게시로 현재 일치시켰다. 일일 수집과 서버 게시의 자동 연결은 추가하지 않았으므로 후속 작업에서도 `/health.revision`·snapshotVersion·근거200을 실제 확인한다. 버전409를 무시하거나 더 오래된 목록으로 돌아가지 않는다. e2e/claude-mem runtime, 대상 Codex skill 자동 발견, native Toss Sandbox를 확인했다고 주장하지 않는다.
