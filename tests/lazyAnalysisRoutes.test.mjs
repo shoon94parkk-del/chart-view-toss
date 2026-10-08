@@ -8,7 +8,7 @@ const main = readFileSync(new URL('../src/main.js', import.meta.url), 'utf8');
 // and unrelated route dependencies are controlled, not the guards under test.
 const renderSource = main.slice(main.indexOf('function renderLazyAnalysis('), main.indexOf('function syncFromLocation(')).replaceAll('import(', 'loadModule(');
 const settle = () => new Promise(resolve => setImmediate(resolve));
-const routes = ['exports', 'memory', 'ideas', 'picks'];
+const routes = ['exports', 'memory', 'ideas', 'picks', 'gurus'];
 
 function harness(tab, loadModule) {
   const app = { innerHTML: 'startup-loading' }, retry = {}, mounts = [], cleanups = [], reloads = [], preloads = [], fetched = [];

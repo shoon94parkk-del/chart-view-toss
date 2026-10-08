@@ -46,7 +46,7 @@ npx playwright show-trace test-results/<실패한-test>/trace.zip
 | 9. 이동 | 실제 하단/분석 메뉴를 통한 수익률·수출·발굴·LAB·기록 순회; 직접 진입 HTTP200, 알 수 없는 경로 안내 |
 | 10. 지연/실패 | held 공시 응답·503·결측, 시세/뉴스 독립 렌더, 해당 요청만 복구; 수출 일부 실패와 전체 홈 API 장애 복구 |
 
-현재 87개 test × 4개 프로젝트 = 348회. 기존 핵심·접근성·전체 점검·거장/부분 히트맵 회귀를 유지하고 lazy 번들 실패/재진입/WebKit 복구9개·펼친 PICK/도구 fallback/성능 진단3개를 추가했다. 데스크톱 Chromium 1440×900, Android Pixel 5 393×851, 좁은 Chromium 320×693, 작은 iPhone SE WebKit 320×568. 기기 설정에는 touch/device scale/mobile 동작도 포함된다. 이관 방법과 실제 검증 한계는 [이관·점검 기록](CODEX_TRANSFER_AUDIT_2026-10-08.md)을 참고한다.
+현재 106개 test × 4개 프로젝트 = 424회. 기존 87개 검사를 유지하고 독립 로딩·재시도·날짜 지정 복귀·상세 모듈 장애·성능 상태 분류·거장 lazy 복구 19개를 추가했다. 데스크톱 Chromium 1440×900, Android Pixel 5 393×851, 좁은 Chromium 320×693, 작은 iPhone SE WebKit 320×568. 기기 설정에는 touch/device scale/mobile 동작도 포함된다. 변경 범위·재현·성능 조건은 [로딩·UX 개선 기록](UX_LOADING_IMPROVEMENTS_20261008.md), 이관 한계는 [이관·점검 기록](CODEX_TRANSFER_AUDIT_2026-10-08.md)을 참고한다.
 
 `tests/e2e/accessibility.spec.mjs`는 실제 GitHub 오픈소스 `@axe-core/playwright` 4.13.0으로 17개 화면/상태의 WCAG 2 A/AA·2.1·2.2 AA 규칙을 검사한다. 홈, 검색 dialog, 관심, 상세, 수익률, 밸류에이션, 전체 히트맵, 선정, 발굴, LAB, 분석 메뉴, 메모리 가격, 수출 요약/반도체/화장품/철강/석유제품이 대상이다. 메모리 503 상태도 검사한다. 대비·ARIA 위반을 숨기는 화면 제외는 없다.
 

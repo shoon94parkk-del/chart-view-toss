@@ -46,8 +46,8 @@ export const searchStocks=async(query,{force=false,signal}={})=>{
 export const marketNow=()=>earlyHome('market',()=>api('/api/market-now',{ttlMs:15000}));
 export const marketNowLive=()=>api('/api/market-now',{ttlMs:0,force:true,timeoutMs:5000,retries:0});
 export const homeSnapshot=({force=false}={})=>force?api('/api/home-snapshot',{ttlMs:60000,force:true}):earlyHome('snapshot',()=>api('/api/home-snapshot',{ttlMs:60000}));
-export const homeBootstrap=()=>earlyHome('bootstrap',()=>api('/api/home-bootstrap',{ttlMs:60000}));
-export const pickMonitor=()=>staticData('pick_monitor.json',()=>api('/static/data/pick_monitor.json',{ttlMs:60000,timeoutMs:5000,retries:0}));
+export const homeBootstrap=({force=false}={})=>force?api('/api/home-bootstrap',{ttlMs:60000,force:true}):earlyHome('bootstrap',()=>api('/api/home-bootstrap',{ttlMs:60000}));
+export const pickMonitor=({force=false}={})=>force?api('/static/data/pick_monitor.json',{ttlMs:60000,force:true,timeoutMs:5000,retries:0}):staticData('pick_monitor.json',()=>api('/static/data/pick_monitor.json',{ttlMs:60000,timeoutMs:5000,retries:0}));
 export const visitorActivity=(visitorId,surface='other')=>api('/api/activity',{
  method:'POST',
  headers:{'Content-Type':'application/json'},

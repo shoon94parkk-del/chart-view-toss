@@ -1,4 +1,6 @@
 import { test, expect } from '@playwright/test';
+import {normalizeExportItemDetail,formatUsdBillion,formatSignedPct} from '../../src/exportMomentumModel.js';
+import {validateGuruSnapshot} from '../../src/guruInvestingModel.js';
 const symbol = '005930.KS';
 const fmtPrice = row => `${Math.round(row.price).toLocaleString('ko-KR')}원`;
 const fatal = [];
@@ -82,4 +84,35 @@ test('live 선정 기록: 실제 응답 분모·성과 집계', async ({ page },
   await expect(summary).toContainText(`${average > 0 ? '+' : ''}${average.toFixed(2)}%`);
   await expect(summary).toContainText(`${winRate}%`);
   await info.attach('real-pick-aggregate', { body: JSON.stringify({ rows: rows.length, evaluated: evaluated.length, average, winRate }), contentType: 'application/json' });
+});
+
+test('live 산업 상세: 실제 화장품 응답 → 모델 → 금액·등락·12개월 표시',async({page},info)=>{
+  const response=page.waitForResponse(r=>new URL(r.url()).pathname.endsWith('/export-momentum/item-detail')&&new URL(r.url()).searchParams.get('key')==='cosmetics');
+  await page.goto('/#exports/cosmetics');
+  const raw=await(await response).json(),data=normalizeExportItemDetail(raw),latest=data.history.at(-1);
+  expect(data.key).toBe('cosmetics');expect(latest).toBeTruthy();expect(Number.isFinite(latest.exportsUsdBillion)).toBe(true);
+  const panel=page.locator('[data-export-panel="cosmetics"]');
+  await expect(panel).toHaveAttribute('data-load-state','ready');
+  const metric=panel.getByTestId('industry-metrics').locator('div').first();
+  await expect(metric.locator('strong')).toHaveText(formatUsdBillion(latest.exportsUsdBillion,{digits:1}));
+  await expect(metric.locator('small')).toHaveText(`YoY ${formatSignedPct(latest.exportYoY)}`);
+  await expect(panel.getByTestId('export-month')).toHaveCount(Math.min(data.history.length,12)*3);
+  await info.attach('real-industry-basis',{body:JSON.stringify({key:data.key,latest,historyCount:data.history.length}),contentType:'application/json'});
+  await info.attach('real-cosmetics-screen',{body:await page.screenshot(),contentType:'image/png'});
+});
+
+test('live 거장 다섯 전략: 실제 snapshot 기준일·검증 분모·선정 개수 표시',async({page},info)=>{
+  const response=page.waitForResponse(r=>new URL(r.url()).pathname.endsWith('/guru_screening.json'));
+  await page.goto('/#gurus/buffett');
+  const data=validateGuruSnapshot(await(await response).json());
+  for(const strategy of ['buffett','lynch','oneil','minervini','greenblatt']){
+    await page.locator(`[data-guru-strategy="${strategy}"]`).click();
+    const summary=data.strategies[strategy],coverage=page.locator('.guru-coverage');
+    await expect(coverage).toContainText(`${summary.matchedCount}개`);
+    await expect(coverage).toContainText(`검증 ${summary.evaluatedCount.toLocaleString()} / 대상 ${summary.universeCount.toLocaleString()}`);
+    await expect(coverage).toContainText(data.tradeDate);
+    await expect(coverage).toContainText(`자료 부족 ${summary.insufficientCount}`);
+  }
+  await info.attach('real-guru-coverage',{body:JSON.stringify({version:data.snapshotVersion,tradeDate:data.tradeDate,strategies:Object.fromEntries(Object.entries(data.strategies).map(([key,s])=>[key,{matched:s.matchedCount,evaluated:s.evaluatedCount,insufficient:s.insufficientCount}]))}),contentType:'application/json'});
+  await info.attach('real-guru-screen',{body:await page.screenshot(),contentType:'image/png'});
 });

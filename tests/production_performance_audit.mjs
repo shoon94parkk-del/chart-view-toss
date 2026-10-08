@@ -1,4 +1,5 @@
 import { chromium } from 'playwright';
+import { performanceOutcome, dataRequestPath } from '../scripts/performance-outcome.mjs';
 
 // audit-run: p0-valuation-swr-live-20260928
 
@@ -7,7 +8,7 @@ const BASE=process.env.PERF_BASE_URL||'https://chart-view-toss.onrender.com';
 const TIMEOUT=Number(process.env.PERF_TIMEOUT_MS||20000);
 
 const routes=[
-  {route:'home',label:'홈',ready:()=>Boolean(document.querySelector('#market-card .quote-card'))&&document.querySelectorAll('#home-daily-heatmap .skeleton').length===0},
+  {route:'home',label:'홈',ready:()=>Boolean(document.querySelector('#market-card .quote-card:not(.market-card-loading)'))&&document.querySelectorAll('#home-daily-heatmap .skeleton').length===0},
   {route:'chart',label:'차트',ready:()=>{const s=document.querySelector('#chart-status');return Boolean(s)&&!String(s.textContent||'').includes('불러오는 중')&&Boolean(document.querySelector('#chart-table-wrap .return-table,#chart-table-wrap .empty'))}},
   {route:'watch',label:'관심종목',ready:()=>Boolean(document.querySelector('#watch-rich-list'))&&document.querySelectorAll('#watch-rich-list .skeleton').length===0},
   {route:'valuation',label:'밸류에이션',ready:()=>Boolean(document.querySelector('#valuation-list'))&&document.querySelectorAll('#valuation-list .skeleton').length===0},
@@ -20,10 +21,13 @@ const routes=[
   {route:'detail/005930.KS',label:'종목 상세',ready:()=>Boolean(document.querySelector('#detail-price'))&&!document.querySelector('#detail-price')?.classList.contains('skeleton')},
   {route:'tools',label:'투자 도구',ready:()=>Boolean(document.querySelector('#analysis-body .investment-tool-card,#analysis-body .empty'))},
   {route:'info',label:'데이터·이용 안내',ready:()=>Boolean(document.querySelector('.info-stack'))},
+  {route:'exports',label:'수출 데이터',ready:()=>Boolean(document.querySelector('[data-export-panel]:not([hidden])[data-load-state="ready"],[data-export-panel]:not([hidden])[data-load-state="error"],[data-export-panel]:not([hidden])[data-load-state="empty"]'))},
+  {route:'gurus',label:'거장 투자법',ready:()=>Boolean(document.querySelector('#guru-data .guru-coverage,#guru-data .guru-empty'))},
+  {route:'picks',label:'선정 기록',ready:()=>Boolean(document.querySelector('[data-testid="pick-performance"],#pick-ledger-summary .empty'))},
+  {route:'memory',label:'반도체 가격',ready:()=>Boolean(document.querySelector('.dram-spot-price,.memory-price-page .empty'))},
   {route:'more',label:'전체 메뉴',ready:()=>Boolean(document.querySelector('.menu-group'))},
 ];
 
-const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const round=n=>Math.round(Number(n)||0);
 
 function apiCollector(page){
@@ -31,13 +35,16 @@ function apiCollector(page){
   const rows=[];
   let generation=0;
   const onRequest=req=>{
-    if(req.url().includes('chart-view-pkv8.onrender.com/api/'))starts.set(req,{started:performance.now(),generation});
+    if(dataRequestPath(req.url()))starts.set(req,{started:performance.now(),generation});
   };
   const onResponse=async res=>{
     const req=res.request();
     const marker=starts.get(req);
     if(!marker||marker.generation!==generation)return;
     const start=marker.started;
+    const headersMs=round(performance.now()-start);
+    const bodyError=await res.finished();
+    if(marker.generation!==generation)return;
     const url=new URL(req.url());
     let meta=null;
     if(url.pathname==='/api/compare'||url.pathname==='/api/valuation'){
@@ -46,7 +53,7 @@ function apiCollector(page){
         meta={cacheHits:Number(body?.cacheHits??-1),providerFetches:Number(body?.providerFetches??-1)};
       }catch{}
     }
-    rows.push({path:url.pathname,ms:round(performance.now()-start),status:res.status(),meta});
+    rows.push({path:url.pathname,ms:round(performance.now()-start),headersMs,bodyComplete:!bodyError,status:res.status(),meta});
   };
   page.on('request',onRequest);
   page.on('response',onResponse);
@@ -76,6 +83,7 @@ async function waitReady(page,cfg){
   }catch{
     state='timeout';
   }
+  if(state==='ready')state=await page.evaluate(performanceOutcome,cfg.route);
   return {ms:round(performance.now()-started),state};
 }
 
@@ -113,7 +121,7 @@ async function coldMeasure(browser,cfg){
     const n=performance.getEntriesByType('navigation')[0];
     return n?{ttfb:n.responseStart,dom:n.domContentLoadedEventEnd,load:n.loadEventEnd}:null;
   });
-  const result={coldMs:totalMs,coldShellMs:shellMs,coldReadyState:ready.state,navTtfbMs:round(nav?.ttfb),apiCold:apiSummary(api.rows)};
+  const result={browserColdMs:totalMs,usableDataMs:ready.state==='ready'?totalMs:null,coldMs:totalMs,coldShellMs:shellMs,coldReadyState:ready.state,navTtfbMs:round(nav?.ttfb),apiCold:apiSummary(api.rows)};
   api.stop();await context.close();
   return result;
 }
@@ -126,7 +134,6 @@ async function spaMeasure(browser,cfg){
   const api=apiCollector(page);
   await page.goto(`${BASE}/#home`,{waitUntil:'domcontentloaded',timeout:30000});
   await waitReady(page,routes[0]);
-  await sleep(100);
   api.reset();
   const start=performance.now();
   await page.evaluate(route=>{location.hash='#'+route},cfg.route);
@@ -157,12 +164,12 @@ const apiCell=api=>{
   return `${api.path} ${api.ms}ms${meta}`;
 };
 const table=[
-  '| 화면 | Cold 데이터 표시 | SPA 이동 | 앱 Shell | Navigation TTFB | Cold 최장 API | SPA 최장 API |',
+  '| 화면 | 새 브라우저 완료 / 상태 | SPA 완료 / 상태 | 앱 Shell | Navigation TTFB | Cold 최장 API (body) | SPA 최장 API (body) |',
   '|---|---:|---:|---:|---:|---|---|',
   ...results.map(r=>{
     const coldApi=(r.apiCold||[])[0];
     const spaApi=(r.apiSpa||[])[0];
-    return `| ${r.label} | ${r.coldMs}ms | ${r.spaMs}ms | ${r.coldShellMs}ms | ${r.navTtfbMs}ms | ${apiCell(coldApi)} | ${apiCell(spaApi)} |`;
+    return `| ${r.label} | ${r.coldMs}ms / ${r.coldReadyState} | ${r.spaMs}ms / ${r.spaReadyState} | ${r.coldShellMs}ms | ${r.navTtfbMs}ms | ${apiCell(coldApi)} | ${apiCell(spaApi)} |`;
   })
 ].join('\n');
 console.log('\nPERF_TABLE\n'+table);

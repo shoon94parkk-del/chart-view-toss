@@ -66,6 +66,8 @@ export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareS
      const filters=Object.fromEntries(new FormData(form));
      const extra=form.querySelector('.screener-extra');
      const applied=[...extra.querySelectorAll('input,select')].filter(field=>field.value!=='').length;
+     const activeConditions=[...form.querySelectorAll('input,select')].filter(field=>field.name!=='sort'&&field.value!=='').length;
+     controls.querySelector('.screener-advanced > summary').textContent=`조건 직접 설정 · 검색${activeConditions?' · '+activeConditions+'개 적용':''}`;
      extra.querySelector('summary').textContent=`추가 기술 조건 · RSI·거래량·추세${applied?' · '+applied+'개 적용':''}`;
      state.screener={...state.screener,filters,count,activePreset};
      const url=new URL(location.href);url.searchParams.set('cv',encodeSharedView(state));history.replaceState(history.state,'',url);
