@@ -15,7 +15,7 @@
 
 앱: `src/pickLedger.js`, `src/exportMomentumView.js`, `src/main.js`, `src/api.js`, `src/analysisViews.js`, `src/detailModuleRecovery.js`.
 
-진단: `scripts/benchmark-loading.mjs`, `scripts/performance-outcome.mjs`, `scripts/measure-site.mjs`, `tests/production_performance_audit.mjs`.
+진단: `scripts/benchmark-loading.mjs`, `scripts/performance-outcome.mjs`, `scripts/measure-site.mjs`, `tests/production_performance_audit.mjs`, `tests/performanceDiagnostics.test.mjs`, `tests/live_api_contract.mjs`.
 
 회귀: `tests/pickLedgerLoading.test.mjs`, `tests/exportLoadingIsolation.test.mjs`, `tests/detailModuleRecovery.test.mjs`, `tests/apiExplicitRetry.test.mjs`, `tests/lazyAnalysisRoutes.test.mjs`, `tests/pick_management.test.mjs`, `tests/e2e/pick-loading-recovery.spec.mjs`, `tests/e2e/export-loading-isolation.spec.mjs`, `tests/e2e/detail-module-recovery.spec.mjs`, `tests/e2e/ux-readiness.spec.mjs`, `tests/e2e/lazy-analysis-recovery.spec.mjs`. `tests/live-e2e/live.spec.mjs`는 실제 화장품·거장 5전략의 API→모델→UI 검사를 확장했다. 기존 거장 fixture를 `tests/e2e/guru-data.mjs`로 공유하고 `guru-coverage.spec.mjs`에서 재사용한다.
 
@@ -50,7 +50,9 @@ npm run test:e2e -- tests/e2e/export-loading-isolation.spec.mjs
 npm run test:e2e -- tests/e2e/detail-module-recovery.spec.mjs
 ```
 
-로컬 최종 검증: Node 353/353, Playwright 106개 시나리오 × desktop/Android/320px/iPhone WebKit = 424/424 통과. skipped·unexpected·flaky 모두 0이다. 기존 approved audit 320/390/1440px와 mobile release QA(반응형·짧은 viewport·5xx·timeout·offline)도 통과했다. GitHub CI 및 실제 배포의 결과는 해당 PR과 완료 보고에 정확한 실행/배포 링크로 기록한다. 재시도·상태 분리 테스트는 기존 가격·등락률·수출/DRAM API→모델→UI 수치, 선정 분모/성과 계산, 접근성·터치·overflow 검사를 그대로 포함한다.
+로컬 최종 검증: Node 355/355, Playwright 106개 시나리오 × desktop/Android/320px/iPhone WebKit = 424/424 통과. skipped·unexpected·flaky 모두 0이다. 기존 approved audit 320/390/1440px와 mobile release QA(반응형·짧은 viewport·5xx·timeout·offline)도 통과했다. GitHub CI 및 실제 배포의 결과는 해당 PR과 완료 보고에 정확한 실행/배포 링크로 기록한다. 재시도·상태 분리 테스트는 기존 가격·등락률·수출/DRAM API→모델→UI 수치, 선정 분모/성과 계산, 접근성·터치·overflow 검사를 그대로 포함한다.
+
+운영 응답을 사용하는 성능 CI에서 context 종료 시 진행 중인 body promise가 거부되는 진단 도구 버그도 수정했다. 종료 후 늦은 응답을 폐기하고 미완료 body를 정상 latency로 집계하지 않는다. 두 회귀를 추가했다. 실제 API smoke는 요청 경로·경과 시간·기존 timeout budget을 오류에 남기며 timeout 기준은 완화하지 않는다. 현재 운영 API 계약도 로컬 실제 응답으로 통과했다.
 
 기존 `Main regression contract`가 새 spec을 자동 탐색한다. PR 및 main의 재사용 QA를 통과한 정확한 SHA만 기존 `feat/apps-in-toss-mvp`로 promotion한다. 실패 screenshot/video/trace/HTML report artifact는 기존 14일 보관 정책을 따른다. 새 배포 훅이나 LLM secret은 없다.
 

@@ -5,10 +5,13 @@ const BASE = (process.env.VITE_CHARTVIEW_API_BASE || 'https://chart-view-pkv8.on
 async function get(path, timeoutMs = 25000) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
+  const started = performance.now();
   try {
     const response = await fetch(BASE + path, { headers: { Accept: 'application/json' }, signal: controller.signal });
     if (!response.ok) throw new Error(`${path} -> HTTP ${response.status}`);
     return await response.json();
+  } catch (error) {
+    throw new Error(`${path} failed after ${Math.round(performance.now() - started)}ms (budget ${timeoutMs}ms): ${error.name}: ${error.message}`, { cause: error });
   } finally {
     clearTimeout(timer);
   }

@@ -43,7 +43,8 @@ function apiCollector(page){
     if(!marker||marker.generation!==generation)return;
     const start=marker.started;
     const headersMs=round(performance.now()-start);
-    const bodyError=await res.finished();
+    // Closing a context can reject an in-flight optional response body.
+    const bodyError=await res.finished().catch(()=>true);
     if(marker.generation!==generation)return;
     const url=new URL(req.url());
     let meta=null;
@@ -53,14 +54,14 @@ function apiCollector(page){
         meta={cacheHits:Number(body?.cacheHits??-1),providerFetches:Number(body?.providerFetches??-1)};
       }catch{}
     }
-    rows.push({path:url.pathname,ms:round(performance.now()-start),headersMs,bodyComplete:!bodyError,status:res.status(),meta});
+    rows.push({path:url.pathname,ms:bodyError?null:round(performance.now()-start),headersMs,bodyComplete:!bodyError,status:res.status(),meta});
   };
   page.on('request',onRequest);
   page.on('response',onResponse);
   return {
     rows,
     reset(){generation++;rows.length=0;},
-    stop(){page.off('request',onRequest);page.off('response',onResponse);}
+    stop(){generation++;page.off('request',onRequest);page.off('response',onResponse);}
   };
 }
 
@@ -96,7 +97,8 @@ function apiSummary(rows){
   return [...by.entries()].map(([path,list])=>({
     path,
     calls:list.length,
-    ms:Math.max(...list.map(x=>x.ms)),
+    ms:list.some(x=>x.bodyComplete)?Math.max(...list.filter(x=>x.bodyComplete).map(x=>x.ms)):null,
+    completedBodies:list.filter(x=>x.bodyComplete).length,
     status:list.map(x=>x.status).join(','),
     meta:list.find(x=>x.meta)?.meta||null
   })).sort((a,b)=>b.ms-a.ms);
