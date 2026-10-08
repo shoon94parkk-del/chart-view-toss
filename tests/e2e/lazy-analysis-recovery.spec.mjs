@@ -1,6 +1,9 @@
 import { test, expect, noOverflow, touchable } from './fixtures.mjs';
+import {snapshot} from './guru-data.mjs';
+test.beforeEach(({qa})=>qa.overrides.set('/static/data/guru_screening.json',route=>route.fulfill({json:snapshot()})));
 
 const cases = [
+  { tab: 'gurus', hash: '#gurus/buffett', chunk: 'guruInvestingView', ready: '.guru-coverage', marker: '.guru-page', active: '[data-guru-strategy="buffett"]' },
   { tab: 'exports', hash: '#exports/items', chunk: 'exportMomentumView', ready: '.export-topic-nav', marker: '.export-topic-nav', active: '[data-export-topic="products"]' },
   { tab: 'memory', hash: '#memory/nand-chip', chunk: 'memoryPriceView', ready: '.dram-spot-price', marker: '.memory-price-page', active: '[data-memory-price-group="nand-chip"]' },
   { tab: 'ideas', hash: '#ideas', chunk: 'ideaView', ready: '.idea-candidate', marker: '.idea-hero' },
@@ -52,7 +55,7 @@ for (const item of cases) {
     await reload;
     await expect(page).toHaveURL(new RegExp(item.hash.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '$'));
     await expect(page.locator(item.ready).first()).toBeVisible();
-    if (item.active) await expect(page.locator(item.active)).toHaveAttribute('aria-selected', 'true');
+    if (item.active) await expect(page.locator(item.active)).toHaveAttribute(item.tab==='gurus'?'aria-pressed':'aria-selected', 'true');
     await expect(page.getByRole('alert')).toHaveCount(0);
     // WebKit's failed modulepreload also needs an explicit asset GET before the
     // new document refetches it. Count both, keeping the retry bounded.

@@ -40,6 +40,7 @@ import {rangeError,requestedRangeNote,financialNavigationHtml} from './auditExpe
 import './auditExperience.css';
 import './accessibility.css';
 import { bindHorizontalTabs } from './accessibleTabs.js';
+import { loadDetailModule } from './detailModuleRecovery.js';
 
 const WATCHLIST_KEY='chartview-toss-watchlist-v1';
 const SELECTED_KEY='chartview-toss-selected-v1';
@@ -99,6 +100,7 @@ let chartResizeObserver=null;
 let detailLiveTimer=null;
 let viewEpoch=0;
 let detailJumpCleanup=null;
+const detailModuleCleanups=new Set();
 let analysisCleanup=null;
 const lazyAnalysisRetryAssets=new Map();
 let searchSeq=0;
@@ -328,7 +330,7 @@ function openHomeSearch(){
    restoreBack:restoreNativeBack,
  });
 }
-function cleanupChart(){detailJumpCleanup?.();detailJumpCleanup=null;analysisCleanup?.();analysisCleanup=null;viewEpoch++;chartLoadSeq++;chartResizeObserver?.disconnect();chartResizeObserver=null;if(detailLiveTimer){clearTimeout(detailLiveTimer);detailLiveTimer=null;}if(chartInstance){try{chartInstance.remove()}catch{}chartInstance=null}}
+function cleanupChart(){for(const cleanup of detailModuleCleanups)cleanup();detailModuleCleanups.clear();detailJumpCleanup?.();detailJumpCleanup=null;analysisCleanup?.();analysisCleanup=null;viewEpoch++;chartLoadSeq++;chartResizeObserver?.disconnect();chartResizeObserver=null;if(detailLiveTimer){clearTimeout(detailLiveTimer);detailLiveTimer=null;}if(chartInstance){try{chartInstance.remove()}catch{}chartInstance=null}}
 
 function previousFromPct(price,changePct){
  const p=finiteNumber(price),c=finiteNumber(changePct);
@@ -1085,15 +1087,10 @@ async function renderDetail(){
  };
  window.addEventListener('scroll',updateSection,{passive:true});detailJumpCleanup=()=>window.removeEventListener('scroll',updateSection);updateSection();
 
- if(koreanDetail)import('./researchCard.js').then(({mountResearchCard})=>{
-   if(epoch!==viewEpoch)return;
+ if(koreanDetail)detailModuleCleanups.add(loadDetailModule({host:document.querySelector('#research-card-body'),key:'research',isCurrent:()=>epoch===viewEpoch,load:()=>import('./researchCard.js'),mount:({mountResearchCard})=>{
    mountResearchCard(document.querySelector('#research-card-body'),{symbol,name:knownName||symbol,onJump:jumpToDetail,onNotice:showToast,candidates:[...state.watchlist,...Object.entries(DISPLAY_NAMES).map(([symbol,name])=>({symbol,name}))],favorites:state.watchlist,draft:researchDrafts.get(symbol),initialPeer:state.sharedDetailSymbol===symbol?state.researchPeer:null,onDraftChange:draft=>{researchDrafts.set(symbol,draft);state.researchPeer=draft.resultPeer||draft.peer||null;},onCompare:companies=>{state.selected=companies.map(row=>row.symbol);companies.forEach(row=>resolvedNames.set(row.symbol,row.name));persist();navigate('chart');},onChoosePeer:callback=>openStockSelector({title:'공시를 비교할 회사',description:'현재 종목과 다른 국내 회사 하나를 선택하세요.',favorites:state.watchlist,nameFor:comparisonStockName,pickLabel:'비교 선택',restoreBack:restoreNativeBack,onPick:(symbol,name)=>callback({symbol,name})})});
    restoreInvestigationJump();
- }).catch(()=>{
-   if(epoch!==viewEpoch)return;
-   const host=document.querySelector('#research-card-body');
-   if(host)host.innerHTML='<p>조사 카드를 열지 못했어요. 화면을 다시 열어주세요.</p>';
- });
+ }}));
  const paintWatchState=()=>{
    const watched=state.watchlist.some(row=>row.symbol===symbol);
    const verified=isIndex||Boolean(knownName)||Number(getLiveQuote(symbol)?.price)>0;
@@ -1295,6 +1292,11 @@ async function renderDetail(){
  if(koreanDetail){
    const reviewHost=document.createElement('div');reviewHost.id='detail-report-review';reviewHost.className='report-review-host';
    document.querySelector('#detail-financial-history').after(reviewHost);
+   // Own the shared quarter preload before reportReview imports it too.
+   const quarters=document.createElement('div');quarters.id='detail-financial-quarters';quarters.className='financial-quarters';
+   document.querySelector('#detail-financial-history').after(quarters);
+   quarters.innerHTML=loadingIndicator('분기 실적 화면을 준비하고 있어요');
+   detailModuleCleanups.add(loadDetailModule({host:quarters,key:'quarters',isCurrent:()=>epoch===viewEpoch,load:()=>import('./quarterView.js'),mount:({mountQuarters})=>mountQuarters(quarters,symbol)}));
    const reviewReady=import('./reportReviewView.js').then(view=>{
      if(epoch===viewEpoch){view.mountReportReview(reviewHost,{symbol,data:{available:false,pending:true},onNotice:showToast,onJump:jumpToDetail});restoreInvestigationJump();}
      return view;
@@ -1314,10 +1316,7 @@ async function renderDetail(){
      });
    };
    jobs.push(loadFinancial());
-   const quarters=document.createElement('div');quarters.id='detail-financial-quarters';quarters.className='financial-quarters';
-   document.querySelector('#detail-financial-history').after(quarters);
-   quarters.innerHTML=loadingIndicator('분기 실적 화면을 준비하고 있어요');
-   import('./quarterView.js').then(({mountQuarters})=>{if(epoch===viewEpoch)mountQuarters(quarters,symbol);}).catch(()=>{if(epoch===viewEpoch)quarters.textContent='분기 실적 화면을 불러오지 못했어요. 화면을 다시 열어주세요.';});
+
  }
  const enrichment={report:null,reportState:koreanDetail?'loading':'idle',directRelations:[],relationsState:koreanDetail?'loading':'idle'};
  jobs.push(settle(industryBasePromise,industryRes=>{
@@ -1612,12 +1611,10 @@ function render(){
    return;
  }
  if(state.tab==='gurus'){
-   cleanupChart();
-   const epoch=viewEpoch;
-   document.querySelector('#app').innerHTML=shell(loadingIndicator('거장 투자법을 불러오고 있어요'),'거장 투자법');bindNav();
-   void Promise.all([import('./guruInvestingView.js'),import('./guruInvestingView.css')]).then(([view])=>{
-     if(epoch===viewEpoch&&state.tab==='gurus')analysisCleanup=view.renderGuruInvesting({state,shell,bindNav,navigate,isCurrent:()=>epoch===viewEpoch&&state.tab==='gurus'});
-   }).catch(()=>{if(epoch===viewEpoch&&state.tab==='gurus'){document.querySelector('#app').innerHTML=shell('<div class="empty"><strong>화면을 불러오지 못했어요.</strong><button data-tab="more">분석 메뉴로</button></div>','거장 투자법');bindNav();}});
+   renderLazyAnalysis({tab:'gurus',title:'거장 투자법',load:()=>Promise.all([import('./guruInvestingView.js'),import('./guruInvestingView.css')]),mount:([view])=>{
+     const epoch=viewEpoch;
+     return view.renderGuruInvesting({state,shell,bindNav,navigate,isCurrent:()=>epoch===viewEpoch&&state.tab==='gurus'});
+   }});
    return;
  }
  if(state.tab==='ideas'){
@@ -1625,7 +1622,8 @@ function render(){
    return;
  }
  if(state.tab==='picks'&&SHOW_SPOTLIGHT){
-   renderLazyAnalysis({tab:'picks',title:'선정 기록·성과',load:()=>Promise.all([import('./pickLedger.js'),import('./pickLedger.css')]),mount:([ledger])=>ledger.renderPickLedger({shell,bindNav,displayName,focusKey:state.pickFocusKey})});
+   const restoreView=state.restoreScroll!=null;
+   renderLazyAnalysis({tab:'picks',title:'선정 기록·성과',load:()=>Promise.all([import('./pickLedger.js'),import('./pickLedger.css')]),mount:([ledger])=>ledger.renderPickLedger({shell,bindNav,displayName,focusKey:state.pickFocusKey,restoreView,viewState:state.pickLedger||(state.pickLedger={})})});
    return;
  }
  if(ANALYSIS_ROUTES.has(state.tab)){cleanupChart();analysisCleanup=renderAnalysis({tab:state.tab,state,shell,bindNav,displayName,openCompareSheet});return;}

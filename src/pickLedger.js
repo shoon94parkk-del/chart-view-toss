@@ -83,10 +83,11 @@ export function selectionScorePresentation(row){
     note:score===null?'이 선정 기록에는 점수가 제공되지 않았어요.':(score===0?'0점은 원자료에 기록된 값이에요. ':'선정 당시 기록된 값이에요. ')+'계산 산식과 척도가 제공되지 않아 현재 기술점수·점검 상태와 직접 비교하지 않아요.'};
 }
 
-function rowMarkup(row,index,displayName){
+function rowMarkup(row,index,displayName,monitorState='ready'){
   const score=selectionScorePresentation(row);
   const pick=row?.monitor;
-  const meta=statusMeta(actionStatus(row));
+  const known=monitorState==='ready';
+  const meta=known?statusMeta(actionStatus(row)):{label:monitorState==='loading'?'점검 확인 중':'점검 미확인',icon:'',cls:'pending'};
   const symbol=symbolOf(row);
   const name=stockName(row,displayName);
   const id=`pick-${String(row?.recommendedDate||'date')}-${String(row?.rank||index)}-${symbol||index}`.replace(/[^a-zA-Z0-9_-]/g,'-');
@@ -94,7 +95,7 @@ function rowMarkup(row,index,displayName){
     ||(Array.isArray(pick?.originalThesis?.pillars)?pick.originalThesis.pillars.join(' · '):'')
     ||row?.reason
     ||'추천 당시 투자논리 기록이 없어요.';
-  const review=pick?.monitor?.reason||'새 기업 근거 확인 전 · 근거 검토 대기';
+  const review=known?(pick?.monitor?.reason||'새 기업 근거 확인 전 · 근거 검토 대기'):monitorState==='loading'?'사후점검 데이터를 확인하고 있어요.':'사후점검 자료를 확인하지 못했어요. 성과 기록은 계속 볼 수 있어요.';
   const reviewed=pick?.monitor?.lastReviewedTradeDate||String(pick?.monitor?.lastReviewedAt||'').slice(0,10)||'—';
   return `<article class="pick-ledger-item ${meta.cls}" data-pick-key="${esc(selectionKey(row))}">
     <button type="button" class="pick-ledger-row" data-pick-expand="${esc(id)}" aria-expanded="false">
@@ -107,10 +108,10 @@ function rowMarkup(row,index,displayName){
       <div class="pick-ledger-detail-grid">
         <section><strong>추천 당시 이유</strong><p>${esc(row?.reason||'추천 사유가 기록되지 않았어요.')}</p></section>
         ${thesis.trim()!==String(row?.reason||'').trim()?`<section><strong>투자논리 기준선</strong><p>${esc(thesis)}</p></section>`:''}
-        <section><strong>기업 근거 점검</strong><p>기업 근거 상태 · ${esc(statusMeta(pick?.status||pick?.monitor?.status||'PENDING_REVIEW').label)} ${(pick?.status||pick?.monitor?.status)==='SELL_REVIEW'?'· 매도검토':''}</p></section><section><strong>최근 점검</strong><p>${esc(review)}</p></section>
+        <section><strong>기업 근거 점검</strong><p>기업 근거 상태 · ${esc(known?statusMeta(pick?.status||pick?.monitor?.status||'PENDING_REVIEW').label:meta.label)} ${(pick?.status||pick?.monitor?.status)==='SELL_REVIEW'?'· 매도검토':''}</p></section><section><strong>최근 점검</strong><p>${esc(review)}</p></section>
         <section data-pick-score-basis><strong>선정 점수 · 출처</strong><p>${esc(score.label)} · ${esc(score.source)}</p><p>${esc(score.note)}</p></section>
-        <section><strong>단기 기술 신호</strong><p>기술 점검 · ${esc(technicalMeta(pick?.technical?.signal).label)} ${pick?.technical?.signal==='TECH_SELL_REVIEW'?'· 단기 매도 검토':''}</p>${technicalMarkup(pick)}</section>
-        <section><strong>검증 근거</strong>${evidenceMarkup(pick)}</section>
+        <section><strong>단기 기술 신호</strong><p>기술 점검 · ${esc(known?technicalMeta(pick?.technical?.signal).label:meta.label)} ${pick?.technical?.signal==='TECH_SELL_REVIEW'?'· 단기 매도 검토':''}</p>${known?technicalMarkup(pick):`<p class="pick-ledger-muted">${monitorState==='loading'?'기술점수를 확인하고 있어요.':'기술점수를 확인하지 못했어요.'}</p>`}</section>
+        <section><strong>검증 근거</strong>${known?evidenceMarkup(pick):`<p class="pick-ledger-muted">${esc(review)}</p>`}</section>
       </div>
       <div class="pick-ledger-detail-foot"><span>마지막 점검 ${esc(reviewed)} · 시세기준 ${esc(row?.lastUpdatedTradeDate||'—')}</span>${pick?.needsUserReview?'<strong>사용자 확인 필요</strong>':''}</div>
       ${symbol?`<button type="button" class="pick-ledger-detail-link" data-stock-detail="${esc(symbol)}">종목 상세 보기</button>`:''}
@@ -118,7 +119,10 @@ function rowMarkup(row,index,displayName){
   </article>`;
 }
 
-export async function renderPickLedger({shell,bindNav,displayName,focusKey=null}){
+export async function renderPickLedger({shell,bindNav,displayName,focusKey=null,viewState={},restoreView=false}){
+  // Hash-only navigation also emits popstate. Restore only the same dated view.
+  restoreView=restoreView&&viewState.routeFocusKey===focusKey;
+  viewState.routeFocusKey=focusKey;
   document.querySelector('#app').innerHTML=shell(`
     <section class="task-head pick-ledger-head"><div><span class="page-kicker">CHARTVIEW</span><h2>선정 기록·성과</h2><p>과거에 선정한 이유와 이후 성과·점검 내용을 확인해요. 실시간 인기 순위가 아니에요.</p></div></section>
     <section class="pick-ledger-overview" aria-label="성과·상태 요약">
@@ -152,99 +156,192 @@ export async function renderPickLedger({shell,bindNav,displayName,focusKey=null}
   const list=document.querySelector('#pick-ledger-list');
   const count=document.querySelector('#pick-ledger-count');
 
-  try{
-    const [payload,monitorResult]=await Promise.all([
-      homeBootstrap(),
-      pickMonitor().then((value)=>({ok:true,value})).catch(()=>({ok:false,value:null})),
-    ]);
-    if(!list.isConnected)return;
-    let focusApplied=false;
-    const picks=Array.isArray(monitorResult.value?.picks)?monitorResult.value.picks:[];
-    const rows=(Array.isArray(payload?.recommendations)?payload.recommendations:[]).map((row)=>({...row,monitor:monitorFor(row,picks)}));
-    const evaluated=rows.filter((row)=>finite(row?.returnPct)!==null);
-    const avg=evaluated.length?evaluated.reduce((sum,row)=>sum+Number(row.returnPct),0)/evaluated.length:null;
-    const wins=evaluated.filter((row)=>Number(row.returnPct)>0).length;
-    const winRate=evaluated.length?Math.round(wins/evaluated.length*100):null;
-    const dayCount=new Set(rows.map((row)=>row?.recommendedDate).filter(Boolean)).size;
-    const latest=evaluated.reduce((max,row)=>String(row?.lastUpdatedTradeDate||'')>max?String(row.lastUpdatedTradeDate):max,'');
-    const latestPickDate=rows.reduce((max,row)=>String(row?.recommendedDate||'')>max?String(row.recommendedDate):max,'');
-    const counts={KEEP:0,WATCH:0,SELL_REVIEW:0,PENDING_REVIEW:0,EXIT:0};
-    rows.forEach((row)=>{const status=actionStatus(row);counts[status]=(counts[status]||0)+1;});
-    const reviewed=rows.filter((row)=>row.monitor?.monitor?.lastReviewedTradeDate).length;
-
-    summary.innerHTML=`<div class="pick-ledger-kpis" data-testid="pick-performance">
-      <div><span>누적 추천일</span><b>${dayCount.toLocaleString('ko-KR')}</b></div>
-      <div><span>누적 추천</span><b>${rows.length.toLocaleString('ko-KR')}건</b></div>
-      <div><span>플러스 비율</span><b>${winRate===null?'—':winRate+'%'}</b><small>평가 ${evaluated.length}/${rows.length}건</small></div>
-      <div><span>평균 수익률</span><b class="${tone(avg)}">${pct(avg)}</b><small>미평가 제외</small></div>
-    </div><p class="pick-ledger-basis">${esc(latest||payload?.day?.tradeDate||'기준일 미확인')} 종가 기준 · 추천가 대비 현재가 단순 수익률</p>`;
-
-    statusStrip.innerHTML=`<div class="pick-ledger-status-kpis" data-testid="pick-status">
-      <div class="keep"><span>🟢 유지</span><b>${counts.KEEP}</b></div>
-      <div class="watch"><span>🟡 경계</span><b>${counts.WATCH}</b></div>
-      <div class="sell"><span>🔴 재점검</span><b>${counts.SELL_REVIEW}</b></div>
-      <div><span>⚪ 검토대기</span><b>${counts.PENDING_REVIEW}</b></div>
-    </div><p class="pick-ledger-status-scope">전체 ${rows.length}건 · 진행 중 ${rows.length-counts.EXIT}건 · 종료 ${counts.EXIT}건 · 위 4개 상태는 진행 중 기록이에요.</p><p class="pick-ledger-basis">${monitorResult.ok?esc(`사후점검 ${String(monitorResult.value?.generatedAt||'').slice(0,10)||'기준일 미확인'} 기준 · 신호등은 펀더멘털과 단기 기술신호 중 더 높은 위험도를 반영 · 자동 점검 실행 ${reviewed}/${rows.length}건 · 근거 검토 대기는 별도 표시`):'사후점검 데이터를 불러오지 못해 성과 기록만 표시 중이에요.'}</p>`;
-    document.querySelector('[data-pick-calculation]').innerHTML=[summary,statusStrip].map(node=>`<p>${esc(node.querySelector('.pick-ledger-basis').textContent)}</p>`).join('');
-    toolbar.hidden=false;
-
-    const search=document.querySelector('#pick-ledger-search');
-    const period=document.querySelector('#pick-ledger-period');
-    const perf=document.querySelector('#pick-ledger-performance');
-    const status=document.querySelector('#pick-ledger-status');
-    const sort=document.querySelector('#pick-ledger-sort');
-
-    function paint(){
-      const q=search.value.trim().toLowerCase();
-      let filtered=rows.filter((row)=>!q||`${row?.name||''} ${row?.code||''} ${symbolOf(row)}`.toLowerCase().includes(q));
-      if(period.value!=='all'&&latestPickDate){
-        const days=Number(period.value);
-        const cutoff=dateValue(latestPickDate)-Math.max(0,days-1)*86400000;
-        filtered=filtered.filter((row)=>dateValue(row?.recommendedDate)>=cutoff);
-      }
-      if(perf.value==='win')filtered=filtered.filter((row)=>(finite(row?.returnPct)||0)>0);
-      if(perf.value==='loss')filtered=filtered.filter((row)=>(finite(row?.returnPct)||0)<0);
-      if(status.value!=='all')filtered=filtered.filter((row)=>actionStatus(row)===status.value);
-      const latestSort=(a,b)=>dateValue(b?.recommendedDate)-dateValue(a?.recommendedDate)||(Number(a?.rank)||99)-(Number(b?.rank)||99);
-      if(sort.value==='technical')filtered.sort((a,b)=>technicalOrder(a)-technicalOrder(b)||latestSort(a,b));
-      else if(sort.value==='status')filtered.sort((a,b)=>statusMeta(actionStatus(a)).order-statusMeta(actionStatus(b)).order||latestSort(a,b));
-      else if(sort.value==='return')filtered.sort((a,b)=>(finite(b?.returnPct)??-Infinity)-(finite(a?.returnPct)??-Infinity)||latestSort(a,b));
-      else if(sort.value==='best')filtered.sort((a,b)=>(finite(b?.bestReturnPct)??-Infinity)-(finite(a?.bestReturnPct)??-Infinity)||latestSort(a,b));
-      else if(sort.value==='score')filtered.sort((a,b)=>(finite(b?.score)??-Infinity)-(finite(a?.score)??-Infinity)||latestSort(a,b));
-      else filtered.sort(latestSort);
-
-      count.textContent=`${filtered.length.toLocaleString('ko-KR')}개 PICK 기록`;
-      list.innerHTML=filtered.length?filtered.map((row,index)=>rowMarkup(row,index,displayName)).join(''):'<div class="empty compact"><strong>조건에 맞는 PICK 기록이 없어요.</strong></div>';
-      list.querySelectorAll('[data-pick-expand]').forEach((button)=>button.addEventListener('click',(event)=>{
-        if(event.target.closest('[data-stock-detail],[data-external-url]'))return;
-        const id=button.dataset.pickExpand;
-        const detail=list.querySelector(`[data-pick-detail="${CSS.escape(id)}"]`);
-        if(!detail)return;
-        const open=detail.hidden;
-        detail.hidden=!open;
-        button.setAttribute('aria-expanded',String(open));
-      }));
-      bindNav();
-      if(focusKey&&!focusApplied){
-        focusApplied=true;
-        const article=[...list.querySelectorAll('[data-pick-key]')].find(el=>el.dataset.pickKey===focusKey);
-        if(article){
-          const button=article.querySelector('[data-pick-expand]');button.click();
-          requestAnimationFrame(()=>{if(article.isConnected){article.scrollIntoView({block:'start'});button.focus({preventScroll:true});}});
-        }else document.querySelector('.pick-ledger-focus-note').textContent='요청한 날짜의 선정 기록을 찾지 못했어요. 다른 기록을 대신 열지 않았어요.';
-      }
+  const search=document.querySelector('#pick-ledger-search');
+  const period=document.querySelector('#pick-ledger-period');
+  const perf=document.querySelector('#pick-ledger-performance');
+  const status=document.querySelector('#pick-ledger-status');
+  const sort=document.querySelector('#pick-ledger-sort');
+  const searchOptions=document.querySelector('.pick-ledger-search-options');
+  const fields={search,period,performance:perf,status,sort};
+  const expanded=new Set(Array.isArray(viewState.expandedKeys)?viewState.expandedKeys:[]);
+  if(focusKey&&!restoreView)expanded.clear();
+  for(const [key,field] of Object.entries(fields))if(typeof viewState[key]==='string')field.value=viewState[key];
+  searchOptions.open=Boolean(viewState.searchOpen);
+  if(!restoreView)delete viewState.returnScroll;
+  let disposed=false,payload=null,rows=[],latestPickDate='',focusApplied=restoreView;
+  let primarySequence=0,monitorSequence=0,primaryLoading=false;
+  let monitorResult={state:'loading',value:null};
+  const alive=()=>!disposed&&list.isConnected;
+  const saveViewState=()=>{
+    for(const [key,field] of Object.entries(fields))viewState[key]=field.value;
+    viewState.searchOpen=searchOptions.open;
+    viewState.expandedKeys=[...expanded];
+  };
+  searchOptions.addEventListener('toggle',saveViewState);
+  // Capture before bindNav moves to a different document surface. Public
+  // share parameters and persistent device storage never contain this state.
+  list.addEventListener('click',event=>{
+    if(event.target.closest('[data-stock-detail]')){
+      saveViewState();viewState.returnScroll=window.scrollY;
     }
-    search.addEventListener('input',paint);
-    period.addEventListener('change',paint);
-    perf.addEventListener('change',paint);
-    status.addEventListener('change',paint);
-    sort.addEventListener('change',paint);
-    paint();
-  }catch(error){
-    if(!list.isConnected)return;
-    summary.innerHTML='<div class="empty compact"><strong>PICK 성과를 불러오지 못했어요.</strong><span>잠시 후 다시 확인해주세요.</span></div>';
-    statusStrip.innerHTML='';
-    list.innerHTML='';
-    count.textContent='';
+  },{capture:true});
+
+  function positionSnapshot(){
+    const active=document.activeElement;
+    const article=active&&list.contains(active)?active.closest('[data-pick-key]'):null;
+    const focus=article?{key:article.dataset.pickKey,expand:active.hasAttribute('data-pick-expand'),stock:active.dataset.stockDetail,external:active.dataset.externalUrl,top:active.getBoundingClientRect().top}:null;
+    const anchor=[...list.querySelectorAll('[data-pick-key]')].find(node=>{
+      const rect=node.getBoundingClientRect();return rect.bottom>0&&rect.top<window.innerHeight;
+    });
+    return {focus,anchorKey:anchor?.dataset.pickKey,anchorTop:anchor?.getBoundingClientRect().top};
   }
+  function paint(position=positionSnapshot()){
+    if(!alive()||!payload)return;
+    saveViewState();
+    const {focus,anchorKey,anchorTop}=position;
+    const q=search.value.trim().toLowerCase();
+    let filtered=rows.filter((row)=>!q||`${row?.name||''} ${row?.code||''} ${symbolOf(row)}`.toLowerCase().includes(q));
+    if(period.value!=='all'&&latestPickDate){
+      const days=Number(period.value);
+      const cutoff=dateValue(latestPickDate)-Math.max(0,days-1)*86400000;
+      filtered=filtered.filter((row)=>dateValue(row?.recommendedDate)>=cutoff);
+    }
+    if(perf.value==='win')filtered=filtered.filter((row)=>(finite(row?.returnPct)||0)>0);
+    if(perf.value==='loss')filtered=filtered.filter((row)=>(finite(row?.returnPct)||0)<0);
+    if(monitorResult.state==='ready'&&status.value!=='all')filtered=filtered.filter((row)=>actionStatus(row)===status.value);
+    const latestSort=(a,b)=>dateValue(b?.recommendedDate)-dateValue(a?.recommendedDate)||(Number(a?.rank)||99)-(Number(b?.rank)||99);
+    if(sort.value==='technical'&&monitorResult.state==='ready')filtered.sort((a,b)=>technicalOrder(a)-technicalOrder(b)||latestSort(a,b));
+    else if(sort.value==='status'&&monitorResult.state==='ready')filtered.sort((a,b)=>statusMeta(actionStatus(a)).order-statusMeta(actionStatus(b)).order||latestSort(a,b));
+    else if(sort.value==='return')filtered.sort((a,b)=>(finite(b?.returnPct)??-Infinity)-(finite(a?.returnPct)??-Infinity)||latestSort(a,b));
+    else if(sort.value==='best')filtered.sort((a,b)=>(finite(b?.bestReturnPct)??-Infinity)-(finite(a?.bestReturnPct)??-Infinity)||latestSort(a,b));
+    else if(sort.value==='score')filtered.sort((a,b)=>(finite(b?.score)??-Infinity)-(finite(a?.score)??-Infinity)||latestSort(a,b));
+    else filtered.sort(latestSort);
+    count.textContent=`${filtered.length.toLocaleString('ko-KR')}개 PICK 기록`;
+    list.innerHTML=filtered.length?filtered.map((row,index)=>rowMarkup(row,index,displayName,monitorResult.state)).join(''):'<div class="empty compact"><strong>조건에 맞는 PICK 기록이 없어요.</strong></div>';
+    list.querySelectorAll('[data-pick-expand]').forEach((button)=>{
+      const key=button.closest('[data-pick-key]').dataset.pickKey;
+      const detail=list.querySelector(`[data-pick-detail="${CSS.escape(button.dataset.pickExpand)}"]`);
+      detail.hidden=!expanded.has(key);
+      button.setAttribute('aria-expanded',String(!detail.hidden));
+      button.addEventListener('click',(event)=>{
+        if(event.target.closest('[data-stock-detail],[data-external-url]'))return;
+        detail.hidden=!detail.hidden;
+        button.setAttribute('aria-expanded',String(!detail.hidden));
+        if(detail.hidden)expanded.delete(key);else expanded.add(key);
+        saveViewState();
+      });
+    });
+    bindNav();
+    if(anchorKey){
+      const restored=[...list.querySelectorAll('[data-pick-key]')].find(node=>node.dataset.pickKey===anchorKey);
+      if(restored)window.scrollBy(0,restored.getBoundingClientRect().top-anchorTop);
+    }
+    if(focus){
+      const restored=[...list.querySelectorAll('[data-pick-key]')].find(node=>node.dataset.pickKey===focus.key);
+      const selector=focus.expand?'[data-pick-expand]':focus.stock?`[data-stock-detail="${CSS.escape(focus.stock)}"]`:focus.external?`[data-external-url="${CSS.escape(focus.external)}"]`:null;
+      const target=selector?restored?.querySelector(selector):null;
+      if(target){target.focus({preventScroll:true});if(focus.top>=0&&focus.top<window.innerHeight)window.scrollBy(0,target.getBoundingClientRect().top-focus.top);}
+    }
+    if(focusKey&&!focusApplied){
+      focusApplied=true;
+      const target=[...list.querySelectorAll('[data-pick-key]')].find(node=>node.dataset.pickKey===focusKey);
+      if(target){
+        const button=target.querySelector('[data-pick-expand]');
+        if(button.getAttribute('aria-expanded')!=='true')button.click();
+        requestAnimationFrame(()=>{if(alive()&&target.isConnected){target.scrollIntoView({block:'start'});button.focus({preventScroll:true});}});
+      }else document.querySelector('.pick-ledger-focus-note').textContent='요청한 날짜의 선정 기록을 찾지 못했어요. 다른 기록을 대신 열지 않았어요.';
+    }
+  }
+
+  function paintMonitoring(){
+    if(!alive()||!payload)return;
+    const position=positionSnapshot();
+    const ready=monitorResult.state==='ready';
+    const picks=ready?monitorResult.value.picks:[];
+    rows=payload.recommendations.map(row=>({...row,monitor:ready?monitorFor(row,picks):null}));
+    statusStrip.setAttribute('data-load-state',monitorResult.state);
+    status.disabled=!ready;
+    for(const option of sort.querySelectorAll('option'))if(['technical','status'].includes(option.value))option.disabled=!ready;
+    if(ready){
+      const counts={KEEP:0,WATCH:0,SELL_REVIEW:0,PENDING_REVIEW:0,EXIT:0};
+      rows.forEach((row)=>{const value=actionStatus(row);counts[value]=(counts[value]||0)+1;});
+      const reviewed=rows.filter((row)=>row.monitor?.monitor?.lastReviewedTradeDate).length;
+      statusStrip.innerHTML=`<div class="pick-ledger-status-kpis" data-testid="pick-status">
+        <div class="keep"><span>🟢 유지</span><b>${counts.KEEP}</b></div>
+        <div class="watch"><span>🟡 경계</span><b>${counts.WATCH}</b></div>
+        <div class="sell"><span>🔴 재점검</span><b>${counts.SELL_REVIEW}</b></div>
+        <div><span>⚪ 검토대기</span><b>${counts.PENDING_REVIEW}</b></div>
+      </div><p class="pick-ledger-status-scope">전체 ${rows.length}건 · 진행 중 ${rows.length-counts.EXIT}건 · 종료 ${counts.EXIT}건 · 위 4개 상태는 진행 중 기록이에요.</p><p class="pick-ledger-basis">${esc(`사후점검 ${String(monitorResult.value.generatedAt||'').slice(0,10)||'기준일 미확인'} 기준 · 신호등은 펀더멘털과 단기 기술신호 중 더 높은 위험도를 반영 · 자동 점검 실행 ${reviewed}/${rows.length}건 · 근거 검토 대기는 별도 표시`)}</p>`;
+    }else if(monitorResult.state==='loading'){
+      statusStrip.innerHTML=loadingIndicator('사후점검 상태를 확인하고 있어요. 성과 기록은 이용할 수 있어요.');
+    }else{
+      statusStrip.innerHTML='<div class="empty compact" role="status"><strong>사후점검 데이터를 불러오지 못해 성과 기록만 표시 중이에요.</strong><button type="button" class="retry" data-pick-monitor-retry>사후점검 다시 시도</button></div>';
+      statusStrip.querySelector('[data-pick-monitor-retry]').onclick=()=>loadMonitoring(true);
+    }
+    const monitoringBasis=ready?statusStrip.querySelector('.pick-ledger-basis').textContent:monitorResult.state==='loading'?'사후점검 확인 중 · 성과 기록은 제공된 기준일의 수익률이에요.':'사후점검 미확인 · 성과 기록은 제공된 기준일의 수익률이에요.';
+    document.querySelector('[data-pick-calculation]').innerHTML=`<p>${esc(summary.querySelector('.pick-ledger-basis').textContent)}</p><p>${esc(monitoringBasis)}</p>`;
+    paint(position);
+  }
+
+  async function loadMonitoring(force=false){
+    if(!alive()||(force&&monitorResult.state==='loading'))return;
+    const sequence=++monitorSequence;
+    monitorResult={state:'loading',value:null};
+    paintMonitoring();
+    const result=await (force
+      ?pickMonitor({force:true}).then((value)=>({ok:true,value})).catch(()=>({ok:false,value:null}))
+      :pickMonitor().then((value)=>({ok:true,value})).catch(()=>({ok:false,value:null})));
+    if(!alive()||sequence!==monitorSequence)return;
+    monitorResult=result.ok&&Array.isArray(result.value?.picks)?{state:'ready',value:result.value}:{state:'error',value:null};
+    paintMonitoring();
+  }
+
+  async function loadPrimary(force=false){
+    if(!alive()||primaryLoading)return;
+    primaryLoading=true;
+    const sequence=++primarySequence;
+    summary.innerHTML=loadingIndicator('선정 기록을 불러오고 있어요');
+    try{
+      const next=await (force?homeBootstrap({force:true}):homeBootstrap());
+      if(!alive()||sequence!==primarySequence)return;
+      if(!Array.isArray(next?.recommendations))throw new Error('선정 기록 형식을 확인하지 못했어요.');
+      payload=next;
+      // An explicit dated record link takes precedence over filters from an
+      // unrelated earlier visit. Back from detail retains its current view.
+      if(focusKey&&!focusApplied&&payload.recommendations.some(row=>selectionKey(row)===focusKey)){
+        const cleared=search.value||period.value!=='all'||perf.value!=='all'||status.value!=='all';
+        search.value='';period.value='all';perf.value='all';status.value='all';searchOptions.open=false;
+        if(cleared)document.querySelector('.pick-ledger-focus-note').textContent='요청한 날짜의 선정 기록을 열기 위해 검색·필터를 해제했어요.';
+      }
+      const evaluated=payload.recommendations.filter((row)=>finite(row?.returnPct)!==null);
+      const avg=evaluated.length?evaluated.reduce((sum,row)=>sum+Number(row.returnPct),0)/evaluated.length:null;
+      const wins=evaluated.filter((row)=>Number(row.returnPct)>0).length;
+      const winRate=evaluated.length?Math.round(wins/evaluated.length*100):null;
+      const dayCount=new Set(payload.recommendations.map((row)=>row?.recommendedDate).filter(Boolean)).size;
+      const latest=evaluated.reduce((max,row)=>String(row?.lastUpdatedTradeDate||'')>max?String(row.lastUpdatedTradeDate):max,'');
+      latestPickDate=payload.recommendations.reduce((max,row)=>String(row?.recommendedDate||'')>max?String(row.recommendedDate):max,'');
+      summary.innerHTML=`<div class="pick-ledger-kpis" data-testid="pick-performance">
+        <div><span>누적 추천일</span><b>${dayCount.toLocaleString('ko-KR')}</b></div>
+        <div><span>누적 추천</span><b>${payload.recommendations.length.toLocaleString('ko-KR')}건</b></div>
+        <div><span>플러스 비율</span><b>${winRate===null?'—':winRate+'%'}</b><small>평가 ${evaluated.length}/${payload.recommendations.length}건</small></div>
+        <div><span>평균 수익률</span><b class="${tone(avg)}">${pct(avg)}</b><small>미평가 제외</small></div>
+      </div><p class="pick-ledger-basis">${esc(latest||payload?.day?.tradeDate||'기준일 미확인')} 종가 기준 · 추천가 대비 현재가 단순 수익률</p>`;
+      toolbar.hidden=false;
+      paintMonitoring();
+      window.__chartviewRestoreScroll?.();
+      if(restoreView&&Number.isFinite(viewState.returnScroll)){
+        const top=viewState.returnScroll;delete viewState.returnScroll;
+        requestAnimationFrame(()=>{if(alive())window.scrollTo({top,behavior:'instant'});});
+      }
+    }catch(error){
+      if(!alive()||sequence!==primarySequence)return;
+      summary.innerHTML='<div class="empty compact" role="status"><strong>PICK 성과를 불러오지 못했어요.</strong><span>잠시 후 다시 확인해주세요.</span><button type="button" class="retry" data-pick-primary-retry>선정 기록 다시 시도</button></div>';
+      summary.querySelector('[data-pick-primary-retry]').onclick=()=>loadPrimary(true);
+      statusStrip.innerHTML='';list.innerHTML='';count.textContent='';toolbar.hidden=true;
+    }finally{if(sequence===primarySequence)primaryLoading=false;}
+  }
+  for(const [field,event] of [[search,'input'],[period,'change'],[perf,'change'],[status,'change'],[sort,'change']])field.addEventListener(event,()=>paint());
+  void loadMonitoring();
+  await loadPrimary();
+  return ()=>{disposed=true;primarySequence++;monitorSequence++;};
 }

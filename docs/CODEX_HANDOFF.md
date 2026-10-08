@@ -36,6 +36,10 @@
 
 기존 두 방법의 1차 실제 수집: 전체2,652 기록 확인, 버핏54·린치37(2026-10-02 종가). **추가 전략의 현재 개수는 운영 스냅샷을 확인**한다. 이 숫자를 실시간·오늘 날짜로 재표시하지 않는다.
 
+## 로딩·UX 후속 개선
+
+[로딩·UX 개선 기록](UX_LOADING_IMPROVEMENTS_20261008.md)을 읽는다. PICK primary/monitor와 수출 monthly/industry를 다시 Promise.all로 묶지 않는다. 모듈 실패는 기존 epoch·host 보호와 명시적 bounded asset repair로 복구한다. PICK 날짜 지정 진입과 실제 Back 복원은 다르다. 조건 설정의 적용 개수는 실제 form 값에서 표시한다. 성능 오류 화면·placeholder를 정상 데이터 준비로 집계하지 않는다.
+
 ## 다른 Codex로 도구·skill 이관
 
 [CODEX_TRANSFER.md](CODEX_TRANSFER.md)에 현재 설치한 GitHub 도구·고정 버전·소스 조사만 한 프로젝트·플랫폼 skill/connector 재연결·실제 QA·기억 보존 절차를 정리했다. `node tools/codex/setup.mjs --install --with-browsers`와 `--check`로 새 클론을 준비한다. 저장소 `.agents/skills`의 `chartview-qa`, `chartview-agent-review`는 직접 작성한 이관용 skill이다. 새 Codex에서 실제 인식 여부를 확인하며 e2e/claude-mem 자동 연결을 가정하지 않는다.
