@@ -1,0 +1,43 @@
+name: ChartView ReviewBench
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      enforce:
+        description: 'Fail when a critical protected area changes without mapped regression-test evidence'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  reviewbench:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.21.0'
+          cache: npm
+      - run: npm ci
+      - name: Existing regression suite
+        run: npm test
+      - name: ReviewBench golden-set guard
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git fetch origin "${{ github.base_ref }}" --depth=1
+            node scripts/chartview-reviewbench.mjs --base "origin/${{ github.base_ref }}" --head HEAD
+          elif [ "${{ inputs.enforce }}" = "true" ]; then
+            node scripts/chartview-reviewbench.mjs --base "HEAD^" --head HEAD --enforce
+          else
+            node scripts/chartview-reviewbench.mjs --base "HEAD^" --head HEAD
+          fi
