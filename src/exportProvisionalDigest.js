@@ -45,7 +45,11 @@ export function renderProvisionalDigest(radar,{adjusted=false}={}){
       +items.map(row=>{
         const yoy=valueFor(row,'yoy');
         const mom=valueFor(row,'mom');
-        return '<div class="export-digest-list-row" role="row"><strong role="cell">'+esc(row.name)+'</strong>'
+        const canOpenDetail=['semiconductor','passenger-car','petroleum','steel','ships'].includes(row.key);
+        const itemName=canOpenDetail
+          ?'<button type="button" role="cell" class="export-digest-item-link" data-export-item="'+esc(row.key)+'">'+esc(row.name)+' <span aria-hidden="true">›</span></button>'
+          :'<strong role="cell">'+esc(row.name)+'</strong>';
+        return '<div class="export-digest-list-row" role="row">'+itemName
           +'<span role="cell">'+growth(yoy,'전년동기 대비')+'</span>'
           +'<span role="cell">'+growth(mom,'전월동기 대비')+'</span></div>';
       }).join('')
