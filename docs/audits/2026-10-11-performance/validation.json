@@ -1,0 +1,131 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-11T13:13:30.866Z",
+  "sourceState": "Measured source hashes in measurement-manifest.json; frontend performance branch, production unchanged",
+  "nodeVersion": "v24.19.0",
+  "packageVersion": "0.15.1",
+  "prepush": {
+    "command": "source /workspace/scratch/browser-libs/env.sh; npm run qa:prepush",
+    "exitCode": 0,
+    "node": {
+      "tests": 413,
+      "passed": 413,
+      "failed": 0
+    },
+    "productionBuild": {
+      "passed": true,
+      "directRoutesVerified": 26
+    },
+    "e2e": {
+      "stats": {
+        "startTime": "2026-10-11T13:02:46.938Z",
+        "duration": 586463.8670000001,
+        "expected": 728,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "perProject": {
+        "desktop-chromium": {
+          "tests": 182,
+          "passed": 182,
+          "failed": 0,
+          "flaky": 0,
+          "skipped": 0
+        },
+        "narrow-chromium": {
+          "tests": 182,
+          "passed": 182,
+          "failed": 0,
+          "flaky": 0,
+          "skipped": 0
+        },
+        "android-chromium": {
+          "tests": 182,
+          "passed": 182,
+          "failed": 0,
+          "flaky": 0,
+          "skipped": 0
+        },
+        "iphone-small-webkit": {
+          "tests": 182,
+          "passed": 182,
+          "failed": 0,
+          "flaky": 0,
+          "skipped": 0
+        }
+      }
+    },
+    "logSha256": "a863c4b2e7800d8a4f94f8419416959ceea9759b24276ed4ea4bbc6ae4e07740"
+  },
+  "legacyQa": {
+    "scriptsPassed": 4,
+    "scriptsFailed": 0,
+    "screenshotCount": 31,
+    "runs": [
+      {
+        "script": "analysis_qa.mjs",
+        "scriptSha256": "997ecaf8e6b5db723e924ee8521eb55ddccc1ec3b642ef67d8eed19fec47dff4",
+        "exitCode": 0,
+        "widths": [
+          320,
+          390,
+          430
+        ],
+        "screenshotCount": 15,
+        "logSha256": "577d369f7c81aee7fe0d5db6c57064d499500a94f6839d68916e169fb3cfec06"
+      },
+      {
+        "script": "progressive_qa.mjs",
+        "scriptSha256": "fa39064f2563335846c3ad24a905ecfd0bdc67aaadae5e760f1dc4755a599fcf",
+        "exitCode": 0,
+        "widths": [
+          390
+        ],
+        "screenshotCount": 0,
+        "logSha256": "b7cd1990e5782bdd74d0d26b904dc149b08019d8aa167f0b19e2f2605a10766e"
+      },
+      {
+        "script": "mobile_continuity_qa.mjs",
+        "scriptSha256": "15dbc9b0a342b82ac0fd2f2cb7c8f3d72bd8211a7a963b2d799aec1d8d7253d4",
+        "exitCode": 0,
+        "widths": [
+          320,
+          390,
+          430
+        ],
+        "screenshotCount": 12,
+        "logSha256": "d25e4dc89c1db9e0e1f33b43528c859dba396b6b669aa89a7c37831a30148388"
+      },
+      {
+        "script": "audit_plan_qa.mjs",
+        "scriptSha256": "8db2a89e501b5dd87358dc44ba5cdd4accfc77f00f60a1df6b26652677f83254",
+        "exitCode": 0,
+        "widths": [
+          320,
+          390,
+          1440
+        ],
+        "screenshotCount": 4,
+        "logSha256": "172d4a34321d95c1a19050b738d52014f8b8de33518944db31cad1dea72199af"
+      }
+    ]
+  },
+  "browserEnvironment": {
+    "rootlessDependencyValidation": "WebKit 67 ELF and Chromium 12 ELF dependency scans, missing libraries 0; actual browser launches validated",
+    "hostPrescan": "Playwright /sbin/ldconfig prescan bypassed only, no test assertions or browser binary changed",
+    "nativeFontConfig": "User-space native Noto/Liberation/DejaVu selection; all measurements rerun after actual glyph geometry check"
+  },
+  "backend": {
+    "commit": "fe7cb20265482e3a2a52fcb7e470ffa50dfc5772",
+    "pr": "https://github.com/shoon94parkk-del/chart_View/pull/147",
+    "pythonTests": 718,
+    "nodeContractTests": 52,
+    "ci": "check/build/7 mobile jobs successful; production job skipped for PR"
+  },
+  "deployment": {
+    "performanceBranchesMerged": false,
+    "newPerformanceDeployment": false,
+    "nativeTossValidation": false
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "workspace": "Chart View",
+  "workspaceId": "tea-dao48j942hec738cpseg",
+  "frontendServiceId": "srv-dao4n4mk1f9s73algnf0",
+  "backendServiceId": "srv-dao4a50473hc73bclej0",
+  "productionFrontendAsset": "/assets/index-CQAV79Ao.js",
+  "frontendDeploy": {
+    "content": [
+      {
+        "type": "text",
+        "text": "[{\"commit\":{\"createdAt\":\"2026-10-11T05:39:19Z\",\"id\":\"4efea61741a058070142a75855b100b73303ca34\",\"message\":\"test: align legacy mobile QA with evidence disclosures\"},\"createdAt\":\"2026-10-11T06:09:24.135323Z\",\"finishedAt\":\"2026-10-11T06:09:50.767525Z\",\"id\":\"dep-db5ig52d0e5s73fjduag\",\"startedAt\":\"2026-10-11T06:09:24.133961Z\",\"status\":\"live\",\"trigger\":\"api\",\"updatedAt\":\"2026-10-11T06:09:50.767727Z\"}]\n\n cursor: JhDOM6KlfyJnNTJkMGU1czczZmpkdWFn"
+      }
+    ],
+    "isError": false
+  },
+  "backendEvents": {
+    "content": [
+      {
+        "type": "text",
+        "text": "[{\"details\":{\"instanceID\":\"srv-dao4a50473hc73bclej0-f8m6f\",\"reason\":{\"evicted\":false,\"oomKilled\":{\"memoryLimit\":\"512Mi\"}}},\"id\":\"evt-db5hcvu8bjmc7397b4kg\",\"serviceId\":\"srv-dao4a50473hc73bclej0\",\"timestamp\":\"2026-10-11T04:54:23.700278Z\",\"type\":\"server_failed\"}]\n\n cursor: F6ONCEjnb2VjdnU4YmptYzczOTdiNGtn"
+      }
+    ],
+    "isError": false
+  }
+}

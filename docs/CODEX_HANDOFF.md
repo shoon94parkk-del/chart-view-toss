@@ -120,3 +120,7 @@ PR122 실제 API smoke의 CLOSE=regular_close 가정도 수정했다. timezone�
 [이관 절차](CODEX_TRANSFER.md)의 setup과 자체 skill 2개를 사용한다. [전체 점검 기록](CODEX_TRANSFER_AUDIT_2026-10-08.md)에 이번 실제 근거와 한계를 보존했다. 위 10월7일 수치는 당시 기록이며 현재 브라우저 suite는87개×4기기=348회다. lazy 분석 번들 실패/빠른 재진입/WebKit 복구, 펼친 PICK·도구 fallback 대비, 실제 히트맵 성능 진단 회귀를 추가했다. 거장181행/선정35건 산술과 모바일81경로를 독립 검토했으며 새 계산 버그는 발견하지 않았다.
 
 최신 거장 CDN와 서버 근거의 버전 차이는 기존 수동 백엔드 게시로 현재 일치시켰다. 일일 수집과 서버 게시의 자동 연결은 추가하지 않았으므로 후속 작업에서도 `/health.revision`·snapshotVersion·근거200을 실제 확인한다. 버전409를 무시하거나 더 오래된 목록으로 돌아가지 않는다. e2e/claude-mem runtime, 대상 Codex skill 자동 발견, native Toss Sandbox를 확인했다고 주장하지 않는다.
+
+## 2026-10-11 성능 측정 후속
+
+[동일 harness 성능 점검](PERFORMANCE_AUDIT_2026-10-11.md)에 운영 18경로 기준, 로컬 7경로 전후 3회, 선택 영역 503과 Render 자원 관측을 보존했다. OS native font 선택을 고치고 앱·테스트·기준 변경 없이 06:48–06:49 UTC에 모두 다시 측정했다. Font-invalid 초기 결과는 제외한다. 공유 분석 5경로는 기존 lazy coordinator로 열고 Home/Watch 초기 main JS는 326.52→296.75kB(gzip 108.65→98.93kB)다. 화면·시세 freshness/API/TTL은 유지한다. Home cold 중앙값은 664→413ms지만 일부 경로는 증가했고 프록시·HTTP cache 비활성·50ms 준비 polling·외부 응답의 한계가 있다. 기존 운영 메모리 95.4%와 후속 83.3% 관측의 원인이나 패치 효과는 입증하지 않았다. base 4efea61 + working tree의 로컬 결과를 최종 CI·운영 배포로 혼동하지 말고 보고서의 최종 검증 추가 기록을 확인한다. 작성 체크포인트는 Node 413/build 통과이며 package 0.15.1을 유지한다.

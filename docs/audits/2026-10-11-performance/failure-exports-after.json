@@ -1,0 +1,832 @@
+{
+  "schemaVersion": 1,
+  "base": "http://127.0.0.1:4173",
+  "sourceRevision": null,
+  "measuredAt": "2026-10-11T06:49:53.504Z",
+  "browser": "Chromium",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "runs": 3,
+  "phases": [
+    "cold",
+    "warm"
+  ],
+  "readiness": "Primary route content; optional loaders, failures and partial coverage reported separately",
+  "coldMeaning": "New browser context; not a controlled Render server cold start",
+  "warmMeaning": "Same session route → more → route (more uses home); no fixed settling sleep",
+  "decodedBodyBytesMeaning": "Decoded response-body bytes, not compressed wire bytes",
+  "proxyRelay": true,
+  "browserHttpCacheDisabled": true,
+  "scenario": {
+    "path": "/api/export-momentum",
+    "mode": "503",
+    "matching": "exact pathname"
+  },
+  "summary": [
+    {
+      "route": "exports/cosmetics",
+      "phase": "cold",
+      "samples": 3,
+      "readySamples": 3,
+      "outcomes": {
+        "ready": 3
+      },
+      "medianReadyMs": 592,
+      "minReadyMs": 428,
+      "maxReadyMs": 648
+    },
+    {
+      "route": "exports/cosmetics",
+      "phase": "warm",
+      "samples": 3,
+      "readySamples": 3,
+      "outcomes": {
+        "ready": 3
+      },
+      "medianReadyMs": 56,
+      "minReadyMs": 56,
+      "maxReadyMs": 57
+    }
+  ],
+  "results": [
+    {
+      "route": "exports/cosmetics",
+      "label": "exports/cosmetics",
+      "run": 0,
+      "browserColdMs": 428,
+      "usableDataMs": 428,
+      "coldMs": 428,
+      "coldShellMs": 112,
+      "coldReadyState": "ready",
+      "navTtfbMs": 5,
+      "apiCold": [
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 306,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum/item-detail?key=cosmetics&balanceBasis=signed-v1",
+          "path": "/api/export-momentum/item-detail",
+          "calls": 1,
+          "ms": 287,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 5520,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum?balanceBasis=signed-v1",
+          "path": "/api/export-momentum",
+          "calls": 1,
+          "ms": 72,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 56,
+          "httpErrors": 1,
+          "status": "503",
+          "meta": null
+        },
+        {
+          "key": "/static/data/company_context.json",
+          "path": "/static/data/company_context.json",
+          "calls": 1,
+          "ms": null,
+          "completedBodies": 0,
+          "pending": 1,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": null,
+          "httpErrors": 0,
+          "status": "pending",
+          "meta": null
+        }
+      ],
+      "requestsCold": [
+        {
+          "path": "/api/activity",
+          "key": "/api/activity",
+          "method": "POST",
+          "state": "complete",
+          "ms": 306,
+          "headersMs": 297,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 29,
+          "meta": null
+        },
+        {
+          "path": "/api/export-momentum/item-detail",
+          "key": "/api/export-momentum/item-detail?key=cosmetics&balanceBasis=signed-v1",
+          "method": "GET",
+          "state": "complete",
+          "ms": 287,
+          "headersMs": 286,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 5520,
+          "meta": null
+        },
+        {
+          "path": "/api/export-momentum",
+          "key": "/api/export-momentum?balanceBasis=signed-v1",
+          "method": "GET",
+          "state": "complete",
+          "ms": 72,
+          "headersMs": 22,
+          "bodyComplete": true,
+          "status": 503,
+          "decodedBodyBytes": 56,
+          "meta": null
+        },
+        {
+          "path": "/static/data/company_context.json",
+          "key": "/static/data/company_context.json",
+          "method": "GET",
+          "state": "pending",
+          "ms": null,
+          "headersMs": null,
+          "bodyComplete": false,
+          "status": null,
+          "decodedBodyBytes": null,
+          "meta": null
+        }
+      ],
+      "coldDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 36
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 36
+          }
+        ],
+        "resources": [
+          {
+            "path": "/assets/index-Dfp2oTJ7.js",
+            "initiator": "script",
+            "durationMs": 12,
+            "transferBytes": 99226,
+            "encodedBodyBytes": 98926,
+            "decodedBodyBytes": 296745
+          },
+          {
+            "path": "/assets/index-CTvnSKgp.css",
+            "initiator": "link",
+            "durationMs": 8,
+            "transferBytes": 30721,
+            "encodedBodyBytes": 30421,
+            "decodedBodyBytes": 172151
+          },
+          {
+            "path": "/assets/exportMomentumView-CDlqMgJf.js",
+            "initiator": "script",
+            "durationMs": 9,
+            "transferBytes": 17970,
+            "encodedBodyBytes": 17670,
+            "decodedBodyBytes": 70076
+          },
+          {
+            "path": "/assets/exportMomentum-C3FdwORK.css",
+            "initiator": "link",
+            "durationMs": 13,
+            "transferBytes": 10596,
+            "encodedBodyBytes": 10296,
+            "decodedBodyBytes": 66691
+          },
+          {
+            "path": "/assets/exportMomentumData-CH2Kqc1I.js",
+            "initiator": "script",
+            "durationMs": 10,
+            "transferBytes": 4800,
+            "encodedBodyBytes": 4500,
+            "decodedBodyBytes": 17391
+          },
+          {
+            "path": "/assets/exportResearchView-LVL_HO5d.js",
+            "initiator": "script",
+            "durationMs": 4,
+            "transferBytes": 2410,
+            "encodedBodyBytes": 2110,
+            "decodedBodyBytes": 3891
+          }
+        ],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [
+          {
+            "state": "ready",
+            "text": "산업별 수출화장품 수출 흐름\n        9월 · HS 3304\n      \n      \n        수출액12.1억달러YoY +29.5%\n        물량 · 순중량3.5만톤YoY +13.4%\n        kg당 평균 신고금액$35/kgYoY"
+          }
+        ],
+        "pageErrors": []
+      },
+      "warmPrimingReadyState": "ready",
+      "warmMs": 56,
+      "warmUsableDataMs": 56,
+      "warmReadyState": "ready",
+      "warmAwayReadyState": "ready",
+      "apiWarm": [
+        {
+          "key": "/api/export-momentum?balanceBasis=signed-v1",
+          "path": "/api/export-momentum",
+          "calls": 1,
+          "ms": null,
+          "completedBodies": 0,
+          "pending": 1,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": null,
+          "httpErrors": 1,
+          "status": "503",
+          "meta": null
+        }
+      ],
+      "requestsWarm": [
+        {
+          "path": "/api/export-momentum",
+          "key": "/api/export-momentum?balanceBasis=signed-v1",
+          "method": "GET",
+          "state": "pending",
+          "ms": null,
+          "headersMs": 20,
+          "bodyComplete": false,
+          "status": 503,
+          "decodedBodyBytes": null,
+          "meta": null
+        }
+      ],
+      "warmDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 36
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 36
+          }
+        ],
+        "resources": [],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [
+          {
+            "state": "ready",
+            "text": "산업별 수출화장품 수출 흐름\n        9월 · HS 3304\n      \n      \n        수출액12.1억달러YoY +29.5%\n        물량 · 순중량3.5만톤YoY +13.4%\n        kg당 평균 신고금액$35/kgYoY"
+          }
+        ],
+        "pageErrors": []
+      }
+    },
+    {
+      "route": "exports/cosmetics",
+      "label": "exports/cosmetics",
+      "run": 1,
+      "browserColdMs": 648,
+      "usableDataMs": 648,
+      "coldMs": 648,
+      "coldShellMs": 113,
+      "coldReadyState": "ready",
+      "navTtfbMs": 7,
+      "apiCold": [
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 546,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum/item-detail?key=cosmetics&balanceBasis=signed-v1",
+          "path": "/api/export-momentum/item-detail",
+          "calls": 1,
+          "ms": 521,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 5520,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum?balanceBasis=signed-v1",
+          "path": "/api/export-momentum",
+          "calls": 1,
+          "ms": 60,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 56,
+          "httpErrors": 1,
+          "status": "503",
+          "meta": null
+        },
+        {
+          "key": "/static/data/company_context.json",
+          "path": "/static/data/company_context.json",
+          "calls": 1,
+          "ms": null,
+          "completedBodies": 0,
+          "pending": 1,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": null,
+          "httpErrors": 0,
+          "status": "pending",
+          "meta": null
+        }
+      ],
+      "requestsCold": [
+        {
+          "path": "/api/activity",
+          "key": "/api/activity",
+          "method": "POST",
+          "state": "complete",
+          "ms": 546,
+          "headersMs": 535,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 29,
+          "meta": null
+        },
+        {
+          "path": "/api/export-momentum/item-detail",
+          "key": "/api/export-momentum/item-detail?key=cosmetics&balanceBasis=signed-v1",
+          "method": "GET",
+          "state": "complete",
+          "ms": 521,
+          "headersMs": 521,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 5520,
+          "meta": null
+        },
+        {
+          "path": "/api/export-momentum",
+          "key": "/api/export-momentum?balanceBasis=signed-v1",
+          "method": "GET",
+          "state": "complete",
+          "ms": 60,
+          "headersMs": 9,
+          "bodyComplete": true,
+          "status": 503,
+          "decodedBodyBytes": 56,
+          "meta": null
+        },
+        {
+          "path": "/static/data/company_context.json",
+          "key": "/static/data/company_context.json",
+          "method": "GET",
+          "state": "pending",
+          "ms": null,
+          "headersMs": null,
+          "bodyComplete": false,
+          "status": null,
+          "decodedBodyBytes": null,
+          "meta": null
+        }
+      ],
+      "coldDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 96
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 96
+          }
+        ],
+        "resources": [
+          {
+            "path": "/assets/index-Dfp2oTJ7.js",
+            "initiator": "script",
+            "durationMs": 18,
+            "transferBytes": 99226,
+            "encodedBodyBytes": 98926,
+            "decodedBodyBytes": 296745
+          },
+          {
+            "path": "/assets/index-CTvnSKgp.css",
+            "initiator": "link",
+            "durationMs": 14,
+            "transferBytes": 30721,
+            "encodedBodyBytes": 30421,
+            "decodedBodyBytes": 172151
+          },
+          {
+            "path": "/assets/exportMomentumView-CDlqMgJf.js",
+            "initiator": "script",
+            "durationMs": 12,
+            "transferBytes": 17970,
+            "encodedBodyBytes": 17670,
+            "decodedBodyBytes": 70076
+          },
+          {
+            "path": "/assets/exportMomentum-C3FdwORK.css",
+            "initiator": "link",
+            "durationMs": 12,
+            "transferBytes": 10596,
+            "encodedBodyBytes": 10296,
+            "decodedBodyBytes": 66691
+          },
+          {
+            "path": "/assets/exportMomentumData-CH2Kqc1I.js",
+            "initiator": "script",
+            "durationMs": 12,
+            "transferBytes": 4800,
+            "encodedBodyBytes": 4500,
+            "decodedBodyBytes": 17391
+          },
+          {
+            "path": "/assets/exportResearchView-LVL_HO5d.js",
+            "initiator": "script",
+            "durationMs": 6,
+            "transferBytes": 2410,
+            "encodedBodyBytes": 2110,
+            "decodedBodyBytes": 3891
+          }
+        ],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [
+          {
+            "state": "ready",
+            "text": "산업별 수출화장품 수출 흐름\n        9월 · HS 3304\n      \n      \n        수출액12.1억달러YoY +29.5%\n        물량 · 순중량3.5만톤YoY +13.4%\n        kg당 평균 신고금액$35/kgYoY"
+          }
+        ],
+        "pageErrors": []
+      },
+      "warmPrimingReadyState": "ready",
+      "warmMs": 57,
+      "warmUsableDataMs": 57,
+      "warmReadyState": "ready",
+      "warmAwayReadyState": "ready",
+      "apiWarm": [
+        {
+          "key": "/api/export-momentum?balanceBasis=signed-v1",
+          "path": "/api/export-momentum",
+          "calls": 1,
+          "ms": null,
+          "completedBodies": 0,
+          "pending": 1,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": null,
+          "httpErrors": 1,
+          "status": "503",
+          "meta": null
+        }
+      ],
+      "requestsWarm": [
+        {
+          "path": "/api/export-momentum",
+          "key": "/api/export-momentum?balanceBasis=signed-v1",
+          "method": "GET",
+          "state": "pending",
+          "ms": null,
+          "headersMs": 7,
+          "bodyComplete": false,
+          "status": 503,
+          "decodedBodyBytes": null,
+          "meta": null
+        }
+      ],
+      "warmDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 96
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 96
+          }
+        ],
+        "resources": [],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [
+          {
+            "state": "ready",
+            "text": "산업별 수출화장품 수출 흐름\n        9월 · HS 3304\n      \n      \n        수출액12.1억달러YoY +29.5%\n        물량 · 순중량3.5만톤YoY +13.4%\n        kg당 평균 신고금액$35/kgYoY"
+          }
+        ],
+        "pageErrors": []
+      }
+    },
+    {
+      "route": "exports/cosmetics",
+      "label": "exports/cosmetics",
+      "run": 2,
+      "browserColdMs": 592,
+      "usableDataMs": 592,
+      "coldMs": 592,
+      "coldShellMs": 81,
+      "coldReadyState": "ready",
+      "navTtfbMs": 3,
+      "apiCold": [
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 511,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum/item-detail?key=cosmetics&balanceBasis=signed-v1",
+          "path": "/api/export-momentum/item-detail",
+          "calls": 1,
+          "ms": 490,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 5520,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum?balanceBasis=signed-v1",
+          "path": "/api/export-momentum",
+          "calls": 1,
+          "ms": 57,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 56,
+          "httpErrors": 1,
+          "status": "503",
+          "meta": null
+        },
+        {
+          "key": "/static/data/company_context.json",
+          "path": "/static/data/company_context.json",
+          "calls": 1,
+          "ms": null,
+          "completedBodies": 0,
+          "pending": 1,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": null,
+          "httpErrors": 0,
+          "status": "pending",
+          "meta": null
+        }
+      ],
+      "requestsCold": [
+        {
+          "path": "/api/activity",
+          "key": "/api/activity",
+          "method": "POST",
+          "state": "complete",
+          "ms": 511,
+          "headersMs": 511,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 29,
+          "meta": null
+        },
+        {
+          "path": "/api/export-momentum/item-detail",
+          "key": "/api/export-momentum/item-detail?key=cosmetics&balanceBasis=signed-v1",
+          "method": "GET",
+          "state": "complete",
+          "ms": 490,
+          "headersMs": 490,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 5520,
+          "meta": null
+        },
+        {
+          "path": "/api/export-momentum",
+          "key": "/api/export-momentum?balanceBasis=signed-v1",
+          "method": "GET",
+          "state": "complete",
+          "ms": 57,
+          "headersMs": 7,
+          "bodyComplete": true,
+          "status": 503,
+          "decodedBodyBytes": 56,
+          "meta": null
+        },
+        {
+          "path": "/static/data/company_context.json",
+          "key": "/static/data/company_context.json",
+          "method": "GET",
+          "state": "pending",
+          "ms": null,
+          "headersMs": null,
+          "bodyComplete": false,
+          "status": null,
+          "decodedBodyBytes": null,
+          "meta": null
+        }
+      ],
+      "coldDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 64
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 64
+          }
+        ],
+        "resources": [
+          {
+            "path": "/assets/index-Dfp2oTJ7.js",
+            "initiator": "script",
+            "durationMs": 9,
+            "transferBytes": 99226,
+            "encodedBodyBytes": 98926,
+            "decodedBodyBytes": 296745
+          },
+          {
+            "path": "/assets/index-CTvnSKgp.css",
+            "initiator": "link",
+            "durationMs": 8,
+            "transferBytes": 30721,
+            "encodedBodyBytes": 30421,
+            "decodedBodyBytes": 172151
+          },
+          {
+            "path": "/assets/exportMomentumView-CDlqMgJf.js",
+            "initiator": "script",
+            "durationMs": 12,
+            "transferBytes": 17970,
+            "encodedBodyBytes": 17670,
+            "decodedBodyBytes": 70076
+          },
+          {
+            "path": "/assets/exportMomentum-C3FdwORK.css",
+            "initiator": "link",
+            "durationMs": 13,
+            "transferBytes": 10596,
+            "encodedBodyBytes": 10296,
+            "decodedBodyBytes": 66691
+          },
+          {
+            "path": "/assets/exportMomentumData-CH2Kqc1I.js",
+            "initiator": "script",
+            "durationMs": 6,
+            "transferBytes": 4800,
+            "encodedBodyBytes": 4500,
+            "decodedBodyBytes": 17391
+          },
+          {
+            "path": "/assets/exportResearchView-LVL_HO5d.js",
+            "initiator": "script",
+            "durationMs": 3,
+            "transferBytes": 2410,
+            "encodedBodyBytes": 2110,
+            "decodedBodyBytes": 3891
+          }
+        ],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [
+          {
+            "state": "ready",
+            "text": "산업별 수출화장품 수출 흐름\n        9월 · HS 3304\n      \n      \n        수출액12.1억달러YoY +29.5%\n        물량 · 순중량3.5만톤YoY +13.4%\n        kg당 평균 신고금액$35/kgYoY"
+          }
+        ],
+        "pageErrors": []
+      },
+      "warmPrimingReadyState": "ready",
+      "warmMs": 56,
+      "warmUsableDataMs": 56,
+      "warmReadyState": "ready",
+      "warmAwayReadyState": "ready",
+      "apiWarm": [
+        {
+          "key": "/api/export-momentum?balanceBasis=signed-v1",
+          "path": "/api/export-momentum",
+          "calls": 1,
+          "ms": null,
+          "completedBodies": 0,
+          "pending": 1,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": null,
+          "httpErrors": 1,
+          "status": "503",
+          "meta": null
+        }
+      ],
+      "requestsWarm": [
+        {
+          "path": "/api/export-momentum",
+          "key": "/api/export-momentum?balanceBasis=signed-v1",
+          "method": "GET",
+          "state": "pending",
+          "ms": null,
+          "headersMs": 8,
+          "bodyComplete": false,
+          "status": 503,
+          "decodedBodyBytes": null,
+          "meta": null
+        }
+      ],
+      "warmDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 64
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 64
+          }
+        ],
+        "resources": [],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [
+          {
+            "state": "ready",
+            "text": "산업별 수출화장품 수출 흐름\n        9월 · HS 3304\n      \n      \n        수출액12.1억달러YoY +29.5%\n        물량 · 순중량3.5만톤YoY +13.4%\n        kg당 평균 신고금액$35/kgYoY"
+          }
+        ],
+        "pageErrors": []
+      }
+    }
+  ]
+}

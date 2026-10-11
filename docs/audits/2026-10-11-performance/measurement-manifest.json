@@ -1,0 +1,195 @@
+{
+  "schemaVersion": 1,
+  "project": "github:shoon94parkk-del/chart-view-toss",
+  "baseCommit": "4efea61741a058070142a75855b100b73303ca34",
+  "afterSourceMeaning": "Base commit plus recorded application source file hashes; assets are built from performance PR source and identified by hashes, not committed build files or a deployed revision",
+  "beforeMainSourceSha256": "6a21991c74a13e302d28ca961850eac0d765706879b72e8be4af75b0bd81d1fd",
+  "afterSources": [
+    {
+      "file": "src/main.js",
+      "sha256": "13d8656ea61c18f2c54c1a9a650d0c702769319535e4623fc3ad8d0d27b63b78"
+    },
+    {
+      "file": "src/analysisViews.js",
+      "sha256": "f6be772a5ede861a64dde9a71685cc719228dc31f12f90b10525e42390ffa8b8"
+    },
+    {
+      "file": "tests/production_performance_audit.mjs",
+      "sha256": "215fde1e37e6f043872263f60147cfff86517f0979b9d782954e9724fdf91ad7"
+    },
+    {
+      "file": "scripts/performance-harness.mjs",
+      "sha256": "ec45e4616f5dbfdb63175b11d8a3b14477514a5f90cd342be60eae78b0ed55e2"
+    }
+  ],
+  "backendBaseCommit": "fcf8038b4d12c01de8447ebc34d79955240c52ab",
+  "backendImprovementCommit": "fe7cb20265482e3a2a52fcb7e470ffa50dfc5772",
+  "backendPullRequest": "https://github.com/shoon94parkk-del/chart_View/pull/147",
+  "packageVersion": "0.15.1",
+  "buildSettings": {
+    "apiPathMode": "API-only for both local builds; no .env.* or exported VITE overrides",
+    "gzipMeaning": "node:zlib.gzipSync default compression level 6; consistent with Vite output; kB = 1000 bytes"
+  },
+  "browser": {
+    "name": "Chromium",
+    "version": "140.0.7339.16",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "nativeFontSelection": "System WOFF2 excluded via user-space fontconfig; installed native Noto/Liberation/DejaVu fallbacks",
+    "fontConfigSha256": "9b8a6790088afedcb94b6735cbfa7e5346e8fd285603436b0b2b2fd9fb32431a",
+    "actualAppFontGeometryVerified": true,
+    "httpCacheDisabled": true,
+    "proxyRelay": true,
+    "tlsVerification": true
+  },
+  "measurementControls": {
+    "beforeAndAfterAddress": "http://127.0.0.1:4173",
+    "execution": "Sequential, separate preserved builds, same harness and font configuration",
+    "invalidPriorMeasurements": "Initial Chromium blank-text font reports excluded; retained in session scratch only",
+    "limits": [
+      "3 samples do not estimate p95 or SLA",
+      "External API/CDN/server cache state can vary between runs",
+      "Browser cold context is not controlled Render service cold start",
+      "Default local API-only mode differs from production static data mode",
+      "decodedBodyBytes is not compressed network transfer size"
+    ]
+  },
+  "beforeAssets": [
+    {
+      "name": "index-DoJWYFE_.js",
+      "bytes": 326518,
+      "gzipBytes": 108654,
+      "sha256": "7167bc67216b0162701b69bf54acdbf52486a9a5eecbc76f43a7d4d3c0fff848"
+    },
+    {
+      "name": "index-Dxg0oyWK.css",
+      "bytes": 172894,
+      "gzipBytes": 30588,
+      "sha256": "7af550051bc1d1b8d245198dcac18e468aff3ef9bf5f2bf0ee8c2221eb5124a2"
+    }
+  ],
+  "afterAssets": [
+    {
+      "name": "analysisViews-BM0ySziZ.css",
+      "bytes": 744,
+      "gzipBytes": 356,
+      "sha256": "e7fb6f8ef5b0b536a1f77f6421f4c8c496fbb3fe6fa2858847063265d113e12c"
+    },
+    {
+      "name": "analysisViews-CjCIoT6y.js",
+      "bytes": 30819,
+      "gzipBytes": 11628,
+      "sha256": "d3deeb8fd34abb481f776605e22a1bc207236763364471a80c040f76d0613aae"
+    },
+    {
+      "name": "index-CTvnSKgp.css",
+      "bytes": 172151,
+      "gzipBytes": 30421,
+      "sha256": "9ddb7cf1c9e8f1e35bca3bbe974ce5f1ee67ed5874251c619fa4926b85151d1c"
+    },
+    {
+      "name": "index-Dfp2oTJ7.js",
+      "bytes": 296745,
+      "gzipBytes": 98926,
+      "sha256": "c56fb4b9605f3cd75609c3a250f47980c36c94f6a422752ec5eef2b7c588fe42"
+    }
+  ],
+  "reports": [
+    {
+      "file": "failure-exports-after.json",
+      "sha256": "d243055cd82a2c288f8009150ccf0209eed05607da2bb5b074618d696721c440",
+      "measuredAt": "2026-10-11T06:49:53.504Z",
+      "sourceRevision": null,
+      "runs": 3,
+      "phases": [
+        "cold",
+        "warm"
+      ],
+      "results": 3,
+      "allPrimaryContentReady": true
+    },
+    {
+      "file": "failure-exports-before.json",
+      "sha256": "7e0e3ad4e159d1cc24f0cc06c10a70423cda0ccdba813cff9ee51d358590361d",
+      "measuredAt": "2026-10-11T06:49:23.970Z",
+      "sourceRevision": "4efea61741a058070142a75855b100b73303ca34",
+      "runs": 3,
+      "phases": [
+        "cold",
+        "warm"
+      ],
+      "results": 3,
+      "allPrimaryContentReady": true
+    },
+    {
+      "file": "failure-picks-after.json",
+      "sha256": "8a8bd927f6ec0a49036ccff3c180bb7c05b549e09d76a362b0e73bced6d5beda",
+      "measuredAt": "2026-10-11T06:49:51.234Z",
+      "sourceRevision": null,
+      "runs": 3,
+      "phases": [
+        "cold",
+        "warm"
+      ],
+      "results": 3,
+      "allPrimaryContentReady": true
+    },
+    {
+      "file": "failure-picks-before.json",
+      "sha256": "bdedc827610118f0ccbf7491ddc3f5752c0ae17cd69dc422677a55751048c9a6",
+      "measuredAt": "2026-10-11T06:49:22.359Z",
+      "sourceRevision": "4efea61741a058070142a75855b100b73303ca34",
+      "runs": 3,
+      "phases": [
+        "cold",
+        "warm"
+      ],
+      "results": 3,
+      "allPrimaryContentReady": true
+    },
+    {
+      "file": "local-after.json",
+      "sha256": "7409f4a301655e2ac6df8a493e10d75c1bd4745e254d814c470dcbed13704f55",
+      "measuredAt": "2026-10-11T06:49:49.090Z",
+      "sourceRevision": null,
+      "runs": 3,
+      "phases": [
+        "cold",
+        "spa",
+        "warm"
+      ],
+      "results": 21,
+      "allPrimaryContentReady": true
+    },
+    {
+      "file": "local-before.json",
+      "sha256": "f4a308591478f0d55c37dac3c37aceccce1e1a7bd8217e98e8562a811a789ed2",
+      "measuredAt": "2026-10-11T06:49:20.597Z",
+      "sourceRevision": "4efea61741a058070142a75855b100b73303ca34",
+      "runs": 3,
+      "phases": [
+        "cold",
+        "spa",
+        "warm"
+      ],
+      "results": 21,
+      "allPrimaryContentReady": true
+    },
+    {
+      "file": "production-baseline.json",
+      "sha256": "877ccbd730bf6a7efa7b3077be44d92094aa134c79f9e2feba2a8a8ce3f626d8",
+      "measuredAt": "2026-10-11T06:48:49.149Z",
+      "sourceRevision": null,
+      "runs": 1,
+      "phases": [
+        "cold",
+        "spa",
+        "warm"
+      ],
+      "results": 18,
+      "allPrimaryContentReady": true
+    }
+  ]
+}
