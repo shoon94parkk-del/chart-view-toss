@@ -378,6 +378,16 @@ export function normalizeExportMomentumMap(raw={}){
 }
 
 
+export function businessDayAdjustedGrowth(currentAmount,comparisonAmount,currentDays,comparisonDays){
+  const current=finite(currentAmount);
+  const comparison=finite(comparisonAmount);
+  const currentCount=finite(currentDays);
+  const comparisonCount=finite(comparisonDays);
+  if(current===null||comparison===null||comparison<=0||currentCount===null||comparisonCount===null
+    ||currentCount<=0||comparisonCount<=0||!Number.isInteger(currentCount)||!Number.isInteger(comparisonCount))return null;
+  return Math.round(((current/currentCount)/(comparison/comparisonCount)-1)*1000)/10;
+}
+
 export function normalizeExportProvisionalRadar(raw={}){
   const normalizeRadarMetric=(metric={})=>({
     exportsUsdBillion:finite(metric?.exportsUsdBillion),
@@ -442,6 +452,13 @@ export function normalizeExportProvisionalRadar(raw={}){
     periodLabel:text(raw.periodLabel)||text(raw.period),
     latestStage:finite(raw.latestStage),
     latestStageLabel:text(raw.latestStageLabel),
+    businessDays:raw.businessDays&&typeof raw.businessDays==='object'?{
+      stage:finite(raw.businessDays.stage),
+      current:finite(raw.businessDays.current),
+      previousMonth:finite(raw.businessDays.previousMonth),
+      priorYear:finite(raw.businessDays.priorYear),
+      basis:text(raw.businessDays.basis),
+    }:null,
     checkpoints,
     items,
     landingProjection,
