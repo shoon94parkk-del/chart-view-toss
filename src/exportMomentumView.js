@@ -1,6 +1,7 @@
 import { loadExportItemDetail, loadExportMomentumMap, loadExportMomentumSnapshot, loadExportProvisionalRadar, loadSemiconductorCountryMatrix, loadSemiconductorTrends } from './exportMomentumData.js';
 import {exportCompanyCandidates,memoryMovements} from './insightModel.js';
 import { bindHorizontalTabs, focusSelectedTab } from './accessibleTabs.js';
+import { renderProvisionalDigest } from './exportProvisionalDigest.js';
 import {
   balanceTone,
   chartExtent,
@@ -76,7 +77,7 @@ function provisionalPlaceholder(){
   `;
 }
 
-function renderProvisionalRadar(radar){
+function renderProvisionalRadar(radar,{adjusted=false}={}){
   const latest=radar.checkpoints.at(-1)||{};
   const latestSemi=latest.semiconductor||{};
   const latestTotal=latest.total||{};
@@ -88,6 +89,8 @@ function renderProvisionalRadar(radar){
         <div><span>수출 속보</span><h3>10일 단위 잠정 수출 레이더</h3></div>
         <small>${esc(radar.periodLabel)} · ${esc(radar.latestStageLabel)}</small>
       </div>
+      ${renderProvisionalDigest(radar,{adjusted})}
+      <details class="export-provisional-more"><summary>구간 누적 흐름·원자료 상세</summary>
       <div class="export-provisional-hero">
         <div>
           <span>전체 수출 · ${esc(radar.latestStageLabel)}</span>
@@ -131,6 +134,7 @@ function renderProvisionalRadar(radar){
           </div>
         `).join('')}
       </div>
+      </details>
       <p class="export-chart-note">이 속보는 관세청의 10대 품목 자체 분류입니다. 아래 월간 HS 품목 통계와 분류 범위가 달라 절대금액을 서로 이어 붙이지 않습니다. 1~10일·1~20일은 누적 잠정치입니다.</p>
     </section>
   `;
@@ -953,7 +957,7 @@ function paint(host,snapshot,bindNav,onItemOpen){
   // panels which may already be ready while this response was pending.
   const monthly=document.createElement('div');
   monthly.innerHTML=[
-    exportPanel('overview',summary(snapshot)+momentumMapPlaceholder()+provisionalPlaceholder()+history(snapshot)+cumulativeSummary(snapshot)+checkpoints(snapshot)+facts(snapshot)+sources(snapshot)),
+    exportPanel('overview',provisionalPlaceholder()+summary(snapshot)+momentumMapPlaceholder()+history(snapshot)+cumulativeSummary(snapshot)+checkpoints(snapshot)+facts(snapshot)+sources(snapshot)),
     exportPanel('products',items(snapshot)+breadth(snapshot)+quadrant(snapshot)),
     exportPanel('countries',regions(snapshot)),
     exportPanel('semiconductor','<button type="button" class="text-button" data-tab="memory">TrendForce 반도체 가격 추적 →</button>'+semiconductorReport(snapshot)+semiconductorTrendPlaceholder()),
@@ -990,6 +994,7 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={},onSe
   let semiconductorSeq=0;
   let industrySeq=0;
   let provisionalLoaded=false;
+  let workdayAdjusted=state.exportWorkdayAdjusted===true;
   let momentumLoaded=false;
   let semiconductorLoaded=false;
   const industryLoaded=new Set();
@@ -1223,6 +1228,19 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={},onSe
     }
   };
 
+  const bindProvisionalActions=(radar,parentToken)=>{
+    host.querySelector('[data-export-workday-toggle]')?.addEventListener('click',()=>{
+      workdayAdjusted=!workdayAdjusted;
+      state.exportWorkdayAdjusted=workdayAdjusted;
+      const current=host.querySelector('#export-provisional-radar');
+      if(parentToken!==seq||!current?.isConnected)return;
+      current.outerHTML=renderProvisionalRadar(radar,{adjusted:workdayAdjusted});
+      bindProvisionalActions(radar,parentToken);
+      host.querySelector('[data-export-workday-toggle]')?.focus({preventScroll:true});
+    });
+    host.querySelector('[data-export-provisional-refresh]')?.addEventListener('click',()=>void loadProvisional(parentToken,true));
+  };
+
   const loadProvisional=async(parentToken,force=false)=>{
     const node=host.querySelector('#export-provisional-radar');
     if(parentToken!==seq||!node?.isConnected)return;
@@ -1232,7 +1250,8 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={},onSe
       const radar=await loadExportProvisionalRadar({force});
       const current=host.querySelector('#export-provisional-radar');
       if(parentToken!==seq||token!==provisionalSeq||!current?.isConnected)return;
-      current.outerHTML=renderProvisionalRadar(radar);
+      current.outerHTML=renderProvisionalRadar(radar,{adjusted:workdayAdjusted});
+      bindProvisionalActions(radar,parentToken);
     }catch(error){
       const current=host.querySelector('#export-provisional-radar');
       if(parentToken!==seq||token!==provisionalSeq||!current?.isConnected)return;
@@ -1329,6 +1348,8 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={},onSe
       const snapshot=await loadExportMomentumSnapshot({force});
       if(token!==seq||requestToken!==monthlySeq||!host.isConnected)return;
       monthlyReady=true;
+      provisionalLoaded=false;
+      momentumLoaded=false;
       paint(host,snapshot,bindNav,openItemDetail);
       activatePanel(state.exportSection);
       applyRequestedFocus();
