@@ -1,0 +1,42 @@
+[
+  {
+    "strategy": "buffett",
+    "symbol": "009450.KS",
+    "requestedVersion": "40e54f87eae91767b646",
+    "status": 200,
+    "responseVersion": "40e54f87eae91767b646",
+    "bodyError": null
+  },
+  {
+    "strategy": "lynch",
+    "symbol": "036620.KQ",
+    "requestedVersion": "40e54f87eae91767b646",
+    "status": 200,
+    "responseVersion": "40e54f87eae91767b646",
+    "bodyError": null
+  },
+  {
+    "strategy": "oneil",
+    "symbol": "192820.KS",
+    "requestedVersion": "40e54f87eae91767b646",
+    "status": 200,
+    "responseVersion": "40e54f87eae91767b646",
+    "bodyError": null
+  },
+  {
+    "strategy": "minervini",
+    "symbol": "000500.KS",
+    "requestedVersion": "40e54f87eae91767b646",
+    "status": 200,
+    "responseVersion": "40e54f87eae91767b646",
+    "bodyError": null
+  },
+  {
+    "strategy": "greenblatt",
+    "symbol": "171090.KQ",
+    "requestedVersion": "40e54f87eae91767b646",
+    "status": 200,
+    "responseVersion": "40e54f87eae91767b646",
+    "bodyError": null
+  }
+]

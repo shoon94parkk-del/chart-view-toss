@@ -1,0 +1,31 @@
+{
+  "version": "40e54f87eae91767b646",
+  "tradeDate": "2026-10-08",
+  "strategies": {
+    "buffett": {
+      "matched": 47,
+      "evaluated": 1711,
+      "insufficient": 711
+    },
+    "lynch": {
+      "matched": 37,
+      "evaluated": 1137,
+      "insufficient": 1285
+    },
+    "oneil": {
+      "matched": 1,
+      "evaluated": 1101,
+      "insufficient": 1321
+    },
+    "minervini": {
+      "matched": 83,
+      "evaluated": 2168,
+      "insufficient": 254
+    },
+    "greenblatt": {
+      "matched": 2,
+      "evaluated": 1244,
+      "insufficient": 1133
+    }
+  }
+}

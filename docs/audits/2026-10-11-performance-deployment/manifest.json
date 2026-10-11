@@ -1,0 +1,193 @@
+{
+  "frontendSourceSha": "e5ffa5669a4b3f8cbf7df1d6df142dd91efa89f6",
+  "backendSourceSha": "6bdfbc3277dd0a105a10f28f7abd43f1914a5f26",
+  "generatedAt": "2026-10-11T13:58:27.696011+00:00",
+  "scope": "post-merge Render deployment verification; documentation and evidence only",
+  "files": [
+    {
+      "path": "backend-ci/main-ci-attempt1.json",
+      "bytes": 4669,
+      "sha256": "c5afdbb6a134bde67e198ad37cb0f313bba3e084a5995f22f8d5d884081a5ee6"
+    },
+    {
+      "path": "backend-ci/main-ci-attempt2-prelaunch.log",
+      "bytes": 67037,
+      "sha256": "45421378564e4af74527b10ac004f7eda48ba4de7ea5f9ef8ce6d88cfe702931"
+    },
+    {
+      "path": "backend-ci/main-ci-attempt2.json",
+      "bytes": 4916,
+      "sha256": "80d61393f64dc6a13273938ef6389a7b298131524d61c70e77e031819ab1858f"
+    },
+    {
+      "path": "backend-ci/main-ci-final.json",
+      "bytes": 15924,
+      "sha256": "ac137f94b21a202d65e8b56fbc60e1da6bf31f668af7f7e5569282fe8be7b641"
+    },
+    {
+      "path": "backend-ci/main-ci-prelaunch-failure.log",
+      "bytes": 1388,
+      "sha256": "790adf3dcd2ea9702da9d6f636a19a8bab4875b8a5a87a86a7a3fa359e396d95"
+    },
+    {
+      "path": "backend-ci/valuation-cache-read.json",
+      "bytes": 244,
+      "sha256": "31bb7530d387ea401a7c759d86b2b1210df401684012d2b5174835f2a3a61817"
+    },
+    {
+      "path": "backend-ci-retry-summary.json",
+      "bytes": 1881,
+      "sha256": "8085e31ea27ae0f12bf53f3f9c6572a86aafb898892a3b44e38cb45cb084067b"
+    },
+    {
+      "path": "backend-deploy.json",
+      "bytes": 521,
+      "sha256": "c43674f4a55ee82802dd2c48eecfb32f4bd98966c0c1ba27fe7dfc9551b59685"
+    },
+    {
+      "path": "backend-main-ci-final.json",
+      "bytes": 15924,
+      "sha256": "ac137f94b21a202d65e8b56fbc60e1da6bf31f668af7f7e5569282fe8be7b641"
+    },
+    {
+      "path": "backend-release-verification.json",
+      "bytes": 6525,
+      "sha256": "e800d8477f5e9f9be9bd0661c8758d39b46adb1edb654f3e582b2fb4c49c6659"
+    },
+    {
+      "path": "consensus-320.png",
+      "bytes": 262723,
+      "sha256": "b10e0ccb9c720ddeef2b6b16c28f92e5450f6340a44097cc9184cef7d312de83"
+    },
+    {
+      "path": "frontend-ait-ci.json",
+      "bytes": 1436,
+      "sha256": "c9093c2c970c5bd68d47ef35788ae1188c29e4a3f7d07143d5922d6c35fd85d1"
+    },
+    {
+      "path": "frontend-assets-verification.json",
+      "bytes": 760,
+      "sha256": "4074afbaa14705753b1a6a8ae0b6fd14d242e687dfbc1db7b68d42f8284f69ba"
+    },
+    {
+      "path": "frontend-deploy.json",
+      "bytes": 517,
+      "sha256": "9ff8b0c7c21584fd74cd5b0b06e1b6613cb5f664542d2139eb1a46620e59b799"
+    },
+    {
+      "path": "frontend-main-ci.json",
+      "bytes": 9169,
+      "sha256": "1d7679b71f5669b2095a85ccd254c06539d651aa079fe9665ef930cfe833ec0a"
+    },
+    {
+      "path": "live-attachments/1-fatal-errors.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "live-attachments/1-real-quote-response.json",
+      "bytes": 321,
+      "sha256": "fd608108ea1cebc3887241942911819f413774a9d40fefb833692227c91b07e7"
+    },
+    {
+      "path": "live-attachments/2-fatal-errors.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "live-attachments/2-real-semiconductor-response.json",
+      "bytes": 23631,
+      "sha256": "9730b3fd11c9cdf5e06bc5cb5acc63edd6cd8936c5519b10038c4e4ca31e5801"
+    },
+    {
+      "path": "live-attachments/3-fatal-errors.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "live-attachments/3-real-pick-aggregate.json",
+      "bytes": 85,
+      "sha256": "41b3bf3b1e2dab3035426ede1da72c7c12feed2ec73f3fa91d9f8b67ccff8a5d"
+    },
+    {
+      "path": "live-attachments/4-fatal-errors.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "live-attachments/4-real-industry-basis.json",
+      "bytes": 535,
+      "sha256": "9214284fe7170014465a35077f9aef9433fda598c3e5bbbe7144292d0808bfd5"
+    },
+    {
+      "path": "live-attachments/5-fatal-errors.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "live-attachments/5-real-guru-buffett-evidence.json",
+      "bytes": 45070,
+      "sha256": "3c25aa2b08b04d8ad427ed0b96ce4d09f282b11ed80170eebbbfd00b2ed25026"
+    },
+    {
+      "path": "live-attachments/5-real-guru-coverage.json",
+      "bytes": 573,
+      "sha256": "aca5dd5c8016d1042e1d7722b6076a871776244ce23e7a61eee204be372efd16"
+    },
+    {
+      "path": "live-attachments/5-real-guru-greenblatt-evidence.json",
+      "bytes": 44855,
+      "sha256": "572e80d504f9a212eb8700495abd8fd3ac4468a6b7f538ff1737e0af7aa0f96f"
+    },
+    {
+      "path": "live-attachments/5-real-guru-lynch-evidence.json",
+      "bytes": 44535,
+      "sha256": "a6aa4962b9b727c438f586f83b7734ecc72b2bfa341eac17350a384182cc7f07"
+    },
+    {
+      "path": "live-attachments/5-real-guru-minervini-evidence.json",
+      "bytes": 51109,
+      "sha256": "7f06c83278f9028d1e56bbe0961c5ed4bb04b02bbc21af410f8bb3830d7dfc08"
+    },
+    {
+      "path": "live-attachments/5-real-guru-oneil-evidence.json",
+      "bytes": 53389,
+      "sha256": "3e60cb2ee7ebdd70278530cf0c5e3adfc127197f7498917ed16ae251511707df"
+    },
+    {
+      "path": "live-attachments/5-real-guru-publication.json",
+      "bytes": 999,
+      "sha256": "53018bf72459bba14b85a35a478c375808a9a6e8ea9e1889327116aba1753296"
+    },
+    {
+      "path": "production-after.json",
+      "bytes": 141147,
+      "sha256": "8a0941cd047fceb87521a445f68af6a0e98b39cc50d616c90450a69d08c484c6"
+    },
+    {
+      "path": "render-error-logs-after.json",
+      "bytes": 131,
+      "sha256": "8134b526e817631a0a3fa6989e2855dc5499d9750be62318eab9db19e8818e01"
+    },
+    {
+      "path": "render-failure-events-after.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "render-metrics-after.json",
+      "bytes": 6296,
+      "sha256": "d42d0d257fc52d4d9c7e7b53b957a6107867b7dac37ad04b7bcf708ee8462579"
+    },
+    {
+      "path": "ui-analysis-ui.json",
+      "bytes": 12004,
+      "sha256": "9633f009d60be49afd4d3d90579e7f1aa25328dad58ebc47c21ff1f7f181bd9b"
+    },
+    {
+      "path": "ui-summary.json",
+      "bytes": 2623,
+      "sha256": "4237d99bac7b4f27ec3a2a9cc216f2fff0234967661ceb2e0c10765659ff2dc8"
+    }
+  ]
+}

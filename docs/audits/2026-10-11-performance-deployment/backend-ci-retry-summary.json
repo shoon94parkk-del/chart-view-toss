@@ -1,0 +1,52 @@
+{
+  "workflowRunId": 38144321292,
+  "workflowUrl": "https://github.com/shoon94parkk-del/chart_View/actions/runs/38144321292",
+  "revision": "6bdfbc3277dd0a105a10f28f7abd43f1914a5f26",
+  "suite": "production (prelaunch_v42)",
+  "initial": {
+    "jobId": 114484701813,
+    "startedAt": "2026-10-11T13:50:40Z",
+    "failedAt": "2026-10-11T13:52:23.5179368Z",
+    "completedAt": "2026-10-11T13:52:27Z",
+    "conclusion": "failure",
+    "failure": "tests/prelaunch_v42.cjs:85 page.waitForFunction timeout after 15000ms waiting for a valuation-cell title matching Yahoo|예상 기간|조회",
+    "exactRevisionAndAssetsGate": "passed",
+    "historicalNetworkCause": "not established; failure did not capture network or DOM state",
+    "evidence": [
+      "backend-ci/main-ci-attempt1.json",
+      "backend-ci/main-ci-prelaunch-failure.log"
+    ]
+  },
+  "soleRetry": {
+    "jobId": 114486636022,
+    "startedAt": "2026-10-11T13:55:11Z",
+    "completedAt": "2026-10-11T13:55:55Z",
+    "conclusion": "success",
+    "revisionUnchanged": true,
+    "sourceAndAssertionsUnchanged": true,
+    "otherSuccessfulJobsNotRerun": true,
+    "evidence": [
+      "backend-ci/main-ci-attempt2.json",
+      "backend-ci/main-ci-final.json",
+      "backend-ci/main-ci-attempt2-prelaunch.log"
+    ],
+    "passMarker": "PRELAUNCH_V42_PASS",
+    "passMarkerAt": "2026-10-11T13:55:50Z"
+  },
+  "diagnosticObservation": {
+    "testFixtureHasFieldMeta": false,
+    "optionalValuationCacheIsNotMocked": true,
+    "runtimePendingSourceLabel": "출처 확인 중",
+    "subsequentCacheRead": {
+      "status": 200,
+      "bytes": 22582,
+      "quoteCount": 67,
+      "elapsedSeconds": 0.625,
+      "evidence": "backend-ci/valuation-cache-read.json"
+    },
+    "observationIsNotHistoricalCauseProof": true
+  },
+  "finalWorkflowConclusion": "success",
+  "retryCount": 1,
+  "noSourceOrDeploymentChangesForRetry": true
+}

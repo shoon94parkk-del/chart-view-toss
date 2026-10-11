@@ -163,4 +163,4 @@ PERF_BASE_URL=http://127.0.0.1:4173 PERF_RUNS=3 PERF_PHASES=cold,warm \
 
 기존 `analysis_qa`, `progressive_qa`, `mobile_continuity_qa`, `audit_plan_qa`도 변경 없는 production build를 대상으로 모두 exit 0으로 통과했다. 320/390/430/1440px에 걸쳐 총 31장 스크린샷을 별도 session 증거에 보존했다. 독립 최종 검토에서 app/cache 변경의 blocker가 없었고 `git diff --check`와 증거 링크를 확인했다. [검증 요약](audits/2026-10-11-performance/validation.json)은 프로젝트별 결과·script/log hash·검증 환경을 기록하며 [측정 manifest](audits/2026-10-11-performance/measurement-manifest.json)의 실제 application source/asset hash와 연결한다.
 
-프런트 성능 브랜치를 검토 가능한 PR로 게시한다. 두 성능 브랜치의 병합·운영 배포는 실행하지 않았으며 PR CI는 별도 확인 단계다. 기존 운영 프런트 `4efea61`과 백엔드 `fcf8038`이 이 로컬 변경의 배포 결과로 바뀌었다고 표현하지 않는다. 원인 미확인 메모리 관측의 후속 점검과 실제 Android/iOS Toss 검증은 남아 있다.
+이 문서의 로컬/PR 이전 측정 이후 두 PR을 병합하고 Render 운영에 배포했다. 실제 프런트 `e5ffa56`과 백엔드 `6bdfbc3`의 live 배포·최종 main CI·실제 파일·데이터·UI·18경로 후속 측정은 [운영 배포 검증](PERFORMANCE_DEPLOYMENT_2026-10-11.md)에 별도로 보존한다. 위 오전/로컬 수치와 후속 운영 수치를 혼동하지 않는다. 원인 미확인 메모리 관측의 장기 점검과 실제 Android/iOS Toss 검증은 별도 범위다.

@@ -1,0 +1,14 @@
+{
+  "ticker": "005930.KS",
+  "name": "삼성전자",
+  "price": 263000,
+  "change": -2.05,
+  "asOf": "2026-10-08T20:34:39+09:00",
+  "marketCap": null,
+  "currency": "KRW",
+  "source": "Naver Finance KRX/Koscom",
+  "delayTime": 0,
+  "marketStatus": "CLOSE",
+  "sessionType": "unknown",
+  "priceBasis": "provider_latest"
+}

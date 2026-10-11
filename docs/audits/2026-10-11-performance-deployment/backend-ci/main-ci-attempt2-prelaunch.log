@@ -1,0 +1,469 @@
+production (prelaunch_v42)	Set up job	﻿2026-10-11T13:55:11.9189337Z Current runner version: '2.337.0'
+production (prelaunch_v42)	Set up job	2026-10-11T13:55:11.9223407Z ##[group]Runner Image Provisioner
+production (prelaunch_v42)	Set up job	2026-10-11T13:55:11.9224383Z Hosted Compute Agent
+production (prelaunch_v42)	Set up job	2026-10-11T13:55:11.9224989Z Version: 20261002.596
+production (prelaunch_v42)	Set up job	2026-10-11T13:55:11.9225604Z Commit: c3d12f3313a95f25162a1503be624f3b0617f8c0
+production (prelaunch_v42)	Set up job	2026-10-11T13:55:11.9226431Z Build Date: 2026-10-02T22:28:27Z
+production (prelaunch_v42)	Set up job	2026-10-11T13:55:11.9227108Z Worker ID: {41bff1a2-0c1b-43d9-be97-b85cc85dbc0c}
+production (prelaunch_v42)	Set up job	2026-10-11T13:55:11.9228231Z Region: centralus
+production (prelaunch_v42)	Set up job	2026-10-11T13:55:11.9228825Z Cloud: Azure
+production (prelaunch_v42)	Set up job	2026-10-11T13:55:11.9229361Z ##[endgroup]
+production (prelaunch_v42)	Set up job	2026-10-11T13:55:11.9230941Z ##[group]Operating System
+production (prelaunch_v42)	Set up job	2026-10-11T13:55:11.9231681Z Ubuntu
+production (prelaunch_v42)	Set up job	2026-10-11T13:55:11.9232622Z 24.04.5
+production (prelaunch_v42)	Set up job	2026-10-11T13:55:11.9233195Z LTS
+production (prelaunch_v42)	Set up job	2026-10-11T13:55:11.9233760Z ##[endgroup]
+production (prelaunch_v42)	Set up job	2026-10-11T13:55:11.9234361Z ##[group]Runner Image
+production (prelaunch_v42)	Set up job	2026-10-11T13:55:11.9234956Z Image: ubuntu-24.04
+production (prelaunch_v42)	Set up job	2026-10-11T13:55:11.9235504Z Version: 20261004.327.1
+production (prelaunch_v42)	Set up job	2026-10-11T13:55:11.9236657Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261004.327/images/ubuntu/Ubuntu2404-Readme.md
+production (prelaunch_v42)	Set up job	2026-10-11T13:55:11.9238962Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261004.327
+production (prelaunch_v42)	Set up job	2026-10-11T13:55:11.9239946Z ##[endgroup]
+production (prelaunch_v42)	Set up job	2026-10-11T13:55:11.9241092Z ##[group]GITHUB_TOKEN Permissions
+production (prelaunch_v42)	Set up job	2026-10-11T13:55:11.9243250Z Contents: read
+production (prelaunch_v42)	Set up job	2026-10-11T13:55:11.9243899Z Metadata: read
+production (prelaunch_v42)	Set up job	2026-10-11T13:55:11.9244566Z ##[endgroup]
+production (prelaunch_v42)	Set up job	2026-10-11T13:55:11.9246998Z Secret source: Actions
+production (prelaunch_v42)	Set up job	2026-10-11T13:55:11.9248416Z Cache mode: write
+production (prelaunch_v42)	Set up job	2026-10-11T13:55:11.9249391Z Prepare workflow directory
+production (prelaunch_v42)	Set up job	2026-10-11T13:55:11.9651082Z Prepare all required actions
+production (prelaunch_v42)	Set up job	2026-10-11T13:55:11.9721958Z Getting action download info
+production (prelaunch_v42)	Set up job	2026-10-11T13:55:12.2355147Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+production (prelaunch_v42)	Set up job	2026-10-11T13:55:12.3350670Z Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+production (prelaunch_v42)	Set up job	2026-10-11T13:55:12.4214791Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+production (prelaunch_v42)	Set up job	2026-10-11T13:55:12.6347868Z Complete job name: production (prelaunch_v42)
+production (prelaunch_v42)	Run actions/checkout@v4	﻿2026-10-11T13:55:12.7139770Z ##[group]Run actions/checkout@v4
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.7140656Z with:
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.7141130Z   repository: shoon94parkk-del/chart_View
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.7145026Z   token: ***
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.7145461Z   ssh-strict: true
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.7145888Z   ssh-user: git
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.7146322Z   persist-credentials: true
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.7146800Z   clean: true
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.7147239Z   sparse-checkout-cone-mode: true
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.7148102Z   fetch-depth: 1
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.7148600Z   fetch-tags: false
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.7149062Z   show-progress: true
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.7149504Z   lfs: false
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.7149911Z   submodules: false
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.7150357Z   set-safe-directory: true
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.7150851Z   allow-unsafe-pr-checkout: false
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.7151658Z ##[endgroup]
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.8197011Z Syncing repository: shoon94parkk-del/chart_View
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.8200012Z ##[group]Getting Git version info
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.8201219Z Working directory is '/home/runner/work/chart_View/chart_View'
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.8203004Z [command]/usr/bin/git version
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.8252135Z git version 2.55.0
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.8274624Z ##[endgroup]
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.8290307Z Temporarily overriding HOME='/home/runner/work/_temp/c8ced94c-5e8d-4f79-8acc-8821bd2d6a80' before making global git config changes
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.8292674Z Adding repository directory to the temporary git global config as a safe directory
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.8296636Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/chart_View/chart_View
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.8350403Z Deleting the contents of '/home/runner/work/chart_View/chart_View'
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.8360201Z ##[group]Initializing the repository
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.8370698Z [command]/usr/bin/git init /home/runner/work/chart_View/chart_View
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.8464566Z hint: Using 'master' as the name for the initial branch. This default branch name
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.8466864Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.8469081Z hint: to use in all of your new repositories, which will suppress this warning,
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.8470570Z hint: call:
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.8471729Z hint:
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.8472677Z hint: 	git config --global init.defaultBranch <name>
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.8473787Z hint:
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.8474809Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.8476526Z hint: 'development'. The just-created branch can be renamed via this command:
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.8479027Z hint:
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.8479921Z hint: 	git branch -m <name>
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.8480848Z hint:
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.8482014Z hint: Disable this message with "git config set advice.defaultBranchName false"
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.8483787Z Initialized empty Git repository in /home/runner/work/chart_View/chart_View/.git/
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.8486621Z [command]/usr/bin/git remote add origin https://github.com/shoon94parkk-del/chart_View
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.8531438Z ##[endgroup]
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.8532757Z ##[group]Disabling automatic garbage collection
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.8536444Z [command]/usr/bin/git config --local gc.auto 0
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.8570053Z ##[endgroup]
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.8571429Z ##[group]Setting up auth
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.8577921Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.8612005Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.8986603Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.9025396Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.9280170Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.9318023Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.9570635Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.9615202Z ##[endgroup]
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.9616760Z ##[group]Fetching the repository
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:12.9635286Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +6bdfbc3277dd0a105a10f28f7abd43f1914a5f26:refs/remotes/origin/main
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:13.9952428Z From https://github.com/shoon94parkk-del/chart_View
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:13.9953820Z  * [new ref]         6bdfbc3277dd0a105a10f28f7abd43f1914a5f26 -> origin/main
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:13.9956844Z ##[endgroup]
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:13.9958150Z ##[group]Determining the checkout info
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:13.9961711Z ##[endgroup]
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:13.9966996Z [command]/usr/bin/git sparse-checkout disable
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:14.0024170Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:14.0060595Z ##[group]Checking out the ref
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:14.0066247Z [command]/usr/bin/git checkout --progress --force -B main refs/remotes/origin/main
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:14.2672390Z Switched to a new branch 'main'
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:14.2678714Z branch 'main' set up to track 'origin/main'.
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:14.2690114Z ##[endgroup]
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:14.2738874Z [command]/usr/bin/git log -1 --format=%H
+production (prelaunch_v42)	Run actions/checkout@v4	2026-10-11T13:55:14.2769564Z 6bdfbc3277dd0a105a10f28f7abd43f1914a5f26
+production (prelaunch_v42)	Run actions/setup-node@v4	﻿2026-10-11T13:55:14.3160734Z ##[group]Run actions/setup-node@v4
+production (prelaunch_v42)	Run actions/setup-node@v4	2026-10-11T13:55:14.3162003Z with:
+production (prelaunch_v42)	Run actions/setup-node@v4	2026-10-11T13:55:14.3162916Z   node-version: 20
+production (prelaunch_v42)	Run actions/setup-node@v4	2026-10-11T13:55:14.3163887Z   always-auth: false
+production (prelaunch_v42)	Run actions/setup-node@v4	2026-10-11T13:55:14.3164892Z   check-latest: false
+production (prelaunch_v42)	Run actions/setup-node@v4	2026-10-11T13:55:14.3174858Z   token: ***
+production (prelaunch_v42)	Run actions/setup-node@v4	2026-10-11T13:55:14.3240590Z ##[endgroup]
+production (prelaunch_v42)	Run actions/setup-node@v4	2026-10-11T13:55:14.4703161Z Attempting to download 20...
+production (prelaunch_v42)	Run actions/setup-node@v4	2026-10-11T13:55:14.4809648Z (node:2304) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+production (prelaunch_v42)	Run actions/setup-node@v4	2026-10-11T13:55:14.4812315Z (Use `node --trace-deprecation ...` to show where the warning was created)
+production (prelaunch_v42)	Run actions/setup-node@v4	2026-10-11T13:55:15.2436291Z Acquiring 20.20.2 - x64 from https://github.com/actions/node-versions/releases/download/20.20.2-23521894959/node-20.20.2-linux-x64.tar.gz
+production (prelaunch_v42)	Run actions/setup-node@v4	2026-10-11T13:55:15.8277290Z Extracting ...
+production (prelaunch_v42)	Run actions/setup-node@v4	2026-10-11T13:55:15.8393580Z [command]/usr/bin/tar xz --strip 1 --warning=no-unknown-keyword --overwrite -C /home/runner/work/_temp/12d0c938-1c82-4bef-b5b2-a4bf3d70d504 -f /home/runner/work/_temp/8dae466d-b241-4062-920b-6618a8fd75a8
+production (prelaunch_v42)	Run actions/setup-node@v4	2026-10-11T13:55:16.8782388Z Adding to the cache ...
+production (prelaunch_v42)	Run actions/setup-node@v4	2026-10-11T13:55:18.8387114Z ##[group]Environment details
+production (prelaunch_v42)	Run actions/setup-node@v4	2026-10-11T13:55:19.0628835Z node: v20.20.2
+production (prelaunch_v42)	Run actions/setup-node@v4	2026-10-11T13:55:19.0629515Z npm: 10.8.2
+production (prelaunch_v42)	Run actions/setup-node@v4	2026-10-11T13:55:19.0629873Z yarn: 1.22.22
+production (prelaunch_v42)	Run actions/setup-node@v4	2026-10-11T13:55:19.0630610Z ##[endgroup]
+production (prelaunch_v42)	Verify exact Render revision and release assets	﻿2026-10-11T13:55:19.0832203Z ##[group]Run python scripts/verify_deployed_release.py
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:19.0832699Z [36;1mpython scripts/verify_deployed_release.py[0m
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:19.1072276Z shell: /usr/bin/bash -e {0}
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:19.1072576Z env:
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:19.1072852Z   APP_URL: https://chart-view-pkv8.onrender.com
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:19.1073251Z   EXPECTED_SHA: 6bdfbc3277dd0a105a10f28f7abd43f1914a5f26
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:19.1073614Z ##[endgroup]
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1039272Z {
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1039841Z   "revision": "6bdfbc3277dd0a105a10f28f7abd43f1914a5f26",
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1040339Z   "baseUrl": "https://chart-view-pkv8.onrender.com",
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1040706Z   "assets": {
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1041278Z     "static/js/chartview_release_bundle.js": "d7b0745fcb101c24b28ffd06d35d139e0285bb449056ced46795be839c20c4d4",
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1042187Z     "static/css/chartview_release_bundle.css": "69f5f6c9c4fb3f63a307aa443665a011599565c19347fed21a7af3740a716382",
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1043023Z     "static/js/ai_daily_widget.js": "2a43ab218166409f546a967476f9951e7fe8aac452f549a1df8caa520c144096"
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1043562Z   },
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1043758Z   "guru": {
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1044022Z     "snapshotVersion": "40e54f87eae91767b646",
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1044396Z     "criteriaVersion": "cv-gurus-v2",
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1044726Z     "tradeDate": "2026-10-08",
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1045030Z     "generatedAt": "2026-10-11T21:54:33+09:00",
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1045317Z     "strategies": {
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1045544Z       "buffett": {
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1045757Z         "coverage": {
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1046008Z           "unsupportedCount": 229,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1046291Z           "pendingCount": 0,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1046567Z           "insufficientCount": 711,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1046852Z           "failedCount": 1664,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1047165Z           "matchedCount": 47,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1047762Z           "evaluatedCount": 1711,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1048062Z           "universeCount": 2651
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1048319Z         },
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1048530Z         "missingReasons": {
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1048973Z           "\uc77c\ubc18\uae30\uc5c5 \uc870\uac74 \ube44\uad50 \uc9c0\uc6d0 \uc81c\uc678": 229,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1049600Z           "\uc5f0\uc18d 4\uac1c \uc5f0\ub3c4 \uc790\ub8cc \ud655\uc778 \ubd80\uc871": 111,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1050149Z           "\uc5c5\uc885\u00b7\uc0c1\ud488 \uc720\ud615 \ud655\uc778 \ubd80\uc871": 52,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1050790Z           "\uacf5\uc2dc \uac31\uc2e0 \ud655\uc778 \uc2e4\ud328 \u00b7 \uc774\uc804 \uc790\ub8cc \ubcf4\uc874": 383,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1051481Z           "\ud544\uc218 \uacc4\uc815 \ub204\ub77d\u00b7\uae08\uc561 \ud655\uc778 \ubd80\uc871": 39,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1052224Z           "\ub3d9\uc77c \uc885\ubaa9\uc758 \uae30\uc900 \uac70\ub798\uc77c \uc885\uac00 \ud655\uc778 \ubd80\uc871": 104,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1052869Z           "\uacf5\uc2dc \uc2dc\uc810\u00b7\ucd9c\ucc98 \ud655\uc778 \ubd80\uc871": 22
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1053542Z         },
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1053789Z         "status": "evidence_verified",
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1054072Z         "symbol": "383220.KS"
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1054357Z       },
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1054550Z       "lynch": {
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1054766Z         "coverage": {
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1055022Z           "unsupportedCount": 229,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1055295Z           "pendingCount": 0,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1055571Z           "insufficientCount": 1285,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1055859Z           "failedCount": 1100,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1056107Z           "matchedCount": 37,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1056386Z           "evaluatedCount": 1137,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1056664Z           "universeCount": 2651
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1056902Z         },
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1057108Z         "missingReasons": {
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1057686Z           "\uc77c\ubc18\uae30\uc5c5 \uc870\uac74 \ube44\uad50 \uc9c0\uc6d0 \uc81c\uc678": 229,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1058284Z           "\uc5f0\uc18d 4\uac1c \uc5f0\ub3c4 \uc790\ub8cc \ud655\uc778 \ubd80\uc871": 111,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1059086Z           "\uc5c5\uc885\u00b7\uc0c1\ud488 \uc720\ud615 \ud655\uc778 \ubd80\uc871": 52,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1059673Z           "\ud544\uc218 \uacc4\uc815 \ub204\ub77d\u00b7\uae08\uc561 \ud655\uc778 \ubd80\uc871": 237,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1060386Z           "\ubcf4\ud1b5\uc8fc EPS\u00b7\uae30\uc5c5\ud589\ub3d9 \ube44\uad50 \uae30\uc900 \ud655\uc778 \ubd80\uc871": 376,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1061143Z           "\uacf5\uc2dc \uac31\uc2e0 \ud655\uc778 \uc2e4\ud328 \u00b7 \uc774\uc804 \uc790\ub8cc \ubcf4\uc874": 383,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1061887Z           "\ub3d9\uc77c \uc885\ubaa9\uc758 \uae30\uc900 \uac70\ub798\uc77c \uc885\uac00 \ud655\uc778 \ubd80\uc871": 104,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1062524Z           "\uacf5\uc2dc \uc2dc\uc810\u00b7\ucd9c\ucc98 \ud655\uc778 \ubd80\uc871": 22
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1062910Z         },
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1063149Z         "status": "evidence_verified",
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1063431Z         "symbol": "030190.KS"
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1063675Z       },
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1063871Z       "oneil": {
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1064078Z         "coverage": {
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1064330Z           "unsupportedCount": 229,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1064604Z           "pendingCount": 0,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1064879Z           "insufficientCount": 1321,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1065170Z           "failedCount": 1100,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1065431Z           "matchedCount": 1,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1065751Z           "evaluatedCount": 1101,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1066037Z           "universeCount": 2651
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1066284Z         },
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1066486Z         "missingReasons": {
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1066912Z           "\uc77c\ubc18\uae30\uc5c5 \uc870\uac74 \ube44\uad50 \uc9c0\uc6d0 \uc81c\uc678": 229,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1067859Z           "\ub3d9\uc77c \uae30\uc900\uc77c 253\uac70\ub798\uc77c OHLCV \ud655\uc778 \ubd80\uc871": 80,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1068499Z           "\uc5c5\uc885\u00b7\uc0c1\ud488 \uc720\ud615 \ud655\uc778 \ubd80\uc871": 52,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1069053Z           "\uc5f0\uc18d 4\uac1c \uc5f0\ub3c4 \uc790\ub8cc \ud655\uc778 \ubd80\uc871": 65,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1069648Z           "\ud544\uc218 \uacc4\uc815 \ub204\ub77d\u00b7\uae08\uc561 \ud655\uc778 \ubd80\uc871": 152,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1070360Z           "\ubcf4\ud1b5\uc8fc EPS\u00b7\uae30\uc5c5\ud589\ub3d9 \ube44\uad50 \uae30\uc900 \ud655\uc778 \ubd80\uc871": 468,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1071114Z           "\uacf5\uc2dc \uac31\uc2e0 \ud655\uc778 \uc2e4\ud328 \u00b7 \uc774\uc804 \uc790\ub8cc \ubcf4\uc874": 359,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1071862Z           "\ub3d9\uc77c \uc885\ubaa9\uc758 \uae30\uc900 \uac70\ub798\uc77c \uc885\uac00 \ud655\uc778 \ubd80\uc871": 122,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1072497Z           "\uacf5\uc2dc \uc2dc\uc810\u00b7\ucd9c\ucc98 \ud655\uc778 \ubd80\uc871": 22,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1073139Z           "\ub2e8\uc77c \ubd84\uae30 EPS\u00b7\ub9e4\ucd9c \ube44\uad50 \uc790\ub8cc \ud655\uc778 \ubd80\uc871": 1
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1073822Z         },
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1074061Z         "status": "evidence_verified",
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1074388Z         "symbol": "192820.KS"
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1074629Z       },
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1074824Z       "minervini": {
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1075047Z         "coverage": {
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1075304Z           "unsupportedCount": 229,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1075578Z           "pendingCount": 0,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1075863Z           "insufficientCount": 254,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1076156Z           "failedCount": 2085,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1076408Z           "matchedCount": 83,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1076725Z           "evaluatedCount": 2168,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1077009Z           "universeCount": 2651
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1077249Z         },
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1077761Z         "missingReasons": {
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1078210Z           "\uc77c\ubc18\uae30\uc5c5 \uc870\uac74 \ube44\uad50 \uc9c0\uc6d0 \uc81c\uc678": 229,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1078834Z           "\ub3d9\uc77c \uae30\uc900\uc77c 253\uac70\ub798\uc77c OHLCV \ud655\uc778 \ubd80\uc871": 80,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1079425Z           "\uc5c5\uc885\u00b7\uc0c1\ud488 \uc720\ud615 \ud655\uc778 \ubd80\uc871": 52,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1080291Z           "\ub3d9\uc77c \uc885\ubaa9\uc758 \uae30\uc900 \uac70\ub798\uc77c \uc885\uac00 \ud655\uc778 \ubd80\uc871": 122
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1080774Z         },
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1081010Z         "status": "evidence_verified",
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1081287Z         "symbol": "068790.KQ"
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1081516Z       },
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1081710Z       "greenblatt": {
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1081931Z         "coverage": {
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1082198Z           "unsupportedCount": 274,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1082476Z           "pendingCount": 0,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1082749Z           "insufficientCount": 1133,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1083039Z           "failedCount": 1242,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1083288Z           "matchedCount": 2,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1083551Z           "evaluatedCount": 1244,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1083841Z           "universeCount": 2651
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1084078Z         },
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1084306Z         "missingReasons": {
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1084733Z           "\uc77c\ubc18\uae30\uc5c5 \uc870\uac74 \ube44\uad50 \uc9c0\uc6d0 \uc81c\uc678": 229,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1085351Z           "\ud544\uc218 \uacc4\uc815 \ub204\ub77d\u00b7\uae08\uc561 \ud655\uc778 \ubd80\uc871": 109,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1085928Z           "\uc5c5\uc885\u00b7\uc0c1\ud488 \uc720\ud615 \ud655\uc778 \ubd80\uc871": 52,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1086599Z           "\ubcf4\ud1b5\uc8fc EPS\u00b7\uae30\uc5c5\ud589\ub3d9 \ube44\uad50 \uae30\uc900 \ud655\uc778 \ubd80\uc871": 473,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1087306Z           "\uae08\uc735\u00b7\uc720\ud2f8\ub9ac\ud2f0 \ube44\uad50 \uc9c0\uc6d0 \uc81c\uc678": 45,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1088147Z           "\uacf5\uc2dc \uac31\uc2e0 \ud655\uc778 \uc2e4\ud328 \u00b7 \uc774\uc804 \uc790\ub8cc \ubcf4\uc874": 360,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1088887Z           "\ub3d9\uc77c \uc885\ubaa9\uc758 \uae30\uc900 \uac70\ub798\uc77c \uc885\uac00 \ud655\uc778 \ubd80\uc871": 117,
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1089525Z           "\uacf5\uc2dc \uc2dc\uc810\u00b7\ucd9c\ucc98 \ud655\uc778 \ubd80\uc871": 22
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1089910Z         },
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1090142Z         "status": "evidence_verified",
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1090420Z         "symbol": "171090.KQ"
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1090654Z       }
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1090836Z     },
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1091096Z     "nonCurrentVersionRejection": "verified_409"
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1091391Z   },
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1091606Z   "verifiedAt": 1791726921.102397
+production (prelaunch_v42)	Verify exact Render revision and release assets	2026-10-11T13:55:21.1091859Z }
+production (prelaunch_v42)	Install production browser	﻿2026-10-11T13:55:21.1169104Z ##[group]Run npm install --no-save --package-lock=false playwright@1.55.0
+production (prelaunch_v42)	Install production browser	2026-10-11T13:55:21.1169703Z [36;1mnpm install --no-save --package-lock=false playwright@1.55.0[0m
+production (prelaunch_v42)	Install production browser	2026-10-11T13:55:21.1170181Z [36;1mnpx playwright install --with-deps chromium >/dev/null[0m
+production (prelaunch_v42)	Install production browser	2026-10-11T13:55:21.1235631Z shell: /usr/bin/bash -e {0}
+production (prelaunch_v42)	Install production browser	2026-10-11T13:55:21.1236073Z ##[endgroup]
+production (prelaunch_v42)	Install production browser	2026-10-11T13:55:22.9096024Z 
+production (prelaunch_v42)	Install production browser	2026-10-11T13:55:22.9096626Z added 2 packages in 2s
+production (prelaunch_v42)	Install production browser	2026-10-11T13:55:32.9541205Z 
+production (prelaunch_v42)	Install production browser	2026-10-11T13:55:32.9542289Z Running kernel seems to be up-to-date.
+production (prelaunch_v42)	Install production browser	2026-10-11T13:55:32.9542774Z 
+production (prelaunch_v42)	Install production browser	2026-10-11T13:55:32.9543024Z Restarting services...
+production (prelaunch_v42)	Install production browser	2026-10-11T13:55:32.9616725Z  systemctl restart php8.3-fpm.service
+production (prelaunch_v42)	Install production browser	2026-10-11T13:55:33.0801638Z 
+production (prelaunch_v42)	Install production browser	2026-10-11T13:55:33.0812206Z No containers need to be restarted.
+production (prelaunch_v42)	Install production browser	2026-10-11T13:55:33.0812604Z 
+production (prelaunch_v42)	Install production browser	2026-10-11T13:55:33.0812927Z No user sessions are running outdated binaries.
+production (prelaunch_v42)	Install production browser	2026-10-11T13:55:33.0813295Z 
+production (prelaunch_v42)	Install production browser	2026-10-11T13:55:33.0813774Z No VM guests are running outdated hypervisor (qemu) binaries on this host.
+production (prelaunch_v42)	Verify production UI and navigation	﻿2026-10-11T13:55:43.3490001Z ##[group]Run node tests/prelaunch_v42.cjs
+production (prelaunch_v42)	Verify production UI and navigation	2026-10-11T13:55:43.3490373Z [36;1mnode tests/prelaunch_v42.cjs[0m
+production (prelaunch_v42)	Verify production UI and navigation	2026-10-11T13:55:43.3553974Z shell: /usr/bin/bash -e {0}
+production (prelaunch_v42)	Verify production UI and navigation	2026-10-11T13:55:43.3554238Z env:
+production (prelaunch_v42)	Verify production UI and navigation	2026-10-11T13:55:43.3554503Z   APP_URL: https://chart-view-pkv8.onrender.com
+production (prelaunch_v42)	Verify production UI and navigation	2026-10-11T13:55:43.3554835Z ##[endgroup]
+production (prelaunch_v42)	Verify production UI and navigation	2026-10-11T13:55:50.1314897Z PRELAUNCH_V42_PASS
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	﻿2026-10-11T13:55:50.1723279Z ##[group]Run python scripts/verify_deployed_release.py --attempts 1 --output test-results/release-after.json
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:50.1724121Z [36;1mpython scripts/verify_deployed_release.py --attempts 1 --output test-results/release-after.json[0m
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:50.1788396Z shell: /usr/bin/bash -e {0}
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:50.1788658Z env:
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:50.1788915Z   APP_URL: https://chart-view-pkv8.onrender.com
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:50.1789313Z   EXPECTED_SHA: 6bdfbc3277dd0a105a10f28f7abd43f1914a5f26
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:50.1789633Z ##[endgroup]
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9942452Z {
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9943280Z   "revision": "6bdfbc3277dd0a105a10f28f7abd43f1914a5f26",
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9944216Z   "baseUrl": "https://chart-view-pkv8.onrender.com",
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9944930Z   "assets": {
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9946079Z     "static/js/chartview_release_bundle.js": "d7b0745fcb101c24b28ffd06d35d139e0285bb449056ced46795be839c20c4d4",
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9948386Z     "static/css/chartview_release_bundle.css": "69f5f6c9c4fb3f63a307aa443665a011599565c19347fed21a7af3740a716382",
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9950196Z     "static/js/ai_daily_widget.js": "2a43ab218166409f546a967476f9951e7fe8aac452f549a1df8caa520c144096"
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9951192Z   },
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9951577Z   "guru": {
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9952114Z     "snapshotVersion": "40e54f87eae91767b646",
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9952837Z     "criteriaVersion": "cv-gurus-v2",
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9953530Z     "tradeDate": "2026-10-08",
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9954183Z     "generatedAt": "2026-10-11T21:54:33+09:00",
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9954792Z     "strategies": {
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9955249Z       "buffett": {
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9955633Z         "coverage": {
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9955959Z           "unsupportedCount": 229,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9956319Z           "pendingCount": 0,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9956687Z           "insufficientCount": 711,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9956989Z           "failedCount": 1664,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9957263Z           "matchedCount": 47,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9957881Z           "evaluatedCount": 1711,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9958185Z           "universeCount": 2651
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9958437Z         },
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9958646Z         "missingReasons": {
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9959087Z           "\uc77c\ubc18\uae30\uc5c5 \uc870\uac74 \ube44\uad50 \uc9c0\uc6d0 \uc81c\uc678": 229,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9959678Z           "\uc5f0\uc18d 4\uac1c \uc5f0\ub3c4 \uc790\ub8cc \ud655\uc778 \ubd80\uc871": 111,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9960237Z           "\uc5c5\uc885\u00b7\uc0c1\ud488 \uc720\ud615 \ud655\uc778 \ubd80\uc871": 52,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9960884Z           "\uacf5\uc2dc \uac31\uc2e0 \ud655\uc778 \uc2e4\ud328 \u00b7 \uc774\uc804 \uc790\ub8cc \ubcf4\uc874": 383,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9961555Z           "\ud544\uc218 \uacc4\uc815 \ub204\ub77d\u00b7\uae08\uc561 \ud655\uc778 \ubd80\uc871": 39,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9962255Z           "\ub3d9\uc77c \uc885\ubaa9\uc758 \uae30\uc900 \uac70\ub798\uc77c \uc885\uac00 \ud655\uc778 \ubd80\uc871": 104,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9963164Z           "\uacf5\uc2dc \uc2dc\uc810\u00b7\ucd9c\ucc98 \ud655\uc778 \ubd80\uc871": 22
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9963548Z         },
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9963788Z         "status": "evidence_verified",
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9964064Z         "symbol": "383220.KS"
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9982884Z       },
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9983274Z       "lynch": {
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9983636Z         "coverage": {
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9984087Z           "unsupportedCount": 229,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9984416Z           "pendingCount": 0,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9984710Z           "insufficientCount": 1285,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9985018Z           "failedCount": 1100,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9985276Z           "matchedCount": 37,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9985552Z           "evaluatedCount": 1137,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9985834Z           "universeCount": 2651
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9986075Z         },
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9986278Z         "missingReasons": {
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9986718Z           "\uc77c\ubc18\uae30\uc5c5 \uc870\uac74 \ube44\uad50 \uc9c0\uc6d0 \uc81c\uc678": 229,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9987901Z           "\uc5f0\uc18d 4\uac1c \uc5f0\ub3c4 \uc790\ub8cc \ud655\uc778 \ubd80\uc871": 111,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9988456Z           "\uc5c5\uc885\u00b7\uc0c1\ud488 \uc720\ud615 \ud655\uc778 \ubd80\uc871": 52,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9989039Z           "\ud544\uc218 \uacc4\uc815 \ub204\ub77d\u00b7\uae08\uc561 \ud655\uc778 \ubd80\uc871": 237,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9989737Z           "\ubcf4\ud1b5\uc8fc EPS\u00b7\uae30\uc5c5\ud589\ub3d9 \ube44\uad50 \uae30\uc900 \ud655\uc778 \ubd80\uc871": 376,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9990481Z           "\uacf5\uc2dc \uac31\uc2e0 \ud655\uc778 \uc2e4\ud328 \u00b7 \uc774\uc804 \uc790\ub8cc \ubcf4\uc874": 383,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9991233Z           "\ub3d9\uc77c \uc885\ubaa9\uc758 \uae30\uc900 \uac70\ub798\uc77c \uc885\uac00 \ud655\uc778 \ubd80\uc871": 104,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9991958Z           "\uacf5\uc2dc \uc2dc\uc810\u00b7\ucd9c\ucc98 \ud655\uc778 \ubd80\uc871": 22
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9992355Z         },
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9992597Z         "status": "evidence_verified",
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9992879Z         "symbol": "030190.KS"
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9993113Z       },
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9993303Z       "oneil": {
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9993508Z         "coverage": {
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9993760Z           "unsupportedCount": 229,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9994039Z           "pendingCount": 0,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9994314Z           "insufficientCount": 1321,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9994599Z           "failedCount": 1100,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9994844Z           "matchedCount": 1,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9995109Z           "evaluatedCount": 1101,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9995398Z           "universeCount": 2651
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9995642Z         },
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9995869Z         "missingReasons": {
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9996307Z           "\uc77c\ubc18\uae30\uc5c5 \uc870\uac74 \ube44\uad50 \uc9c0\uc6d0 \uc81c\uc678": 229,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9996932Z           "\ub3d9\uc77c \uae30\uc900\uc77c 253\uac70\ub798\uc77c OHLCV \ud655\uc778 \ubd80\uc871": 80,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9997781Z           "\uc5c5\uc885\u00b7\uc0c1\ud488 \uc720\ud615 \ud655\uc778 \ubd80\uc871": 52,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9998346Z           "\uc5f0\uc18d 4\uac1c \uc5f0\ub3c4 \uc790\ub8cc \ud655\uc778 \ubd80\uc871": 65,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9998936Z           "\ud544\uc218 \uacc4\uc815 \ub204\ub77d\u00b7\uae08\uc561 \ud655\uc778 \ubd80\uc871": 152,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:51.9999638Z           "\ubcf4\ud1b5\uc8fc EPS\u00b7\uae30\uc5c5\ud589\ub3d9 \ube44\uad50 \uae30\uc900 \ud655\uc778 \ubd80\uc871": 468,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0000384Z           "\uacf5\uc2dc \uac31\uc2e0 \ud655\uc778 \uc2e4\ud328 \u00b7 \uc774\uc804 \uc790\ub8cc \ubcf4\uc874": 359,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0001127Z           "\ub3d9\uc77c \uc885\ubaa9\uc758 \uae30\uc900 \uac70\ub798\uc77c \uc885\uac00 \ud655\uc778 \ubd80\uc871": 122,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0001761Z           "\uacf5\uc2dc \uc2dc\uc810\u00b7\ucd9c\ucc98 \ud655\uc778 \ubd80\uc871": 22,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0002402Z           "\ub2e8\uc77c \ubd84\uae30 EPS\u00b7\ub9e4\ucd9c \ube44\uad50 \uc790\ub8cc \ud655\uc778 \ubd80\uc871": 1
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0003033Z         },
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0003269Z         "status": "evidence_verified",
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0003558Z         "symbol": "192820.KS"
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0003803Z       },
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0003999Z       "minervini": {
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0004218Z         "coverage": {
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0004472Z           "unsupportedCount": 229,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0004745Z           "pendingCount": 0,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0005023Z           "insufficientCount": 254,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0005306Z           "failedCount": 2085,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0005555Z           "matchedCount": 83,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0005818Z           "evaluatedCount": 2168,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0006094Z           "universeCount": 2651
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0006329Z         },
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0006526Z         "missingReasons": {
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0006956Z           "\uc77c\ubc18\uae30\uc5c5 \uc870\uac74 \ube44\uad50 \uc9c0\uc6d0 \uc81c\uc678": 229,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0007934Z           "\ub3d9\uc77c \uae30\uc900\uc77c 253\uac70\ub798\uc77c OHLCV \ud655\uc778 \ubd80\uc871": 80,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0008713Z           "\uc5c5\uc885\u00b7\uc0c1\ud488 \uc720\ud615 \ud655\uc778 \ubd80\uc871": 52,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0009359Z           "\ub3d9\uc77c \uc885\ubaa9\uc758 \uae30\uc900 \uac70\ub798\uc77c \uc885\uac00 \ud655\uc778 \ubd80\uc871": 122
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0009833Z         },
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0010062Z         "status": "evidence_verified",
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0010339Z         "symbol": "068790.KQ"
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0010566Z       },
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0010758Z       "greenblatt": {
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0010975Z         "coverage": {
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0011228Z           "unsupportedCount": 274,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0011493Z           "pendingCount": 0,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0011763Z           "insufficientCount": 1133,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0012048Z           "failedCount": 1242,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0012291Z           "matchedCount": 2,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0012557Z           "evaluatedCount": 1244,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0012842Z           "universeCount": 2651
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0013076Z         },
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0013272Z         "missingReasons": {
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0013687Z           "\uc77c\ubc18\uae30\uc5c5 \uc870\uac74 \ube44\uad50 \uc9c0\uc6d0 \uc81c\uc678": 229,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0014290Z           "\ud544\uc218 \uacc4\uc815 \ub204\ub77d\u00b7\uae08\uc561 \ud655\uc778 \ubd80\uc871": 109,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0014867Z           "\uc5c5\uc885\u00b7\uc0c1\ud488 \uc720\ud615 \ud655\uc778 \ubd80\uc871": 52,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0015524Z           "\ubcf4\ud1b5\uc8fc EPS\u00b7\uae30\uc5c5\ud589\ub3d9 \ube44\uad50 \uae30\uc900 \ud655\uc778 \ubd80\uc871": 473,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0016211Z           "\uae08\uc735\u00b7\uc720\ud2f8\ub9ac\ud2f0 \ube44\uad50 \uc9c0\uc6d0 \uc81c\uc678": 45,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0016883Z           "\uacf5\uc2dc \uac31\uc2e0 \ud655\uc778 \uc2e4\ud328 \u00b7 \uc774\uc804 \uc790\ub8cc \ubcf4\uc874": 360,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0017895Z           "\ub3d9\uc77c \uc885\ubaa9\uc758 \uae30\uc900 \uac70\ub798\uc77c \uc885\uac00 \ud655\uc778 \ubd80\uc871": 117,
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0018545Z           "\uacf5\uc2dc \uc2dc\uc810\u00b7\ucd9c\ucc98 \ud655\uc778 \ubd80\uc871": 22
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0018918Z         },
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0019146Z         "status": "evidence_verified",
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0019417Z         "symbol": "171090.KQ"
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0019650Z       }
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0019839Z     },
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0020093Z     "nonCurrentVersionRejection": "verified_409"
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0020402Z   },
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0020660Z   "verifiedAt": 1791726951.9934204
+production (prelaunch_v42)	Confirm revision and assets stayed unchanged	2026-10-11T13:55:52.0020907Z }
+production (prelaunch_v42)	Run actions/upload-artifact@v4	﻿2026-10-11T13:55:52.0132140Z ##[group]Run actions/upload-artifact@v4
+production (prelaunch_v42)	Run actions/upload-artifact@v4	2026-10-11T13:55:52.0132449Z with:
+production (prelaunch_v42)	Run actions/upload-artifact@v4	2026-10-11T13:55:52.0132670Z   name: production-review-prelaunch_v42
+production (prelaunch_v42)	Run actions/upload-artifact@v4	2026-10-11T13:55:52.0132950Z   path: test-results/
+production (prelaunch_v42)	Run actions/upload-artifact@v4	2026-10-11T13:55:52.0133173Z   if-no-files-found: warn
+production (prelaunch_v42)	Run actions/upload-artifact@v4	2026-10-11T13:55:52.0133405Z   compression-level: 6
+production (prelaunch_v42)	Run actions/upload-artifact@v4	2026-10-11T13:55:52.0133781Z   overwrite: false
+production (prelaunch_v42)	Run actions/upload-artifact@v4	2026-10-11T13:55:52.0133996Z   include-hidden-files: false
+production (prelaunch_v42)	Run actions/upload-artifact@v4	2026-10-11T13:55:52.0134242Z ##[endgroup]
+production (prelaunch_v42)	Run actions/upload-artifact@v4	2026-10-11T13:55:52.1779747Z (node:3220) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+production (prelaunch_v42)	Run actions/upload-artifact@v4	2026-10-11T13:55:52.1781328Z (Use `node --trace-deprecation ...` to show where the warning was created)
+production (prelaunch_v42)	Run actions/upload-artifact@v4	2026-10-11T13:55:52.1838965Z With the provided path, there will be 3 files uploaded
+production (prelaunch_v42)	Run actions/upload-artifact@v4	2026-10-11T13:55:52.1845278Z Artifact name is valid!
+production (prelaunch_v42)	Run actions/upload-artifact@v4	2026-10-11T13:55:52.1846447Z Root directory input is valid!
+production (prelaunch_v42)	Run actions/upload-artifact@v4	2026-10-11T13:55:52.4534755Z Beginning upload of artifact content to blob storage
+production (prelaunch_v42)	Run actions/upload-artifact@v4	2026-10-11T13:55:52.4790104Z (node:3220) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+production (prelaunch_v42)	Run actions/upload-artifact@v4	2026-10-11T13:55:52.6606696Z Uploaded bytes 71738
+production (prelaunch_v42)	Run actions/upload-artifact@v4	2026-10-11T13:55:52.6991093Z Finished uploading artifact content to blob storage!
+production (prelaunch_v42)	Run actions/upload-artifact@v4	2026-10-11T13:55:52.6992510Z SHA256 digest of uploaded artifact zip is c135183276473b0b0d0fef58cb1b468d66716933cfcd382a25db1be6424c40a2
+production (prelaunch_v42)	Run actions/upload-artifact@v4	2026-10-11T13:55:52.6994180Z Finalizing artifact upload
+production (prelaunch_v42)	Run actions/upload-artifact@v4	2026-10-11T13:55:52.9519782Z Artifact production-review-prelaunch_v42.zip successfully finalized. Artifact ID 11703984630
+production (prelaunch_v42)	Run actions/upload-artifact@v4	2026-10-11T13:55:52.9520864Z Artifact production-review-prelaunch_v42 has been successfully uploaded! Final size is 71738 bytes. Artifact ID is 11703984630
+production (prelaunch_v42)	Run actions/upload-artifact@v4	2026-10-11T13:55:52.9526223Z Artifact download URL: https://github.com/shoon94parkk-del/chart_View/actions/runs/38144321292/artifacts/11703984630
+production (prelaunch_v42)	Post Run actions/setup-node@v4	﻿2026-10-11T13:55:52.9703939Z Post job cleanup.
+production (prelaunch_v42)	Post Run actions/setup-node@v4	2026-10-11T13:55:53.0915953Z (node:3232) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+production (prelaunch_v42)	Post Run actions/setup-node@v4	2026-10-11T13:55:53.0916913Z (Use `node --trace-deprecation ...` to show where the warning was created)
+production (prelaunch_v42)	Post Run actions/checkout@v4	﻿2026-10-11T13:55:53.1123148Z Post job cleanup.
+production (prelaunch_v42)	Post Run actions/checkout@v4	2026-10-11T13:55:53.2167253Z [command]/usr/bin/git version
+production (prelaunch_v42)	Post Run actions/checkout@v4	2026-10-11T13:55:53.2219424Z git version 2.55.0
+production (prelaunch_v42)	Post Run actions/checkout@v4	2026-10-11T13:55:53.2261950Z Temporarily overriding HOME='/home/runner/work/_temp/4e706721-95b9-406b-8c59-d17a9aa98f99' before making global git config changes
+production (prelaunch_v42)	Post Run actions/checkout@v4	2026-10-11T13:55:53.2263810Z Adding repository directory to the temporary git global config as a safe directory
+production (prelaunch_v42)	Post Run actions/checkout@v4	2026-10-11T13:55:53.2272775Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/chart_View/chart_View
+production (prelaunch_v42)	Post Run actions/checkout@v4	2026-10-11T13:55:53.2315532Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+production (prelaunch_v42)	Post Run actions/checkout@v4	2026-10-11T13:55:53.2363603Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+production (prelaunch_v42)	Post Run actions/checkout@v4	2026-10-11T13:55:53.2649806Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+production (prelaunch_v42)	Post Run actions/checkout@v4	2026-10-11T13:55:53.2681532Z http.https://github.com/.extraheader
+production (prelaunch_v42)	Post Run actions/checkout@v4	2026-10-11T13:55:53.2699038Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+production (prelaunch_v42)	Post Run actions/checkout@v4	2026-10-11T13:55:53.2736817Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+production (prelaunch_v42)	Post Run actions/checkout@v4	2026-10-11T13:55:53.3009934Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+production (prelaunch_v42)	Post Run actions/checkout@v4	2026-10-11T13:55:53.3052793Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+production (prelaunch_v42)	Complete job	﻿2026-10-11T13:55:53.3470498Z Cleaning up orphan processes
+production (prelaunch_v42)	Complete job	2026-10-11T13:55:53.3878302Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

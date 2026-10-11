@@ -1,0 +1,14 @@
+{
+  "commit": {
+    "createdAt": "2026-10-11T13:44:08Z",
+    "id": "e5ffa5669a4b3f8cbf7df1d6df142dd91efa89f6",
+    "message": "Merge PR #129: measured analysis loading improvements\n\nperf: defer shared analysis views and record production baseline"
+  },
+  "createdAt": "2026-10-11T13:49:13.455735Z",
+  "finishedAt": "2026-10-11T13:49:35.301299Z",
+  "id": "dep-db5p7md9fdbs73dl7rgg",
+  "startedAt": "2026-10-11T13:49:13.454132Z",
+  "status": "live",
+  "trigger": "api",
+  "updatedAt": "2026-10-11T13:49:35.301458Z"
+}

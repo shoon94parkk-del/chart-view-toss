@@ -1,0 +1,130 @@
+{
+  "status": "completed",
+  "conclusion": "failure",
+  "headSha": "6bdfbc3277dd0a105a10f28f7abd43f1914a5f26",
+  "url": "https://github.com/shoon94parkk-del/chart_View/actions/runs/38144321292",
+  "jobs": [
+    {
+      "name": "check",
+      "status": "completed",
+      "conclusion": "success",
+      "databaseId": 114484388706,
+      "startedAt": "2026-10-11T13:43:40Z",
+      "completedAt": "2026-10-11T13:44:14Z",
+      "url": "https://github.com/shoon94parkk-del/chart_View/actions/runs/38144321292/job/114484388706",
+      "failedSteps": []
+    },
+    {
+      "name": "mobile (app_release_stage12)",
+      "status": "completed",
+      "conclusion": "success",
+      "databaseId": 114484388770,
+      "startedAt": "2026-10-11T13:43:41Z",
+      "completedAt": "2026-10-11T13:44:54Z",
+      "url": "https://github.com/shoon94parkk-del/chart_View/actions/runs/38144321292/job/114484388770",
+      "failedSteps": []
+    },
+    {
+      "name": "mobile (share_deeplink_v68)",
+      "status": "completed",
+      "conclusion": "success",
+      "databaseId": 114484388793,
+      "startedAt": "2026-10-11T13:43:40Z",
+      "completedAt": "2026-10-11T13:44:32Z",
+      "url": "https://github.com/shoon94parkk-del/chart_View/actions/runs/38144321292/job/114484388793",
+      "failedSteps": []
+    },
+    {
+      "name": "mobile (cross_device_sync_v64)",
+      "status": "completed",
+      "conclusion": "success",
+      "databaseId": 114484388805,
+      "startedAt": "2026-10-11T13:43:41Z",
+      "completedAt": "2026-10-11T13:44:38Z",
+      "url": "https://github.com/shoon94parkk-del/chart_View/actions/runs/38144321292/job/114484388805",
+      "failedSteps": []
+    },
+    {
+      "name": "mobile (mobile_smoke)",
+      "status": "completed",
+      "conclusion": "success",
+      "databaseId": 114484388843,
+      "startedAt": "2026-10-11T13:43:41Z",
+      "completedAt": "2026-10-11T13:45:12Z",
+      "url": "https://github.com/shoon94parkk-del/chart_View/actions/runs/38144321292/job/114484388843",
+      "failedSteps": []
+    },
+    {
+      "name": "mobile (v41_my_hub)",
+      "status": "completed",
+      "conclusion": "success",
+      "databaseId": 114484388855,
+      "startedAt": "2026-10-11T13:43:41Z",
+      "completedAt": "2026-10-11T13:44:43Z",
+      "url": "https://github.com/shoon94parkk-del/chart_View/actions/runs/38144321292/job/114484388855",
+      "failedSteps": []
+    },
+    {
+      "name": "mobile (prelaunch_v42)",
+      "status": "completed",
+      "conclusion": "success",
+      "databaseId": 114484388863,
+      "startedAt": "2026-10-11T13:43:41Z",
+      "completedAt": "2026-10-11T13:44:48Z",
+      "url": "https://github.com/shoon94parkk-del/chart_View/actions/runs/38144321292/job/114484388863",
+      "failedSteps": []
+    },
+    {
+      "name": "mobile (news_summary_expand_v48)",
+      "status": "completed",
+      "conclusion": "success",
+      "databaseId": 114484388888,
+      "startedAt": "2026-10-11T13:43:41Z",
+      "completedAt": "2026-10-11T13:44:27Z",
+      "url": "https://github.com/shoon94parkk-del/chart_View/actions/runs/38144321292/job/114484388888",
+      "failedSteps": []
+    },
+    {
+      "name": "production (production_stage12)",
+      "status": "completed",
+      "conclusion": "success",
+      "databaseId": 114484701785,
+      "startedAt": "2026-10-11T13:45:15Z",
+      "completedAt": "2026-10-11T13:48:50Z",
+      "url": "https://github.com/shoon94parkk-del/chart_View/actions/runs/38144321292/job/114484701785",
+      "failedSteps": []
+    },
+    {
+      "name": "production (prelaunch_v42)",
+      "status": "completed",
+      "conclusion": "failure",
+      "databaseId": 114484701813,
+      "startedAt": "2026-10-11T13:50:40Z",
+      "completedAt": "2026-10-11T13:52:27Z",
+      "url": "https://github.com/shoon94parkk-del/chart_View/actions/runs/38144321292/job/114484701813",
+      "failedSteps": [
+        "Verify production UI and navigation"
+      ]
+    },
+    {
+      "name": "production (news_summary_expand_v48)",
+      "status": "completed",
+      "conclusion": "success",
+      "databaseId": 114484701836,
+      "startedAt": "2026-10-11T13:49:52Z",
+      "completedAt": "2026-10-11T13:50:37Z",
+      "url": "https://github.com/shoon94parkk-del/chart_View/actions/runs/38144321292/job/114484701836",
+      "failedSteps": []
+    },
+    {
+      "name": "production (v41_my_hub)",
+      "status": "completed",
+      "conclusion": "success",
+      "databaseId": 114484701884,
+      "startedAt": "2026-10-11T13:48:52Z",
+      "completedAt": "2026-10-11T13:49:49Z",
+      "url": "https://github.com/shoon94parkk-del/chart_View/actions/runs/38144321292/job/114484701884",
+      "failedSteps": []
+    }
+  ]
+}

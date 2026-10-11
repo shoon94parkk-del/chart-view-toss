@@ -1,0 +1,22 @@
+{
+  "key": "cosmetics",
+  "latest": {
+    "period": "2026-09",
+    "exportsUsdBillion": 1.2129,
+    "priorExportsUsdBillion": null,
+    "deltaUsdBillion": null,
+    "exportYoY": 29.5,
+    "exportMoM": null,
+    "exportWeightKg": 34611457,
+    "exportWeightYoY": 13.4,
+    "exportWeightMoM": null,
+    "unitValueUsdPerKg": 35.0422,
+    "unitValueYoY": 14.1,
+    "unitValueMoM": null,
+    "importsUsdBillion": 0.0841,
+    "importYoY": -8.8,
+    "importWeightKg": 2766707,
+    "tradeBalanceUsdBillion": 1.1288
+  },
+  "historyCount": 12
+}

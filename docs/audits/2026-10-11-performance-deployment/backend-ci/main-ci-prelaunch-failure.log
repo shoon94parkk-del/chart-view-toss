@@ -1,0 +1,11 @@
+production (prelaunch_v42)	Verify production UI and navigation	﻿2026-10-11T13:51:54.7290946Z ##[group]Run node tests/prelaunch_v42.cjs
+production (prelaunch_v42)	Verify production UI and navigation	2026-10-11T13:51:54.7291310Z [36;1mnode tests/prelaunch_v42.cjs[0m
+production (prelaunch_v42)	Verify production UI and navigation	2026-10-11T13:51:54.7354875Z shell: /usr/bin/bash -e {0}
+production (prelaunch_v42)	Verify production UI and navigation	2026-10-11T13:51:54.7355129Z env:
+production (prelaunch_v42)	Verify production UI and navigation	2026-10-11T13:51:54.7355383Z   APP_URL: https://chart-view-pkv8.onrender.com
+production (prelaunch_v42)	Verify production UI and navigation	2026-10-11T13:51:54.7355706Z ##[endgroup]
+production (prelaunch_v42)	Verify production UI and navigation	2026-10-11T13:52:23.5179368Z page.waitForFunction: Timeout 15000ms exceeded.
+production (prelaunch_v42)	Verify production UI and navigation	2026-10-11T13:52:23.5180090Z     at /home/runner/work/chart_View/chart_View/tests/prelaunch_v42.cjs:85:13 {
+production (prelaunch_v42)	Verify production UI and navigation	2026-10-11T13:52:23.5180602Z   name: 'TimeoutError'
+production (prelaunch_v42)	Verify production UI and navigation	2026-10-11T13:52:23.5180877Z }
+production (prelaunch_v42)	Verify production UI and navigation	2026-10-11T13:52:23.5317721Z ##[error]Process completed with exit code 1.

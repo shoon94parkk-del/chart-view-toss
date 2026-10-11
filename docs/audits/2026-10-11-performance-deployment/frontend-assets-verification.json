@@ -1,0 +1,22 @@
+{
+  "before": {
+    "asset": "/assets/index-CQAV79Ao.js",
+    "source": "4efea61741a058070142a75855b100b73303ca34",
+    "bytes": 326520,
+    "gzipBytes": 108683,
+    "sha256": "db679e00e63033a94940d535816dd551c241fd5d8299998d4317229bfb9f4755"
+  },
+  "after": {
+    "asset": "/assets/index-Curs8YFG.js",
+    "source": "e5ffa5669a4b3f8cbf7df1d6df142dd91efa89f6",
+    "bytes": 296747,
+    "gzipBytes": 98955,
+    "sha256": "dfd6dbfcee27b3c3b6832706f0b06256881925bc7bf60c2f3a90f31385d1cca8"
+  },
+  "mainBytesReductionPct": 9.118277594021807,
+  "gzipMeaning": "Locally computed zlib default-level6 compression of actual served assets, not wire transfer size",
+  "afterSharedAnalysisAssets": [
+    "analysisViews-D9ykvVMT.js",
+    "analysisViews-BM0ySziZ.css"
+  ]
+}

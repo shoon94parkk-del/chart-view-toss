@@ -1,0 +1,14 @@
+{
+  "commit": {
+    "createdAt": "2026-10-11T13:43:34Z",
+    "id": "6bdfbc3277dd0a105a10f28f7abd43f1914a5f26",
+    "message": "Merge pull request #147 from shoon94parkk-del/perf/guru-cache-20261011\n\nperf: avoid reparsing unchanged Guru evidence on 409"
+  },
+  "createdAt": "2026-10-11T13:46:18.615435Z",
+  "finishedAt": "2026-10-11T13:47:35.584726Z",
+  "id": "dep-db5p6aijnfac73b8ueh0",
+  "startedAt": "2026-10-11T13:46:18.57716Z",
+  "status": "live",
+  "trigger": "api",
+  "updatedAt": "2026-10-11T13:48:04.961175Z"
+}

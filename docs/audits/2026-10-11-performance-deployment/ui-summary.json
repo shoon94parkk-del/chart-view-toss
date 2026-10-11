@@ -1,0 +1,82 @@
+{
+  "frontendSha": "e5ffa5669a4b3f8cbf7df1d6df142dd91efa89f6",
+  "backendSha": "6bdfbc3277dd0a105a10f28f7abd43f1914a5f26",
+  "baseURL": "https://chart-view-toss.onrender.com",
+  "fixture": false,
+  "TLSVerification": true,
+  "liveTests": [
+    {
+      "test": "live 실제 삼성전자 검색·시세 응답과 상세 표시",
+      "outcome": "expected",
+      "ok": true,
+      "startTime": "2026-10-11T13:50:41.861Z",
+      "durationMs": 5201,
+      "retry": 0,
+      "attachments": [
+        "live-attachments/1-real-quote-response.json",
+        "live-attachments/1-fatal-errors.json"
+      ]
+    },
+    {
+      "test": "live 관세청 반도체 응답·12개월 DRAM 표시",
+      "outcome": "expected",
+      "ok": true,
+      "startTime": "2026-10-11T13:50:47.126Z",
+      "durationMs": 26181,
+      "retry": 0,
+      "attachments": [
+        "live-attachments/2-real-semiconductor-response.json",
+        "live-attachments/2-fatal-errors.json"
+      ]
+    },
+    {
+      "test": "live 선정 기록: 실제 응답 분모·성과 집계",
+      "outcome": "expected",
+      "ok": true,
+      "startTime": "2026-10-11T13:51:13.315Z",
+      "durationMs": 6178,
+      "retry": 0,
+      "attachments": [
+        "live-attachments/3-real-pick-aggregate.json",
+        "live-attachments/3-fatal-errors.json"
+      ]
+    },
+    {
+      "test": "live 산업 상세: 실제 화장품 응답 → 모델 → 금액·등락·12개월 표시",
+      "outcome": "expected",
+      "ok": true,
+      "startTime": "2026-10-11T13:51:19.504Z",
+      "durationMs": 13540,
+      "retry": 0,
+      "attachments": [
+        "live-attachments/4-real-industry-basis.json",
+        "live-attachments/4-fatal-errors.json"
+      ]
+    },
+    {
+      "test": "live 거장 다섯 전략: 실제 snapshot 범위와 같은 버전의 후보 근거 게시 검증",
+      "outcome": "expected",
+      "ok": true,
+      "startTime": "2026-10-11T13:51:33.056Z",
+      "durationMs": 8888,
+      "retry": 0,
+      "attachments": [
+        "live-attachments/5-real-guru-buffett-evidence.json",
+        "live-attachments/5-real-guru-lynch-evidence.json",
+        "live-attachments/5-real-guru-oneil-evidence.json",
+        "live-attachments/5-real-guru-minervini-evidence.json",
+        "live-attachments/5-real-guru-greenblatt-evidence.json",
+        "live-attachments/5-real-guru-publication.json",
+        "live-attachments/5-real-guru-coverage.json",
+        "live-attachments/5-fatal-errors.json"
+      ]
+    }
+  ],
+  "analysisObservation": "ui-analysis-ui.json",
+  "stats": {
+    "passed": 5,
+    "failed": 0,
+    "flaky": 0,
+    "skipped": 0
+  }
+}
