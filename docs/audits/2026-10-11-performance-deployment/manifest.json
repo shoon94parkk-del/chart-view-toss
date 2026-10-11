@@ -11,8 +11,8 @@
     },
     {
       "path": "backend-ci/main-ci-attempt2-prelaunch.log",
-      "bytes": 67037,
-      "sha256": "45421378564e4af74527b10ac004f7eda48ba4de7ea5f9ef8ce6d88cfe702931"
+      "bytes": 67031,
+      "sha256": "eb25e0ddf2b6eaa75019f124b0409a458517ae762d04d10564b6a80e7c454f93"
     },
     {
       "path": "backend-ci/main-ci-attempt2.json",
@@ -188,6 +188,13 @@
       "path": "ui-summary.json",
       "bytes": 2623,
       "sha256": "4237d99bac7b4f27ec3a2a9cc216f2fff0234967661ceb2e0c10765659ff2dc8"
+    }
+  ],
+  "normalizations": [
+    {
+      "path": "backend-ci/main-ci-attempt2-prelaunch.log",
+      "operation": "Remove trailing whitespace from captured GitHub log lines; message content and timestamps retained",
+      "originalSha256": "45421378564e4af74527b10ac004f7eda48ba4de7ea5f9ef8ce6d88cfe702931"
     }
   ]
 }

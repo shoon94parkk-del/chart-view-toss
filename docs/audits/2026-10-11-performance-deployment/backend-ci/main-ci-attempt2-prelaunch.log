@@ -267,18 +267,18 @@ production (prelaunch_v42)	Install production browser	2026-10-11T13:55:21.116970
 production (prelaunch_v42)	Install production browser	2026-10-11T13:55:21.1170181Z [36;1mnpx playwright install --with-deps chromium >/dev/null[0m
 production (prelaunch_v42)	Install production browser	2026-10-11T13:55:21.1235631Z shell: /usr/bin/bash -e {0}
 production (prelaunch_v42)	Install production browser	2026-10-11T13:55:21.1236073Z ##[endgroup]
-production (prelaunch_v42)	Install production browser	2026-10-11T13:55:22.9096024Z 
+production (prelaunch_v42)	Install production browser	2026-10-11T13:55:22.9096024Z
 production (prelaunch_v42)	Install production browser	2026-10-11T13:55:22.9096626Z added 2 packages in 2s
-production (prelaunch_v42)	Install production browser	2026-10-11T13:55:32.9541205Z 
+production (prelaunch_v42)	Install production browser	2026-10-11T13:55:32.9541205Z
 production (prelaunch_v42)	Install production browser	2026-10-11T13:55:32.9542289Z Running kernel seems to be up-to-date.
-production (prelaunch_v42)	Install production browser	2026-10-11T13:55:32.9542774Z 
+production (prelaunch_v42)	Install production browser	2026-10-11T13:55:32.9542774Z
 production (prelaunch_v42)	Install production browser	2026-10-11T13:55:32.9543024Z Restarting services...
 production (prelaunch_v42)	Install production browser	2026-10-11T13:55:32.9616725Z  systemctl restart php8.3-fpm.service
-production (prelaunch_v42)	Install production browser	2026-10-11T13:55:33.0801638Z 
+production (prelaunch_v42)	Install production browser	2026-10-11T13:55:33.0801638Z
 production (prelaunch_v42)	Install production browser	2026-10-11T13:55:33.0812206Z No containers need to be restarted.
-production (prelaunch_v42)	Install production browser	2026-10-11T13:55:33.0812604Z 
+production (prelaunch_v42)	Install production browser	2026-10-11T13:55:33.0812604Z
 production (prelaunch_v42)	Install production browser	2026-10-11T13:55:33.0812927Z No user sessions are running outdated binaries.
-production (prelaunch_v42)	Install production browser	2026-10-11T13:55:33.0813295Z 
+production (prelaunch_v42)	Install production browser	2026-10-11T13:55:33.0813295Z
 production (prelaunch_v42)	Install production browser	2026-10-11T13:55:33.0813774Z No VM guests are running outdated hypervisor (qemu) binaries on this host.
 production (prelaunch_v42)	Verify production UI and navigation	﻿2026-10-11T13:55:43.3490001Z ##[group]Run node tests/prelaunch_v42.cjs
 production (prelaunch_v42)	Verify production UI and navigation	2026-10-11T13:55:43.3490373Z [36;1mnode tests/prelaunch_v42.cjs[0m
