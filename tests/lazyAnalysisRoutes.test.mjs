@@ -8,7 +8,8 @@ const main = readFileSync(new URL('../src/main.js', import.meta.url), 'utf8');
 // and unrelated route dependencies are controlled, not the guards under test.
 const renderSource = main.slice(main.indexOf('function renderLazyAnalysis('), main.indexOf('function syncFromLocation(')).replaceAll('import(', 'loadModule(');
 const settle = () => new Promise(resolve => setImmediate(resolve));
-const routes = ['exports', 'memory', 'ideas', 'picks', 'gurus'];
+const sharedRoutes = ['discover', 'heatmap', 'consensus', 'bands', 'tools'];
+const routes = ['exports', 'memory', 'ideas', 'picks', 'gurus', ...sharedRoutes];
 
 function harness(tab, loadModule) {
   const app = { innerHTML: 'startup-loading' }, retry = {}, mounts = [], cleanups = [], reloads = [], preloads = [], fetched = [];
@@ -17,16 +18,17 @@ function harness(tab, loadModule) {
     viewEpoch: 0, analysisCleanup: null, lazyAnalysisRetryAssets: new Map(), performance, URL, AbortController,
     setTimeout, clearTimeout,
     fetch: async (href, options) => { fetched.push({ href, options }); return { ok: true, headers: { get: () => 'text/javascript' }, arrayBuffer: async () => new ArrayBuffer(0) }; },
-    requestAnimationFrame() {}, recordMetric() {}, setLiveSurface() {}, syncNativeBackHandler() {}, goBack() {}, bindNav() {}, navigate() {},
+    requestAnimationFrame() {}, recordMetric() {}, setLiveSurface() {}, syncNativeBackHandler() {}, goBack() {}, bindNav() {}, navigate() {}, openCompareSheet() {},
     shell: (content, title) => `<h1>${title}</h1>${content}<nav data-tab="more">분석</nav>`,
     loadingIndicator: text => `<div role="status">${text}</div>`,
-    SHOW_SPOTLIGHT: true, ANALYSIS_ROUTES: new Set(), displayName: name => name,
+    SHOW_SPOTLIGHT: true, ANALYSIS_ROUTES: new Set(sharedRoutes), displayName: name => name, featureLabel: tab => tab,
     document: { querySelector: selector => selector === '#app' ? app : retry, querySelectorAll: () => preloads },
     location: { origin: 'https://app.test', hash: `#${tab}`, reload: () => reloads.push(context.location.hash) },
     loadModule: path => loadModule(path),
   };
   context.cleanupChart = () => { context.analysisCleanup?.(); context.analysisCleanup = null; context.viewEpoch++; };
   context.renderHome = () => { context.cleanupChart(); app.innerHTML = 'home'; };
+  context.renderWatch = () => { context.cleanupChart(); app.innerHTML = 'watch'; };
   const mount = (route, args) => {
     const id = mounts.length + 1;
     mounts.push({ id, route, args }); app.innerHTML = `${route}-${id}`;
@@ -38,6 +40,7 @@ function harness(tab, loadModule) {
     './ideaView.js': { renderIdeaView: args => mount('ideas', args) },
     './pickLedger.js': { renderPickLedger: args => mount('picks', args) },
     './guruInvestingView.js': { renderGuruInvesting: args => mount('gurus', args) },
+    './analysisViews.js': { renderAnalysis: args => mount(args.tab, args) },
   };
   vm.createContext(context); vm.runInContext(renderSource, context);
   return { context, app, retry, mounts, cleanups, reloads, modules, preloads, fetched };
@@ -119,7 +122,50 @@ test('normal lazy mounts preserve route focus/state and memory restoration is co
     if (route === 'exports') { assert.equal(args.focus, 'items'); assert.equal(args.state, h.context.state.exports); }
     if (route === 'memory') { assert.equal(args.activeGroup, 'nand-chip'); assert.equal(args.restoreTabFocus, true); assert.equal(h.context.state.memoryTabFocus, false); }
     if (route === 'picks') { assert.equal(args.focusKey, 'dated-record'); assert.equal(args.displayName, h.context.displayName); }
+    if (sharedRoutes.includes(route)) {
+      assert.equal(args.tab, route);
+      assert.equal(args.state, h.context.state);
+      assert.equal(args.displayName, h.context.displayName);
+      assert.equal(args.openCompareSheet, h.context.openCompareSheet);
+    }
   }
+});
+
+test('Home and Watch never import analysis views, and the shared chunk loads only on analysis entry', async () => {
+  const imports = [];
+  let h;
+  h = harness('home', path => { imports.push(path); return Promise.resolve(h.modules[path] || {}); });
+  h.context.render(); await settle();
+  assert.equal(h.app.innerHTML, 'home');
+  h.context.state.tab = 'watch'; h.context.render(); await settle();
+  assert.equal(h.app.innerHTML, 'watch');
+  assert.deepEqual(imports, []);
+  h.context.state.tab = 'tools'; h.context.render(); await settle();
+  assert.deepEqual(imports, ['./analysisViews.js']);
+  assert.equal(h.mounts[0].route, 'tools');
+  assert.doesNotMatch(main, /^import .*from ['"]\.\/analysisViews\.js['"]/m);
+});
+
+test('the lazy route registry preserves every existing shared analysis route', () => {
+  const registry = source => [...vm.runInNewContext(source.match(/(?:export )?const ANALYSIS_ROUTES=new Set\([^;]+;/)[0].replace('export ', '') + '\n[...ANALYSIS_ROUTES];')];
+  const view = readFileSync(new URL('../src/analysisViews.js', import.meta.url), 'utf8');
+  assert.deepEqual(registry(main), sharedRoutes);
+  assert.deepEqual(registry(view), sharedRoutes);
+});
+
+test('a shared analysis import captured for an older tab cannot mount using a newer tab', async () => {
+  const pending = [];
+  const h = harness('discover', path => new Promise(resolve => pending.push({ path, resolve })));
+  h.context.render(); await settle();
+  h.context.state.tab = 'bands'; h.context.render(); await settle();
+  pending[0].resolve(h.modules[pending[0].path]); await settle();
+  assert.equal(h.mounts.length, 0);
+  pending[1].resolve(h.modules[pending[1].path]); await settle();
+  assert.equal(h.mounts.length, 1);
+  assert.equal(h.mounts[0].route, 'bands');
+  assert.equal(h.mounts[0].args.state, h.context.state);
+  h.context.state.tab = 'home'; h.context.render();
+  assert.deepEqual(h.cleanups, [1]);
 });
 
 test('hidden PICK scope and the existing Guru epoch/catch behavior remain intact', async () => {

@@ -1,0 +1,657 @@
+{
+  "capturedAt": "2026-10-11T06:32:50.033Z",
+  "workspace": "Chart View",
+  "workspaceId": "tea-dao48j942hec738cpseg",
+  "backendRevision": "fcf8038b4d12c01de8447ebc34d79955240c52ab",
+  "resources": [
+    {
+      "resourceId": "srv-dao4a50473hc73bclej0",
+      "timeRange": {},
+      "metrics": [
+        {
+          "type": "cpu_usage",
+          "data": [
+            {
+              "labels": [
+                {
+                  "field": "instance",
+                  "value": "srv-dao4a50473hc73bclej0-wgdxc"
+                },
+                {
+                  "field": "service",
+                  "value": "srv-dao4a50473hc73bclej0"
+                },
+                {
+                  "field": "resource",
+                  "value": "srv-dao4a50473hc73bclej0"
+                }
+              ],
+              "unit": "cpu",
+              "values": [
+                {
+                  "timestamp": "2026-10-11T06:16:24.423Z",
+                  "value": 0.11052784
+                },
+                {
+                  "timestamp": "2026-10-11T06:21:24.423Z",
+                  "value": 0.02340102
+                },
+                {
+                  "timestamp": "2026-10-11T06:26:24.423Z",
+                  "value": 0.019532444
+                },
+                {
+                  "timestamp": "2026-10-11T06:31:24.423Z",
+                  "value": 0.0052113766
+                }
+              ]
+            },
+            {
+              "labels": [
+                {
+                  "field": "instance",
+                  "value": "srv-dao4a50473hc73bclej0-f8m6f"
+                },
+                {
+                  "field": "service",
+                  "value": "srv-dao4a50473hc73bclej0"
+                },
+                {
+                  "field": "resource",
+                  "value": "srv-dao4a50473hc73bclej0"
+                }
+              ],
+              "unit": "cpu",
+              "values": [
+                {
+                  "timestamp": "2026-10-11T05:31:24.423Z",
+                  "value": 0.0015592834
+                },
+                {
+                  "timestamp": "2026-10-11T05:36:24.423Z",
+                  "value": 0.0014495733
+                },
+                {
+                  "timestamp": "2026-10-11T05:41:24.423Z",
+                  "value": 0.0016030166
+                },
+                {
+                  "timestamp": "2026-10-11T05:46:24.423Z",
+                  "value": 0.0021936432
+                },
+                {
+                  "timestamp": "2026-10-11T05:51:24.423Z",
+                  "value": 0.0015399667
+                },
+                {
+                  "timestamp": "2026-10-11T05:56:24.423Z",
+                  "value": 0.0016994133
+                },
+                {
+                  "timestamp": "2026-10-11T06:01:24.423Z",
+                  "value": 0.00156532
+                },
+                {
+                  "timestamp": "2026-10-11T06:06:24.423Z",
+                  "value": 0.0015783167
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "cpu_limit",
+          "data": [
+            {
+              "labels": [
+                {
+                  "field": "service",
+                  "value": "srv-dao4a50473hc73bclej0"
+                },
+                {
+                  "field": "resource",
+                  "value": "srv-dao4a50473hc73bclej0"
+                },
+                {
+                  "field": "instance",
+                  "value": "srv-dao4a50473hc73bclej0-wgdxc"
+                }
+              ],
+              "unit": "cpu",
+              "values": [
+                {
+                  "timestamp": "2026-10-11T06:11:24.559Z",
+                  "value": 0.15
+                },
+                {
+                  "timestamp": "2026-10-11T06:16:24.559Z",
+                  "value": 0.15
+                },
+                {
+                  "timestamp": "2026-10-11T06:21:24.559Z",
+                  "value": 0.15
+                },
+                {
+                  "timestamp": "2026-10-11T06:26:24.559Z",
+                  "value": 0.15
+                },
+                {
+                  "timestamp": "2026-10-11T06:31:24.559Z",
+                  "value": 0.15
+                }
+              ]
+            },
+            {
+              "labels": [
+                {
+                  "field": "instance",
+                  "value": "srv-dao4a50473hc73bclej0-f8m6f"
+                },
+                {
+                  "field": "service",
+                  "value": "srv-dao4a50473hc73bclej0"
+                },
+                {
+                  "field": "resource",
+                  "value": "srv-dao4a50473hc73bclej0"
+                }
+              ],
+              "unit": "cpu",
+              "values": [
+                {
+                  "timestamp": "2026-10-11T05:31:24.559Z",
+                  "value": 0.15
+                },
+                {
+                  "timestamp": "2026-10-11T05:36:24.559Z",
+                  "value": 0.15
+                },
+                {
+                  "timestamp": "2026-10-11T05:41:24.559Z",
+                  "value": 0.15
+                },
+                {
+                  "timestamp": "2026-10-11T05:46:24.559Z",
+                  "value": 0.15
+                },
+                {
+                  "timestamp": "2026-10-11T05:51:24.559Z",
+                  "value": 0.15
+                },
+                {
+                  "timestamp": "2026-10-11T05:56:24.559Z",
+                  "value": 0.15
+                },
+                {
+                  "timestamp": "2026-10-11T06:01:24.559Z",
+                  "value": 0.15
+                },
+                {
+                  "timestamp": "2026-10-11T06:06:24.559Z",
+                  "value": 0.15
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "memory_usage",
+          "data": [
+            {
+              "labels": [
+                {
+                  "field": "instance",
+                  "value": "srv-dao4a50473hc73bclej0-wgdxc"
+                },
+                {
+                  "field": "service",
+                  "value": "srv-dao4a50473hc73bclej0"
+                },
+                {
+                  "field": "resource",
+                  "value": "srv-dao4a50473hc73bclej0"
+                }
+              ],
+              "unit": "bytes",
+              "values": [
+                {
+                  "timestamp": "2026-10-11T06:11:24.682Z",
+                  "value": 332832770
+                },
+                {
+                  "timestamp": "2026-10-11T06:16:24.682Z",
+                  "value": 458321920
+                },
+                {
+                  "timestamp": "2026-10-11T06:21:24.682Z",
+                  "value": 498376700
+                },
+                {
+                  "timestamp": "2026-10-11T06:26:24.682Z",
+                  "value": 512065540
+                },
+                {
+                  "timestamp": "2026-10-11T06:31:24.682Z",
+                  "value": 512344060
+                }
+              ]
+            },
+            {
+              "labels": [
+                {
+                  "field": "instance",
+                  "value": "srv-dao4a50473hc73bclej0-f8m6f"
+                },
+                {
+                  "field": "service",
+                  "value": "srv-dao4a50473hc73bclej0"
+                },
+                {
+                  "field": "resource",
+                  "value": "srv-dao4a50473hc73bclej0"
+                }
+              ],
+              "unit": "bytes",
+              "values": [
+                {
+                  "timestamp": "2026-10-11T05:31:24.682Z",
+                  "value": 376598530
+                },
+                {
+                  "timestamp": "2026-10-11T05:36:24.682Z",
+                  "value": 376598530
+                },
+                {
+                  "timestamp": "2026-10-11T05:41:24.682Z",
+                  "value": 376717300
+                },
+                {
+                  "timestamp": "2026-10-11T05:46:24.682Z",
+                  "value": 376721400
+                },
+                {
+                  "timestamp": "2026-10-11T05:51:24.682Z",
+                  "value": 376774660
+                },
+                {
+                  "timestamp": "2026-10-11T05:56:24.682Z",
+                  "value": 376774660
+                },
+                {
+                  "timestamp": "2026-10-11T06:01:24.682Z",
+                  "value": 376778750
+                },
+                {
+                  "timestamp": "2026-10-11T06:06:24.682Z",
+                  "value": 376815600
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "memory_limit",
+          "data": [
+            {
+              "labels": [
+                {
+                  "field": "instance",
+                  "value": "srv-dao4a50473hc73bclej0-wgdxc"
+                },
+                {
+                  "field": "service",
+                  "value": "srv-dao4a50473hc73bclej0"
+                },
+                {
+                  "field": "resource",
+                  "value": "srv-dao4a50473hc73bclej0"
+                }
+              ],
+              "unit": "bytes",
+              "values": [
+                {
+                  "timestamp": "2026-10-11T06:11:24.816Z",
+                  "value": 536870900
+                },
+                {
+                  "timestamp": "2026-10-11T06:16:24.816Z",
+                  "value": 536870900
+                },
+                {
+                  "timestamp": "2026-10-11T06:21:24.816Z",
+                  "value": 536870900
+                },
+                {
+                  "timestamp": "2026-10-11T06:26:24.816Z",
+                  "value": 536870900
+                },
+                {
+                  "timestamp": "2026-10-11T06:31:24.816Z",
+                  "value": 536870900
+                }
+              ]
+            },
+            {
+              "labels": [
+                {
+                  "field": "service",
+                  "value": "srv-dao4a50473hc73bclej0"
+                },
+                {
+                  "field": "resource",
+                  "value": "srv-dao4a50473hc73bclej0"
+                },
+                {
+                  "field": "instance",
+                  "value": "srv-dao4a50473hc73bclej0-f8m6f"
+                }
+              ],
+              "unit": "bytes",
+              "values": [
+                {
+                  "timestamp": "2026-10-11T05:31:24.816Z",
+                  "value": 536870900
+                },
+                {
+                  "timestamp": "2026-10-11T05:36:24.816Z",
+                  "value": 536870900
+                },
+                {
+                  "timestamp": "2026-10-11T05:41:24.816Z",
+                  "value": 536870900
+                },
+                {
+                  "timestamp": "2026-10-11T05:46:24.816Z",
+                  "value": 536870900
+                },
+                {
+                  "timestamp": "2026-10-11T05:51:24.816Z",
+                  "value": 536870900
+                },
+                {
+                  "timestamp": "2026-10-11T05:56:24.816Z",
+                  "value": 536870900
+                },
+                {
+                  "timestamp": "2026-10-11T06:01:24.816Z",
+                  "value": 536870900
+                },
+                {
+                  "timestamp": "2026-10-11T06:06:24.816Z",
+                  "value": 536870900
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "instance_count",
+          "data": []
+        }
+      ]
+    }
+  ],
+  "latency": [
+    {
+      "resourceId": "srv-dao4a50473hc73bclej0",
+      "timeRange": {},
+      "metrics": [
+        {
+          "type": "http_latency",
+          "data": []
+        }
+      ]
+    }
+  ],
+  "counts": [
+    {
+      "resourceId": "srv-dao4a50473hc73bclej0",
+      "timeRange": {},
+      "metrics": [
+        {
+          "type": "http_request_count",
+          "data": []
+        }
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "hasMore": true,
+      "logs": [
+        {
+          "id": "af78438f-9ebe-4f67-8bb0-1a7eb10076f6",
+          "labels": [
+            {
+              "name": "resource",
+              "value": "srv-dao4a50473hc73bclej0"
+            },
+            {
+              "name": "instance",
+              "value": "srv-dao4a50473hc73bclej0-f8m6f"
+            },
+            {
+              "name": "level",
+              "value": "error"
+            },
+            {
+              "name": "type",
+              "value": "app"
+            }
+          ],
+          "message": "[Consensus] 103140.KS failed: 429 Client Error: Too Many Requests for url: https://query1.finance.yahoo.com/v1/test/getcrumb",
+          "timestamp": "2026-10-09T16:12:51.93032728Z"
+        },
+        {
+          "id": "9c775ae1-7836-444e-8443-74eb57804f2e",
+          "labels": [
+            {
+              "name": "resource",
+              "value": "srv-dao4a50473hc73bclej0"
+            },
+            {
+              "name": "instance",
+              "value": "srv-dao4a50473hc73bclej0-f8m6f"
+            },
+            {
+              "name": "level",
+              "value": "error"
+            },
+            {
+              "name": "type",
+              "value": "app"
+            }
+          ],
+          "message": "[Consensus] 103140.KS failed: 429 Client Error: Too Many Requests for url: https://query1.finance.yahoo.com/v1/test/getcrumb",
+          "timestamp": "2026-10-09T16:12:52.812928333Z"
+        },
+        {
+          "id": "b65e17f1-ccd2-49b1-b8d5-0b6df0a444c5",
+          "labels": [
+            {
+              "name": "resource",
+              "value": "srv-dao4a50473hc73bclej0"
+            },
+            {
+              "name": "instance",
+              "value": "srv-dao4a50473hc73bclej0-f8m6f"
+            },
+            {
+              "name": "level",
+              "value": "error"
+            },
+            {
+              "name": "type",
+              "value": "app"
+            }
+          ],
+          "message": "[Consensus] 103140.KS failed: 429 Client Error: Too Many Requests for url: https://query1.finance.yahoo.com/v1/test/getcrumb",
+          "timestamp": "2026-10-09T16:12:54.285326414Z"
+        },
+        {
+          "id": "ec179800-00fa-4a02-9f11-1d151a257836",
+          "labels": [
+            {
+              "name": "resource",
+              "value": "srv-dao4a50473hc73bclej0"
+            },
+            {
+              "name": "instance",
+              "value": "srv-dao4a50473hc73bclej0-f8m6f"
+            },
+            {
+              "name": "level",
+              "value": "error"
+            },
+            {
+              "name": "type",
+              "value": "app"
+            }
+          ],
+          "message": "[Consensus] 005490.KS failed: 429 Client Error: Too Many Requests for url: https://query1.finance.yahoo.com/v1/test/getcrumb",
+          "timestamp": "2026-10-09T16:12:54.901413688Z"
+        },
+        {
+          "id": "72832704-8bdc-48f5-8d85-c0b9c3ee6766",
+          "labels": [
+            {
+              "name": "resource",
+              "value": "srv-dao4a50473hc73bclej0"
+            },
+            {
+              "name": "instance",
+              "value": "srv-dao4a50473hc73bclej0-f8m6f"
+            },
+            {
+              "name": "level",
+              "value": "error"
+            },
+            {
+              "name": "type",
+              "value": "app"
+            }
+          ],
+          "message": "[Consensus] 005490.KS failed: 429 Client Error: Too Many Requests for url: https://query1.finance.yahoo.com/v1/test/getcrumb",
+          "timestamp": "2026-10-09T16:12:56.13542555Z"
+        },
+        {
+          "id": "0fe8ec58-005b-48b8-abf9-72a3f9a0c5c4",
+          "labels": [
+            {
+              "name": "resource",
+              "value": "srv-dao4a50473hc73bclej0"
+            },
+            {
+              "name": "instance",
+              "value": "srv-dao4a50473hc73bclej0-f8m6f"
+            },
+            {
+              "name": "level",
+              "value": "error"
+            },
+            {
+              "name": "type",
+              "value": "app"
+            }
+          ],
+          "message": "[Consensus] 103140.KS failed: 429 Client Error: Too Many Requests for url: https://query1.finance.yahoo.com/v1/test/getcrumb",
+          "timestamp": "2026-10-09T16:12:57.734274985Z"
+        },
+        {
+          "id": "81778395-f800-407a-8b5f-2720a6de46de",
+          "labels": [
+            {
+              "name": "resource",
+              "value": "srv-dao4a50473hc73bclej0"
+            },
+            {
+              "name": "instance",
+              "value": "srv-dao4a50473hc73bclej0-f8m6f"
+            },
+            {
+              "name": "level",
+              "value": "error"
+            },
+            {
+              "name": "type",
+              "value": "app"
+            }
+          ],
+          "message": "[Consensus] 005490.KS failed: 429 Client Error: Too Many Requests for url: https://query1.finance.yahoo.com/v1/test/getcrumb",
+          "timestamp": "2026-10-09T16:12:58.579547682Z"
+        },
+        {
+          "id": "38af4e4d-2332-4208-9e09-f469bdc91bdb",
+          "labels": [
+            {
+              "name": "resource",
+              "value": "srv-dao4a50473hc73bclej0"
+            },
+            {
+              "name": "instance",
+              "value": "srv-dao4a50473hc73bclej0-f8m6f"
+            },
+            {
+              "name": "level",
+              "value": "error"
+            },
+            {
+              "name": "type",
+              "value": "app"
+            }
+          ],
+          "message": "[Consensus] 103140 failed: 429 Client Error: Too Many Requests for url: https://query1.finance.yahoo.com/v1/test/getcrumb",
+          "timestamp": "2026-10-09T16:12:59.098578561Z"
+        },
+        {
+          "id": "bb34e080-4d78-47fe-be03-93630292f0f1",
+          "labels": [
+            {
+              "name": "resource",
+              "value": "srv-dao4a50473hc73bclej0"
+            },
+            {
+              "name": "instance",
+              "value": "srv-dao4a50473hc73bclej0-f8m6f"
+            },
+            {
+              "name": "level",
+              "value": "error"
+            },
+            {
+              "name": "type",
+              "value": "app"
+            }
+          ],
+          "message": "[MarketData] Yahoo detail auth unavailable: 429 Client Error: Too Many Requests for url: https://query1.finance.yahoo.com/v1/test/getcrumb",
+          "timestamp": "2026-10-11T02:49:44.797746602Z"
+        },
+        {
+          "id": "ad13fb32-d105-406f-9fb0-dfaf8dccaad5",
+          "labels": [
+            {
+              "name": "resource",
+              "value": "srv-dao4a50473hc73bclej0"
+            },
+            {
+              "name": "instance",
+              "value": "srv-dao4a50473hc73bclej0-f8m6f"
+            },
+            {
+              "name": "level",
+              "value": "error"
+            },
+            {
+              "name": "type",
+              "value": "app"
+            }
+          ],
+          "message": "[MarketData] Yahoo detail auth unavailable: 429 Client Error: Too Many Requests for url: https://query1.finance.yahoo.com/v1/test/getcrumb",
+          "timestamp": "2026-10-11T05:00:05.200839811Z"
+        }
+      ],
+      "nextEndTime": "2026-10-09T16:12:51.93032728Z",
+      "nextStartTime": "2026-10-04T06:31:25.616759815Z"
+    }
+  ]
+}

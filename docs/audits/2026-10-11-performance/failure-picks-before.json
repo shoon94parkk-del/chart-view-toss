@@ -1,0 +1,706 @@
+{
+  "schemaVersion": 1,
+  "base": "http://127.0.0.1:4173",
+  "sourceRevision": "4efea61741a058070142a75855b100b73303ca34",
+  "measuredAt": "2026-10-11T06:49:22.359Z",
+  "browser": "Chromium",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "runs": 3,
+  "phases": [
+    "cold",
+    "warm"
+  ],
+  "readiness": "Primary route content; optional loaders, failures and partial coverage reported separately",
+  "coldMeaning": "New browser context; not a controlled Render server cold start",
+  "warmMeaning": "Same session route → more → route (more uses home); no fixed settling sleep",
+  "decodedBodyBytesMeaning": "Decoded response-body bytes, not compressed wire bytes",
+  "proxyRelay": true,
+  "browserHttpCacheDisabled": true,
+  "scenario": {
+    "path": "/static/data/pick_monitor.json",
+    "mode": "503",
+    "matching": "exact pathname"
+  },
+  "summary": [
+    {
+      "route": "picks",
+      "phase": "cold",
+      "samples": 3,
+      "readySamples": 3,
+      "outcomes": {
+        "ready": 3
+      },
+      "medianReadyMs": 365,
+      "minReadyMs": 360,
+      "maxReadyMs": 468
+    },
+    {
+      "route": "picks",
+      "phase": "warm",
+      "samples": 3,
+      "readySamples": 3,
+      "outcomes": {
+        "ready": 3
+      },
+      "medianReadyMs": 56,
+      "minReadyMs": 55,
+      "maxReadyMs": 57
+    }
+  ],
+  "results": [
+    {
+      "route": "picks",
+      "label": "선정 기록",
+      "run": 0,
+      "browserColdMs": 468,
+      "usableDataMs": 468,
+      "coldMs": 468,
+      "coldShellMs": 111,
+      "coldReadyState": "ready",
+      "navTtfbMs": 5,
+      "apiCold": [
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 359,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/home-bootstrap",
+          "path": "/api/home-bootstrap",
+          "calls": 1,
+          "ms": 344,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 24178,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/static/data/pick_monitor.json",
+          "path": "/static/data/pick_monitor.json",
+          "calls": 1,
+          "ms": 61,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 56,
+          "httpErrors": 1,
+          "status": "503",
+          "meta": null
+        }
+      ],
+      "requestsCold": [
+        {
+          "path": "/api/activity",
+          "key": "/api/activity",
+          "method": "POST",
+          "state": "complete",
+          "ms": 359,
+          "headersMs": 359,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 29,
+          "meta": null
+        },
+        {
+          "path": "/static/data/pick_monitor.json",
+          "key": "/static/data/pick_monitor.json",
+          "method": "GET",
+          "state": "complete",
+          "ms": 61,
+          "headersMs": 17,
+          "bodyComplete": true,
+          "status": 503,
+          "decodedBodyBytes": 56,
+          "meta": null
+        },
+        {
+          "path": "/api/home-bootstrap",
+          "key": "/api/home-bootstrap",
+          "method": "GET",
+          "state": "complete",
+          "ms": 344,
+          "headersMs": 344,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 24178,
+          "meta": null
+        }
+      ],
+      "coldDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 76
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 76
+          }
+        ],
+        "resources": [
+          {
+            "path": "/assets/index-DoJWYFE_.js",
+            "initiator": "script",
+            "durationMs": 14,
+            "transferBytes": 108954,
+            "encodedBodyBytes": 108654,
+            "decodedBodyBytes": 326518
+          },
+          {
+            "path": "/assets/index-Dxg0oyWK.css",
+            "initiator": "link",
+            "durationMs": 10,
+            "transferBytes": 30888,
+            "encodedBodyBytes": 30588,
+            "decodedBodyBytes": 172894
+          },
+          {
+            "path": "/assets/pickLedger-BYNTcGLT.css",
+            "initiator": "link",
+            "durationMs": 4,
+            "transferBytes": 2921,
+            "encodedBodyBytes": 2621,
+            "decodedBodyBytes": 12222
+          },
+          {
+            "path": "/assets/pickLedger-Z2_tdHZZ.js",
+            "initiator": "script",
+            "durationMs": 11,
+            "transferBytes": 7726,
+            "encodedBodyBytes": 7426,
+            "decodedBodyBytes": 20913
+          }
+        ],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [
+          {
+            "state": "error",
+            "text": "사후점검 데이터를 불러오지 못해 성과 기록만 표시 중이에요.사후점검 다시 시도"
+          }
+        ],
+        "pageErrors": []
+      },
+      "warmPrimingReadyState": "ready",
+      "warmMs": 57,
+      "warmUsableDataMs": 57,
+      "warmReadyState": "ready",
+      "warmAwayReadyState": "ready",
+      "apiWarm": [
+        {
+          "key": "/static/data/pick_monitor.json",
+          "path": "/static/data/pick_monitor.json",
+          "calls": 1,
+          "ms": null,
+          "completedBodies": 0,
+          "pending": 1,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": null,
+          "httpErrors": 1,
+          "status": "503",
+          "meta": null
+        }
+      ],
+      "requestsWarm": [
+        {
+          "path": "/static/data/pick_monitor.json",
+          "key": "/static/data/pick_monitor.json",
+          "method": "GET",
+          "state": "pending",
+          "ms": null,
+          "headersMs": 11,
+          "bodyComplete": false,
+          "status": 503,
+          "decodedBodyBytes": null,
+          "meta": null
+        }
+      ],
+      "warmDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 76
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 76
+          }
+        ],
+        "resources": [],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [
+          {
+            "state": "error",
+            "text": "사후점검 데이터를 불러오지 못해 성과 기록만 표시 중이에요.사후점검 다시 시도"
+          }
+        ],
+        "pageErrors": []
+      }
+    },
+    {
+      "route": "picks",
+      "label": "선정 기록",
+      "run": 1,
+      "browserColdMs": 360,
+      "usableDataMs": 360,
+      "coldMs": 360,
+      "coldShellMs": 85,
+      "coldReadyState": "ready",
+      "navTtfbMs": 3,
+      "apiCold": [
+        {
+          "key": "/api/home-bootstrap",
+          "path": "/api/home-bootstrap",
+          "calls": 1,
+          "ms": 262,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 24178,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 250,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/static/data/pick_monitor.json",
+          "path": "/static/data/pick_monitor.json",
+          "calls": 1,
+          "ms": 59,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 56,
+          "httpErrors": 1,
+          "status": "503",
+          "meta": null
+        }
+      ],
+      "requestsCold": [
+        {
+          "path": "/api/activity",
+          "key": "/api/activity",
+          "method": "POST",
+          "state": "complete",
+          "ms": 250,
+          "headersMs": 250,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 29,
+          "meta": null
+        },
+        {
+          "path": "/static/data/pick_monitor.json",
+          "key": "/static/data/pick_monitor.json",
+          "method": "GET",
+          "state": "complete",
+          "ms": 59,
+          "headersMs": 11,
+          "bodyComplete": true,
+          "status": 503,
+          "decodedBodyBytes": 56,
+          "meta": null
+        },
+        {
+          "path": "/api/home-bootstrap",
+          "key": "/api/home-bootstrap",
+          "method": "GET",
+          "state": "complete",
+          "ms": 262,
+          "headersMs": 262,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 24178,
+          "meta": null
+        }
+      ],
+      "coldDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 28
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 28
+          }
+        ],
+        "resources": [
+          {
+            "path": "/assets/index-Dxg0oyWK.css",
+            "initiator": "link",
+            "durationMs": 8,
+            "transferBytes": 30888,
+            "encodedBodyBytes": 30588,
+            "decodedBodyBytes": 172894
+          },
+          {
+            "path": "/assets/index-DoJWYFE_.js",
+            "initiator": "script",
+            "durationMs": 14,
+            "transferBytes": 108954,
+            "encodedBodyBytes": 108654,
+            "decodedBodyBytes": 326518
+          },
+          {
+            "path": "/assets/pickLedger-BYNTcGLT.css",
+            "initiator": "link",
+            "durationMs": 8,
+            "transferBytes": 2921,
+            "encodedBodyBytes": 2621,
+            "decodedBodyBytes": 12222
+          },
+          {
+            "path": "/assets/pickLedger-Z2_tdHZZ.js",
+            "initiator": "script",
+            "durationMs": 8,
+            "transferBytes": 7726,
+            "encodedBodyBytes": 7426,
+            "decodedBodyBytes": 20913
+          }
+        ],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [
+          {
+            "state": "error",
+            "text": "사후점검 데이터를 불러오지 못해 성과 기록만 표시 중이에요.사후점검 다시 시도"
+          }
+        ],
+        "pageErrors": []
+      },
+      "warmPrimingReadyState": "ready",
+      "warmMs": 55,
+      "warmUsableDataMs": 55,
+      "warmReadyState": "ready",
+      "warmAwayReadyState": "ready",
+      "apiWarm": [
+        {
+          "key": "/static/data/pick_monitor.json",
+          "path": "/static/data/pick_monitor.json",
+          "calls": 1,
+          "ms": null,
+          "completedBodies": 0,
+          "pending": 1,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": null,
+          "httpErrors": 1,
+          "status": "503",
+          "meta": null
+        }
+      ],
+      "requestsWarm": [
+        {
+          "path": "/static/data/pick_monitor.json",
+          "key": "/static/data/pick_monitor.json",
+          "method": "GET",
+          "state": "pending",
+          "ms": null,
+          "headersMs": 13,
+          "bodyComplete": false,
+          "status": 503,
+          "decodedBodyBytes": null,
+          "meta": null
+        }
+      ],
+      "warmDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 28
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 28
+          }
+        ],
+        "resources": [],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [
+          {
+            "state": "error",
+            "text": "사후점검 데이터를 불러오지 못해 성과 기록만 표시 중이에요.사후점검 다시 시도"
+          }
+        ],
+        "pageErrors": []
+      }
+    },
+    {
+      "route": "picks",
+      "label": "선정 기록",
+      "run": 2,
+      "browserColdMs": 365,
+      "usableDataMs": 365,
+      "coldMs": 365,
+      "coldShellMs": 84,
+      "coldReadyState": "ready",
+      "navTtfbMs": 3,
+      "apiCold": [
+        {
+          "key": "/api/home-bootstrap",
+          "path": "/api/home-bootstrap",
+          "calls": 1,
+          "ms": 261,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 24178,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 252,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/static/data/pick_monitor.json",
+          "path": "/static/data/pick_monitor.json",
+          "calls": 1,
+          "ms": 58,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 56,
+          "httpErrors": 1,
+          "status": "503",
+          "meta": null
+        }
+      ],
+      "requestsCold": [
+        {
+          "path": "/api/activity",
+          "key": "/api/activity",
+          "method": "POST",
+          "state": "complete",
+          "ms": 252,
+          "headersMs": 252,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 29,
+          "meta": null
+        },
+        {
+          "path": "/static/data/pick_monitor.json",
+          "key": "/static/data/pick_monitor.json",
+          "method": "GET",
+          "state": "complete",
+          "ms": 58,
+          "headersMs": 7,
+          "bodyComplete": true,
+          "status": 503,
+          "decodedBodyBytes": 56,
+          "meta": null
+        },
+        {
+          "path": "/api/home-bootstrap",
+          "key": "/api/home-bootstrap",
+          "method": "GET",
+          "state": "complete",
+          "ms": 261,
+          "headersMs": 261,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 24178,
+          "meta": null
+        }
+      ],
+      "coldDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 32
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 32
+          }
+        ],
+        "resources": [
+          {
+            "path": "/assets/index-DoJWYFE_.js",
+            "initiator": "script",
+            "durationMs": 15,
+            "transferBytes": 108954,
+            "encodedBodyBytes": 108654,
+            "decodedBodyBytes": 326518
+          },
+          {
+            "path": "/assets/index-Dxg0oyWK.css",
+            "initiator": "link",
+            "durationMs": 10,
+            "transferBytes": 30888,
+            "encodedBodyBytes": 30588,
+            "decodedBodyBytes": 172894
+          },
+          {
+            "path": "/assets/pickLedger-BYNTcGLT.css",
+            "initiator": "link",
+            "durationMs": 8,
+            "transferBytes": 2921,
+            "encodedBodyBytes": 2621,
+            "decodedBodyBytes": 12222
+          },
+          {
+            "path": "/assets/pickLedger-Z2_tdHZZ.js",
+            "initiator": "script",
+            "durationMs": 8,
+            "transferBytes": 7726,
+            "encodedBodyBytes": 7426,
+            "decodedBodyBytes": 20913
+          }
+        ],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [
+          {
+            "state": "error",
+            "text": "사후점검 데이터를 불러오지 못해 성과 기록만 표시 중이에요.사후점검 다시 시도"
+          }
+        ],
+        "pageErrors": []
+      },
+      "warmPrimingReadyState": "ready",
+      "warmMs": 56,
+      "warmUsableDataMs": 56,
+      "warmReadyState": "ready",
+      "warmAwayReadyState": "ready",
+      "apiWarm": [
+        {
+          "key": "/static/data/pick_monitor.json",
+          "path": "/static/data/pick_monitor.json",
+          "calls": 1,
+          "ms": null,
+          "completedBodies": 0,
+          "pending": 1,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": null,
+          "httpErrors": 1,
+          "status": "503",
+          "meta": null
+        }
+      ],
+      "requestsWarm": [
+        {
+          "path": "/static/data/pick_monitor.json",
+          "key": "/static/data/pick_monitor.json",
+          "method": "GET",
+          "state": "pending",
+          "ms": null,
+          "headersMs": 13,
+          "bodyComplete": false,
+          "status": 503,
+          "decodedBodyBytes": null,
+          "meta": null
+        }
+      ],
+      "warmDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 32
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 32
+          }
+        ],
+        "resources": [],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [
+          {
+            "state": "error",
+            "text": "사후점검 데이터를 불러오지 못해 성과 기록만 표시 중이에요.사후점검 다시 시도"
+          }
+        ],
+        "pageErrors": []
+      }
+    }
+  ]
+}

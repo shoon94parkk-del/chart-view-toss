@@ -1,0 +1,5293 @@
+{
+  "schemaVersion": 1,
+  "base": "https://chart-view-toss.onrender.com",
+  "sourceRevision": null,
+  "measuredAt": "2026-10-11T06:48:49.149Z",
+  "browser": "Chromium",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "runs": 1,
+  "phases": [
+    "cold",
+    "spa",
+    "warm"
+  ],
+  "readiness": "Primary route content; optional loaders, failures and partial coverage reported separately",
+  "coldMeaning": "New browser context; not a controlled Render server cold start",
+  "warmMeaning": "Same session route → more → route (more uses home); no fixed settling sleep",
+  "decodedBodyBytesMeaning": "Decoded response-body bytes, not compressed wire bytes",
+  "proxyRelay": true,
+  "browserHttpCacheDisabled": true,
+  "scenario": {
+    "mode": "normal"
+  },
+  "summary": [
+    {
+      "route": "home",
+      "phase": "cold",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 1616,
+      "minReadyMs": 1616,
+      "maxReadyMs": 1616
+    },
+    {
+      "route": "home",
+      "phase": "spa",
+      "samples": 1,
+      "readySamples": 0,
+      "outcomes": {
+        "root": 1
+      },
+      "medianReadyMs": null,
+      "minReadyMs": null,
+      "maxReadyMs": null
+    },
+    {
+      "route": "home",
+      "phase": "warm",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 28,
+      "minReadyMs": 28,
+      "maxReadyMs": 28
+    },
+    {
+      "route": "chart",
+      "phase": "cold",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 668,
+      "minReadyMs": 668,
+      "maxReadyMs": 668
+    },
+    {
+      "route": "chart",
+      "phase": "spa",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 370,
+      "minReadyMs": 370,
+      "maxReadyMs": 370
+    },
+    {
+      "route": "chart",
+      "phase": "warm",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 22,
+      "minReadyMs": 22,
+      "maxReadyMs": 22
+    },
+    {
+      "route": "watch",
+      "phase": "cold",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 130,
+      "minReadyMs": 130,
+      "maxReadyMs": 130
+    },
+    {
+      "route": "watch",
+      "phase": "spa",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 11,
+      "minReadyMs": 11,
+      "maxReadyMs": 11
+    },
+    {
+      "route": "watch",
+      "phase": "warm",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 6,
+      "minReadyMs": 6,
+      "maxReadyMs": 6
+    },
+    {
+      "route": "valuation",
+      "phase": "cold",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 428,
+      "minReadyMs": 428,
+      "maxReadyMs": 428
+    },
+    {
+      "route": "valuation",
+      "phase": "spa",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 363,
+      "minReadyMs": 363,
+      "maxReadyMs": 363
+    },
+    {
+      "route": "valuation",
+      "phase": "warm",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 8,
+      "minReadyMs": 8,
+      "maxReadyMs": 8
+    },
+    {
+      "route": "macro",
+      "phase": "cold",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 841,
+      "minReadyMs": 841,
+      "maxReadyMs": 841
+    },
+    {
+      "route": "macro",
+      "phase": "spa",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 711,
+      "minReadyMs": 711,
+      "maxReadyMs": 711
+    },
+    {
+      "route": "macro",
+      "phase": "warm",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 17,
+      "minReadyMs": 17,
+      "maxReadyMs": 17
+    },
+    {
+      "route": "discover",
+      "phase": "cold",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 465,
+      "minReadyMs": 465,
+      "maxReadyMs": 465
+    },
+    {
+      "route": "discover",
+      "phase": "spa",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 107,
+      "minReadyMs": 107,
+      "maxReadyMs": 107
+    },
+    {
+      "route": "discover",
+      "phase": "warm",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 36,
+      "minReadyMs": 36,
+      "maxReadyMs": 36
+    },
+    {
+      "route": "news",
+      "phase": "cold",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 457,
+      "minReadyMs": 457,
+      "maxReadyMs": 457
+    },
+    {
+      "route": "news",
+      "phase": "spa",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 165,
+      "minReadyMs": 165,
+      "maxReadyMs": 165
+    },
+    {
+      "route": "news",
+      "phase": "warm",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 11,
+      "minReadyMs": 11,
+      "maxReadyMs": 11
+    },
+    {
+      "route": "heatmap",
+      "phase": "cold",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 1567,
+      "minReadyMs": 1567,
+      "maxReadyMs": 1567
+    },
+    {
+      "route": "heatmap",
+      "phase": "spa",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 411,
+      "minReadyMs": 411,
+      "maxReadyMs": 411
+    },
+    {
+      "route": "heatmap",
+      "phase": "warm",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 56,
+      "minReadyMs": 56,
+      "maxReadyMs": 56
+    },
+    {
+      "route": "consensus",
+      "phase": "cold",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 532,
+      "minReadyMs": 532,
+      "maxReadyMs": 532
+    },
+    {
+      "route": "consensus",
+      "phase": "spa",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 362,
+      "minReadyMs": 362,
+      "maxReadyMs": 362
+    },
+    {
+      "route": "consensus",
+      "phase": "warm",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 10,
+      "minReadyMs": 10,
+      "maxReadyMs": 10
+    },
+    {
+      "route": "bands",
+      "phase": "cold",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 482,
+      "minReadyMs": 482,
+      "maxReadyMs": 482
+    },
+    {
+      "route": "bands",
+      "phase": "spa",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 313,
+      "minReadyMs": 313,
+      "maxReadyMs": 313
+    },
+    {
+      "route": "bands",
+      "phase": "warm",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 16,
+      "minReadyMs": 16,
+      "maxReadyMs": 16
+    },
+    {
+      "route": "detail/005930.KS",
+      "phase": "cold",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 703,
+      "minReadyMs": 703,
+      "maxReadyMs": 703
+    },
+    {
+      "route": "detail/005930.KS",
+      "phase": "spa",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 36,
+      "minReadyMs": 36,
+      "maxReadyMs": 36
+    },
+    {
+      "route": "detail/005930.KS",
+      "phase": "warm",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 32,
+      "minReadyMs": 32,
+      "maxReadyMs": 32
+    },
+    {
+      "route": "tools",
+      "phase": "cold",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 134,
+      "minReadyMs": 134,
+      "maxReadyMs": 134
+    },
+    {
+      "route": "tools",
+      "phase": "spa",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 26,
+      "minReadyMs": 26,
+      "maxReadyMs": 26
+    },
+    {
+      "route": "tools",
+      "phase": "warm",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 7,
+      "minReadyMs": 7,
+      "maxReadyMs": 7
+    },
+    {
+      "route": "info",
+      "phase": "cold",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 138,
+      "minReadyMs": 138,
+      "maxReadyMs": 138
+    },
+    {
+      "route": "info",
+      "phase": "spa",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 16,
+      "minReadyMs": 16,
+      "maxReadyMs": 16
+    },
+    {
+      "route": "info",
+      "phase": "warm",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 9,
+      "minReadyMs": 9,
+      "maxReadyMs": 9
+    },
+    {
+      "route": "exports",
+      "phase": "cold",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 742,
+      "minReadyMs": 742,
+      "maxReadyMs": 742
+    },
+    {
+      "route": "exports",
+      "phase": "spa",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 81,
+      "minReadyMs": 81,
+      "maxReadyMs": 81
+    },
+    {
+      "route": "exports",
+      "phase": "warm",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 56,
+      "minReadyMs": 56,
+      "maxReadyMs": 56
+    },
+    {
+      "route": "gurus",
+      "phase": "cold",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 1276,
+      "minReadyMs": 1276,
+      "maxReadyMs": 1276
+    },
+    {
+      "route": "gurus",
+      "phase": "spa",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 869,
+      "minReadyMs": 869,
+      "maxReadyMs": 869
+    },
+    {
+      "route": "gurus",
+      "phase": "warm",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 56,
+      "minReadyMs": 56,
+      "maxReadyMs": 56
+    },
+    {
+      "route": "picks",
+      "phase": "cold",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 639,
+      "minReadyMs": 639,
+      "maxReadyMs": 639
+    },
+    {
+      "route": "picks",
+      "phase": "spa",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 62,
+      "minReadyMs": 62,
+      "maxReadyMs": 62
+    },
+    {
+      "route": "picks",
+      "phase": "warm",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 57,
+      "minReadyMs": 57,
+      "maxReadyMs": 57
+    },
+    {
+      "route": "memory",
+      "phase": "cold",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 620,
+      "minReadyMs": 620,
+      "maxReadyMs": 620
+    },
+    {
+      "route": "memory",
+      "phase": "spa",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 310,
+      "minReadyMs": 310,
+      "maxReadyMs": 310
+    },
+    {
+      "route": "memory",
+      "phase": "warm",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 54,
+      "minReadyMs": 54,
+      "maxReadyMs": 54
+    },
+    {
+      "route": "more",
+      "phase": "cold",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 149,
+      "minReadyMs": 149,
+      "maxReadyMs": 149
+    },
+    {
+      "route": "more",
+      "phase": "spa",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 15,
+      "minReadyMs": 15,
+      "maxReadyMs": 15
+    },
+    {
+      "route": "more",
+      "phase": "warm",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 18,
+      "minReadyMs": 18,
+      "maxReadyMs": 18
+    }
+  ],
+  "results": [
+    {
+      "route": "home",
+      "label": "홈",
+      "run": 0,
+      "browserColdMs": 1616,
+      "usableDataMs": 1616,
+      "coldMs": 1616,
+      "coldShellMs": 742,
+      "coldReadyState": "ready",
+      "navTtfbMs": 306,
+      "apiCold": [
+        {
+          "key": "/api/market-now",
+          "path": "/api/market-now",
+          "calls": 1,
+          "ms": 913,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 2378,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum?balanceBasis=signed-v1",
+          "path": "/api/export-momentum",
+          "calls": 1,
+          "ms": 530,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 10487,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/home-snapshot",
+          "path": "/api/home-snapshot",
+          "calls": 1,
+          "ms": 344,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 68274,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/home-bootstrap",
+          "path": "/api/home-bootstrap",
+          "calls": 1,
+          "ms": 344,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 24178,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 344,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/quotes?tickers=005930.KS%2CNVDA%2CAAPL",
+          "path": "/api/quotes",
+          "calls": 1,
+          "ms": null,
+          "completedBodies": 0,
+          "pending": 1,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": null,
+          "httpErrors": 0,
+          "status": "pending",
+          "meta": null
+        },
+        {
+          "key": "/api/personalized-news?tickers=005930.KS%2CNVDA%2CAAPL&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90%7C%EC%97%94%EB%B9%84%EB%94%94%EC%95%84%7C%EC%95%A0%ED%94%8C",
+          "path": "/api/personalized-news",
+          "calls": 1,
+          "ms": null,
+          "completedBodies": 0,
+          "pending": 1,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": null,
+          "httpErrors": 0,
+          "status": "pending",
+          "meta": null
+        },
+        {
+          "key": "/shoon94parkk-del/chart_View/main/static/data/screener.json",
+          "path": "/shoon94parkk-del/chart_View/main/static/data/screener.json",
+          "calls": 1,
+          "ms": null,
+          "completedBodies": 0,
+          "pending": 1,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": null,
+          "httpErrors": 0,
+          "status": "pending",
+          "meta": null
+        },
+        {
+          "key": "/shoon94parkk-del/chart_View/main/static/data/pick_monitor.json",
+          "path": "/shoon94parkk-del/chart_View/main/static/data/pick_monitor.json",
+          "calls": 1,
+          "ms": null,
+          "completedBodies": 0,
+          "pending": 1,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": null,
+          "httpErrors": 0,
+          "status": "pending",
+          "meta": null
+        }
+      ],
+      "requestsCold": [
+        {
+          "path": "/api/market-now",
+          "key": "/api/market-now",
+          "method": "GET",
+          "state": "complete",
+          "ms": 913,
+          "headersMs": 913,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 2378,
+          "meta": null
+        },
+        {
+          "path": "/api/home-snapshot",
+          "key": "/api/home-snapshot",
+          "method": "GET",
+          "state": "complete",
+          "ms": 344,
+          "headersMs": 344,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 68274,
+          "meta": null
+        },
+        {
+          "path": "/api/home-bootstrap",
+          "key": "/api/home-bootstrap",
+          "method": "GET",
+          "state": "complete",
+          "ms": 344,
+          "headersMs": 343,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 24178,
+          "meta": null
+        },
+        {
+          "path": "/api/quotes",
+          "key": "/api/quotes?tickers=005930.KS%2CNVDA%2CAAPL",
+          "method": "GET",
+          "state": "pending",
+          "ms": null,
+          "headersMs": null,
+          "bodyComplete": false,
+          "status": null,
+          "decodedBodyBytes": null,
+          "meta": null
+        },
+        {
+          "path": "/api/personalized-news",
+          "key": "/api/personalized-news?tickers=005930.KS%2CNVDA%2CAAPL&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90%7C%EC%97%94%EB%B9%84%EB%94%94%EC%95%84%7C%EC%95%A0%ED%94%8C",
+          "method": "GET",
+          "state": "pending",
+          "ms": null,
+          "headersMs": null,
+          "bodyComplete": false,
+          "status": null,
+          "decodedBodyBytes": null,
+          "meta": null
+        },
+        {
+          "path": "/api/activity",
+          "key": "/api/activity",
+          "method": "POST",
+          "state": "complete",
+          "ms": 344,
+          "headersMs": 344,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 29,
+          "meta": null
+        },
+        {
+          "path": "/api/export-momentum",
+          "key": "/api/export-momentum?balanceBasis=signed-v1",
+          "method": "GET",
+          "state": "complete",
+          "ms": 530,
+          "headersMs": 528,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 10487,
+          "meta": null
+        },
+        {
+          "path": "/shoon94parkk-del/chart_View/main/static/data/screener.json",
+          "key": "/shoon94parkk-del/chart_View/main/static/data/screener.json",
+          "method": "GET",
+          "state": "pending",
+          "ms": null,
+          "headersMs": null,
+          "bodyComplete": false,
+          "status": null,
+          "decodedBodyBytes": null,
+          "meta": null
+        },
+        {
+          "path": "/shoon94parkk-del/chart_View/main/static/data/pick_monitor.json",
+          "key": "/shoon94parkk-del/chart_View/main/static/data/pick_monitor.json",
+          "method": "GET",
+          "state": "pending",
+          "ms": null,
+          "headersMs": null,
+          "bodyComplete": false,
+          "status": null,
+          "decodedBodyBytes": null,
+          "meta": null
+        }
+      ],
+      "coldDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 656
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 656
+          }
+        ],
+        "resources": [
+          {
+            "path": "/assets/index-CQAV79Ao.js",
+            "initiator": "script",
+            "durationMs": 320,
+            "transferBytes": 109354,
+            "encodedBodyBytes": 109054,
+            "decodedBodyBytes": 326520
+          },
+          {
+            "path": "/assets/index-Dxg0oyWK.css",
+            "initiator": "link",
+            "durationMs": 309,
+            "transferBytes": 32951,
+            "encodedBodyBytes": 32651,
+            "decodedBodyBytes": 172894
+          },
+          {
+            "path": "/assets/homeChangesView-Et8lZIrq.js",
+            "initiator": "script",
+            "durationMs": 299,
+            "transferBytes": 1846,
+            "encodedBodyBytes": 1546,
+            "decodedBodyBytes": 3055
+          },
+          {
+            "path": "/assets/exportMomentumData-D7_3xyEZ.js",
+            "initiator": "script",
+            "durationMs": 270,
+            "transferBytes": 4865,
+            "encodedBodyBytes": 4565,
+            "decodedBodyBytes": 17390
+          },
+          {
+            "path": "/assets/pickLedger-CcJhyjj_.js",
+            "initiator": "script",
+            "durationMs": 254,
+            "transferBytes": 7865,
+            "encodedBodyBytes": 7565,
+            "decodedBodyBytes": 20913
+          }
+        ],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 1,
+          "totalMs": 67,
+          "maxMs": 67
+        },
+        "visibleLoaders": [
+          "관련 뉴스를 확인하고 있어요"
+        ],
+        "partialStates": [],
+        "pageErrors": []
+      },
+      "warmPrimingReadyState": "ready",
+      "warmMs": 28,
+      "warmUsableDataMs": 28,
+      "warmReadyState": "ready",
+      "warmAwayReadyState": "ready",
+      "apiWarm": [],
+      "requestsWarm": [],
+      "warmDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 656
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 656
+          }
+        ],
+        "resources": [],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [
+          "관련 뉴스를 확인하고 있어요"
+        ],
+        "partialStates": [],
+        "pageErrors": []
+      },
+      "spaMs": 0,
+      "spaReadyState": "root",
+      "apiSpa": [],
+      "requestsSpa": []
+    },
+    {
+      "route": "chart",
+      "label": "차트",
+      "run": 0,
+      "browserColdMs": 668,
+      "usableDataMs": 668,
+      "coldMs": 668,
+      "coldShellMs": 199,
+      "coldReadyState": "ready",
+      "navTtfbMs": 71,
+      "apiCold": [
+        {
+          "key": "/api/compare?tickers=005930.KS%2CNVDA%2CAAPL&period=1mo",
+          "path": "/api/compare",
+          "calls": 1,
+          "ms": 479,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 4877,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": {
+            "cacheHits": 3,
+            "providerFetches": 0
+          }
+        },
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 459,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        }
+      ],
+      "requestsCold": [
+        {
+          "path": "/api/compare",
+          "key": "/api/compare?tickers=005930.KS%2CNVDA%2CAAPL&period=1mo",
+          "method": "GET",
+          "state": "complete",
+          "ms": 479,
+          "headersMs": 478,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 4877,
+          "meta": {
+            "cacheHits": 3,
+            "providerFetches": 0
+          }
+        },
+        {
+          "path": "/api/activity",
+          "key": "/api/activity",
+          "method": "POST",
+          "state": "complete",
+          "ms": 459,
+          "headersMs": 459,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 29,
+          "meta": null
+        }
+      ],
+      "coldDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 116
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 116
+          }
+        ],
+        "resources": [
+          {
+            "path": "/assets/index-CQAV79Ao.js",
+            "initiator": "script",
+            "durationMs": 62,
+            "transferBytes": 109354,
+            "encodedBodyBytes": 109054,
+            "decodedBodyBytes": 326520
+          },
+          {
+            "path": "/assets/index-Dxg0oyWK.css",
+            "initiator": "link",
+            "durationMs": 32,
+            "transferBytes": 32951,
+            "encodedBodyBytes": 32651,
+            "decodedBodyBytes": 172894
+          },
+          {
+            "path": "/assets/lightweight-charts.production-d2CSQ3C3.js",
+            "initiator": "script",
+            "durationMs": 299,
+            "transferBytes": 53296,
+            "encodedBodyBytes": 52996,
+            "decodedBodyBytes": 162844
+          }
+        ],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [],
+        "pageErrors": []
+      },
+      "warmPrimingReadyState": "ready",
+      "warmMs": 22,
+      "warmUsableDataMs": 22,
+      "warmReadyState": "ready",
+      "warmAwayReadyState": "ready",
+      "apiWarm": [],
+      "requestsWarm": [],
+      "warmDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 116
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 116
+          }
+        ],
+        "resources": [],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [],
+        "pageErrors": []
+      },
+      "spaMs": 370,
+      "spaUsableDataMs": 370,
+      "spaReadyState": "ready",
+      "spaFromHomeReadyState": "ready",
+      "apiSpa": [
+        {
+          "key": "/api/compare?tickers=005930.KS%2CNVDA%2CAAPL&period=1mo",
+          "path": "/api/compare",
+          "calls": 1,
+          "ms": 320,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 4877,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": {
+            "cacheHits": 3,
+            "providerFetches": 0
+          }
+        }
+      ],
+      "requestsSpa": [
+        {
+          "path": "/api/compare",
+          "key": "/api/compare?tickers=005930.KS%2CNVDA%2CAAPL&period=1mo",
+          "method": "GET",
+          "state": "complete",
+          "ms": 320,
+          "headersMs": 320,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 4877,
+          "meta": {
+            "cacheHits": 3,
+            "providerFetches": 0
+          }
+        }
+      ],
+      "spaDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 128
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 128
+          }
+        ],
+        "resources": [
+          {
+            "path": "/assets/lightweight-charts.production-d2CSQ3C3.js",
+            "initiator": "script",
+            "durationMs": 26,
+            "transferBytes": 53296,
+            "encodedBodyBytes": 52996,
+            "decodedBodyBytes": 162844
+          }
+        ],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [],
+        "pageErrors": []
+      }
+    },
+    {
+      "route": "watch",
+      "label": "관심종목",
+      "run": 0,
+      "browserColdMs": 130,
+      "usableDataMs": 130,
+      "coldMs": 130,
+      "coldShellMs": 125,
+      "coldReadyState": "ready",
+      "navTtfbMs": 36,
+      "apiCold": [
+        {
+          "key": "/api/quotes?tickers=005930.KS%2CNVDA%2CAAPL",
+          "path": "/api/quotes",
+          "calls": 1,
+          "ms": null,
+          "completedBodies": 0,
+          "pending": 1,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": null,
+          "httpErrors": 0,
+          "status": "pending",
+          "meta": null
+        },
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": null,
+          "completedBodies": 0,
+          "pending": 1,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": null,
+          "httpErrors": 0,
+          "status": "pending",
+          "meta": null
+        }
+      ],
+      "requestsCold": [
+        {
+          "path": "/api/quotes",
+          "key": "/api/quotes?tickers=005930.KS%2CNVDA%2CAAPL",
+          "method": "GET",
+          "state": "pending",
+          "ms": null,
+          "headersMs": null,
+          "bodyComplete": false,
+          "status": null,
+          "decodedBodyBytes": null,
+          "meta": null
+        },
+        {
+          "path": "/api/activity",
+          "key": "/api/activity",
+          "method": "POST",
+          "state": "pending",
+          "ms": null,
+          "headersMs": null,
+          "bodyComplete": false,
+          "status": null,
+          "decodedBodyBytes": null,
+          "meta": null
+        }
+      ],
+      "coldDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 84
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 84
+          }
+        ],
+        "resources": [
+          {
+            "path": "/assets/index-Dxg0oyWK.css",
+            "initiator": "link",
+            "durationMs": 27,
+            "transferBytes": 32951,
+            "encodedBodyBytes": 32651,
+            "decodedBodyBytes": 172894
+          },
+          {
+            "path": "/assets/index-CQAV79Ao.js",
+            "initiator": "script",
+            "durationMs": 26,
+            "transferBytes": 109354,
+            "encodedBodyBytes": 109054,
+            "decodedBodyBytes": 326520
+          }
+        ],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [],
+        "pageErrors": []
+      },
+      "warmPrimingReadyState": "ready",
+      "warmMs": 6,
+      "warmUsableDataMs": 6,
+      "warmReadyState": "ready",
+      "warmAwayReadyState": "ready",
+      "apiWarm": [],
+      "requestsWarm": [],
+      "warmDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 84
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 84
+          }
+        ],
+        "resources": [],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [],
+        "pageErrors": []
+      },
+      "spaMs": 11,
+      "spaUsableDataMs": 11,
+      "spaReadyState": "ready",
+      "spaFromHomeReadyState": "ready",
+      "apiSpa": [],
+      "requestsSpa": [],
+      "spaDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 84
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 84
+          }
+        ],
+        "resources": [],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [],
+        "pageErrors": []
+      }
+    },
+    {
+      "route": "valuation",
+      "label": "밸류에이션",
+      "run": 0,
+      "browserColdMs": 428,
+      "usableDataMs": 428,
+      "coldMs": 428,
+      "coldShellMs": 121,
+      "coldReadyState": "ready",
+      "navTtfbMs": 37,
+      "apiCold": [
+        {
+          "key": "/api/valuation?tickers=005930.KS%2CNVDA%2CAAPL",
+          "path": "/api/valuation",
+          "calls": 1,
+          "ms": 309,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 7029,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": {
+            "cacheHits": 3,
+            "providerFetches": 0
+          }
+        },
+        {
+          "key": "/api/quotes?tickers=005930.KS%2CNVDA%2CAAPL",
+          "path": "/api/quotes",
+          "calls": 1,
+          "ms": 306,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 1491,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": null,
+          "completedBodies": 0,
+          "pending": 1,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": null,
+          "httpErrors": 0,
+          "status": "pending",
+          "meta": null
+        }
+      ],
+      "requestsCold": [
+        {
+          "path": "/api/quotes",
+          "key": "/api/quotes?tickers=005930.KS%2CNVDA%2CAAPL",
+          "method": "GET",
+          "state": "complete",
+          "ms": 306,
+          "headersMs": 306,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 1491,
+          "meta": null
+        },
+        {
+          "path": "/api/valuation",
+          "key": "/api/valuation?tickers=005930.KS%2CNVDA%2CAAPL",
+          "method": "GET",
+          "state": "complete",
+          "ms": 309,
+          "headersMs": 309,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 7029,
+          "meta": {
+            "cacheHits": 3,
+            "providerFetches": 0
+          }
+        },
+        {
+          "path": "/api/activity",
+          "key": "/api/activity",
+          "method": "POST",
+          "state": "pending",
+          "ms": null,
+          "headersMs": null,
+          "bodyComplete": false,
+          "status": null,
+          "decodedBodyBytes": null,
+          "meta": null
+        }
+      ],
+      "coldDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 80
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 80
+          }
+        ],
+        "resources": [
+          {
+            "path": "/assets/index-CQAV79Ao.js",
+            "initiator": "script",
+            "durationMs": 26,
+            "transferBytes": 109354,
+            "encodedBodyBytes": 109054,
+            "decodedBodyBytes": 326520
+          },
+          {
+            "path": "/assets/index-Dxg0oyWK.css",
+            "initiator": "link",
+            "durationMs": 24,
+            "transferBytes": 32951,
+            "encodedBodyBytes": 32651,
+            "decodedBodyBytes": 172894
+          }
+        ],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [],
+        "pageErrors": []
+      },
+      "warmPrimingReadyState": "ready",
+      "warmMs": 8,
+      "warmUsableDataMs": 8,
+      "warmReadyState": "ready",
+      "warmAwayReadyState": "ready",
+      "apiWarm": [],
+      "requestsWarm": [],
+      "warmDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 80
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 80
+          }
+        ],
+        "resources": [],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [],
+        "pageErrors": []
+      },
+      "spaMs": 363,
+      "spaUsableDataMs": 363,
+      "spaReadyState": "ready",
+      "spaFromHomeReadyState": "ready",
+      "apiSpa": [
+        {
+          "key": "/api/valuation?tickers=005930.KS%2CNVDA%2CAAPL",
+          "path": "/api/valuation",
+          "calls": 1,
+          "ms": 321,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 7029,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": {
+            "cacheHits": 3,
+            "providerFetches": 0
+          }
+        },
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": null,
+          "completedBodies": 0,
+          "pending": 1,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": null,
+          "httpErrors": 0,
+          "status": "pending",
+          "meta": null
+        }
+      ],
+      "requestsSpa": [
+        {
+          "path": "/api/valuation",
+          "key": "/api/valuation?tickers=005930.KS%2CNVDA%2CAAPL",
+          "method": "GET",
+          "state": "complete",
+          "ms": 321,
+          "headersMs": 321,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 7029,
+          "meta": {
+            "cacheHits": 3,
+            "providerFetches": 0
+          }
+        },
+        {
+          "path": "/api/activity",
+          "key": "/api/activity",
+          "method": "POST",
+          "state": "pending",
+          "ms": null,
+          "headersMs": null,
+          "bodyComplete": false,
+          "status": null,
+          "decodedBodyBytes": null,
+          "meta": null
+        }
+      ],
+      "spaDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 116
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 116
+          }
+        ],
+        "resources": [],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [],
+        "pageErrors": []
+      }
+    },
+    {
+      "route": "macro",
+      "label": "경제지표",
+      "run": 0,
+      "browserColdMs": 841,
+      "usableDataMs": 841,
+      "coldMs": 841,
+      "coldShellMs": 131,
+      "coldReadyState": "ready",
+      "navTtfbMs": 35,
+      "apiCold": [
+        {
+          "key": "/api/macro",
+          "path": "/api/macro",
+          "calls": 1,
+          "ms": 733,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 65301,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": null,
+          "completedBodies": 0,
+          "pending": 1,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": null,
+          "httpErrors": 0,
+          "status": "pending",
+          "meta": null
+        }
+      ],
+      "requestsCold": [
+        {
+          "path": "/api/macro",
+          "key": "/api/macro",
+          "method": "GET",
+          "state": "complete",
+          "ms": 733,
+          "headersMs": 733,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 65301,
+          "meta": null
+        },
+        {
+          "path": "/api/activity",
+          "key": "/api/activity",
+          "method": "POST",
+          "state": "pending",
+          "ms": null,
+          "headersMs": null,
+          "bodyComplete": false,
+          "status": null,
+          "decodedBodyBytes": null,
+          "meta": null
+        }
+      ],
+      "coldDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 88
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 88
+          }
+        ],
+        "resources": [
+          {
+            "path": "/assets/index-CQAV79Ao.js",
+            "initiator": "script",
+            "durationMs": 34,
+            "transferBytes": 109354,
+            "encodedBodyBytes": 109054,
+            "decodedBodyBytes": 326520
+          },
+          {
+            "path": "/assets/index-Dxg0oyWK.css",
+            "initiator": "link",
+            "durationMs": 25,
+            "transferBytes": 32951,
+            "encodedBodyBytes": 32651,
+            "decodedBodyBytes": 172894
+          }
+        ],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [],
+        "pageErrors": []
+      },
+      "warmPrimingReadyState": "ready",
+      "warmMs": 17,
+      "warmUsableDataMs": 17,
+      "warmReadyState": "ready",
+      "warmAwayReadyState": "ready",
+      "apiWarm": [],
+      "requestsWarm": [],
+      "warmDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 88
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 88
+          }
+        ],
+        "resources": [],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [],
+        "pageErrors": []
+      },
+      "spaMs": 711,
+      "spaUsableDataMs": 711,
+      "spaReadyState": "ready",
+      "spaFromHomeReadyState": "ready",
+      "apiSpa": [
+        {
+          "key": "/api/macro",
+          "path": "/api/macro",
+          "calls": 1,
+          "ms": 687,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 65301,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        }
+      ],
+      "requestsSpa": [
+        {
+          "path": "/api/macro",
+          "key": "/api/macro",
+          "method": "GET",
+          "state": "complete",
+          "ms": 687,
+          "headersMs": 687,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 65301,
+          "meta": null
+        }
+      ],
+      "spaDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 92
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 92
+          }
+        ],
+        "resources": [],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [],
+        "pageErrors": []
+      }
+    },
+    {
+      "route": "discover",
+      "label": "조건별 종목 찾기",
+      "run": 0,
+      "browserColdMs": 465,
+      "usableDataMs": 465,
+      "coldMs": 465,
+      "coldShellMs": 127,
+      "coldReadyState": "ready",
+      "navTtfbMs": 38,
+      "apiCold": [
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 336,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/shoon94parkk-del/chart_View/main/static/data/screener.json",
+          "path": "/shoon94parkk-del/chart_View/main/static/data/screener.json",
+          "calls": 1,
+          "ms": 271,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 2115922,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        }
+      ],
+      "requestsCold": [
+        {
+          "path": "/shoon94parkk-del/chart_View/main/static/data/screener.json",
+          "key": "/shoon94parkk-del/chart_View/main/static/data/screener.json",
+          "method": "GET",
+          "state": "complete",
+          "ms": 271,
+          "headersMs": 250,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 2115922,
+          "meta": null
+        },
+        {
+          "path": "/api/activity",
+          "key": "/api/activity",
+          "method": "POST",
+          "state": "complete",
+          "ms": 336,
+          "headersMs": 336,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 29,
+          "meta": null
+        }
+      ],
+      "coldDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 84
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 84
+          }
+        ],
+        "resources": [
+          {
+            "path": "/assets/index-CQAV79Ao.js",
+            "initiator": "script",
+            "durationMs": 26,
+            "transferBytes": 109354,
+            "encodedBodyBytes": 109054,
+            "decodedBodyBytes": 326520
+          },
+          {
+            "path": "/assets/index-Dxg0oyWK.css",
+            "initiator": "link",
+            "durationMs": 23,
+            "transferBytes": 32951,
+            "encodedBodyBytes": 32651,
+            "decodedBodyBytes": 172894
+          }
+        ],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [],
+        "pageErrors": []
+      },
+      "warmPrimingReadyState": "ready",
+      "warmMs": 36,
+      "warmUsableDataMs": 36,
+      "warmReadyState": "ready",
+      "warmAwayReadyState": "ready",
+      "apiWarm": [],
+      "requestsWarm": [],
+      "warmDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 84
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 84
+          }
+        ],
+        "resources": [],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [],
+        "pageErrors": []
+      },
+      "spaMs": 107,
+      "spaUsableDataMs": 107,
+      "spaReadyState": "ready",
+      "spaFromHomeReadyState": "ready",
+      "apiSpa": [
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": null,
+          "completedBodies": 0,
+          "pending": 1,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": null,
+          "httpErrors": 0,
+          "status": "pending",
+          "meta": null
+        }
+      ],
+      "requestsSpa": [
+        {
+          "path": "/api/activity",
+          "key": "/api/activity",
+          "method": "POST",
+          "state": "pending",
+          "ms": null,
+          "headersMs": null,
+          "bodyComplete": false,
+          "status": null,
+          "decodedBodyBytes": null,
+          "meta": null
+        }
+      ],
+      "spaDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 84
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 84
+          }
+        ],
+        "resources": [],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [],
+        "pageErrors": []
+      }
+    },
+    {
+      "route": "news",
+      "label": "관심종목 뉴스",
+      "run": 0,
+      "browserColdMs": 457,
+      "usableDataMs": 457,
+      "coldMs": 457,
+      "coldShellMs": 148,
+      "coldReadyState": "ready",
+      "navTtfbMs": 32,
+      "apiCold": [
+        {
+          "key": "/api/personalized-news?tickers=005930.KS%2CNVDA%2CAAPL&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90%7C%EC%97%94%EB%B9%84%EB%94%94%EC%95%84%7C%EC%95%A0%ED%94%8C",
+          "path": "/api/personalized-news",
+          "calls": 1,
+          "ms": 327,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 28251,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": null,
+          "completedBodies": 0,
+          "pending": 1,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": null,
+          "httpErrors": 0,
+          "status": "pending",
+          "meta": null
+        }
+      ],
+      "requestsCold": [
+        {
+          "path": "/api/personalized-news",
+          "key": "/api/personalized-news?tickers=005930.KS%2CNVDA%2CAAPL&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90%7C%EC%97%94%EB%B9%84%EB%94%94%EC%95%84%7C%EC%95%A0%ED%94%8C",
+          "method": "GET",
+          "state": "complete",
+          "ms": 327,
+          "headersMs": 326,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 28251,
+          "meta": null
+        },
+        {
+          "path": "/api/activity",
+          "key": "/api/activity",
+          "method": "POST",
+          "state": "pending",
+          "ms": null,
+          "headersMs": null,
+          "bodyComplete": false,
+          "status": null,
+          "decodedBodyBytes": null,
+          "meta": null
+        }
+      ],
+      "coldDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 80
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 80
+          }
+        ],
+        "resources": [
+          {
+            "path": "/assets/index-CQAV79Ao.js",
+            "initiator": "script",
+            "durationMs": 31,
+            "transferBytes": 109354,
+            "encodedBodyBytes": 109054,
+            "decodedBodyBytes": 326520
+          },
+          {
+            "path": "/assets/index-Dxg0oyWK.css",
+            "initiator": "link",
+            "durationMs": 24,
+            "transferBytes": 32951,
+            "encodedBodyBytes": 32651,
+            "decodedBodyBytes": 172894
+          }
+        ],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [],
+        "pageErrors": []
+      },
+      "warmPrimingReadyState": "ready",
+      "warmMs": 11,
+      "warmUsableDataMs": 11,
+      "warmReadyState": "ready",
+      "warmAwayReadyState": "ready",
+      "apiWarm": [],
+      "requestsWarm": [],
+      "warmDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 80
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 80
+          }
+        ],
+        "resources": [],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [],
+        "pageErrors": []
+      },
+      "spaMs": 165,
+      "spaUsableDataMs": 165,
+      "spaReadyState": "ready",
+      "spaFromHomeReadyState": "ready",
+      "apiSpa": [],
+      "requestsSpa": [],
+      "spaDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 80
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 80
+          }
+        ],
+        "resources": [],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [],
+        "pageErrors": []
+      }
+    },
+    {
+      "route": "heatmap",
+      "label": "시장 히트맵",
+      "run": 0,
+      "browserColdMs": 1567,
+      "usableDataMs": 1567,
+      "coldMs": 1567,
+      "coldShellMs": 151,
+      "coldReadyState": "ready",
+      "navTtfbMs": 55,
+      "apiCold": [
+        {
+          "key": "/api/heatmap/full",
+          "path": "/api/heatmap/full",
+          "calls": 1,
+          "ms": 1144,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 25474,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/shoon94parkk-del/chart_View/main/static/data/full_heatmap_snapshot.json",
+          "path": "/shoon94parkk-del/chart_View/main/static/data/full_heatmap_snapshot.json",
+          "calls": 1,
+          "ms": 688,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 33127,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/home-snapshot",
+          "path": "/api/home-snapshot",
+          "calls": 1,
+          "ms": 536,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 68273,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 291,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        }
+      ],
+      "requestsCold": [
+        {
+          "path": "/api/activity",
+          "key": "/api/activity",
+          "method": "POST",
+          "state": "complete",
+          "ms": 291,
+          "headersMs": 290,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 29,
+          "meta": null
+        },
+        {
+          "path": "/shoon94parkk-del/chart_View/main/static/data/full_heatmap_snapshot.json",
+          "key": "/shoon94parkk-del/chart_View/main/static/data/full_heatmap_snapshot.json",
+          "method": "GET",
+          "state": "complete",
+          "ms": 688,
+          "headersMs": 687,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 33127,
+          "meta": null
+        },
+        {
+          "path": "/api/home-snapshot",
+          "key": "/api/home-snapshot",
+          "method": "GET",
+          "state": "complete",
+          "ms": 536,
+          "headersMs": 536,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 68273,
+          "meta": null
+        },
+        {
+          "path": "/api/heatmap/full",
+          "key": "/api/heatmap/full",
+          "method": "GET",
+          "state": "complete",
+          "ms": 1144,
+          "headersMs": 1144,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 25474,
+          "meta": null
+        }
+      ],
+      "coldDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 116
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 116
+          }
+        ],
+        "resources": [
+          {
+            "path": "/assets/index-CQAV79Ao.js",
+            "initiator": "script",
+            "durationMs": 33,
+            "transferBytes": 109354,
+            "encodedBodyBytes": 109054,
+            "decodedBodyBytes": 326520
+          },
+          {
+            "path": "/assets/index-Dxg0oyWK.css",
+            "initiator": "link",
+            "durationMs": 43,
+            "transferBytes": 32951,
+            "encodedBodyBytes": 32651,
+            "decodedBodyBytes": 172894
+          },
+          {
+            "path": "/assets/marketMap-K_dLf464.css",
+            "initiator": "link",
+            "durationMs": 252,
+            "transferBytes": 1573,
+            "encodedBodyBytes": 1273,
+            "decodedBodyBytes": 4480
+          },
+          {
+            "path": "/assets/marketMapView-CNWgBDAk.js",
+            "initiator": "script",
+            "durationMs": 277,
+            "transferBytes": 3452,
+            "encodedBodyBytes": 3152,
+            "decodedBodyBytes": 6212
+          }
+        ],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [],
+        "pageErrors": []
+      },
+      "warmPrimingReadyState": "ready",
+      "warmMs": 56,
+      "warmUsableDataMs": 56,
+      "warmReadyState": "ready",
+      "warmAwayReadyState": "ready",
+      "apiWarm": [],
+      "requestsWarm": [],
+      "warmDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 116
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 116
+          }
+        ],
+        "resources": [],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [],
+        "pageErrors": []
+      },
+      "spaMs": 411,
+      "spaUsableDataMs": 411,
+      "spaReadyState": "ready",
+      "spaFromHomeReadyState": "ready",
+      "apiSpa": [
+        {
+          "key": "/api/heatmap/full",
+          "path": "/api/heatmap/full",
+          "calls": 1,
+          "ms": 331,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 25474,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/shoon94parkk-del/chart_View/main/static/data/full_heatmap_snapshot.json",
+          "path": "/shoon94parkk-del/chart_View/main/static/data/full_heatmap_snapshot.json",
+          "calls": 1,
+          "ms": null,
+          "completedBodies": 0,
+          "pending": 1,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": null,
+          "httpErrors": 0,
+          "status": "pending",
+          "meta": null
+        }
+      ],
+      "requestsSpa": [
+        {
+          "path": "/shoon94parkk-del/chart_View/main/static/data/full_heatmap_snapshot.json",
+          "key": "/shoon94parkk-del/chart_View/main/static/data/full_heatmap_snapshot.json",
+          "method": "GET",
+          "state": "pending",
+          "ms": null,
+          "headersMs": null,
+          "bodyComplete": false,
+          "status": null,
+          "decodedBodyBytes": null,
+          "meta": null
+        },
+        {
+          "path": "/api/heatmap/full",
+          "key": "/api/heatmap/full",
+          "method": "GET",
+          "state": "complete",
+          "ms": 331,
+          "headersMs": 330,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 25474,
+          "meta": null
+        }
+      ],
+      "spaDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 80
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 80
+          }
+        ],
+        "resources": [
+          {
+            "path": "/assets/marketMap-K_dLf464.css",
+            "initiator": "link",
+            "durationMs": 26,
+            "transferBytes": 1573,
+            "encodedBodyBytes": 1273,
+            "decodedBodyBytes": 4480
+          },
+          {
+            "path": "/assets/marketMapView-CNWgBDAk.js",
+            "initiator": "script",
+            "durationMs": 26,
+            "transferBytes": 3452,
+            "encodedBodyBytes": 3152,
+            "decodedBodyBytes": 6212
+          }
+        ],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [],
+        "pageErrors": []
+      }
+    },
+    {
+      "route": "consensus",
+      "label": "실적 전망",
+      "run": 0,
+      "browserColdMs": 532,
+      "usableDataMs": 532,
+      "coldMs": 532,
+      "coldShellMs": 178,
+      "coldReadyState": "ready",
+      "navTtfbMs": 48,
+      "apiCold": [
+        {
+          "key": "/api/consensus?ticker=005930.KS",
+          "path": "/api/consensus",
+          "calls": 1,
+          "ms": 377,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 7382,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/consensus?ticker=AAPL",
+          "path": "/api/consensus",
+          "calls": 1,
+          "ms": 376,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 7080,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/consensus?ticker=NVDA",
+          "path": "/api/consensus",
+          "calls": 1,
+          "ms": 375,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 7122,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 359,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        }
+      ],
+      "requestsCold": [
+        {
+          "path": "/api/consensus",
+          "key": "/api/consensus?ticker=005930.KS",
+          "method": "GET",
+          "state": "complete",
+          "ms": 377,
+          "headersMs": 376,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 7382,
+          "meta": null
+        },
+        {
+          "path": "/api/consensus",
+          "key": "/api/consensus?ticker=NVDA",
+          "method": "GET",
+          "state": "complete",
+          "ms": 375,
+          "headersMs": 375,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 7122,
+          "meta": null
+        },
+        {
+          "path": "/api/consensus",
+          "key": "/api/consensus?ticker=AAPL",
+          "method": "GET",
+          "state": "complete",
+          "ms": 376,
+          "headersMs": 375,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 7080,
+          "meta": null
+        },
+        {
+          "path": "/api/activity",
+          "key": "/api/activity",
+          "method": "POST",
+          "state": "complete",
+          "ms": 359,
+          "headersMs": 357,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 29,
+          "meta": null
+        }
+      ],
+      "coldDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 92
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 92
+          }
+        ],
+        "resources": [
+          {
+            "path": "/assets/index-CQAV79Ao.js",
+            "initiator": "script",
+            "durationMs": 78,
+            "transferBytes": 109354,
+            "encodedBodyBytes": 109054,
+            "decodedBodyBytes": 326520
+          },
+          {
+            "path": "/assets/index-Dxg0oyWK.css",
+            "initiator": "link",
+            "durationMs": 28,
+            "transferBytes": 32951,
+            "encodedBodyBytes": 32651,
+            "decodedBodyBytes": 172894
+          }
+        ],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [],
+        "pageErrors": []
+      },
+      "warmPrimingReadyState": "ready",
+      "warmMs": 10,
+      "warmUsableDataMs": 10,
+      "warmReadyState": "ready",
+      "warmAwayReadyState": "ready",
+      "apiWarm": [],
+      "requestsWarm": [],
+      "warmDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 92
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 92
+          }
+        ],
+        "resources": [],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [],
+        "pageErrors": []
+      },
+      "spaMs": 362,
+      "spaUsableDataMs": 362,
+      "spaReadyState": "ready",
+      "spaFromHomeReadyState": "ready",
+      "apiSpa": [
+        {
+          "key": "/api/consensus?ticker=AAPL",
+          "path": "/api/consensus",
+          "calls": 1,
+          "ms": 353,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 7080,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/consensus?ticker=NVDA",
+          "path": "/api/consensus",
+          "calls": 1,
+          "ms": 259,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 7122,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/consensus?ticker=005930.KS",
+          "path": "/api/consensus",
+          "calls": 1,
+          "ms": 251,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 7382,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        }
+      ],
+      "requestsSpa": [
+        {
+          "path": "/api/consensus",
+          "key": "/api/consensus?ticker=005930.KS",
+          "method": "GET",
+          "state": "complete",
+          "ms": 251,
+          "headersMs": 251,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 7382,
+          "meta": null
+        },
+        {
+          "path": "/api/consensus",
+          "key": "/api/consensus?ticker=NVDA",
+          "method": "GET",
+          "state": "complete",
+          "ms": 259,
+          "headersMs": 259,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 7122,
+          "meta": null
+        },
+        {
+          "path": "/api/consensus",
+          "key": "/api/consensus?ticker=AAPL",
+          "method": "GET",
+          "state": "complete",
+          "ms": 353,
+          "headersMs": 353,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 7080,
+          "meta": null
+        }
+      ],
+      "spaDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 76
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 76
+          }
+        ],
+        "resources": [],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [],
+        "pageErrors": []
+      }
+    },
+    {
+      "route": "bands",
+      "label": "역사적 밸류에이션",
+      "run": 0,
+      "browserColdMs": 482,
+      "usableDataMs": 482,
+      "coldMs": 482,
+      "coldShellMs": 125,
+      "coldReadyState": "ready",
+      "navTtfbMs": 33,
+      "apiCold": [
+        {
+          "key": "/api/valuation-band?ticker=005930.KS&years=3",
+          "path": "/api/valuation-band",
+          "calls": 1,
+          "ms": 353,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 12275,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 332,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        }
+      ],
+      "requestsCold": [
+        {
+          "path": "/api/valuation-band",
+          "key": "/api/valuation-band?ticker=005930.KS&years=3",
+          "method": "GET",
+          "state": "complete",
+          "ms": 353,
+          "headersMs": 353,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 12275,
+          "meta": null
+        },
+        {
+          "path": "/api/activity",
+          "key": "/api/activity",
+          "method": "POST",
+          "state": "complete",
+          "ms": 332,
+          "headersMs": 332,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 29,
+          "meta": null
+        }
+      ],
+      "coldDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 84
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 84
+          }
+        ],
+        "resources": [
+          {
+            "path": "/assets/index-Dxg0oyWK.css",
+            "initiator": "link",
+            "durationMs": 27,
+            "transferBytes": 32951,
+            "encodedBodyBytes": 32651,
+            "decodedBodyBytes": 172894
+          },
+          {
+            "path": "/assets/index-CQAV79Ao.js",
+            "initiator": "script",
+            "durationMs": 27,
+            "transferBytes": 109354,
+            "encodedBodyBytes": 109054,
+            "decodedBodyBytes": 326520
+          },
+          {
+            "path": "/assets/lightweight-charts.production-d2CSQ3C3.js",
+            "initiator": "script",
+            "durationMs": 30,
+            "transferBytes": 53296,
+            "encodedBodyBytes": 52996,
+            "decodedBodyBytes": 162844
+          }
+        ],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [],
+        "pageErrors": []
+      },
+      "warmPrimingReadyState": "ready",
+      "warmMs": 16,
+      "warmUsableDataMs": 16,
+      "warmReadyState": "ready",
+      "warmAwayReadyState": "ready",
+      "apiWarm": [],
+      "requestsWarm": [],
+      "warmDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 84
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 84
+          }
+        ],
+        "resources": [],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [],
+        "pageErrors": []
+      },
+      "spaMs": 313,
+      "spaUsableDataMs": 313,
+      "spaReadyState": "ready",
+      "spaFromHomeReadyState": "ready",
+      "apiSpa": [
+        {
+          "key": "/api/valuation-band?ticker=005930.KS&years=3",
+          "path": "/api/valuation-band",
+          "calls": 1,
+          "ms": 270,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 12275,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        }
+      ],
+      "requestsSpa": [
+        {
+          "path": "/api/valuation-band",
+          "key": "/api/valuation-band?ticker=005930.KS&years=3",
+          "method": "GET",
+          "state": "complete",
+          "ms": 270,
+          "headersMs": 270,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 12275,
+          "meta": null
+        }
+      ],
+      "spaDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 96
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 96
+          }
+        ],
+        "resources": [
+          {
+            "path": "/assets/lightweight-charts.production-d2CSQ3C3.js",
+            "initiator": "script",
+            "durationMs": 34,
+            "transferBytes": 53296,
+            "encodedBodyBytes": 52996,
+            "decodedBodyBytes": 162844
+          }
+        ],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [],
+        "pageErrors": []
+      }
+    },
+    {
+      "route": "detail/005930.KS",
+      "label": "종목 상세",
+      "run": 0,
+      "browserColdMs": 703,
+      "usableDataMs": 703,
+      "coldMs": 703,
+      "coldShellMs": 143,
+      "coldReadyState": "ready",
+      "navTtfbMs": 35,
+      "apiCold": [
+        {
+          "key": "/api/compare?tickers=005930.KS&period=3mo",
+          "path": "/api/compare",
+          "calls": 1,
+          "ms": 539,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 4194,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": {
+            "cacheHits": 1,
+            "providerFetches": 0
+          }
+        },
+        {
+          "key": "/api/financial-history?ticker=005930.KS",
+          "path": "/api/financial-history",
+          "calls": 1,
+          "ms": 505,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 5234,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/personalized-news?tickers=005930.KS&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90",
+          "path": "/api/personalized-news",
+          "calls": 1,
+          "ms": 505,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 10753,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/valuation?tickers=005930.KS",
+          "path": "/api/valuation",
+          "calls": 1,
+          "ms": 500,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 2360,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": {
+            "cacheHits": 1,
+            "providerFetches": 0
+          }
+        },
+        {
+          "key": "/shoon94parkk-del/chart_View/main/static/data/screener.json",
+          "path": "/shoon94parkk-del/chart_View/main/static/data/screener.json",
+          "calls": 1,
+          "ms": null,
+          "completedBodies": 0,
+          "pending": 1,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": null,
+          "httpErrors": 0,
+          "status": "pending",
+          "meta": null
+        },
+        {
+          "key": "/api/quotes?tickers=005930.KS&fresh=true",
+          "path": "/api/quotes",
+          "calls": 1,
+          "ms": null,
+          "completedBodies": 0,
+          "pending": 1,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": null,
+          "httpErrors": 0,
+          "status": "pending",
+          "meta": null
+        },
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": null,
+          "completedBodies": 0,
+          "pending": 1,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": null,
+          "httpErrors": 0,
+          "status": "pending",
+          "meta": null
+        },
+        {
+          "key": "/api/financial-quarters?ticker=005930.KS",
+          "path": "/api/financial-quarters",
+          "calls": 1,
+          "ms": null,
+          "completedBodies": 0,
+          "pending": 1,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": null,
+          "httpErrors": 0,
+          "status": "pending",
+          "meta": null
+        }
+      ],
+      "requestsCold": [
+        {
+          "path": "/shoon94parkk-del/chart_View/main/static/data/screener.json",
+          "key": "/shoon94parkk-del/chart_View/main/static/data/screener.json",
+          "method": "GET",
+          "state": "pending",
+          "ms": null,
+          "headersMs": null,
+          "bodyComplete": false,
+          "status": null,
+          "decodedBodyBytes": null,
+          "meta": null
+        },
+        {
+          "path": "/api/quotes",
+          "key": "/api/quotes?tickers=005930.KS&fresh=true",
+          "method": "GET",
+          "state": "pending",
+          "ms": null,
+          "headersMs": null,
+          "bodyComplete": false,
+          "status": null,
+          "decodedBodyBytes": null,
+          "meta": null
+        },
+        {
+          "path": "/api/compare",
+          "key": "/api/compare?tickers=005930.KS&period=3mo",
+          "method": "GET",
+          "state": "complete",
+          "ms": 539,
+          "headersMs": 539,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 4194,
+          "meta": {
+            "cacheHits": 1,
+            "providerFetches": 0
+          }
+        },
+        {
+          "path": "/api/financial-history",
+          "key": "/api/financial-history?ticker=005930.KS",
+          "method": "GET",
+          "state": "complete",
+          "ms": 505,
+          "headersMs": 505,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 5234,
+          "meta": null
+        },
+        {
+          "path": "/api/valuation",
+          "key": "/api/valuation?tickers=005930.KS",
+          "method": "GET",
+          "state": "complete",
+          "ms": 500,
+          "headersMs": 500,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 2360,
+          "meta": {
+            "cacheHits": 1,
+            "providerFetches": 0
+          }
+        },
+        {
+          "path": "/api/personalized-news",
+          "key": "/api/personalized-news?tickers=005930.KS&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90",
+          "method": "GET",
+          "state": "complete",
+          "ms": 505,
+          "headersMs": 505,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 10753,
+          "meta": null
+        },
+        {
+          "path": "/api/activity",
+          "key": "/api/activity",
+          "method": "POST",
+          "state": "pending",
+          "ms": null,
+          "headersMs": null,
+          "bodyComplete": false,
+          "status": null,
+          "decodedBodyBytes": null,
+          "meta": null
+        },
+        {
+          "path": "/api/financial-quarters",
+          "key": "/api/financial-quarters?ticker=005930.KS",
+          "method": "GET",
+          "state": "pending",
+          "ms": null,
+          "headersMs": null,
+          "bodyComplete": false,
+          "status": null,
+          "decodedBodyBytes": null,
+          "meta": null
+        }
+      ],
+      "coldDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 80
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 80
+          }
+        ],
+        "resources": [
+          {
+            "path": "/assets/index-CQAV79Ao.js",
+            "initiator": "script",
+            "durationMs": 27,
+            "transferBytes": 109354,
+            "encodedBodyBytes": 109054,
+            "decodedBodyBytes": 326520
+          },
+          {
+            "path": "/assets/index-Dxg0oyWK.css",
+            "initiator": "link",
+            "durationMs": 28,
+            "transferBytes": 32951,
+            "encodedBodyBytes": 32651,
+            "decodedBodyBytes": 172894
+          },
+          {
+            "path": "/assets/researchCard-DNWDJLoG.js",
+            "initiator": "script",
+            "durationMs": 287,
+            "transferBytes": 7598,
+            "encodedBodyBytes": 7298,
+            "decodedBodyBytes": 20285
+          },
+          {
+            "path": "/assets/researchAnalysis-DHsF-5l8.js",
+            "initiator": "script",
+            "durationMs": 269,
+            "transferBytes": 3448,
+            "encodedBodyBytes": 3148,
+            "decodedBodyBytes": 6415
+          },
+          {
+            "path": "/assets/financialQuality-CwjF0rt4.js",
+            "initiator": "script",
+            "durationMs": 338,
+            "transferBytes": 2647,
+            "encodedBodyBytes": 2347,
+            "decodedBodyBytes": 5273
+          },
+          {
+            "path": "/assets/financialQualityView-CHrP7PXc.js",
+            "initiator": "script",
+            "durationMs": 292,
+            "transferBytes": 2297,
+            "encodedBodyBytes": 1997,
+            "decodedBodyBytes": 3748
+          },
+          {
+            "path": "/assets/financialQualityView-CpbI4CS1.css",
+            "initiator": "link",
+            "durationMs": 284,
+            "transferBytes": 962,
+            "encodedBodyBytes": 662,
+            "decodedBodyBytes": 1960
+          },
+          {
+            "path": "/assets/researchCard-BZfmWDM1.css",
+            "initiator": "link",
+            "durationMs": 253,
+            "transferBytes": 2126,
+            "encodedBodyBytes": 1826,
+            "decodedBodyBytes": 7287
+          },
+          {
+            "path": "/assets/investmentReview-CFO1Xgdy.js",
+            "initiator": "script",
+            "durationMs": 277,
+            "transferBytes": 1628,
+            "encodedBodyBytes": 1328,
+            "decodedBodyBytes": 2734
+          },
+          {
+            "path": "/assets/investmentReview-gLMHc1ie.css",
+            "initiator": "link",
+            "durationMs": 522,
+            "transferBytes": 1408,
+            "encodedBodyBytes": 1108,
+            "decodedBodyBytes": 3839
+          },
+          {
+            "path": "/assets/industryContextView-7nkkSNrN.js",
+            "initiator": "script",
+            "durationMs": 339,
+            "transferBytes": 4546,
+            "encodedBodyBytes": 4246,
+            "decodedBodyBytes": 11033
+          },
+          {
+            "path": "/assets/industryContextView-CTbXbUND.css",
+            "initiator": "link",
+            "durationMs": 465,
+            "transferBytes": 2665,
+            "encodedBodyBytes": 2365,
+            "decodedBodyBytes": 9419
+          },
+          {
+            "path": "/assets/quarterView-B-w8TNWp.js",
+            "initiator": "script",
+            "durationMs": 312,
+            "transferBytes": 3916,
+            "encodedBodyBytes": 3616,
+            "decodedBodyBytes": 7682
+          },
+          {
+            "path": "/assets/reviewRevisit-DFX1DSTO.js",
+            "initiator": "script",
+            "durationMs": 461,
+            "transferBytes": 519,
+            "encodedBodyBytes": 219,
+            "decodedBodyBytes": 302
+          },
+          {
+            "path": "/assets/reportReviewView-DJ4w0CQx.js",
+            "initiator": "script",
+            "durationMs": 503,
+            "transferBytes": 3693,
+            "encodedBodyBytes": 3393,
+            "decodedBodyBytes": 7727
+          },
+          {
+            "path": "/assets/financialHistoryView-DhnpNV-q.js",
+            "initiator": "script",
+            "durationMs": 463,
+            "transferBytes": 1888,
+            "encodedBodyBytes": 1588,
+            "decodedBodyBytes": 3605
+          },
+          {
+            "path": "/assets/financialHistoryView-C6pzh8Yo.css",
+            "initiator": "link",
+            "durationMs": 483,
+            "transferBytes": 868,
+            "encodedBodyBytes": 568,
+            "decodedBodyBytes": 1738
+          },
+          {
+            "path": "/assets/lightweight-charts.production-d2CSQ3C3.js",
+            "initiator": "script",
+            "durationMs": 248,
+            "transferBytes": 53296,
+            "encodedBodyBytes": 52996,
+            "decodedBodyBytes": 162844
+          }
+        ],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [
+          "분기 보고서를 확인하고 있어요 · 첫 조회는 시간이 걸릴 수 있어요",
+          "회사·산업 정보를 불러오고 있어요"
+        ],
+        "partialStates": [],
+        "pageErrors": []
+      },
+      "warmPrimingReadyState": "ready",
+      "warmMs": 32,
+      "warmUsableDataMs": 32,
+      "warmReadyState": "ready",
+      "warmAwayReadyState": "ready",
+      "apiWarm": [
+        {
+          "key": "/api/financial-quarters?ticker=005930.KS",
+          "path": "/api/financial-quarters",
+          "calls": 1,
+          "ms": null,
+          "completedBodies": 0,
+          "pending": 1,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": null,
+          "httpErrors": 0,
+          "status": "pending",
+          "meta": null
+        }
+      ],
+      "requestsWarm": [
+        {
+          "path": "/api/financial-quarters",
+          "key": "/api/financial-quarters?ticker=005930.KS",
+          "method": "GET",
+          "state": "pending",
+          "ms": null,
+          "headersMs": null,
+          "bodyComplete": false,
+          "status": null,
+          "decodedBodyBytes": null,
+          "meta": null
+        }
+      ],
+      "warmDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 80
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 80
+          }
+        ],
+        "resources": [],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [
+          "분기 보고서를 확인하고 있어요 · 첫 조회는 시간이 걸릴 수 있어요",
+          "회사·산업 정보를 불러오고 있어요"
+        ],
+        "partialStates": [],
+        "pageErrors": []
+      },
+      "spaMs": 36,
+      "spaUsableDataMs": 36,
+      "spaReadyState": "ready",
+      "spaFromHomeReadyState": "ready",
+      "apiSpa": [
+        {
+          "key": "/api/quotes?tickers=005930.KS&fresh=true",
+          "path": "/api/quotes",
+          "calls": 1,
+          "ms": null,
+          "completedBodies": 0,
+          "pending": 1,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": null,
+          "httpErrors": 0,
+          "status": "pending",
+          "meta": null
+        },
+        {
+          "key": "/api/compare?tickers=005930.KS&period=3mo",
+          "path": "/api/compare",
+          "calls": 1,
+          "ms": null,
+          "completedBodies": 0,
+          "pending": 1,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": null,
+          "httpErrors": 0,
+          "status": "pending",
+          "meta": null
+        },
+        {
+          "key": "/api/financial-history?ticker=005930.KS",
+          "path": "/api/financial-history",
+          "calls": 1,
+          "ms": null,
+          "completedBodies": 0,
+          "pending": 1,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": null,
+          "httpErrors": 0,
+          "status": "pending",
+          "meta": null
+        },
+        {
+          "key": "/api/valuation?tickers=005930.KS",
+          "path": "/api/valuation",
+          "calls": 1,
+          "ms": null,
+          "completedBodies": 0,
+          "pending": 1,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": null,
+          "httpErrors": 0,
+          "status": "pending",
+          "meta": null
+        },
+        {
+          "key": "/api/personalized-news?tickers=005930.KS&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90",
+          "path": "/api/personalized-news",
+          "calls": 1,
+          "ms": null,
+          "completedBodies": 0,
+          "pending": 1,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": null,
+          "httpErrors": 0,
+          "status": "pending",
+          "meta": null
+        }
+      ],
+      "requestsSpa": [
+        {
+          "path": "/api/quotes",
+          "key": "/api/quotes?tickers=005930.KS&fresh=true",
+          "method": "GET",
+          "state": "pending",
+          "ms": null,
+          "headersMs": null,
+          "bodyComplete": false,
+          "status": null,
+          "decodedBodyBytes": null,
+          "meta": null
+        },
+        {
+          "path": "/api/compare",
+          "key": "/api/compare?tickers=005930.KS&period=3mo",
+          "method": "GET",
+          "state": "pending",
+          "ms": null,
+          "headersMs": null,
+          "bodyComplete": false,
+          "status": null,
+          "decodedBodyBytes": null,
+          "meta": null
+        },
+        {
+          "path": "/api/financial-history",
+          "key": "/api/financial-history?ticker=005930.KS",
+          "method": "GET",
+          "state": "pending",
+          "ms": null,
+          "headersMs": null,
+          "bodyComplete": false,
+          "status": null,
+          "decodedBodyBytes": null,
+          "meta": null
+        },
+        {
+          "path": "/api/valuation",
+          "key": "/api/valuation?tickers=005930.KS",
+          "method": "GET",
+          "state": "pending",
+          "ms": null,
+          "headersMs": null,
+          "bodyComplete": false,
+          "status": null,
+          "decodedBodyBytes": null,
+          "meta": null
+        },
+        {
+          "path": "/api/personalized-news",
+          "key": "/api/personalized-news?tickers=005930.KS&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90",
+          "method": "GET",
+          "state": "pending",
+          "ms": null,
+          "headersMs": null,
+          "bodyComplete": false,
+          "status": null,
+          "decodedBodyBytes": null,
+          "meta": null
+        }
+      ],
+      "spaDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 88
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 88
+          }
+        ],
+        "resources": [],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [
+          "종목 차트를 불러오고 있어요",
+          "최근 재무제표를 확인하고 있어요",
+          "분기 실적 화면을 준비하고 있어요",
+          "공시 비교를 열고 있어요",
+          "회사·산업 정보를 불러오고 있어요",
+          "핵심 지표를 불러오고 있어요",
+          "관련 뉴스를 불러오고 있어요"
+        ],
+        "partialStates": [],
+        "pageErrors": []
+      }
+    },
+    {
+      "route": "tools",
+      "label": "투자 도구",
+      "run": 0,
+      "browserColdMs": 134,
+      "usableDataMs": 134,
+      "coldMs": 134,
+      "coldShellMs": 127,
+      "coldReadyState": "ready",
+      "navTtfbMs": 40,
+      "apiCold": [
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": null,
+          "completedBodies": 0,
+          "pending": 1,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": null,
+          "httpErrors": 0,
+          "status": "pending",
+          "meta": null
+        }
+      ],
+      "requestsCold": [
+        {
+          "path": "/api/activity",
+          "key": "/api/activity",
+          "method": "POST",
+          "state": "pending",
+          "ms": null,
+          "headersMs": null,
+          "bodyComplete": false,
+          "status": null,
+          "decodedBodyBytes": null,
+          "meta": null
+        }
+      ],
+      "coldDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 84
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 84
+          }
+        ],
+        "resources": [
+          {
+            "path": "/assets/index-CQAV79Ao.js",
+            "initiator": "script",
+            "durationMs": 28,
+            "transferBytes": 109354,
+            "encodedBodyBytes": 109054,
+            "decodedBodyBytes": 326520
+          },
+          {
+            "path": "/assets/index-Dxg0oyWK.css",
+            "initiator": "link",
+            "durationMs": 28,
+            "transferBytes": 32951,
+            "encodedBodyBytes": 32651,
+            "decodedBodyBytes": 172894
+          }
+        ],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [],
+        "pageErrors": []
+      },
+      "warmPrimingReadyState": "ready",
+      "warmMs": 7,
+      "warmUsableDataMs": 7,
+      "warmReadyState": "ready",
+      "warmAwayReadyState": "ready",
+      "apiWarm": [],
+      "requestsWarm": [],
+      "warmDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 84
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 84
+          }
+        ],
+        "resources": [],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [],
+        "pageErrors": []
+      },
+      "spaMs": 26,
+      "spaUsableDataMs": 26,
+      "spaReadyState": "ready",
+      "spaFromHomeReadyState": "ready",
+      "apiSpa": [],
+      "requestsSpa": [],
+      "spaDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 104
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 104
+          }
+        ],
+        "resources": [],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [],
+        "pageErrors": []
+      }
+    },
+    {
+      "route": "info",
+      "label": "데이터·이용 안내",
+      "run": 0,
+      "browserColdMs": 138,
+      "usableDataMs": 138,
+      "coldMs": 138,
+      "coldShellMs": 132,
+      "coldReadyState": "ready",
+      "navTtfbMs": 43,
+      "apiCold": [
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": null,
+          "completedBodies": 0,
+          "pending": 1,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": null,
+          "httpErrors": 0,
+          "status": "pending",
+          "meta": null
+        }
+      ],
+      "requestsCold": [
+        {
+          "path": "/api/activity",
+          "key": "/api/activity",
+          "method": "POST",
+          "state": "pending",
+          "ms": null,
+          "headersMs": null,
+          "bodyComplete": false,
+          "status": null,
+          "decodedBodyBytes": null,
+          "meta": null
+        }
+      ],
+      "coldDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 88
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 88
+          }
+        ],
+        "resources": [
+          {
+            "path": "/assets/index-CQAV79Ao.js",
+            "initiator": "script",
+            "durationMs": 27,
+            "transferBytes": 109354,
+            "encodedBodyBytes": 109054,
+            "decodedBodyBytes": 326520
+          },
+          {
+            "path": "/assets/index-Dxg0oyWK.css",
+            "initiator": "link",
+            "durationMs": 25,
+            "transferBytes": 32951,
+            "encodedBodyBytes": 32651,
+            "decodedBodyBytes": 172894
+          }
+        ],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [],
+        "pageErrors": []
+      },
+      "warmPrimingReadyState": "ready",
+      "warmMs": 9,
+      "warmUsableDataMs": 9,
+      "warmReadyState": "ready",
+      "warmAwayReadyState": "ready",
+      "apiWarm": [],
+      "requestsWarm": [],
+      "warmDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 88
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 88
+          }
+        ],
+        "resources": [],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [],
+        "pageErrors": []
+      },
+      "spaMs": 16,
+      "spaUsableDataMs": 16,
+      "spaReadyState": "ready",
+      "spaFromHomeReadyState": "ready",
+      "apiSpa": [
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": null,
+          "completedBodies": 0,
+          "pending": 1,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": null,
+          "httpErrors": 0,
+          "status": "pending",
+          "meta": null
+        }
+      ],
+      "requestsSpa": [
+        {
+          "path": "/api/activity",
+          "key": "/api/activity",
+          "method": "POST",
+          "state": "pending",
+          "ms": null,
+          "headersMs": null,
+          "bodyComplete": false,
+          "status": null,
+          "decodedBodyBytes": null,
+          "meta": null
+        }
+      ],
+      "spaDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 100
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 100
+          }
+        ],
+        "resources": [],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [],
+        "pageErrors": []
+      }
+    },
+    {
+      "route": "exports",
+      "label": "수출 데이터",
+      "run": 0,
+      "browserColdMs": 742,
+      "usableDataMs": 742,
+      "coldMs": 742,
+      "coldShellMs": 135,
+      "coldReadyState": "ready",
+      "navTtfbMs": 42,
+      "apiCold": [
+        {
+          "key": "/api/export-momentum?balanceBasis=signed-v1",
+          "path": "/api/export-momentum",
+          "calls": 1,
+          "ms": 306,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 10487,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 283,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum/momentum-map",
+          "path": "/api/export-momentum/momentum-map",
+          "calls": 1,
+          "ms": null,
+          "completedBodies": 0,
+          "pending": 1,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": null,
+          "httpErrors": 0,
+          "status": "pending",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum/provisional",
+          "path": "/api/export-momentum/provisional",
+          "calls": 1,
+          "ms": null,
+          "completedBodies": 0,
+          "pending": 1,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": null,
+          "httpErrors": 0,
+          "status": "pending",
+          "meta": null
+        }
+      ],
+      "requestsCold": [
+        {
+          "path": "/api/activity",
+          "key": "/api/activity",
+          "method": "POST",
+          "state": "complete",
+          "ms": 283,
+          "headersMs": 282,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 29,
+          "meta": null
+        },
+        {
+          "path": "/api/export-momentum",
+          "key": "/api/export-momentum?balanceBasis=signed-v1",
+          "method": "GET",
+          "state": "complete",
+          "ms": 306,
+          "headersMs": 306,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 10487,
+          "meta": null
+        },
+        {
+          "path": "/api/export-momentum/momentum-map",
+          "key": "/api/export-momentum/momentum-map",
+          "method": "GET",
+          "state": "pending",
+          "ms": null,
+          "headersMs": null,
+          "bodyComplete": false,
+          "status": null,
+          "decodedBodyBytes": null,
+          "meta": null
+        },
+        {
+          "path": "/api/export-momentum/provisional",
+          "key": "/api/export-momentum/provisional",
+          "method": "GET",
+          "state": "pending",
+          "ms": null,
+          "headersMs": null,
+          "bodyComplete": false,
+          "status": null,
+          "decodedBodyBytes": null,
+          "meta": null
+        }
+      ],
+      "coldDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 92
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 92
+          }
+        ],
+        "resources": [
+          {
+            "path": "/assets/index-CQAV79Ao.js",
+            "initiator": "script",
+            "durationMs": 28,
+            "transferBytes": 109354,
+            "encodedBodyBytes": 109054,
+            "decodedBodyBytes": 326520
+          },
+          {
+            "path": "/assets/index-Dxg0oyWK.css",
+            "initiator": "link",
+            "durationMs": 27,
+            "transferBytes": 32951,
+            "encodedBodyBytes": 32651,
+            "decodedBodyBytes": 172894
+          },
+          {
+            "path": "/assets/exportMomentumView-BsGrR1ks.js",
+            "initiator": "script",
+            "durationMs": 288,
+            "transferBytes": 18578,
+            "encodedBodyBytes": 18278,
+            "decodedBodyBytes": 70076
+          },
+          {
+            "path": "/assets/exportMomentumData-D7_3xyEZ.js",
+            "initiator": "script",
+            "durationMs": 25,
+            "transferBytes": 4865,
+            "encodedBodyBytes": 4565,
+            "decodedBodyBytes": 17390
+          },
+          {
+            "path": "/assets/exportMomentum-C3FdwORK.css",
+            "initiator": "link",
+            "durationMs": 279,
+            "transferBytes": 11542,
+            "encodedBodyBytes": 11242,
+            "decodedBodyBytes": 66691
+          }
+        ],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [
+          {
+            "state": "ready",
+            "text": "대한민국 수출 · 관세청 통관기준 월간 실적\n          2026년 9월\n          관세청 월간 실적에서 품목과 국가별 흐름을 살펴보세요.\n        \n        관세청 API\n      \n      \n      \n        총"
+          }
+        ],
+        "pageErrors": []
+      },
+      "warmPrimingReadyState": "ready",
+      "warmMs": 56,
+      "warmUsableDataMs": 56,
+      "warmReadyState": "ready",
+      "warmAwayReadyState": "ready",
+      "apiWarm": [],
+      "requestsWarm": [],
+      "warmDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 92
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 92
+          }
+        ],
+        "resources": [],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [
+          {
+            "state": "ready",
+            "text": "대한민국 수출 · 관세청 통관기준 월간 실적\n          2026년 9월\n          관세청 월간 실적에서 품목과 국가별 흐름을 살펴보세요.\n        \n        관세청 API\n      \n      \n      \n        총"
+          }
+        ],
+        "pageErrors": []
+      },
+      "spaMs": 81,
+      "spaUsableDataMs": 81,
+      "spaReadyState": "ready",
+      "spaFromHomeReadyState": "ready",
+      "apiSpa": [
+        {
+          "key": "/api/export-momentum/momentum-map",
+          "path": "/api/export-momentum/momentum-map",
+          "calls": 1,
+          "ms": null,
+          "completedBodies": 0,
+          "pending": 1,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": null,
+          "httpErrors": 0,
+          "status": "pending",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum/provisional",
+          "path": "/api/export-momentum/provisional",
+          "calls": 1,
+          "ms": null,
+          "completedBodies": 0,
+          "pending": 1,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": null,
+          "httpErrors": 0,
+          "status": "pending",
+          "meta": null
+        }
+      ],
+      "requestsSpa": [
+        {
+          "path": "/api/export-momentum/momentum-map",
+          "key": "/api/export-momentum/momentum-map",
+          "method": "GET",
+          "state": "pending",
+          "ms": null,
+          "headersMs": null,
+          "bodyComplete": false,
+          "status": null,
+          "decodedBodyBytes": null,
+          "meta": null
+        },
+        {
+          "path": "/api/export-momentum/provisional",
+          "key": "/api/export-momentum/provisional",
+          "method": "GET",
+          "state": "pending",
+          "ms": null,
+          "headersMs": null,
+          "bodyComplete": false,
+          "status": null,
+          "decodedBodyBytes": null,
+          "meta": null
+        }
+      ],
+      "spaDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 92
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 92
+          }
+        ],
+        "resources": [
+          {
+            "path": "/assets/exportMomentumView-BsGrR1ks.js",
+            "initiator": "script",
+            "durationMs": 35,
+            "transferBytes": 18578,
+            "encodedBodyBytes": 18278,
+            "decodedBodyBytes": 70076
+          },
+          {
+            "path": "/assets/exportMomentum-C3FdwORK.css",
+            "initiator": "link",
+            "durationMs": 41,
+            "transferBytes": 11542,
+            "encodedBodyBytes": 11242,
+            "decodedBodyBytes": 66691
+          }
+        ],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [
+          {
+            "state": "ready",
+            "text": "대한민국 수출 · 관세청 통관기준 월간 실적\n          2026년 9월\n          관세청 월간 실적에서 품목과 국가별 흐름을 살펴보세요.\n        \n        관세청 API\n      \n      \n      \n        총"
+          }
+        ],
+        "pageErrors": []
+      }
+    },
+    {
+      "route": "gurus",
+      "label": "거장 투자법",
+      "run": 0,
+      "browserColdMs": 1276,
+      "usableDataMs": 1276,
+      "coldMs": 1276,
+      "coldShellMs": 118,
+      "coldReadyState": "ready",
+      "navTtfbMs": 36,
+      "apiCold": [
+        {
+          "key": "/shoon94parkk-del/chart_View/main/static/data/guru_screening.json",
+          "path": "/shoon94parkk-del/chart_View/main/static/data/guru_screening.json",
+          "calls": 1,
+          "ms": 860,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 218448,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 327,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        }
+      ],
+      "requestsCold": [
+        {
+          "path": "/api/activity",
+          "key": "/api/activity",
+          "method": "POST",
+          "state": "complete",
+          "ms": 327,
+          "headersMs": 326,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 29,
+          "meta": null
+        },
+        {
+          "path": "/shoon94parkk-del/chart_View/main/static/data/guru_screening.json",
+          "key": "/shoon94parkk-del/chart_View/main/static/data/guru_screening.json",
+          "method": "GET",
+          "state": "complete",
+          "ms": 860,
+          "headersMs": 858,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 218448,
+          "meta": null
+        }
+      ],
+      "coldDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 80
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 80
+          }
+        ],
+        "resources": [
+          {
+            "path": "/assets/index-CQAV79Ao.js",
+            "initiator": "script",
+            "durationMs": 23,
+            "transferBytes": 109354,
+            "encodedBodyBytes": 109054,
+            "decodedBodyBytes": 326520
+          },
+          {
+            "path": "/assets/index-Dxg0oyWK.css",
+            "initiator": "link",
+            "durationMs": 24,
+            "transferBytes": 32951,
+            "encodedBodyBytes": 32651,
+            "decodedBodyBytes": 172894
+          },
+          {
+            "path": "/assets/guruInvestingView-BzLAuFMQ.css",
+            "initiator": "link",
+            "durationMs": 243,
+            "transferBytes": 1786,
+            "encodedBodyBytes": 1486,
+            "decodedBodyBytes": 5625
+          },
+          {
+            "path": "/assets/guruInvestingView-DnUUXPZJ.js",
+            "initiator": "script",
+            "durationMs": 283,
+            "transferBytes": 9365,
+            "encodedBodyBytes": 9065,
+            "decodedBodyBytes": 22877
+          }
+        ],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [],
+        "pageErrors": []
+      },
+      "warmPrimingReadyState": "ready",
+      "warmMs": 56,
+      "warmUsableDataMs": 56,
+      "warmReadyState": "ready",
+      "warmAwayReadyState": "ready",
+      "apiWarm": [],
+      "requestsWarm": [],
+      "warmDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 80
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 80
+          }
+        ],
+        "resources": [],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [],
+        "pageErrors": []
+      },
+      "spaMs": 869,
+      "spaUsableDataMs": 869,
+      "spaReadyState": "ready",
+      "spaFromHomeReadyState": "ready",
+      "apiSpa": [
+        {
+          "key": "/shoon94parkk-del/chart_View/main/static/data/guru_screening.json",
+          "path": "/shoon94parkk-del/chart_View/main/static/data/guru_screening.json",
+          "calls": 1,
+          "ms": 794,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 218448,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/shoon94parkk-del/chart_View/main/static/data/pick_monitor.json",
+          "path": "/shoon94parkk-del/chart_View/main/static/data/pick_monitor.json",
+          "calls": 1,
+          "ms": 374,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 90531,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        }
+      ],
+      "requestsSpa": [
+        {
+          "path": "/shoon94parkk-del/chart_View/main/static/data/pick_monitor.json",
+          "key": "/shoon94parkk-del/chart_View/main/static/data/pick_monitor.json",
+          "method": "GET",
+          "state": "complete",
+          "ms": 374,
+          "headersMs": 374,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 90531,
+          "meta": null
+        },
+        {
+          "path": "/shoon94parkk-del/chart_View/main/static/data/guru_screening.json",
+          "key": "/shoon94parkk-del/chart_View/main/static/data/guru_screening.json",
+          "method": "GET",
+          "state": "complete",
+          "ms": 794,
+          "headersMs": 793,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 218448,
+          "meta": null
+        }
+      ],
+      "spaDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 104
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 104
+          }
+        ],
+        "resources": [
+          {
+            "path": "/assets/guruInvestingView-BzLAuFMQ.css",
+            "initiator": "link",
+            "durationMs": 27,
+            "transferBytes": 1786,
+            "encodedBodyBytes": 1486,
+            "decodedBodyBytes": 5625
+          },
+          {
+            "path": "/assets/guruInvestingView-DnUUXPZJ.js",
+            "initiator": "script",
+            "durationMs": 37,
+            "transferBytes": 9365,
+            "encodedBodyBytes": 9065,
+            "decodedBodyBytes": 22877
+          }
+        ],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [],
+        "pageErrors": []
+      }
+    },
+    {
+      "route": "picks",
+      "label": "선정 기록",
+      "run": 0,
+      "browserColdMs": 639,
+      "usableDataMs": 639,
+      "coldMs": 639,
+      "coldShellMs": 113,
+      "coldReadyState": "ready",
+      "navTtfbMs": 34,
+      "apiCold": [
+        {
+          "key": "/api/home-bootstrap",
+          "path": "/api/home-bootstrap",
+          "calls": 1,
+          "ms": 253,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 24178,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 252,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/shoon94parkk-del/chart_View/main/static/data/pick_monitor.json",
+          "path": "/shoon94parkk-del/chart_View/main/static/data/pick_monitor.json",
+          "calls": 1,
+          "ms": null,
+          "completedBodies": 0,
+          "pending": 1,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": null,
+          "httpErrors": 0,
+          "status": "pending",
+          "meta": null
+        }
+      ],
+      "requestsCold": [
+        {
+          "path": "/api/activity",
+          "key": "/api/activity",
+          "method": "POST",
+          "state": "complete",
+          "ms": 252,
+          "headersMs": 252,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 29,
+          "meta": null
+        },
+        {
+          "path": "/shoon94parkk-del/chart_View/main/static/data/pick_monitor.json",
+          "key": "/shoon94parkk-del/chart_View/main/static/data/pick_monitor.json",
+          "method": "GET",
+          "state": "pending",
+          "ms": null,
+          "headersMs": null,
+          "bodyComplete": false,
+          "status": null,
+          "decodedBodyBytes": null,
+          "meta": null
+        },
+        {
+          "path": "/api/home-bootstrap",
+          "key": "/api/home-bootstrap",
+          "method": "GET",
+          "state": "complete",
+          "ms": 253,
+          "headersMs": 252,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 24178,
+          "meta": null
+        }
+      ],
+      "coldDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 80
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 80
+          }
+        ],
+        "resources": [
+          {
+            "path": "/assets/index-CQAV79Ao.js",
+            "initiator": "script",
+            "durationMs": 26,
+            "transferBytes": 109354,
+            "encodedBodyBytes": 109054,
+            "decodedBodyBytes": 326520
+          },
+          {
+            "path": "/assets/index-Dxg0oyWK.css",
+            "initiator": "link",
+            "durationMs": 26,
+            "transferBytes": 32951,
+            "encodedBodyBytes": 32651,
+            "decodedBodyBytes": 172894
+          },
+          {
+            "path": "/assets/pickLedger-BYNTcGLT.css",
+            "initiator": "link",
+            "durationMs": 251,
+            "transferBytes": 2997,
+            "encodedBodyBytes": 2697,
+            "decodedBodyBytes": 12222
+          },
+          {
+            "path": "/assets/pickLedger-CcJhyjj_.js",
+            "initiator": "script",
+            "durationMs": 24,
+            "transferBytes": 7865,
+            "encodedBodyBytes": 7565,
+            "decodedBodyBytes": 20913
+          }
+        ],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [
+          "사후점검 상태를 확인하고 있어요. 성과 기록은 이용할 수 있어요.",
+          "사후점검 상태를 확인하고 있어요. 성과 기록은 이용할 수 있어요."
+        ],
+        "partialStates": [
+          {
+            "state": "loading",
+            "text": "사후점검 상태를 확인하고 있어요. 성과 기록은 이용할 수 있어요."
+          }
+        ],
+        "pageErrors": []
+      },
+      "warmPrimingReadyState": "ready",
+      "warmMs": 57,
+      "warmUsableDataMs": 57,
+      "warmReadyState": "ready",
+      "warmAwayReadyState": "ready",
+      "apiWarm": [],
+      "requestsWarm": [],
+      "warmDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 80
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 80
+          }
+        ],
+        "resources": [],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [
+          "사후점검 상태를 확인하고 있어요. 성과 기록은 이용할 수 있어요.",
+          "사후점검 상태를 확인하고 있어요. 성과 기록은 이용할 수 있어요."
+        ],
+        "partialStates": [
+          {
+            "state": "loading",
+            "text": "사후점검 상태를 확인하고 있어요. 성과 기록은 이용할 수 있어요."
+          }
+        ],
+        "pageErrors": []
+      },
+      "spaMs": 62,
+      "spaUsableDataMs": 62,
+      "spaReadyState": "ready",
+      "spaFromHomeReadyState": "ready",
+      "apiSpa": [],
+      "requestsSpa": [],
+      "spaDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 76
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 76
+          }
+        ],
+        "resources": [
+          {
+            "path": "/assets/pickLedger-BYNTcGLT.css",
+            "initiator": "link",
+            "durationMs": 25,
+            "transferBytes": 2997,
+            "encodedBodyBytes": 2697,
+            "decodedBodyBytes": 12222
+          }
+        ],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [
+          "사후점검 상태를 확인하고 있어요. 성과 기록은 이용할 수 있어요.",
+          "사후점검 상태를 확인하고 있어요. 성과 기록은 이용할 수 있어요."
+        ],
+        "partialStates": [
+          {
+            "state": "loading",
+            "text": "사후점검 상태를 확인하고 있어요. 성과 기록은 이용할 수 있어요."
+          }
+        ],
+        "pageErrors": []
+      }
+    },
+    {
+      "route": "memory",
+      "label": "반도체 가격",
+      "run": 0,
+      "browserColdMs": 620,
+      "usableDataMs": 620,
+      "coldMs": 620,
+      "coldShellMs": 111,
+      "coldReadyState": "ready",
+      "navTtfbMs": 29,
+      "apiCold": [
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 259,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/memory-prices",
+          "path": "/api/memory-prices",
+          "calls": 1,
+          "ms": 252,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 9291,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        }
+      ],
+      "requestsCold": [
+        {
+          "path": "/api/activity",
+          "key": "/api/activity",
+          "method": "POST",
+          "state": "complete",
+          "ms": 259,
+          "headersMs": 258,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 29,
+          "meta": null
+        },
+        {
+          "path": "/api/memory-prices",
+          "key": "/api/memory-prices",
+          "method": "GET",
+          "state": "complete",
+          "ms": 252,
+          "headersMs": 252,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 9291,
+          "meta": null
+        }
+      ],
+      "coldDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 80
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 80
+          }
+        ],
+        "resources": [
+          {
+            "path": "/assets/index-Dxg0oyWK.css",
+            "initiator": "link",
+            "durationMs": 26,
+            "transferBytes": 32951,
+            "encodedBodyBytes": 32651,
+            "decodedBodyBytes": 172894
+          },
+          {
+            "path": "/assets/index-CQAV79Ao.js",
+            "initiator": "script",
+            "durationMs": 28,
+            "transferBytes": 109354,
+            "encodedBodyBytes": 109054,
+            "decodedBodyBytes": 326520
+          },
+          {
+            "path": "/assets/memoryPriceView-BuN6S7xH.js",
+            "initiator": "script",
+            "durationMs": 250,
+            "transferBytes": 3516,
+            "encodedBodyBytes": 3216,
+            "decodedBodyBytes": 7239
+          },
+          {
+            "path": "/assets/exportMomentum-C3FdwORK.css",
+            "initiator": "link",
+            "durationMs": 26,
+            "transferBytes": 11542,
+            "encodedBodyBytes": 11242,
+            "decodedBodyBytes": 66691
+          },
+          {
+            "path": "/assets/exportMomentumData-D7_3xyEZ.js",
+            "initiator": "script",
+            "durationMs": 35,
+            "transferBytes": 4865,
+            "encodedBodyBytes": 4565,
+            "decodedBodyBytes": 17390
+          }
+        ],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [],
+        "pageErrors": []
+      },
+      "warmPrimingReadyState": "ready",
+      "warmMs": 54,
+      "warmUsableDataMs": 54,
+      "warmReadyState": "ready",
+      "warmAwayReadyState": "ready",
+      "apiWarm": [],
+      "requestsWarm": [],
+      "warmDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 80
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 80
+          }
+        ],
+        "resources": [],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [],
+        "pageErrors": []
+      },
+      "spaMs": 310,
+      "spaUsableDataMs": 310,
+      "spaReadyState": "ready",
+      "spaFromHomeReadyState": "ready",
+      "apiSpa": [
+        {
+          "key": "/api/memory-prices",
+          "path": "/api/memory-prices",
+          "calls": 1,
+          "ms": 254,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 9291,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/shoon94parkk-del/chart_View/main/static/data/pick_monitor.json",
+          "path": "/shoon94parkk-del/chart_View/main/static/data/pick_monitor.json",
+          "calls": 1,
+          "ms": 220,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 90531,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        }
+      ],
+      "requestsSpa": [
+        {
+          "path": "/shoon94parkk-del/chart_View/main/static/data/pick_monitor.json",
+          "key": "/shoon94parkk-del/chart_View/main/static/data/pick_monitor.json",
+          "method": "GET",
+          "state": "complete",
+          "ms": 220,
+          "headersMs": 219,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 90531,
+          "meta": null
+        },
+        {
+          "path": "/api/memory-prices",
+          "key": "/api/memory-prices",
+          "method": "GET",
+          "state": "complete",
+          "ms": 254,
+          "headersMs": 253,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 9291,
+          "meta": null
+        }
+      ],
+      "spaDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 84
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 84
+          }
+        ],
+        "resources": [
+          {
+            "path": "/assets/memoryPriceView-BuN6S7xH.js",
+            "initiator": "script",
+            "durationMs": 28,
+            "transferBytes": 3516,
+            "encodedBodyBytes": 3216,
+            "decodedBodyBytes": 7239
+          },
+          {
+            "path": "/assets/exportMomentum-C3FdwORK.css",
+            "initiator": "link",
+            "durationMs": 26,
+            "transferBytes": 11542,
+            "encodedBodyBytes": 11242,
+            "decodedBodyBytes": 66691
+          }
+        ],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [],
+        "pageErrors": []
+      }
+    },
+    {
+      "route": "more",
+      "label": "전체 메뉴",
+      "run": 0,
+      "browserColdMs": 149,
+      "usableDataMs": 149,
+      "coldMs": 149,
+      "coldShellMs": 142,
+      "coldReadyState": "ready",
+      "navTtfbMs": 46,
+      "apiCold": [
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": null,
+          "completedBodies": 0,
+          "pending": 1,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": null,
+          "httpErrors": 0,
+          "status": "pending",
+          "meta": null
+        }
+      ],
+      "requestsCold": [
+        {
+          "path": "/api/activity",
+          "key": "/api/activity",
+          "method": "POST",
+          "state": "pending",
+          "ms": null,
+          "headersMs": null,
+          "bodyComplete": false,
+          "status": null,
+          "decodedBodyBytes": null,
+          "meta": null
+        }
+      ],
+      "coldDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 92
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 92
+          }
+        ],
+        "resources": [
+          {
+            "path": "/assets/index-CQAV79Ao.js",
+            "initiator": "script",
+            "durationMs": 31,
+            "transferBytes": 109354,
+            "encodedBodyBytes": 109054,
+            "decodedBodyBytes": 326520
+          },
+          {
+            "path": "/assets/index-Dxg0oyWK.css",
+            "initiator": "link",
+            "durationMs": 27,
+            "transferBytes": 32951,
+            "encodedBodyBytes": 32651,
+            "decodedBodyBytes": 172894
+          }
+        ],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [],
+        "pageErrors": []
+      },
+      "warmPrimingReadyState": "ready",
+      "warmMs": 18,
+      "warmUsableDataMs": 18,
+      "warmReadyState": "ready",
+      "warmAwayReadyState": "ready",
+      "apiWarm": [
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": null,
+          "completedBodies": 0,
+          "pending": 1,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": null,
+          "httpErrors": 0,
+          "status": "pending",
+          "meta": null
+        }
+      ],
+      "requestsWarm": [
+        {
+          "path": "/api/activity",
+          "key": "/api/activity",
+          "method": "POST",
+          "state": "pending",
+          "ms": null,
+          "headersMs": null,
+          "bodyComplete": false,
+          "status": null,
+          "decodedBodyBytes": null,
+          "meta": null
+        }
+      ],
+      "warmDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 92
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 92
+          }
+        ],
+        "resources": [],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [],
+        "pageErrors": []
+      },
+      "spaMs": 15,
+      "spaUsableDataMs": 15,
+      "spaReadyState": "ready",
+      "spaFromHomeReadyState": "ready",
+      "apiSpa": [
+        {
+          "key": "/shoon94parkk-del/chart_View/main/static/data/pick_monitor.json",
+          "path": "/shoon94parkk-del/chart_View/main/static/data/pick_monitor.json",
+          "calls": 1,
+          "ms": null,
+          "completedBodies": 0,
+          "pending": 1,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": null,
+          "httpErrors": 0,
+          "status": "pending",
+          "meta": null
+        },
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": null,
+          "completedBodies": 0,
+          "pending": 1,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": null,
+          "httpErrors": 0,
+          "status": "pending",
+          "meta": null
+        }
+      ],
+      "requestsSpa": [
+        {
+          "path": "/shoon94parkk-del/chart_View/main/static/data/pick_monitor.json",
+          "key": "/shoon94parkk-del/chart_View/main/static/data/pick_monitor.json",
+          "method": "GET",
+          "state": "pending",
+          "ms": null,
+          "headersMs": null,
+          "bodyComplete": false,
+          "status": null,
+          "decodedBodyBytes": null,
+          "meta": null
+        },
+        {
+          "path": "/api/activity",
+          "key": "/api/activity",
+          "method": "POST",
+          "state": "pending",
+          "ms": null,
+          "headersMs": null,
+          "bodyComplete": false,
+          "status": null,
+          "decodedBodyBytes": null,
+          "meta": null
+        }
+      ],
+      "spaDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 100
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 100
+          }
+        ],
+        "resources": [],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "visibleLoaders": [],
+        "partialStates": [],
+        "pageErrors": []
+      }
+    }
+  ]
+}

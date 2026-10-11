@@ -18,7 +18,6 @@ import './uiExperience.css';
 import './emphasis.css';
 import './mobileContinuity.css';
 import { SHOW_SPOTLIGHT } from './releaseScope.js';
-import { ANALYSIS_ROUTES, renderAnalysis } from './analysisViews.js';
 import packageInfo from '../package.json';
 import { finiteNumber } from './analysisData.js';
 import { marketNowLive } from './api.js';
@@ -43,6 +42,7 @@ import './watchlist.css';
 import { bindHorizontalTabs } from './accessibleTabs.js';
 import { loadDetailModule } from './detailModuleRecovery.js';
 
+const ANALYSIS_ROUTES=new Set(['discover','heatmap','consensus','bands','tools']);
 const WATCHLIST_KEY='chartview-toss-watchlist-v1';
 const SELECTED_KEY='chartview-toss-selected-v1';
 const WATCHLIST_LIMIT=20;
@@ -1705,7 +1705,12 @@ function render(){
    renderLazyAnalysis({tab:'picks',title:'선정 기록·성과',load:()=>Promise.all([import('./pickLedger.js'),import('./pickLedger.css')]),mount:([ledger])=>ledger.renderPickLedger({shell,bindNav,displayName,focusKey:state.pickFocusKey,restoreView,viewState:state.pickLedger||(state.pickLedger={})})});
    return;
  }
- if(ANALYSIS_ROUTES.has(state.tab)){cleanupChart();analysisCleanup=renderAnalysis({tab:state.tab,state,shell,bindNav,displayName,openCompareSheet});return;}
+ if(ANALYSIS_ROUTES.has(state.tab)){
+   const tab=state.tab;
+   const title={discover:featureLabel('discover'),heatmap:'시장 히트맵',consensus:'실적 전망 조회',bands:'역사적 밸류에이션',tools:'투자 도구'}[tab];
+   renderLazyAnalysis({tab,title,load:()=>import('./analysisViews.js'),mount:view=>view.renderAnalysis({tab,state,shell,bindNav,displayName,openCompareSheet})});
+   return;
+ }
  if(state.tab==='news')return renderNews();
  if(state.tab==='detail')return renderDetail();
  if(state.tab==='info')return renderInfo();
