@@ -660,3 +660,10 @@ Independent data review passed1,352 assertions and5,000 seeded properties, with 
 ## 2026-10-08 — Independent primary loading and recoverable optional detail modules
 
 Classification: new loading dependency bugs, missing host-local chunk recovery and hidden applied-filter feedback; diagnostic false readiness is a regression. User authorized implementation of the holistic improvement plan. Native coordinator plus three subagents own disjoint PICK/export changes and read-only review. Preserve UI/CSS, finance/source/HS/zero/missing contracts, default CDN/earlyHome paths and existing Render infrastructure. PICK bootstrap and monitoring render/retry independently; explicit retry can bypass a malformed HTTP200 cache. Export monthly panels are populated without replacing an already usable industry/DRAM panel; selected industry alone is requested and late monthly completion cannot steal restored keyboard tab focus. Preserve real dated ledger records, true Back restoration and primary performance denominator; never certify pending/error monitor statuses. Guru uses the existing bounded lazy coordinator; optional research/quarter modules show host-local failure, retain route-owned preload assets even on late failure, and abort repair on navigation. Manual condition summary reports actual active form values. Performance probes separate primary usable/error/unavailable/empty outcomes, include CDN/body timing and avoid fixed settling sleeps. See UX_LOADING_IMPROVEMENTS_20261008.md for same-harness evidence and final validation. No new LLM/API key/paid infrastructure or automatic memory service.
+
+## 2026-10-11 — 수출 전체 요약 잠정치·영업일 보정
+- 차트뷰 전체 홈 수정 없음. 수출 `전체 요약` 탭에서만 10일 단위 잠정치 요약을 월간 통계보다 우선 배치한다.
+- YoY/MoM은 관세청 대분류의 동일 구간 원자료를 기본 표시한다. 영업일 보정은 OFF가 기본이며, 별도 명시된 해당 구간의 법정/대체공휴일 제외 일수를 사용해 일평균 수출액 기준 성장률을 계산한다. 영업일 메타데이터가 없으면 옵션을 비활성화하며 임의 보정하지 않는다.
+- 수동 새로고침 및 표시된 자료 기준월/갱신 실패 상태를 제공한다. 세부 HSK/DRAM/NAND/HBM 10일치를 관세청 10대품목 API 대분류와 혼합하거나 사용자 입력 수치를 공식값으로 표기하지 않는다.
+- 테스트: `tests/export_momentum.test.mjs`, `tests/export_provisional_digest.test.mjs`, `tests/e2e/exports.spec.mjs`.
+- 백엔드 호환성: `chart_View`의 `businessDays` 확장 필드는 선택적이며, 기존 필드를 변경하지 않는다.

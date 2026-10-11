@@ -5,6 +5,7 @@ import {
   chartPct,
   checkpointProgress,
   exportDriverLabel,
+  businessDayAdjustedGrowth,
   formatPp,
   formatSignedPct,
   formatSignedUsdBillion,
@@ -353,4 +354,22 @@ test('month-end landing projection preserves range actual review and backtest qu
   assert.equal(radar.landingProjection.total.backtest.medianAbsErrorPct,6.1);
   assert.equal(radar.landingProjection.semiconductor.rangeHighUsdBillion,62.7);
   assert.equal(radar.landingProjection.semiconductor.backtest.rangeHitPct,75);
+});
+
+test('business-day adjusted growth compares same windows without inventing missing metrics',()=>{
+  assert.equal(businessDayAdjustedGrowth(79,100,5,8),26.4);
+  assert.equal(businessDayAdjustedGrowth(79,100,5,3),-52.6);
+  assert.equal(businessDayAdjustedGrowth(79,100,0,8),null);
+  assert.equal(businessDayAdjustedGrowth(null,100,5,8),null);
+  assert.equal(businessDayAdjustedGrowth(79,null,5,8),null);
+  assert.equal(businessDayAdjustedGrowth(79,0,5,8),null);
+  assert.equal(businessDayAdjustedGrowth(79,100,5.5,8),null);
+  const normalized=normalizeExportProvisionalRadar({
+    period:'2026-10',latestStage:10,checkpoints:[{stage:10,label:'1~10일'}],
+    businessDays:{stage:10,current:5,previousMonth:8,priorYear:3},
+  });
+  assert.deepEqual(
+    [normalized.businessDays.current,normalized.businessDays.previousMonth,normalized.businessDays.priorYear],
+    [5,8,3],
+  );
 });
