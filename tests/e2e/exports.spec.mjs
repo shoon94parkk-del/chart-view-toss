@@ -127,3 +127,31 @@ test('10 수출 일부 누락·503: 월간 그래프 유지, 해당 품목만 �
   expect(qa.calls.filter(call => call.path === '/api/export-momentum')).toHaveLength(1);
   await noOverflow(page);
 });
+
+test('수출 전체 요약: 잠정치 우선 노출·모바일 영업일 보정 전환·강제 갱신',async({page,qa})=>{
+  const radar={
+    period:'2026-10',latestStage:10,latestStageLabel:'1~10일',
+    businessDays:{stage:10,current:5,previousMonth:8,priorYear:3},
+    checkpoints:[{stage:10,label:'1~10일',total:{exportsUsdBillion:20,priorYearUsdBillion:10,previousMonthUsdBillion:25,exportYoY:100,exportMoM:-20},
+      semiconductor:{exportsUsdBillion:10,priorYearUsdBillion:5,previousMonthUsdBillion:12.5,exportYoY:100,exportMoM:-20}}],
+    items:[{key:'semiconductor',name:'반도체',exportsUsdBillion:10,priorYearUsdBillion:5,previousMonthUsdBillion:12.5,exportYoY:100,exportMoM:-20}],
+  };
+  qa.overrides.set('/api/export-momentum/provisional',route=>route.fulfill({json:radar}));
+  await page.goto('/#exports');
+  const panel=page.getByRole('tabpanel',{name:'전체 요약'});
+  const digest=panel.locator('[data-export-digest]');
+  await expect(digest).toBeVisible();
+  await expect(digest).toContainText('2026년 10월 10일');
+  await expect(digest).toContainText('5영업일');
+  await expect(digest).toContainText('-20.0%');
+  const toggle=digest.locator('[data-export-workday-toggle]');
+  await touchable(toggle);
+  await toggle.click();
+  const updated=panel.locator('[data-export-digest]');
+  await expect(updated.locator('[data-export-workday-toggle]')).toHaveAttribute('aria-pressed','true');
+  await expect(updated).toContainText('+28.0%');
+  await updated.locator('[data-export-provisional-refresh]').click();
+  await expect(panel.locator('[data-export-digest]')).toContainText('2026년 10월 10일');
+  expect(qa.calls.filter(row=>row.path==='/api/export-momentum/provisional').length).toBeGreaterThan(1);
+  await noOverflow(page);
+});
