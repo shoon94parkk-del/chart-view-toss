@@ -31,10 +31,17 @@ try{
   await page.locator('[data-screener-preset="rsi-oversold"]').click();
   const hanchang=page.locator('.analysis-stock[data-stock-detail="005110.KS"]');
   await hanchang.waitFor();
-  const warning=await hanchang.locator('.data-quality-warning').count();
+  const hanchangRecord=page.locator('.analysis-stock-wrap').filter({has:hanchang});
+  const hanchangWarning=hanchangRecord.locator('.data-quality-warning');
+  const warning=await hanchangWarning.count();
   if(!observe){
    assert.equal(warning,1);assert.match(await hanchang.innerText(),/-91.07%/);assert.match(await hanchang.innerText(),/RSI 0/);
-   assert.doesNotMatch(await hanchang.locator('.data-quality-warning').innerText(),/감자|상장폐지/);
+   assert.match(await hanchang.innerText(),/변동 기준 확인/);
+   // The compact row signals the warning; its complete evidence is a sibling disclosure.
+   assert.equal(await hanchangWarning.isVisible(),false);
+   await hanchangRecord.locator('.analysis-stock-evidence>summary').click();
+   assert.equal(await hanchangWarning.isVisible(),true);
+   assert.doesNotMatch(await hanchangWarning.innerText(),/감자|상장폐지/);
   }
   await page.locator('[data-clear-preset]').click();
   const clearedRsi=await page.locator('[name="rsiMax"]').inputValue();
@@ -67,7 +74,7 @@ try{
   }
   await page.locator('#screener-filters button[type="reset"]').click();
   const alphanumeric=page.locator('.analysis-stock[data-stock-detail="0004V0.KQ"]');await alphanumeric.waitFor();
-  assert.equal(await alphanumeric.locator('.data-quality-warning').count(),0);
+  assert.equal(await page.locator('.analysis-stock-wrap').filter({has:alphanumeric}).locator('.data-quality-warning').count(),0);
   await page.screenshot({path:`${out}/${width}-${observe?'before':'after'}-screener.png`,fullPage:true});
   await page.evaluate(()=>window.__chartviewNavigate('ideas'));
   const idea=page.locator('[data-idea-symbol="005110.KS"]');await idea.waitFor();

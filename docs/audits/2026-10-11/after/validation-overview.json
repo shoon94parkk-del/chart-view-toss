@@ -3,7 +3,7 @@
   "branch": "improve/user-audit-20261011",
   "baseSha": "d4f3a9ff6eca2ed3d72d928869271c3a3ddf8552",
   "applicationSourceSha256": "13afc8f00e330e572a4aba2d474880aef5077121be81f7fbb788e753d2c93314",
-  "testSourceSha256": "7a6a42340e118c7e31441a9a5d207dd066cb12fa52a98afe51876a76b4f7201d",
+  "testSourceSha256": "20f5bfbaba9399e5b52356410033f89d8796a5fffccbb0b42686921967271bbd",
   "qaPrepushExitCode": 0,
   "node": {
     "passed": 390,
@@ -13,8 +13,8 @@
   "productionBuild": "passed",
   "directEntryRoutes": 26,
   "playwright": {
-    "startTime": "2026-10-11T05:05:58.181Z",
-    "duration": 656698.112,
+    "startTime": "2026-10-11T05:27:30.210Z",
+    "duration": 672013.1969999999,
     "expected": 680,
     "skipped": 0,
     "unexpected": 0,
@@ -46,5 +46,33 @@
     "productionJob": "skipped on PR"
   },
   "nativeSandbox": "not run",
-  "newLlmApiCalls": 0
+  "newLlmApiCalls": 0,
+  "sourceFingerprintMethod": "SHA-256 of UTF-8 JSON mapping relative path to file SHA-256, sorted keys, compact separators; src/ and tests/ separately",
+  "qaPrepushLog": "/workspace/scratch/chartview-ux-prepush-ci-followup.log",
+  "frozenFilesChecked": 240,
+  "legacyMobileQa": {
+    "applicationSourceChanged": false,
+    "previewBuildFilesByteIdentical": 85,
+    "entryAsset": "assets/index-BEb9wZHk.js",
+    "entryAssetSha256": "043565fb4caf3e0ab731909b7c00f4a71f0524c8ae0a78b13315823f2b61b2db",
+    "mobileRelease": {
+      "exitCode": 0,
+      "widths": [
+        320,
+        360,
+        390,
+        430
+      ],
+      "log": "/workspace/scratch/guru-mobile-ci-green/mobile-release-green.log"
+    },
+    "strategyReport": {
+      "exitCode": 0,
+      "widths": [
+        320,
+        390,
+        430
+      ],
+      "log": "/workspace/scratch/strategy-ci-current-green.log"
+    }
+  }
 }

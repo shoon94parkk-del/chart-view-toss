@@ -657,10 +657,16 @@ try{
   await ideaPage.goto(`${BASE}/#ideas`,{waitUntil:'networkidle'});
   await ideaPage.locator('.idea-card .idea-candidate').first().waitFor();
   if(await ideaPage.locator('#idea-body').getAttribute('aria-busy')!=='false') throw new Error('idea results did not leave the loading state');
-  const monitorBadge=ideaPage.locator('[data-idea-symbol="005930.KS"] .idea-monitor-status.sell').first();
+  const monitoredCandidate=ideaPage.locator('.idea-candidate-wrap[data-idea-symbol="005930.KS"]').first();
+  const monitorBadge=monitoredCandidate.locator('.idea-monitor-status.sell');
   await monitorBadge.waitFor();
-  const monitorText=await monitorBadge.innerText();
+  const monitorDetails=monitoredCandidate.locator('.idea-monitor-details');
+  if(await monitorDetails.evaluate(node=>node.open)) throw new Error('idea monitor evidence should start collapsed');
+  await monitorDetails.locator('summary').click();
+  await monitorDetails.locator('p').first().waitFor({state:'visible'});
+  const monitorText=[await monitorBadge.innerText(),await monitorDetails.innerText()].join('\n');
   if(!monitorText.includes('가격·거래 · 강한 기술 경고')||!monitorText.includes('RSI 81.7')||monitorText.includes('기업 근거 · 재점검 필요')) throw new Error(`idea/pick monitor conflict was not reconciled: ${monitorText}`);
+  if(!monitorText.includes('20일 수익률 +39.9% 급등')||!monitorText.includes('펀더멘털 근거는 유지되지만 단기 가격 과열을 함께 확인하세요.')||!monitorText.includes('기업 근거 검토 2026-10-02')||!monitorText.includes('가격·거래 기준 2026-10-02')) throw new Error(`idea monitor evidence is incomplete: ${monitorText}`);
   if(await ideaPage.locator('.idea-guide').evaluate(node=>node.open)) throw new Error('idea methodology should start collapsed');
   const firstIdea=await ideaPage.locator('.idea-card .idea-candidate').first().boundingBox();
   if(!firstIdea||firstIdea.y>=844) throw new Error(`the first idea candidate is below the first viewport: ${JSON.stringify(firstIdea)}`);
