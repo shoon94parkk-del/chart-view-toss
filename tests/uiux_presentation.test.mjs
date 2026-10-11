@@ -4,7 +4,16 @@ import vm from 'node:vm';
 import {readFileSync} from 'node:fs';
 import * as exportModel from '../src/exportMomentumModel.js';
 import {memoryMovements} from '../src/insightModel.js';
+import { PICK_METHOD, pickPriceBasis } from '../src/pickPerformanceBasis.js';
 const loadView=(file,imports={})=>{const context=vm.createContext(imports);vm.runInContext(readFileSync(new URL('../src/'+file,import.meta.url),'utf8').replace(/^import[\s\S]*?;\r?\n/gm,'').replaceAll('export ',''),context);return context;};
+test('compact saved research always exposes all records alongside an available filing refresh',()=>{
+ const rows=['005930.KS','000660.KS'].map(symbol=>({symbol,filing:{label:'2026 반기'},conditions:[],updatedAt:'2026-10-10',question:''}));
+ const view=loadView('savedResearchView.js',{savedResearch:()=>({rows,error:false}),reviewRevisit:()=>({kind:'new',label:'새 공시'})});
+ const html=view.savedResearchHtml(x=>x,{compact:true});
+ assert.match(html,/data-refresh-saved-research/);
+ assert.match(html,/data-tab="watch"[^>]*>모두 보기 · 2/);
+ assert.equal((html.match(/class="saved-research-row"/g)||[]).length,1);
+});
 test('item detail puts company investigation after summary and keeps country data in disclosures',()=>{
  const view=loadView('exportMomentumView.js',{...exportModel,memoryMovements});
  const html=view.renderItemDetail({key:'car',name:'자동차',note:'HS 87',period:'2026-08',history:[],countries:[]});
@@ -65,7 +74,7 @@ test('empty saved research provides one action to start investigating a stock',(
 
 import {recentSelections,selectionCardMarkup} from '../src/valueDiscovery.js';
 test('Home shows three compact recent records when the source supplies three',()=>{
- const view=loadView('homeExtras.js',{HOME_STOCK_META:{},recentSelections,selectionCardMarkup,window:{},document:{readyState:'loading',addEventListener(){}},MutationObserver:class{}});
+ const view=loadView('homeExtras.js',{PICK_METHOD,pickPriceBasis,HOME_STOCK_META:{},recentSelections,selectionCardMarkup,window:{},document:{readyState:'loading',addEventListener(){}},MutationObserver:class{}});
  const host={isConnected:true,innerHTML:'',querySelectorAll:()=>[]};view.paintPicks(host,{day:{tradeDate:'2026-10-02',top3:['005930.KS','000660.KS','373220.KS'].map(symbol=>({symbol,name:symbol}))}});
  assert.equal((host.innerHTML.match(/home-selection-link/g)||[]).length,3);assert.match(host.innerHTML,/home-pick-summary/);
 });

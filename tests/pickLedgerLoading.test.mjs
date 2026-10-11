@@ -5,9 +5,21 @@ import { setImmediate as nextTurn } from 'node:timers/promises';
 import { selectionKey } from '../src/valueDiscovery.js';
 import { loadingIndicator } from '../src/loadingView.js';
 import { recommendations, monitor } from './e2e/data.mjs';
+import { PICK_METHOD, pickPriceBasis } from '../src/pickPerformanceBasis.js';
 
 const source = readFileSync(new URL('../src/pickLedger.js', import.meta.url), 'utf8');
 const deferred = () => { let resolve; const promise = new Promise(done => { resolve = done; }); return { promise, resolve }; };
+
+test('PICK discloses whole-record average and mixed close dates without changing its denominator', async () => {
+  const rows = recommendations.map((row, i) => ({ ...row, lastUpdatedTradeDate: i === 0 ? '2026-10-06' : '2026-10-07' }));
+  const app = harness({ bootstrap: async () => ({ recommendations: rows }) });
+  await app.render();
+  const summary = app.node('#pick-ledger-summary').innerHTML;
+  assert.match(summary, /2026-10-06.*2026-10-07/);
+  const explanation = app.node('[data-pick-calculation]').innerHTML;
+  for (const term of ['산술평균', '선정일', '보유기간', '같은 기업', '배당', '비용', '포트폴리오', '목록 필터']) assert.ok(explanation.includes(term), term);
+  assert.match(summary, /평가 3\/4건/);
+});
 
 // Execute the real renderer with controlled API promises. This small DOM stub
 // records rendered content/events; browser geometry and navigation are covered
@@ -33,9 +45,9 @@ function harness({ bootstrap = async () => ({ recommendations }), monitoring = a
   const window = { scrollY: 0, scrollTo(value) { this.scrollY = typeof value === 'object' ? value.top : value; }, __chartviewRestoreScroll() {} };
   // Only resolve module imports to the controlled dependencies. All renderer
   // branches/calculations below are the current repository implementation.
-  const render = new Function('document', 'window', 'homeBootstrap', 'pickMonitor', 'selectionKey', 'loadingIndicator', 'requestAnimationFrame',
+  const render = new Function('document', 'window', 'homeBootstrap', 'pickMonitor', 'selectionKey', 'loadingIndicator', 'requestAnimationFrame', 'PICK_METHOD', 'pickPriceBasis',
     source.replace(/^import .*;\n/gm, '').replace(/^export /gm, '') + '\nreturn renderPickLedger;'
-  )(document, window, bootstrap, monitoring, selectionKey, loadingIndicator, callback => queueMicrotask(callback));
+  )(document, window, bootstrap, monitoring, selectionKey, loadingIndicator, callback => queueMicrotask(callback), PICK_METHOD, pickPriceBasis);
   return { node, nodes, window, render: options => render({ shell: html => html, bindNav() {}, displayName: symbol => symbol, ...options }) };
 }
 

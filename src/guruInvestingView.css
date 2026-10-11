@@ -26,3 +26,9 @@
 
 
 
+.guru-current-provenance summary{min-height:44px;display:flex;align-items:center;cursor:pointer;font-size:12px;font-weight:600}
+.guru-current-provenance{margin-top:6px;border-top:1px solid #dce5ef;overflow-wrap:anywhere}
+.guru-current-provenance p{margin:6px 0}
+.guru-current-summary{display:grid;gap:4px}
+.guru-retry-ttm{justify-self:start;min-height:44px;font:inherit;border:1px solid #cbd7e6;background:white;border-radius:8px;color:#2465b0;padding:8px 10px}
+.guru-retry-ttm:disabled,.guru-retry-evidence:disabled,.guru-refresh-error button:disabled,.guru-retry:disabled{opacity:.65;cursor:wait}

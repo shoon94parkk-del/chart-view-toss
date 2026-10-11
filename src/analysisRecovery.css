@@ -1,0 +1,32 @@
+.screener-advanced > summary .screener-condition-values,
+.screener-extra > summary .screener-condition-values {
+ display:block;
+ margin-top:4px;
+ color:#4e5968;
+ font-size:12px;
+ font-weight:400;
+ line-height:1.45;
+ overflow-wrap:anywhere;
+}
+.screener-field-error {
+ color:#b32828;
+ font-size:12px;
+ line-height:1.5;
+}
+.screener-field-error[hidden] { display:none; }
+.analysis-filters [aria-invalid="true"] { border-color:#b32828; }
+.screener-validation,
+.band-feedback:not(:empty) {
+ margin:8px 0;
+ padding:10px 12px;
+ border-radius:10px;
+ background:#f2f4f6;
+ color:#4e5968;
+ font-size:12px;
+ line-height:1.5;
+}
+.screener-validation p,
+.band-feedback p { margin:0; }
+.band-feedback .retry,
+.screener-validation .retry { min-height:44px; margin-top:6px; }
+[data-band-basis] { color:#4e5968; font-size:12px; line-height:1.5; }

@@ -2,6 +2,7 @@ import {guruScreeningData,guruEvidenceData,valuationStocks} from './api.js';
 import {GURU_STRATEGIES,guruMetricLabels,guruMetricUnits,guruRowMetrics,validateGuruSnapshot,filterGuruResults,guruViewStatus,greenblattCurrentCheck,guruMissingReasons,isOlderGuruSnapshot} from './guruInvestingModel.js';
 import {extensionCriteria,extensionEvidence} from './guruInvestingExtensions.js';
 import {loadingIndicator} from './loadingView.js';
+import {formatKst} from './dataPresentation.js';
 
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const num=(v,suffix='')=>typeof v==='number'&&Number.isFinite(v)?v.toLocaleString('ko-KR',{maximumFractionDigits:1})+suffix:'—';
@@ -18,7 +19,7 @@ function missingReasonsMarkup(s){
 }
 function candidate(row,strategy,expanded,currentCheck=null,currentState='idle'){
  const keys=guruRowMetrics[strategy];
- const ttmLabel=currentCheck?.status==='matched'?'TTM충족':currentCheck?.status==='failed'?'TTM미충족':currentCheck?.status==='unknown'?'TTM자료없음':currentState==='loading'?'TTM확인중':currentState==='error'?'TTM실패':'TTM확인전';
+ const ttmLabel=currentCheck?.status==='matched'?'TTM충족':currentCheck?.status==='failed'?'TTM미충족':currentCheck?.status==='unknown'?'TTM자료없음':currentState==='loading'?'TTM확인중':currentCheck?.status==='error'||currentState==='error'?'TTM실패':'TTM확인전';
  const annualYear=String(row.annualReportYear||'').slice(-2);
  const reason=strategy==='greenblatt'?`${annualYear}년 · ${ttmLabel} · 근거 ${expanded?'⌃':'⌄'}`:`${row.checks.length}개 조건 충족 · 선정 근거 ${expanded?'⌃':'⌄'}`;
  return `<article class="guru-candidate" data-guru-symbol="${esc(row.symbol)}"><div class="guru-row"><button class="guru-stock" data-stock-detail="${esc(row.symbol)}" data-stock-name="${esc(row.name)}" aria-label="${esc(row.name)} 종목 상세"><strong>${esc(row.name)}</strong><small>${esc(row.market)} · ${esc(row.symbol.split('.')[0])}</small></button><button class="guru-expand" data-guru-expand="${esc(row.symbol)}" aria-expanded="${expanded}" aria-label="${esc(row.name)} 선정 근거"><span class="guru-metrics">${keys.map(k=>metric(k,row.metrics[k])).join('')}</span><span class="guru-reason-label">${esc(reason)}</span></button></div>${expanded?'<section class="guru-evidence" aria-live="polite">'+loadingIndicator('공시 근거를 확인하고 있어요')+'</section>':''}</article>`;
@@ -37,7 +38,7 @@ function evidenceMarkup(evidence,strategy,row,currentCheck=null){
 }
 
 export function renderGuruInvesting({state,shell,bindNav,navigate,isCurrent}){
- let disposed=false,sequence=0,data=state.guruSnapshot||null;
+ let disposed=false,sequence=0,data=state.guruSnapshot||null,refreshing=false,lastCheckedAt=null;
  let saved={};try{saved=JSON.parse(sessionStorage.getItem('cv-guru-session-v1')||'{}')||{};}catch{}
  const session=state.gurus ||= {query:typeof saved.query==='string'?saved.query:'',market:['KOSPI','KOSDAQ'].includes(saved.market)?saved.market:'',count:Number.isInteger(saved.count)&&saved.count>=30?saved.count:30,expandedSymbol:/^\d{6}\.(KS|KQ)$/.test(saved.expandedSymbol||'')?saved.expandedSymbol:null};
  const save=()=>{try{sessionStorage.setItem('cv-guru-session-v1',JSON.stringify(session));}catch{}};
@@ -49,6 +50,7 @@ export function renderGuruInvesting({state,shell,bindNav,navigate,isCurrent}){
  const host=document.querySelector('#guru-data');
  bindNav();
  const detailsCache=state.guruEvidenceCache ||= new Map();
+ const evidenceErrors=new Map();
  let currentChecks=new Map(),currentState='idle',currentVersion=null,currentSequence=0;
  const currentCheckFor=row=>{
   if(strategy!=='greenblatt')return null;
@@ -58,37 +60,66 @@ export function renderGuruInvesting({state,shell,bindNav,navigate,isCurrent}){
  function paintCurrentSummary(){
   const target=host.querySelector('.guru-current-summary');if(!target||strategy!=='greenblatt'||!data)return;
   const rows=data.strategies.greenblatt?.results||[];
-  if(currentState==='loading'){target.textContent='연간 후보의 현재 TTM ROA·PER를 재확인하고 있어요.';return;}
-  if(currentState==='error'){target.textContent='TTM 재확인 실패 · 연간 선정값은 유지해요.';return;}
-  if(currentState!=='ready'){target.textContent='TTM 재확인은 연간 선정과 분리해 표시해요.';return;}
-  let matched=0,failed=0,unknown=0;
-  for(const row of rows){const status=currentChecks.get(row.symbol)?.status;if(status==='matched')matched++;else if(status==='failed')failed++;else unknown++;}
-  target.textContent=`연간 후보 ${rows.length}개 TTM 재확인 · 충족 ${matched} · 미충족 ${failed} · 자료 부족 ${unknown}`;
+  let message='TTM 재확인은 연간 선정과 분리해 표시해요.',retry=false;
+  if(currentState==='loading'){message='연간 후보의 현재 TTM ROA·PER를 재확인하고 있어요.';retry=true;}
+  else if(currentState==='error'){message='TTM 재확인 실패 · 연간 선정값은 유지해요.';retry=true;}
+  else if(['ready','partial'].includes(currentState)){
+   let matched=0,failed=0,unknown=0,errors=0;
+   for(const row of rows){const status=currentChecks.get(row.symbol)?.status;if(status==='matched')matched++;else if(status==='failed')failed++;else if(status==='error')errors++;else unknown++;}
+   message=`연간 후보 ${rows.length}개 TTM 재확인 · 충족 ${matched} · 미충족 ${failed} · 자료 부족 ${unknown}${errors?' · 확인 실패 '+errors:''}`;
+   retry=errors>0;
+  }
+  target.innerHTML=`<small>${esc(message)}</small>${retry?`<button class="guru-retry-ttm" ${currentState==='loading'?'disabled':''}>${currentState==='loading'?'TTM 확인 중':'TTM 다시 확인'}</button>`:''}`;
+  const button=target.querySelector('button');if(button)button.onclick=()=>loadGreenblattCurrent({force:true});
  }
- async function loadGreenblattCurrent(){
+ async function loadGreenblattCurrent({force=false}={}){
   if(strategy!=='greenblatt'||!data?.strategies?.greenblatt)return;
-  if(currentVersion===data.snapshotVersion&&['loading','ready'].includes(currentState))return;
-  currentVersion=data.snapshotVersion;currentState='loading';currentChecks=new Map();const seq=++currentSequence;
+  if(currentVersion===data.snapshotVersion&&(currentState==='loading'||!force&&['ready','partial','error'].includes(currentState)))return;
+  if(currentVersion!==data.snapshotVersion)currentChecks=new Map();
+  currentVersion=data.snapshotVersion;currentState='loading';const seq=++currentSequence;
   paintCurrentSummary();if(host.querySelector('.guru-list'))paintRows();
   const symbols=(data.strategies.greenblatt.results||[]).map(r=>r.symbol).slice(0,30);
   if(!symbols.length){currentState='ready';paintCurrentSummary();return;}
   try{
-   const response=await valuationStocks(symbols);if(!current()||seq!==currentSequence)return;
-   const rows=Array.isArray(response?.stocks)?response.stocks:[];
-   for(const value of rows){const symbol=value?.ticker||value?.symbol;if(symbols.includes(symbol))currentChecks.set(symbol,greenblattCurrentCheck(value));}
-   currentState='ready';paintCurrentSummary();paintRows();
+   const response=await valuationStocks(symbols,{force});if(!current()||seq!==currentSequence)return;
+   if(!Array.isArray(response?.stocks)||response.error)throw new Error('TTM 응답 형식을 확인하지 못했어요.');
+   const next=new Map(),providerErrors=new Set((Array.isArray(response.errors)?response.errors:[]).map(value=>value?.ticker||value?.symbol));
+   for(const symbol of symbols){
+    const values=response.stocks.filter(value=>(value?.ticker||value?.symbol)===symbol);
+    next.set(symbol,greenblattCurrentCheck(values.length===1&&!providerErrors.has(symbol)?values[0]:null));
+   }
+   currentChecks=next;
+   const errors=[...next.values()].filter(value=>value.status==='error').length;
+   currentState=errors===symbols.length?'error':errors?'partial':'ready';paintCurrentSummary();paintRows();
   }catch{if(!current()||seq!==currentSequence)return;currentState='error';paintCurrentSummary();paintRows();}
  }
- async function showEvidence(row){
+ function refreshBusy(){
+  host.querySelectorAll('.guru-retry-evidence,.guru-refresh-error button,.guru-retry').forEach(button=>{button.disabled=refreshing;});
+ }
+ function evidenceFailure(target,row,error){
+  const waiting=error.status===409;
+  target.innerHTML=`${waiting?'<p><b>선정 근거 게시 대기</b></p><p>목록과 같은 버전의 근거가 아직 게시되지 않았어요. 현재 결과를 유지해요. 잠시 후 게시 상태를 확인해 주세요.</p>':'<p>'+esc(error.message||'근거를 불러오지 못했어요.')+'</p>'}${waiting&&lastCheckedAt?'<small>마지막 확인 '+esc(formatKst(lastCheckedAt))+'</small>':''}<button class="guru-retry-evidence" ${refreshing?'disabled':''}>${waiting?'게시 상태 다시 확인':'근거 다시 확인'}</button>`;
+  target.querySelector('button').onclick=()=>waiting?load(true):showEvidence(row,{force:true});
+ }
+ async function showEvidence(row,{force=false}={}){
   const target=host.querySelector(`[data-guru-symbol="${row.symbol}"] .guru-evidence`);
   if(!target||!data)return;
   const version=data.snapshotVersion,key=version+':'+row.symbol;
+  if(!force&&evidenceErrors.has(key)){evidenceFailure(target,row,evidenceErrors.get(key));return;}
+  if(force)target.innerHTML=loadingIndicator('공시 근거를 다시 확인하고 있어요');
   try{
    let evidence=detailsCache.get(key);
-   if(!evidence){evidence=await guruEvidenceData(row.symbol,version);if(evidence.snapshotVersion!==version||evidence.symbol!==row.symbol)throw new Error('선정 근거의 버전이 달라요.');detailsCache.set(key,evidence);while(detailsCache.size>30)detailsCache.delete(detailsCache.keys().next().value);}
+   if(!evidence||force)evidence=await guruEvidenceData(row.symbol,version,{force});
    if(!current()||!target.isConnected||data.snapshotVersion!==version)return;
-   target.innerHTML=evidenceMarkup(evidence,strategy,row,currentCheckFor(row));bindNav();window.__chartviewRestoreScroll?.();
-  }catch(error){if(!current()||!target.isConnected)return;target.innerHTML=`<p>${error.status===409?'결과가 갱신되어 같은 버전의 근거를 확인할 수 없어요.':esc(error.message||'근거를 불러오지 못했어요.')}</p><button class="guru-retry-evidence">${error.status===409?'최신 결과 확인':'근거 다시 확인'}</button>`;target.querySelector('button').onclick=()=>error.status===409?load(true):showEvidence(row);}
+   if(evidence.snapshotVersion!==version||evidence.symbol!==row.symbol)throw new Error('선정 근거의 버전이 달라요.');
+   const markup=evidenceMarkup(evidence,strategy,row,currentCheckFor(row));
+   detailsCache.set(key,evidence);while(detailsCache.size>30)detailsCache.delete(detailsCache.keys().next().value);
+   evidenceErrors.delete(key);target.innerHTML=markup;bindNav();window.__chartviewRestoreScroll?.();
+  }catch(error){
+   if(!current()||!target.isConnected||data.snapshotVersion!==version)return;
+   if(error.status===409)lastCheckedAt=new Date().toISOString();
+   evidenceErrors.set(key,error);evidenceFailure(target,row,error);
+  }
  }
  function rowsMarkup(){
   const s=data.strategies[strategy],rows=filterGuruResults(s.results,session,strategy),status=guruViewStatus(s,strategy);
@@ -109,16 +140,29 @@ export function renderGuruInvesting({state,shell,bindNav,navigate,isCurrent}){
   if(!s){host.innerHTML='<div class="guru-empty"><strong>새 기준의 결과가 아직 게시되지 않았어요.</strong><p>기존 버핏·린치 결과는 계속 확인할 수 있어요.</p><button class="guru-retry">최신 결과 확인</button></div>';host.querySelector('button').onclick=()=>load(true);return;}
   const basis=strategy==='minervini'?'253거래일 일봉 추세':strategy==='oneil'?'단일 분기·연간 공시와 일봉':strategy==='greenblatt'?'확정 연간 ROA·PER + 기준일 종가':'기업별 최근 연간 공시';
   const matchedLabel=strategy==='greenblatt'?'연간 조건 충족':'조건 충족';
-  host.innerHTML=`<div class="guru-coverage"><strong>${matchedLabel} ${s.matchedCount}개 <span>검증 ${s.evaluatedCount.toLocaleString()} / 대상 ${s.universeCount.toLocaleString()}</span></strong><small>${esc(data.tradeDate)} 종가 · ${basis}</small>${strategy==='greenblatt'?'<small class="guru-current-summary">TTM 재확인은 연간 선정과 분리해 표시해요.</small>':''}<small>수집 대기 ${s.pendingCount} · 자료 부족 ${s.insufficientCount} · 지원 제외 ${s.unsupportedCount}</small></div>${missingReasonsMarkup(s)}<form class="guru-filters"><input type="search" aria-label="선정 기업 이름 또는 코드" placeholder="선정 기업 이름·코드" value="${esc(session.query)}"><select aria-label="선정 기업 시장"><option value="">전체 시장</option><option ${session.market==='KOSPI'?'selected':''}>KOSPI</option><option ${session.market==='KOSDAQ'?'selected':''}>KOSDAQ</option></select></form><small class="guru-search-count"></small><div class="guru-list"></div><p class="guru-footnote">출처: ${strategy==='minervini'?'KIND · Yahoo Finance':'OpenDART · KIND · Yahoo Finance'}<br>${strategy==='minervini'?'일봉 기준 '+esc(data.tradeDate):'재무 확인 '+esc(String(data.financialAsOf).slice(0,10))} · 결과 생성 ${esc(String(data.generatedAt).slice(0,10))}<br>차트뷰의 조건 조회이며 투자 권유가 아니에요.</p>`;
+  host.innerHTML=`<div class="guru-coverage"><strong>${matchedLabel} ${s.matchedCount}개 <span>검증 ${s.evaluatedCount.toLocaleString()} / 대상 ${s.universeCount.toLocaleString()}</span></strong><small>${esc(data.tradeDate)} 종가 · ${basis}</small>${strategy==='greenblatt'?'<div class="guru-current-summary" aria-live="polite">TTM 재확인은 연간 선정과 분리해 표시해요.</div>':''}<small>수집 대기 ${s.pendingCount} · 자료 부족 ${s.insufficientCount} · 지원 제외 ${s.unsupportedCount}</small></div>${missingReasonsMarkup(s)}<form class="guru-filters"><input type="search" aria-label="선정 기업 이름 또는 코드" placeholder="선정 기업 이름·코드" value="${esc(session.query)}"><select aria-label="선정 기업 시장"><option value="">전체 시장</option><option ${session.market==='KOSPI'?'selected':''}>KOSPI</option><option ${session.market==='KOSDAQ'?'selected':''}>KOSDAQ</option></select></form><small class="guru-search-count"></small><div class="guru-list"></div><p class="guru-footnote">출처: ${strategy==='minervini'?'KIND · Yahoo Finance':'OpenDART · KIND · Yahoo Finance'}<br>${strategy==='minervini'?'일봉 기준 '+esc(data.tradeDate):'재무 확인 '+esc(String(data.financialAsOf).slice(0,10))} · 결과 생성 ${esc(String(data.generatedAt).slice(0,10))}<br>차트뷰의 조건 조회이며 투자 권유가 아니에요.</p>`;
   const form=host.querySelector('form');form.onsubmit=e=>e.preventDefault();
   form.querySelector('input').oninput=e=>{session.query=e.target.value;session.count=30;paintRows();};
   form.querySelector('select').onchange=e=>{session.market=e.target.value;session.count=30;paintRows();};
   paintRows();paintCurrentSummary();loadGreenblattCurrent();
  }
  async function load(force=false){
-  const seq=++sequence;
-  try{const fresh=validateGuruSnapshot(await guruScreeningData({force}));if(!current()||seq!==sequence)return;if(isOlderGuruSnapshot(fresh,data)){const error=new Error('표시된 결과보다 기준일 또는 생성 시각이 이전인 자료가 응답했어요. 현재 결과를 유지하며 같은 버전의 근거가 게시되면 다시 확인할 수 있어요.');error.code='GURU_OLDER_SNAPSHOT';throw error;}data=fresh;state.guruSnapshot=fresh;paint();}
-  catch(error){if(!current()||seq!==sequence)return;if(data){let notice=host.querySelector('.guru-refresh-error');if(!notice){notice=document.createElement('p');notice.className='guru-refresh-error';notice.setAttribute('role','status');host.prepend(notice);}notice.innerHTML=`${error.code==='GURU_OLDER_SNAPSHOT'?esc(error.message):'결과 갱신을 확인하지 못했어요. 표시된 기준일의 자료를 유지해요.'} <button>다시 확인</button>`;notice.querySelector('button').onclick=()=>load(true);}else{host.innerHTML=`<div class="guru-empty"><strong>재무 조건 결과를 불러오지 못했어요.</strong><p>${esc(error.message)}</p><button class="guru-retry">다시 확인</button></div>`;host.querySelector('button').onclick=()=>load(true);}}
+  if(refreshing)return;
+  refreshing=true;refreshBusy();const seq=++sequence;
+  try{
+   const fresh=validateGuruSnapshot(await guruScreeningData({force}));if(!current()||seq!==sequence)return;
+   if(force)lastCheckedAt=new Date().toISOString();
+   if(isOlderGuruSnapshot(fresh,data)){const error=new Error('선정 근거 게시 대기 · 서버에서 이전 자료가 응답했어요. 현재 결과를 유지하며 같은 버전의 근거가 게시되면 다시 확인할 수 있어요.');error.code='GURU_OLDER_SNAPSHOT';throw error;}
+   evidenceErrors.clear();data=fresh;state.guruSnapshot=fresh;paint();
+  }catch(error){
+   if(!current()||seq!==sequence)return;
+   if(force)lastCheckedAt=new Date().toISOString();
+   if(data){
+    let notice=host.querySelector('.guru-refresh-error');if(!notice){notice=document.createElement('p');notice.className='guru-refresh-error';notice.setAttribute('role','status');host.prepend(notice);}
+    notice.innerHTML=`${error.code==='GURU_OLDER_SNAPSHOT'?esc(error.message):'결과 갱신을 확인하지 못했어요. 표시된 기준일의 자료를 유지해요.'}${lastCheckedAt?' <span>마지막 확인 '+esc(formatKst(lastCheckedAt))+'</span>':''} <button>다시 확인</button>`;
+    notice.querySelector('button').onclick=()=>load(true);
+   }else{host.innerHTML=`<div class="guru-empty"><strong>재무 조건 결과를 불러오지 못했어요.</strong><p>${esc(error.message)}</p><button class="guru-retry">다시 확인</button></div>`;host.querySelector('button').onclick=()=>load(true);}
+  }finally{refreshing=false;if(current())refreshBusy();}
  }
  if(data){try{validateGuruSnapshot(data);paint();}catch{data=null;}}
  load();

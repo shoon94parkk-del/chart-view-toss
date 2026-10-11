@@ -1,0 +1,50 @@
+{
+  "project": "github:shoon94parkk-del/chart-view-toss",
+  "branch": "improve/user-audit-20261011",
+  "baseSha": "d4f3a9ff6eca2ed3d72d928869271c3a3ddf8552",
+  "applicationSourceSha256": "13afc8f00e330e572a4aba2d474880aef5077121be81f7fbb788e753d2c93314",
+  "testSourceSha256": "7a6a42340e118c7e31441a9a5d207dd066cb12fa52a98afe51876a76b4f7201d",
+  "qaPrepushExitCode": 0,
+  "node": {
+    "passed": 390,
+    "failed": 0,
+    "skipped": 0
+  },
+  "productionBuild": "passed",
+  "directEntryRoutes": 26,
+  "playwright": {
+    "startTime": "2026-10-11T05:05:58.181Z",
+    "duration": 656698.112,
+    "expected": 680,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "projects": [
+    "desktop-chromium",
+    "narrow-chromium",
+    "android-chromium",
+    "iphone-small-webkit"
+  ],
+  "liveBrowser": {
+    "passed": 4,
+    "failed": 1,
+    "guruCandidateHttpStatus": [
+      409,
+      409,
+      409,
+      409,
+      409
+    ],
+    "bodyErrors": 0,
+    "operationalPublicationResolved": false
+  },
+  "backend": {
+    "pr": 146,
+    "localPythonPassed": 714,
+    "githubChecksPassed": 10,
+    "productionJob": "skipped on PR"
+  },
+  "nativeSandbox": "not run",
+  "newLlmApiCalls": 0
+}

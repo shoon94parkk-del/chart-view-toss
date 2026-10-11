@@ -11,12 +11,39 @@ import {validateFullHeatmapSnapshot} from './fullHeatmapSnapshot.js';
 import {bandCoverage,discoveryContext} from './insightModel.js';
 import {encodeSharedView} from './experienceState.js';
 import {featureLabel} from './uiIdentity.js';
+import './analysisRecovery.css';
 
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const number=(v,suffix='')=>finiteNumber(v)===null?'—':Number(v).toLocaleString('ko-KR',{maximumFractionDigits:2})+suffix;
 const pct=v=>finiteNumber(v)===null?'—':`${Number(v)>0?'+':''}${number(v,'%')}`;
 const empty=text=>`<div class="empty"><strong>${esc(text)}</strong></div>`;
 const alignFullHeatmapWithHome=alignHeatmapQuotes;
+export function screenerConditionSummary(filters={}){
+ const values=[],present=name=>filters[name]!==''&&filters[name]!=null;
+ if(filters.query?.trim())values.push(filters.query.trim());
+ if(filters.market)values.push(filters.market);
+ if(present('rsiMin')&&present('rsiMax'))values.push(`RSI ${filters.rsiMin}~${filters.rsiMax}`);
+ else if(present('rsiMin'))values.push(`RSI ≥${filters.rsiMin}`);
+ else if(present('rsiMax'))values.push(`RSI ≤${filters.rsiMax}`);
+ for(const [name,label,unit] of [['volumeMin','거래량','배'],['ret20Min','20일','%'],['valueMin','거래대금','억원']])if(present(name))values.push(`${label} ≥${filters[name]}${unit}`);
+ const labels={above20:'20일선 위',cross20:'20일선 돌파',trend2060:'20일선 > 60일선',aligned:'20·60·120 정배열',macdBullish:'MACD 강세',macdCrossUp:'MACD 상향돌파',goldenCross2060:'20·60 골든크로스',near52High:'52주 신고가 근접',bbBreakout:'볼린저 상단 돌파',exclude:'가격 기준 확인 제외',only:'가격 기준 확인만'};
+ for(const name of ['trend','signal','priceBasis'])if(labels[filters[name]])values.push(labels[filters[name]]);
+ return values.join(' · ');
+}
+export function screenerRangeErrors(filters={}){
+ const errors={};
+ for(const name of ['rsiMin','rsiMax','volumeMin','valueMin','ret20Min']){
+  if(filters[name]===''||filters[name]==null)continue;
+  const value=finiteNumber(filters[name]);
+  if(value===null)errors[name]='숫자를 입력해주세요.';
+  else if(name.startsWith('rsi')&&(value<0||value>100))errors[name]='RSI는 0~100 사이로 입력해주세요.';
+  else if(['volumeMin','valueMin'].includes(name)&&value<0)errors[name]='0 이상으로 입력해주세요.';
+ }
+ if(!errors.rsiMin&&!errors.rsiMax&&finiteNumber(filters.rsiMin)!==null&&finiteNumber(filters.rsiMax)!==null&&Number(filters.rsiMin)>Number(filters.rsiMax)){
+  errors.rsiMin='RSI 하한은 상한 이하로 입력해주세요.';errors.rsiMax='RSI 상한은 하한 이상으로 입력해주세요.';
+ }
+ return errors;
+}
 export const ANALYSIS_ROUTES=new Set(['discover','heatmap','consensus','bands','tools']);
 export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareSheet}){
  let disposed=false,chart,observer;
@@ -40,7 +67,16 @@ export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareS
     const rows=Array.isArray(data.stocks)?data.stocks:[];
     let activePreset=state.screener?.activePreset||'';
     controls.innerHTML=`<section class="screener-preset-panel"><div class="screener-preset-head"><div><strong>인기 필터</strong><small>많이 쓰는 기술적 조건을 적용해요. 옆으로 밀면 다른 조건이 보여요.</small></div><button type="button" class="screener-preset-clear" data-clear-preset hidden>프리셋 해제</button></div><div class="screener-preset-strip">${SCREENER_PRESETS.map(item=>`<button type="button" class="screener-preset" data-screener-preset="${esc(item.id)}" aria-pressed="false"><span>${esc(item.icon)}</span><b>${esc(item.label)}</b><small>${esc(item.description)}</small></button>`).join('')}</div></section><details class="screener-advanced"><summary>조건 직접 설정 · 검색</summary><form class="analysis-filters" id="screener-filters"><p class="screener-basis-copy">시세는 장마감 수집값이에요. 지표는 종목별 동일 기준일의 일봉으로 계산해요. 검색어·시장·기술 조건은 함께 적용돼요.</p><label>종목명·코드<input name="query" type="search" placeholder="삼성전자 또는 005930" autocomplete="off"></label><label>시장<select name="market"><option value="">전체</option><option>KOSPI</option><option>KOSDAQ</option></select></label><label>평균 거래대금 하한(억원)<input name="valueMin" type="number" min="0" step="any" placeholder="제한 없음"></label><label>가격 기준 확인 · ±35% 이상 변동은 오류 확정이 아니에요<select name="priceBasis"><option value="">확인 필요 종목 포함</option><option value="exclude">확인 필요 종목 제외</option><option value="only">확인 필요 종목만</option></select></label><label>정렬<select name="sort"><option value="name">이름순</option><option value="change1d">등락률순</option><option value="volumeRatio">거래량 배수순</option><option value="avgValue20">평균 거래대금순</option><option value="ret20">20일 수익률순</option><option value="rsiAsc">RSI 낮은순</option><option value="rsiDesc">RSI 높은순</option><option value="distance52HighPct">52주 고점 근접순</option></select></label><details class="screener-extra"><summary>추가 기술 조건 · RSI·거래량·추세</summary><div class="screener-extra-grid"><label>RSI 하한<input name="rsiMin" type="number" min="0" max="100" placeholder="제한 없음"></label><label>RSI 상한<input name="rsiMax" type="number" min="0" max="100" placeholder="제한 없음"></label><label>거래량 배수 하한<input name="volumeMin" type="number" min="0" step="0.1" placeholder="제한 없음"></label><label>20일 수익률 하한(%)<input name="ret20Min" type="number" step="any" placeholder="제한 없음"></label><label>추세 조건<select name="trend"><option value="">전체</option><option value="above20">20일선 위</option><option value="cross20">20일선 돌파</option><option value="trend2060">20일선 > 60일선</option><option value="aligned">20·60·120 정배열</option></select></label><label>기술 신호<select name="signal"><option value="">전체</option><option value="macdBullish">MACD 강세</option><option value="macdCrossUp">MACD 상향돌파</option><option value="goldenCross2060">20·60 골든크로스</option><option value="near52High">52주 신고가 근접</option><option value="bbBreakout">볼린저 상단 돌파</option></select></label></div></details><button type="reset" class="neutral-action">초기화</button></form></details>`;
-    const form=controls.querySelector('form');let count=Math.max(30,state.screener?.count||30);let applyingPreset=false;
+    const form=controls.querySelector('form');let count=Math.max(30,state.screener?.count||30);let applyingPreset=false,lastNumberValidity='';
+    const numberValidity=()=>[...form.querySelectorAll('input[type="number"]')].map(field=>field.validity.valid).join(',');
+    for(const field of form.querySelectorAll('input[type="number"]')){
+     const error=document.createElement('small');error.id=`screener-error-${field.name}`;error.className='screener-field-error';error.hidden=true;field.after(error);
+    }
+    function focusInvalid(){
+     const field=form.querySelector('[aria-invalid="true"]');if(!field)return;
+     for(let parent=field.parentElement;parent&&parent!==controls;parent=parent.parentElement)if(parent.tagName==='DETAILS')parent.open=true;
+     field.focus();
+    }
     for(const [name,value] of Object.entries(state.screener?.filters||{})){const field=form.elements.namedItem(name);if(field)field.value=String(value);}
     const presetButtons=[...controls.querySelectorAll('[data-screener-preset]')];
     const clearPreset=controls.querySelector('[data-clear-preset]');
@@ -64,19 +100,33 @@ export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareS
     function paint(){
      if(!current())return;
      const filters=Object.fromEntries(new FormData(form));
+     lastNumberValidity=numberValidity();
      const extra=form.querySelector('.screener-extra');
      const applied=[...extra.querySelectorAll('input,select')].filter(field=>field.value!=='').length;
      const activeConditions=[...form.querySelectorAll('input,select')].filter(field=>field.name!=='sort'&&field.value!=='').length;
-     controls.querySelector('.screener-advanced > summary').textContent=`조건 직접 설정 · 검색${activeConditions?' · '+activeConditions+'개 적용':''}`;
-     extra.querySelector('summary').textContent=`추가 기술 조건 · RSI·거래량·추세${applied?' · '+applied+'개 적용':''}`;
+     const conditionValues=screenerConditionSummary(filters);
+     const extraValues=screenerConditionSummary(Object.fromEntries([...extra.querySelectorAll('input,select')].map(field=>[field.name,field.value])));
+     controls.querySelector('.screener-advanced > summary').innerHTML=`조건 직접 설정 · 검색${activeConditions?' · '+activeConditions+'개 적용':''}${conditionValues?`<small class="screener-condition-values">${esc(conditionValues)}</small>`:''}`;
+     extra.querySelector('summary').innerHTML=`추가 기술 조건 · RSI·거래량·추세${applied?' · '+applied+'개 적용':''}${extraValues?`<small class="screener-condition-values">${esc(extraValues)}</small>`:''}`;
      state.screener={...state.screener,filters,count,activePreset};
      const url=new URL(location.href);url.searchParams.set('cv',encodeSharedView(state));history.replaceState(history.state,'',url);
-     if(!form.checkValidity()||(filters.rsiMin!==''&&filters.rsiMax!==''&&Number(filters.rsiMin)>Number(filters.rsiMax))){host.innerHTML=empty('조건의 범위와 RSI 상·하한을 확인해주세요.');return;}
+     const errors=screenerRangeErrors(filters);
+     for(const field of form.querySelectorAll('input[type="number"]')){
+      if(!field.validity.valid&&!errors[field.name])errors[field.name]=field.validity.stepMismatch?'입력 단위를 확인해주세요.':field.validationMessage||'숫자 범위를 확인해주세요.';
+      const error=form.querySelector(`#screener-error-${field.name}`),message=errors[field.name];
+      error.hidden=!message;error.textContent=message||'';
+      if(message){field.setAttribute('aria-invalid','true');field.setAttribute('aria-describedby',error.id);}
+      else{field.removeAttribute('aria-invalid');field.removeAttribute('aria-describedby');}
+     }
+     if(Object.keys(errors).length){
+      host.innerHTML='<div class="screener-validation"><p role="status">조건의 범위를 확인해주세요. 입력란 아래에서 수정할 값을 안내해요.</p><button type="button" class="retry" data-screener-fix>오류 입력 수정</button></div>';
+      host.querySelector('[data-screener-fix]').onclick=focusInvalid;return;
+     }
      const filtered=filterScreener(rows,filters);
      const active=screenerPreset(activePreset);
      const presetLine=active?`<p class="screener-active-preset"><span>${esc(active.icon)} ${esc(active.label)}</span><small>${esc(active.description)}</small></p>`:'';
      const noResults=!filtered.length?screenerEmptyState(rows,filters):null;
-     host.innerHTML=`${presetLine}<p class="analysis-meta">기준 거래일 ${esc(data.tradeDate||data.updated||'미제공')} · 수집 ${rows.length.toLocaleString()}개 · 조건 일치 <strong>${filtered.length.toLocaleString()}개</strong> · 정렬 ${esc(form.querySelector('[name="sort"]').selectedOptions[0].textContent)}</p><p class="price-basis-note"><span>가격 기준 확인 ${filtered.filter(row=>screenerDataWarnings(row).length).length}개</span> <button type="button" class="text-button" data-price-basis-toggle>${filters.priceBasis==='exclude'?'확인 필요 종목 포함':'확인 필요 종목 제외'}</button></p><div class="analysis-list">${filtered.slice(0,count).map(row=>{const reasons=screenerMatchReasons(row,filters).slice(0,2),warnings=screenerDataWarnings(row);return `<button class="analysis-stock" data-stock-detail="${esc(row.symbol)}"><span><strong>${esc(row.name||row.symbol)}</strong></span><span><b>기준 종가 ${number(row.price,'원')}</b><em class="${Number(row.change1d)>0?'up':'down'}">${pct(row.change1d)}</em></span><span class="analysis-stock-basis">${esc(row.symbol)} · ${esc(row.market)} · ${esc(row.date||'기준일 미제공')}</span>${reasons.length?`<span class="analysis-match-reasons">${reasons.map(reason=>`<i>${esc(reason)}</i>`).join('')}</span>`:''}${warnings.length?`<span class="data-quality-warning"><b>변동 기준 확인</b>${warnings.map(esc).join(' ')}</span>`:''}</button>`}).join('')||`<div class="empty"><strong>${esc(noResults.message)}</strong>${noResults.canClearTechnical?'<button type="button" class="retry" data-clear-technical>기술 조건 해제</button>':''}</div>`}</div>${count<filtered.length?'<button class="retry" id="screener-more">30개 더 보기</button>':''}`;
+     host.innerHTML=`${presetLine}<p class="analysis-meta">기준 거래일 ${esc(data.tradeDate||data.updated||'미제공')} · 수집 ${rows.length.toLocaleString()}개 · 조건 일치 <strong>${filtered.length.toLocaleString()}개</strong> · 정렬 ${esc(form.querySelector('[name="sort"]').selectedOptions[0].textContent)}</p><p class="price-basis-note"><span>가격 기준 확인 ${filtered.filter(row=>screenerDataWarnings(row).length).length}개</span> <button type="button" class="text-button" data-price-basis-toggle>${filters.priceBasis==='exclude'?'확인 필요 종목 포함':'확인 필요 종목 제외'}</button></p><div class="analysis-list">${filtered.slice(0,count).map(row=>{const reasons=screenerMatchReasons(row,filters),warnings=screenerDataWarnings(row);return `<article class="analysis-stock-wrap"><button class="analysis-stock" data-stock-detail="${esc(row.symbol)}"><span><strong>${esc(row.name||row.symbol)}</strong></span><span><b>기준 종가 ${number(row.price,'원')}</b><em class="${Number(row.change1d)>0?'up':'down'}">${pct(row.change1d)}</em></span><span class="analysis-stock-summary">${reasons.length?`${esc(reasons[0])}${reasons.length>1?` 외 ${reasons.length-1}개`:''}`:esc(row.symbol)}${warnings.length?' · 변동 기준 확인':''}</span></button><details class="analysis-stock-evidence"><summary>조건 근거 · 기준일 보기</summary><div><p class="analysis-stock-basis">${esc(row.symbol)} · ${esc(row.market)} · ${esc(row.date||'기준일 미제공')}</p>${reasons.length?`<span class="analysis-match-reasons">${reasons.map(reason=>`<i>${esc(reason)}</i>`).join('')}</span>`:'<p>추가 기술 조건 없이 검색했어요.</p>'}${warnings.length?`<p class="data-quality-warning"><b>변동 기준 확인</b>${warnings.map(esc).join(' ')}</p>`:''}</div></details></article>`}).join('')||`<div class="empty"><strong>${esc(noResults.message)}</strong>${noResults.canClearTechnical?'<button type="button" class="retry" data-clear-technical>기술 조건 해제</button>':''}</div>`}</div>${count<filtered.length?'<button class="retry" id="screener-more">30개 더 보기</button>':''}`;
      bindNav();
      host.querySelectorAll('.analysis-stock').forEach(button=>button.onclick=()=>{const row=rows.find(row=>row.symbol===button.dataset.stockDetail);window.__chartviewInvestigate?.(row.symbol,row.name,discoveryContext(row,filters,active?.label,data.tradeDate||data.updated));});
      window.__chartviewRestoreScroll?.();
@@ -87,8 +137,9 @@ export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareS
     }
     presetButtons.forEach(button=>button.addEventListener('click',()=>setPreset(button.dataset.screenerPreset)));
     clearPreset?.addEventListener('click',clearTechnical);
-    form.onsubmit=e=>e.preventDefault();
-    const manualChange=()=>{const filters=Object.fromEntries(new FormData(form));if(JSON.stringify(filters)===JSON.stringify(state.screener?.filters))return;if(!applyingPreset&&activePreset)activePreset='';syncPresetUi();count=30;paint();};
+    form.onsubmit=e=>{e.preventDefault();focusInvalid();};
+    // Incomplete numeric input and a corrected empty input both submit ''.
+    const manualChange=()=>{const filters=Object.fromEntries(new FormData(form));if(JSON.stringify(filters)===JSON.stringify(state.screener?.filters)&&numberValidity()===lastNumberValidity)return;if(!applyingPreset&&activePreset)activePreset='';syncPresetUi();count=30;paint();};
     form.oninput=manualChange;form.onchange=manualChange;
     form.onreset=e=>{e.preventDefault();activePreset='';for(const input of form.querySelectorAll('input,select'))input.value=input.name==='sort'?'name':'';count=30;syncPresetUi();paint();};
     const advanced=controls.querySelector('.screener-advanced');
@@ -206,20 +257,46 @@ export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareS
    }else if(tab==='bands'){
     const symbols=[...state.selected];if(!symbols.length){host.innerHTML=empty('종목 변경에서 조회할 종목을 선택해주세요.');return;}
     controls.innerHTML=`<div class="analysis-filters"><label>종목<select id="band-symbol">${symbols.map(x=>`<option value="${esc(x)}">${esc(displayName(x))}</option>`).join('')}</select></label><label>기간<select id="band-years"><option value="3">3년</option><option value="5">5년</option><option value="10">10년</option></select></label><label>지표<select id="band-metric"><option value="per">PER</option><option value="pbr">PBR</option></select></label></div>`;
-    let bandSeq=0,data=null,chartRuntime=null;
+    let bandSeq=0,data=null,chartRuntime=null,shownBand=null,pendingBand=null,bandError=null;
     if(state.band){if(symbols.includes(state.band.symbol))controls.querySelector('#band-symbol').value=state.band.symbol;controls.querySelector('#band-years').value=String(state.band.years);controls.querySelector('#band-metric').value=state.band.metric;}
     const saveBand=()=>state.band={symbol:controls.querySelector('#band-symbol').value,years:Number(controls.querySelector('#band-years').value),metric:controls.querySelector('#band-metric').value};
+    function paintBandFeedback(){
+     if(!current())return;
+     const box=host.querySelector('[data-band-feedback]');if(!box)return;
+     const requested=pendingBand||bandError;
+     box.innerHTML=requested?`<p role="status">${requested.years}년 자료를 ${pendingBand?'불러오는 중이에요.':'불러오지 못했어요.'} 현재 표시 자료는 ${shownBand.years}년 요청 자료예요.</p>${bandError?'<button type="button" class="retry" data-band-retry>선택한 기간 다시 시도</button>':''}`:'';
+     box.querySelector('[data-band-retry]')?.addEventListener('click',fetchBand);
+    }
     function paint(){
      if(!current())return;chart?.remove();chart=null;observer?.disconnect();
      saveBand();const metric=controls.querySelector('#band-metric').value,series=data?.[metric],stats=series?.stats;
-     host.innerHTML=`<p class="analysis-meta">${esc(formatDataSource(data?.source||''))} · 조회 ${esc(formatKst(data?.generatedAt))}</p><p class="muted-copy" data-band-coverage>${esc(bandCoverage(stats,state.band.years,data?.years))}</p><p class="muted-copy">${esc(data?.method||'')}</p><p class="muted-copy">과거 공시일을 완전히 복원한 지표가 아니며 재무자료에 보수적 시차를 적용한 재구성이에요.</p><div id="band-chart" class="detail-chart"></div>${stats?`<dl class="analysis-metrics"><div><dt>최근값</dt><dd>${number(stats.current,'배')}</dd></div><div><dt>중앙값</dt><dd>${number(stats.median,'배')}</dd></div><div><dt>하위 20% 경계</dt><dd>${number(stats.p20,'배')}</dd></div><div><dt>상위 20% 경계</dt><dd>${number(stats.p80,'배')}</dd></div></dl><p class="analysis-meta">${esc(stats.start)} ~ ${esc(stats.end)} · ${number(stats.observations)}개 관측</p>`:empty('이 종목의 해당 지표 이력이 제공되지 않아요.')}`;
+     host.innerHTML=`<div class="band-feedback" data-band-feedback></div><p data-band-basis>표시 자료: ${esc(displayName(shownBand.symbol))} · ${shownBand.years}년 요청 · ${metric.toUpperCase()}</p><p class="analysis-meta">${esc(formatDataSource(data?.source||''))} · 조회 ${esc(formatKst(data?.generatedAt))}</p><p class="muted-copy" data-band-coverage>${esc(bandCoverage(stats,shownBand.years,data?.years))}</p><p class="muted-copy">${esc(data?.method||'')}</p><p class="muted-copy">과거 공시일을 완전히 복원한 지표가 아니며 재무자료에 보수적 시차를 적용한 재구성이에요.</p><div id="band-chart" class="detail-chart"></div>${stats?`<dl class="analysis-metrics"><div><dt>최근값</dt><dd>${number(stats.current,'배')}</dd></div><div><dt>중앙값</dt><dd>${number(stats.median,'배')}</dd></div><div><dt>하위 20% 경계</dt><dd>${number(stats.p20,'배')}</dd></div><div><dt>상위 20% 경계</dt><dd>${number(stats.p80,'배')}</dd></div></dl><p class="analysis-meta">${esc(stats.start)} ~ ${esc(stats.end)} · ${number(stats.observations)}개 관측</p>`:empty('이 종목의 해당 지표 이력이 제공되지 않아요.')}`;
+     paintBandFeedback();
      const canvas=host.querySelector('#band-chart');if(!series?.points?.length)return;
      chart=chartRuntime.createChart(canvas,{localization:{locale:'ko-KR',dateFormat:'yyyy.MM.dd'},width:canvas.clientWidth,height:230,handleScale:{pinch:false},layout:{background:{type:chartRuntime.ColorType.Solid,color:'#fff'},textColor:'#6b7684'},timeScale:{borderVisible:false},rightPriceScale:{borderVisible:false}});
      const line=chart.addLineSeries({color:'#3182f6',lineWidth:2,priceLineVisible:false});line.setData(series.points);if(stats)for(const value of [stats.p20,stats.median,stats.p80])if(finiteNumber(value)!==null)line.createPriceLine({price:Number(value),color:'#9ca3af',lineWidth:1,lineStyle:2,axisLabelVisible:true});chart.timeScale().fitContent();
      observer=new ResizeObserver(()=>{if(chart&&canvas.isConnected)chart.applyOptions({width:canvas.clientWidth});});observer.observe(canvas);
     }
-    async function fetchBand(){saveBand();const seq=++bandSeq;data=null;chart?.remove();chart=null;observer?.disconnect();host.innerHTML=loadingIndicator('과거 가격·재무자료를 조회하고 있어요');try{const [next,runtime]=await Promise.all([valuationBandData(controls.querySelector('#band-symbol').value,Number(controls.querySelector('#band-years').value)),loadChartRuntime()]);if(seq!==bandSeq||!current())return;data=next;chartRuntime=runtime;paint();}catch(error){if(seq===bandSeq&&current())fail(error,fetchBand);}}
-    controls.querySelector('#band-symbol').onchange=fetchBand;controls.querySelector('#band-years').onchange=fetchBand;controls.querySelector('#band-metric').onchange=()=>{if(data)paint();};await fetchBand();
+    async function fetchBand(){
+     const requested={...saveBand()};
+     if(pendingBand?.symbol===requested.symbol&&pendingBand.years===requested.years)return;
+     const seq=++bandSeq;pendingBand=requested;bandError=null;
+     if(shownBand?.symbol===requested.symbol){paintBandFeedback();}
+     else{
+      data=null;shownBand=null;chart?.remove();chart=null;observer?.disconnect();
+      host.innerHTML=loadingIndicator('과거 가격·재무자료를 조회하고 있어요');
+     }
+     try{
+      const [next,runtime]=await Promise.all([valuationBandData(requested.symbol,requested.years),loadChartRuntime()]);
+      if(seq!==bandSeq||!current())return;
+      data=next;shownBand=requested;pendingBand=null;chartRuntime=runtime;paint();
+     }catch(error){
+      if(seq!==bandSeq||!current())return;
+      pendingBand=null;bandError=requested;
+      if(shownBand)paintBandFeedback();else fail(error,fetchBand);
+     }
+    }
+    controls.querySelector('#band-symbol').onchange=fetchBand;controls.querySelector('#band-years').onchange=fetchBand;controls.querySelector('#band-metric').onchange=()=>{saveBand();if(data)paint();};await fetchBand();
    }else{
     host.innerHTML=investmentToolsMarkup();bindInvestmentToolLogos(host);bindNav();
    }

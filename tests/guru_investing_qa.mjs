@@ -86,7 +86,7 @@ try{
   await page.getByRole('searchbox').fill('없는 기업');assert.match(await page.locator('.guru-empty').innerText(),/검색 조건/);
   await page.getByRole('searchbox').fill('');await page.getByLabel('선정 기업 시장').selectOption('KOSDAQ');assert.match(await page.locator('.guru-empty').innerText(),/검색 조건/);
   await page.getByLabel('선정 기업 시장').selectOption('');
-  conflict=true;await page.locator('.guru-expand').nth(1).click();await page.locator('.guru-retry-evidence').waitFor();assert.match(await page.locator('.guru-evidence').innerText(),/결과가 갱신/);
+  conflict=true;await page.locator('.guru-expand').nth(1).click();await page.locator('.guru-retry-evidence').waitFor();assert.match(await page.locator('.guru-evidence').innerText(),/선정 근거 게시 대기[\s\S]*같은 버전의 근거/);
   conflict=false;await page.locator('.guru-retry-evidence').click();await page.locator('.guru-table-wrap').waitFor();
   mode='error';conflict=true;await page.locator('.guru-expand').nth(2).click();await page.locator('.guru-retry-evidence').click();await page.locator('.guru-refresh-error').waitFor();assert.ok(await page.locator('.guru-candidate').count()>0);
   conflict=false;mode='empty';await page.reload();await page.locator('.guru-empty').waitFor();assert.match(await page.locator('.guru-empty').innerText(),/条件|조건을 모두 충족한 기업이 없어요/);

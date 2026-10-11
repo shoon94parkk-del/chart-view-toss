@@ -1,0 +1,74 @@
+{
+  "checkedAt": "2026-10-11T04:48:41.553377+00:00",
+  "health": {
+    "status": "ok",
+    "timestamp": "2026-10-11T04:47:55.564339",
+    "revision": "ae06abd12405e4c76d33ee2a0653b9fa28780e8a"
+  },
+  "cdn": {
+    "snapshotVersion": "ddc4483acdd78555148e",
+    "generatedAt": "2026-10-11T08:11:19+09:00"
+  },
+  "backend": {
+    "url": "https://chart-view-pkv8.onrender.com/static/data/guru_screening.json",
+    "snapshotVersion": "a44945d27014caff69b5",
+    "generatedAt": "2026-10-09T16:41:25+09:00"
+  },
+  "proof": [
+    {
+      "strategy": "buffett",
+      "symbol": "383220.KS",
+      "status": 409,
+      "response": {
+        "detail": {
+          "code": "snapshot_changed",
+          "currentVersion": "a44945d27014caff69b5"
+        }
+      }
+    },
+    {
+      "strategy": "lynch",
+      "symbol": "030190.KS",
+      "status": 409,
+      "response": {
+        "detail": {
+          "code": "snapshot_changed",
+          "currentVersion": "a44945d27014caff69b5"
+        }
+      }
+    },
+    {
+      "strategy": "oneil",
+      "symbol": "192820.KS",
+      "status": 409,
+      "response": {
+        "detail": {
+          "code": "snapshot_changed",
+          "currentVersion": "a44945d27014caff69b5"
+        }
+      }
+    },
+    {
+      "strategy": "minervini",
+      "symbol": "068790.KQ",
+      "status": 409,
+      "response": {
+        "detail": {
+          "code": "snapshot_changed",
+          "currentVersion": "a44945d27014caff69b5"
+        }
+      }
+    },
+    {
+      "strategy": "greenblatt",
+      "symbol": "171090.KQ",
+      "status": 409,
+      "response": {
+        "detail": {
+          "code": "snapshot_changed",
+          "currentVersion": "a44945d27014caff69b5"
+        }
+      }
+    }
+  ]
+}

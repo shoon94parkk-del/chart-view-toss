@@ -7,6 +7,31 @@ const finite=(value)=>{
 
 const text=(value)=>String(value??'').trim();
 
+const normalizeSource=value=>typeof value==='string'?{name:text(value),url:'',role:''}:{
+  name:text(value?.name),url:text(value?.url),role:text(value?.role),
+};
+const exportProvenance=raw=>{
+  const source=normalizeSource(raw.source||raw.meta?.source);
+  return {
+    source:source.name?source:normalizeSource(raw.meta?.provider),
+    sources:(Array.isArray(raw.sources)?raw.sources:[]).map(normalizeSource),
+    updatedAt:text(raw.updatedAt||raw.meta?.updatedAt),
+  };
+};
+
+// Root months must be known; a segment's explicit month may narrow, never contradict, its response.
+export function semiconductorCountryEvidence(trends,matrix,key){
+  const selected=trends?.segments?.find(row=>row.key===key);
+  const country=matrix?.segments?.find(row=>row.key===key);
+  const trendPeriod=text(selected?.period)||text(trends?.period);
+  const countryPeriod=text(country?.period)||text(matrix?.period);
+  const month=/^\d{4}-(0[1-9]|1[0-2])$/;
+  const compatible=Boolean(month.test(text(trends?.period))&&month.test(text(matrix?.period))
+    &&trends.period===matrix.period&&trendPeriod===trends.period&&countryPeriod===matrix.period);
+  return {compatible,trendPeriod,countryPeriod,segment:compatible?country||null:null};
+}
+
+
 const normalizeMetric=(raw={})=>({
   exportsUsdBillion:finite(raw.exportsUsdBillion),
   importsUsdBillion:finite(raw.importsUsdBillion),
@@ -337,6 +362,7 @@ export function normalizeExportItemDetail(raw={}){
 
   return {
     schemaVersion:Number(raw.schemaVersion)||1,
+    ...exportProvenance(raw),
     key:text(raw.key),
     name:text(raw.name),
     note:text(raw.note),
@@ -487,6 +513,7 @@ export function normalizeSemiconductorTrends(raw={}){
 
   return {
     schemaVersion:Number(raw.schemaVersion)||1,
+    ...exportProvenance(raw),
     period:text(raw.period),
     total,
     memoryTotalDeltaUsdBillion:finite(raw.memoryTotalDeltaUsdBillion),

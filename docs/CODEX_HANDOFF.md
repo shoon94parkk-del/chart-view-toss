@@ -1,6 +1,6 @@
 # 새 PC에서 이어가기 — Chart View Toss
 
-최종 갱신: 2026-10-08 KST. 대화 기억 대신 이 문서와 저장소의 현재 `main`을 기준으로 시작한다.
+최종 갱신: 2026-10-11. 대화 기억 대신 이 문서와 저장소의 현재 `main`을 기준으로 시작한다.
 
 ## 저장소와 운영 서비스
 
@@ -39,6 +39,12 @@
 ## 로딩·UX 후속 개선
 
 [로딩·UX 개선 기록](UX_LOADING_IMPROVEMENTS_20261008.md)을 읽는다. PICK primary/monitor와 수출 monthly/industry를 다시 Promise.all로 묶지 않는다. 모듈 실패는 기존 epoch·host 보호와 명시적 bounded asset repair로 복구한다. PICK 날짜 지정 진입과 실제 Back 복원은 다르다. 조건 설정의 적용 개수는 실제 form 값에서 표시한다. 성능 오류 화면·placeholder를 정상 데이터 준비로 집계하지 않는다.
+
+## 2026-10-11 사용자 점검 후 개선
+
+[우선순위별 구현·검증·다음 개선](UX_IMPROVEMENTS_2026-10-11.md)을 읽는다. 관심 저장 확인/한도/순서 편집, PICK 실제 기준일·계산 설명, TTM provenance, 수출 기간 일치·부분 재시도·독립 출처, 산업 공유, 작은 화면 전체 근거, 연구 재방문과 원문 실패, 조건 값·로컬 오류 회복을 보강했다. compact 밀도·시세/API·기존 CI/Render 흐름은 유지한다.
+
+거장 근거 게시 대기와 backend readiness gate를 서버 운영 게시 완료로 혼동하지 않는다. 10/11 실제 점검에서는 raw CDN `ddc4483acdd78555148e`와 backend `a44945d27014caff69b5`가 달라 근거409가 발생했다. 다음 우선순위는 기존 정확한 SHA 수동 게시의 실제 동일 버전 검증, Android/iOS native Sandbox, 동일 harness 성능 측정이다. 원래 점검의 미실행 항목과 이후 실행 결과는 해당 날짜의 보고서로 구분한다.
 
 ## 다른 Codex로 도구·skill 이관
 

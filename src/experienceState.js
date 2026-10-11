@@ -1,7 +1,9 @@
 // Only public view conditions belong in links. Device notes and watchlists never do.
 const symbolPattern=/^[A-Z0-9^][A-Z0-9.^=\-]{0,29}$/;
 const periods=new Set(['1mo','3mo','6mo','1y','5y','max']);
-const shareTabs=new Set(['chart','detail','discover','valuation','consensus','bands','news','heatmap']);
+const shareTabs=new Set(['chart','detail','discover','valuation','consensus','bands','news','heatmap','exports']);
+const exportFocuses=new Set(['history','provisional','items','breadth','quadrant','countries','memory','passenger-car','petroleum','cosmetics','ships','steel']);
+const publicExportKeys=['semiconductorSegmentKey','semiconductorMetric','itemKey','countryName'];
 const filterKeys=['query','market','rsiMin','rsiMax','volumeMin','ret20Min','valueMin','trend','signal','sort','priceBasis'];
 export function encodeSharedView(state){
  if(!shareTabs.has(state.tab))return '';
@@ -15,6 +17,10 @@ export function encodeSharedView(state){
  if(state.tab==='bands')view.band=state.band;
  if(state.tab==='heatmap')view.heatmap={market:state.heatmap?.market||'KR',selected:state.heatmap?.selected||null};
  if(state.tab==='news'){view.newsSymbol=state.newsSymbol;view.newsSort=state.newsSort;}
+ if(state.tab==='exports'){
+  view.exportFocus=state.exportFocus||null;
+  view.exports=Object.fromEntries(publicExportKeys.filter(key=>state.exports?.[key]!=null).map(key=>[key,state.exports[key]]));
+ }
  return JSON.stringify(view);
 }
 const validDate=value=>/^\d{4}-\d{2}-\d{2}$/.test(value||'')&&Number.isFinite(Date.parse(value))&&new Date(value).toISOString().slice(0,10)===value;
@@ -35,6 +41,17 @@ export function decodeSharedView(raw){
   if(x.band&&symbolPattern.test(x.band.symbol||'')&&[3,5,10].includes(x.band.years)&&['per','pbr'].includes(x.band.metric))view.band={symbol:x.band.symbol,years:x.band.years,metric:x.band.metric};
   if(x.tab==='heatmap'){if(!['KR','US'].includes(x.heatmap?.market))return null;view.heatmap={market:x.heatmap.market,selected:typeof x.heatmap.selected==='string'?x.heatmap.selected.slice(0,50):null};}
   if(['major','latest'].includes(x.newsSort))view.newsSort=x.newsSort;
+  if(x.tab==='exports'){
+   if(x.exportFocus!=null&&!exportFocuses.has(x.exportFocus))return null;
+   view.exportFocus=x.exportFocus||null;view.exports={};
+   if(x.exports!=null&&(typeof x.exports!=='object'||Array.isArray(x.exports)))return null;
+   for(const key of ['semiconductorSegmentKey','itemKey'])if(x.exports?.[key]!=null){
+    if(typeof x.exports[key]!=='string'||!/^[a-z0-9-]{1,48}$/.test(x.exports[key]))return null;
+    view.exports[key]=x.exports[key];
+   }
+   if(x.exports?.semiconductorMetric!=null){if(!['delta','yoy'].includes(x.exports.semiconductorMetric))return null;view.exports.semiconductorMetric=x.exports.semiconductorMetric;}
+   if(x.exports?.countryName!=null){if(typeof x.exports.countryName!=='string'||x.exports.countryName.length>80||/[\u0000-\u001f]/.test(x.exports.countryName))return null;view.exports.countryName=x.exports.countryName;}
+  }
   return view;
  }catch{return null;}
 }

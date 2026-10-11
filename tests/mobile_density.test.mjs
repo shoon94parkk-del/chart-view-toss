@@ -7,10 +7,10 @@ const picks=readFileSync(new URL('../src/pickLedger.css',import.meta.url),'utf8'
 const styles=readFileSync(new URL('../src/styles.css',import.meta.url),'utf8');
 const exportsCss=readFileSync(new URL('../src/exportMomentum.css',import.meta.url),'utf8');
 
-test('mobile screener rows keep a compact base height and typography',()=>{
+test('mobile screener rows keep compact height with readable expanded evidence',()=>{
   assert.match(discovery,/@media\(max-width:600px\)[\s\S]*\.discovery-results \.analysis-stock\{[\s\S]*min-height:68px/);
   assert.match(discovery,/\.discovery-results \.analysis-stock>span:first-child strong\{[\s\S]*font-size:13px/);
-  assert.match(discovery,/\.discovery-results \.analysis-match-reasons i\{[\s\S]*font-size:8\.5px/);
+  assert.match(discovery,/\.discovery-results \.analysis-match-reasons i\{[\s\S]*font-size:12px/);
 });
 
 test('mobile pick ledger keeps collapsed records compact without hiding core fields',()=>{

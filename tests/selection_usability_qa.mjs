@@ -84,7 +84,12 @@ try {
   await page.evaluate(()=>window.__chartviewNavigate('watch'));
   await page.evaluate(()=>window.__chartviewNavigate('detail','005930.KS','삼성전자'));
   await page.locator('[data-back]').waitFor();
-  await page.goBack();await page.locator('#watch-add').waitFor();
+  await page.goBack();await page.locator('#watch-empty-add').waitFor();
+  await page.locator('#watch-empty-add').click();
+  await page.getByRole('dialog').waitFor();
+  assert.equal(await page.locator('#app').evaluate(el=>el.inert),true,'empty watchlist opens the same accessible editor');
+  await page.keyboard.press('Escape');
+  assert.equal(await page.locator('.selector-overlay').count(),0,'empty watch editor closes with Escape');
   await page.goForward();await page.locator('[data-back]').waitFor();
   await page.locator('[data-back]').click();await page.waitForTimeout(150);
   assert.equal(new URL(page.url()).hash,'#watch','app back still works after browser forward');

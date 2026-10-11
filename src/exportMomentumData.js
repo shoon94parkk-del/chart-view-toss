@@ -1,4 +1,4 @@
-import { api } from './api.js';
+import { api, companyContextData } from './api.js';
 import { normalizeExportItemDetail, normalizeExportMomentumMap, normalizeExportProvisionalRadar, normalizeExportSnapshot, normalizeSemiconductorCountryMatrix, normalizeSemiconductorTrends } from './exportMomentumModel.js';
 
 export async function loadExportMomentumSnapshot({force=false}={}){
@@ -55,7 +55,7 @@ export async function loadSemiconductorTrends({force=false}={}){
     force,
   });
   const payload=normalizeSemiconductorTrends(raw);
-  if(!payload.period||!payload.segments.length)throw new Error('반도체 품목별 추이 데이터가 아직 준비되지 않았어요.');
+  if(!payload.segments.length)throw new Error('반도체 품목별 추이 데이터가 아직 준비되지 않았어요.');
   return payload;
 }
 
@@ -68,7 +68,7 @@ export async function loadSemiconductorCountryMatrix({force=false}={}){
     force,
   });
   const payload=normalizeSemiconductorCountryMatrix(raw);
-  if(!payload.period||!payload.segments.length)throw new Error('반도체 국가별 데이터가 아직 준비되지 않았어요.');
+  if(!payload.segments.length)throw new Error('반도체 국가별 데이터가 아직 준비되지 않았어요.');
   return payload;
 }
 
@@ -100,4 +100,22 @@ export async function loadMemorySpot({force=false}={}){
     ...raw,
     history:Array.isArray(raw.history)?raw.history:[],
   };
+}
+
+let companyContextPending=null;
+export async function loadExportCompanyContext({force=false}={}){
+  // A newly mounted industry must join recovery before consulting a cached failed HTTP200.
+  if(companyContextPending)return companyContextPending;
+  const work=(async()=>{
+    const payload=await companyContextData({force});
+    if(!payload||payload.error||payload.status==='error'||payload.available===false||!Array.isArray(payload.companies)
+      ||payload.companies.some(row=>!row||typeof row!=='object'||Array.isArray(row)
+        ||typeof row.symbol!=='string'||!row.symbol.trim()||typeof row.name!=='string'||!row.name.trim())){
+      throw new Error('기업 근거 자료 확인 실패');
+    }
+    return payload;
+  })();
+  companyContextPending=work;
+  try{return await work;}
+  finally{if(companyContextPending===work)companyContextPending=null;}
 }

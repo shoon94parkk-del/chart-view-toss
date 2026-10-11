@@ -12,6 +12,16 @@ test('public share round trips selection, dates, peer and screener without priva
  assert.equal(decodeSharedView('{"tab":"chart","selected":["<script>"]}'),null);
  assert.equal(decodeSharedView('{"tab":"chart","customRange":{"start":"2026-99-99","end":"2027-01-01"}}'),null);
 });
+test('industry sharing round trips only public export selections',()=>{
+ const state={tab:'exports',exportFocus:'memory',exports:{semiconductorSegmentKey:'dram',semiconductorMetric:'yoy',itemKey:'cosmetics',countryName:'중국',returnToResearch:true,privateNote:'secret'},watchlist:[{symbol:'AAPL'}],question:'secret'};
+ const decoded=decodeSharedView(encodeSharedView(state));
+ assert.ok(decoded);
+ assert.equal(decoded.exportFocus,'memory');
+ assert.deepEqual(decoded.exports,{semiconductorSegmentKey:'dram',semiconductorMetric:'yoy',itemKey:'cosmetics',countryName:'중국'});
+ assert.doesNotMatch(JSON.stringify(decoded),/secret|AAPL|returnToResearch/);
+ assert.equal(decodeSharedView('{"tab":"exports","exportFocus":"unknown"}'),null);
+ assert.equal(decodeSharedView('{"tab":"exports","exports":{"itemKey":"<script>"}}'),null);
+});
 test('home summary has separate pending, missing and failure terminal states',()=>{
  assert.equal(homeBriefState(null,{pending:true}).status,'loading');
  assert.equal(homeBriefState({macro:{summary:{}}}).status,'empty');

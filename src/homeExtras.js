@@ -8,6 +8,7 @@ import { mergeLiveRows } from './liveHomeSync.js';
 import { rememberLiveQuotes, getLiveQuote, mergeRowsWithLive } from './liveQuoteStore.js';
 import { SHOW_SPOTLIGHT } from './releaseScope.js';
 import { loadingIndicator } from './loadingView.js';
+import { PICK_METHOD, pickPriceBasis } from './pickPerformanceBasis.js';
 
 const STOCK_META = HOME_STOCK_META;
 
@@ -229,6 +230,7 @@ function paintPicks(host, payload) {
       '<span><small>평가 기록</small><strong>' + esc(evaluated.length+'/'+allRecords.length) + '</strong></span>' +
       '<span><small>재점검</small><strong data-home-pick-risk>—</strong></span>' +
     '</div>' +
+    '<details class="home-pick-calculation"><summary>성과 집계 기준</summary><p>' + esc(PICK_METHOD) + '</p><p>' + esc(pickPriceBasis(allRecords)) + '</p></details>' +
     '<div class="home-pick-meta">' + esc(dateLabel) + ' · 최근 3종목</div>' +
     recentSelections(payload).slice(0,3).map(row=>selectionCardMarkup(row)).join('');
   window.__chartviewBindNav?.();

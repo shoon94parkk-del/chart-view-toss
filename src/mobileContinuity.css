@@ -36,7 +36,7 @@
 
  /* Comparable values lead; original estimates, currency and source remain visible. */
  .app-shell[data-surface="consensus"] .consensus-caution{padding:9px 10px;margin:8px 0;font-size:12px;line-height:1.5}
- .app-shell[data-surface="consensus"] .analysis-card{padding:11px 12px;border-radius:14px;margin-bottom:9px}
+ .app-shell[data-surface="consensus"] .analysis-card{padding:10px 12px;border-radius:14px;margin-bottom:9px}
  .app-shell[data-surface="consensus"] .analysis-card .text-button{font-size:14px}
  .app-shell[data-surface="consensus"] .analysis-card p{font-size:12px;line-height:1.5;margin:7px 0}
  .app-shell[data-surface="consensus"] .analysis-meta{font-size:12px;white-space:normal;color:#596575}

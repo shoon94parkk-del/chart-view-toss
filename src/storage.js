@@ -10,8 +10,11 @@ const IDENTITY_KEY = 'chartview-toss-identity-v1';
 const USAGE_KEY = 'chartview-toss-usage-v1';
 const WEB_VISITOR_KEY = 'chartview-toss-visitor-v1';
 const cache = new Map();
+const committed = new Map();
+const writeVersions = new Map();
 let queue = Promise.resolve();
 let nativeReady = false;
+let nativeWriteBlocked = false;
 let namespace = '';
 const scoped = key => namespace ? `${key}:${namespace}` : key;
 
@@ -27,7 +30,7 @@ async function bridgeCall(operation) {
 export async function initializeStorage() {
   if (!isAppsInTossRuntime()) return;
   nativeReady = false;
-  await queue.catch(() => {});
+  await bridgeCall(() => queue.catch(() => {}));
   const identity = await bridgeCall(() => User.getAnonymousKey());
   if (identity?.type !== 'HASH' || typeof identity.hash !== 'string' || !identity.hash.trim()) throw new Error('Identity unavailable');
   const previous = await bridgeCall(() => Storage.getItem(IDENTITY_KEY));
@@ -54,8 +57,12 @@ export async function initializeStorage() {
     firstUsedAt: usage?.firstUsedAt || now, lastUsedAt: now,
     visits: Number.isSafeInteger(usage?.visits) && usage.visits >= 0 ? usage.visits + 1 : 1,
   })));
-  values.forEach((value, index) => cache.set(keys[index], value));
+  values.forEach((value, index) => {
+    cache.set(keys[index], value);
+    committed.set(keys[index], value);
+  });
   nativeReady = true;
+  nativeWriteBlocked = false;
 }
 
 export function getActivityVisitorId() {
@@ -72,24 +79,76 @@ export function getActivityVisitorId() {
 }
 
 export function readStored(key) {
-  return isAppsInTossRuntime() ? cache.get(key) ?? null : localStorage.getItem(key);
+  return isAppsInTossRuntime() ? (nativeReady ? cache.get(key) ?? null : null) : localStorage.getItem(key);
 }
 
-export function writeStored(key, value) {
+export function writeStored(key, value, { confirmed = false } = {}) {
   if (!isAppsInTossRuntime()) { localStorage.setItem(key, value); return; }
   if (!nativeReady) throw new Error('Storage not ready');
-  cache.set(key, value);
   const target = scoped(key);
-  queue = queue.catch(() => {}).then(() => bridgeCall(() => Storage.setItem(target, value)));
-  queue.catch(() => document.dispatchEvent(new Event('chartview:storage-error')));
+  const version = (writeVersions.get(key) || 0) + 1;
+  writeVersions.set(key, version);
+  // Research/review callers read immediately after saving. List transactions
+  // opt into confirmed writes so their state changes only after bridge success.
+  if (!confirmed) cache.set(key, value);
+  let expired = false;
+  queue = queue.catch(() => {}).then(async () => {
+    if (expired) return;
+    if (nativeWriteBlocked) throw new Error('Storage not ready');
+    const previous = committed.get(key) ?? null;
+    try {
+      // A caller timeout does not cancel the native operation. Keep the queue
+      // behind its real settlement and repair a late success before any retry.
+      await Storage.setItem(target, value);
+      if (expired) {
+        try {
+          if (previous == null) await Storage.removeItem(target);
+          else await Storage.setItem(target, previous);
+        } catch (error) {
+          nativeReady = false;
+          nativeWriteBlocked = true;
+          document.dispatchEvent(new Event('chartview:storage-error'));
+          throw error;
+        }
+        return;
+      }
+      committed.set(key, value);
+      if (writeVersions.get(key) === version) cache.set(key, value);
+    } catch (error) {
+      // A failed older save must not undo a newer caller's optimistic value.
+      if (writeVersions.get(key) === version) cache.set(key, committed.get(key) ?? null);
+      throw error;
+    }
+  });
+  const result = bridgeCall(() => queue).catch(error => {
+    expired = true;
+    if (writeVersions.get(key) === version) cache.set(key, committed.get(key) ?? null);
+    throw error;
+  });
+  result.catch(() => document.dispatchEvent(new Event('chartview:storage-error')));
+  return result;
 }
 
 export async function clearStored() {
   if (!isAppsInTossRuntime()) { [...keys, WEB_VISITOR_KEY].forEach(key => localStorage.removeItem(key)); return; }
   if (!nativeReady) throw new Error('Storage not ready');
+  let expired = false;
+  const versions = new Map(keys.map(key => [key, writeVersions.get(key)]));
   queue = queue.catch(() => {}).then(async () => {
-    await bridgeCall(() => Promise.all([...keys, USAGE_KEY].map(key => Storage.removeItem(scoped(key)))));
-    keys.forEach(key => cache.delete(key));
+    if (expired) return;
+    const targets = [...keys, USAGE_KEY];
+    // Wait for every removal even if one fails, so a late removal cannot erase
+    // a following save after the caller has already received an error.
+    const results = await Promise.allSettled(targets.map(key => Storage.removeItem(scoped(key))));
+    results.forEach((result, index) => {
+      const key = targets[index];
+      if (result.status !== 'fulfilled' || !keys.includes(key)) return;
+      committed.delete(key);
+      if (writeVersions.get(key) === versions.get(key)) cache.delete(key);
+    });
+    const failure = results.find(result => result.status === 'rejected');
+    if (failure) throw failure.reason;
   });
-  await queue;
+  try { await bridgeCall(() => queue); }
+  catch (error) { expired = true; throw error; }
 }

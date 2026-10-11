@@ -25,8 +25,9 @@ export function filterGuruResults(rows,{query='',market=''}={},strategy=''){
 export function greenblattCurrentCheck(value){
  const roa=Number.isFinite(value?.roa)?value.roa:null,pe=Number.isFinite(value?.trailingPE)?value.trailingPE:null,forwardPE=Number.isFinite(value?.forwardPE)?value.forwardPE:null,trailingEPS=Number.isFinite(value?.trailingEPS)?value.trailingEPS:null;
  const provenFailure=(roa!==null&&roa<25)||(pe!==null&&(pe<5||pe>20))||(trailingEPS!==null&&trailingEPS<=0);
- const status=provenFailure?'failed':roa===null||pe===null?'unknown':'matched';
- return {status,roa,trailingPE:pe,forwardPE,trailingEPS};
+ const invalid=!value||value.error||value.status==='error'||!['roa','trailingPE','trailingEPS'].some(key=>Object.hasOwn(value,key));
+ const status=invalid?'error':provenFailure?'failed':roa===null||pe===null?'unknown':'matched';
+ return {status,roa,trailingPE:pe,forwardPE,trailingEPS,dataSource:value?.dataSource??null,provider:value?.provider??null,generatedAt:value?.generatedAt??null,asOf:value?.asOf??null,fieldMeta:value?.fieldMeta&&typeof value.fieldMeta==='object'&&!Array.isArray(value.fieldMeta)?structuredClone(value.fieldMeta):{}};
 }
 // missingReasons is optional in older publications. Its counts describe both
 // insufficient data and unsupported comparisons, not just insufficientCount.

@@ -1,0 +1,79 @@
+{
+  "note": "Intentional error controls, not application failures",
+  "runs": [
+    {
+      "project": "desktop-chromium",
+      "control": "uncaught-runtime-controls",
+      "actualRuntimeKinds": [
+        "error",
+        "unhandledrejection",
+        "unhandledrejection"
+      ],
+      "intentionalErrorMessages": [
+        "oracle sync failure",
+        "oracle async failure",
+        "oracle closing failure"
+      ],
+      "inspectorDiagnosticCount": 3,
+      "caught": null
+    },
+    {
+      "project": "narrow-chromium",
+      "control": "uncaught-runtime-controls",
+      "actualRuntimeKinds": [
+        "error",
+        "unhandledrejection",
+        "unhandledrejection"
+      ],
+      "intentionalErrorMessages": [
+        "oracle sync failure",
+        "oracle async failure",
+        "oracle closing failure"
+      ],
+      "inspectorDiagnosticCount": 3,
+      "caught": null
+    },
+    {
+      "project": "android-chromium",
+      "control": "uncaught-runtime-controls",
+      "actualRuntimeKinds": [
+        "error",
+        "unhandledrejection",
+        "unhandledrejection"
+      ],
+      "intentionalErrorMessages": [
+        "oracle sync failure",
+        "oracle async failure",
+        "oracle closing failure"
+      ],
+      "inspectorDiagnosticCount": 3,
+      "caught": null
+    },
+    {
+      "project": "iphone-small-webkit",
+      "control": "uncaught-runtime-controls",
+      "actualRuntimeKinds": [
+        "error",
+        "unhandledrejection",
+        "unhandledrejection"
+      ],
+      "intentionalErrorMessages": [
+        "oracle sync failure",
+        "oracle async failure",
+        "oracle closing failure"
+      ],
+      "inspectorDiagnosticCount": 3,
+      "caught": null
+    },
+    {
+      "project": "iphone-small-webkit",
+      "control": "caught-provisional-fetch-diagnostics",
+      "actualRuntimeKinds": [],
+      "intentionalErrorMessages": [],
+      "inspectorDiagnosticCount": 1,
+      "caught": [
+        "TypeError: Load failed"
+      ]
+    }
+  ]
+}

@@ -4,6 +4,11 @@
 .home-extra-skeleton{height:214px;border-radius:18px}
 .home-pick-list{border:1px solid #edf0f2;border-radius:18px;overflow:hidden;background:#fff}
 .home-pick-meta{padding:10px 14px;background:#f7f8fa;color:#8b95a1;font-size:11px;font-weight:700;border-bottom:1px solid #edf0f2}
+.home-pick-calculation{padding:0 12px;color:#4e5968;font-size:12px;line-height:1.5;border-bottom:1px solid #edf0f2}
+.home-pick-calculation>summary{display:flex;align-items:center;min-height:44px;cursor:pointer;font-weight:700}
+.home-pick-calculation>summary::after{content:'⌄';margin-left:auto}
+.home-pick-calculation[open]>summary::after{content:'⌃'}
+.home-pick-calculation p{margin:0 0 10px}
 .home-pick-row{width:100%;min-height:66px;border:0;border-bottom:1px solid #f2f4f6;background:#fff;display:grid;grid-template-columns:34px 1fr auto;gap:10px;align-items:center;padding:11px 13px;text-align:left;color:#191f28}
 .home-pick-row:last-child{border-bottom:0}
 .home-pick-row:disabled{cursor:default}

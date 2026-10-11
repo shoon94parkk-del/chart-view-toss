@@ -94,7 +94,12 @@ export function mountResearchCard(host,options){
  const bindResults=()=>{
   result.querySelector('[data-research-retry]')?.addEventListener('click',()=>analyze(lastQuestion,lastTarget,lastConfirmed));
   result.querySelectorAll('[data-research-jump]').forEach(b=>b.onclick=()=>{if(!onJump?.(b.dataset.researchJump))onNotice?.('해당 자료를 아직 표시할 수 없어요.');});
-  result.querySelectorAll('[data-research-source]').forEach(b=>b.onclick=()=>openExternal(b.dataset.researchSource));
+  result.querySelectorAll('[data-research-source]').forEach(b=>b.onclick=async()=>{
+   if(b.disabled)return;b.disabled=true;
+   const opened=await openExternal(b.dataset.researchSource);
+   b.disabled=false;
+   if(!opened&&host.isConnected)onNotice?.('원문을 열지 못했어요. 연결 상태를 확인한 뒤 원문 버튼을 다시 눌러주세요.');
+  });
  };
  const analyze=async (question,chosenTarget=null,confirmed=false)=>{
   if(!question.trim()){input.focus();return;}

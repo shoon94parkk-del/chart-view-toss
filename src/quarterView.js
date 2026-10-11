@@ -7,7 +7,16 @@ export const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;'
 export const money=(v,currency='KRW')=>{const n=number(v);if(n===null)return '확인 불가';return currency==='KRW'?(Math.abs(n)>=1e12?(n/1e12).toLocaleString('ko-KR',{maximumFractionDigits:2})+'조 원':(n/1e8).toLocaleString('ko-KR',{maximumFractionDigits:1})+'억 원'):n.toLocaleString('ko-KR')+' '+esc(currency);};
 const pct=v=>number(v)===null?'확인 불가':Number(v).toFixed(1)+'%';
 export const sources=urls=>[...new Set(urls||[])].filter(url=>{try{const u=new URL(url);return u.protocol==='https:'&&u.hostname==='dart.fss.or.kr';}catch{return false;}}).map((url,i)=>`<button type="button" class="financial-source" data-review-source="${esc(url)}">${i?'계산에 사용한 이전 공시':'공시 원문'}</button>`).join('');
-export function bindSources(host){host.querySelectorAll('[data-review-source]').forEach(b=>b.onclick=()=>openExternal(b.dataset.reviewSource));}
+export function bindSources(host){
+ let status=host.querySelector('[data-source-open-status]');
+ if(!status){status=document.createElement('p');status.dataset.sourceOpenStatus='';status.className='review-note';status.setAttribute('role','status');host.append(status);}
+ host.querySelectorAll('[data-review-source]').forEach(b=>b.onclick=async()=>{
+  if(b.disabled)return;b.disabled=true;
+  const opened=await openExternal(b.dataset.reviewSource);
+  b.disabled=false;
+  if(status.isConnected)status.textContent=opened?'':'원문을 열지 못했어요. 연결 상태를 확인한 뒤 원문 버튼을 다시 눌러주세요.';
+ });
+}
 export function quarterChart(rows,key){
  const values=rows.map(r=>r.available?number(r[key]):null),valid=values.filter(v=>v!==null);
  if(!valid.length)return '<p>이 항목의 분기 자료를 확인할 수 없어요.</p>';
@@ -21,6 +30,7 @@ export function quarterChart(rows,key){
 function html(data,key){
  const rows=data.quarters||[],ttm=data.ttm;
  return `<div class="investment-subhead"><div><h3>최근 8분기 흐름</h3><p>누적이 아닌 각 분기의 3개월 실적</p></div><span>${esc(data.basis||'')}</span></div><div class="quarter-tabs" role="group" aria-label="분기 차트 항목">${[['revenue','매출액'],['operatingProfit','영업이익'],['margin','이익률']].map(([k,l])=>`<button type="button" data-quarter-key="${k}" aria-pressed="${key===k}">${l}</button>`).join('')}</div>${quarterChart(rows,key)}
+ ${data.basis?'<details class="quarter-basis-help"><summary>연결·별도 기준 안내</summary><p>연결재무제표는 종속기업을 포함하고 별도재무제표는 해당 기업만의 실적이에요. 위의 최근 실적과 재무 기준이 같은지 함께 확인하세요. 서로 다르면 수치를 직접 비교하지 마세요.</p></details>':''}
  <div class="review-ttm"><strong>최근 12개월 합계 · TTM</strong>${ttm?`<small>${esc(ttm.start)} → ${esc(ttm.end)}</small><div><span>매출액 <b>${money(ttm.revenue,ttm.currency)}</b></span><span>영업이익 <b>${money(ttm.operatingProfit,ttm.currency)}</b></span></div><p>영업이익률 ${pct(ttm.margin)}</p>`:'<p>연속된 최근 네 분기 자료가 모두 있어야 계산할 수 있어요.</p>'}</div>
  <details class="quarter-table-details"><summary>분기별 수치 · 증가율 · 원문 확인</summary><div class="review-table-scroll"><table class="review-table"><thead><tr><th scope="col">분기</th><th scope="col">매출액</th><th scope="col">영업이익</th><th scope="col">이익률</th></tr></thead><tbody>${rows.map(r=>`<tr><th scope="row">${r.year}년 ${r.quarter}Q</th><td>${money(r.revenue,r.currency)}<small>전년 대비 ${pct(r.revenueGrowth)}</small></td><td>${money(r.operatingProfit,r.currency)}<small>전년 대비 ${pct(r.profitGrowth)}</small></td><td>${pct(r.margin)}</td></tr><tr class="quarter-source-row"><td colspan="4">${r.available?(r.method==='annual_minus_q3'?'연간 − 3분기 누적 · 계산값':r.method==='cumulative_difference'?'인접 누적 공시의 차이 · 계산값':'공시의 3개월 실적'):'자료 미확인'} ${sources(r.sourceUrls)}</td></tr>`).join('')}</tbody></table></div></details>
  <p class="review-note">4분기는 연간에서 3분기 누적을 뺀 계산값이에요. 각 공시의 정정 시점이 다르면 계산값도 달라질 수 있어요. 증가율은 전년 같은 분기 값이 양수일 때만 계산해요. 자료 없는 분기를 0으로 채우지 않아요.${data.refreshFailed?' 최신 조회에 실패해 이전 공시 자료를 표시하고 있어요.':data.partialRefresh?' 일부 보고서의 재조회에 실패해 저장된 자료를 함께 표시하고 있어요.':data.refreshDelayed?' 확인이 지연되어 저장된 자료를 표시하고 있어요.':''}</p>${data.refreshing?loadingIndicator('새 공시를 확인하는 동안 저장된 분기 자료를 보여드려요'):''}${data.refreshFailed||data.partialRefresh||data.refreshDelayed?'<button type="button" class="retry" data-quarter-retry>분기 실적 다시 확인</button>':''}`;

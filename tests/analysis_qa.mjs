@@ -36,6 +36,7 @@ try{
     assert.equal(await page.locator('[name=volumeMin]').inputValue(),'2');
     assert.match(await page.locator('.screener-active-preset').innerText(),/거래량 급증/);
     assert.ok((await page.locator('.analysis-stock').count())>0);
+    await page.locator('.analysis-stock-evidence>summary').first().click();
     assert.match(await page.locator('.analysis-match-reasons').first().innerText(),/거래량/);
     await page.locator('[data-screener-preset="rsi-oversold"]').click();
     assert.equal(await page.locator('[name=rsiMax]').inputValue(),'30');

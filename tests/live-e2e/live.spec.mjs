@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import {normalizeExportItemDetail,formatUsdBillion,formatSignedPct} from '../../src/exportMomentumModel.js';
-import {validateGuruSnapshot} from '../../src/guruInvestingModel.js';
+import {validateGuruSnapshot,guruViewStatus} from '../../src/guruInvestingModel.js';
 const symbol = '005930.KS';
 const fmtPrice = row => `${Math.round(row.price).toLocaleString('ko-KR')}원`;
 const fatal = [];
@@ -101,18 +101,58 @@ test('live 산업 상세: 실제 화장품 응답 → 모델 → 금액·등락�
   await info.attach('real-cosmetics-screen',{body:await page.screenshot(),contentType:'image/png'});
 });
 
-test('live 거장 다섯 전략: 실제 snapshot 기준일·검증 분모·선정 개수 표시',async({page},info)=>{
+test('live 거장 다섯 전략: 실제 snapshot 범위와 같은 버전의 후보 근거 게시 검증',async({page},info)=>{
+  const proofResponses=[],publication=[];
+  page.on('response',response=>{
+    if(!new URL(response.url()).pathname.startsWith('/api/guru-investing/'))return;
+    // Capture immediately; retain body failures as evidence without stopping
+    // the remaining strategies before their strict HTTP200 checks can run.
+    proofResponses.push({url:response.url(),status:response.status(),ok:response.ok(),
+      body:response.json().then(payload=>({payload,bodyError:null}),error=>({payload:null,bodyError:String(error?.message||error)}))});
+  });
   const response=page.waitForResponse(r=>new URL(r.url()).pathname.endsWith('/guru_screening.json'));
   await page.goto('/#gurus/buffett');
   const data=validateGuruSnapshot(await(await response).json());
   for(const strategy of ['buffett','lynch','oneil','minervini','greenblatt']){
     await page.locator(`[data-guru-strategy="${strategy}"]`).click();
     const summary=data.strategies[strategy],coverage=page.locator('.guru-coverage');
+    if(!summary){
+      await expect(page.locator('.guru-empty')).toContainText('결과가 아직 게시되지 않았어요');
+      publication.push({strategy,state:'unpublished',version:data.snapshotVersion});
+      continue;
+    }
     await expect(coverage).toContainText(`${summary.matchedCount}개`);
     await expect(coverage).toContainText(`검증 ${summary.evaluatedCount.toLocaleString()} / 대상 ${summary.universeCount.toLocaleString()}`);
     await expect(coverage).toContainText(data.tradeDate);
     await expect(coverage).toContainText(`자료 부족 ${summary.insufficientCount}`);
+    if(!summary.matchedCount){
+      const state=guruViewStatus(summary,strategy);
+      await expect(page.locator('.guru-empty')).toContainText(state.title);
+      await expect(page.locator('.guru-empty')).toContainText(state.text);
+      publication.push({strategy,state:state.status,version:data.snapshotVersion,evaluated:summary.evaluatedCount,pending:summary.pendingCount});
+      continue;
+    }
+    const candidate=page.locator('[data-guru-expand]').first(),symbol=await candidate.getAttribute('data-guru-expand');
+    expect(summary.results.some(row=>row.symbol===symbol)).toBe(true);
+    if(await candidate.getAttribute('aria-expanded')!=='true')await candidate.click();
+    await expect.poll(()=>proofResponses.some(response=>new URL(response.url).pathname.endsWith('/'+symbol)&&new URL(response.url).searchParams.get('version')===data.snapshotVersion)).toBe(true);
+    const response=proofResponses.findLast(response=>new URL(response.url).pathname.endsWith('/'+symbol)&&new URL(response.url).searchParams.get('version')===data.snapshotVersion);
+    const {payload:proof,bodyError}=await response.body;
+    publication.push({strategy,symbol,requestedVersion:data.snapshotVersion,status:response.status,responseVersion:proof?.snapshotVersion,detail:proof?.detail,bodyError});
+    await info.attach(`real-guru-${strategy}-evidence`,{body:JSON.stringify({url:response.url,status:response.status,payload:proof,bodyError}),contentType:'application/json'});
+    expect.soft(response.status,`${strategy} ${symbol}: published candidate evidence must be HTTP200 for snapshot ${data.snapshotVersion}; deployment publication mismatch must not be hidden`).toBe(200);
+    expect.soft(bodyError,`${strategy} ${symbol}: candidate evidence response body must be readable JSON`).toBeNull();
+    if(!response.ok||bodyError){
+      if(response.status===409)await expect(page.locator('.guru-evidence')).toContainText('같은 버전의 근거');
+      continue;
+    }
+    expect(proof.snapshotVersion).toBe(data.snapshotVersion);
+    expect(proof.symbol).toBe(symbol);
+    expect(proof.strategies?.[strategy]?.status).toBe('matched');
+    await expect(page.locator('.guru-evidence-basis')).toBeVisible();
+    await expect(page.locator('.guru-retry-evidence')).toHaveCount(0);
   }
+  await info.attach('real-guru-publication',{body:JSON.stringify(publication),contentType:'application/json'});
   await info.attach('real-guru-coverage',{body:JSON.stringify({version:data.snapshotVersion,tradeDate:data.tradeDate,strategies:Object.fromEntries(Object.entries(data.strategies).map(([key,s])=>[key,{matched:s.matchedCount,evaluated:s.evaluatedCount,insufficient:s.insufficientCount}]))}),contentType:'application/json'});
   await info.attach('real-guru-screen',{body:await page.screenshot(),contentType:'image/png'});
 });

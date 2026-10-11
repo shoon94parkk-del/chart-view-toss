@@ -7,7 +7,7 @@ export function savedResearchHtml(nameFor,{compact=false}={}){
  const priority=row=>['new','corrected','conditionChanged'].includes(reviewRevisit(row).kind)?0:1;
  const ordered=[...rows].sort((a,b)=>priority(a)-priority(b));
  const eligible=rows.filter(row=>/^[A-Z0-9]{6}\.(KS|KQ)$/.test(row.symbol)&&(row.filing||row.conditions.length)).length;
- if(compact)return `<section class="saved-research section" data-revisit-compact="true"><div class="section-head"><h2>다시 확인할 내용</h2>${eligible?'<button type="button" class="text-button" data-refresh-saved-research>최신 공시 확인</button>':'<button type="button" class="text-button" data-tab="watch">모두 보기</button>'}</div><p class="revisit-refresh-status" role="status"></p>${error?'<p role="status">일부 저장 내용을 읽지 못했어요. 저장한 자료를 지우지 않았어요.</p>':''}${ordered.slice(0,1).map(row=>{
+ if(compact)return `<section class="saved-research section" data-revisit-compact="true"><div class="section-head"><h2>다시 확인할 내용</h2><button type="button" class="text-button" data-tab="watch">모두 보기 · ${rows.length}</button></div>${eligible?'<button type="button" class="text-button" data-refresh-saved-research>최신 공시 확인</button>':''}<p class="revisit-refresh-status" role="status"></p>${error?'<p role="status">일부 저장 내용을 읽지 못했어요. 저장한 자료를 지우지 않았어요.</p>':''}${ordered.slice(0,1).map(row=>{
   const review=reviewRevisit(row),hasReview=Boolean(row.filing||row.conditions.length);
   const jump=hasReview?'detail-report-review':'detail-research-card';
   const checked=review.checkedAt?new Intl.DateTimeFormat('ko-KR',{timeZone:'Asia/Seoul',month:'numeric',day:'numeric'}).format(new Date(review.checkedAt)):'';

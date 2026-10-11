@@ -3,31 +3,39 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
 
-function setup({ native = true, failRead = false, failWrite = false } = {}) {
+function setup({ native = true, failRead = false, manualTimers = false } = {}) {
   const disk = new Map([['chartview-toss-watchlist-v1', '[{"symbol":"NVDA"}]']]);
   const events = [];
   let identity = {type:'HASH',hash:'user-A'};
-  let writeFails = false;
+  let writeFails = false, nextWriteFailures = 0, pendingWrite = null, pendingRemoval = null;
+  const timers = new Map();
+  let timerId = 0;
   const context = vm.createContext({
-    Map, Promise, Error, Event, setTimeout, clearTimeout,
+    Map, Promise, Error, Event,
+    setTimeout: manualTimers ? callback => { timers.set(++timerId, callback); return timerId; } : setTimeout,
+    clearTimeout: manualTimers ? id => timers.delete(id) : clearTimeout,
     User: { getAnonymousKey: async () => identity },
     document: { dispatchEvent: event => events.push(event.type) },
     isAppsInTossRuntime: () => native,
     localStorage: { getItem: k => disk.get(k) ?? null, setItem: (k,v) => disk.set(k,v), removeItem: k => disk.delete(k) },
     Storage: {
       getItem: async k => { if (failRead) throw new Error('offline bridge'); return disk.get(k) ?? null; },
-      setItem: async (k,v) => { if (writeFails) throw new Error('full'); disk.set(k,v); },
-      removeItem: async k => disk.delete(k),
+      setItem: async (k,v) => { if (pendingWrite) await pendingWrite; if (writeFails) throw new Error('full'); if (nextWriteFailures > 0) { nextWriteFailures--; throw new Error('full'); } disk.set(k,v); },
+      removeItem: async k => { if(pendingRemoval)await pendingRemoval; disk.delete(k); },
     },
   });
   const source = readFileSync('src/storage.js','utf8').replace(/^import .*;\r?\n/gm,'').replaceAll('export ', '');
-  vm.runInContext(source + '\nthis.api={initializeStorage,readStored,writeStored,clearStored,WATCHLIST_KEY,SELECTED_KEY,RESEARCH_KEY,REVIEW_KEY};',context);
-  return { ...context.api, disk, events, setIdentity: value => {identity=value;}, failWrites: () => {writeFails=true;} };
+  vm.runInContext(source + '\nthis.api={initializeStorage,readStored,writeStored,clearStored,WATCHLIST_KEY,SELECTED_KEY,RESEARCH_KEY,REVIEW_KEY,flushWrites:()=>queue};',context);
+  for (const [file, api] of [['researchNotes', 'saveResearchNote,readResearchNote'], ['reviewStorage', 'updateReview,readReview']]) {
+    const module = readFileSync(`src/${file}.js`, 'utf8').replace(/^import .*;\r?\n/gm, '').replaceAll('export ', '');
+    vm.runInContext(`{${module}\nObject.assign(this.api,{${api}});}`, context);
+  }
+  return { ...context.api, disk, events, setIdentity: value => {identity=value;}, failWrites: (value=true) => {writeFails=value;}, rejectNextWrites: (count=1) => {nextWriteFailures=count;}, expireTimers: () => { const pending=[...timers.values()]; timers.clear(); pending.forEach(callback=>callback()); }, allowFollowingWrites: () => {pendingWrite=null;}, holdRemovals: () => { let release; pendingRemoval=new Promise(resolve=>{release=resolve;}); return () => {pendingRemoval=null;release();}; }, holdWrites: () => { let release; pendingWrite=new Promise(resolve=>{release=resolve;}); return () => {pendingWrite=null;release();}; } };
 }
 test('native storage restores and serializes writes before clear',async()=>{
   const s=setup(); await s.initializeStorage();
   assert.equal(s.readStored(s.WATCHLIST_KEY),'[{"symbol":"NVDA"}]');
-  s.writeStored(s.WATCHLIST_KEY,'[]');
+  await s.writeStored(s.WATCHLIST_KEY,'[]');
   assert.equal(s.readStored(s.WATCHLIST_KEY),'[]');
   await s.clearStored();
   assert.deepEqual([...s.disk.keys()],['chartview-toss-identity-v1']);
@@ -49,12 +57,178 @@ test('failed native read cannot overwrite existing watchlist',async()=>{
   assert.throws(()=>s.writeStored(s.WATCHLIST_KEY,'[]'),/not ready/);
   assert.equal(s.disk.get(s.WATCHLIST_KEY),'[{"symbol":"NVDA"}]');
 });
-test('native write failures are surfaced to the UI',async()=>{
-  const s=setup({failWrite:true}); await s.initializeStorage();
+test('native write failures reject and preserve the last committed cache and saved bytes',async()=>{
+  const s=setup(); await s.initializeStorage();
+  const before=s.readStored(s.WATCHLIST_KEY);
   s.failWrites();
-  s.writeStored(s.WATCHLIST_KEY,'[]');
+  await assert.rejects(Promise.resolve(s.writeStored(s.WATCHLIST_KEY,'[]',{confirmed:true})),/full/);
   await new Promise(resolve=>setTimeout(resolve,0));
   assert.deepEqual(s.events,['chartview:storage-error']);
+  assert.equal(s.readStored(s.WATCHLIST_KEY),before);
+  assert.equal(s.disk.get(`${s.WATCHLIST_KEY}:user-A`),before);
+  s.failWrites(false);
+  await s.writeStored(s.WATCHLIST_KEY,'[]');
+  assert.equal(s.readStored(s.WATCHLIST_KEY),'[]');
+});
+
+test('native pending writes do not expose uncommitted values and awaitable writes retain order',async()=>{
+  const s=setup(); await s.initializeStorage();
+  const before=s.readStored(s.WATCHLIST_KEY),release=s.holdWrites();
+  const first=s.writeStored(s.WATCHLIST_KEY,'[{"symbol":"AAPL"}]',{confirmed:true});
+  const second=s.writeStored(s.WATCHLIST_KEY,'[]',{confirmed:true});
+  assert.equal(s.readStored(s.WATCHLIST_KEY),before);
+  assert.equal(typeof first?.then,'function');
+  release();await Promise.all([first,second]);
+  assert.equal(s.readStored(s.WATCHLIST_KEY),'[]');
+  assert.equal(s.disk.get(`${s.WATCHLIST_KEY}:user-A`),'[]');
+});
+
+test('native research and review saves remain immediately readable while bridge writes are pending',async()=>{
+  const s=setup(); await s.initializeStorage();
+  const release=s.holdWrites();
+  try {
+    s.saveResearchNote('AAPL',{question:'First company'});
+    assert.equal(s.readResearchNote('AAPL')?.question,'First company');
+    s.saveResearchNote('NVDA',{question:'Second company'});
+    assert.deepEqual(Object.keys(JSON.parse(s.readStored(s.RESEARCH_KEY))),['AAPL','NVDA']);
+    s.updateReview('AAPL',{reviewedAt:'2026-10-11'});
+    assert.equal(s.readReview('AAPL').reviewedAt,'2026-10-11');
+    s.updateReview('NVDA',{reviewedAt:'2026-10-12'});
+    assert.deepEqual(Object.keys(JSON.parse(s.readStored(s.REVIEW_KEY))),['AAPL','NVDA']);
+  } finally { release(); await s.flushWrites(); }
+  assert.deepEqual(Object.keys(JSON.parse(s.disk.get(`${s.RESEARCH_KEY}:user-A`))),['AAPL','NVDA']);
+  assert.deepEqual(Object.keys(JSON.parse(s.disk.get(`${s.REVIEW_KEY}:user-A`))),['AAPL','NVDA']);
+});
+
+test('a failed optimistic native write rolls back an unchanged cache to the saved value',async()=>{
+  const s=setup(); await s.initializeStorage();
+  const before=s.readStored(s.WATCHLIST_KEY),release=s.holdWrites();
+  s.rejectNextWrites();
+  const failed=s.writeStored(s.WATCHLIST_KEY,'[]');
+  try { assert.equal(s.readStored(s.WATCHLIST_KEY),'[]'); } finally { release(); }
+  await assert.rejects(failed,/full/);
+  assert.equal(s.readStored(s.WATCHLIST_KEY),before);
+  assert.equal(s.disk.get(`${s.WATCHLIST_KEY}:user-A`),before);
+});
+
+test('failed queued optimistic writes restore committed bytes without reviving an earlier failed value',async()=>{
+  const s=setup(); await s.initializeStorage();
+  const before=s.readStored(s.WATCHLIST_KEY),release=s.holdWrites();
+  s.rejectNextWrites(2);
+  const first=s.writeStored(s.WATCHLIST_KEY,'[{"symbol":"AAPL"}]');
+  const second=s.writeStored(s.WATCHLIST_KEY,'[]');
+  try { assert.equal(s.readStored(s.WATCHLIST_KEY),'[]'); } finally { release(); }
+  await assert.rejects(first,/full/);await assert.rejects(second,/full/);
+  assert.equal(s.readStored(s.WATCHLIST_KEY),before);
+  assert.equal(s.disk.get(`${s.WATCHLIST_KEY}:user-A`),before);
+});
+
+test('an earlier confirmed native write cannot replace a newer optimistic cache value',async()=>{
+  const s=setup(); await s.initializeStorage();
+  const release=s.holdWrites();
+  const first=s.writeStored(s.WATCHLIST_KEY,'[{"symbol":"AAPL"}]',{confirmed:true});
+  const second=s.writeStored(s.WATCHLIST_KEY,'[]');
+  try { assert.equal(s.readStored(s.WATCHLIST_KEY),'[]'); } finally { release(); }
+  await first;
+  assert.equal(s.readStored(s.WATCHLIST_KEY),'[]');
+  await second;
+  assert.equal(s.disk.get(`${s.WATCHLIST_KEY}:user-A`),'[]');
+});
+
+test('timed-out confirmed native writes are repaired before a newer retry can reach disk',async()=>{
+  const s=setup({manualTimers:true}); await s.initializeStorage();
+  const before=s.readStored(s.WATCHLIST_KEY),release=s.holdWrites();
+  const first=s.writeStored(s.WATCHLIST_KEY,'[]',{confirmed:true});
+  await new Promise(resolve=>setTimeout(resolve,0));
+  s.expireTimers();
+  await assert.rejects(first,/timeout/);
+  s.allowFollowingWrites();
+  let secondSettled=false;
+  const second=s.writeStored(s.WATCHLIST_KEY,'[{"symbol":"AAPL"}]',{confirmed:true}).then(()=>{secondSettled=true;});
+  try {
+    await new Promise(resolve=>setTimeout(resolve,0));
+    assert.equal(secondSettled,false,'A retry must wait for the timed-out bridge operation');
+    assert.equal(s.disk.get(`${s.WATCHLIST_KEY}:user-A`),before);
+    assert.equal(s.readStored(s.WATCHLIST_KEY),before);
+  } finally { release(); await second; }
+  assert.equal(s.disk.get(`${s.WATCHLIST_KEY}:user-A`),'[{"symbol":"AAPL"}]');
+  assert.equal(s.readStored(s.WATCHLIST_KEY),'[{"symbol":"AAPL"}]');
+});
+
+test('a timed-out native write that settles late restores the committed bytes',async()=>{
+  const s=setup({manualTimers:true}); await s.initializeStorage();
+  const before=s.readStored(s.WATCHLIST_KEY),release=s.holdWrites();
+  const write=s.writeStored(s.WATCHLIST_KEY,'[]',{confirmed:true});
+  await new Promise(resolve=>setTimeout(resolve,0));
+  s.expireTimers();
+  await assert.rejects(write,/timeout/);
+  release();await s.flushWrites().catch(()=>{});
+  assert.equal(s.disk.get(`${s.WATCHLIST_KEY}:user-A`),before);
+  assert.equal(s.readStored(s.WATCHLIST_KEY),before);
+});
+
+test('native initialization times out while an earlier write is still unsettled and later restores safely',async()=>{
+  const s=setup({manualTimers:true}); await s.initializeStorage();
+  const before=s.readStored(s.WATCHLIST_KEY),release=s.holdWrites();
+  const write=s.writeStored(s.WATCHLIST_KEY,'[]',{confirmed:true});
+  await new Promise(resolve=>setTimeout(resolve,0));
+  s.expireTimers();await assert.rejects(write,/timeout/);
+  const initialize=s.initializeStorage();
+  await new Promise(resolve=>setTimeout(resolve,0));
+  s.expireTimers();await assert.rejects(initialize,/timeout/);
+  assert.equal(s.readStored(s.WATCHLIST_KEY),null);
+  release();await s.flushWrites();
+  await s.initializeStorage();
+  assert.equal(s.readStored(s.WATCHLIST_KEY),before);
+});
+
+test('a retry that times out while queued is never written after the earlier operation settles',async()=>{
+  const s=setup({manualTimers:true}); await s.initializeStorage();
+  const before=s.readStored(s.WATCHLIST_KEY),release=s.holdWrites();
+  const first=s.writeStored(s.WATCHLIST_KEY,'[]',{confirmed:true});
+  await new Promise(resolve=>setTimeout(resolve,0));
+  s.expireTimers();await assert.rejects(first,/timeout/);
+  const retry=s.writeStored(s.WATCHLIST_KEY,'[{"symbol":"AAPL"}]',{confirmed:true});
+  s.expireTimers();await assert.rejects(retry,/timeout/);
+  release();await s.flushWrites();
+  assert.equal(s.disk.get(`${s.WATCHLIST_KEY}:user-A`),before);
+  assert.equal(s.readStored(s.WATCHLIST_KEY),before);
+});
+
+test('clear times out behind an unsettled native write and cannot delete data later',async()=>{
+  const s=setup({manualTimers:true}); await s.initializeStorage();
+  const before=s.readStored(s.WATCHLIST_KEY),release=s.holdWrites();
+  const write=s.writeStored(s.WATCHLIST_KEY,'[]',{confirmed:true});
+  await new Promise(resolve=>setTimeout(resolve,0));
+  s.expireTimers();await assert.rejects(write,/timeout/);
+  let settled=false,error=null;
+  const clear=s.clearStored().then(()=>{settled=true;},reason=>{settled=true;error=reason;});
+  await new Promise(resolve=>setTimeout(resolve,0));
+  s.expireTimers();
+  try {
+    await new Promise(resolve=>setTimeout(resolve,0));
+    assert.equal(settled,true,'Clear must report a timeout while the bridge remains unsettled');
+    assert.match(error?.message||'',/timeout/);
+  } finally { release();await clear; }
+  await s.flushWrites();
+  assert.equal(s.disk.get(`${s.WATCHLIST_KEY}:user-A`),before);
+  assert.equal(s.readStored(s.WATCHLIST_KEY),before);
+});
+
+test('a started native clear cannot delete a newer saved list after timing out',async()=>{
+  const s=setup({manualTimers:true}); await s.initializeStorage();
+  const release=s.holdRemovals();
+  const clear=s.clearStored();
+  await new Promise(resolve=>setTimeout(resolve,0));
+  s.expireTimers();await assert.rejects(clear,/timeout/);
+  let saved=false;
+  const retry=s.writeStored(s.WATCHLIST_KEY,'[{"symbol":"AAPL"}]',{confirmed:true}).then(()=>{saved=true;});
+  try {
+    await new Promise(resolve=>setTimeout(resolve,0));
+    assert.equal(saved,false,'A write must wait for every started native removal to settle');
+  } finally {release();await retry;}
+  assert.equal(s.disk.get(`${s.WATCHLIST_KEY}:user-A`),'[{"symbol":"AAPL"}]');
+  assert.equal(s.readStored(s.WATCHLIST_KEY),'[{"symbol":"AAPL"}]');
 });
 
 test('anonymous identity separates accounts, restores returning users and preserves usage',async()=>{

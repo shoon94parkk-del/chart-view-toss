@@ -1,4 +1,4 @@
-import { loadExportItemDetail, loadExportMomentumMap, loadExportMomentumSnapshot, loadExportProvisionalRadar, loadSemiconductorCountryMatrix, loadSemiconductorTrends } from './exportMomentumData.js';
+import { loadExportCompanyContext, loadExportItemDetail, loadExportMomentumMap, loadExportMomentumSnapshot, loadExportProvisionalRadar, loadSemiconductorCountryMatrix, loadSemiconductorTrends } from './exportMomentumData.js';
 import {exportCompanyCandidates,memoryMovements} from './insightModel.js';
 import { bindHorizontalTabs, focusSelectedTab } from './accessibleTabs.js';
 import {
@@ -14,6 +14,7 @@ import {
   formatUsdBillion,
   formatWeightKg,
   semiconductorShare,
+  semiconductorCountryEvidence,
   tradeBalanceLabel,
   yoyLabel,
   zeroPct,
@@ -389,7 +390,19 @@ function semiconductorTrendHistory(segment){
   `;
 }
 
-function semiconductorTrendView(trends,{metric='delta',selectedKey='',countryMatrix=null,countryState='loading',metadata=null,companyState='loading'}={}){
+function industrySources(detail,{scope=detail.note}={}){
+  const provided=[detail.source,...(detail.sources||[])].filter(source=>source?.name);
+  const sourceNames=[...new Set(provided.map(source=>source.name))].join(' · ')||'출처 미제공';
+  const updated=detail.updatedAt?`갱신 시각 ${detail.updatedAt}`:'갱신 시각 미제공';
+  return `<details class="export-source export-industry-source"><summary><strong>데이터 기준·원자료</strong><span>기준월 ${esc(detail.period||'미제공')}</span></summary><div class="export-source-body"><p>출처 ${esc(sourceNames)} · 기준월 ${esc(detail.period||'미제공')} · ${esc(scope||'HS 범위 미제공')}</p><p>금액 억달러 · 물량 순중량(kg 원자료) · 평균 단위가치 USD/kg. 단위가치는 개별 제품 판매가격이 아닙니다.</p><p>${esc(updated)}</p><div class="export-source-links">${provided.filter(source=>/^https:\/\//.test(source.url||'')).map(source=>`<button type="button" data-external-url="${esc(source.url)}"><span>${esc(source.name)}</span><small>원자료 열기</small></button>`).join('')}</div></div></details>`;
+}
+
+function semiconductorCompanyView(selected,metadata,companyState){
+  const candidates=metadata&&selected?exportCompanyCandidates('semiconductor',metadata,selected.key):[];
+  return `<div class="export-detail-country-head"><strong>관련 기업에서 확인하기</strong><small>KRX 주요제품 근거</small></div>${companyState==='error'?'<div class="export-semi-inline-state is-error" role="status">기업 근거 자료 확인 실패. <button type="button" data-export-semi-company-retry>기업 근거 다시 시도</button></div>':candidates.length?`<div class="export-semi-company-list">${candidates.map((row,index)=>`<button type="button" data-export-semi-company="${index}"><strong>${esc(row.name)}</strong><span>${esc(row.productEvidence)}</span><small>${row.matchScope==='segment'?'선택 품목 표현 확인':'반도체 제조 사업 후보'} · ${esc(row.basisDate)}</small></button>`).join('')}</div><p class="export-chart-note">기업별 수출액·납품 관계·수혜를 의미하지 않습니다. 주요제품과 공시 실적을 이어서 확인하는 조사 후보입니다.</p>`:companyState==='loading'?'<div class="export-semi-inline-state" role="status">검증된 주요제품에서 관련 기업 후보를 확인하고 있어요.</div>':'<div class="export-semi-inline-state">검증된 주요제품 근거가 있는 기업 후보를 찾지 못했어요. 이름만으로 관련주를 만들지 않습니다.</div>'}`;
+}
+
+export function semiconductorTrendView(trends,{metric='delta',selectedKey='',countryMatrix=null,countryState='loading',metadata=null,companyState='loading'}={}){
   const preferred=['memory-total','dram','flash','sram','mcp-memory','processor-controller','other-ic','dram-module'];
   const sourceRows=preferred.map(key=>trends.segments.find(row=>row.key===key)).filter(Boolean);
   const metricValue=row=>metric==='yoy'?row.exportYoY:row.deltaUsdBillion;
@@ -401,8 +414,8 @@ function semiconductorTrendView(trends,{metric='delta',selectedKey='',countryMat
   const selected=sourceRows.find(row=>row.key===selectedKey)||sourceRows.find(row=>row.key==='dram')||sourceRows[0];
   const values=rows.map(metricValue).filter(Number.isFinite);
   const maxAbs=Math.max(...values.map(value=>Math.abs(value)),1);
-  const countrySegment=countryMatrix?.segments?.find(row=>row.key===selected?.key)||null;
-  const candidates=metadata&&selected?exportCompanyCandidates('semiconductor',metadata,selected.key):[];
+  const countryEvidence=semiconductorCountryEvidence(trends,countryMatrix,selected?.key);
+  const countrySegment=countryEvidence.segment;
   const contribution=selected?.overallContributionPct!==null&&selected?.overallContributionPct!==undefined
     ?{label:'반도체 전체 증가액 중',value:selected.overallContributionPct,note:'HS 8541+8542 증가액을 분모로 한 부분 기여도'}
     :selected?.memoryContributionPct!==null&&selected?.memoryContributionPct!==undefined
@@ -453,7 +466,7 @@ function semiconductorTrendView(trends,{metric='delta',selectedKey='',countryMat
           ${contribution?`<div class="export-semi-contribution"><span>${esc(contribution.label)}</span><strong class="${yoyTone(contribution.value)}">${esc(contribution.value.toFixed(1))}%</strong><small>${esc(contribution.note)} · 다른 품목 감소가 있으면 100%를 넘거나 음수가 될 수 있어요.</small></div>`:`<div class="export-semi-contribution is-muted"><span>증가액 기여도</span><strong>-</strong><small>${selected.key==='dram-module'?'DRAM 모듈은 반도체 총계 HS 8541+8542 밖이라 전체 기여도를 계산하지 않습니다.':'상위 분류와 중복되지 않는 기여 기준이 없어 임의 계산하지 않습니다.'}</small></div>`}
           <div class="export-semi-country-inline">
             <div class="export-detail-country-head"><strong>어느 나라가 증감을 만들었나</strong><small>지정 6개 시장 · 전년동월 대비</small></div>
-            ${countrySegment?`
+            ${countryMatrix&&!countryEvidence.compatible?`<div class="export-semi-inline-state">추이 ${esc(countryEvidence.trendPeriod||'기준월 미제공')} · 국가 ${esc(countryEvidence.countryPeriod||'기준월 미제공')}. 기준월이 같다고 확인되지 않아 국가 증감을 이 품목의 설명·기업 조사 근거로 연결하지 않아요.</div>`:countrySegment?`
               <div class="export-semi-country-mini">
                 ${[...countrySegment.countries].sort((a,b)=>Math.abs(b.deltaUsdBillion||0)-Math.abs(a.deltaUsdBillion||0)).map(row=>`
                   <div><strong>${esc(row.name)}</strong><span>${esc(formatUsdBillion(row.exportsUsdBillion,{digits:1}))}</span><em class="${yoyTone(row.deltaUsdBillion)}">${esc(formatSignedUsdBillion(row.deltaUsdBillion,{digits:1}))}</em><small>YoY ${esc(formatSignedPct(row.exportYoY))}</small></div>
@@ -462,21 +475,22 @@ function semiconductorTrendView(trends,{metric='delta',selectedKey='',countryMat
               <p class="export-chart-note">중국·홍콩·베트남·대만·미국·일본 지정 시장 비교이며 전세계 국가 순위가 아닙니다.</p>
             `:countryState==='loading'?'<div class="export-semi-inline-state">국가별 증감 데이터를 불러오고 있어요.</div>':countryState==='error'?'<div class="export-semi-inline-state is-error">국가별 세부 분석을 불러오지 못했어요. <button type="button" data-export-semi-country-retry>다시 시도</button></div>':'<div class="export-semi-inline-state">이 품목은 현재 6개국 세부 비교 대상이 아닙니다. DRAM·Flash·MCP·DRAM 모듈을 선택하면 국가 분해를 볼 수 있어요.</div>'}
           </div>
-          <div class="export-semi-company-inline">
-            <div class="export-detail-country-head"><strong>관련 기업에서 확인하기</strong><small>KRX 주요제품 근거</small></div>
-            ${candidates.length?`<div class="export-semi-company-list">${candidates.map((row,index)=>`<button type="button" data-export-semi-company="${index}"><strong>${esc(row.name)}</strong><span>${esc(row.productEvidence)}</span><small>${row.matchScope==='segment'?'선택 품목 표현 확인':'반도체 제조 사업 후보'} · ${esc(row.basisDate)}</small></button>`).join('')}</div><p class="export-chart-note">기업별 수출액·납품 관계·수혜를 의미하지 않습니다. 주요제품과 공시 실적을 이어서 확인하는 조사 후보입니다.</p>`:companyState==='loading'?'<div class="export-semi-inline-state">검증된 주요제품에서 관련 기업 후보를 확인하고 있어요.</div>':'<div class="export-semi-inline-state">검증된 주요제품 근거가 있는 기업 후보를 찾지 못했어요. 이름만으로 관련주를 만들지 않습니다.</div>'}
-          </div>
+          <div class="export-semi-company-inline">${semiconductorCompanyView(selected,metadata,companyState)}</div>
+          ${industrySources(trends,{scope:`HS 8541+8542 · 선택 품목 HSK ${selected.code}`})}
         </div>
       `:''}
     </section>
   `;
 }
 
-function breadth(snapshot){
+export function breadth(snapshot){
   const data=snapshot.breadth;
   if(!data||!Number.isFinite(data.comparableCount)||data.comparableCount<=0)return '';
-  const risingPct=Number.isFinite(data.risingBreadthPct)?Math.max(0,Math.min(100,data.risingBreadthPct)):0;
-  const fallingPct=100-risingPct;
+  const parts=[['up','증가',data.risingCount],['down','감소',data.fallingCount],['flat','보합',data.flatCount]].map(([tone,label,count])=>({
+    tone,label,count,pct:Number.isFinite(count)&&count>=0&&count<=data.comparableCount?count/data.comparableCount*100:null,
+  }));
+  const partLabel=part=>part.pct===null?`${part.label} 미제공`:`${part.label} ${part.count}개 · ${part.pct.toFixed(1)}%`;
+  const risingPct=parts[0].pct;
   const moverRows=(rows,tone)=>rows.map(row=>`
     <div class="export-breadth-mover">
       <div><span>HS ${esc(row.code)}</span><strong>${esc(row.name)}</strong></div>
@@ -488,15 +502,15 @@ function breadth(snapshot){
       <div class="export-section-head"><div><span>수출 확산도</span><h3>몇 개 품목이 같이 좋아졌나</h3></div><small>${esc(monthLabel(data.period||snapshot.itemPeriod))} · HS2</small></div>
       <div class="export-breadth-card">
         <div class="export-breadth-summary">
-          <div><span>증가 품목</span><strong>${esc(data.risingCount)} / ${esc(data.comparableCount)}</strong><small>전년동월 비교 가능 HS2</small></div>
-          <div><span>상승 확산도</span><strong>${esc(formatSignedPct(data.risingBreadthPct,{digits:1}).replace('+',''))}</strong><small>증가 품목 비율</small></div>
+          <div><span>증가 품목</span><strong>${data.risingCount===null?'미제공':esc(data.risingCount)} / ${esc(data.comparableCount)}</strong><small>전년동월 비교 가능 HS2</small></div>
+          <div><span>상승 확산도</span><strong>${risingPct===null?'미제공':risingPct.toFixed(1)+'%'}</strong><small>증가 품목 비율</small></div>
           <div><span>증가 품목 수출 비중</span><strong>${data.risingExportSharePct===null?'-':esc(data.risingExportSharePct.toFixed(1)+'%')}</strong><small>현재 HS2 수출액 기준</small></div>
           <div><span>HS2 순증감</span><strong class="${balanceTone(data.netChangeUsdBillion)}">${esc(formatUsdBillion(data.netChangeUsdBillion,{digits:1}))}</strong><small>전년동월 대비</small></div>
         </div>
-        <div class="export-breadth-track" aria-label="증가 품목 ${esc(data.risingCount)}개, 감소 품목 ${esc(data.fallingCount)}개">
-          <i class="up" style="width:${risingPct.toFixed(1)}%"></i><i class="down" style="width:${fallingPct.toFixed(1)}%"></i>
+        <div class="export-breadth-track" role="img" aria-label="${esc(parts.map(partLabel).join(', '))}">
+          ${parts.filter(part=>part.pct!==null).map(part=>`<i class="${part.tone}" style="width:${part.pct.toFixed(1)}%"></i>`).join('')}
         </div>
-        <div class="export-breadth-legend"><span>증가 ${esc(data.risingCount)}개</span><span>보합 ${esc(data.flatCount)}개</span><span>감소 ${esc(data.fallingCount)}개</span></div>
+        <div class="export-breadth-legend">${parts.map(part=>`<span>${esc(partLabel(part))}</span>`).join('')}</div>
         <div class="export-breadth-movers">
           <div><h4>수출 증가 기여액 상위</h4>${moverRows(data.topPositive,'up')}</div>
           <div><h4>수출 감소 기여액 상위</h4>${moverRows(data.topNegative,'down')}</div>
@@ -722,7 +736,7 @@ function industryTabError(config,message){
   `;
 }
 
-function renderIndustryTab(detail){
+export function renderIndustryTab(detail){
   const latest=detail.history.at(-1)||{};
   const maxCountry=Math.max(...detail.countries.map(row=>row.exportsUsdBillion||0),1);
   const phaseRows=(detail.momentum?.phaseHistory||[]).slice(-12);
@@ -769,6 +783,7 @@ function renderIndustryTab(detail){
       </div>
       <div class="export-industry-research-head"><strong>기업 실적으로 확인하기</strong><small>KRX 주요제품과 공시에서 교차확인</small></div>
       <section class="export-research export-industry-research" tabindex="-1"></section>
+      ${industrySources(detail,{scope:detail.note||config.scope})}
     </section>
   `;
 }
@@ -1128,16 +1143,25 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={},onSe
       }));
       next.querySelector('[data-export-semi-country-retry]')?.addEventListener('click',async()=>{
         countryState='loading';renderCurrent();
-        try{countryMatrix=await loadSemiconductorCountryMatrix({force:true});countryState='ready';}
-        catch{countryState='error';}
+        try{const value=await loadSemiconductorCountryMatrix({force:true});if(!currentRequest())return;countryMatrix=value;countryState='ready';}
+        catch{if(!currentRequest())return;countryState='error';}
         renderCurrent();
       });
-      next.querySelectorAll('[data-export-semi-company]').forEach(button=>button.addEventListener('click',()=>{
+      bindCompanies(next.querySelector('.export-semi-company-inline'));
+      bindNav();
+
+    };
+
+    const currentRequest=()=>parentToken===seq&&token===semiconductorSeq&&host.isConnected;
+    const bindCompanies=companyHost=>{
+      if(!companyHost)return;
+      companyHost.querySelector('[data-export-semi-company-retry]')?.addEventListener('click',()=>void loadCompanies(true));
+      companyHost.querySelectorAll('[data-export-semi-company]').forEach(button=>button.addEventListener('click',()=>{
         const selected=trends.segments.find(row=>row.key===semiconductorSegmentKey)||trends.segments[0];
         const candidates=exportCompanyCandidates('semiconductor',metadata||{},selected?.key);
         const row=candidates[Number(button.dataset.exportSemiCompany)];
         if(!row||!selected)return;
-        const country=countryMatrix?.segments?.find(segment=>segment.key===selected.key)?.countries?.slice().sort((a,b)=>Math.abs(b.deltaUsdBillion||0)-Math.abs(a.deltaUsdBillion||0))[0];
+        const country=semiconductorCountryEvidence(trends,countryMatrix,selected.key).segment?.countries?.slice().sort((a,b)=>Math.abs(b.deltaUsdBillion||0)-Math.abs(a.deltaUsdBillion||0))[0];
         window.__chartviewInvestigate?.(row.symbol,row.name,{
           kind:'export',
           symbol:row.symbol,
@@ -1155,21 +1179,37 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={},onSe
         });
       }));
     };
+    const updateCompanies=()=>{
+      if(!currentRequest()||!trends)return;
+      const companyHost=host.querySelector('#export-semiconductor-analysis .export-semi-company-inline');
+      if(!companyHost)return;
+      const selected=trends.segments.find(row=>row.key===semiconductorSegmentKey)||trends.segments[0];
+      companyHost.innerHTML=semiconductorCompanyView(selected,metadata,companyState);
+      bindCompanies(companyHost);
+    };
+    let companyLoading=false;
+    const loadCompanies=async(force=false)=>{
+      if(companyLoading||!currentRequest())return;
+      companyLoading=true;companyState='loading';updateCompanies();
+      try{
+        const value=await loadExportCompanyContext({force});
+        if(!currentRequest())return;
+        metadata=value;companyState='ready';
+      }catch{
+        if(!currentRequest())return;
+        metadata=null;companyState='error';
+      }finally{companyLoading=false;}
+      updateCompanies();
+    };
 
     const countryPromise=loadSemiconductorCountryMatrix({force}).then(value=>{
-      if(token!==semiconductorSeq)return;
+      if(!currentRequest())return;
       countryMatrix=value;countryState='ready';renderCurrent();
     }).catch(()=>{
-      if(token!==semiconductorSeq)return;
+      if(!currentRequest())return;
       countryState='error';renderCurrent();
     });
-    const companyPromise=import('./api.js').then(({companyContextData})=>companyContextData()).then(value=>{
-      if(token!==semiconductorSeq)return;
-      metadata=value||{};companyState='ready';renderCurrent();
-    }).catch(()=>{
-      if(token!==semiconductorSeq)return;
-      companyState='error';renderCurrent();
-    });
+    const companyPromise=loadCompanies(force);
 
     try{
       trends=await loadSemiconductorTrends({force});
@@ -1204,6 +1244,7 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={},onSe
       industryLoaded.add(key);
       panel.innerHTML=renderIndustryTab(detail);
       panel.dataset.loadState='ready';
+      bindNav();
       const researchHost=panel.querySelector('.export-industry-research');
       if(researchHost){
         void import('./exportResearchView.js').then(({mountExportResearch})=>{

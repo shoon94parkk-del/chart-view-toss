@@ -1,0 +1,7 @@
+.watch-sort{flex-wrap:wrap}
+.watch-sort #watch-order-edit{margin-left:auto;background:#fff8e6;color:#755213}
+.watch-order-note{font-size:12px;line-height:1.6;color:#4e5968;margin:0 0 12px}
+.watch-order-controls{display:flex;align-items:center;justify-content:flex-end;gap:4px;padding:0 8px 4px;border-top:1px solid #f2f4f6}
+.watch-order-controls span{margin-right:auto;font-size:12px;color:#4e5968}
+.watch-order-controls button{min-width:64px;min-height:44px;border:0;border-radius:8px;background:#f2f4f6;color:#333d4b;font-size:12px;font-weight:700}
+.watch-order-controls button:disabled{opacity:.45}

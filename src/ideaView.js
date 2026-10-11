@@ -3,7 +3,7 @@ import { buildInvestmentIdeas, ideaCoverage } from './ideaEngine.js';
 import { industryContextHtml } from './industryContextView.js';
 import { loadingIndicator } from './loadingView.js';
 
-import {retainIdeaDisclosures} from './auditExperience.js';
+import {ideaDisclosureKey,retainIdeaDisclosures} from './auditExperience.js';
 const ideaVisits=new Map();
 
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -39,6 +39,13 @@ const latestMonitorBySymbol=(payload)=>{
   }
   return result;
 };
+function monitorDetailsHtml(pick,status){
+  const dates=[pick?.monitor?.lastReviewedTradeDate?`기업 근거 검토 ${pick.monitor.lastReviewedTradeDate}`:'',pick?.technical?.tradeDate?`가격·거래 기준 ${pick.technical.tradeDate}`:''].filter(Boolean);
+  const corporate=pick?.monitor?.reason||'';
+  const technical=(Array.isArray(pick?.technical?.reasons)?pick.technical.reasons:[]).filter(Boolean).join(' · ');
+  const notes=corporate&&technical?[`기업 근거 · ${corporate}`,`가격·거래 · ${technical}`]:[corporate||technical||'제공된 상세 검토 근거가 없어요.'];
+  return `<details class="idea-monitor-details"><summary>사후점검 근거</summary>${notes.map(note=>`<p>${esc(note)}</p>`).join('')}<small class="idea-monitor-date">${esc(dates.join(' · ')||'검토일 미제공')}</small></details>`;
+}
 function candidateRow(row){
   const change=Number(row.change1d);
   return `<article class="idea-candidate-wrap" data-idea-symbol="${esc(row.symbol)}" data-idea-name="${esc(row.name)}">
@@ -47,7 +54,7 @@ function candidateRow(row){
       <span class="idea-candidate-price"><strong>${price(row.price)}</strong><em class="${change>0?'up':change<0?'down':'flat'}">${pct(row.change1d)}</em></span>
       <span class="idea-reasons">${row.reasons.slice(0,2).map(reason=>`<i>${esc(reason)}</i>`).join('')}</span>
       ${row.dataWarnings?.length?`<span class="data-quality-warning"><b>변동 기준 확인</b>${row.dataWarnings.map(esc).join(' ')}</span>`:''}
-      ${row.monitorStatus?`<span class="idea-monitor-status ${esc(row.monitorStatus.cls)}"><b>${esc(row.monitorStatus.label)}</b>${row.monitorStatus.note?`<small>${esc(row.monitorStatus.note)}</small>`:''}</span>`:''}
+      ${row.monitorStatus?`<span class="idea-monitor-status ${esc(row.monitorStatus.cls)}"><b>${esc(row.monitorStatus.label)}</b></span>`:''}
     </button>
     ${industryContextHtml(row.context,{collapsible:true,open:false})}
   </article>`;
@@ -65,23 +72,26 @@ function ideaCard(idea,index){
 function applyMonitorStatuses(host,ideas,monitorPayload){
   if(!host?.isConnected)return;
   const monitorBySymbol=latestMonitorBySymbol(monitorPayload);
-  for(const idea of ideas){
-    for(const row of idea.candidates||[]){
-      const status=monitorSummary(monitorBySymbol.get(String(row.symbol||'').toUpperCase()));
-      if(!status)continue;
-      const wrap=host.querySelector(`[data-idea-symbol="${CSS.escape(String(row.symbol||''))}"]`);
-      const button=wrap?.querySelector('.idea-candidate');
-      const reasons=button?.querySelector('.idea-reasons');
-      if(!button||!reasons)continue;
-      let badge=button.querySelector('.idea-monitor-status');
-      if(!badge){
-        badge=document.createElement('span');
-        badge.className='idea-monitor-status';
-        reasons.insertAdjacentElement('afterend',badge);
-      }
-      badge.className=`idea-monitor-status ${status.cls}`;
-      badge.innerHTML=`<b>${esc(status.label)}</b>${status.note?`<small>${esc(status.note)}</small>`:''}`;
+  for(const wrap of host.querySelectorAll('[data-idea-symbol]')){
+    const pick=monitorBySymbol.get(String(wrap.dataset.ideaSymbol||'').toUpperCase());
+    const status=monitorSummary(pick);
+    const button=wrap.querySelector('.idea-candidate');
+    const reasons=button?.querySelector('.idea-reasons');
+    if(!status||!button||!reasons)continue;
+    let badge=button.querySelector('.idea-monitor-status');
+    if(!badge){
+      badge=document.createElement('span');
+      reasons.insertAdjacentElement('afterend',badge);
     }
+    badge.className=`idea-monitor-status ${status.cls}`;
+    badge.innerHTML=`<b>${esc(status.label)}</b>`;
+    let details=wrap.querySelector('.idea-monitor-details');
+    const open=details?.open;
+    if(details)details.outerHTML=monitorDetailsHtml(pick,status);
+    else button.insertAdjacentHTML('afterend',monitorDetailsHtml(pick,status));
+    details=wrap.querySelector('.idea-monitor-details');
+    const key=ideaDisclosureKey(wrap.closest('.idea-card')?.querySelector('h3')?.textContent||'guide',wrap.dataset.ideaSymbol,'idea-monitor-details');
+    details.open=ideaVisits.has(key)?ideaVisits.get(key):Boolean(open);
   }
 }
 

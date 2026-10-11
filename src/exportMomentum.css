@@ -538,3 +538,10 @@
   .export-industry-hero strong{font-size:9.5px}
   .export-industry-country-grid{grid-template-columns:1fr}
 }
+
+.export-breadth-track .flat{background:#8b95a1}
+.export-breadth-legend{flex-wrap:wrap;font-size:12px;line-height:1.5}
+.export-industry-source .export-source-body p,.export-industry-source .export-source-body small,.export-industry-source .export-source-links button span{font-size:12px;line-height:1.6;overflow-wrap:anywhere}
+.export-industry-source summary strong,.export-industry-source summary span{font-size:12px}
+.export-industry-source .export-source-links button{min-height:44px}
+.export-semi-inline-state{font-size:12px}

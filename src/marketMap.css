@@ -32,3 +32,10 @@
 .market-map-members small,.market-map-meta,.market-map-meta strong,.market-map-basis{font-size:12px;color:#4e5968}
 .market-map-controls button{min-height:44px}
 .market-map-members .text-button{min-height:44px;font-size:13px}
+
+.market-map-members>button{gap:10px}
+.market-map-members>button>span{min-width:0;flex:1}
+.market-map-members>button strong{font-size:12px;line-height:1.5;overflow-wrap:anywhere}
+.market-map-members>button>b{flex:none;white-space:nowrap}
+.market-map-ticker{font-style:normal;font-weight:800;color:#245ba5;white-space:nowrap}
+.market-map-members small{line-height:1.5;overflow-wrap:anywhere}

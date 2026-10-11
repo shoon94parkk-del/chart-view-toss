@@ -1,0 +1,57 @@
+[
+  {
+    "strategy": "buffett",
+    "symbol": "009450.KS",
+    "requestedVersion": "ddc4483acdd78555148e",
+    "status": 409,
+    "detail": {
+      "code": "snapshot_changed",
+      "currentVersion": "a44945d27014caff69b5"
+    },
+    "bodyError": null
+  },
+  {
+    "strategy": "lynch",
+    "symbol": "036620.KQ",
+    "requestedVersion": "ddc4483acdd78555148e",
+    "status": 409,
+    "detail": {
+      "code": "snapshot_changed",
+      "currentVersion": "a44945d27014caff69b5"
+    },
+    "bodyError": null
+  },
+  {
+    "strategy": "oneil",
+    "symbol": "192820.KS",
+    "requestedVersion": "ddc4483acdd78555148e",
+    "status": 409,
+    "detail": {
+      "code": "snapshot_changed",
+      "currentVersion": "a44945d27014caff69b5"
+    },
+    "bodyError": null
+  },
+  {
+    "strategy": "minervini",
+    "symbol": "000500.KS",
+    "requestedVersion": "ddc4483acdd78555148e",
+    "status": 409,
+    "detail": {
+      "code": "snapshot_changed",
+      "currentVersion": "a44945d27014caff69b5"
+    },
+    "bodyError": null
+  },
+  {
+    "strategy": "greenblatt",
+    "symbol": "171090.KQ",
+    "requestedVersion": "ddc4483acdd78555148e",
+    "status": 409,
+    "detail": {
+      "code": "snapshot_changed",
+      "currentVersion": "a44945d27014caff69b5"
+    },
+    "bodyError": null
+  }
+]

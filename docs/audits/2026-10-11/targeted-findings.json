@@ -1,0 +1,45 @@
+{
+  "share": {
+    "source": "https://chart-view-toss.onrender.com/#exports/cosmetics",
+    "shared": {
+      "url": "https://chart-view-toss.onrender.com/?v=promo-20260930-v2#exports",
+      "title": "수출 데이터 | 차트뷰",
+      "text": "차트뷰에서 시장 데이터와 종목 정보를 확인해보세요."
+    },
+    "received": "https://chart-view-toss.onrender.com/?v=promo-20260930-v2#exports",
+    "selected": "전체 요약"
+  },
+  "storage": {
+    "afterFailure": "삼\n삼성전자\n005930.KS · 기준시각 확인 중 · 새 시세 확인 중\n확인 중\n등락률 -\n엔\n엔비디아\nNVDA · 기준시각 확인 중 · 새 시세 확인 중\n확인 중\n등락률 -\n애\n애플\nAAPL · 기준시각 확인 중 · 새 시세 확인 중\n확인 중\n등락률 -",
+    "afterSort": "애\n애플\nAAPL · 기준시각 확인 중 · 새 시세 확인 중\n확인 중\n등락률 -\n엔\n엔비디아\nNVDA · 기준시각 확인 중 · 새 시세 확인 중\n확인 중\n등락률 -",
+    "stored": [
+      {
+        "symbol": "005930.KS",
+        "name": "삼성전자"
+      },
+      {
+        "symbol": "NVDA",
+        "name": "엔비디아"
+      },
+      {
+        "symbol": "AAPL",
+        "name": "애플"
+      }
+    ],
+    "afterReloadCount": 3,
+    "mode": "own isolated local list, injected web quota failure; real app and data"
+  },
+  "limit": {
+    "savedCount": 21,
+    "last": {
+      "symbol": "AAPL",
+      "name": "AAPL"
+    },
+    "visibleRows": 21,
+    "lastRow": "애\n애플\nAAPL · 기준시각 미제공\n-\n등락률 -",
+    "quoteRequests": [
+      "005930.KS,NVDA,MSFT,GOOGL,AMZN,META,TSLA,AVGO,TSM,ORCL,AMD,NFLX,COST,WMT,JPM,V,MA,XOM,UNH,JNJ"
+    ],
+    "mode": "own seeded 20-item list; real app and API"
+  }
+}

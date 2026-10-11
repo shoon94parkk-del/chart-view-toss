@@ -72,6 +72,7 @@ export function openStockSelector({
   const wasInert = app?.inert;
   const draft = new Set(initial);
   const searchOnly = typeof onPick === 'function';
+  let applying = false;
   const favoriteRows = prioritizeStocks(favorites.filter(row => row?.symbol).map(row => ({
     symbol: row.symbol, name: row.name || nameFor(row.symbol), market: row.market || '',
   })));
@@ -129,6 +130,7 @@ export function openStockSelector({
     apply.textContent = draft.size ? `${draft.size}개 종목 적용` : '선택 없이 적용';
     selectedEl.querySelectorAll('[data-selected-remove]').forEach((button) => {
       button.onclick = () => {
+        if (applying) return;
         const next = button.nextElementSibling || button.previousElementSibling;
         const nextSymbol = next?.dataset.selectedRemove;
         draft.delete(button.dataset.selectedRemove);
@@ -170,6 +172,7 @@ export function openStockSelector({
 
     resultEl.querySelectorAll('[data-selector-symbol]').forEach((button) => {
       button.onclick = () => {
+        if (applying) return;
         const symbol = button.dataset.selectorSymbol;
         if (searchOnly) {
           const name = button.dataset.selectorName || symbol;
@@ -287,11 +290,26 @@ export function openStockSelector({
   overlay.addEventListener('click', (event) => {
     if (event.target === overlay) close();
   });
-  apply.onclick = () => {
+  apply.onclick = async () => {
+    if (applying) return;
     const selected = [...draft];
     const selectedNames = Object.fromEntries(selected.map((symbol) => [symbol, resolvedSelectorName(names.get(symbol), symbol) || symbol]));
-    close();
-    onApply?.(selected, selectedNames);
+    applying = true;
+    apply.disabled = true;
+    apply.textContent = '저장 중…';
+    try {
+      if (await onApply?.(selected, selectedNames) === false) {
+        messageEl.textContent = '저장하지 못했어요. 선택한 초안은 유지했으니 다시 적용해주세요.';
+        return;
+      }
+      close();
+    } catch {
+      messageEl.textContent = '저장하지 못했어요. 선택한 초안은 유지했으니 다시 적용해주세요.';
+    } finally {
+      applying = false;
+      apply.disabled = false;
+      if (overlay.isConnected) renderSelected();
+    }
   };
 
   renderSelected();

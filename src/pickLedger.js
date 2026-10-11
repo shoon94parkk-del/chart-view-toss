@@ -1,6 +1,7 @@
 import { selectionKey } from './valueDiscovery.js';
 import { homeBootstrap, pickMonitor } from './api.js';
 import { loadingIndicator } from './loadingView.js';
+import { PICK_METHOD, pickPriceBasis } from './pickPerformanceBasis.js';
 
 const STATUS={
   SELL_REVIEW:{label:'재점검',icon:'🔴',cls:'sell',order:0},
@@ -279,7 +280,7 @@ export async function renderPickLedger({shell,bindNav,displayName,focusKey=null,
       statusStrip.querySelector('[data-pick-monitor-retry]').onclick=()=>loadMonitoring(true);
     }
     const monitoringBasis=ready?statusStrip.querySelector('.pick-ledger-basis').textContent:monitorResult.state==='loading'?'사후점검 확인 중 · 성과 기록은 제공된 기준일의 수익률이에요.':'사후점검 미확인 · 성과 기록은 제공된 기준일의 수익률이에요.';
-    document.querySelector('[data-pick-calculation]').innerHTML=`<p>${esc(summary.querySelector('.pick-ledger-basis').textContent)}</p><p>${esc(monitoringBasis)}</p>`;
+    document.querySelector('[data-pick-calculation]').innerHTML=`<p>${esc(summary.querySelector('.pick-ledger-basis').textContent)}</p><p>${esc(PICK_METHOD)}</p><p>상단 성과는 전체 평가 기록 기준이에요. 목록 필터는 아래 기록에만 적용돼요.</p><p>${esc(monitoringBasis)}</p>`;
     paint(position);
   }
 
@@ -318,14 +319,13 @@ export async function renderPickLedger({shell,bindNav,displayName,focusKey=null,
       const wins=evaluated.filter((row)=>Number(row.returnPct)>0).length;
       const winRate=evaluated.length?Math.round(wins/evaluated.length*100):null;
       const dayCount=new Set(payload.recommendations.map((row)=>row?.recommendedDate).filter(Boolean)).size;
-      const latest=evaluated.reduce((max,row)=>String(row?.lastUpdatedTradeDate||'')>max?String(row.lastUpdatedTradeDate):max,'');
       latestPickDate=payload.recommendations.reduce((max,row)=>String(row?.recommendedDate||'')>max?String(row.recommendedDate):max,'');
       summary.innerHTML=`<div class="pick-ledger-kpis" data-testid="pick-performance">
         <div><span>누적 추천일</span><b>${dayCount.toLocaleString('ko-KR')}</b></div>
         <div><span>누적 추천</span><b>${payload.recommendations.length.toLocaleString('ko-KR')}건</b></div>
         <div><span>플러스 비율</span><b>${winRate===null?'—':winRate+'%'}</b><small>평가 ${evaluated.length}/${payload.recommendations.length}건</small></div>
         <div><span>평균 수익률</span><b class="${tone(avg)}">${pct(avg)}</b><small>미평가 제외</small></div>
-      </div><p class="pick-ledger-basis">${esc(latest||payload?.day?.tradeDate||'기준일 미확인')} 종가 기준 · 추천가 대비 현재가 단순 수익률</p>`;
+      </div><p class="pick-ledger-basis">${esc(pickPriceBasis(payload.recommendations))}</p>`;
       toolbar.hidden=false;
       paintMonitoring();
       window.__chartviewRestoreScroll?.();
