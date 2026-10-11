@@ -538,3 +538,41 @@
   .export-industry-hero strong{font-size:9.5px}
   .export-industry-country-grid{grid-template-columns:1fr}
 }
+
+/* Export overview only: provisional digest with optional workday normalization */
+.export-digest{border:1px solid #dce9fa;border-radius:22px;padding:16px;background:linear-gradient(160deg,#f3f8ff 0%,#fff 57%);box-shadow:0 8px 24px rgba(25,31,40,.045)}
+.export-digest-header{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.export-digest-header small{font-size:11px;font-weight:800;color:#3182f6}
+.export-digest-header h4{margin:4px 0 0;font-size:19px;letter-spacing:-.5px;color:#191f28}
+.export-digest-refresh{flex-shrink:0;border:1px solid #d7e5f7;background:#fff;color:#1769c2;border-radius:11px;min-height:40px;padding:0 12px;font-size:12px;font-weight:800;cursor:pointer}
+.export-digest-days{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:15px}
+.export-digest-days>div{min-width:0;border-radius:13px;background:#fff;border:1px solid #edf1f6;padding:11px 9px}
+.export-digest-days small{display:block;color:#6b7684;font-size:10px}
+.export-digest-days strong{display:block;margin-top:4px;color:#191f28;font-size:14px;font-weight:900}
+.export-digest-days em{display:block;font-style:normal;font-size:10px;margin-top:3px;color:#6b7684}
+.export-digest-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:10px}
+.export-digest-metrics>div{border-radius:14px;background:#eaf3ff;padding:13px;min-width:0}
+.export-digest-metrics span,.export-digest-metrics small{font-size:11px;color:#566476}
+.export-digest-metrics strong{display:block;margin:6px 0;font-size:19px;color:#191f28;letter-spacing:-.45px}
+.export-digest-metrics small>span{font-weight:900}
+.export-digest-list-title{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:20px}
+.export-digest-list-title strong{color:#191f28;font-size:14px}
+.export-digest-toggle{min-height:42px;border:1px solid #d8e2ef;background:#fff;color:#4e5968;border-radius:999px;padding:0 13px;white-space:nowrap;font-size:11px;font-weight:800;cursor:pointer}
+.export-digest-toggle.is-active{background:#e4f1ff;border-color:#7cb4fa;color:#1769c2}
+.export-digest-toggle:disabled{opacity:.5;cursor:not-allowed}
+.export-digest-caption{font-size:10px;color:#6b7684;margin:5px 0 10px}
+.export-digest-list{display:grid;border:1px solid #edf0f4;border-radius:14px;overflow:hidden;background:#fff}
+.export-digest-list-head,.export-digest-list-row{display:grid;grid-template-columns:minmax(0,1fr) 70px 70px;align-items:center;gap:5px;padding:10px 11px}
+.export-digest-list-head{background:#f4f7fb;font-size:10px;font-weight:900;color:#6b7684}
+.export-digest-list-row{border-top:1px solid #f0f2f5;font-size:12px;color:#191f28}
+.export-digest-list-head>span:not(:first-child),.export-digest-list-row>span{text-align:right;white-space:nowrap}
+.export-digest-list-row strong{overflow-wrap:anywhere}
+.export-digest-list-row span.up{color:#e64a61;font-weight:900}
+.export-digest-list-row span.down{color:#3182f6;font-weight:900}
+.export-digest-list-row span.flat{color:#6b7684;font-weight:800}
+.export-digest-warning{margin:12px 0 0;color:#c45e1b;font-size:11px;line-height:1.5}
+.export-digest .export-chart-note{font-size:10px;line-height:1.55}
+.export-provisional-more{margin-top:12px;border-radius:13px;background:#f7f9fc;border:1px solid #edf0f4;padding:11px 12px}
+.export-provisional-more>summary{cursor:pointer;font-size:12px;font-weight:800;color:#4e5968;min-height:32px;align-content:center}
+.export-provisional-more[open]>.export-provisional-hero{margin-top:12px}
+@media(max-width:370px){.export-digest{padding:12px}.export-digest-header h4{font-size:17px}.export-digest-days>div{padding:9px 6px}.export-digest-days strong{font-size:12px}.export-digest-list-head,.export-digest-list-row{grid-template-columns:minmax(0,1fr) 62px 62px;gap:4px;padding:10px 8px}.export-digest-list-row{font-size:11px}}
