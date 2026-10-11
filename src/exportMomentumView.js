@@ -1229,6 +1229,7 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={},onSe
   };
 
   const bindProvisionalActions=(radar,parentToken)=>{
+    host.querySelectorAll('#export-provisional-radar [data-export-item]').forEach(button=>button.addEventListener('click',()=>void openItemDetail(button.dataset.exportItem)));
     host.querySelector('[data-export-workday-toggle]')?.addEventListener('click',()=>{
       workdayAdjusted=!workdayAdjusted;
       state.exportWorkdayAdjusted=workdayAdjusted;
