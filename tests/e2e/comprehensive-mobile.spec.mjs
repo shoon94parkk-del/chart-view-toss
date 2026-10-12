@@ -47,6 +47,11 @@ for (const view of ['news', 'macro', 'info']) {
 }
 
 test('comprehensive accessibility research answer → saved question → Watch evidence', async ({ page }, info) => {
+  // Six focused example/input pairs, an offscreen contrast oracle and two
+  // full-document axe scans share this integration budget. Keep each normal
+  // expectation limit: the recorded 30s failure exhausted the overall budget
+  // after a successful Save hit-box check, before its final geometry poll.
+  test.setTimeout(60_000);
   await page.goto(`/#detail/${symbol}`);
   await expect(page.locator('#detail-financial-history .financial-history')).toBeVisible();
   await expect(page.locator('[data-research-example="0"]')).toBeVisible();

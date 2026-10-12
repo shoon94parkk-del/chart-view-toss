@@ -8,6 +8,10 @@ import { resolveRoute } from './routes.js';
 import {indexSeries,quoteHtml,detailCachedQuote,marketCapHtml,metricBasis,invalidSymbolHtml} from './detailPresentation.js';
 import {encodeSharedView,decodeSharedView,homeBriefState,quoteBasisLabel} from './experienceState.js';
 import { recordMetric, diagnosticSummary, clearDiagnostics } from './diagnostics.js';
+import {trackUsage,newUsageOperation} from './usageMetrics.js';
+import {offerReviewOpportunity} from './reviewPrompt.js';
+import {getHomeJourneySession,resetHomeJourneySession,homeJourneyMarkup} from './homeJourney.js';
+import './homeJourney.css';
 import './styles.css';
 import './homeExtras.css';
 import './homeExtras.js';
@@ -25,7 +29,7 @@ import { loadChartRuntime } from './chartRuntime.js';
 import { API_BASE, quoteSnapshots, quoteSnapshotsLive, compareStocks, marketNow, homeSnapshot, searchStocks, valuationStocks, macroData, homeInsights, personalizedNews, screenerData, companyContextData, businessReportData, financialHistoryData, relationshipEvidenceData } from './api.js';
 import { applyRuntimeClass, haptic, openExternal, syncNativeBackHandler, closeMiniApp, isAppsInTossRuntime } from './tossBridge.js';
 import { openStockSelector, closeStockSelector, formatSelectedStockLabel } from './stockSelector.js';
-import { initializeStorage, readStored, writeStored, clearStored, getActivityVisitorId } from './storage.js';
+import { initializeStorage, readStored, writeStored, clearStored, getActivityVisitorId, HOME_JOURNEY_KEY } from './storage.js';
 import { parseStoredList } from './storedLists.js';
 import { startHomeLiveSync, setLiveSurface } from './liveHomeSync.js';
 import { readHomeFast, writeHomeFast } from './homeFastCache.js';
@@ -114,6 +118,22 @@ let listSaveQueue=Promise.resolve();
 let watchRenderSeq=0;
 let watchOrderEditing=false;
 let toastTimer=null;
+let homeJourneyStorageReady=false;
+let usageRouteKey='',usageOperation=newUsageOperation(),usageStarted=performance.now();
+const usageScreen=tab=>['home','watch','chart','detail','discover','valuation','macro','news','picks','gurus','exports','heatmap','ideas','more'].includes(tab)?tab:['memory','tools','bands','consensus'].includes(tab)?'analysis':'other';
+function reportUsableScreen(screen,operationId=usageOperation,started=usageStarted){
+ void trackUsage('screen_load',{operationId,params:{screen,outcome:'success',duration_ms:performance.now()-started}});
+}
+function reportAppError(code='unknown',operationId=usageOperation){
+ void trackUsage('app_error',{operationId:operationId+':'+code,params:{screen:usageScreen(state.tab),code}});
+}
+function offerSavedReview(source){
+ const anchor=document.querySelector(state.tab==='detail'?'#detail-price':state.tab==='watch'?'.watch-task-head':'[data-home-journey]');
+ if(!anchor)return;
+ let host=document.querySelector('[data-saved-review]');
+ if(!host){host=document.createElement('div');host.dataset.savedReview='';anchor.after(host);}
+ void offerReviewOpportunity(host,{source});
+}
 let homeMarketExpanded=false;
 let homeMarketPayload=null;
 let homeMarketCached=false;
@@ -157,12 +177,18 @@ function persistList(property,update,{restoreLimit=0,refresh=false}={}){
      watchLimitNotice();return false;
    }
    if(JSON.stringify(previous)===JSON.stringify(next))return true;
+   // Metadata changes, reorder, deletion and undo are not registration conversions.
+   const adding=property==='watchlist'&&!restoreLimit&&next.some(row=>!previous.some(old=>old.symbol===row.symbol));
+   const operationId=adding?newUsageOperation():null;
+   if(adding)void trackUsage('watchlist_add_attempt',{operationId,params:{source:'watchlist'}});
    try{
      await writeStored(property==='watchlist'?WATCHLIST_KEY:SELECTED_KEY,JSON.stringify(next),{confirmed:true});
      state[property]=next;
+     if(adding)void trackUsage('watchlist_add_success',{operationId,params:{source:'watchlist'}});
      if(refresh||epoch!==viewEpoch)refreshListSurface(property);
      return true;
    }catch{
+     if(adding)void trackUsage('watchlist_add_failure',{operationId,params:{source:'watchlist',code:'storage'}});
      showToast('기기 저장공간에 저장하지 못했어요. 기존 목록을 유지했어요. 다시 시도해주세요.');
      return false;
    }
@@ -496,7 +522,7 @@ function bindHomeMarketToggle(){
  };
 }
 
-function patchHomeWatchLive(quotes){
+function patchHomeWatchLive(quotes,observations=quotes){
  if(state.tab!=='home'||!Array.isArray(quotes)||!quotes.length)return;
  const byTicker=new Map(quotes.filter(row=>row?.ticker).map(row=>[String(row.ticker).toUpperCase(),row]));
  document.querySelectorAll('#home-watchlist .watch-rich-row[data-stock-detail]').forEach(row=>{
@@ -508,17 +534,50 @@ function patchHomeWatchLive(quotes){
    if(price&&quote.price!=null)price.innerHTML=`<strong>${esc(formatCurrencyPrice(quote.price,quote.currency))}</strong><em class="${ch>0?'up':ch<0?'down':'flat'}">${esc(fmtChange(quote.change))}</em>`;
    if(meta)meta.textContent=`${row.dataset.stockDetail}${quote.asOf?' · '+formatKst(quote.asOf):''}`;
  });
+ updateHomeWatchJourney(observations);
 }
 
-function paintHomeWatch(quotes,hasWatch,{pending=false,failed=false}={}){
+function updateHomeWatchJourney(quotes,options={}){
+ const host=document.querySelector('#home-watch-revisit');
+ if(!host||!state.watchlist.length||!homeJourneyStorageReady)return null;
+ const journey=getHomeJourneySession({read:()=>readStored(HOME_JOURNEY_KEY),write:value=>writeStored(HOME_JOURNEY_KEY,JSON.stringify(value),{confirmed:true})});
+ const matchesDisplay=row=>{
+   const displayed=getLiveQuote(row?.ticker||row?.symbol);
+   return !displayed||Date.parse(row?.asOf)===Date.parse(displayed.asOf)&&finiteNumber(row?.price)===finiteNumber(displayed.price)&&row?.currency===displayed.currency;
+ };
+ const viewForDisplay=view=>{
+   const changes=view.changes.filter(change=>matchesDisplay(change.current));
+   return {...view,changes,status:view.status==='changes'&&!changes.length?'unavailable':view.status};
+ };
+ const observations=(quotes||[]).filter(matchesDisplay);
+ const view=viewForDisplay(journey.observe(observations,state.watchlist.map(row=>row.symbol),options));
+ host.innerHTML=homeJourneyMarkup(view);
+ document.querySelectorAll('#home-watchlist .watch-rich-row[data-stock-detail]').forEach(row=>{
+   const delta=row.querySelector('.home-watch-delta');
+   if(!delta)return;
+   const change=view.changes.find(change=>change.symbol===String(row.dataset.stockDetail).toUpperCase());
+   delta.hidden=!change;
+   if(change)delta.innerHTML=homeWatchDeltaMarkup(change);
+ });
+ if(view.saveStatus==='pending')void journey.settled().then(()=>{if(host.isConnected)host.innerHTML=homeJourneyMarkup(viewForDisplay(journey.current()));});
+ return view;
+}
+
+function homeWatchDeltaMarkup(change){
+ const percent=`${change.deltaPct>0?'+':''}${change.deltaPct.toFixed(2)}%`;
+ return `<span>이전 확인 ${esc(formatCurrencyPrice(change.previous.price,change.previous.currency))} 대비 <b>${esc(percent)}</b></span><small>${esc(formatKst(change.previous.asOf))} → ${esc(formatKst(change.current.asOf))}</small>`;
+}
+
+function paintHomeWatch(quotes,hasWatch,{pending=false,failed=false,observations=quotes}={}){
  if(!hasWatch)return;
  const host=document.querySelector('#home-watchlist');
  if(!host)return;
  host.innerHTML=state.watchlist.slice(0,3).map((x,i)=>{
    const q=(quotes||[]).find(r=>String(r.ticker).toUpperCase()===String(x.symbol).toUpperCase());const ch=finiteNumber(q?.change);const name=displayName(x.symbol,x.name);
    const status=pending?' · 새 시세 확인 중':failed?' · 갱신 실패':'';
-   return `<button class="watch-rich-row" data-stock-detail="${esc(x.symbol)}"><span class="stock-logo tone-${i%4}">${esc(name.slice(0,1))}</span><span class="stock-copy"><strong>${esc(name)}</strong><small>${esc(x.symbol)}${q?.asOf?' · '+esc(formatKst(q.asOf)):''}${status}</small></span><span class="watch-price">${q?.price!=null?`<strong>${esc(formatCurrencyPrice(q.price,q.currency))}</strong><em class="${ch>0?'up':ch<0?'down':'flat'}">${esc(fmtChange(q.change))}</em>`:`<small>${pending?'가격 확인 중':'가격 확인 필요'}</small>`}</span><span class="chevron">${iconSvg('arrow',18)}</span></button>`;
+   return `<button class="watch-rich-row" data-stock-detail="${esc(x.symbol)}"><span class="stock-logo tone-${i%4}">${esc(name.slice(0,1))}</span><span class="stock-copy"><strong>${esc(name)}</strong><small>${esc(x.symbol)}${q?.asOf?' · '+esc(formatKst(q.asOf)):''}${status}</small></span><span class="watch-price">${q?.price!=null?`<strong>${esc(formatCurrencyPrice(q.price,q.currency))}</strong><em class="${ch>0?'up':ch<0?'down':'flat'}">${esc(fmtChange(q.change))}</em>`:`<small>${pending?'가격 확인 중':'가격 확인 필요'}</small>`}</span><span class="chevron">${iconSvg('arrow',18)}</span><span class="home-watch-delta" hidden></span></button>`;
  }).join('');
+ updateHomeWatchJourney(observations,{pending,failed});
 }
 
 function paintHomeBrief(home,options={}){
@@ -546,17 +605,22 @@ function paintHomeBrief(home,options={}){
 async function renderHome(){
  cleanupChart();
  const epoch=viewEpoch;
+ const homeUsageOperation=usageOperation,homeUsageStarted=usageStarted;
  const hasWatch=state.watchlist.length>0;
+ const watchSection=`<section class="section watch-section home-primary${hasWatch?' home-return-watch':''}">${sectionTitle('<i class="section-symbol" aria-hidden="true">'+uiIcon('watch',16)+'</i>내 관심종목',hasWatch?'<button class="text-button" data-tab="watch">전체 보기</button>':'')}<div id="home-watchlist" class="watch-card">${hasWatch?loadingIndicator('관심종목 시세를 확인하고 있어요')+'<div class="skeleton watch"></div><div class="skeleton watch"></div>':'<div class="home-empty-watch"><button type="button" data-tab="watch">자주 볼 관심종목 추가 →</button></div>'}</div>${hasWatch?'<div id="home-watch-revisit"></div>':''}</section>`;
  document.querySelector('#app').innerHTML=shell(`
-   <section class="home-compact-head"><p class="home-value-copy">시장 흐름부터 내 종목의 근거까지</p>
+   <section class="home-compact-head"><p class="home-value-copy">${hasWatch?'저장한 종목부터, 달라진 시세와 근거 확인':'시세와 공시 근거를 한곳에서 확인해요'}</p>
      <button class="search-box elevated home-search" id="home-search-open" type="button">${iconSvg('search',20)}<span>종목 검색</span><b>${iconSvg('arrow',18)}</b></button>
+     ${hasWatch?'':'<p class="home-start-guide">종목 검색 → 상세에서 하트로 관심 저장</p>'}
    </section>
+   ${hasWatch?watchSection:''}
    <section class="market-section home-primary"><div class="section-head market-head"><h2><i class="section-symbol" aria-hidden="true">${uiIcon('market',16)}</i>주요 시장</h2><div class="market-head-actions"><span id="market-time">기준 시각 확인 중</span><button type="button" id="market-expand" class="market-expand" aria-expanded="false" hidden>지표 더 보기 <span>⌄</span></button></div></div><div id="market-card">${loadingIndicator('주요 시장을 확인하고 있어요')}<div class="market-grid"><div class="skeleton quote"></div><div class="skeleton quote"></div><div class="skeleton quote"></div><div class="skeleton quote"></div></div></div></section>
    <div class="home-analysis-heading"><h2><i class="section-symbol" aria-hidden="true">${uiIcon('analysis',16)}</i>근거를 찾는 분석</h2><span>목적에 맞게 바로 열어요</span></div>
    ${valueEntriesMarkup(SHOW_SPOTLIGHT)}
    <div id="home-discovery-feed"></div>
-   <section class="section watch-section home-primary">${sectionTitle('<i class="section-symbol" aria-hidden="true">'+uiIcon('watch',16)+'</i>내 관심종목',hasWatch?'<button class="text-button" data-tab="watch">전체 보기</button>':'')}<div id="home-watchlist" class="watch-card">${hasWatch?loadingIndicator('관심종목 시세를 확인하고 있어요')+'<div class="skeleton watch"></div><div class="skeleton watch"></div>':'<div class="home-empty-watch"><button type="button" data-tab="watch">자주 볼 관심종목 추가 →</button></div>'}</div></section>
+   ${hasWatch?'':watchSection}
    ${savedResearchHtml(symbol=>displayName(symbol),{compact:true})}
+   <div id="home-secondary-start"></div>
    <section id="brief-card" class="brief-card compact-brief skeleton brief">${loadingIndicator('시장 요약을 확인하고 있어요')}</section>
    <section class="section quick-section">${sectionTitle('<i class="section-symbol" aria-hidden="true">'+uiIcon('compare',16)+'</i>빠른 비교','<button class="text-button" data-go-chart>종목 변경</button>')}<div class="ticker-strip">${state.selected.map((x,i)=>`<button data-go-chart><span class="ticker-orb tone-${i%4}">${esc(displayName(x).slice(0,1))}</span><span><strong>${esc(displayName(x))}</strong><small>${esc(x)}</small></span><b>${iconSvg('arrow',16)}</b></button>`).join('')||'<span class="muted-copy">비교 종목을 선택해주세요.</span>'}</div></section>
    <section class="section home-news-section" id="home-news-section">${sectionTitle('관심종목 뉴스','<button class="text-button" data-tab="news">뉴스 모두 보기</button>')}<div id="home-news">${loadingIndicator('관련 뉴스를 확인하고 있어요')}<div class="skeleton news"></div></div></section>
@@ -567,9 +631,10 @@ async function renderHome(){
 
  const watchSymbols=state.watchlist.slice(0,3).map(x=>x.symbol);
  const watchNames=state.watchlist.slice(0,3).map(x=>displayName(x.symbol,x.name));
+ const homeReady=quotes=>{if((quotes||[]).some(row=>finiteNumber(row?.price)>0))reportUsableScreen('home',homeUsageOperation,homeUsageStarted);};
  const cachedMarket=readHomeFast('market',6*60*60*1000);
  homeMarketCached=false;
- if(cachedMarket)paintHomeMarket(cachedMarket,{allowError:false,cached:true});
+ if(cachedMarket){paintHomeMarket(cachedMarket,{allowError:false,cached:true});homeReady(cachedMarket.results?.filter(row=>HOME_MARKET_PRIMARY.some(item=>item.symbol===row?.ticker)));}
  const cachedSnapshot=readHomeFast('snapshot',6*60*60*1000);
  if(cachedSnapshot){
    rememberLiveQuotes(cachedSnapshot?.heatmap?.results||[],{priority:20});
@@ -583,6 +648,7 @@ async function renderHome(){
  }
  let watchLoaded=false;
  paintHomeWatch(watchSymbols.map(symbol=>getLiveQuote(symbol)).filter(Boolean),hasWatch,{pending:true});
+ homeReady(watchSymbols.map(symbol=>getLiveQuote(symbol)).filter(Boolean));
  const settle=(task,paint)=>task.then(value=>({status:'fulfilled',value}),reason=>({status:'rejected',reason})).then(result=>{if(epoch===viewEpoch){paint(result);bindNav();bindHomeMarketToggle();}});
  const jobs=[];
  jobs.push(settle(marketNow(),marketRes=>{
@@ -590,6 +656,7 @@ async function renderHome(){
  if(market){
    writeHomeFast('market',market);
    paintHomeMarket(market,{allowError:true,cached:false});
+   homeReady(market.results?.filter(row=>HOME_MARKET_PRIMARY.some(item=>item.symbol===row?.ticker)));
  }else if(!cachedMarket)paintHomeMarket(null,{allowError:true});
  else {const time=document.querySelector('#market-time');if(time)time.textContent='시세 갱신 실패 · 이전 저장 시세';}
  }));
@@ -602,7 +669,8 @@ async function renderHome(){
  if(payload&&watchCacheKey)writeHomeFast(watchCacheKey,{...payload,results:quotes});
  if(payload)saveWatchQuoteCache(state.watchlist.map(x=>x.symbol));
  watchLoaded=true;
- paintHomeWatch(quotes,hasWatch,{failed:!payload});
+ paintHomeWatch(quotes,hasWatch,{failed:!payload,observations:fetchedQuotes});
+ homeReady(quotes);
  }));
  jobs.push(settle(homeSnapshot(),homeRes=>{
  const home=homeRes.status==='fulfilled'?homeRes.value:null;
@@ -610,7 +678,9 @@ async function renderHome(){
    rememberLiveQuotes(home?.heatmap?.results||[],{priority:20});
    writeHomeFast('snapshot',{...home,heatmap:{...(home.heatmap||{}),results:mergeRowsWithLive(home?.heatmap?.results||[])}});
    paintHomeBrief(home);
-   paintHomeWatch(watchSymbols.map(symbol=>getLiveQuote(symbol)).filter(Boolean),hasWatch,{pending:!watchLoaded});
+   const watchQuotes=watchSymbols.map(symbol=>getLiveQuote(symbol)).filter(Boolean);
+   paintHomeWatch(watchQuotes,hasWatch,{pending:!watchLoaded,observations:home?.heatmap?.results||[]});
+   homeReady(watchQuotes);
  }else paintHomeBrief(cachedSnapshot,{failed:true});
  }));
  if(watchSymbols.length){
@@ -699,6 +769,7 @@ async function addSelected(symbol,name){
 
 async function loadChart({retainPrevious=false,force=false}={}){
  const started=performance.now();
+ const chartUsageOperation=newUsageOperation();
  const seq=++chartLoadSeq;
  const requested=[...state.selected];
  const requestedPeriod=state.period;
@@ -733,7 +804,7 @@ async function loadChart({retainPrevious=false,force=false}={}){
      notice.querySelector('button').onclick=()=>refreshChart({period:requestedPeriod,range:requestedRange,force:true});
    }
    document.querySelector('#chart-loading')?.remove();
-   requestAnimationFrame(()=>{if(canvas.isConnected&&seq===chartLoadSeq)recordMetric('chart.ready',started);});
+   requestAnimationFrame(()=>{if(canvas.isConnected&&seq===chartLoadSeq){recordMetric('chart.ready',started);reportUsableScreen('chart',chartUsageOperation,started);}});
    chartResizeObserver=new ResizeObserver(()=>{if(chartInstance&&canvas.clientWidth)chartInstance.applyOptions({width:canvas.clientWidth})});chartResizeObserver.observe(canvas);
    const styleName=(i)=>i<3?'실선':i===3?'파선':i===4?'점선':'긴 파선';
    legend.classList.remove('chart-legend-loading');legend.removeAttribute('aria-hidden');
@@ -776,6 +847,7 @@ async function loadChart({retainPrevious=false,force=false}={}){
    bindNav();
  }catch(e){
    if(seq!==chartLoadSeq)return;
+   if(e?.code)reportAppError(['timeout','network','offline'].includes(e.code)?e.code:'unknown',chartUsageOperation);
    document.querySelector('#chart-loading')?.remove();
    if(retainPrevious&&chartInstance&&chartDisplayedSelection){
      const failedSelection={period:requestedPeriod,range:requestedRange};
@@ -799,6 +871,7 @@ async function loadChart({retainPrevious=false,force=false}={}){
 async function renderWatch(){
  cleanupChart();
  const epoch=viewEpoch,renderSeq=++watchRenderSeq;
+ const watchUsageOperation=usageOperation,watchUsageStarted=usageStarted;
  const current=()=>epoch===viewEpoch&&renderSeq===watchRenderSeq&&state.tab==='watch';
  document.querySelector('#app').innerHTML=shell(`
    <section class="task-head watch-task-head"><div><h2>관심종목 <span>${state.watchlist.length}</span></h2><p>이 목록은 현재 기기에 저장돼요.</p></div>${state.watchlist.length?'<div class="task-actions"><button class="primary-subtle" id="watch-add">종목 추가</button><button class="neutral-action" id="watch-edit">편집</button></div>':''}</section>
@@ -819,8 +892,14 @@ async function renderWatch(){
    nameFor:(symbol)=>displayName(symbol,state.watchlist.find(x=>x.symbol===symbol)?.name),
    restoreBack:restoreNativeBack,
    onApply:async(symbols,names)=>{
+     const added=symbols.some(symbol=>!state.watchlist.some(row=>row.symbol===symbol));
+     const changed=symbols.length!==state.watchlist.length||symbols.some((symbol,index)=>state.watchlist[index]?.symbol!==symbol);
      const saved=await persistList('watchlist',rows=>symbols.map(symbol=>({...rows.find(row=>row.symbol===symbol),symbol,name:names[symbol]||displayName(symbol)})));
-     if(saved&&current())renderWatch();
+     if(saved&&current()){
+       renderWatch();
+       if(changed)showToast('관심종목 목록을 이 기기에 저장했어요.');
+       if(added)offerSavedReview('watchlist');
+     }
      return saved;
    },
  });
@@ -846,6 +925,7 @@ async function renderWatch(){
      const name=displayName(x.symbol,x.name);const ch=finiteNumber(q.change),quoted=index<WATCHLIST_LIMIT;
      return `<article class="watch-detail-card"><button class="watch-main" data-stock-detail="${esc(x.symbol)}"><span class="stock-logo tone-${i%4}">${esc(name.slice(0,1))}</span><span class="watch-main-copy"><strong>${esc(name)}</strong><small>${esc(x.symbol)} · ${!quoted?'시세 조회 범위 밖':q.asOf?esc(formatKst(q.asOf)):pending?'기준시각 확인 중':'기준시각 미제공'}${quoted&&pending?' · 새 시세 확인 중':''}</small></span><span class="watch-card-price"><strong>${q.price==null?(quoted&&pending?'확인 중':'-'):esc(formatCurrencyPrice(q.price,q.currency))}</strong><em class="${ch>0?'up':ch<0?'down':'flat'}">${Number.isFinite(ch)?esc(fmtChange(ch)):'등락률 -'}</em><i>${iconSvg('arrow',18)}</i></span></button><button class="watch-remove" data-unwatch="${esc(x.symbol)}" aria-label="${esc(name)} 관심 해제">${iconSvg('heart',18)}</button>${watchOrderEditing?`<div class="watch-order-controls"><span>저장순서 ${index+1}</span><button type="button" data-watch-move="-1" data-watch-symbol="${esc(x.symbol)}" aria-label="${esc(name)} 위로" ${index===0?'disabled':''}>↑ 위로</button><button type="button" data-watch-move="1" data-watch-symbol="${esc(x.symbol)}" aria-label="${esc(name)} 아래로" ${index===state.watchlist.length-1?'disabled':''}>↓ 아래로</button></div>`:''}</article>`;
    }).join('');
+   if(quotes.some(row=>finiteNumber(row?.price)>0))reportUsableScreen('watch',watchUsageOperation,watchUsageStarted);
    bindNav();
    document.querySelector('#retry-watch')?.addEventListener('click',renderWatch);
    document.querySelectorAll('[data-watch-move]').forEach(button=>button.onclick=async()=>{
@@ -892,6 +972,7 @@ async function renderWatch(){
    paint();
  }catch(e){
    if(!current())return;
+   reportAppError(['timeout','network','offline'].includes(e?.code)?e.code:'unknown',watchUsageOperation);
    paint({failed:true});
  }
 }
@@ -1097,6 +1178,8 @@ async function renderDetail(){
  cleanupChart();
  detailDisplayedPeriod=null;
  const epoch=viewEpoch;
+ const detailUsageOperation=usageOperation,detailUsageStarted=usageStarted;
+ void trackUsage('stock_detail_attempt',{operationId:detailUsageOperation,params:{screen:'detail'}});
  const symbol=state.detailSymbol||state.selected[0]||'005930.KS';
  const isIndex=symbol.startsWith('^');
  const koreanDetail=/\.(KS|KQ)$/i.test(symbol);
@@ -1245,6 +1328,7 @@ async function renderDetail(){
      });
    }else{
      haptic('tickWeak');showToast(`${knownName||symbol} 관심종목에 저장했어요.`);
+     offerSavedReview('watchlist');
    }
  };
  document.querySelector('#detail-change')?.addEventListener('click',()=>openStockSelector({
@@ -1281,6 +1365,12 @@ async function renderDetail(){
    priceBox.classList.remove('skeleton','detail-price-skeleton');
    priceBox.classList.add('quote-compact');
    priceBox.innerHTML=quoteHtml(current,closingQuote?{...closingQuote,priceLabel:formatCurrencyPrice(closingQuote.price,'KRW')}:null,{basis:quoteBasisLabel(current),price:current?.price!=null?(isIndex?Number(current.price).toLocaleString('ko-KR',{maximumFractionDigits:2})+' pt':formatCurrencyPrice(current.price,current.currency)):'확인 불가',change:dayChange===null?'확인 불가':fmtChange(dayChange),asOf:current?.asOf?formatKst(current.asOf):'',queriedAt:formatKst(new Date().toISOString())})+(failed?'<button class="retry" data-retry-detail>시세 다시 시도</button>':'');
+   if(Number.isFinite(Number(current?.price))&&Number(current.price)>0){
+     void trackUsage('stock_detail_view',{operationId:detailUsageOperation,params:{screen:'detail'}});
+     reportUsableScreen('detail',detailUsageOperation,detailUsageStarted);
+   }else if(failed){
+     void trackUsage('stock_detail_failure',{operationId:detailUsageOperation,params:{screen:'detail',outcome:'unavailable'}});
+   }
    priceBox.querySelector('.quote-provenance').open=Boolean(provenanceOpen);
    if(provenanceFocused)priceBox.querySelector('.quote-provenance summary').focus({preventScroll:true});
  };
@@ -1316,7 +1406,8 @@ async function renderDetail(){
        paintDetailQuote(canonical);
      }
      else if(!getLiveQuote(symbol))paintDetailQuote(null,{failed:true});
-   }catch{
+   }catch(error){
+     if(epoch===viewEpoch)reportAppError(['timeout','network','offline'].includes(error?.code)?error.code:'unknown',detailUsageOperation);
      if(!getLiveQuote(symbol))paintDetailQuote(null,{failed:true});
    }finally{
      const canonical=getLiveQuote(symbol);
@@ -1534,16 +1625,23 @@ function renderInfo(){
      return;
    }
    try{
+     homeJourneyStorageReady=false;
+     resetHomeJourneySession();
      await clearStored();
+     resetHomeJourneySession();
+     homeJourneyStorageReady=true;
      clearDiagnostics();
      state.watchlist=[];researchDrafts.clear();state.screener={filters:{},count:30,activePreset:''};state.researchPeer=null;
      state.selected=DEFAULTS.map(x=>x.symbol);
+     if(['chart','valuation'].includes(state.tab))refreshListSurface('selected');
+     else refreshListSurface('watchlist');
      clearButton.dataset.confirmed='false';
      clearButton.textContent='초기화 완료';
      clearButton.classList.remove('danger');
      haptic('tickWeak');
      showToast('이 기기의 관심종목·비교종목·조사 카드를 초기화했어요.');
    }catch{
+     homeJourneyStorageReady=true;
      showToast('기기 저장 데이터를 초기화하지 못했어요.');
    }
  });
@@ -1659,6 +1757,11 @@ function renderLazyAnalysis({tab,title,load,mount}){
 
 function render(){
  setLiveSurface(state.tab);
+ const nextUsageRoute=state.tab==='detail'?'detail:'+state.detailSymbol:state.tab;
+ if(nextUsageRoute!==usageRouteKey){
+   usageRouteKey=nextUsageRoute;usageOperation=newUsageOperation();usageStarted=performance.now();
+   void trackUsage('screen_view',{operationId:usageOperation,params:{screen:usageScreen(state.tab)}});
+ }
  const started=performance.now();
  const route=state.tab;
  requestAnimationFrame(()=>{if(state.tab===route)recordMetric(`view.${route}`,started);});
@@ -1735,13 +1838,15 @@ applyRuntimeClass();
 window.addEventListener('popstate',event=>{navigationDepth=event.state?.cvNavigation?.session===navigationSession?event.state.cvNavigation.depth:0;closeStockSelector();syncFromLocation();state.restoreScroll=scrollPositions.get(location.hash||'#home')||0;render();window.__chartviewRestoreScroll();});
 window.addEventListener('online',()=>render());
 window.addEventListener('offline',()=>render());
-document.addEventListener('chartview:storage-error',()=>showToast('데이터를 기기에 저장하지 못했어요. 다시 시도해주세요.'));
+document.addEventListener('chartview:storage-error',()=>{reportAppError('storage');showToast('데이터를 기기에 저장하지 못했어요. 다시 시도해주세요.');});
+window.addEventListener('error',()=>reportAppError('unknown'));
+window.addEventListener('unhandledrejection',()=>reportAppError('unknown'));
 document.addEventListener('chartview:home-live',(event)=>{
  const rows=Array.isArray(event.detail?.results)?event.detail.results:[];
  rememberLiveQuotes(rows,{priority:30});
  if(state.tab!=='home')return;
  const canonical=rows.map(row=>getLiveQuote(row?.ticker)||row);
- patchHomeWatchLive(canonical);
+ patchHomeWatchLive(canonical,rows);
 });
 document.addEventListener('chartview:market-now-live',(event)=>{
  if(state.tab!=='home')return;
@@ -1753,12 +1858,17 @@ document.addEventListener('chartview:market-now-live',(event)=>{
 });
 async function startApp(){
  const started=performance.now();
+ void trackUsage('app_open',{operationId:'app-open'});
+ homeJourneyStorageReady=false;
+ resetHomeJourneySession();
  syncFromLocation();
  const fastHome=state.tab==='home';
  if(fastHome)render();
  else document.querySelector('#app').innerHTML=`<div class="startup-loading">${loadingIndicator('저장된 목록을 불러오고 있어요')}</div>`;
  try {
    await initializeStorage();
+   resetHomeJourneySession();
+   homeJourneyStorageReady=true;
    state.watchlist=load(WATCHLIST_KEY,[]);
    state.selected=load(SELECTED_KEY,DEFAULTS.map(x=>x.symbol));
    const activityId=getActivityVisitorId();
@@ -1767,6 +1877,7 @@ async function startApp(){
    render();
    recordMetric('startup',started);
  } catch {
+   reportAppError('storage');
    document.querySelector('#app').innerHTML='<div class="empty"><strong>사용자 정보와 저장 목록을 확인하지 못했어요</strong><span>토스 앱을 최신 버전으로 업데이트하고 다시 시도해주세요. 기존 목록은 그대로 보관돼요.</span><button id="retry-start" class="retry">다시 시도</button></div>';
    document.querySelector('#retry-start').onclick=startApp;
  }

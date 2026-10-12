@@ -373,7 +373,8 @@ try{
       if(tab==='home'){
         await page.waitForSelector('#market-card .quote-card');
         const homePriority=await page.evaluate(()=>({watch:document.querySelector('.watch-section.home-primary')?.getBoundingClientRect().top,market:document.querySelector('.market-section.home-primary')?.getBoundingClientRect().top}));
-        if(!(homePriority.market<homePriority.watch)) throw new Error(`${width}px Home must show market context before the watchlist: ${JSON.stringify(homePriority)}`);
+        const hasSavedInterests=await page.evaluate(()=>JSON.parse(localStorage.getItem('chartview-toss-watchlist-v1')||'[]').length>0);
+        if(hasSavedInterests?!(homePriority.watch<homePriority.market):!(homePriority.market<homePriority.watch)) throw new Error(`${width}px Home must prioritize saved interests, retaining market-first order for an empty list: ${JSON.stringify(homePriority)}`);
         await page.waitForSelector('#home-top-picks-section');
         const pickMarketOrder=await page.evaluate(()=>({pick:document.querySelector('#home-top-picks-section')?.getBoundingClientRect().top,market:document.querySelector('.market-section.home-primary')?.getBoundingClientRect().top}));
         if(!(pickMarketOrder.market<pickMarketOrder.pick)) throw new Error(`${width}px market context must precede historical records: ${JSON.stringify(pickMarketOrder)}`);

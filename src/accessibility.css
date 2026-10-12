@@ -149,3 +149,8 @@
     min-height: 44px;
   }
 }
+.selector-close {
+  min-width: 44px;
+  min-height: 44px;
+  flex-shrink: 0;
+}

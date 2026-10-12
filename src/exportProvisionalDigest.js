@@ -38,6 +38,9 @@ export function renderProvisionalDigest(radar,{adjusted=false}={}){
     '<div><small>전년동월</small><strong>'+fmtDays(prior)+'</strong><em>'+esc(formatSignedPct(diffPct(current,prior)))+'</em></div>',
     '</div>',
   ].join(''):'<p class="export-digest-warning">영업일 수를 확인할 수 없어 원자료 증가율만 표시합니다.</p>';
+  const dayBasis=businessDays?.basis;
+  const dayBasisLabel=dayBasis==='calendar weekdays excluding KR statutory/substitute holidays'
+    ?'주말·공휴일 제외 달력 기준':dayBasis;
   const items=(radar.items||[]).filter(row=>row.exportsUsdBillion!==null);
   const table=items.length
     ?'<div class="export-digest-list" role="table" aria-label="주요 수출 품목별 성장률">'
@@ -47,7 +50,7 @@ export function renderProvisionalDigest(radar,{adjusted=false}={}){
         const mom=valueFor(row,'mom');
         const canOpenDetail=['semiconductor','passenger-car','petroleum','steel','ships'].includes(row.key);
         const itemName=canOpenDetail
-          ?'<button type="button" role="cell" class="export-digest-item-link" data-export-item="'+esc(row.key)+'">'+esc(row.name)+' <span aria-hidden="true">›</span></button>'
+          ?'<div role="cell"><button type="button" class="export-digest-item-link" data-export-item="'+esc(row.key)+'">'+esc(row.name)+' <span aria-hidden="true">›</span></button></div>'
           :'<strong role="cell">'+esc(row.name)+'</strong>';
         return '<div class="export-digest-list-row" role="row">'+itemName
           +'<span role="cell">'+growth(yoy,'전년동기 대비')+'</span>'
@@ -69,6 +72,7 @@ export function renderProvisionalDigest(radar,{adjusted=false}={}){
     '<button type="button" class="export-digest-refresh" data-export-provisional-refresh aria-label="잠정 수출 새로고침">갱신 ↻</button></div>',
     status,
     dayStats,
+    dayBasisLabel?'<p class="export-digest-caption export-digest-day-basis">영업일 수 기준: '+esc(dayBasisLabel)+' · 관세청 공식 조업일수·일평균 증가율과 다를 수 있습니다.</p>':'',
     '<div class="export-digest-metrics">'+largeStats+'</div>',
     '<div class="export-digest-list-title"><strong>주요 품목 수출 성장률</strong>',
     '<button type="button" class="export-digest-toggle'+(isAdjusted?' is-active':'')+'" data-export-workday-toggle aria-pressed="'+String(isAdjusted)+'"'+(!canAdjust?' disabled title="영업일 수를 확인할 수 없습니다"':'')+'>영업일 보정 '+(isAdjusted?'ON':'OFF')+'</button></div>',

@@ -38,7 +38,14 @@ try{
   assert.equal(calls.radar,1,'initial unavailable radar response must be intercepted');
   await page.locator('[data-export-provisional-retry]').click();
   await page.locator('#export-provisional-radar .export-provisional-error').waitFor({state:'detached'});
-  await page.getByText('반도체 · 1~20일',{exact:true}).first().waitFor().catch(async error=>{
+  const radarSection=page.locator('#export-provisional-radar');
+  await radarSection.locator('[data-export-digest]').getByRole('heading',{name:'2026년 9월 20일 기준',exact:true}).waitFor();
+  const disclosure=radarSection.locator('details.export-provisional-more');
+  assert.equal(await disclosure.evaluate(node=>node.open),false,'raw checkpoint details stay collapsed initially');
+  assert.equal(await disclosure.locator('.export-provisional-hero').isVisible(),false);
+  await disclosure.locator('summary').filter({hasText:'구간 누적 흐름·원자료 상세'}).click();
+  assert.equal(await disclosure.evaluate(node=>node.open),true,'native summary action expands checkpoint details');
+  await disclosure.locator('.export-provisional-stage').getByText('반도체 · 1~20일',{exact:true}).waitFor().catch(async error=>{
     console.error(JSON.stringify({width,calls,errors,radar:await page.locator('#export-provisional-radar').innerText(),url:page.url()}));
     throw error;
   });

@@ -5,7 +5,9 @@ export const WATCHLIST_KEY = 'chartview-toss-watchlist-v1';
 export const SELECTED_KEY = 'chartview-toss-selected-v1';
 export const RESEARCH_KEY = 'chartview-toss-research-v1';
 export const REVIEW_KEY = 'chartview-toss-review-v1';
-const keys = [WATCHLIST_KEY, SELECTED_KEY, RESEARCH_KEY, REVIEW_KEY];
+export const HOME_JOURNEY_KEY = 'chartview-toss-home-journey-v1';
+export const REVIEW_PROMPT_KEY = 'chartview-toss-review-prompt-v1';
+const keys = [WATCHLIST_KEY, SELECTED_KEY, RESEARCH_KEY, REVIEW_KEY, HOME_JOURNEY_KEY, REVIEW_PROMPT_KEY];
 const IDENTITY_KEY = 'chartview-toss-identity-v1';
 const USAGE_KEY = 'chartview-toss-usage-v1';
 const WEB_VISITOR_KEY = 'chartview-toss-visitor-v1';
@@ -16,7 +18,14 @@ let queue = Promise.resolve();
 let nativeReady = false;
 let nativeWriteBlocked = false;
 let namespace = '';
+let storageGeneration = 0;
 const scoped = key => namespace ? `${key}:${namespace}` : key;
+
+// Deferred local transactions must belong to the account/reset that created them.
+export function getStorageContext() { return storageGeneration; }
+export function isStorageContextCurrent(context) {
+  return context === storageGeneration && (!isAppsInTossRuntime() || nativeReady);
+}
 
 async function bridgeCall(operation) {
   let timer;
@@ -29,6 +38,7 @@ async function bridgeCall(operation) {
 
 export async function initializeStorage() {
   if (!isAppsInTossRuntime()) return;
+  storageGeneration++;
   nativeReady = false;
   await bridgeCall(() => queue.catch(() => {}));
   const identity = await bridgeCall(() => User.getAnonymousKey());
@@ -130,6 +140,7 @@ export function writeStored(key, value, { confirmed = false } = {}) {
 }
 
 export async function clearStored() {
+  storageGeneration++;
   if (!isAppsInTossRuntime()) { [...keys, WEB_VISITOR_KEY].forEach(key => localStorage.removeItem(key)); return; }
   if (!nativeReady) throw new Error('Storage not ready');
   let expired = false;

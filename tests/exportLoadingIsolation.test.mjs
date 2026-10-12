@@ -68,11 +68,14 @@ function harness(focus=null,state={}){
     scrollIntoView(){}
     click(){(this.onclick||this.events.click)?.({detail:1,target:this});}
   }
-  const app=new Element(),monthly=deferred(),requests=[],pending=new Map();
+  const app=new Element(),monthly=deferred(),requests=[],pending=new Map(),usageEvents=[];
+  let usageSequence=0;
   document={querySelector:selector=>selector==='#app'?app:null,createElement:()=>new Element(),activeElement:null};
   const context=vm.createContext({
     ...model,document,window:{},console,Intl,Date,setTimeout,requestAnimationFrame:fn=>fn(),
     exportCompanyCandidates:()=>[],memoryMovements:()=>[],
+    newUsageOperation:()=> 'export-operation-'+(++usageSequence),
+    trackUsage:(name,options)=>usageEvents.push(JSON.parse(JSON.stringify({name,...options}))),
     bindHorizontalTabs:()=>{},focusSelectedTab:nav=>nav.nodes.find(node=>node.attrs['aria-selected']==='true')?.focus(),
     loadExportMomentumSnapshot:()=>{requests.push('monthly');return monthly.promise;},
     loadExportItemDetail:key=>{requests.push(key);const item=deferred();pending.set(key,item);return item.promise;},
@@ -83,7 +86,7 @@ function harness(focus=null,state={}){
     .replace(/^import[\s\S]*?;\n/gm,'').replace(/^export /gm,'');
   vm.runInContext(source+'\nwindow.mount=renderExportMomentumView;',context);
   const cleanup=context.window.mount({shell:html=>html,bindNav(){},focus,state});
-  return {app,document,monthly,requests,pending,state,cleanup,
+  return {app,document,monthly,requests,pending,state,cleanup,usageEvents,
     tab:key=>app.querySelector(`[data-export-topic="${key}"]`),
     panel:key=>app.querySelector(`[data-export-panel="${key}"]`),
     reply:key=>pending.get(key).resolve(model.normalizeExportItemDetail(industryDetails[key])),
@@ -165,4 +168,48 @@ test('a response for a different industry never becomes valid selected data',asy
   h.pending.get('steel').resolve(model.normalizeExportItemDetail(industryDetails.cosmetics));await flush();
   assert.equal(h.panel('steel').dataset.loadState,'error');
   assert.match(h.panel('steel').textContent,/요청한 산업과 다른 자료/);
+});
+
+test('export consumption follows ready active content once per genuine panel opening',async()=>{
+  const h=harness('cosmetics');
+  assert.deepEqual(h.usageEvents,[],'pending data is not consumption');
+  h.reply('cosmetics');await flush();
+  assert.equal(h.usageEvents.length,1);
+  assert.equal(h.usageEvents[0].name,'export_detail_view');
+  assert.deepEqual(h.usageEvents[0].params,{screen:'exports',source:'exports'});
+  h.snapshot();await flush();
+  h.tab('cosmetics').click();
+  assert.equal(h.usageEvents.length,1,'monthly rendering and same-tab activation do not duplicate consumption');
+  h.tab('overview').click();
+  assert.equal(h.usageEvents.length,1,'overview is not item-detail consumption');
+  h.tab('cosmetics').click();
+  assert.equal(h.usageEvents.length,2,'a cached panel actually opened again is usable consumption');
+  assert.notEqual(h.usageEvents[0].operationId,h.usageEvents[1].operationId);
+  assert.equal(h.requests.filter(key=>key==='cosmetics').length,1);
+  assert.doesNotMatch(JSON.stringify(h.usageEvents),/cosmetics|화장품|symbol|question/);
+});
+
+test('hidden and disposed late export data cannot emit consumption',async()=>{
+  const h=harness('cosmetics');
+  h.tab('steel').click();
+  h.reply('cosmetics');await flush();
+  assert.deepEqual(h.usageEvents,[],'background completion does not count as a viewed panel');
+  h.reply('steel');await flush();
+  assert.equal(h.usageEvents.length,1);
+  const closed=harness('cosmetics');
+  closed.cleanup();closed.reply('cosmetics');await flush();
+  assert.deepEqual(closed.usageEvents,[]);
+});
+
+test('mismatched or entirely missing export amounts are not successful consumption',async()=>{
+  const mismatched=harness('steel');
+  mismatched.pending.get('steel').resolve(model.normalizeExportItemDetail(industryDetails.cosmetics));await flush();
+  assert.deepEqual(mismatched.usageEvents,[]);
+  mismatched.panel('steel').querySelector('[data-export-industry-retry="steel"]').click();
+  mismatched.reply('steel');await flush();
+  assert.equal(mismatched.usageEvents.length,1,'only the successful retry counts');
+  const empty=harness('cosmetics');
+  empty.pending.get('cosmetics').resolve(model.normalizeExportItemDetail({key:'cosmetics',name:'화장품',period:'2026-09',history:[{period:'2026-09',exportsUsdBillion:null}]}));
+  await flush();
+  assert.deepEqual(empty.usageEvents,[]);
 });

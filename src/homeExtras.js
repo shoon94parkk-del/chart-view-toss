@@ -180,7 +180,7 @@ function createSections(marketSection) {
     `<div id="home-daily-heatmap">${loadingIndicator('오늘 등락 히트맵을 불러오고 있어요')}<div class="skeleton home-heatmap-skeleton"></div></div>`;
 
   if (picks) document.querySelector('#home-discovery-feed').append(picks);
-  const revisit=document.querySelector('.saved-research')||document.querySelector('.watch-section');
+  const revisit=document.querySelector('.saved-research')||document.querySelector('#home-secondary-start')||document.querySelector('.watch-section');
   revisit.insertAdjacentElement('afterend',heatmap);
   const discovery=document.querySelector('#home-discovery-feed');
   const exportPreview=document.createElement('section');exportPreview.className='home-export-preview home-changes';

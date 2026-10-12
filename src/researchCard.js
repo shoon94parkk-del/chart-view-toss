@@ -4,7 +4,7 @@ import { financialHistoryData, screenerData, valuationStocks } from './api.js';
 import { loadingIndicator } from './loadingView.js';
 import { openExternal } from './tossBridge.js';
 import { questionPlan, resolveComparisonTarget, compareReports, reportObservations, growthComparison, number } from './researchAnalysis.js';
-import { qualitySlice, qualityLabels, qualityObservations } from './financialQuality.js';
+import { qualitySlice, qualityLabels, qualityObservations, qualityValue } from './financialQuality.js';
 import { qualityCell, qualityReviewHtml } from './financialQualityView.js';
 import { comparisonGroup } from './industryContext.js';
 import {comparisonExample} from './insightModel.js';
@@ -12,6 +12,8 @@ import { formatKst, formatMetricPeriod, formatDataSource } from './dataPresentat
 import {conditionChoices} from './investmentReview.js';
 import {saveCondition} from './reviewStorage.js';
 import './investmentReview.css';
+import { trackUsage, newUsageOperation } from './usageMetrics.js';
+import { offerReviewOpportunity } from './reviewPrompt.js';
 
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const money=(v,currency)=>{
@@ -104,16 +106,19 @@ export function mountResearchCard(host,options){
  const analyze=async (question,chosenTarget=null,confirmed=false)=>{
   if(!question.trim()){input.focus();return;}
   const run=++sequence;lastQuestion=question;lastTarget=chosenTarget;lastConfirmed=confirmed;
+  const operationId=newUsageOperation();
+  let usableAnalysis=false;
+  void trackUsage('analysis_view_attempt',{operationId,params:{source:'research',screen:'detail'}});
   saveState.textContent='질문은 이 기기에서만 처리해요.';
   result.setAttribute('aria-busy','false');
-  if(!korean){result.innerHTML='<p class="research-form-error">이 체험판은 국내 종목의 DART 실적을 비교해요. 해외 종목은 상세의 핵심 지표와 가격 차트를 확인해주세요.</p>';return;}
+  if(!korean){result.innerHTML='<p class="research-form-error">이 체험판은 국내 종목의 DART 실적을 비교해요. 해외 종목은 상세의 핵심 지표와 가격 차트를 확인해주세요.</p>';void trackUsage('analysis_view_failure',{operationId,params:{source:'research',screen:'detail',outcome:'unavailable',code:'unsupported'}});return;}
   result.setAttribute('aria-busy','true');result.innerHTML=loadingIndicator('질문에 맞는 공시 비교 자료를 확인하고 있어요');
   try{
    const universe=await screenerData().catch(()=>({stocks:[]}));
    if(run!==sequence||!host.isConnected)return;
    const plan=questionPlan(question,symbol,[...candidates,...(universe.stocks||[])]);
    if(plan.unsupported.length||plan.forecast){
-    result.innerHTML=`<div class="research-answer"><h3>이 질문은 현재 비교 범위 밖이에요</h3><p>${plan.unsupported.length?`${esc(plan.unsupported.join('·'))} 항목은 이 공시 비교에서 지원하지 않아요. `:''}${plan.forecast?'미래 전망과 목표주가는 과거 공시로 계산할 수 없어요. ':''}매출·영업이익·순이익·영업현금흐름·재무상태의 이미 발표한 수치를 비교할 수 있어요.</p><p>위 질문 예시를 선택하거나 지원 항목으로 질문을 수정해주세요.</p></div>`;return;
+    result.innerHTML=`<div class="research-answer"><h3>이 질문은 현재 비교 범위 밖이에요</h3><p>${plan.unsupported.length?`${esc(plan.unsupported.join('·'))} 항목은 이 공시 비교에서 지원하지 않아요. `:''}${plan.forecast?'미래 전망과 목표주가는 과거 공시로 계산할 수 없어요. ':''}매출·영업이익·순이익·영업현금흐름·재무상태의 이미 발표한 수치를 비교할 수 있어요.</p><p>위 질문 예시를 선택하거나 지원 항목으로 질문을 수정해주세요.</p></div>`;void trackUsage('analysis_view_failure',{operationId,params:{source:'research',screen:'detail',outcome:'unavailable',code:'unsupported'}});return;
    }
    const resolved=resolveComparisonTarget(plan,chosenTarget);
    if(resolved.conflict&&!confirmed){
@@ -143,6 +148,12 @@ export function mountResearchCard(host,options){
    }else{
     const {selection}=comparison,slices=comparison.slices.map((slice,i)=>qualitySlice(reports[i],selection,slice));
     const metrics=plan.focus==='cash'?['netIncome','operatingCashFlow','cashConversion']:plan.focus==='balance'?['debtRatio','liabilities','equity','inventories','receivables']:plan.focus==='quality'?['revenueGrowth','profitGrowth','margin','operatingCashFlow','cashConversion','debtRatio']:plan.focus==='growth'?['revenueGrowth','profitGrowth','margin']:plan.focus==='profit'?['profit','margin','revenue']:['revenue','profit','margin'];
+    usableAnalysis=slices.some(slice=>metrics.some(key=>{
+     if(key==='revenue'||key==='revenueGrowth')return number(slice.current?.revenue)!==null;
+     if(key==='profit'||key==='profitGrowth')return number(slice.current?.operatingProfit)!==null;
+     if(key==='margin')return number(slice.margin)!==null;
+     return qualityValue(slice,key)!==null;
+    }));
     const labels={...qualityLabels,revenueGrowth:'매출 증가율',profitGrowth:'영업이익 증가율',revenue:'매출액',profit:'영업이익',margin:'영업이익률'};
     const cell=(s,key)=>{
      if(qualityLabels[key])return qualityCell(s,key);
@@ -184,20 +195,41 @@ export function mountResearchCard(host,options){
     track.querySelectorAll('[data-track-condition]').forEach(b=>b.onclick=()=>{try{saveCondition(symbol,choices[Number(b.dataset.trackCondition)]);track.querySelector('[data-track-status]').textContent='근거를 저장했어요. 공시 실적의 내 투자 근거에서 다시 확인할 수 있어요.';document.dispatchEvent(new Event('chartview:review-changed'));b.textContent='저장됨 · '+choices[Number(b.dataset.trackCondition)].label;}catch(error){track.querySelector('[data-track-status]').textContent=error.message||'근거를 저장하지 못했어요.';}});
    }
    bindResults();
+   void trackUsage(usableAnalysis?'analysis_view_success':'analysis_view_failure',{operationId,params:{source:'research',screen:'detail',outcome:usableAnalysis?'success':'unavailable'}});
   }catch{
    if(run!==sequence||!host.isConnected)return;
    result.innerHTML='<p class="research-form-error">비교 자료를 불러오지 못했어요. 질문을 유지한 채 다시 시도해주세요.</p><button type="button" data-research-retry>다시 비교하기</button>';bindResults();
+   void trackUsage('analysis_view_failure',{operationId,params:{source:'research',screen:'detail',outcome:'error',code:'network'}});
   }finally{if(run===sequence&&host.isConnected)result.setAttribute('aria-busy','false');}
  };
  form.onsubmit=e=>{e.preventDefault();analyze(input.value,selectedPeer);};
- host.querySelector('[data-research-save]').onclick=()=>{
-  try{saved=saveResearchNote(symbol,{...saved,question:input.value,peer:selectedPeer});host.querySelector('[data-research-delete]').hidden=false;saveState.textContent=selectedPeer?'질문과 비교 회사를 이 기기에 저장했어요.':'질문을 이 기기에 저장했어요.';onNotice?.('질문을 저장했어요.');}
-  catch{saveState.textContent='질문을 저장하지 못했어요. 입력 내용과 기기 저장 공간을 확인해주세요.';}
- };
+ const saveButton=host.querySelector('[data-research-save]');
  const remove=host.querySelector('[data-research-delete]');
- if(remove)remove.onclick=()=>{
+ saveButton.onclick=async()=>{
+  if(saveButton.disabled)return;
+  const operationId=newUsageOperation(),peer=selectedPeer;
+  saveButton.disabled=true;
+  if(remove)remove.disabled=true;
+  saveState.textContent='질문을 이 기기에 저장하고 있어요.';
+  void trackUsage('research_save_attempt',{operationId,params:{source:'research',screen:'detail'}});
+  try{
+   saved=await saveResearchNote(symbol,{...saved,question:input.value,peer},{confirmed:true});
+   void trackUsage('research_save_success',{operationId,params:{source:'research',screen:'detail'}});
+   if(!host.isConnected)return;
+   host.querySelector('[data-research-delete]').hidden=false;saveState.textContent=peer?'질문과 비교 회사를 이 기기에 저장했어요.':'질문을 이 기기에 저장했어요.';onNotice?.('질문을 저장했어요.');
+   void offerReviewOpportunity(host,{source:'research',operationId});
+  }catch{
+   void trackUsage('research_save_failure',{operationId,params:{source:'research',screen:'detail',code:'storage'}});
+   if(host.isConnected)saveState.textContent='질문을 저장하지 못했어요. 입력 내용과 기기 저장 공간을 확인해주세요.';
+  }finally{saveButton.disabled=false;if(remove)remove.disabled=false;}
+ };
+ if(remove)remove.onclick=async()=>{
+  if(remove.disabled||saveButton.disabled)return;
   if(remove.dataset.confirm!=='true'){remove.dataset.confirm='true';remove.textContent='한 번 더 누르면 삭제';setTimeout(()=>{if(remove.isConnected){remove.dataset.confirm='false';remove.textContent='저장한 질문 삭제';}},4500);return;}
-  try{deleteResearchNote(symbol);saved=null;remove.hidden=true;remove.dataset.confirm='false';remove.textContent='저장한 질문 삭제';host.querySelector('.research-legacy')?.remove();saveState.textContent='저장한 질문을 삭제했어요. 현재 입력은 남아 있어요.';}
-  catch{saveState.textContent='저장한 질문을 삭제하지 못했어요.';}
+  remove.disabled=true;saveButton.disabled=true;
+  saveState.textContent='저장한 질문을 삭제하고 있어요.';
+  try{await deleteResearchNote(symbol,{confirmed:true});if(!host.isConnected)return;saved=null;remove.hidden=true;remove.dataset.confirm='false';remove.textContent='저장한 질문 삭제';host.querySelector('.research-legacy')?.remove();saveState.textContent='저장한 질문을 삭제했어요. 현재 입력은 남아 있어요.';}
+  catch{if(host.isConnected)saveState.textContent='저장한 질문을 삭제하지 못했어요.';}
+  finally{remove.disabled=false;saveButton.disabled=false;}
  };
 }

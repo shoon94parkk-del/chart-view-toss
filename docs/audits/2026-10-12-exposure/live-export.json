@@ -1,0 +1,84 @@
+{
+  "observedAtUtc": "2026-10-12T02:21:36.068404+00:00",
+  "request": {
+    "method": "GET",
+    "url": "https://chart-view-pkv8.onrender.com/api/export-momentum/provisional",
+    "freshRequested": false
+  },
+  "httpStatus": 200,
+  "response": {
+    "schemaVersion": 2,
+    "status": "official_preliminary_api",
+    "period": "2026-10",
+    "periodLabel": "2026년 10월",
+    "latestStage": 10,
+    "latestStageLabel": "1~10일",
+    "businessDays": {
+      "stage": 10,
+      "current": 5,
+      "previousMonth": 8,
+      "priorYear": 3,
+      "basis": "calendar weekdays excluding KR statutory/substitute holidays"
+    },
+    "source": {
+      "name": "관세청 수출 주요품목별 10일 단위 잠정치 통계",
+      "url": "https://www.data.go.kr/data/15157908/openapi.do"
+    },
+    "meta": {
+      "provider": "Korea Customs Service / data.go.kr",
+      "basis": "수출신고수리일 기준 10일 단위 누적 잠정치",
+      "unit": "USD billion (provider source: USD thousand)",
+      "classification": "Korea Customs 10 major export product categories; not HS monthly classification",
+      "queryRange": "2020-11~2026-10",
+      "landingModel": "rolling completion-ratio median with interquartile range and 24-month backtest",
+      "cacheTtlSec": 1800,
+      "cacheStatus": "fresh"
+    }
+  },
+  "latestCheckpoint": {
+    "stage": 10,
+    "label": "1~10일",
+    "periodRaw": "01~10",
+    "total": {
+      "exportsUsdBillion": 26.104,
+      "exportYoY": 102.0,
+      "exportMoM": -25.4,
+      "priorYearUsdBillion": 12.9258,
+      "previousMonthUsdBillion": 35.0129,
+      "deltaYoYUsdBillion": 13.1782
+    },
+    "semiconductor": {
+      "exportsUsdBillion": 12.1978,
+      "exportYoY": 170.9,
+      "exportMoM": -26.0,
+      "priorYearUsdBillion": 4.5022,
+      "previousMonthUsdBillion": 16.4831,
+      "deltaYoYUsdBillion": 7.6956
+    },
+    "semiconductorSharePct": 46.7,
+    "semiconductorContributionPct": 58.4,
+    "semiconductorYoYAccelerationPp": null,
+    "totalYoYAccelerationPp": null
+  },
+  "officialCorroboration": {
+    "url": "https://www.customs.go.kr/kcs/na/ntt/selectNttInfo.do?mi=2891&bbsId=1362&nttSn=10179143&nttSnUrl=2fbd97b6ed3711c34f4810ce485a72ce",
+    "publishedDate": "2026-10-12",
+    "period": "2026-10-01/2026-10-10",
+    "checkedAtUtc": "2026-10-12T02:19:26Z",
+    "httpStatus": 200,
+    "exportUsdMillion": 26104,
+    "exportYoYPct": 102.0,
+    "officialOperatingDays": {
+      "current": 5.5,
+      "previousMonth": 8.5,
+      "priorYear": 3.5
+    },
+    "officialDailyExportYoYPct": 28.5,
+    "basisDifference": "API businessDays uses calendar weekdays excluding statutory/substitute holidays; it is not the official Customs operating-day convention. The UI adjustment preserves this optional calendar calculation and discloses the difference."
+  },
+  "limits": [
+    "No October 1~20 or full-month actual data was observed.",
+    "The monthly HS/HSK detail dataset is separate from ten-day Customs product categories.",
+    "No collection, backend change, provider fan-out, or fresh=true request was performed."
+  ]
+}

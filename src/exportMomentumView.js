@@ -2,6 +2,7 @@ import { loadExportCompanyContext, loadExportItemDetail, loadExportMomentumMap, 
 import {exportCompanyCandidates,memoryMovements} from './insightModel.js';
 import { bindHorizontalTabs, focusSelectedTab } from './accessibleTabs.js';
 import { renderProvisionalDigest } from './exportProvisionalDigest.js';
+import { newUsageOperation, trackUsage } from './usageMetrics.js';
 import {
   balanceTone,
   chartExtent,
@@ -1018,11 +1019,20 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={},onSe
   const industryTokens=new Map();
   let semiconductorMetric=state.semiconductorMetric==='yoy'?'yoy':'delta';
   let semiconductorSegmentKey=state.semiconductorSegmentKey||'dram';
+  const usableDetailPanels=new Set();
+  let usagePanelKey=null,usagePanelOperation=null,usagePanelRecorded=false;
+  const recordVisibleDetailPanel=()=>{
+    const panel=host.querySelector('[data-export-panel="'+usagePanelKey+'"]');
+    if(usagePanelRecorded||!usableDetailPanels.has(usagePanelKey)||!panel?.isConnected||panel.hidden||state.exportSection!==usagePanelKey)return;
+    usagePanelRecorded=true;
+    void trackUsage('export_detail_view',{operationId:usagePanelOperation,params:{screen:'exports',source:'exports'}});
+  };
 
   const openItemDetail=async(key,{force=false,restore=false}={})=>{
     const panel=host.querySelector('#export-item-detail');
     if(!panel||!key)return;
     const token=++detailSeq;
+    const usageOperation=newUsageOperation();
     if(state.itemKey!==key)state.countryName='';state.itemKey=key;
     panel.hidden=false;
     panel.innerHTML='<div class="export-detail-loading" role="status"><span></span><strong>12개월 품목 상세를 불러오고 있어요.</strong><small>첫 조회는 관세청 상세 통계를 수집해 조금 더 걸릴 수 있습니다.</small><button type="button" data-export-detail-close>닫기</button></div>';
@@ -1037,6 +1047,9 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={},onSe
       const detail=await loadExportItemDetail(key,{force});
       if(token!==detailSeq||!panel.isConnected)return;
       panel.innerHTML=renderItemDetail(detail);
+      if(!panel.hidden&&detail.key===key&&detail.history.some(row=>Number.isFinite(row.exportsUsdBillion))){
+        void trackUsage('export_detail_view',{operationId:usageOperation,params:{screen:'exports',source:'exports'}});
+      }
       const researchHost=panel.querySelector('.export-research');
       panel.querySelector('[data-export-research-jump]').onclick=()=>{researchHost.scrollIntoView({block:'start'});researchHost.focus({preventScroll:true});};
       void import('./exportResearchView.js').then(({mountExportResearch})=>{if(token===detailSeq&&researchHost.isConnected)void mountExportResearch(researchHost,detail,{state,alive:()=>token===detailSeq&&researchHost.isConnected});}).catch(()=>{if(researchHost.isConnected)researchHost.textContent='기업 연결을 열지 못했어요. 주요제품과 공시를 직접 확인해주세요.';});
@@ -1126,6 +1139,10 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={},onSe
       });
       const next=host.querySelector('#export-semiconductor-analysis');
       host.querySelector('[data-export-panel="semiconductor"]').dataset.loadState='ready';
+      if(trends.segments.some(row=>Number.isFinite(row.exportsUsdBillion))){
+        usableDetailPanels.add('semiconductor');
+        recordVisibleDetailPanel();
+      }
       next.querySelectorAll('[data-export-semi-metric]').forEach(button=>button.addEventListener('click',()=>{
         semiconductorMetric=button.dataset.exportSemiMetric==='yoy'?'yoy':'delta';
         state.semiconductorMetric=semiconductorMetric;
@@ -1249,6 +1266,10 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={},onSe
       industryLoaded.add(key);
       panel.innerHTML=renderIndustryTab(detail);
       panel.dataset.loadState='ready';
+      if(detail.history.some(row=>Number.isFinite(row.exportsUsdBillion))){
+        usableDetailPanels.add(key);
+        recordVisibleDetailPanel();
+      }
       bindNav();
       const researchHost=panel.querySelector('.export-industry-research');
       if(researchHost){
@@ -1326,6 +1347,11 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={},onSe
     const token=seq;
     const panel=host.querySelector('[data-export-panel="'+panelKey+'"]');
     if(!panel)return;
+    if(usagePanelKey!==panelKey){
+      usagePanelKey=panelKey;
+      usagePanelOperation=newUsageOperation();
+      usagePanelRecorded=false;
+    }
     if(closeDetail){
       const detailPanel=host.querySelector('#export-item-detail');
       if(detailPanel&&!detailPanel.hidden){
@@ -1358,6 +1384,7 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={},onSe
     if(industryTabConfig(panelKey)&&!industryLoaded.has(panelKey)&&!industryLoading.has(panelKey)){
       void loadIndustryAnalysis(panelKey,token,force);
     }
+    recordVisibleDetailPanel();
     if(scroll)panel.scrollIntoView({behavior:'smooth',block:'start'});
   };
 

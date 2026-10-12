@@ -47,3 +47,37 @@ test('stale API responses and period are explicitly disclosed',()=>{
   assert.match(html,/2026년 9월 10일/);
   assert.match(html,/갱신 실패/);
 });
+
+test('provisional item actions retain native button semantics inside table cells',()=>{
+  const html=renderProvisionalDigest({...radar,items:[
+    radar.items[0],
+    {...radar.items[0],key:'wireless',name:'무선통신기기'},
+  ]});
+  assert.match(html,/<div role="cell"><button type="button" class="export-digest-item-link" data-export-item="semiconductor">반도체 /);
+  assert.doesNotMatch(html,/<button[^>]*role="cell"/);
+  assert.match(html,/<strong role="cell">무선통신기기<\/strong>/);
+});
+
+test('digest labels follow the actual latest cumulative stage, including first ten days',()=>{
+  for(const [stage,label,period,endDay] of [
+    [10,'1~10일','2026-10',10],
+    [20,'1~20일','2026-10',20],
+    [30,'월 전체','2026-09',30],
+    [30,'월 전체','2028-02',29],
+  ]){
+    const html=renderProvisionalDigest({...radar,period,latestStage:stage,latestStageLabel:label,businessDays:null});
+    assert.ok(html.includes('관세청 잠정 수출 · '+label));
+    assert.ok(html.includes(Number(period.slice(5))+'월 '+endDay+'일 기준'));
+    assert.ok(html.includes('매월 같은 1~'+(stage===30?'말일':stage)+'일 구간 비교'));
+  }
+});
+
+test('supplied calendar business-day basis is distinguished from official operating-day growth',()=>{
+  const html=renderProvisionalDigest({...radar,businessDays:{...radar.businessDays,
+    basis:'calendar weekdays excluding KR statutory/substitute holidays',
+  }},{adjusted:true});
+  assert.match(html,/영업일 수 기준: 주말·공휴일 제외 달력 기준/);
+  assert.match(html,/관세청 공식 조업일수·일평균 증가율과 다를 수 있습니다/);
+  assert.match(html,/\+20\.0%/);
+  assert.match(html,/\+28\.0%/);
+});
