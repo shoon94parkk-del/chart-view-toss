@@ -1,0 +1,4752 @@
+{
+  "schemaVersion": 1,
+  "project": "github:shoon94parkk-del/chart-view-toss",
+  "measuredAt": "2026-10-12T03:58:06.808Z",
+  "startedAt": "2026-10-12T03:57:55.790Z",
+  "baseUrl": "http://127.0.0.1:4174",
+  "nodeVersion": "v24.21.0",
+  "browser": "Chromium",
+  "browserVersion": "140.0.7339.16",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "runsPerRoute": 5,
+  "phases": [
+    "cold"
+  ],
+  "timeoutMs": 20000,
+  "pollingMs": 50,
+  "fixtureDate": "2026-10-07T06:35:00Z",
+  "methodology": {
+    "cold": "Fresh Chromium context for each route/run, empty browser/app caches, same deterministic data fixture; host process and browser binary stay warm",
+    "readiness": "Visible numeric primary data; existing performanceOutcome excludes unavailable, empty and error placeholders; optional sections do not delay detail price",
+    "percentiles": "p50 is median; p95 is nearest rank. With 5 or 10 samples p95 equals sample maximum; no production percentile or SLA claim",
+    "networking": "All data endpoints fulfilled by tests/e2e/data.mjs payloadFor. Only the selected loopback origin may continue. No live providers, telemetry or LLM APIs",
+    "runtime": "Anonymous web preview: SDK runtime is false and native analytics remains inactive. No user identity, query, credentials, notes or real interest list is collected",
+    "requestCounts": "Path-only counts from navigation to primary readiness plus diagnostic capture; requestCountAtPrimary records the boundary; observed response bodies complete without fixed sleeps",
+    "bytes": "Initial entry JS comes from the built dist; response SHA must match. Local gzip comparison is not observed wire transfer or total loaded-resource bytes",
+    "limits": [
+      "Local desktop Chromium viewport, not Android/iOS native Toss",
+      "No mobile network/CPU throttling or server cold start",
+      "50ms readiness polling and host scheduling can move small latency differences",
+      "No fixed wait or network-idle barrier; optional requests initiated after primary capture may be outside counts and optional bodies can remain pending/null",
+      "Playwright routing disables HTTP cache identically in both builds",
+      "Fixed fixture Date uses Playwright clock, which substitutes browser Performance/timers; elapsed primary-readiness time is measured by real Node performance.now, resource timing is unavailable",
+      "Readiness validates primary data presence rather than every optional section or every fixture value"
+    ]
+  },
+  "command": [
+    "node",
+    "scripts/exposure-performance.mjs",
+    "--url",
+    "http://127.0.0.1:4174",
+    "--source-dir",
+    "/workspace/chartview-baseline",
+    "--dist-dir",
+    "/workspace/chartview-baseline/dist",
+    "--runs",
+    "5",
+    "--output",
+    "docs/audits/2026-10-12-exposure/performance-before.json"
+  ],
+  "sourceRevision": "e15f2358aa265815ed6dcb6c872eae63a2198c50",
+  "sourceRevisionMeaning": "Git HEAD identifies the base commit; sourceTreeSha256 identifies measured application/config working-tree contents and distTreeSha256 identifies all built artifacts",
+  "sourceTreeSha256": "9c225355c53495f4301cb418d8fb98a52ee04825399f4c8f64dcc8d22458658c",
+  "sourceFiles": [
+    {
+      "path": "apps-in-toss.config.ts",
+      "bytes": 514,
+      "sha256": "cfcfe3accf8800897ae94ff7b4976b95d188b9adcaaa25c25be332887c33d63e"
+    },
+    {
+      "path": "index.html",
+      "bytes": 3270,
+      "sha256": "35bc1de7d86edfc146db4eb86abe267078148c9b60ce40f728b35329200e0039"
+    },
+    {
+      "path": "package-lock.json",
+      "bytes": 101953,
+      "sha256": "c60d1453a66c974505aa6b4214f2605781108ca2b79d43c35b461dae802c369f"
+    },
+    {
+      "path": "package.json",
+      "bytes": 1180,
+      "sha256": "cb70fcb51839c735b0bcea99062d6dd4f7ff2c0e7ee40272254a3dcae4a1d792"
+    },
+    {
+      "path": "scripts/export-preview-routes.mjs",
+      "bytes": 732,
+      "sha256": "9c3d7cf0b27748c687c5096fb0ba67479e27f3e75e65c68e316cd831803c64ba"
+    },
+    {
+      "path": "src/accessibility.css",
+      "bytes": 5512,
+      "sha256": "87980ed1c0594f15c4855a5f5a3f42125f14aac7467a577fd1fc14710d13f93b"
+    },
+    {
+      "path": "src/accessibleTabs.js",
+      "bytes": 1842,
+      "sha256": "bf32c175dfed52ea4d8297b2528c522c7de6cf7ac90ac4be4b884fbf7031ba33"
+    },
+    {
+      "path": "src/analysisData.js",
+      "bytes": 7234,
+      "sha256": "15daf507f7c868aea6e773863abe707faa245721e040646a37f2fdacc6446240"
+    },
+    {
+      "path": "src/analysisRecovery.css",
+      "bytes": 827,
+      "sha256": "d90f5ba066a798215454a22abe90c92d5fb3ef8d25af1ffc82962b43ce597944"
+    },
+    {
+      "path": "src/analysisViews.js",
+      "bytes": 33394,
+      "sha256": "f6be772a5ede861a64dde9a71685cc719228dc31f12f90b10525e42390ffa8b8"
+    },
+    {
+      "path": "src/api.js",
+      "bytes": 7316,
+      "sha256": "e943005f7e4afa4aaf964d1dfad28cdeb9d4cddf36fe83af2be0c36ab0b30c75"
+    },
+    {
+      "path": "src/auditExperience.css",
+      "bytes": 3265,
+      "sha256": "d6856a93d025610c0488f1173197f1a690068a4b4a5989d7d206972a06bc7aa3"
+    },
+    {
+      "path": "src/auditExperience.js",
+      "bytes": 1872,
+      "sha256": "d21d332de55ee8efe5108f13f221636d10be0fbb854c07477749c418c308f141"
+    },
+    {
+      "path": "src/chartRuntime.js",
+      "bytes": 164,
+      "sha256": "9f11b7ea68dc7f755dfd18a85cd5ea233782a79d5fa552343b2802e02a3ad327"
+    },
+    {
+      "path": "src/dataPresentation.js",
+      "bytes": 12997,
+      "sha256": "ea913dadc3dffe66e9ed1a68705abf4d1edcb6541e2c9bfa9d09160b9f35a844"
+    },
+    {
+      "path": "src/detailModuleRecovery.js",
+      "bytes": 2067,
+      "sha256": "1ede8bd259b9667d103265f8bad3983b4443b5106420955f74d2dbb01a8f8b8f"
+    },
+    {
+      "path": "src/detailPresentation.js",
+      "bytes": 3234,
+      "sha256": "5eb63c58a9b10e6d5197ef9ee535968abda355312b670e1c6eb45b7cd5c9bc62"
+    },
+    {
+      "path": "src/detailReviewSummary.js",
+      "bytes": 3891,
+      "sha256": "59fa988987d81e92f89ac0a712a6abced82201576ba584941e0df253273a84e8"
+    },
+    {
+      "path": "src/diagnostics.js",
+      "bytes": 1164,
+      "sha256": "84106ef5488552b0dacaf71bc6287f4a754bf27496d6f8313461c5d464a30912"
+    },
+    {
+      "path": "src/emphasis.css",
+      "bytes": 36438,
+      "sha256": "3c899b5c3e239ac014863737e3a908e8bdff9e38c20fb8aaf4f4e66dcf56588b"
+    },
+    {
+      "path": "src/experience.css",
+      "bytes": 9315,
+      "sha256": "90e7e58222e41e02e3f32cdb5e745c1b5a12da1e65bb1b2801cba28cbeacb6eb"
+    },
+    {
+      "path": "src/experienceState.js",
+      "bytes": 6362,
+      "sha256": "d5293c897cbbcae82457d982055e9027037e438047338a2b7cc7fc53b6abe377"
+    },
+    {
+      "path": "src/exportMomentum.css",
+      "bytes": 72955,
+      "sha256": "560836fedfe7f1d076f0e806f9a05d6e335bb2d4de83a21af8678c898eca5715"
+    },
+    {
+      "path": "src/exportMomentumData.js",
+      "bytes": 4302,
+      "sha256": "31b229d07a3e629cc1f6ce1d67db13cdf3f05cc0facb305ab874cd5a4ad8e8a8"
+    },
+    {
+      "path": "src/exportMomentumModel.js",
+      "bytes": 23861,
+      "sha256": "3dde7fec786e544182d05f6b52b265f84264efa91adbda3b0b2fe40b893dfc51"
+    },
+    {
+      "path": "src/exportMomentumView.js",
+      "bytes": 90367,
+      "sha256": "3202d103d61f17cea6d5ed653408ef08e4bc6a6a2f887433f747b72873e3c4e8"
+    },
+    {
+      "path": "src/exportProvisionalDigest.js",
+      "bytes": 5729,
+      "sha256": "8eb4f46bb599a1771dcd04d34127dabb1b545d25dbca6739cf737228d034fd65"
+    },
+    {
+      "path": "src/exportResearchView.js",
+      "bytes": 4823,
+      "sha256": "ffcffc63b9044ae225dbea92fd7e42ecd9e82b83cbe6490b1da0f5f62016874a"
+    },
+    {
+      "path": "src/externalLinks.js",
+      "bytes": 882,
+      "sha256": "db672b7500efc72469ef4b8f7852a80fed1891b484430ae8a14d65ccdd76fdaa"
+    },
+    {
+      "path": "src/filingComparison.js",
+      "bytes": 1156,
+      "sha256": "84b3c8b0fdc7fda35b48b8bb747951756975730d5298b2bf58189518e083afa6"
+    },
+    {
+      "path": "src/financialHistoryView.css",
+      "bytes": 1739,
+      "sha256": "4c32984eaf513b9ee923d2061ace40c991cef2e5257ddff9a850da4655bd40d5"
+    },
+    {
+      "path": "src/financialHistoryView.js",
+      "bytes": 4297,
+      "sha256": "88b591cc032cd17eb3071a4432cb37c7d40b3cffe729fe90e91ed13425e2c6bb"
+    },
+    {
+      "path": "src/financialQuality.js",
+      "bytes": 6668,
+      "sha256": "cff0ec1af2480e6d2bb36633ff254bad16d0bd32f1bdf07c9791c9ae60c304dc"
+    },
+    {
+      "path": "src/financialQualityView.css",
+      "bytes": 1960,
+      "sha256": "4913b458c700ada02695fddbb0edb9e431dfdb84462e77b31e8ff527d5288c22"
+    },
+    {
+      "path": "src/financialQualityView.js",
+      "bytes": 4624,
+      "sha256": "5af9361622b235b173575914ff7a48b9874124b99b6dc3d2770e5fb77fcb126e"
+    },
+    {
+      "path": "src/fullHeatmapSnapshot.js",
+      "bytes": 3435,
+      "sha256": "a293ba14837d5003bec53af6e73cb3899f89ad1699e12210c0ac04c9c0d989d4"
+    },
+    {
+      "path": "src/guruInvestingExtensions.js",
+      "bytes": 8836,
+      "sha256": "a2f22cba7d7fae8c7a7aa4b66d8238ee0875fe5bd7846d0a197c4f13bc8f3e99"
+    },
+    {
+      "path": "src/guruInvestingModel.js",
+      "bytes": 7863,
+      "sha256": "acdbf74e4126ff9b1e9515492adebdb74610678e6f850726df999ba0894319f0"
+    },
+    {
+      "path": "src/guruInvestingView.css",
+      "bytes": 5692,
+      "sha256": "6eb414235c3d8dad0307df4905a7676702e907ece13173a73c5dd0217f4a798c"
+    },
+    {
+      "path": "src/guruInvestingView.js",
+      "bytes": 19882,
+      "sha256": "0a849aa0334ae02597fdce87fc247573624ba30358b4af024311ed690dde221e"
+    },
+    {
+      "path": "src/heatmapAlignment.js",
+      "bytes": 1554,
+      "sha256": "f793e71d292edcdf6dedb8b85eb58dc5d2267f3721fbfbd2da2e05376f1b2f96"
+    },
+    {
+      "path": "src/heatmapView.js",
+      "bytes": 13825,
+      "sha256": "395aacd0e44f6b6bc3c73d85160f4f0dc4d293cdb0a404c7d00fd78e6b0a16a4"
+    },
+    {
+      "path": "src/homeChangesView.js",
+      "bytes": 3947,
+      "sha256": "87c648943dffe96c82b5735d0939daee2ec1edfdc07ee96151632701434ca482"
+    },
+    {
+      "path": "src/homeExportPreview.js",
+      "bytes": 1560,
+      "sha256": "75d51c0dc9d1302323d5e74697a5e2b0a7888eaccdbedda0100af67e852899a5"
+    },
+    {
+      "path": "src/homeExtras.css",
+      "bytes": 10164,
+      "sha256": "44818e612a2e4a58665e357be82f5431812ea9d8003aea7eb310399cd1008ff9"
+    },
+    {
+      "path": "src/homeExtras.js",
+      "bytes": 20061,
+      "sha256": "8028cf815cd0652867c9fbd75ad6196aa34c503a2a464f84decc4e96a27e0378"
+    },
+    {
+      "path": "src/homeFastCache.js",
+      "bytes": 1033,
+      "sha256": "4dc1acf91648923508b80e53a4142fde8afa9ab12476e441bbf27a941929377b"
+    },
+    {
+      "path": "src/homeLogos.js",
+      "bytes": 6989,
+      "sha256": "be5c28f222ffb09923e4ec420920c391f340445a740af0e2623c2cf7b791a0f2"
+    },
+    {
+      "path": "src/ideaEngine.js",
+      "bytes": 8149,
+      "sha256": "4ef2a9784a99e32be72850ce2747a6efc6dd97832f1d4d4dedd8b61c6ccbb85d"
+    },
+    {
+      "path": "src/ideaView.css",
+      "bytes": 11447,
+      "sha256": "14ac36d3fca2c7fd995bf4fc8b8621bec88b8d1d51a2977405da0e77d2d692b1"
+    },
+    {
+      "path": "src/ideaView.js",
+      "bytes": 13734,
+      "sha256": "e7266c2e2647343b1e9d01419b931e8ec2b9662d97436477812cdc8897314ada"
+    },
+    {
+      "path": "src/industryContext.js",
+      "bytes": 12898,
+      "sha256": "7a0dd7a884ee869c5f92677f89f7ebcd9eb62fecdc7ffecf966c307633e4176d"
+    },
+    {
+      "path": "src/industryContextView.css",
+      "bytes": 9600,
+      "sha256": "d7ffbc567078f8b53d30937f1e6cb7e7ce4bf494187927e86ab667d66615a05e"
+    },
+    {
+      "path": "src/industryContextView.js",
+      "bytes": 12913,
+      "sha256": "20a8fd2fb213a8095179c144496e9ac05a3c70938e5880f8a24e9193dde5d027"
+    },
+    {
+      "path": "src/insight.css",
+      "bytes": 2347,
+      "sha256": "50d37dd30272d526551b1a71efc98e0e4428091b059aa81af7ada2121e002ea0"
+    },
+    {
+      "path": "src/insightModel.js",
+      "bytes": 10338,
+      "sha256": "9b7b68b1b7a5705811b0e22fcd648da347fa35080b23e5df1329d46c58d2276f"
+    },
+    {
+      "path": "src/insightView.js",
+      "bytes": 1787,
+      "sha256": "c5287115936fe25c675dbf339a62c7fcdadaca38a46c4f2001bd0625a8f97f21"
+    },
+    {
+      "path": "src/investmentReview.css",
+      "bytes": 3928,
+      "sha256": "58fc1380226c2253091e5a7d69dcdccf7d70acb0a85c2272cb983a5ebba58fbb"
+    },
+    {
+      "path": "src/investmentReview.js",
+      "bytes": 3675,
+      "sha256": "4c82ad8e992c362d0015f72f3f12572d73de0f933d8f660467dbf1e900200e8a"
+    },
+    {
+      "path": "src/investmentTools.js",
+      "bytes": 3100,
+      "sha256": "6fc7df9edd5713e6c904b0a0cf7727a8d89a83158a7b7b79dad3bc6f0a55b474"
+    },
+    {
+      "path": "src/liveHomeSync.js",
+      "bytes": 5425,
+      "sha256": "80295e4ddd66b97aa13d7c702526e149bbd1c185642ed949843997b766ddcaf2"
+    },
+    {
+      "path": "src/liveQuoteStore.js",
+      "bytes": 2294,
+      "sha256": "20f5edd399b92b12a16ae4839c3367bb906effbaa11847cf9760ad75b97565e8"
+    },
+    {
+      "path": "src/loadingView.js",
+      "bytes": 885,
+      "sha256": "6aa8a6fb2ea3c20bb20828745229eab1416ac82428527761e025b346d938a8f5"
+    },
+    {
+      "path": "src/main.js",
+      "bytes": 146939,
+      "sha256": "13d8656ea61c18f2c54c1a9a650d0c702769319535e4623fc3ad8d0d27b63b78"
+    },
+    {
+      "path": "src/marketMap.css",
+      "bytes": 4547,
+      "sha256": "0dec50017c7d2419cb3eba474750bdef0ba6fe3ed85d110eddb6e5cc7cdcef44"
+    },
+    {
+      "path": "src/marketMapView.js",
+      "bytes": 5940,
+      "sha256": "625141ac4610efd0513a3b2a689243a0b8e1875f24cd0b975d6f9e47d069bde5"
+    },
+    {
+      "path": "src/memoryPriceView.js",
+      "bytes": 779,
+      "sha256": "e5eab39489882d7d0c147cef06b51c4d1653c74d58bb162621a4c732c6e8e001"
+    },
+    {
+      "path": "src/memorySpotView.js",
+      "bytes": 9644,
+      "sha256": "aeeed2959b749186b96564ce6813a2f880a172ffb981fd8bca0a53e31c6a71d1"
+    },
+    {
+      "path": "src/mobileContinuity.css",
+      "bytes": 11434,
+      "sha256": "00588d137863f8ebf9fc21c7c99823686b6070bdefe991bc5492d38675a42377"
+    },
+    {
+      "path": "src/pickLedger.css",
+      "bytes": 12897,
+      "sha256": "1a25401e200035ff7a2c791d0f8d4ea119e9cfc77b906bc99fb8140abcb331a2"
+    },
+    {
+      "path": "src/pickLedger.js",
+      "bytes": 27612,
+      "sha256": "2cad685b7355e805cdf17480921d9bab5866dc29674c7d3cefeadf105d840644"
+    },
+    {
+      "path": "src/pickPerformanceBasis.js",
+      "bytes": 1374,
+      "sha256": "b9bc7ca271266491d807714f91a478fbde98913d78953c4d97a2f3c4def92fa2"
+    },
+    {
+      "path": "src/quarterView.js",
+      "bytes": 8971,
+      "sha256": "cdeffaec1ed8ad507ff3238019d8de1f6d0a545ccd22272809a7ac9455ae9f79"
+    },
+    {
+      "path": "src/releaseScope.js",
+      "bytes": 268,
+      "sha256": "a16fd068e1184f4b5aeac4a07a825193d0efb400cea869a262f17b5d0ad2a753"
+    },
+    {
+      "path": "src/reportReviewView.js",
+      "bytes": 9422,
+      "sha256": "e908dfa5f06aecfbde8ca4533a1a962c48b9be0e60f6c8ce11f933fa18bde89f"
+    },
+    {
+      "path": "src/requestClient.js",
+      "bytes": 3352,
+      "sha256": "16a008ad96b3a2655d50dcfe95f462c4dd36cc2d023e290a3dbf5993353dd817"
+    },
+    {
+      "path": "src/researchAnalysis.js",
+      "bytes": 8196,
+      "sha256": "294e52ce15e86b61f1db0e24a052f6d42510bd8898c32702be2bb85a54d132a3"
+    },
+    {
+      "path": "src/researchCard.css",
+      "bytes": 7367,
+      "sha256": "5591c04af9d8874ae1f5e8e51b375e03f8a6a3f5b49dd16d8927fceae859a742"
+    },
+    {
+      "path": "src/researchCard.js",
+      "bytes": 24839,
+      "sha256": "6caadd1979d1b33dc6d4dbd1f9aae64e6cc8920120e60f6b053b8f41fc17489d"
+    },
+    {
+      "path": "src/researchNotes.js",
+      "bytes": 2538,
+      "sha256": "c01f27b7bcf2b2dc715901f10ae07e649399313c57c567b1369d1643a10db650"
+    },
+    {
+      "path": "src/reviewRevisit.js",
+      "bytes": 566,
+      "sha256": "255762e99b0f3b9c8d189e25b1cb7fa2fe000a060cdd0a3024b45e33354d1a3a"
+    },
+    {
+      "path": "src/reviewStorage.js",
+      "bytes": 1272,
+      "sha256": "2733024c4645367eb109b82edb739c0d954400217612af9422045353e952679c"
+    },
+    {
+      "path": "src/revisitRefresh.js",
+      "bytes": 1167,
+      "sha256": "42284c1caba0a00e20a1c15c2d36f3ed3ab099495293f1c6b0a74c11c00a1ecd"
+    },
+    {
+      "path": "src/revisitStatus.js",
+      "bytes": 1775,
+      "sha256": "9e6f5dd901462f624577c72a27d99a8045bde405ad535e0285a478ca9eb574bc"
+    },
+    {
+      "path": "src/routes.js",
+      "bytes": 2487,
+      "sha256": "beb3f4cfb276e0354ff48e71a1650f4263c135d63e2e3f6e1690d4b1505746b4"
+    },
+    {
+      "path": "src/savedResearch.js",
+      "bytes": 1206,
+      "sha256": "5c55a59d2d7e1bcaac7463a525ca6f5a5db9d9996f696d91f7ec85a2f40763a7"
+    },
+    {
+      "path": "src/savedResearchView.js",
+      "bytes": 4751,
+      "sha256": "02ae096f5d4cec9167816fa2c12fe3bc3c3ce697bdb8f46aad061b60c6592aa4"
+    },
+    {
+      "path": "src/searchIdentity.js",
+      "bytes": 1664,
+      "sha256": "a2152bca55ef539887948014355de2d3a5d0b644e9a68f16d246c801ccbdfe04"
+    },
+    {
+      "path": "src/sectorHeatmap.css",
+      "bytes": 2104,
+      "sha256": "9d147db6bd7e997d0311def923ec5eb6e34d61e6d8a11c4bf6345dded778fe2b"
+    },
+    {
+      "path": "src/sectorHeatmap.js",
+      "bytes": 3081,
+      "sha256": "f5a527c8c4f9e408cc5b9d2d736b47c28e1e65bb34b4d8a6d687406aea74cad6"
+    },
+    {
+      "path": "src/sectorHeatmapLoader.js",
+      "bytes": 2509,
+      "sha256": "fb06cea66ff04a5b2ee791aede8de46e235b0cdc1e8b56dd74b09929fe3c05f3"
+    },
+    {
+      "path": "src/sectorHeatmapView.js",
+      "bytes": 4050,
+      "sha256": "0d36923b77e04f4bb2238a8f4dc02034fe68b340d4ee1d5ea9c23b0234426c28"
+    },
+    {
+      "path": "src/staticData.js",
+      "bytes": 861,
+      "sha256": "524e340f5ae60b00225a44669ef6ad28ec370d1450c213e434259993ba9d96b9"
+    },
+    {
+      "path": "src/stockSelector.js",
+      "bytes": 15332,
+      "sha256": "829144df2f5414afb9d6158db46de0e4355d8db48fb74e5d7a41570826873ba2"
+    },
+    {
+      "path": "src/storage.js",
+      "bytes": 6601,
+      "sha256": "409d81c0fb9756c5741d39cb15bd876a8fc844e3d2af535ff3d93b655677f90c"
+    },
+    {
+      "path": "src/storedLists.js",
+      "bytes": 1057,
+      "sha256": "ff988a29bd0c9e67766263fff1e7ef44b1656f9cad16ff4f3b8ac93165a16117"
+    },
+    {
+      "path": "src/styles.css",
+      "bytes": 67348,
+      "sha256": "0e3396d1038b15130ee3d83bd8f05a45f1a81299b85490823a43e6026e1617de"
+    },
+    {
+      "path": "src/tossBridge.js",
+      "bytes": 2389,
+      "sha256": "690e6f3fd0faad6744bf2e6cfb655e058dcbc47506768637e1d2fb77d1db6432"
+    },
+    {
+      "path": "src/uiExperience.css",
+      "bytes": 13449,
+      "sha256": "797793c1d067e0ffb71aae2b5140c991583c569e79df5ae577f744e12dfa78c0"
+    },
+    {
+      "path": "src/uiIdentity.js",
+      "bytes": 2996,
+      "sha256": "e014e90ff7ed0941f8a461cdbc093374f6663e35fdf953ce90902153490c0de6"
+    },
+    {
+      "path": "src/valueDiscovery.css",
+      "bytes": 15304,
+      "sha256": "a93e3791ee9a343fc53d0a3cc1c3a25bba0c960b720f201bd4a168f4373454e7"
+    },
+    {
+      "path": "src/valueDiscovery.js",
+      "bytes": 3118,
+      "sha256": "29ac9d3f16f45244fc3579f904e4ae90a6eea163401915b71eee06c3f7fc252b"
+    },
+    {
+      "path": "src/visualIdentity.css",
+      "bytes": 7131,
+      "sha256": "451acfcdd82b3e09835793f18e635918417ca9190278b03d65a725de959a4bb2"
+    },
+    {
+      "path": "src/watchQuoteCache.js",
+      "bytes": 1038,
+      "sha256": "4c42f8123e6ed7a6dda30c16b6fec19747e1157725f33e04ab24c0893fc109dc"
+    },
+    {
+      "path": "src/watchlist.css",
+      "bytes": 602,
+      "sha256": "d1d492d3c197b442bc4a23cb86e5163b0cc5bd92ea46ce71192db72ca55abb97"
+    }
+  ],
+  "harnessSha256": "7ea377068e02468c51ceb5fda9406bd49c47f6c193a2e6df773f13b2c8917b54",
+  "harnessFiles": [
+    {
+      "path": "scripts/exposure-performance.mjs",
+      "bytes": 16408,
+      "sha256": "25fdea681dff62972e2ef97812e188d33660e22d8a87f6a6a74a4a741199f26b"
+    },
+    {
+      "path": "scripts/performance-harness.mjs",
+      "bytes": 3617,
+      "sha256": "ec45e4616f5dbfdb63175b11d8a3b14477514a5f90cd342be60eae78b0ed55e2"
+    },
+    {
+      "path": "scripts/performance-outcome.mjs",
+      "bytes": 2297,
+      "sha256": "586d87a3ad889fe759867eb1bab01ca42328c0823b53dfad35fd02dd09e5bd11"
+    },
+    {
+      "path": "tests/e2e/data.mjs",
+      "bytes": 7877,
+      "sha256": "6afa54616fa98d6fce9d99893e4248e6233b6c16254dc44b9987f106c0014f1b"
+    },
+    {
+      "path": "tests/fixtures/export-recovery.mjs",
+      "bytes": 7818,
+      "sha256": "c9b218f711cf76068077136ca04c594aa15528fdf8154bd9feefeb176d843f89"
+    }
+  ],
+  "distTreeSha256": "fb1abd694702c41ec47ee75c5462b7698001f4c083a3ea6bde5096506022af2a",
+  "distFiles": [
+    {
+      "path": "assets/analysisViews-BM0ySziZ.css",
+      "bytes": 744,
+      "sha256": "e7fb6f8ef5b0b536a1f77f6421f4c8c496fbb3fe6fa2858847063265d113e12c"
+    },
+    {
+      "path": "assets/analysisViews-Cl8dLlZM.js",
+      "bytes": 30819,
+      "sha256": "3fd249f2f0595c527e2510370d503f862dbccadda15a4f572c4ddacdec52ab54"
+    },
+    {
+      "path": "assets/detailReviewSummary-Cfrx4315.js",
+      "bytes": 3111,
+      "sha256": "15365964f6a1d5e70422c7b627e643bc7433599f5851b603ff2bbe510c592bf3"
+    },
+    {
+      "path": "assets/exportMomentum-ZePqpEYh.css",
+      "bytes": 70704,
+      "sha256": "1ce8e76b99b31eef0312189c891af6f8da0a70f2f055b806a94b8d7c7992225b"
+    },
+    {
+      "path": "assets/exportMomentumData-BcXgAS2N.js",
+      "bytes": 17844,
+      "sha256": "13c9c7d81174a813e1e5616b461825c7459d0c52b85db1b248206e8d9bd16099"
+    },
+    {
+      "path": "assets/exportMomentumView-BgOla64_.js",
+      "bytes": 74947,
+      "sha256": "408320d2111eccdf8822a925b00413408960a73953db0e160dee93bc3e345fc1"
+    },
+    {
+      "path": "assets/exportResearchView-DqTXj_-V.js",
+      "bytes": 3896,
+      "sha256": "35ccf60b71fcaa66da55fed9b4ef7ffb9f9069b90b29a410f068cdd31b0e8951"
+    },
+    {
+      "path": "assets/financialHistoryView-C6pzh8Yo.css",
+      "bytes": 1738,
+      "sha256": "02d50a632de1a9a2f14a85481f5f1a44497683c9320d1b3ff047243816258960"
+    },
+    {
+      "path": "assets/financialHistoryView-DhnpNV-q.js",
+      "bytes": 3605,
+      "sha256": "1883dd2d3f98da81951805c605193e6f5c4f588cff8583279566042bfaaedf69"
+    },
+    {
+      "path": "assets/financialQuality-CwjF0rt4.js",
+      "bytes": 5273,
+      "sha256": "33302e944bfed02789f5c0f34bfd44bbbf5e60f9024acec36354040cdda749b7"
+    },
+    {
+      "path": "assets/financialQualityView-CHrP7PXc.js",
+      "bytes": 3748,
+      "sha256": "11808bb9c9ade7cd324d34e03a81a61f687cbe16fcf79ef99f5edd75418f0bfc"
+    },
+    {
+      "path": "assets/financialQualityView-CpbI4CS1.css",
+      "bytes": 1960,
+      "sha256": "4913b458c700ada02695fddbb0edb9e431dfdb84462e77b31e8ff527d5288c22"
+    },
+    {
+      "path": "assets/guruInvestingView-BzLAuFMQ.css",
+      "bytes": 5625,
+      "sha256": "79b09937ba3bbe06f9a15c2d92011187512f6cfb73feffbb2c7da45cc7b5a549"
+    },
+    {
+      "path": "assets/guruInvestingView-vJE51yE4.js",
+      "bytes": 22877,
+      "sha256": "c5e3d7f4172c14d7c93bb99579c5a0c6199bafed1ff8e3b9d93313c089f86af6"
+    },
+    {
+      "path": "assets/homeChangesView-Wh_OOFH0.js",
+      "bytes": 3056,
+      "sha256": "de462251be29bd38a8e269c11672457a35a5445a82ab74c4bb1dbf18ba737391"
+    },
+    {
+      "path": "assets/ideaView--asePfxF.css",
+      "bytes": 11097,
+      "sha256": "39b6baa3ada25c8be946378db374edc8a9628aed866efd3c786ebe49d7dd44a4"
+    },
+    {
+      "path": "assets/ideaView-B8VNios-.js",
+      "bytes": 15914,
+      "sha256": "53b257714d16c79f4edd6b63f084389e89835042ac5e795586165e9a2e5c9e06"
+    },
+    {
+      "path": "assets/index-BNcwh0wY.js",
+      "bytes": 296745,
+      "sha256": "c2d8b5c2ea248b243601c1facde24dcbf9a26ac6fbea5ec047b2151613ff2a9e"
+    },
+    {
+      "path": "assets/index-CTvnSKgp.css",
+      "bytes": 172151,
+      "sha256": "9ddb7cf1c9e8f1e35bca3bbe974ce5f1ee67ed5874251c619fa4926b85151d1c"
+    },
+    {
+      "path": "assets/industryContextView-CAOCty-u.js",
+      "bytes": 11033,
+      "sha256": "b5dcf051a23218c486b83e1c35091e399950d58f823af71b6202a5458e72a50b"
+    },
+    {
+      "path": "assets/industryContextView-CTbXbUND.css",
+      "bytes": 9419,
+      "sha256": "41f1434be2c7f1698176f9ef52680e354084fc0be40edb26fb46c5a9c53a7f8b"
+    },
+    {
+      "path": "assets/investmentReview-CFO1Xgdy.js",
+      "bytes": 2734,
+      "sha256": "4830d3da58080614a55e00ab5c94e2f6c9411316b066df5f65b52c974e33e4c6"
+    },
+    {
+      "path": "assets/investmentReview-gLMHc1ie.css",
+      "bytes": 3839,
+      "sha256": "402b0fccb0e8a9eed9eb654890793e8016fbb7eab060f1c13d74ca72474b7d7a"
+    },
+    {
+      "path": "assets/lightweight-charts.production-d2CSQ3C3.js",
+      "bytes": 162844,
+      "sha256": "9fa946b60a8b2d06d3efdfe9fed21e556c40b72633e871f1a586bd6819f2a3d3"
+    },
+    {
+      "path": "assets/marketMap-K_dLf464.css",
+      "bytes": 4480,
+      "sha256": "ed2b3423531b97689e2f26f28f528f3e21936e86664de78fdf4f0a1e361a9966"
+    },
+    {
+      "path": "assets/marketMapView-CbnzN4C0.js",
+      "bytes": 6213,
+      "sha256": "6db6468b10f6e66665a53c4585eaa9aeba5076990691a0d361707a5536c44c7e"
+    },
+    {
+      "path": "assets/memoryPriceView-BJaZFeh0.js",
+      "bytes": 7239,
+      "sha256": "34e113694e2bfda11c6e9880c0e544e74b97c60e7be73c6b36f06078032893f2"
+    },
+    {
+      "path": "assets/pickLedger-1YRPkKhd.js",
+      "bytes": 20913,
+      "sha256": "1532350b068255f8b1f4f15d3cd559553e191099512e5832458398c85a0e997d"
+    },
+    {
+      "path": "assets/pickLedger-BYNTcGLT.css",
+      "bytes": 12222,
+      "sha256": "6d609f26ffa7b69c788b13f088e96365499ea7020914a25ead5b59657d99ffc6"
+    },
+    {
+      "path": "assets/quarterView-DvBJ6hw5.js",
+      "bytes": 7682,
+      "sha256": "208b5cd08c08f36661897c6706ffa2a26c8b25d6c988316540a52d7f4cfd0165"
+    },
+    {
+      "path": "assets/reportReviewView-BM0S2lSZ.js",
+      "bytes": 7727,
+      "sha256": "73d74fa42e41a4eadc425d4676a8fa332807c82e4c88041b6406a6bf4132aa33"
+    },
+    {
+      "path": "assets/researchAnalysis-DHsF-5l8.js",
+      "bytes": 6415,
+      "sha256": "0fa57c6c0cf685da1f3f5c5d4c3b755a43bbb7cabcafc736713091865c6beae8"
+    },
+    {
+      "path": "assets/researchCard-BZfmWDM1.css",
+      "bytes": 7287,
+      "sha256": "bbe3122bd4e3387038a472b853742fe9d2538c0739eaa53ca0b76331bd2f775d"
+    },
+    {
+      "path": "assets/researchCard-CRAVlRSS.js",
+      "bytes": 20285,
+      "sha256": "674ee28f39c53e049a4ec5f82570da001a965ea4bc5b0447b47fe19131d5f39a"
+    },
+    {
+      "path": "assets/reviewRevisit-DFX1DSTO.js",
+      "bytes": 302,
+      "sha256": "bd3391fc9bd1cdc39a04453ebcc284cfd75e7ab7f26119bae3e153da72f0722e"
+    },
+    {
+      "path": "assets/revisitRefresh-BWKybeml.js",
+      "bytes": 789,
+      "sha256": "5b6f4fbf52077aa530f4ebd779a5d004a0c2f59d3a3a3dfbff04c846984439d2"
+    },
+    {
+      "path": "bands/index.html",
+      "bytes": 3316,
+      "sha256": "3e92467219f4bd92bd1552bc303e02b9973f5dc1ea3add7749277e813aba4725"
+    },
+    {
+      "path": "chart/index.html",
+      "bytes": 3316,
+      "sha256": "3e92467219f4bd92bd1552bc303e02b9973f5dc1ea3add7749277e813aba4725"
+    },
+    {
+      "path": "chartview-logo-600.png",
+      "bytes": 35886,
+      "sha256": "e2ea793bae13effd21b25c670a049924984c553ad575d7d1016be9ff2f875c80"
+    },
+    {
+      "path": "chartview-logo.svg",
+      "bytes": 630,
+      "sha256": "a5f1baa4091c8833e7a5abb63e110f68f55fb8bcc4a0272183ad64714471ba47"
+    },
+    {
+      "path": "chartview/chartviewHome/index.html",
+      "bytes": 3316,
+      "sha256": "3e92467219f4bd92bd1552bc303e02b9973f5dc1ea3add7749277e813aba4725"
+    },
+    {
+      "path": "chartviewHome/index.html",
+      "bytes": 3316,
+      "sha256": "3e92467219f4bd92bd1552bc303e02b9973f5dc1ea3add7749277e813aba4725"
+    },
+    {
+      "path": "consensus/index.html",
+      "bytes": 3316,
+      "sha256": "3e92467219f4bd92bd1552bc303e02b9973f5dc1ea3add7749277e813aba4725"
+    },
+    {
+      "path": "data-guide.html",
+      "bytes": 6582,
+      "sha256": "35df0fe1ba82cf89d3ffbbb9dc06d062fe3927bd023b10dfed325a56c04cba7c"
+    },
+    {
+      "path": "data/export-momentum.json",
+      "bytes": 3968,
+      "sha256": "3c8546ff930bc87bcf00ad654357f3b3445a336abe6dd7e5152fc331054faae7"
+    },
+    {
+      "path": "discover/index.html",
+      "bytes": 3316,
+      "sha256": "3e92467219f4bd92bd1552bc303e02b9973f5dc1ea3add7749277e813aba4725"
+    },
+    {
+      "path": "exports/index.html",
+      "bytes": 3316,
+      "sha256": "3e92467219f4bd92bd1552bc303e02b9973f5dc1ea3add7749277e813aba4725"
+    },
+    {
+      "path": "favorites/index.html",
+      "bytes": 3316,
+      "sha256": "3e92467219f4bd92bd1552bc303e02b9973f5dc1ea3add7749277e813aba4725"
+    },
+    {
+      "path": "gurus/buffett/index.html",
+      "bytes": 3316,
+      "sha256": "3e92467219f4bd92bd1552bc303e02b9973f5dc1ea3add7749277e813aba4725"
+    },
+    {
+      "path": "gurus/greenblatt/index.html",
+      "bytes": 3316,
+      "sha256": "3e92467219f4bd92bd1552bc303e02b9973f5dc1ea3add7749277e813aba4725"
+    },
+    {
+      "path": "gurus/index.html",
+      "bytes": 3316,
+      "sha256": "3e92467219f4bd92bd1552bc303e02b9973f5dc1ea3add7749277e813aba4725"
+    },
+    {
+      "path": "gurus/lynch/index.html",
+      "bytes": 3316,
+      "sha256": "3e92467219f4bd92bd1552bc303e02b9973f5dc1ea3add7749277e813aba4725"
+    },
+    {
+      "path": "gurus/minervini/index.html",
+      "bytes": 3316,
+      "sha256": "3e92467219f4bd92bd1552bc303e02b9973f5dc1ea3add7749277e813aba4725"
+    },
+    {
+      "path": "gurus/oneil/index.html",
+      "bytes": 3316,
+      "sha256": "3e92467219f4bd92bd1552bc303e02b9973f5dc1ea3add7749277e813aba4725"
+    },
+    {
+      "path": "heatmap/index.html",
+      "bytes": 3316,
+      "sha256": "3e92467219f4bd92bd1552bc303e02b9973f5dc1ea3add7749277e813aba4725"
+    },
+    {
+      "path": "home/index.html",
+      "bytes": 3316,
+      "sha256": "3e92467219f4bd92bd1552bc303e02b9973f5dc1ea3add7749277e813aba4725"
+    },
+    {
+      "path": "ideas/index.html",
+      "bytes": 3316,
+      "sha256": "3e92467219f4bd92bd1552bc303e02b9973f5dc1ea3add7749277e813aba4725"
+    },
+    {
+      "path": "index.html",
+      "bytes": 3316,
+      "sha256": "3e92467219f4bd92bd1552bc303e02b9973f5dc1ea3add7749277e813aba4725"
+    },
+    {
+      "path": "info/index.html",
+      "bytes": 3316,
+      "sha256": "3e92467219f4bd92bd1552bc303e02b9973f5dc1ea3add7749277e813aba4725"
+    },
+    {
+      "path": "macro/index.html",
+      "bytes": 3316,
+      "sha256": "3e92467219f4bd92bd1552bc303e02b9973f5dc1ea3add7749277e813aba4725"
+    },
+    {
+      "path": "marketing/2026-09/chartview-toss-promo-clean-tiktok.webp",
+      "bytes": 122766,
+      "sha256": "d8dc8daf489283df3a20e2f624f7c54c30759788e1bc6625085563ce4215096a"
+    },
+    {
+      "path": "marketing/2026-09/chartview-toss-promo-clean.png",
+      "bytes": 1474756,
+      "sha256": "96ef3b12765461f6b61afcf6c660886f35204f16f299f065ad083cfb07ae9981"
+    },
+    {
+      "path": "marketing/2026-09/chartview-toss-promo-clean.webp",
+      "bytes": 175196,
+      "sha256": "7fe3b5c10c02fd3dd7d44792b622ee8e9603919f5275003a8f6f76561c39f945"
+    },
+    {
+      "path": "marketing/2026-09/chartview-toss-promo-dark-tiktok.webp",
+      "bytes": 149720,
+      "sha256": "292cf1b8986b98616d37f00d90ef8756197db0a0d70494390fea82def7b2fbac"
+    },
+    {
+      "path": "marketing/2026-09/chartview-toss-promo-dark.png",
+      "bytes": 1692774,
+      "sha256": "44d7d75cbdc2ff3be61a11f9a314b0c8a7e3007c3ee946fbc67aa9cdb7d8eb03"
+    },
+    {
+      "path": "marketing/2026-09/chartview-toss-promo-dark.webp",
+      "bytes": 214304,
+      "sha256": "3737d6abd7b46e24fc1c78e2fe8bfc5bd43f3a507896402f9802da2f8b9a9bca"
+    },
+    {
+      "path": "marketing/2026-09/chartview-toss-promo-soft-tiktok.webp",
+      "bytes": 126320,
+      "sha256": "6773b2311ee1497b37d4ad4568843efd910afe1b4c3600163577cc054d494ede"
+    },
+    {
+      "path": "marketing/2026-09/chartview-toss-promo-soft.png",
+      "bytes": 1481338,
+      "sha256": "37b1077777c86c532b583b8952e4c5b905bc9eb6df91f4939f66360fcff3657f"
+    },
+    {
+      "path": "marketing/2026-09/chartview-toss-promo-soft.webp",
+      "bytes": 173806,
+      "sha256": "76714e8e9a55fb8540453e1dad32ba06b88c214cbdd5ff1f0e8d17c24aacc74f"
+    },
+    {
+      "path": "marketing/2026-09/chartview-toss-promo-story-tiktok.webp",
+      "bytes": 168974,
+      "sha256": "387b3d9be65c7f516d1d761cb0fb6618b614cc3707561db1d96c7cf028c0f2db"
+    },
+    {
+      "path": "marketing/2026-09/chartview-toss-promo-story.png",
+      "bytes": 1910313,
+      "sha256": "7adbb0982bae71cfb694f04ef3944fabae89860f9df6d7aba4c9878953e226f8"
+    },
+    {
+      "path": "marketing/2026-09/chartview-toss-promo-story.webp",
+      "bytes": 242560,
+      "sha256": "f7c31ed44aacc3f17f7de82c7cc8d49a0385a50f9466b8a4fd4c1d2a2988b2ba"
+    },
+    {
+      "path": "marketing/2026-09/tiktok/chartview-toss-promo-clean-1080.webp",
+      "bytes": 125316,
+      "sha256": "7c72b2f48213bf3810d0c920248998730e7383be14af390cac846f3d12de04b2"
+    },
+    {
+      "path": "marketing/2026-09/tiktok/chartview-toss-promo-dark-1080.webp",
+      "bytes": 157004,
+      "sha256": "17e4e0eed28b72ec797f6525fd8c651dd4d70d8c05f09542e9991e40a61533ec"
+    },
+    {
+      "path": "marketing/2026-09/tiktok/chartview-toss-promo-soft-1080.webp",
+      "bytes": 125350,
+      "sha256": "22bed316079092479dd3b17ddbb43f3d044bcaa7f1aa3feb4e07e64986a53e91"
+    },
+    {
+      "path": "marketing/2026-09/tiktok/chartview-toss-promo-story-1080.webp",
+      "bytes": 174564,
+      "sha256": "d46d829c2adb3efa3bc39bf981bee1bf297fd8342d26e84ec9951e0c9397ae8b"
+    },
+    {
+      "path": "marketing/chartview-toss-instagram-20260930.png",
+      "bytes": 1561053,
+      "sha256": "5d1b74dd04158a46cfc74996c57687ac494f5143ae3f0f785345169062fc4aad"
+    },
+    {
+      "path": "memory/index.html",
+      "bytes": 3316,
+      "sha256": "3e92467219f4bd92bd1552bc303e02b9973f5dc1ea3add7749277e813aba4725"
+    },
+    {
+      "path": "more/index.html",
+      "bytes": 3316,
+      "sha256": "3e92467219f4bd92bd1552bc303e02b9973f5dc1ea3add7749277e813aba4725"
+    },
+    {
+      "path": "news/index.html",
+      "bytes": 3316,
+      "sha256": "3e92467219f4bd92bd1552bc303e02b9973f5dc1ea3add7749277e813aba4725"
+    },
+    {
+      "path": "picks/index.html",
+      "bytes": 3316,
+      "sha256": "3e92467219f4bd92bd1552bc303e02b9973f5dc1ea3add7749277e813aba4725"
+    },
+    {
+      "path": "privacy.html",
+      "bytes": 4726,
+      "sha256": "dc6acd139225680ab6a254524ef32ec45bed2973c6ffee810c3ea38a4d153951"
+    },
+    {
+      "path": "site.webmanifest",
+      "bytes": 452,
+      "sha256": "cf3c3db80db1bb3dcc0c5827f9a6898aa41ef64a4f2e3037c6c67c7a55d9e432"
+    },
+    {
+      "path": "terms.html",
+      "bytes": 2431,
+      "sha256": "215d664f570c607d3bc677bf5bf4541a6cc81d4ac4036f714bf5fee72f36399d"
+    },
+    {
+      "path": "tools/index.html",
+      "bytes": 3316,
+      "sha256": "3e92467219f4bd92bd1552bc303e02b9973f5dc1ea3add7749277e813aba4725"
+    },
+    {
+      "path": "valuation/index.html",
+      "bytes": 3316,
+      "sha256": "3e92467219f4bd92bd1552bc303e02b9973f5dc1ea3add7749277e813aba4725"
+    },
+    {
+      "path": "watch/index.html",
+      "bytes": 3316,
+      "sha256": "3e92467219f4bd92bd1552bc303e02b9973f5dc1ea3add7749277e813aba4725"
+    }
+  ],
+  "initialJavaScript": {
+    "path": "/assets/index-BNcwh0wY.js",
+    "decodedBytes": 296745,
+    "gzipBytes": 98920,
+    "sha256": "c2d8b5c2ea248b243601c1facde24dcbf9a26ac6fbea5ec047b2151613ff2a9e",
+    "gzipMeaning": "node:zlib default gzip; build artifact comparison, not observed wire transfer"
+  },
+  "summary": [
+    {
+      "route": "home",
+      "phase": "cold",
+      "samples": 5,
+      "readySamples": 5,
+      "outcomes": {
+        "ready": 5
+      },
+      "medianReadyMs": 233.06,
+      "minReadyMs": 211.18,
+      "maxReadyMs": 371.53,
+      "p50ReadyMs": 233.06,
+      "p95ReadyMs": 371.53,
+      "apiRequests": [
+        {
+          "path": "/api/activity",
+          "countsPerRun": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "path": "/api/export-momentum",
+          "countsPerRun": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "path": "/api/home-bootstrap",
+          "countsPerRun": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "path": "/api/home-snapshot",
+          "countsPerRun": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "path": "/api/market-now",
+          "countsPerRun": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "path": "/api/personalized-news",
+          "countsPerRun": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "path": "/api/quotes",
+          "countsPerRun": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "path": "/static/data/pick_monitor.json",
+          "countsPerRun": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "path": "/static/data/screener.json",
+          "countsPerRun": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "route": "watch",
+      "phase": "cold",
+      "samples": 5,
+      "readySamples": 5,
+      "outcomes": {
+        "ready": 5
+      },
+      "medianReadyMs": 152.47,
+      "minReadyMs": 145.19,
+      "maxReadyMs": 164.7,
+      "p50ReadyMs": 152.47,
+      "p95ReadyMs": 164.7,
+      "apiRequests": [
+        {
+          "path": "/api/activity",
+          "countsPerRun": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "path": "/api/quotes",
+          "countsPerRun": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "route": "detail/005930.KS",
+      "phase": "cold",
+      "samples": 5,
+      "readySamples": 5,
+      "outcomes": {
+        "ready": 5
+      },
+      "medianReadyMs": 305.91,
+      "minReadyMs": 267.42,
+      "maxReadyMs": 348.64,
+      "p50ReadyMs": 305.91,
+      "p95ReadyMs": 348.64,
+      "apiRequests": [
+        {
+          "path": "/api/activity",
+          "countsPerRun": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "path": "/api/business-report",
+          "countsPerRun": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "path": "/api/compare",
+          "countsPerRun": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "path": "/api/financial-history",
+          "countsPerRun": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "path": "/api/financial-quarters",
+          "countsPerRun": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "path": "/api/personalized-news",
+          "countsPerRun": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "path": "/api/quotes",
+          "countsPerRun": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "path": "/api/relationship-evidence",
+          "countsPerRun": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "path": "/api/valuation",
+          "countsPerRun": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "path": "/static/data/screener.json",
+          "countsPerRun": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "route": "chart",
+      "phase": "cold",
+      "samples": 5,
+      "readySamples": 5,
+      "outcomes": {
+        "ready": 5
+      },
+      "medianReadyMs": 234.09,
+      "minReadyMs": 202.58,
+      "maxReadyMs": 260.74,
+      "p50ReadyMs": 234.09,
+      "p95ReadyMs": 260.74,
+      "apiRequests": [
+        {
+          "path": "/api/activity",
+          "countsPerRun": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "path": "/api/compare",
+          "countsPerRun": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "route": "exports",
+      "phase": "cold",
+      "samples": 5,
+      "readySamples": 5,
+      "outcomes": {
+        "ready": 5
+      },
+      "medianReadyMs": 242.64,
+      "minReadyMs": 233.98,
+      "maxReadyMs": 254.92,
+      "p50ReadyMs": 242.64,
+      "p95ReadyMs": 254.92,
+      "apiRequests": [
+        {
+          "path": "/api/activity",
+          "countsPerRun": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "path": "/api/export-momentum",
+          "countsPerRun": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "path": "/api/export-momentum/momentum-map",
+          "countsPerRun": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "path": "/api/export-momentum/provisional",
+          "countsPerRun": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "route": "exports/memory",
+      "phase": "cold",
+      "samples": 5,
+      "readySamples": 5,
+      "outcomes": {
+        "ready": 5
+      },
+      "medianReadyMs": 248.31,
+      "minReadyMs": 227.24,
+      "maxReadyMs": 264.94,
+      "p50ReadyMs": 248.31,
+      "p95ReadyMs": 264.94,
+      "apiRequests": [
+        {
+          "path": "/api/activity",
+          "countsPerRun": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "path": "/api/export-momentum",
+          "countsPerRun": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "path": "/api/export-momentum/semiconductor-countries",
+          "countsPerRun": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "path": "/api/export-momentum/semiconductor-trends",
+          "countsPerRun": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "path": "/static/data/company_context.json",
+          "countsPerRun": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "route": "exports/cosmetics",
+      "phase": "cold",
+      "samples": 5,
+      "readySamples": 5,
+      "outcomes": {
+        "ready": 5
+      },
+      "medianReadyMs": 210.59,
+      "minReadyMs": 189.41,
+      "maxReadyMs": 214.93,
+      "p50ReadyMs": 210.59,
+      "p95ReadyMs": 214.93,
+      "apiRequests": [
+        {
+          "path": "/api/activity",
+          "countsPerRun": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "path": "/api/export-momentum",
+          "countsPerRun": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "path": "/api/export-momentum/item-detail",
+          "countsPerRun": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "path": "/static/data/company_context.json",
+          "countsPerRun": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        }
+      ]
+    }
+  ],
+  "results": [
+    {
+      "route": "home",
+      "run": 1,
+      "coldMs": 371.53,
+      "coldReadyState": "ready",
+      "usableDataMs": 371.53,
+      "navigationStatus": 200,
+      "requestCountAtPrimary": 9,
+      "api": [
+        {
+          "key": "/api/personalized-news",
+          "path": "/api/personalized-news",
+          "calls": 1,
+          "ms": 221.14,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 213,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/market-now",
+          "path": "/api/market-now",
+          "calls": 1,
+          "ms": 209.29,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 1063,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/home-snapshot",
+          "path": "/api/home-snapshot",
+          "calls": 1,
+          "ms": 206.36,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 996,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/home-bootstrap",
+          "path": "/api/home-bootstrap",
+          "calls": 1,
+          "ms": 206.12,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 3925,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/quotes",
+          "path": "/api/quotes",
+          "calls": 1,
+          "ms": 205.07,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 824,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 110.62,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/static/data/pick_monitor.json",
+          "path": "/static/data/pick_monitor.json",
+          "calls": 1,
+          "ms": 23.71,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 1093,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum",
+          "path": "/api/export-momentum",
+          "calls": 1,
+          "ms": 23.67,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 6547,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/static/data/screener.json",
+          "path": "/static/data/screener.json",
+          "calls": 1,
+          "ms": 21.85,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 1651,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        }
+      ],
+      "diagnostics": {
+        "aitRuntime": "false",
+        "overflow": false,
+        "resourceTiming": "unavailable: Playwright fixed clock substitutes browser Performance; no loaded-resource byte/absence claim"
+      },
+      "servedEntrySha256": "c2d8b5c2ea248b243601c1facde24dcbf9a26ac6fbea5ec047b2151613ff2a9e",
+      "failureCategory": null,
+      "errors": [],
+      "unexpectedPaths": []
+    },
+    {
+      "route": "watch",
+      "run": 1,
+      "coldMs": 164.7,
+      "coldReadyState": "ready",
+      "usableDataMs": 164.7,
+      "navigationStatus": 200,
+      "requestCountAtPrimary": 2,
+      "api": [
+        {
+          "key": "/api/quotes",
+          "path": "/api/quotes",
+          "calls": 1,
+          "ms": 72.74,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 824,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 22.71,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        }
+      ],
+      "diagnostics": {
+        "aitRuntime": "false",
+        "overflow": false,
+        "resourceTiming": "unavailable: Playwright fixed clock substitutes browser Performance; no loaded-resource byte/absence claim"
+      },
+      "servedEntrySha256": "c2d8b5c2ea248b243601c1facde24dcbf9a26ac6fbea5ec047b2151613ff2a9e",
+      "failureCategory": null,
+      "errors": [],
+      "unexpectedPaths": []
+    },
+    {
+      "route": "detail/005930.KS",
+      "run": 1,
+      "coldMs": 330.31,
+      "coldReadyState": "ready",
+      "usableDataMs": 330.31,
+      "navigationStatus": 200,
+      "requestCountAtPrimary": 10,
+      "api": [
+        {
+          "key": "/api/personalized-news",
+          "path": "/api/personalized-news",
+          "calls": 1,
+          "ms": 164.39,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 213,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/static/data/screener.json",
+          "path": "/static/data/screener.json",
+          "calls": 1,
+          "ms": 154.93,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 1651,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/quotes",
+          "path": "/api/quotes",
+          "calls": 1,
+          "ms": 154.2,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 285,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/compare",
+          "path": "/api/compare",
+          "calls": 1,
+          "ms": 153.98,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 459,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/financial-history",
+          "path": "/api/financial-history",
+          "calls": 1,
+          "ms": 149.91,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 450,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/valuation",
+          "path": "/api/valuation",
+          "calls": 1,
+          "ms": 148.13,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 433,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 117.46,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/financial-quarters",
+          "path": "/api/financial-quarters",
+          "calls": 1,
+          "ms": 90.62,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 19,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/business-report",
+          "path": "/api/business-report",
+          "calls": 1,
+          "ms": 86.59,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 19,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/relationship-evidence",
+          "path": "/api/relationship-evidence",
+          "calls": 1,
+          "ms": 85.9,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 34,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        }
+      ],
+      "diagnostics": {
+        "aitRuntime": "false",
+        "overflow": false,
+        "resourceTiming": "unavailable: Playwright fixed clock substitutes browser Performance; no loaded-resource byte/absence claim"
+      },
+      "servedEntrySha256": "c2d8b5c2ea248b243601c1facde24dcbf9a26ac6fbea5ec047b2151613ff2a9e",
+      "failureCategory": null,
+      "errors": [],
+      "unexpectedPaths": []
+    },
+    {
+      "route": "chart",
+      "run": 1,
+      "coldMs": 242.99,
+      "coldReadyState": "ready",
+      "usableDataMs": 242.99,
+      "navigationStatus": 200,
+      "requestCountAtPrimary": 2,
+      "api": [
+        {
+          "key": "/api/compare",
+          "path": "/api/compare",
+          "calls": 1,
+          "ms": 132.47,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 1350,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 76.93,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        }
+      ],
+      "diagnostics": {
+        "aitRuntime": "false",
+        "overflow": false,
+        "resourceTiming": "unavailable: Playwright fixed clock substitutes browser Performance; no loaded-resource byte/absence claim"
+      },
+      "servedEntrySha256": "c2d8b5c2ea248b243601c1facde24dcbf9a26ac6fbea5ec047b2151613ff2a9e",
+      "failureCategory": null,
+      "errors": [],
+      "unexpectedPaths": []
+    },
+    {
+      "route": "exports",
+      "run": 1,
+      "coldMs": 254.92,
+      "coldReadyState": "ready",
+      "usableDataMs": 254.92,
+      "navigationStatus": 200,
+      "requestCountAtPrimary": 4,
+      "api": [
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 43.24,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum/momentum-map",
+          "path": "/api/export-momentum/momentum-map",
+          "calls": 1,
+          "ms": 41.19,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 418,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum",
+          "path": "/api/export-momentum",
+          "calls": 1,
+          "ms": 39.93,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 6547,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum/provisional",
+          "path": "/api/export-momentum/provisional",
+          "calls": 1,
+          "ms": 39.6,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 158,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        }
+      ],
+      "diagnostics": {
+        "aitRuntime": "false",
+        "overflow": false,
+        "resourceTiming": "unavailable: Playwright fixed clock substitutes browser Performance; no loaded-resource byte/absence claim"
+      },
+      "servedEntrySha256": "c2d8b5c2ea248b243601c1facde24dcbf9a26ac6fbea5ec047b2151613ff2a9e",
+      "failureCategory": null,
+      "errors": [],
+      "unexpectedPaths": []
+    },
+    {
+      "route": "exports/memory",
+      "run": 1,
+      "coldMs": 229.2,
+      "coldReadyState": "ready",
+      "usableDataMs": 229.2,
+      "navigationStatus": 200,
+      "requestCountAtPrimary": 5,
+      "api": [
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 96.84,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum/semiconductor-countries",
+          "path": "/api/export-momentum/semiconductor-countries",
+          "calls": 1,
+          "ms": 90.47,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 185,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/static/data/company_context.json",
+          "path": "/static/data/company_context.json",
+          "calls": 1,
+          "ms": 89.53,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 882,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum/semiconductor-trends",
+          "path": "/api/export-momentum/semiconductor-trends",
+          "calls": 1,
+          "ms": 89.28,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 13662,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum",
+          "path": "/api/export-momentum",
+          "calls": 1,
+          "ms": 86.36,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 6547,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        }
+      ],
+      "diagnostics": {
+        "aitRuntime": "false",
+        "overflow": false,
+        "resourceTiming": "unavailable: Playwright fixed clock substitutes browser Performance; no loaded-resource byte/absence claim"
+      },
+      "servedEntrySha256": "c2d8b5c2ea248b243601c1facde24dcbf9a26ac6fbea5ec047b2151613ff2a9e",
+      "failureCategory": null,
+      "errors": [],
+      "unexpectedPaths": []
+    },
+    {
+      "route": "exports/cosmetics",
+      "run": 1,
+      "coldMs": 211.5,
+      "coldReadyState": "ready",
+      "usableDataMs": 211.5,
+      "navigationStatus": 200,
+      "requestCountAtPrimary": 4,
+      "api": [
+        {
+          "key": "/api/export-momentum",
+          "path": "/api/export-momentum",
+          "calls": 1,
+          "ms": 72.78,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 6547,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum/item-detail",
+          "path": "/api/export-momentum/item-detail",
+          "calls": 1,
+          "ms": 38.99,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 4233,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 24.11,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/static/data/company_context.json",
+          "path": "/static/data/company_context.json",
+          "calls": 1,
+          "ms": null,
+          "completedBodies": 0,
+          "pending": 1,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": null,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        }
+      ],
+      "diagnostics": {
+        "aitRuntime": "false",
+        "overflow": false,
+        "resourceTiming": "unavailable: Playwright fixed clock substitutes browser Performance; no loaded-resource byte/absence claim"
+      },
+      "servedEntrySha256": "c2d8b5c2ea248b243601c1facde24dcbf9a26ac6fbea5ec047b2151613ff2a9e",
+      "failureCategory": null,
+      "errors": [],
+      "unexpectedPaths": []
+    },
+    {
+      "route": "home",
+      "run": 2,
+      "coldMs": 233.06,
+      "coldReadyState": "ready",
+      "usableDataMs": 233.06,
+      "navigationStatus": 200,
+      "requestCountAtPrimary": 9,
+      "api": [
+        {
+          "key": "/api/market-now",
+          "path": "/api/market-now",
+          "calls": 1,
+          "ms": 149.78,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 1063,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/home-snapshot",
+          "path": "/api/home-snapshot",
+          "calls": 1,
+          "ms": 148.36,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 996,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/home-bootstrap",
+          "path": "/api/home-bootstrap",
+          "calls": 1,
+          "ms": 146.39,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 3925,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/quotes",
+          "path": "/api/quotes",
+          "calls": 1,
+          "ms": 138.39,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 824,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/personalized-news",
+          "path": "/api/personalized-news",
+          "calls": 1,
+          "ms": 137.11,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 213,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/static/data/pick_monitor.json",
+          "path": "/static/data/pick_monitor.json",
+          "calls": 1,
+          "ms": 34.17,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 1093,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 28.88,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum",
+          "path": "/api/export-momentum",
+          "calls": 1,
+          "ms": 22.49,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 6547,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/static/data/screener.json",
+          "path": "/static/data/screener.json",
+          "calls": 1,
+          "ms": 21.47,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 1651,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        }
+      ],
+      "diagnostics": {
+        "aitRuntime": "false",
+        "overflow": false,
+        "resourceTiming": "unavailable: Playwright fixed clock substitutes browser Performance; no loaded-resource byte/absence claim"
+      },
+      "servedEntrySha256": "c2d8b5c2ea248b243601c1facde24dcbf9a26ac6fbea5ec047b2151613ff2a9e",
+      "failureCategory": null,
+      "errors": [],
+      "unexpectedPaths": []
+    },
+    {
+      "route": "watch",
+      "run": 2,
+      "coldMs": 152.47,
+      "coldReadyState": "ready",
+      "usableDataMs": 152.47,
+      "navigationStatus": 200,
+      "requestCountAtPrimary": 2,
+      "api": [
+        {
+          "key": "/api/quotes",
+          "path": "/api/quotes",
+          "calls": 1,
+          "ms": 71.74,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 824,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 22.48,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        }
+      ],
+      "diagnostics": {
+        "aitRuntime": "false",
+        "overflow": false,
+        "resourceTiming": "unavailable: Playwright fixed clock substitutes browser Performance; no loaded-resource byte/absence claim"
+      },
+      "servedEntrySha256": "c2d8b5c2ea248b243601c1facde24dcbf9a26ac6fbea5ec047b2151613ff2a9e",
+      "failureCategory": null,
+      "errors": [],
+      "unexpectedPaths": []
+    },
+    {
+      "route": "detail/005930.KS",
+      "run": 2,
+      "coldMs": 289.63,
+      "coldReadyState": "ready",
+      "usableDataMs": 289.63,
+      "navigationStatus": 200,
+      "requestCountAtPrimary": 10,
+      "api": [
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 117.43,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/quotes",
+          "path": "/api/quotes",
+          "calls": 1,
+          "ms": 101.62,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 285,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/compare",
+          "path": "/api/compare",
+          "calls": 1,
+          "ms": 100.95,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 459,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/financial-history",
+          "path": "/api/financial-history",
+          "calls": 1,
+          "ms": 96.53,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 450,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/valuation",
+          "path": "/api/valuation",
+          "calls": 1,
+          "ms": 95.17,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 433,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/personalized-news",
+          "path": "/api/personalized-news",
+          "calls": 1,
+          "ms": 94.33,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 213,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/static/data/screener.json",
+          "path": "/static/data/screener.json",
+          "calls": 1,
+          "ms": 81.7,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 1651,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/financial-quarters",
+          "path": "/api/financial-quarters",
+          "calls": 1,
+          "ms": 57.94,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 19,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/business-report",
+          "path": "/api/business-report",
+          "calls": 1,
+          "ms": 54.56,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 19,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/relationship-evidence",
+          "path": "/api/relationship-evidence",
+          "calls": 1,
+          "ms": 53.14,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 34,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        }
+      ],
+      "diagnostics": {
+        "aitRuntime": "false",
+        "overflow": false,
+        "resourceTiming": "unavailable: Playwright fixed clock substitutes browser Performance; no loaded-resource byte/absence claim"
+      },
+      "servedEntrySha256": "c2d8b5c2ea248b243601c1facde24dcbf9a26ac6fbea5ec047b2151613ff2a9e",
+      "failureCategory": null,
+      "errors": [],
+      "unexpectedPaths": []
+    },
+    {
+      "route": "chart",
+      "run": 2,
+      "coldMs": 234.09,
+      "coldReadyState": "ready",
+      "usableDataMs": 234.09,
+      "navigationStatus": 200,
+      "requestCountAtPrimary": 2,
+      "api": [
+        {
+          "key": "/api/compare",
+          "path": "/api/compare",
+          "calls": 1,
+          "ms": 117.01,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 1350,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 74.16,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        }
+      ],
+      "diagnostics": {
+        "aitRuntime": "false",
+        "overflow": false,
+        "resourceTiming": "unavailable: Playwright fixed clock substitutes browser Performance; no loaded-resource byte/absence claim"
+      },
+      "servedEntrySha256": "c2d8b5c2ea248b243601c1facde24dcbf9a26ac6fbea5ec047b2151613ff2a9e",
+      "failureCategory": null,
+      "errors": [],
+      "unexpectedPaths": []
+    },
+    {
+      "route": "exports",
+      "run": 2,
+      "coldMs": 240.27,
+      "coldReadyState": "ready",
+      "usableDataMs": 240.27,
+      "navigationStatus": 200,
+      "requestCountAtPrimary": 4,
+      "api": [
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 39.51,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum",
+          "path": "/api/export-momentum",
+          "calls": 1,
+          "ms": 36.65,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 6547,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum/momentum-map",
+          "path": "/api/export-momentum/momentum-map",
+          "calls": 1,
+          "ms": 34.11,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 418,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum/provisional",
+          "path": "/api/export-momentum/provisional",
+          "calls": 1,
+          "ms": 31.76,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 158,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        }
+      ],
+      "diagnostics": {
+        "aitRuntime": "false",
+        "overflow": false,
+        "resourceTiming": "unavailable: Playwright fixed clock substitutes browser Performance; no loaded-resource byte/absence claim"
+      },
+      "servedEntrySha256": "c2d8b5c2ea248b243601c1facde24dcbf9a26ac6fbea5ec047b2151613ff2a9e",
+      "failureCategory": null,
+      "errors": [],
+      "unexpectedPaths": []
+    },
+    {
+      "route": "exports/memory",
+      "run": 2,
+      "coldMs": 250.16,
+      "coldReadyState": "ready",
+      "usableDataMs": 250.16,
+      "navigationStatus": 200,
+      "requestCountAtPrimary": 5,
+      "api": [
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 109.05,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum/semiconductor-countries",
+          "path": "/api/export-momentum/semiconductor-countries",
+          "calls": 1,
+          "ms": 101.2,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 185,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/static/data/company_context.json",
+          "path": "/static/data/company_context.json",
+          "calls": 1,
+          "ms": 98.21,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 882,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum/semiconductor-trends",
+          "path": "/api/export-momentum/semiconductor-trends",
+          "calls": 1,
+          "ms": 96.95,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 13662,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum",
+          "path": "/api/export-momentum",
+          "calls": 1,
+          "ms": 96.35,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 6547,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        }
+      ],
+      "diagnostics": {
+        "aitRuntime": "false",
+        "overflow": false,
+        "resourceTiming": "unavailable: Playwright fixed clock substitutes browser Performance; no loaded-resource byte/absence claim"
+      },
+      "servedEntrySha256": "c2d8b5c2ea248b243601c1facde24dcbf9a26ac6fbea5ec047b2151613ff2a9e",
+      "failureCategory": null,
+      "errors": [],
+      "unexpectedPaths": []
+    },
+    {
+      "route": "exports/cosmetics",
+      "run": 2,
+      "coldMs": 210.59,
+      "coldReadyState": "ready",
+      "usableDataMs": 210.59,
+      "navigationStatus": 200,
+      "requestCountAtPrimary": 4,
+      "api": [
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 47.84,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum/item-detail",
+          "path": "/api/export-momentum/item-detail",
+          "calls": 1,
+          "ms": 44.32,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 4233,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum",
+          "path": "/api/export-momentum",
+          "calls": 1,
+          "ms": 43.58,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 6547,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/static/data/company_context.json",
+          "path": "/static/data/company_context.json",
+          "calls": 1,
+          "ms": null,
+          "completedBodies": 0,
+          "pending": 1,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": null,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        }
+      ],
+      "diagnostics": {
+        "aitRuntime": "false",
+        "overflow": false,
+        "resourceTiming": "unavailable: Playwright fixed clock substitutes browser Performance; no loaded-resource byte/absence claim"
+      },
+      "servedEntrySha256": "c2d8b5c2ea248b243601c1facde24dcbf9a26ac6fbea5ec047b2151613ff2a9e",
+      "failureCategory": null,
+      "errors": [],
+      "unexpectedPaths": []
+    },
+    {
+      "route": "home",
+      "run": 3,
+      "coldMs": 279.89,
+      "coldReadyState": "ready",
+      "usableDataMs": 279.89,
+      "navigationStatus": 200,
+      "requestCountAtPrimary": 9,
+      "api": [
+        {
+          "key": "/api/quotes",
+          "path": "/api/quotes",
+          "calls": 1,
+          "ms": 175.67,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 824,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/personalized-news",
+          "path": "/api/personalized-news",
+          "calls": 1,
+          "ms": 175.45,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 213,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/home-bootstrap",
+          "path": "/api/home-bootstrap",
+          "calls": 1,
+          "ms": 166.13,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 3925,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/home-snapshot",
+          "path": "/api/home-snapshot",
+          "calls": 1,
+          "ms": 150.04,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 996,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/market-now",
+          "path": "/api/market-now",
+          "calls": 1,
+          "ms": 149.92,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 1063,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 56.21,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum",
+          "path": "/api/export-momentum",
+          "calls": 1,
+          "ms": 27.53,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 6547,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/static/data/screener.json",
+          "path": "/static/data/screener.json",
+          "calls": 1,
+          "ms": 24.67,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 1651,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/static/data/pick_monitor.json",
+          "path": "/static/data/pick_monitor.json",
+          "calls": 1,
+          "ms": 24.23,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 1093,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        }
+      ],
+      "diagnostics": {
+        "aitRuntime": "false",
+        "overflow": false,
+        "resourceTiming": "unavailable: Playwright fixed clock substitutes browser Performance; no loaded-resource byte/absence claim"
+      },
+      "servedEntrySha256": "c2d8b5c2ea248b243601c1facde24dcbf9a26ac6fbea5ec047b2151613ff2a9e",
+      "failureCategory": null,
+      "errors": [],
+      "unexpectedPaths": []
+    },
+    {
+      "route": "watch",
+      "run": 3,
+      "coldMs": 145.19,
+      "coldReadyState": "ready",
+      "usableDataMs": 145.19,
+      "navigationStatus": 200,
+      "requestCountAtPrimary": 2,
+      "api": [
+        {
+          "key": "/api/quotes",
+          "path": "/api/quotes",
+          "calls": 1,
+          "ms": 57.52,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 824,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 22.23,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        }
+      ],
+      "diagnostics": {
+        "aitRuntime": "false",
+        "overflow": false,
+        "resourceTiming": "unavailable: Playwright fixed clock substitutes browser Performance; no loaded-resource byte/absence claim"
+      },
+      "servedEntrySha256": "c2d8b5c2ea248b243601c1facde24dcbf9a26ac6fbea5ec047b2151613ff2a9e",
+      "failureCategory": null,
+      "errors": [],
+      "unexpectedPaths": []
+    },
+    {
+      "route": "detail/005930.KS",
+      "run": 3,
+      "coldMs": 267.42,
+      "coldReadyState": "ready",
+      "usableDataMs": 267.42,
+      "navigationStatus": 200,
+      "requestCountAtPrimary": 10,
+      "api": [
+        {
+          "key": "/static/data/screener.json",
+          "path": "/static/data/screener.json",
+          "calls": 1,
+          "ms": 103.58,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 1651,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/quotes",
+          "path": "/api/quotes",
+          "calls": 1,
+          "ms": 101.59,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 285,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/compare",
+          "path": "/api/compare",
+          "calls": 1,
+          "ms": 100.47,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 459,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/financial-history",
+          "path": "/api/financial-history",
+          "calls": 1,
+          "ms": 98.3,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 450,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/valuation",
+          "path": "/api/valuation",
+          "calls": 1,
+          "ms": 96.27,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 433,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/personalized-news",
+          "path": "/api/personalized-news",
+          "calls": 1,
+          "ms": 91.11,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 213,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/relationship-evidence",
+          "path": "/api/relationship-evidence",
+          "calls": 1,
+          "ms": 79.02,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 34,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/financial-quarters",
+          "path": "/api/financial-quarters",
+          "calls": 1,
+          "ms": 77.75,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 19,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/business-report",
+          "path": "/api/business-report",
+          "calls": 1,
+          "ms": 74.18,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 19,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 73.58,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        }
+      ],
+      "diagnostics": {
+        "aitRuntime": "false",
+        "overflow": false,
+        "resourceTiming": "unavailable: Playwright fixed clock substitutes browser Performance; no loaded-resource byte/absence claim"
+      },
+      "servedEntrySha256": "c2d8b5c2ea248b243601c1facde24dcbf9a26ac6fbea5ec047b2151613ff2a9e",
+      "failureCategory": null,
+      "errors": [],
+      "unexpectedPaths": []
+    },
+    {
+      "route": "chart",
+      "run": 3,
+      "coldMs": 207.37,
+      "coldReadyState": "ready",
+      "usableDataMs": 207.37,
+      "navigationStatus": 200,
+      "requestCountAtPrimary": 2,
+      "api": [
+        {
+          "key": "/api/compare",
+          "path": "/api/compare",
+          "calls": 1,
+          "ms": 114.59,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 1350,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 60.85,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        }
+      ],
+      "diagnostics": {
+        "aitRuntime": "false",
+        "overflow": false,
+        "resourceTiming": "unavailable: Playwright fixed clock substitutes browser Performance; no loaded-resource byte/absence claim"
+      },
+      "servedEntrySha256": "c2d8b5c2ea248b243601c1facde24dcbf9a26ac6fbea5ec047b2151613ff2a9e",
+      "failureCategory": null,
+      "errors": [],
+      "unexpectedPaths": []
+    },
+    {
+      "route": "exports",
+      "run": 3,
+      "coldMs": 245.22,
+      "coldReadyState": "ready",
+      "usableDataMs": 245.22,
+      "navigationStatus": 200,
+      "requestCountAtPrimary": 4,
+      "api": [
+        {
+          "key": "/api/export-momentum",
+          "path": "/api/export-momentum",
+          "calls": 1,
+          "ms": 45.06,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 6547,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 40.95,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum/momentum-map",
+          "path": "/api/export-momentum/momentum-map",
+          "calls": 1,
+          "ms": 35.21,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 418,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum/provisional",
+          "path": "/api/export-momentum/provisional",
+          "calls": 1,
+          "ms": 34.28,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 158,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        }
+      ],
+      "diagnostics": {
+        "aitRuntime": "false",
+        "overflow": false,
+        "resourceTiming": "unavailable: Playwright fixed clock substitutes browser Performance; no loaded-resource byte/absence claim"
+      },
+      "servedEntrySha256": "c2d8b5c2ea248b243601c1facde24dcbf9a26ac6fbea5ec047b2151613ff2a9e",
+      "failureCategory": null,
+      "errors": [],
+      "unexpectedPaths": []
+    },
+    {
+      "route": "exports/memory",
+      "run": 3,
+      "coldMs": 227.24,
+      "coldReadyState": "ready",
+      "usableDataMs": 227.24,
+      "navigationStatus": 200,
+      "requestCountAtPrimary": 5,
+      "api": [
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 99.13,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/static/data/company_context.json",
+          "path": "/static/data/company_context.json",
+          "calls": 1,
+          "ms": 93.68,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 882,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum/semiconductor-countries",
+          "path": "/api/export-momentum/semiconductor-countries",
+          "calls": 1,
+          "ms": 93.66,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 185,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum/semiconductor-trends",
+          "path": "/api/export-momentum/semiconductor-trends",
+          "calls": 1,
+          "ms": 93.52,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 13662,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum",
+          "path": "/api/export-momentum",
+          "calls": 1,
+          "ms": 92.51,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 6547,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        }
+      ],
+      "diagnostics": {
+        "aitRuntime": "false",
+        "overflow": false,
+        "resourceTiming": "unavailable: Playwright fixed clock substitutes browser Performance; no loaded-resource byte/absence claim"
+      },
+      "servedEntrySha256": "c2d8b5c2ea248b243601c1facde24dcbf9a26ac6fbea5ec047b2151613ff2a9e",
+      "failureCategory": null,
+      "errors": [],
+      "unexpectedPaths": []
+    },
+    {
+      "route": "exports/cosmetics",
+      "run": 3,
+      "coldMs": 214.93,
+      "coldReadyState": "ready",
+      "usableDataMs": 214.93,
+      "navigationStatus": 200,
+      "requestCountAtPrimary": 4,
+      "api": [
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 53.87,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum/item-detail",
+          "path": "/api/export-momentum/item-detail",
+          "calls": 1,
+          "ms": 49.42,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 4233,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum",
+          "path": "/api/export-momentum",
+          "calls": 1,
+          "ms": 48.84,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 6547,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/static/data/company_context.json",
+          "path": "/static/data/company_context.json",
+          "calls": 1,
+          "ms": null,
+          "completedBodies": 0,
+          "pending": 1,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": null,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        }
+      ],
+      "diagnostics": {
+        "aitRuntime": "false",
+        "overflow": false,
+        "resourceTiming": "unavailable: Playwright fixed clock substitutes browser Performance; no loaded-resource byte/absence claim"
+      },
+      "servedEntrySha256": "c2d8b5c2ea248b243601c1facde24dcbf9a26ac6fbea5ec047b2151613ff2a9e",
+      "failureCategory": null,
+      "errors": [],
+      "unexpectedPaths": []
+    },
+    {
+      "route": "home",
+      "run": 4,
+      "coldMs": 231,
+      "coldReadyState": "ready",
+      "usableDataMs": 231,
+      "navigationStatus": 200,
+      "requestCountAtPrimary": 9,
+      "api": [
+        {
+          "key": "/api/personalized-news",
+          "path": "/api/personalized-news",
+          "calls": 1,
+          "ms": 142.49,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 213,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/quotes",
+          "path": "/api/quotes",
+          "calls": 1,
+          "ms": 136.95,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 824,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/market-now",
+          "path": "/api/market-now",
+          "calls": 1,
+          "ms": 129.4,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 1063,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/home-snapshot",
+          "path": "/api/home-snapshot",
+          "calls": 1,
+          "ms": 129.4,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 996,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/home-bootstrap",
+          "path": "/api/home-bootstrap",
+          "calls": 1,
+          "ms": 125.99,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 3925,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 32.42,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum",
+          "path": "/api/export-momentum",
+          "calls": 1,
+          "ms": 26.89,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 6547,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/static/data/screener.json",
+          "path": "/static/data/screener.json",
+          "calls": 1,
+          "ms": 23.97,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 1651,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/static/data/pick_monitor.json",
+          "path": "/static/data/pick_monitor.json",
+          "calls": 1,
+          "ms": null,
+          "completedBodies": 0,
+          "pending": 1,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": null,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        }
+      ],
+      "diagnostics": {
+        "aitRuntime": "false",
+        "overflow": false,
+        "resourceTiming": "unavailable: Playwright fixed clock substitutes browser Performance; no loaded-resource byte/absence claim"
+      },
+      "servedEntrySha256": "c2d8b5c2ea248b243601c1facde24dcbf9a26ac6fbea5ec047b2151613ff2a9e",
+      "failureCategory": null,
+      "errors": [],
+      "unexpectedPaths": []
+    },
+    {
+      "route": "watch",
+      "run": 4,
+      "coldMs": 162.35,
+      "coldReadyState": "ready",
+      "usableDataMs": 162.35,
+      "navigationStatus": 200,
+      "requestCountAtPrimary": 2,
+      "api": [
+        {
+          "key": "/api/quotes",
+          "path": "/api/quotes",
+          "calls": 1,
+          "ms": 72.36,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 824,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 23.68,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        }
+      ],
+      "diagnostics": {
+        "aitRuntime": "false",
+        "overflow": false,
+        "resourceTiming": "unavailable: Playwright fixed clock substitutes browser Performance; no loaded-resource byte/absence claim"
+      },
+      "servedEntrySha256": "c2d8b5c2ea248b243601c1facde24dcbf9a26ac6fbea5ec047b2151613ff2a9e",
+      "failureCategory": null,
+      "errors": [],
+      "unexpectedPaths": []
+    },
+    {
+      "route": "detail/005930.KS",
+      "run": 4,
+      "coldMs": 348.64,
+      "coldReadyState": "ready",
+      "usableDataMs": 348.64,
+      "navigationStatus": 200,
+      "requestCountAtPrimary": 10,
+      "api": [
+        {
+          "key": "/api/personalized-news",
+          "path": "/api/personalized-news",
+          "calls": 1,
+          "ms": 190.93,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 213,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/static/data/screener.json",
+          "path": "/static/data/screener.json",
+          "calls": 1,
+          "ms": 127.74,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 1651,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/quotes",
+          "path": "/api/quotes",
+          "calls": 1,
+          "ms": 126.9,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 285,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/compare",
+          "path": "/api/compare",
+          "calls": 1,
+          "ms": 126.15,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 459,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 124.4,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/financial-history",
+          "path": "/api/financial-history",
+          "calls": 1,
+          "ms": 118.79,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 450,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/valuation",
+          "path": "/api/valuation",
+          "calls": 1,
+          "ms": 116.45,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 433,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/financial-quarters",
+          "path": "/api/financial-quarters",
+          "calls": 1,
+          "ms": 46.04,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 19,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/business-report",
+          "path": "/api/business-report",
+          "calls": 1,
+          "ms": 35.42,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 19,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/relationship-evidence",
+          "path": "/api/relationship-evidence",
+          "calls": 1,
+          "ms": 34.33,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 34,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        }
+      ],
+      "diagnostics": {
+        "aitRuntime": "false",
+        "overflow": false,
+        "resourceTiming": "unavailable: Playwright fixed clock substitutes browser Performance; no loaded-resource byte/absence claim"
+      },
+      "servedEntrySha256": "c2d8b5c2ea248b243601c1facde24dcbf9a26ac6fbea5ec047b2151613ff2a9e",
+      "failureCategory": null,
+      "errors": [],
+      "unexpectedPaths": []
+    },
+    {
+      "route": "chart",
+      "run": 4,
+      "coldMs": 260.74,
+      "coldReadyState": "ready",
+      "usableDataMs": 260.74,
+      "navigationStatus": 200,
+      "requestCountAtPrimary": 2,
+      "api": [
+        {
+          "key": "/api/compare",
+          "path": "/api/compare",
+          "calls": 1,
+          "ms": 84.64,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 1350,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 63.57,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        }
+      ],
+      "diagnostics": {
+        "aitRuntime": "false",
+        "overflow": false,
+        "resourceTiming": "unavailable: Playwright fixed clock substitutes browser Performance; no loaded-resource byte/absence claim"
+      },
+      "servedEntrySha256": "c2d8b5c2ea248b243601c1facde24dcbf9a26ac6fbea5ec047b2151613ff2a9e",
+      "failureCategory": null,
+      "errors": [],
+      "unexpectedPaths": []
+    },
+    {
+      "route": "exports",
+      "run": 4,
+      "coldMs": 242.64,
+      "coldReadyState": "ready",
+      "usableDataMs": 242.64,
+      "navigationStatus": 200,
+      "requestCountAtPrimary": 4,
+      "api": [
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 42.46,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum",
+          "path": "/api/export-momentum",
+          "calls": 1,
+          "ms": 39.51,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 6547,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum/momentum-map",
+          "path": "/api/export-momentum/momentum-map",
+          "calls": 1,
+          "ms": 34.74,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 418,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum/provisional",
+          "path": "/api/export-momentum/provisional",
+          "calls": 1,
+          "ms": 34.25,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 158,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        }
+      ],
+      "diagnostics": {
+        "aitRuntime": "false",
+        "overflow": false,
+        "resourceTiming": "unavailable: Playwright fixed clock substitutes browser Performance; no loaded-resource byte/absence claim"
+      },
+      "servedEntrySha256": "c2d8b5c2ea248b243601c1facde24dcbf9a26ac6fbea5ec047b2151613ff2a9e",
+      "failureCategory": null,
+      "errors": [],
+      "unexpectedPaths": []
+    },
+    {
+      "route": "exports/memory",
+      "run": 4,
+      "coldMs": 264.94,
+      "coldReadyState": "ready",
+      "usableDataMs": 264.94,
+      "navigationStatus": 200,
+      "requestCountAtPrimary": 5,
+      "api": [
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 108.83,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum/semiconductor-countries",
+          "path": "/api/export-momentum/semiconductor-countries",
+          "calls": 1,
+          "ms": 99.01,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 185,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/static/data/company_context.json",
+          "path": "/static/data/company_context.json",
+          "calls": 1,
+          "ms": 98.54,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 882,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum/semiconductor-trends",
+          "path": "/api/export-momentum/semiconductor-trends",
+          "calls": 1,
+          "ms": 98.15,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 13662,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum",
+          "path": "/api/export-momentum",
+          "calls": 1,
+          "ms": 97.59,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 6547,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        }
+      ],
+      "diagnostics": {
+        "aitRuntime": "false",
+        "overflow": false,
+        "resourceTiming": "unavailable: Playwright fixed clock substitutes browser Performance; no loaded-resource byte/absence claim"
+      },
+      "servedEntrySha256": "c2d8b5c2ea248b243601c1facde24dcbf9a26ac6fbea5ec047b2151613ff2a9e",
+      "failureCategory": null,
+      "errors": [],
+      "unexpectedPaths": []
+    },
+    {
+      "route": "exports/cosmetics",
+      "run": 4,
+      "coldMs": 197.43,
+      "coldReadyState": "ready",
+      "usableDataMs": 197.43,
+      "navigationStatus": 200,
+      "requestCountAtPrimary": 4,
+      "api": [
+        {
+          "key": "/api/export-momentum/item-detail",
+          "path": "/api/export-momentum/item-detail",
+          "calls": 1,
+          "ms": 47.59,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 4233,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum",
+          "path": "/api/export-momentum",
+          "calls": 1,
+          "ms": 46.95,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 6547,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 43.34,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/static/data/company_context.json",
+          "path": "/static/data/company_context.json",
+          "calls": 1,
+          "ms": null,
+          "completedBodies": 0,
+          "pending": 1,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": null,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        }
+      ],
+      "diagnostics": {
+        "aitRuntime": "false",
+        "overflow": false,
+        "resourceTiming": "unavailable: Playwright fixed clock substitutes browser Performance; no loaded-resource byte/absence claim"
+      },
+      "servedEntrySha256": "c2d8b5c2ea248b243601c1facde24dcbf9a26ac6fbea5ec047b2151613ff2a9e",
+      "failureCategory": null,
+      "errors": [],
+      "unexpectedPaths": []
+    },
+    {
+      "route": "home",
+      "run": 5,
+      "coldMs": 211.18,
+      "coldReadyState": "ready",
+      "usableDataMs": 211.18,
+      "navigationStatus": 200,
+      "requestCountAtPrimary": 9,
+      "api": [
+        {
+          "key": "/api/market-now",
+          "path": "/api/market-now",
+          "calls": 1,
+          "ms": 144.11,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 1063,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/home-snapshot",
+          "path": "/api/home-snapshot",
+          "calls": 1,
+          "ms": 143.6,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 996,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/home-bootstrap",
+          "path": "/api/home-bootstrap",
+          "calls": 1,
+          "ms": 143.08,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 3925,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/quotes",
+          "path": "/api/quotes",
+          "calls": 1,
+          "ms": 127.31,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 824,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/personalized-news",
+          "path": "/api/personalized-news",
+          "calls": 1,
+          "ms": 126.61,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 213,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 28.02,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/static/data/pick_monitor.json",
+          "path": "/static/data/pick_monitor.json",
+          "calls": 1,
+          "ms": 23.65,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 1093,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum",
+          "path": "/api/export-momentum",
+          "calls": 1,
+          "ms": 15.05,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 6547,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/static/data/screener.json",
+          "path": "/static/data/screener.json",
+          "calls": 1,
+          "ms": 13.31,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 1651,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        }
+      ],
+      "diagnostics": {
+        "aitRuntime": "false",
+        "overflow": false,
+        "resourceTiming": "unavailable: Playwright fixed clock substitutes browser Performance; no loaded-resource byte/absence claim"
+      },
+      "servedEntrySha256": "c2d8b5c2ea248b243601c1facde24dcbf9a26ac6fbea5ec047b2151613ff2a9e",
+      "failureCategory": null,
+      "errors": [],
+      "unexpectedPaths": []
+    },
+    {
+      "route": "watch",
+      "run": 5,
+      "coldMs": 150.74,
+      "coldReadyState": "ready",
+      "usableDataMs": 150.74,
+      "navigationStatus": 200,
+      "requestCountAtPrimary": 2,
+      "api": [
+        {
+          "key": "/api/quotes",
+          "path": "/api/quotes",
+          "calls": 1,
+          "ms": 72.79,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 824,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 24.6,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        }
+      ],
+      "diagnostics": {
+        "aitRuntime": "false",
+        "overflow": false,
+        "resourceTiming": "unavailable: Playwright fixed clock substitutes browser Performance; no loaded-resource byte/absence claim"
+      },
+      "servedEntrySha256": "c2d8b5c2ea248b243601c1facde24dcbf9a26ac6fbea5ec047b2151613ff2a9e",
+      "failureCategory": null,
+      "errors": [],
+      "unexpectedPaths": []
+    },
+    {
+      "route": "detail/005930.KS",
+      "run": 5,
+      "coldMs": 305.91,
+      "coldReadyState": "ready",
+      "usableDataMs": 305.91,
+      "navigationStatus": 200,
+      "requestCountAtPrimary": 10,
+      "api": [
+        {
+          "key": "/api/compare",
+          "path": "/api/compare",
+          "calls": 1,
+          "ms": 86.41,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 459,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 85,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/financial-history",
+          "path": "/api/financial-history",
+          "calls": 1,
+          "ms": 80.16,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 450,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/valuation",
+          "path": "/api/valuation",
+          "calls": 1,
+          "ms": 78.35,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 433,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/financial-quarters",
+          "path": "/api/financial-quarters",
+          "calls": 1,
+          "ms": 78.07,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 19,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/personalized-news",
+          "path": "/api/personalized-news",
+          "calls": 1,
+          "ms": 73.66,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 213,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/static/data/screener.json",
+          "path": "/static/data/screener.json",
+          "calls": 1,
+          "ms": 71.67,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 1651,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/quotes",
+          "path": "/api/quotes",
+          "calls": 1,
+          "ms": 69.73,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 285,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/business-report",
+          "path": "/api/business-report",
+          "calls": 1,
+          "ms": 58.18,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 19,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/relationship-evidence",
+          "path": "/api/relationship-evidence",
+          "calls": 1,
+          "ms": 56.94,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 34,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        }
+      ],
+      "diagnostics": {
+        "aitRuntime": "false",
+        "overflow": false,
+        "resourceTiming": "unavailable: Playwright fixed clock substitutes browser Performance; no loaded-resource byte/absence claim"
+      },
+      "servedEntrySha256": "c2d8b5c2ea248b243601c1facde24dcbf9a26ac6fbea5ec047b2151613ff2a9e",
+      "failureCategory": null,
+      "errors": [],
+      "unexpectedPaths": []
+    },
+    {
+      "route": "chart",
+      "run": 5,
+      "coldMs": 202.58,
+      "coldReadyState": "ready",
+      "usableDataMs": 202.58,
+      "navigationStatus": 200,
+      "requestCountAtPrimary": 2,
+      "api": [
+        {
+          "key": "/api/compare",
+          "path": "/api/compare",
+          "calls": 1,
+          "ms": 115.02,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 1350,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 65.36,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        }
+      ],
+      "diagnostics": {
+        "aitRuntime": "false",
+        "overflow": false,
+        "resourceTiming": "unavailable: Playwright fixed clock substitutes browser Performance; no loaded-resource byte/absence claim"
+      },
+      "servedEntrySha256": "c2d8b5c2ea248b243601c1facde24dcbf9a26ac6fbea5ec047b2151613ff2a9e",
+      "failureCategory": null,
+      "errors": [],
+      "unexpectedPaths": []
+    },
+    {
+      "route": "exports",
+      "run": 5,
+      "coldMs": 233.98,
+      "coldReadyState": "ready",
+      "usableDataMs": 233.98,
+      "navigationStatus": 200,
+      "requestCountAtPrimary": 4,
+      "api": [
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 55.99,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum",
+          "path": "/api/export-momentum",
+          "calls": 1,
+          "ms": 40.42,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 6547,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum/momentum-map",
+          "path": "/api/export-momentum/momentum-map",
+          "calls": 1,
+          "ms": 39.99,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 418,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum/provisional",
+          "path": "/api/export-momentum/provisional",
+          "calls": 1,
+          "ms": 35.25,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 158,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        }
+      ],
+      "diagnostics": {
+        "aitRuntime": "false",
+        "overflow": false,
+        "resourceTiming": "unavailable: Playwright fixed clock substitutes browser Performance; no loaded-resource byte/absence claim"
+      },
+      "servedEntrySha256": "c2d8b5c2ea248b243601c1facde24dcbf9a26ac6fbea5ec047b2151613ff2a9e",
+      "failureCategory": null,
+      "errors": [],
+      "unexpectedPaths": []
+    },
+    {
+      "route": "exports/memory",
+      "run": 5,
+      "coldMs": 248.31,
+      "coldReadyState": "ready",
+      "usableDataMs": 248.31,
+      "navigationStatus": 200,
+      "requestCountAtPrimary": 5,
+      "api": [
+        {
+          "key": "/api/export-momentum/semiconductor-countries",
+          "path": "/api/export-momentum/semiconductor-countries",
+          "calls": 1,
+          "ms": 118.73,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 185,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/static/data/company_context.json",
+          "path": "/static/data/company_context.json",
+          "calls": 1,
+          "ms": 117.89,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 882,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum/semiconductor-trends",
+          "path": "/api/export-momentum/semiconductor-trends",
+          "calls": 1,
+          "ms": 117.67,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 13662,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum",
+          "path": "/api/export-momentum",
+          "calls": 1,
+          "ms": 117.62,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 6547,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 63.27,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        }
+      ],
+      "diagnostics": {
+        "aitRuntime": "false",
+        "overflow": false,
+        "resourceTiming": "unavailable: Playwright fixed clock substitutes browser Performance; no loaded-resource byte/absence claim"
+      },
+      "servedEntrySha256": "c2d8b5c2ea248b243601c1facde24dcbf9a26ac6fbea5ec047b2151613ff2a9e",
+      "failureCategory": null,
+      "errors": [],
+      "unexpectedPaths": []
+    },
+    {
+      "route": "exports/cosmetics",
+      "run": 5,
+      "coldMs": 189.41,
+      "coldReadyState": "ready",
+      "usableDataMs": 189.41,
+      "navigationStatus": 200,
+      "requestCountAtPrimary": 4,
+      "api": [
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 60.18,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum/item-detail",
+          "path": "/api/export-momentum/item-detail",
+          "calls": 1,
+          "ms": 48.67,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 4233,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum",
+          "path": "/api/export-momentum",
+          "calls": 1,
+          "ms": 47.06,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 6547,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/static/data/company_context.json",
+          "path": "/static/data/company_context.json",
+          "calls": 1,
+          "ms": null,
+          "completedBodies": 0,
+          "pending": 1,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": null,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        }
+      ],
+      "diagnostics": {
+        "aitRuntime": "false",
+        "overflow": false,
+        "resourceTiming": "unavailable: Playwright fixed clock substitutes browser Performance; no loaded-resource byte/absence claim"
+      },
+      "servedEntrySha256": "c2d8b5c2ea248b243601c1facde24dcbf9a26ac6fbea5ec047b2151613ff2a9e",
+      "failureCategory": null,
+      "errors": [],
+      "unexpectedPaths": []
+    }
+  ]
+}
