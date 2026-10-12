@@ -4,7 +4,7 @@ import { performanceOptions, summarizeRequests, summarizeMeasurements } from '..
 import { mkdir, writeFile, appendFile } from 'node:fs/promises';
 import path from 'node:path';
 
-// audit-run: p0-valuation-swr-live-20260928
+// audit-run: trust-ux-live-20261002
 
 // audit-run: default-analysis-prewarm-20260928
 const BASE=process.env.PERF_BASE_URL||'https://chart-view-toss.onrender.com';
@@ -30,6 +30,8 @@ const routes=[
   {route:'picks',label:'선정 기록',ready:()=>Boolean(document.querySelector('[data-testid="pick-performance"],#pick-ledger-summary .empty'))},
   {route:'memory',label:'반도체 가격',ready:()=>Boolean(document.querySelector('.dram-spot-price,.memory-price-page .empty'))},
   {route:'more',label:'전체 메뉴',ready:()=>Boolean(document.querySelector('.menu-group'))},
+  {route:'picks',label:'최근 주목 종목',ready:()=>Boolean(document.querySelector('.pick-ledger-item,.pick-ledger-list .empty'))},
+  {route:'ideas',label:'투자 아이디어 LAB',ready:()=>Boolean(document.querySelector('#idea-body:not([aria-busy="true"]) .idea-card,#idea-body:not([aria-busy="true"]) .empty'))},
 ];
 
 function routeConfig(route){
