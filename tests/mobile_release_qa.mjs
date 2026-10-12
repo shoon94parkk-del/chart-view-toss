@@ -483,6 +483,8 @@ try{
         if(await page.getByRole('tab',{name:label,exact:true}).count()!==1) throw new Error(`export industry tab missing: ${label}`);
       }
       await page.waitForSelector('.export-combo-plot');
+      await page.waitForSelector('[data-export-digest]');
+      await page.locator('.export-provisional-more summary').click();
       await page.waitForSelector('.export-provisional-hero');
       if(await page.locator('.export-provisional-stage').count()!==3) throw new Error('10-day radar must show 10d 20d and month-end checkpoints');
       if(await page.locator('.export-provisional-item').count()!==10) throw new Error('10-day radar must show ten official product groups');
