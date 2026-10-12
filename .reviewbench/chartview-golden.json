@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "name": "ChartView ReviewBench golden set",
+  "description": "ReviewBench-inspired, repository-local regression golden set. It does not call external models or modify runtime behavior.",
+  "mode": "advisory",
+  "cases": [
+    {
+      "id": "core-shell-navigation",
+      "severity": "critical",
+      "category": "reliability",
+      "contract": "Native back/root-exit, deep links, safe-area behavior and Apps in Toss external-link handling must remain intact.",
+      "riskPaths": ["src/main.js", "src/routes.js", "src/tossBridge.js", "scripts/export-preview-routes.mjs"],
+      "evidence": ["tests/routes.test.mjs", "tests/ait_contract.cjs", "tests/mobile_continuity_qa.mjs", "tests/verify_preview_routes.mjs"],
+      "goldenFindings": [
+        "Subpage back must not break platform root exit.",
+        "Major deep links and exported preview routes must remain valid.",
+        "External links must use the supported Apps in Toss bridge and must not silently fail."
+      ]
+    },
+    {
+      "id": "quote-freshness-parity",
+      "severity": "critical",
+      "category": "correctness",
+      "contract": "Older cached or delayed quotes must never overwrite a newer in-session quote across Home, Watchlist, Detail and full heatmap.",
+      "riskPaths": ["src/liveQuoteStore.js", "src/homeFastCache.js", "src/watchQuoteCache.js", "src/liveHomeSync.js"],
+      "evidence": ["tests/live_quote_parity.test.mjs", "tests/home_fast_cache.test.mjs", "tests/live_home_sync.test.mjs", "tests/watch_quote_parity_qa.mjs"],
+      "goldenFindings": [
+        "Reject timestamp rollback and lower-priority equal-time overwrites.",
+        "Keep structural heatmap fields when overlaying live quote fields.",
+        "Preserve cached-first rendering while still revalidating fresh data."
+      ]
+    },
+    {
+      "id": "heatmap-parity-geometry",
+      "severity": "critical",
+      "category": "correctness",
+      "contract": "Home and full heatmap must keep canonical quote parity, two-dimensional treemap geometry, readable identity labels and expanded full-map scope.",
+      "riskPaths": ["src/heatmapView.js", "src/heatmapAlignment.js", "src/marketMapView.js", "src/marketMap.css", "src/sectorHeatmap.js", "src/sectorHeatmapView.js", "src/sectorHeatmap.css"],
+      "evidence": ["tests/heatmap_shared.test.mjs", "tests/market_map.test.mjs", "tests/sectorHeatmap.test.mjs", "tests/sector_heatmap_qa.mjs"],
+      "goldenFindings": [
+        "Do not regress the treemap to one-dimensional strips or leave empty board area.",
+        "Do not show stale full-heatmap values over newer Home values.",
+        "Do not collapse the full heatmap back to the compact Home universe."
+      ]
+    },
+    {
+      "id": "pick-review-semantics",
+      "severity": "critical",
+      "category": "correctness",
+      "contract": "PICK review state and technical alerts must remain advisory; sell-review must not become an automatic sell/close decision.",
+      "riskPaths": ["src/pickLedger.js", "src/pickLedger.css", "src/releaseScope.js"],
+      "evidence": ["tests/pick_management.test.mjs", "tests/review_disclaimer.test.mjs", "tests/review_validation.test.mjs"],
+      "goldenFindings": [
+        "Keep one primary review state per collapsed PICK row.",
+        "Technical sell-review signals must remain distinct from fundamental review state.",
+        "Never convert sell-review into automatic execution or completion."
+      ]
+    },
+    {
+      "id": "dart-industry-nonblocking",
+      "severity": "medium",
+      "category": "reliability",
+      "contract": "DART, industry context and financial-quality modules must remain optional, evidence-based and non-blocking for quote/chart/detail first paint.",
+      "riskPaths": ["src/industryContext.js", "src/industryContextView.js", "src/financialHistoryView.js", "src/financialQuality.js", "src/financialQualityView.js"],
+      "evidence": ["tests/dartBusinessReport.test.mjs", "tests/detailIndustryContext.test.mjs", "tests/financialQuality.test.mjs", "tests/financial_flow_qa.mjs"],
+      "goldenFindings": [
+        "Do not invent revenue rank, customer/supplier relationships or missing financial values.",
+        "Slow or failed DART/industry requests must not blank price, chart or unrelated sections.",
+        "Keep source period, filing basis and missing-data semantics explicit."
+      ]
+    },
+    {
+      "id": "request-loading-recovery",
+      "severity": "medium",
+      "category": "reliability",
+      "contract": "Timeout, retry, offline, progressive rendering and visible loading/recovery states must remain usable without hiding valid cached content.",
+      "riskPaths": ["src/requestClient.js", "src/loadingView.js", "src/staticData.js"],
+      "evidence": ["tests/requestClient.test.mjs", "tests/loadingShare.test.mjs", "tests/loading_states_qa.mjs", "tests/progressive_qa.mjs"],
+      "goldenFindings": [
+        "Partial failure must not blank unrelated valid sections.",
+        "Loading states must clear on success, empty results and failure.",
+        "Retry/offline behavior must remain visible and recoverable."
+      ]
+    }
+  ]
+}
