@@ -17,7 +17,7 @@ test('수출 데이터는 공통 탭과 주요 산업 전용 탭으로 구성한
   assert.match(view,/key:'steel',label:'철강'/);
   assert.match(view,/\.\.\.INDUSTRY_TABS\.map\(row=>\[row\.key,row\.label\]\)/);
   assert.doesNotMatch(view,/\['trend','속보·추세'\]/);
-  assert.match(view,/exportPanel\('overview',summary\(snapshot\)\+momentumMapPlaceholder\(\)\+provisionalPlaceholder\(\)\+history\(snapshot\)\+cumulativeSummary\(snapshot\)\+checkpoints\(snapshot\)\+facts\(snapshot\)\+sources\(snapshot\)\)/);
+  assert.match(view,/exportPanel\('overview',provisionalPlaceholder\(\)\+summary\(snapshot\)\+momentumMapPlaceholder\(\)\+history\(snapshot\)\+cumulativeSummary\(snapshot\)\+checkpoints\(snapshot\)\+facts\(snapshot\)\+sources\(snapshot\)\)/);
   assert.match(styles,/\.export-tab-panel\[hidden\]\{display:none\}/);
   assert.match(view,/<details class="export-source">/);
 });

@@ -44,9 +44,16 @@ try {
   });
   console.log(JSON.stringify({width,scenario,geometry}));
   await page.screenshot({path:`artifacts/home-journey/${width}-${scenario}-initial.png`});
-  assert.ok(geometry.market.top<geometry.entries.top&&geometry.entries.top<geometry.changes.top&&geometry.changes.top<geometry.records.top&&geometry.records.top<geometry.watch.top,'market, entries, changes, records and personal watch order');
-  assert.ok(geometry.market.bottom<geometry.nav.top,'all four market cards or explicit failure are readable on first screen');
-  assert.ok(geometry.entries.bottom<geometry.nav.top,'core value entries remain discoverable on first screen');
+  const savedWatch=['ready-saved','watch-3','watch-20'].includes(scenario);
+  assert.ok(geometry.market.top<geometry.entries.top&&geometry.entries.top<geometry.changes.top&&geometry.changes.top<geometry.records.top,'market, entries, changes and records retain their order');
+  if(savedWatch){
+   assert.ok(geometry.watch.top<geometry.market.top,'saved interests are prioritized before markets on return');
+   assert.ok(await page.locator('#home-watchlist .watch-rich-row').first().evaluate(el=>el.getBoundingClientRect().bottom)<geometry.nav.top,'first saved interest is readable immediately');
+  }else{
+   assert.ok(geometry.records.top<geometry.watch.top,'empty personal watch follows established discovery and records');
+   assert.ok(geometry.market.bottom<geometry.nav.top,'all four market cards or explicit failure are readable on first screen');
+   assert.ok(geometry.entries.bottom<geometry.nav.top,'core value entries remain discoverable on first screen');
+  }
   const visual=await page.locator('.home-value-entries button').evaluateAll(buttons=>buttons.map(button=>({label:button.innerText,background:getComputedStyle(button).backgroundColor,icons:button.querySelectorAll('svg[aria-hidden="true"][focusable="false"]').length,height:button.getBoundingClientRect().height})));
   assert.equal(new Set(visual.map(x=>x.background)).size,3,'each core tool has a distinct purpose surface');
   assert.ok(visual.every(x=>x.icons===1&&x.height>=44),'graphics stay decorative and controls remain touchable');

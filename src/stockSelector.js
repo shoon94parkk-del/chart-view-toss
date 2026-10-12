@@ -1,6 +1,7 @@
 import { searchStocks } from './api.js';
 import { loadingIndicator } from './loadingView.js';
 import { haptic, syncNativeBackHandler } from './tossBridge.js';
+import { trackUsage, newUsageOperation } from './usageMetrics.js';
 
 const esc = (value = '') => String(value).replace(/[&<>"']/g, (c) => ({
   '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
@@ -241,6 +242,8 @@ export function openStockSelector({
     paintResults(matchedFavorites, query);
     timer = setTimeout(async () => {
       searchController = new AbortController();
+      const operationId = newUsageOperation();
+      void trackUsage('stock_search_attempt', {operationId, params: {source:'search'}});
       try {
         const data = await searchStocks(query, {force: immediate, signal: searchController.signal});
         if (seq !== querySeq || !overlay.isConnected) return;
@@ -249,10 +252,14 @@ export function openStockSelector({
         // 검증된 종목명이 없으면 결과에서 제외 → '상세 보기' 폴백 버튼 생성 억제
         const verified = (data?.results || []).filter(isVerifiableSearchRow);
         paintResults([...matchedFavorites, ...verified.slice(0, 12)], query);
+        void trackUsage(verified.length ? 'stock_search_success' : 'stock_search_failure', {
+          operationId, params: {source:'search', outcome:data?.partialFailure?'partial':verified.length?'success':'empty', result_count:verified.length},
+        });
       } catch (error) {
         if (seq !== querySeq || !overlay.isConnected) return;
         searchState = 'error';
         paintResults(matchedFavorites, query);
+        void trackUsage('stock_search_failure', {operationId, params: {source:'search', outcome:'error', code:'network'}});
       }
     }, immediate ? 0 : 180);
   };

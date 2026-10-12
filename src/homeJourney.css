@@ -1,0 +1,7 @@
+.app-shell .home-start-guide{margin:5px 0 0;color:#56616f;font-size:12px;line-height:1.5}
+.app-shell .home-return-watch{margin:12px 0 16px}
+.app-shell .home-return-watch .watch-rich-row{flex-wrap:wrap}
+.app-shell .home-watch-delta{flex:0 0 100%;margin-top:5px;padding-left:0;font-size:12px;line-height:1.5;color:#4e5968;overflow-wrap:anywhere}
+.app-shell .home-watch-delta small{display:block;color:#56616f;font-size:12px;line-height:1.5}
+.app-shell .home-watch-delta[hidden]{display:none}
+.app-shell .home-revisit-note{margin:6px 0 0;color:#56616f;font-size:12px;line-height:1.5;overflow-wrap:anywhere}

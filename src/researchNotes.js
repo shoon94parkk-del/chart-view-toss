@@ -1,4 +1,21 @@
-import { RESEARCH_KEY, readStored, writeStored } from './storage.js';
+import { RESEARCH_KEY, readStored, writeStored, getStorageContext, isStorageContextCurrent } from './storage.js';
+
+let researchMutationQueue=Promise.resolve(),pendingMutations=0;
+
+function enqueueResearchMutation(persist){
+  const context=getStorageContext();
+  pendingMutations++;
+  const result=researchMutationQueue.catch(()=>{}).then(()=>{
+    if(!isStorageContextCurrent(context))throw new Error('Storage context changed');
+    return persist();
+  }).then(value=>{
+    if(!isStorageContextCurrent(context))throw new Error('Storage context changed');
+    return value;
+  });
+  researchMutationQueue=result;
+  result.then(()=>pendingMutations--,()=>pendingMutations--);
+  return result;
+}
 
 const text=(value,limit)=>String(value??'').trim().slice(0,limit);
 const ticker=value=>{
@@ -36,7 +53,7 @@ export function readResearchNote(symbol){
   };
 }
 
-export function saveResearchNote(symbol,input,{now=new Date()}={}){
+export function saveResearchNote(symbol,input,{now=new Date(),confirmed=false}={}){
   const key=ticker(symbol);
   const question=text(input?.question,180);
   if(!question)throw new Error('확인하고 싶은 질문을 적어주세요.');
@@ -50,14 +67,33 @@ export function saveResearchNote(symbol,input,{now=new Date()}={}){
     createdAt:previous?.createdAt||now.toISOString(),
     updatedAt:now.toISOString(),
   };
-  const cards=readCards();
-  cards[key]=note;
-  writeStored(RESEARCH_KEY,JSON.stringify(cards));
-  return note;
+  const persist=(confirmWrite=confirmed)=>{
+    // Read after the preceding confirmed write so a save from another screen
+    // cannot replace a different company's still-pending card.
+    const cards=readCards();
+    const latest=readResearchNote(key);
+    const next={...note,createdAt:latest?.createdAt||note.createdAt};
+    cards[key]=next;
+    const persisted=writeStored(RESEARCH_KEY,JSON.stringify(cards),{confirmed:confirmWrite});
+    return confirmWrite?Promise.resolve(persisted).then(()=>next):next;
+  };
+  if(!confirmed&&!pendingMutations)return persist();
+  const result=enqueueResearchMutation(()=>persist(true));
+  // Preserve the legacy synchronous return; mixed pending mutations still
+  // merge only after preceding writes settle, avoiding a stale whole-card map.
+  if(!confirmed){result.catch(()=>{});return note;}
+  return result;
 }
 
-export function deleteResearchNote(symbol){
-  const cards=readCards();
-  delete cards[ticker(symbol)];
-  writeStored(RESEARCH_KEY,JSON.stringify(cards));
+export function deleteResearchNote(symbol,{confirmed=false}={}){
+  const key=ticker(symbol);
+  const persist=(confirmWrite=confirmed)=>{
+    const cards=readCards();
+    delete cards[key];
+    return writeStored(RESEARCH_KEY,JSON.stringify(cards),{confirmed:confirmWrite});
+  };
+  if(!confirmed&&!pendingMutations){persist();return;}
+  const result=enqueueResearchMutation(()=>persist(true));
+  if(!confirmed){result.catch(()=>{});return;}
+  return result;
 }

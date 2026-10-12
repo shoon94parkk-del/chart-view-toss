@@ -373,7 +373,8 @@ try{
       if(tab==='home'){
         await page.waitForSelector('#market-card .quote-card');
         const homePriority=await page.evaluate(()=>({watch:document.querySelector('.watch-section.home-primary')?.getBoundingClientRect().top,market:document.querySelector('.market-section.home-primary')?.getBoundingClientRect().top}));
-        if(!(homePriority.market<homePriority.watch)) throw new Error(`${width}px Home must show market context before the watchlist: ${JSON.stringify(homePriority)}`);
+        const hasSavedInterests=await page.evaluate(()=>JSON.parse(localStorage.getItem('chartview-toss-watchlist-v1')||'[]').length>0);
+        if(hasSavedInterests?!(homePriority.watch<homePriority.market):!(homePriority.market<homePriority.watch)) throw new Error(`${width}px Home must prioritize saved interests, retaining market-first order for an empty list: ${JSON.stringify(homePriority)}`);
         await page.waitForSelector('#home-top-picks-section');
         const pickMarketOrder=await page.evaluate(()=>({pick:document.querySelector('#home-top-picks-section')?.getBoundingClientRect().top,market:document.querySelector('.market-section.home-primary')?.getBoundingClientRect().top}));
         if(!(pickMarketOrder.market<pickMarketOrder.pick)) throw new Error(`${width}px market context must precede historical records: ${JSON.stringify(pickMarketOrder)}`);
@@ -483,6 +484,8 @@ try{
         if(await page.getByRole('tab',{name:label,exact:true}).count()!==1) throw new Error(`export industry tab missing: ${label}`);
       }
       await page.waitForSelector('.export-combo-plot');
+      await page.waitForSelector('[data-export-digest]');
+      await page.locator('.export-provisional-more summary').click();
       await page.waitForSelector('.export-provisional-hero');
       if(await page.locator('.export-provisional-stage').count()!==3) throw new Error('10-day radar must show 10d 20d and month-end checkpoints');
       if(await page.locator('.export-provisional-item').count()!==10) throw new Error('10-day radar must show ten official product groups');

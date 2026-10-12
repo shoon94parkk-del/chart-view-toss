@@ -16,6 +16,8 @@ function harness(tab, loadModule) {
   const context = {
     state: { tab, exportFocus: 'items', memoryPriceGroup: 'nand-chip', memoryTabFocus: true, pickFocusKey: 'dated-record' },
     viewEpoch: 0, analysisCleanup: null, lazyAnalysisRetryAssets: new Map(), performance, URL, AbortController,
+    usageRouteKey: '', usageOperation: 'initial', usageStarted: 0,
+    newUsageOperation: () => 'route-operation', trackUsage() {}, usageScreen: tab => tab,
     setTimeout, clearTimeout,
     fetch: async (href, options) => { fetched.push({ href, options }); return { ok: true, headers: { get: () => 'text/javascript' }, arrayBuffer: async () => new ArrayBuffer(0) }; },
     requestAnimationFrame() {}, recordMetric() {}, setLiveSurface() {}, syncNativeBackHandler() {}, goBack() {}, bindNav() {}, navigate() {}, openCompareSheet() {},

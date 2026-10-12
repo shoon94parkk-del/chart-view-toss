@@ -1,6 +1,8 @@
 import { loadExportCompanyContext, loadExportItemDetail, loadExportMomentumMap, loadExportMomentumSnapshot, loadExportProvisionalRadar, loadSemiconductorCountryMatrix, loadSemiconductorTrends } from './exportMomentumData.js';
 import {exportCompanyCandidates,memoryMovements} from './insightModel.js';
 import { bindHorizontalTabs, focusSelectedTab } from './accessibleTabs.js';
+import { renderProvisionalDigest } from './exportProvisionalDigest.js';
+import { newUsageOperation, trackUsage } from './usageMetrics.js';
 import {
   balanceTone,
   chartExtent,
@@ -77,7 +79,7 @@ function provisionalPlaceholder(){
   `;
 }
 
-function renderProvisionalRadar(radar){
+function renderProvisionalRadar(radar,{adjusted=false}={}){
   const latest=radar.checkpoints.at(-1)||{};
   const latestSemi=latest.semiconductor||{};
   const latestTotal=latest.total||{};
@@ -89,6 +91,8 @@ function renderProvisionalRadar(radar){
         <div><span>수출 속보</span><h3>10일 단위 잠정 수출 레이더</h3></div>
         <small>${esc(radar.periodLabel)} · ${esc(radar.latestStageLabel)}</small>
       </div>
+      ${renderProvisionalDigest(radar,{adjusted})}
+      <details class="export-provisional-more"><summary>구간 누적 흐름·원자료 상세</summary>
       <div class="export-provisional-hero">
         <div>
           <span>전체 수출 · ${esc(radar.latestStageLabel)}</span>
@@ -132,6 +136,7 @@ function renderProvisionalRadar(radar){
           </div>
         `).join('')}
       </div>
+      </details>
       <p class="export-chart-note">이 속보는 관세청의 10대 품목 자체 분류입니다. 아래 월간 HS 품목 통계와 분류 범위가 달라 절대금액을 서로 이어 붙이지 않습니다. 1~10일·1~20일은 누적 잠정치입니다.</p>
     </section>
   `;
@@ -968,7 +973,7 @@ function paint(host,snapshot,bindNav,onItemOpen){
   // panels which may already be ready while this response was pending.
   const monthly=document.createElement('div');
   monthly.innerHTML=[
-    exportPanel('overview',summary(snapshot)+momentumMapPlaceholder()+provisionalPlaceholder()+history(snapshot)+cumulativeSummary(snapshot)+checkpoints(snapshot)+facts(snapshot)+sources(snapshot)),
+    exportPanel('overview',provisionalPlaceholder()+summary(snapshot)+momentumMapPlaceholder()+history(snapshot)+cumulativeSummary(snapshot)+checkpoints(snapshot)+facts(snapshot)+sources(snapshot)),
     exportPanel('products',items(snapshot)+breadth(snapshot)+quadrant(snapshot)),
     exportPanel('countries',regions(snapshot)),
     exportPanel('semiconductor','<button type="button" class="text-button" data-tab="memory">TrendForce 반도체 가격 추적 →</button>'+semiconductorReport(snapshot)+semiconductorTrendPlaceholder()),
@@ -1005,6 +1010,7 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={},onSe
   let semiconductorSeq=0;
   let industrySeq=0;
   let provisionalLoaded=false;
+  let workdayAdjusted=state.exportWorkdayAdjusted===true;
   let momentumLoaded=false;
   let semiconductorLoaded=false;
   const industryLoaded=new Set();
@@ -1013,11 +1019,20 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={},onSe
   const industryTokens=new Map();
   let semiconductorMetric=state.semiconductorMetric==='yoy'?'yoy':'delta';
   let semiconductorSegmentKey=state.semiconductorSegmentKey||'dram';
+  const usableDetailPanels=new Set();
+  let usagePanelKey=null,usagePanelOperation=null,usagePanelRecorded=false;
+  const recordVisibleDetailPanel=()=>{
+    const panel=host.querySelector('[data-export-panel="'+usagePanelKey+'"]');
+    if(usagePanelRecorded||!usableDetailPanels.has(usagePanelKey)||!panel?.isConnected||panel.hidden||state.exportSection!==usagePanelKey)return;
+    usagePanelRecorded=true;
+    void trackUsage('export_detail_view',{operationId:usagePanelOperation,params:{screen:'exports',source:'exports'}});
+  };
 
   const openItemDetail=async(key,{force=false,restore=false}={})=>{
     const panel=host.querySelector('#export-item-detail');
     if(!panel||!key)return;
     const token=++detailSeq;
+    const usageOperation=newUsageOperation();
     if(state.itemKey!==key)state.countryName='';state.itemKey=key;
     panel.hidden=false;
     panel.innerHTML='<div class="export-detail-loading" role="status"><span></span><strong>12개월 품목 상세를 불러오고 있어요.</strong><small>첫 조회는 관세청 상세 통계를 수집해 조금 더 걸릴 수 있습니다.</small><button type="button" data-export-detail-close>닫기</button></div>';
@@ -1032,6 +1047,9 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={},onSe
       const detail=await loadExportItemDetail(key,{force});
       if(token!==detailSeq||!panel.isConnected)return;
       panel.innerHTML=renderItemDetail(detail);
+      if(!panel.hidden&&detail.key===key&&detail.history.some(row=>Number.isFinite(row.exportsUsdBillion))){
+        void trackUsage('export_detail_view',{operationId:usageOperation,params:{screen:'exports',source:'exports'}});
+      }
       const researchHost=panel.querySelector('.export-research');
       panel.querySelector('[data-export-research-jump]').onclick=()=>{researchHost.scrollIntoView({block:'start'});researchHost.focus({preventScroll:true});};
       void import('./exportResearchView.js').then(({mountExportResearch})=>{if(token===detailSeq&&researchHost.isConnected)void mountExportResearch(researchHost,detail,{state,alive:()=>token===detailSeq&&researchHost.isConnected});}).catch(()=>{if(researchHost.isConnected)researchHost.textContent='기업 연결을 열지 못했어요. 주요제품과 공시를 직접 확인해주세요.';});
@@ -1121,6 +1139,10 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={},onSe
       });
       const next=host.querySelector('#export-semiconductor-analysis');
       host.querySelector('[data-export-panel="semiconductor"]').dataset.loadState='ready';
+      if(trends.segments.some(row=>Number.isFinite(row.exportsUsdBillion))){
+        usableDetailPanels.add('semiconductor');
+        recordVisibleDetailPanel();
+      }
       next.querySelectorAll('[data-export-semi-metric]').forEach(button=>button.addEventListener('click',()=>{
         semiconductorMetric=button.dataset.exportSemiMetric==='yoy'?'yoy':'delta';
         state.semiconductorMetric=semiconductorMetric;
@@ -1244,6 +1266,10 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={},onSe
       industryLoaded.add(key);
       panel.innerHTML=renderIndustryTab(detail);
       panel.dataset.loadState='ready';
+      if(detail.history.some(row=>Number.isFinite(row.exportsUsdBillion))){
+        usableDetailPanels.add(key);
+        recordVisibleDetailPanel();
+      }
       bindNav();
       const researchHost=panel.querySelector('.export-industry-research');
       if(researchHost){
@@ -1264,6 +1290,20 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={},onSe
     }
   };
 
+  const bindProvisionalActions=(radar,parentToken)=>{
+    host.querySelectorAll('#export-provisional-radar [data-export-item]').forEach(button=>button.addEventListener('click',()=>void openItemDetail(button.dataset.exportItem)));
+    host.querySelector('[data-export-workday-toggle]')?.addEventListener('click',()=>{
+      workdayAdjusted=!workdayAdjusted;
+      state.exportWorkdayAdjusted=workdayAdjusted;
+      const current=host.querySelector('#export-provisional-radar');
+      if(parentToken!==seq||!current?.isConnected)return;
+      current.outerHTML=renderProvisionalRadar(radar,{adjusted:workdayAdjusted});
+      bindProvisionalActions(radar,parentToken);
+      host.querySelector('[data-export-workday-toggle]')?.focus({preventScroll:true});
+    });
+    host.querySelector('[data-export-provisional-refresh]')?.addEventListener('click',()=>void loadProvisional(parentToken,true));
+  };
+
   const loadProvisional=async(parentToken,force=false)=>{
     const node=host.querySelector('#export-provisional-radar');
     if(parentToken!==seq||!node?.isConnected)return;
@@ -1273,7 +1313,8 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={},onSe
       const radar=await loadExportProvisionalRadar({force});
       const current=host.querySelector('#export-provisional-radar');
       if(parentToken!==seq||token!==provisionalSeq||!current?.isConnected)return;
-      current.outerHTML=renderProvisionalRadar(radar);
+      current.outerHTML=renderProvisionalRadar(radar,{adjusted:workdayAdjusted});
+      bindProvisionalActions(radar,parentToken);
     }catch(error){
       const current=host.querySelector('#export-provisional-radar');
       if(parentToken!==seq||token!==provisionalSeq||!current?.isConnected)return;
@@ -1306,6 +1347,11 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={},onSe
     const token=seq;
     const panel=host.querySelector('[data-export-panel="'+panelKey+'"]');
     if(!panel)return;
+    if(usagePanelKey!==panelKey){
+      usagePanelKey=panelKey;
+      usagePanelOperation=newUsageOperation();
+      usagePanelRecorded=false;
+    }
     if(closeDetail){
       const detailPanel=host.querySelector('#export-item-detail');
       if(detailPanel&&!detailPanel.hidden){
@@ -1338,6 +1384,7 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={},onSe
     if(industryTabConfig(panelKey)&&!industryLoaded.has(panelKey)&&!industryLoading.has(panelKey)){
       void loadIndustryAnalysis(panelKey,token,force);
     }
+    recordVisibleDetailPanel();
     if(scroll)panel.scrollIntoView({behavior:'smooth',block:'start'});
   };
 
@@ -1370,6 +1417,8 @@ export function renderExportMomentumView({shell,bindNav,focus=null,state={},onSe
       const snapshot=await loadExportMomentumSnapshot({force});
       if(token!==seq||requestToken!==monthlySeq||!host.isConnected)return;
       monthlyReady=true;
+      provisionalLoaded=false;
+      momentumLoaded=false;
       paint(host,snapshot,bindNav,openItemDetail);
       activatePanel(state.exportSection);
       applyRequestedFocus();

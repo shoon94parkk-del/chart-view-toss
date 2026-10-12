@@ -25,7 +25,7 @@ function setup({ native = true, failRead = false, manualTimers = false } = {}) {
     },
   });
   const source = readFileSync('src/storage.js','utf8').replace(/^import .*;\r?\n/gm,'').replaceAll('export ', '');
-  vm.runInContext(source + '\nthis.api={initializeStorage,readStored,writeStored,clearStored,WATCHLIST_KEY,SELECTED_KEY,RESEARCH_KEY,REVIEW_KEY,flushWrites:()=>queue};',context);
+  vm.runInContext(source + '\nthis.api={initializeStorage,readStored,writeStored,clearStored,getStorageContext,isStorageContextCurrent,WATCHLIST_KEY,SELECTED_KEY,RESEARCH_KEY,REVIEW_KEY,flushWrites:()=>queue};',context);
   for (const [file, api] of [['researchNotes', 'saveResearchNote,readResearchNote'], ['reviewStorage', 'updateReview,readReview']]) {
     const module = readFileSync(`src/${file}.js`, 'utf8').replace(/^import .*;\r?\n/gm, '').replaceAll('export ', '');
     vm.runInContext(`{${module}\nObject.assign(this.api,{${api}});}`, context);
@@ -40,6 +40,38 @@ test('native storage restores and serializes writes before clear',async()=>{
   await s.clearStored();
   assert.deepEqual([...s.disk.keys()],['chartview-toss-identity-v1']);
   assert.equal(s.readStored(s.WATCHLIST_KEY),null);
+});
+test('home return baselines and review cooldowns follow account isolation and reset',async()=>{
+ const s=setup(); await s.initializeStorage();
+ const keys=['chartview-toss-home-journey-v1','chartview-toss-review-prompt-v1'];
+ for(const key of keys)await s.writeStored(key,'{"checkedAt":"2026-10-12"}',{confirmed:true});
+ s.setIdentity({type:'HASH',hash:'user-B'});await s.initializeStorage();
+ for(const key of keys)assert.equal(s.readStored(key),null);
+ for(const key of keys)await s.writeStored(key,'{"checkedAt":"other"}',{confirmed:true});
+ await s.clearStored();
+ for(const key of keys)assert.equal(s.disk.has(key+':user-B'),false);
+ s.setIdentity({type:'HASH',hash:'user-A'});await s.initializeStorage();
+ for(const key of keys)assert.match(s.readStored(key),/2026-10-12/);
+ await s.clearStored();
+ for(const key of keys)assert.equal(s.readStored(key),null);
+});
+test('browser reset also removes return baselines and review cooldowns',async()=>{
+ const s=setup({native:false});
+ const keys=['chartview-toss-home-journey-v1','chartview-toss-review-prompt-v1'];
+ for(const key of keys)s.writeStored(key,'{}');
+ await s.clearStored();
+ for(const key of keys)assert.equal(s.readStored(key),null);
+});
+test('a deferred local write context expires as soon as reset or identity reload starts',async()=>{
+ const s=setup();await s.initializeStorage();
+ const previous=s.getStorageContext();assert.equal(s.isStorageContextCurrent(previous),true);
+ const release=s.holdRemovals();const clearing=s.clearStored();
+ assert.equal(s.isStorageContextCurrent(previous),false);
+ release();await clearing;
+ const next=s.getStorageContext();assert.equal(s.isStorageContextCurrent(next),true);
+ s.setIdentity({type:'HASH',hash:'user-B'});await s.initializeStorage();
+ assert.equal(s.isStorageContextCurrent(next),false);
+ assert.equal(s.isStorageContextCurrent(s.getStorageContext()),true);
 });
 test('reviewed filings and investment conditions are isolated by native account and reset',async()=>{
  const s=setup();await s.initializeStorage();
