@@ -1,0 +1,152 @@
+{
+  "scope": "offline_saved_data_only; remote CDN/backend publication must be verified separately",
+  "revision": "78021f77ed75e1322efa3b3a848744d2571f837f",
+  "providerRequests": 0,
+  "recomputedSnapshotAndEvidenceExactlyMatch": true,
+  "contentHashVersionMatches": true,
+  "allCandidateEvidenceKeysValid": true,
+  "evidenceCompanies": 154,
+  "macroRows": 16,
+  "guru": {
+    "snapshotVersion": "3eaa543efd1960f197bb",
+    "criteriaVersion": "cv-gurus-v2",
+    "tradeDate": "2026-10-13",
+    "generatedAt": "2026-10-13T23:16:14+09:00",
+    "strategies": {
+      "buffett": {
+        "coverage": {
+          "unsupportedCount": 226,
+          "pendingCount": 0,
+          "insufficientCount": 708,
+          "failedCount": 1666,
+          "matchedCount": 47,
+          "evaluatedCount": 1713,
+          "universeCount": 2647
+        },
+        "missingReasons": {
+          "\uc77c\ubc18\uae30\uc5c5 \uc870\uac74 \ube44\uad50 \uc9c0\uc6d0 \uc81c\uc678": 226,
+          "\uc5f0\uc18d 4\uac1c \uc5f0\ub3c4 \uc790\ub8cc \ud655\uc778 \ubd80\uc871": 111,
+          "\uc5c5\uc885\u00b7\uc0c1\ud488 \uc720\ud615 \ud655\uc778 \ubd80\uc871": 52,
+          "\uacf5\uc2dc \uac31\uc2e0 \ud655\uc778 \uc2e4\ud328 \u00b7 \uc774\uc804 \uc790\ub8cc \ubcf4\uc874": 383,
+          "\ud544\uc218 \uacc4\uc815 \ub204\ub77d\u00b7\uae08\uc561 \ud655\uc778 \ubd80\uc871": 38,
+          "\ub3d9\uc77c \uc885\ubaa9\uc758 \uae30\uc900 \uac70\ub798\uc77c \uc885\uac00 \ud655\uc778 \ubd80\uc871": 102,
+          "\uacf5\uc2dc \uc2dc\uc810\u00b7\ucd9c\ucc98 \ud655\uc778 \ubd80\uc871": 22
+        },
+        "status": "evidence_verified",
+        "symbol": "383220.KS"
+      },
+      "lynch": {
+        "coverage": {
+          "unsupportedCount": 226,
+          "pendingCount": 0,
+          "insufficientCount": 1286,
+          "failedCount": 1097,
+          "matchedCount": 38,
+          "evaluatedCount": 1135,
+          "universeCount": 2647
+        },
+        "missingReasons": {
+          "\uc77c\ubc18\uae30\uc5c5 \uc870\uac74 \ube44\uad50 \uc9c0\uc6d0 \uc81c\uc678": 226,
+          "\uc5f0\uc18d 4\uac1c \uc5f0\ub3c4 \uc790\ub8cc \ud655\uc778 \ubd80\uc871": 111,
+          "\uc5c5\uc885\u00b7\uc0c1\ud488 \uc720\ud615 \ud655\uc778 \ubd80\uc871": 52,
+          "\ud544\uc218 \uacc4\uc815 \ub204\ub77d\u00b7\uae08\uc561 \ud655\uc778 \ubd80\uc871": 240,
+          "\ubcf4\ud1b5\uc8fc EPS\u00b7\uae30\uc5c5\ud589\ub3d9 \ube44\uad50 \uae30\uc900 \ud655\uc778 \ubd80\uc871": 376,
+          "\uacf5\uc2dc \uac31\uc2e0 \ud655\uc778 \uc2e4\ud328 \u00b7 \uc774\uc804 \uc790\ub8cc \ubcf4\uc874": 383,
+          "\ub3d9\uc77c \uc885\ubaa9\uc758 \uae30\uc900 \uac70\ub798\uc77c \uc885\uac00 \ud655\uc778 \ubd80\uc871": 102,
+          "\uacf5\uc2dc \uc2dc\uc810\u00b7\ucd9c\ucc98 \ud655\uc778 \ubd80\uc871": 22
+        },
+        "status": "evidence_verified",
+        "symbol": "064400.KS"
+      },
+      "oneil": {
+        "coverage": {
+          "unsupportedCount": 226,
+          "pendingCount": 0,
+          "insufficientCount": 1353,
+          "failedCount": 1068,
+          "matchedCount": 0,
+          "evaluatedCount": 1068,
+          "universeCount": 2647
+        },
+        "missingReasons": {
+          "\uc77c\ubc18\uae30\uc5c5 \uc870\uac74 \ube44\uad50 \uc9c0\uc6d0 \uc81c\uc678": 226,
+          "\ub3d9\uc77c \uae30\uc900\uc77c 253\uac70\ub798\uc77c OHLCV \ud655\uc778 \ubd80\uc871": 147,
+          "\uc5c5\uc885\u00b7\uc0c1\ud488 \uc720\ud615 \ud655\uc778 \ubd80\uc871": 52,
+          "\uc5f0\uc18d 4\uac1c \uc5f0\ub3c4 \uc790\ub8cc \ud655\uc778 \ubd80\uc871": 60,
+          "\ud544\uc218 \uacc4\uc815 \ub204\ub77d\u00b7\uae08\uc561 \ud655\uc778 \ubd80\uc871": 142,
+          "\ubcf4\ud1b5\uc8fc EPS\u00b7\uae30\uc5c5\ud589\ub3d9 \ube44\uad50 \uae30\uc900 \ud655\uc778 \ubd80\uc871": 453,
+          "\uacf5\uc2dc \uac31\uc2e0 \ud655\uc778 \uc2e4\ud328 \u00b7 \uc774\uc804 \uc790\ub8cc \ubcf4\uc874": 358,
+          "\ub3d9\uc77c \uc885\ubaa9\uc758 \uae30\uc900 \uac70\ub798\uc77c \uc885\uac00 \ud655\uc778 \ubd80\uc871": 120,
+          "\uacf5\uc2dc \uc2dc\uc810\u00b7\ucd9c\ucc98 \ud655\uc778 \ubd80\uc871": 20,
+          "\ub2e8\uc77c \ubd84\uae30 EPS\u00b7\ub9e4\ucd9c \ube44\uad50 \uc790\ub8cc \ud655\uc778 \ubd80\uc871": 1
+        },
+        "status": "no_matches"
+      },
+      "minervini": {
+        "coverage": {
+          "unsupportedCount": 226,
+          "pendingCount": 0,
+          "insufficientCount": 319,
+          "failedCount": 2027,
+          "matchedCount": 75,
+          "evaluatedCount": 2102,
+          "universeCount": 2647
+        },
+        "missingReasons": {
+          "\uc77c\ubc18\uae30\uc5c5 \uc870\uac74 \ube44\uad50 \uc9c0\uc6d0 \uc81c\uc678": 226,
+          "\ub3d9\uc77c \uae30\uc900\uc77c 253\uac70\ub798\uc77c OHLCV \ud655\uc778 \ubd80\uc871": 147,
+          "\uc5c5\uc885\u00b7\uc0c1\ud488 \uc720\ud615 \ud655\uc778 \ubd80\uc871": 52,
+          "\ub3d9\uc77c \uc885\ubaa9\uc758 \uae30\uc900 \uac70\ub798\uc77c \uc885\uac00 \ud655\uc778 \ubd80\uc871": 120
+        },
+        "status": "evidence_verified",
+        "symbol": "068790.KQ"
+      },
+      "greenblatt": {
+        "coverage": {
+          "unsupportedCount": 271,
+          "pendingCount": 0,
+          "insufficientCount": 1134,
+          "failedCount": 1240,
+          "matchedCount": 2,
+          "evaluatedCount": 1242,
+          "universeCount": 2647
+        },
+        "missingReasons": {
+          "\uc77c\ubc18\uae30\uc5c5 \uc870\uac74 \ube44\uad50 \uc9c0\uc6d0 \uc81c\uc678": 226,
+          "\ud544\uc218 \uacc4\uc815 \ub204\ub77d\u00b7\uae08\uc561 \ud655\uc778 \ubd80\uc871": 108,
+          "\uc5c5\uc885\u00b7\uc0c1\ud488 \uc720\ud615 \ud655\uc778 \ubd80\uc871": 52,
+          "\ubcf4\ud1b5\uc8fc EPS\u00b7\uae30\uc5c5\ud589\ub3d9 \ube44\uad50 \uae30\uc900 \ud655\uc778 \ubd80\uc871": 477,
+          "\uae08\uc735\u00b7\uc720\ud2f8\ub9ac\ud2f0 \ube44\uad50 \uc9c0\uc6d0 \uc81c\uc678": 45,
+          "\uacf5\uc2dc \uac31\uc2e0 \ud655\uc778 \uc2e4\ud328 \u00b7 \uc774\uc804 \uc790\ub8cc \ubcf4\uc874": 360,
+          "\ub3d9\uc77c \uc885\ubaa9\uc758 \uae30\uc900 \uac70\ub798\uc77c \uc885\uac00 \ud655\uc778 \ubd80\uc871": 115,
+          "\uacf5\uc2dc \uc2dc\uc810\u00b7\ucd9c\ucc98 \ud655\uc778 \ubd80\uc871": 22
+        },
+        "status": "evidence_verified",
+        "symbol": "171090.KQ"
+      }
+    },
+    "nonCurrentVersionRejection": "verified_409"
+  },
+  "localApiRequests": [
+    {
+      "base": "http://offline-saved-router",
+      "path": "/api/guru-investing/383220.KS?version=3eaa543efd1960f197bb&publication_check=1791901606024791958"
+    },
+    {
+      "base": "http://offline-saved-router",
+      "path": "/api/guru-investing/064400.KS?version=3eaa543efd1960f197bb&publication_check=1791901606340786671"
+    },
+    {
+      "base": "http://offline-saved-router",
+      "path": "/api/guru-investing/068790.KQ?version=3eaa543efd1960f197bb&publication_check=1791901606343785572"
+    },
+    {
+      "base": "http://offline-saved-router",
+      "path": "/api/guru-investing/171090.KQ?version=3eaa543efd1960f197bb&publication_check=1791901606346447960"
+    },
+    {
+      "base": "http://offline-saved-router",
+      "path": "/api/guru-investing/383220.KS?version=00000000000000000000&publication_check=1791901606348673682"
+    }
+  ]
+}

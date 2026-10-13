@@ -1,0 +1,9 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"commit\":{\"createdAt\":\"2026-10-13T23:34:54Z\",\"id\":\"34debb1199eda0278783bdd34ef34bc61c78adf9\",\"message\":\"data: refresh verified guru screening\"},\"createdAt\":\"2026-10-13T23:35:12.024706Z\",\"finishedAt\":\"2026-10-13T23:36:30.030223Z\",\"id\":\"dep-db7c0bq5b2lc73fbp2u0\",\"startedAt\":\"2026-10-13T23:35:11.997487Z\",\"status\":\"live\",\"trigger\":\"api\",\"updatedAt\":\"2026-10-13T23:36:59.532963Z\"}"
+    }
+  ],
+  "isError": false
+}

@@ -1,0 +1,9 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"commit\":{\"createdAt\":\"2026-10-13T14:18:56Z\",\"id\":\"02cb31170ce4ce78cc724611189e06a1e4347bac\",\"message\":\"Merge pull request #133 from shoon94parkk-del/fix/preserve-render-home-wait-20261013\\n\\nfix: preserve live TOP10 and complete Home wait release\"},\"createdAt\":\"2026-10-13T14:25:44.914412Z\",\"finishedAt\":\"2026-10-13T14:26:08.055667Z\",\"id\":\"dep-db73uq59fdbs73eusos0\",\"startedAt\":\"2026-10-13T14:25:44.912771Z\",\"status\":\"live\",\"trigger\":\"api\",\"updatedAt\":\"2026-10-13T14:26:08.055918Z\"}"
+    }
+  ],
+  "isError": false
+}

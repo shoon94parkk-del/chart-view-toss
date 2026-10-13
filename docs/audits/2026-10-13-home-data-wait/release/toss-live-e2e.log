@@ -1,0 +1,24 @@
+
+> chart-view-toss@0.15.1 test:e2e:live
+> playwright test --config playwright.live.config.mjs
+
+
+Running 5 tests using 1 worker
+
+(node:146324) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:146324) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+  ✓  1 tests/live-e2e/live.spec.mjs:45:1 › live 실제 삼성전자 검색·시세 응답과 상세 표시 (15.2s)
+  ✓  2 tests/live-e2e/live.spec.mjs:79:1 › live 관세청 반도체 응답·12개월 DRAM 표시 (25.8s)
+  ✓  3 tests/live-e2e/live.spec.mjs:107:1 › live 선정 기록: 실제 응답 분모·성과 집계 (2.7s)
+  ✓  4 tests/live-e2e/live.spec.mjs:132:1 › live 산업 상세: 실제 화장품 응답 → 모델 → 금액·등락·12개월 표시 (11.3s)
+  ✓  5 tests/live-e2e/live.spec.mjs:164:1 › live 거장 다섯 전략: 실제 snapshot 범위와 같은 버전의 후보 근거 게시 검증 (6.0s)
+
+  5 passed (1.0m)
+
+To open last HTML report run:
+[36m[39m
+[36m  npx playwright show-report playwright-report/live[39m
+[36m[39m

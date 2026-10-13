@@ -76,3 +76,6 @@
 모든 pointer가 해제되고 이미 click이 dispatch된 명시 펼치기만 즉시 paint한다. 다른 pointer가 여전히 눌려 있거나 데이터 응답만 도착한 경우에는 기존 보류를 유지한다. 즉시 반영한 host의 이전 queued paint도 지운다. 기존 모바일 검사는 변경 없이320/390px 모두 통과했고 실제 runtime Node11/11에 즉시 펼치기·다른 pointer 보호 회귀를 추가했다. 최종 source의 전체 prepush는 Node527/build26/E2E824 전부 통과했다. 실패·skip·flaky0, 재시도0이다. 관련 기존 QA6종(기존5종+insight_research)도 전부 통과했다. 앞선525/824 기록은 첫 gesture 보호 source에 해당한다.
 
 최종 통합 main 자산은 `index-BiploiZa.js`/322,262bytes/SHA-256 `0d2f4aff89a06b336e12d792a5c38e26991a0d91f6d394b00c503e4fb31beb1a`이다. 실제 직전 운영 f60 자산317,848bytes 대비 약1.4% 증가하며 번들 감소로 설명하지 않는다. 정확한 운영 제공 bytes를 후속 배포 기록에서 대조한다.
+
+
+최종운영결과는 [배포·실측기록](HOME_DATA_WAIT_RELEASE_2026-10-13.md)과 [릴리스manifest](audits/2026-10-13-home-data-wait/release/release.json)에 남겼다. 첫deadline/progress배포에서남았던8.6/13.9초를추가로확인해 기존한국시세singleflight복구와provider연결재사용을후속반영했다. 최종backend34debb1/frontend02cb311의실제data5/5·exactmainCI·asset/publishingproof와같은harness3회표본을구분한다.

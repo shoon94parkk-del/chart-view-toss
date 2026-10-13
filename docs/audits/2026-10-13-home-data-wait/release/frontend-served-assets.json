@@ -1,0 +1,20 @@
+{
+  "baseUrl": "https://chart-view-toss.onrender.com",
+  "verifiedAt": 1791901949.8787773,
+  "htmlSha256": "638f02a477f021cc0173e61d8a7767ddcd53f456647ea0687946186c4355d5f8",
+  "assets": [
+    {
+      "path": "/assets/index-Sp9522Il.js",
+      "bytes": 322264,
+      "sha256": "c7317891e41d0449f57fd008f1a44517666a9d7ed3b4e61ed7cc159cef000b66",
+      "matchesTestedBuild": true
+    },
+    {
+      "path": "/assets/index-DqczN_vl.css",
+      "bytes": 173577,
+      "sha256": "75db5471b06c2d51af6f2706c44a442a4a8f4d56fed8a02e785fe74d62f7f443",
+      "matchesTestedBuild": true
+    }
+  ],
+  "meaning": "Actual served HTML references and bytes match the same validated source rebuilt with existing production API/CDN settings; Render commit identity is verified separately."
+}

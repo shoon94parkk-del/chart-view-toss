@@ -1,0 +1,155 @@
+{
+  "recordedAt": "2026-10-13T23:48:53.202432+00:00",
+  "appUrl": "https://chart-view-toss.onrender.com",
+  "frontend": {
+    "pr": [
+      132,
+      133
+    ],
+    "mergedCommit": "02cb31170ce4ce78cc724611189e06a1e4347bac",
+    "preservedUserTop10": "f60f83c5e0553947e2d695ababba42baae8cb160",
+    "deploy": "dep-db73uq59fdbs73eusos0",
+    "liveAt": "2026-10-13T14:26:08.055667Z",
+    "nodePassed": 527,
+    "e2ePassed": 824,
+    "staticRoutes": 26,
+    "legacySuitesPassed": 6,
+    "prChecksPassed": 9,
+    "exactMainChecksAndPromotionPassed": 7,
+    "mainAITPassed": true,
+    "testedDefaultAsset": "index-BiploiZa.js",
+    "productionConfiguredAsset": "index-Sp9522Il.js",
+    "productionAssetSha256": "c7317891e41d0449f57fd008f1a44517666a9d7ed3b4e61ed7cc159cef000b66",
+    "buildMeaning": "Samevalidatedsource rebuiltwith already-existingpublicAPI+CDNbase config matches actualmainJS/CSSbytes; Node24.19local vs24.21CI/Render; no config changed"
+  },
+  "backend": {
+    "prs": [
+      148,
+      149
+    ],
+    "homeProgressMerge": "3b0cfec877975a383b61a33dd0f56804bd54cfb9",
+    "providerMerge": "ddadf8e708bcc9b7224d9936193065be1f6ef379",
+    "actualLiveMain": "34debb1199eda0278783bdd34ef34bc61c78adf9",
+    "dataOnlyAdvance": [
+      "static/data/guru_evidence.json",
+      "static/data/guru_financials.json",
+      "static/data/guru_market.json",
+      "static/data/guru_quarters.json",
+      "static/data/guru_screening.json"
+    ],
+    "deploy": "dep-db7c0bq5b2lc73fbp2u0",
+    "liveAt": "2026-10-13T23:36:30.030223Z",
+    "pythonPassed": 761,
+    "nodeCIContractsPassed": 52,
+    "prRequiredChecksPassed": 9,
+    "prProductionJob": "intentionallySKIPPEDonPR",
+    "exactLiveMainRun": 38485233180,
+    "exactLiveMainChecksPassed": 12,
+    "runAttempt": 1,
+    "publicationAndThreeAssetsVerified": true,
+    "nonCurrentGuruVersion409Verified": true,
+    "supersededRun": 38484874883,
+    "supersededMeaning": "ddadpredeploy8 passed; data advancedwhiletriggerselectedlatest34, soobsoleteexactddadproductionwaitingjobs canceled;34reranfull12andallpassed"
+  },
+  "actualTossDataTests": {
+    "passed": 5,
+    "failed": 0,
+    "retries": 0,
+    "log": "toss-live-e2e.log"
+  },
+  "packageVersion": "0.15.1",
+  "newAPIsKeysPaidInfrastructure": false,
+  "next": "WholeHeatmap unusedHome market/bootstrappreloads and snapshotpublishingfailurevisibility, preserving60 coverage/realasOf/revalidation",
+  "evidence": [
+    {
+      "file": "browser-before-latest.json",
+      "bytes": 1127726,
+      "sha256": "748068d8832ebb06617f1f0dce00de01ec3bc4fe085695f0c4fba6d09aa4c325"
+    },
+    {
+      "file": "browser-after-first-release.json",
+      "bytes": 1227265,
+      "sha256": "b8f257bedca42e2b51f7ccbb493a45cd5c1098ff83073a4388770624b5251366"
+    },
+    {
+      "file": "browser-after-provider.json",
+      "bytes": 1289509,
+      "sha256": "7593167f381fb1b102cd396a4f99523d6433d362b55099ec486b593303659ceb"
+    },
+    {
+      "file": "frontend-served-assets.json",
+      "bytes": 773,
+      "sha256": "bc59b144512428fe37e8367867f5f76b64a40e0b1e23118d185f28e3ed763e21"
+    },
+    {
+      "file": "backend-release-verification.json",
+      "bytes": 6489,
+      "sha256": "100ea36db2ff8e1533afb62b503933354cc082051b9c53484fcf083b0efe929e"
+    },
+    {
+      "file": "backend-main-ci.json",
+      "bytes": 13120,
+      "sha256": "030174b74f70b112a9c7b7f6cc461a65e4de783f51f822ce88678d7e13bc127a"
+    },
+    {
+      "file": "backend-main-ci-jobs.json",
+      "bytes": 33415,
+      "sha256": "ffa3f95c0f2aa790ff72c164566ab78f1d71342619d5b5d46e6f406b7cb48dc5"
+    },
+    {
+      "file": "backend-pr-ci.json",
+      "bytes": 3252,
+      "sha256": "0b0d6255fc75ea18e16f0619f6cbfea75d3199f393efe2b8b527e7510b9a87c4"
+    },
+    {
+      "file": "backend-deploy-live.json",
+      "bytes": 513,
+      "sha256": "ef73b0719a972ff28311a3e22ab156a0103c0b615cad1efc2fd0a61f58e84993"
+    },
+    {
+      "file": "backend-metrics-after.json",
+      "bytes": 2118,
+      "sha256": "e83d0f0e255dff9985fd78671ed289dd228a7f184367e48586a3f4a86fd16740"
+    },
+    {
+      "file": "backend-events-after.json",
+      "bytes": 112,
+      "sha256": "05487bd86b1086d9f8923ca5b8bc6d5738edb7ee51222816c03821b9079903fd"
+    },
+    {
+      "file": "backend-metrics-first-release.json",
+      "bytes": 3004,
+      "sha256": "ea351bc2795888713c8a013cbf41150db5f052d7bdce84b50f44234d99e1d7bf"
+    },
+    {
+      "file": "frontend-deploy-live.json",
+      "bytes": 621,
+      "sha256": "e4d1adaaf2a7076cf25e151f9125f44792ba74ff6c6414cfe974a66cc0678960"
+    },
+    {
+      "file": "frontend-pr-ci.json",
+      "bytes": 2962,
+      "sha256": "9f0824dddd0d1c09f4d39c3da5c1297a775ca60014fb6fbe37eef21c6fe81f31"
+    },
+    {
+      "file": "frontend-main-ci.json",
+      "bytes": 13839,
+      "sha256": "37957fa88a5a27a575a90e7aec36cb104d1a508c5d6cbc0fbd01f06250faac20"
+    },
+    {
+      "file": "frontend-main-ci-jobs.json",
+      "bytes": 19076,
+      "sha256": "595def5fedd9933542f9b6846d7b24e58d117737cc194a585622119063bcfaf0"
+    },
+    {
+      "file": "frontend-main-ait.json",
+      "bytes": 13627,
+      "sha256": "2c5d5237599431663527d0aac8e17bfb789102a8269d223fa982fd9863c306f7"
+    },
+    {
+      "file": "backend-publication-offline.json",
+      "bytes": 7234,
+      "sha256": "f7e57d2623149588a10ef204234b83d88e2e38d2bf7b37efc8f22e026776a25f"
+    }
+  ]
+}
