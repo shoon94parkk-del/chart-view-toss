@@ -1,5 +1,10 @@
 # Chart View Toss project memory
 
+### 2026-10-13 — Home data wait fixes preserve established owners
+- Initial HTML3 requests are adopted once into existing requestClient; one5s headers/body budget, no failed-preload fallback/new budget, no late cache writes. Other screens retain ordinary12s defaults.
+- Market progress is not completion-cache success. Keep dated previous rows through partial/failed refresh, mark confirmed failures separately, and use canonical market prices/dates in both paint/device save. Explicit retry alone uses existing fresh=true; normal6/12s polling remains.
+- Backend uses existing per-row cache publication and cold primary-or2s readiness; all8 source completion/fresh await remain. User20s exact episode has no correlated request-start evidence. [Report](HOME_DATA_WAIT_2026-10-13.md) separates controlled experiment, ordinary browser samples and deployment proof.
+
 ### 2026-09-30 — DART scope disclosed before question entry
 - Detail title is DART 공시 비교. Upfront guidance lists revenue/profit/margin/year-over-year growth; forecasts, price targets and causal explanations are unsupported.
 - Three tappable examples populate the single input without automatic requests or saves and invalidate old results. SK hynix detail uses Samsung as the peer example.

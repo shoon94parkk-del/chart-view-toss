@@ -25,12 +25,14 @@ export function writeHomeFast(key,value){
   }catch{}
 }
 
-export function earlyHome(name,fallback,maxAgeMs=15000){
-  try{
-    const entry=globalThis?.__chartviewHomeWarm?.[name];
-    if(entry?.promise&&Date.now()-Number(entry.startedAt||0)<=maxAgeMs){
-      return entry.promise.then(value=>value??fallback()).catch(()=>fallback());
-    }
-  }catch{}
-  return fallback();
+export function adoptEarlyHome(request,base,{timeoutMs=5000,marketCacheIf}={}){
+  const warm=globalThis?.__chartviewHomeWarm;
+  if(!warm)return;
+  for(const [name,path,ttlMs] of [['market','/api/market-now',15000],['snapshot','/api/home-snapshot',60000],['bootstrap','/api/home-bootstrap',60000]]){
+    const entry=warm[name];
+    if(entry?.base!==base||entry.path!==path)continue;
+    request.adopt(path,entry,{ttlMs,timeoutMs,...(name==='market'?{cacheIf:marketCacheIf}:{})});
+    // One handoff owns each HTML transport; route entry cannot re-adopt it.
+    delete warm[name];
+  }
 }

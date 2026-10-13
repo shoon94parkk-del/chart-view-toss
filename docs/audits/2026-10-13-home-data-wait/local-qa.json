@@ -1,0 +1,62 @@
+{
+  "recordedAt": "2026-10-13T12:38:08.038414+00:00",
+  "project": "github:shoon94parkk-del/chart-view-toss",
+  "branch": "fix/home-data-wait-20261013",
+  "frontendBase": "82c7b1132ff101b3793932d1b858036eea0aebfe",
+  "testedFrontendCommit": null,
+  "meaning": "Final source changes in the worktree, before the documentation/source commit; exact main CI and deployed bytes are separate release proof",
+  "packageVersion": "0.15.1",
+  "nodeVersion": "24.19.0",
+  "npmVersion": "11.9.0",
+  "ciNodeVersion": "24.21.0",
+  "frontend": {
+    "command": "npm run qa:prepush",
+    "exitCode": 0,
+    "nodePassed": 519,
+    "previewRoutes": 26,
+    "e2ePassed": 816,
+    "failed": 0,
+    "skipped": 0,
+    "flaky": 0,
+    "newFocusedBrowserPassed": 32,
+    "relatedLegacySuites": [
+      "analysis_qa",
+      "progressive_qa",
+      "mobile_continuity_qa",
+      "audit_plan_qa",
+      "home_journey_qa"
+    ],
+    "relatedLegacyPassed": 5,
+    "playwrightVersion": "1.55.0",
+    "projects": [
+      "desktop-chromium",
+      "narrow-chromium",
+      "android-chromium",
+      "iphone-small-webkit"
+    ],
+    "asset": {
+      "path": "/assets/index-Cyhr7OH3.js",
+      "bytes": 320742,
+      "sha256": "285f79b1f9138d5f6267d0c3db88a3bc8ee46748f8e843239bfbdbd5f8843ba9"
+    }
+  },
+  "backend": {
+    "testedPrHead": "f53e9048d798d778d6c232bba31a9d54dbf8ec2a",
+    "mergedIdenticalTree": "3b0cfec877975a383b61a33dd0f56804bd54cfb9",
+    "pythonVersion": "3.11.17",
+    "pythonPassed": 748,
+    "nodeContractsPassed": 52,
+    "ciStaticAndMarketInvariantsPassed": true,
+    "syntaxPassed": true,
+    "pr": "https://github.com/shoon94parkk-del/chart_View/pull/148"
+  },
+  "review": {
+    "independentSourceReview": "no remaining blockers",
+    "foundAndFixed": "Empty terminal market responses were dropped by the polling dispatcher and error painting was disabled; actual scheduler/API-to-DOM regressions failed before and pass afterward"
+  },
+  "limits": [
+    "The controlled20s experiment does not attribute the uncorrelated user incident",
+    "All8 provider completion can still take20s; cold readiness2s is not all-index2s SLA",
+    "Actual Toss Sandbox Android/iOS approval is separate from browser preview deployment"
+  ]
+}

@@ -1,13 +1,16 @@
 import { createRequestClient } from './requestClient.js';
 import { recordMetric } from './diagnostics.js';
 import { staticData } from './staticData.js';
-import { earlyHome } from './homeFastCache.js';
+import { adoptEarlyHome } from './homeFastCache.js';
 import { searchAlias, verifiedSearchRows } from './searchIdentity.js';
 export { ApiError } from './requestClient.js';
 export const API_BASE=(import.meta.env?.VITE_CHARTVIEW_API_BASE||'https://chart-view-pkv8.onrender.com').replace(/\/$/,'');
 const DEFAULT_TIMEOUT_MS=Number(import.meta.env?.VITE_CHARTVIEW_API_TIMEOUT_MS||12000);
+export const HOME_DATA_TIMEOUT_MS=Math.min(5000,DEFAULT_TIMEOUT_MS);
+const marketCacheIf=payload=>!payload?.refreshing&&!payload?.refreshScheduled;
 const DEFAULT_RETRIES=1;
 const request=createRequestClient({base:API_BASE});
+adoptEarlyHome(request,API_BASE,{timeoutMs:HOME_DATA_TIMEOUT_MS,marketCacheIf});
 export const api=async(path,options={})=>{
  const start=performance.now();
  const label=path.split('?')[0].replace('/api/','api.').replace('/static/data/','data.');
@@ -16,7 +19,7 @@ export const api=async(path,options={})=>{
 };
 export const clearApiCache=()=>request.clear();
 const list=tickers=>encodeURIComponent([...new Set(tickers)].join(','));
-export const quoteSnapshots=(tickers,{force=false}={})=>api(`/api/quotes?tickers=${list(tickers)}`,{ttlMs:15000,force});
+export const quoteSnapshots=(tickers,{force=false,timeoutMs=DEFAULT_TIMEOUT_MS}={})=>api(`/api/quotes?tickers=${list(tickers)}`,{ttlMs:15000,force,timeoutMs:Math.min(timeoutMs,DEFAULT_TIMEOUT_MS)});
 export const quoteSnapshotsLive=tickers=>api(`/api/quotes?tickers=${list(tickers)}&fresh=true`,{ttlMs:0,force:true,timeoutMs:5000,retries:0});
 export const compareStocks=(tickers,period='1mo',range={}, {force=false}={})=>api(`/api/compare?tickers=${list(tickers)}&period=${encodeURIComponent(period)}${range.start&&range.end?`&start=${encodeURIComponent(range.start)}&end=${encodeURIComponent(range.end)}`:''}`,{ttlMs:60000,timeoutMs:8000,retries:0,force});
 export const searchStocks=async(query,{force=false,signal}={})=>{
@@ -43,10 +46,10 @@ export const searchStocks=async(query,{force=false,signal}={})=>{
  const unverifiedDirect=rows.filter(row=>row.type==='DIRECT'&&!results.some(result=>result.symbol===row.symbol)).map(row=>row.symbol);
  return {...(original||aliasResult),results,unverifiedDirect,...(failures.length||verificationError?{partialFailure:true}:{})};
 };
-export const marketNow=()=>earlyHome('market',()=>api('/api/market-now',{ttlMs:15000}));
-export const marketNowLive=()=>api('/api/market-now',{ttlMs:0,force:true,timeoutMs:5000,retries:0});
-export const homeSnapshot=({force=false}={})=>force?api('/api/home-snapshot',{ttlMs:60000,force:true}):earlyHome('snapshot',()=>api('/api/home-snapshot',{ttlMs:60000}));
-export const homeBootstrap=({force=false}={})=>force?api('/api/home-bootstrap',{ttlMs:60000,force:true}):earlyHome('bootstrap',()=>api('/api/home-bootstrap',{ttlMs:60000}));
+export const marketNow=()=>api('/api/market-now',{ttlMs:15000,timeoutMs:HOME_DATA_TIMEOUT_MS,cacheIf:marketCacheIf});
+export const marketNowLive=({fresh=false}={})=>api(`/api/market-now${fresh?'?fresh=true':''}`,{ttlMs:0,force:true,timeoutMs:HOME_DATA_TIMEOUT_MS,retries:0});
+export const homeSnapshot=({force=false}={})=>api('/api/home-snapshot',{ttlMs:60000,force});
+export const homeBootstrap=({force=false}={})=>api('/api/home-bootstrap',{ttlMs:60000,force});
 export const pickMonitor=({force=false}={})=>force?api('/static/data/pick_monitor.json',{ttlMs:60000,force:true,timeoutMs:5000,retries:0}):staticData('pick_monitor.json',()=>api('/static/data/pick_monitor.json',{ttlMs:60000,timeoutMs:5000,retries:0}));
 export const visitorActivity=(visitorId,surface='other')=>api('/api/activity',{
  method:'POST',

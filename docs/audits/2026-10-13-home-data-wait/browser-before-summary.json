@@ -1,0 +1,758 @@
+{
+  "sourceSha": "82c7b1132ff101b3793932d1b858036eea0aebfe",
+  "scope": "Read-only deployed frontend performance audit; no app edits/build/CI/deployment/restart",
+  "evidence": {
+    "existingHarness": "production-18-routes.json",
+    "focused": "focused-normal.json",
+    "canonicalRefreshFollowup": "focused-poll.json",
+    "invalidInitialFocus": "invalid-initial-focus/README.md"
+  },
+  "existingHarnessOutcomes": {
+    "ready": 53,
+    "root": 1
+  },
+  "focusedSegments": 31,
+  "focusedRuntimeErrors": 0,
+  "focusedLongTasks": {
+    "count": 1,
+    "totalMs": 57,
+    "maxMs": 57
+  },
+  "profiles": {
+    "saved3": {
+      "home-cold": {
+        "shellMs": {
+          "samplesMs": [
+            177.7,
+            126.2,
+            125.9
+          ],
+          "medianMs": 126.2
+        },
+        "marketFirstValidMs": {
+          "samplesMs": [
+            509.7,
+            2238.4,
+            864
+          ],
+          "medianMs": 864
+        },
+        "marketAllFourMs": {
+          "samplesMs": [
+            509.7,
+            2238.4,
+            864
+          ],
+          "medianMs": 864
+        },
+        "watchFirstPriceMs": {
+          "samplesMs": [
+            544.1,
+            2249.3,
+            859.8
+          ],
+          "medianMs": 859.8
+        },
+        "watchAllThreePriceMs": {
+          "samplesMs": [
+            544.1,
+            2249.3,
+            859.8
+          ],
+          "medianMs": 859.8
+        },
+        "watchRefreshLabelEndedMs": {
+          "samplesMs": [
+            1879.7,
+            2329.8,
+            859.8
+          ],
+          "medianMs": 1879.7
+        },
+        "primaryFirstObservedMs": {
+          "samplesMs": [
+            544.1,
+            2249.3,
+            879.1
+          ],
+          "medianMs": 879.1
+        },
+        "terminalFirstObservedMs": {
+          "samplesMs": [
+            1879.7,
+            2926.8,
+            1151.1
+          ],
+          "medianMs": 1879.7
+        }
+      },
+      "home-warm": {
+        "shellMs": {
+          "samplesMs": [
+            0.1,
+            0.1,
+            0.1
+          ],
+          "medianMs": 0.1
+        },
+        "marketFirstValidMs": {
+          "samplesMs": [
+            9.2,
+            9.5,
+            10.6
+          ],
+          "medianMs": 9.5
+        },
+        "marketAllFourMs": {
+          "samplesMs": [
+            9.2,
+            9.5,
+            10.6
+          ],
+          "medianMs": 9.5
+        },
+        "watchFirstPriceMs": {
+          "samplesMs": [
+            9.2,
+            9.5,
+            10.6
+          ],
+          "medianMs": 9.5
+        },
+        "watchAllThreePriceMs": {
+          "samplesMs": [
+            9.2,
+            9.5,
+            10.6
+          ],
+          "medianMs": 9.5
+        },
+        "watchRefreshLabelEndedMs": {
+          "samplesMs": [
+            20.7,
+            20.1,
+            20.8
+          ],
+          "medianMs": 20.7
+        },
+        "primaryFirstObservedMs": {
+          "samplesMs": [
+            13.6,
+            14.1,
+            15
+          ],
+          "medianMs": 14.1
+        },
+        "terminalFirstObservedMs": {
+          "samplesMs": [
+            20.7,
+            20.1,
+            20.8
+          ],
+          "medianMs": 20.7
+        }
+      },
+      "heatmap-cold": {
+        "shellMs": {
+          "samplesMs": [
+            364.6,
+            133.9,
+            175.1
+          ],
+          "medianMs": 175.1
+        },
+        "primaryFirstObservedMs": {
+          "samplesMs": [
+            1560.9,
+            896.2,
+            763.4
+          ],
+          "medianMs": 896.2
+        },
+        "terminalFirstObservedMs": {
+          "samplesMs": [
+            1560.9,
+            896.2,
+            763.4
+          ],
+          "medianMs": 896.2
+        },
+        "mapFirstValidMs": {
+          "samplesMs": [
+            1560.9,
+            896.2,
+            763.4
+          ],
+          "medianMs": 896.2
+        },
+        "mapTwentyShownMs": {
+          "samplesMs": [
+            1560.9,
+            896.2,
+            763.4
+          ],
+          "medianMs": 896.2
+        }
+      },
+      "heatmap-spa": {
+        "shellMs": {
+          "samplesMs": [
+            0.4,
+            0.1,
+            0.2
+          ],
+          "medianMs": 0.2
+        },
+        "marketFirstValidMs": {
+          "samplesMs": [
+            0.4,
+            0.1,
+            0.2
+          ],
+          "medianMs": 0.2
+        },
+        "marketAllFourMs": {
+          "samplesMs": [
+            0.4,
+            0.1,
+            0.2
+          ],
+          "medianMs": 0.2
+        },
+        "watchFirstPriceMs": {
+          "samplesMs": [
+            0.4,
+            0.1,
+            0.2
+          ],
+          "medianMs": 0.2
+        },
+        "watchAllThreePriceMs": {
+          "samplesMs": [
+            0.4,
+            0.1,
+            0.2
+          ],
+          "medianMs": 0.2
+        },
+        "watchRefreshLabelEndedMs": {
+          "samplesMs": [
+            0.4,
+            0.1,
+            0.2
+          ],
+          "medianMs": 0.2
+        },
+        "primaryFirstObservedMs": {
+          "samplesMs": [
+            604.3,
+            596.8,
+            682.4
+          ],
+          "medianMs": 604.3
+        },
+        "terminalFirstObservedMs": {
+          "samplesMs": [
+            604.3,
+            596.8,
+            682.4
+          ],
+          "medianMs": 604.3
+        },
+        "mapFirstValidMs": {
+          "samplesMs": [
+            604.3,
+            596.8,
+            682.4
+          ],
+          "medianMs": 604.3
+        },
+        "mapTwentyShownMs": {
+          "samplesMs": [
+            604.3,
+            596.8,
+            682.4
+          ],
+          "medianMs": 604.3
+        }
+      },
+      "heatmap-warm": {
+        "shellMs": {
+          "samplesMs": [
+            0.1,
+            0.2,
+            0.1
+          ],
+          "medianMs": 0.1
+        },
+        "primaryFirstObservedMs": {
+          "samplesMs": [
+            16.1,
+            13.8,
+            9.5
+          ],
+          "medianMs": 13.8
+        },
+        "terminalFirstObservedMs": {
+          "samplesMs": [
+            16.1,
+            13.8,
+            9.5
+          ],
+          "medianMs": 13.8
+        },
+        "mapFirstValidMs": {
+          "samplesMs": [
+            16.1,
+            13.8,
+            9.5
+          ],
+          "medianMs": 13.8
+        },
+        "mapTwentyShownMs": {
+          "samplesMs": [
+            16.1,
+            13.8,
+            9.5
+          ],
+          "medianMs": 13.8
+        }
+      }
+    },
+    "empty": {
+      "home-cold": {
+        "shellMs": {
+          "samplesMs": [
+            117.5,
+            132.5,
+            126.4
+          ],
+          "medianMs": 126.4
+        },
+        "marketFirstValidMs": {
+          "samplesMs": [
+            1435,
+            549.8,
+            833.7
+          ],
+          "medianMs": 833.7
+        },
+        "marketAllFourMs": {
+          "samplesMs": [
+            1435,
+            549.8,
+            833.7
+          ],
+          "medianMs": 833.7
+        },
+        "primaryFirstObservedMs": {
+          "samplesMs": [
+            1464,
+            649.5,
+            847.5
+          ],
+          "medianMs": 847.5
+        },
+        "terminalFirstObservedMs": {
+          "samplesMs": [
+            1464,
+            743,
+            847.5
+          ],
+          "medianMs": 847.5
+        }
+      },
+      "home-warm": {
+        "shellMs": {
+          "samplesMs": [
+            0.2,
+            0.1,
+            0.1
+          ],
+          "medianMs": 0.1
+        },
+        "marketFirstValidMs": {
+          "samplesMs": [
+            31.7,
+            7.9,
+            8.8
+          ],
+          "medianMs": 8.8
+        },
+        "marketAllFourMs": {
+          "samplesMs": [
+            31.7,
+            7.9,
+            8.8
+          ],
+          "medianMs": 8.8
+        },
+        "primaryFirstObservedMs": {
+          "samplesMs": [
+            36.7,
+            12.1,
+            13.4
+          ],
+          "medianMs": 13.4
+        },
+        "terminalFirstObservedMs": {
+          "samplesMs": [
+            36.7,
+            12.1,
+            13.4
+          ],
+          "medianMs": 13.4
+        }
+      },
+      "heatmap-cold": {
+        "shellMs": {
+          "samplesMs": [
+            637.2,
+            124.1,
+            102.4
+          ],
+          "medianMs": 124.1
+        },
+        "primaryFirstObservedMs": {
+          "samplesMs": [
+            1192.5,
+            585.6,
+            946.1
+          ],
+          "medianMs": 946.1
+        },
+        "terminalFirstObservedMs": {
+          "samplesMs": [
+            1192.5,
+            585.6,
+            946.1
+          ],
+          "medianMs": 946.1
+        },
+        "mapFirstValidMs": {
+          "samplesMs": [
+            1192.5,
+            585.6,
+            946.1
+          ],
+          "medianMs": 946.1
+        },
+        "mapTwentyShownMs": {
+          "samplesMs": [
+            1192.5,
+            585.6,
+            946.1
+          ],
+          "medianMs": 946.1
+        }
+      },
+      "heatmap-spa": {
+        "shellMs": {
+          "samplesMs": [
+            0.3,
+            0.2,
+            0.1
+          ],
+          "medianMs": 0.2
+        },
+        "marketFirstValidMs": {
+          "samplesMs": [
+            0.3,
+            0.2,
+            0.1
+          ],
+          "medianMs": 0.2
+        },
+        "marketAllFourMs": {
+          "samplesMs": [
+            0.3,
+            0.2,
+            0.1
+          ],
+          "medianMs": 0.2
+        },
+        "primaryFirstObservedMs": {
+          "samplesMs": [
+            644.5,
+            710.1,
+            487.7
+          ],
+          "medianMs": 644.5
+        },
+        "terminalFirstObservedMs": {
+          "samplesMs": [
+            644.5,
+            710.1,
+            487.7
+          ],
+          "medianMs": 644.5
+        },
+        "mapFirstValidMs": {
+          "samplesMs": [
+            644.4,
+            710.1,
+            487.7
+          ],
+          "medianMs": 644.4
+        },
+        "mapTwentyShownMs": {
+          "samplesMs": [
+            644.4,
+            710.1,
+            487.7
+          ],
+          "medianMs": 644.4
+        }
+      },
+      "heatmap-warm": {
+        "shellMs": {
+          "samplesMs": [
+            0.2,
+            0.2,
+            0
+          ],
+          "medianMs": 0.2
+        },
+        "primaryFirstObservedMs": {
+          "samplesMs": [
+            10,
+            9.3,
+            9.3
+          ],
+          "medianMs": 9.3
+        },
+        "terminalFirstObservedMs": {
+          "samplesMs": [
+            10,
+            9.3,
+            9.3
+          ],
+          "medianMs": 9.3
+        },
+        "mapFirstValidMs": {
+          "samplesMs": [
+            10,
+            9.2,
+            9.3
+          ],
+          "medianMs": 9.3
+        },
+        "mapTwentyShownMs": {
+          "samplesMs": [
+            10,
+            9.2,
+            9.3
+          ],
+          "medianMs": 9.3
+        }
+      }
+    }
+  },
+  "limitations": [
+    "Only three samples per focused combination; no p95/SLA claim.",
+    "Browser-cold means a new context, not an intentionally restarted/cold Render process.",
+    "Real responses relayed through Node configured CA/TLS, browser HTTP cache disabled. Timing includes proxy/network/server variability.",
+    "Pixel 5 emulation is not a physical Toss device or native WebView.",
+    "Home loader settling includes loading-indicator and watch refresh text; plain optional status copy and background API work may continue.",
+    "The extra pathname run is one sample; its additional API calls are established, its causal latency effect is not.",
+    "CPU/network-constrained scenario was not run after user clarified market/watch data focus.",
+    "Initial scratch diagnostics failed before document root creation; excluded entirely and preserved."
+  ],
+  "savedHomeRequests": [
+    {
+      "run": 0,
+      "rows": [
+        {
+          "path": "/api/market-now",
+          "startMs": 123.0,
+          "finishMs": 492.2,
+          "durationMs": 369.2,
+          "decodedBodyBytes": 2382,
+          "status": 200,
+          "providerFetches": null
+        },
+        {
+          "path": "/api/home-snapshot",
+          "startMs": 123.6,
+          "finishMs": 526.2,
+          "durationMs": 402.6,
+          "decodedBodyBytes": 68276,
+          "status": 200,
+          "providerFetches": null
+        },
+        {
+          "path": "/api/home-bootstrap",
+          "startMs": 123.7,
+          "finishMs": 492.5,
+          "durationMs": 368.8,
+          "decodedBodyBytes": 25536,
+          "status": 200,
+          "providerFetches": null
+        },
+        {
+          "path": "/api/quotes",
+          "startMs": 195.7,
+          "finishMs": 1876.6,
+          "durationMs": 1681.0,
+          "decodedBodyBytes": 1486,
+          "status": 200,
+          "providerFetches": 1
+        },
+        {
+          "path": "/api/personalized-news",
+          "startMs": 196.1,
+          "finishMs": 609.1,
+          "durationMs": 413.0,
+          "decodedBodyBytes": 26885,
+          "status": 200,
+          "providerFetches": null
+        }
+      ]
+    },
+    {
+      "run": 1,
+      "rows": [
+        {
+          "path": "/api/market-now",
+          "startMs": 90.3,
+          "finishMs": 2233.1,
+          "durationMs": 2142.9,
+          "decodedBodyBytes": 2381,
+          "status": 200,
+          "providerFetches": null
+        },
+        {
+          "path": "/api/home-snapshot",
+          "startMs": 91.3,
+          "finishMs": 2245.1,
+          "durationMs": 2153.8,
+          "decodedBodyBytes": 68276,
+          "status": 200,
+          "providerFetches": null
+        },
+        {
+          "path": "/api/home-bootstrap",
+          "startMs": 92.2,
+          "finishMs": 1831.9,
+          "durationMs": 1739.7,
+          "decodedBodyBytes": 25536,
+          "status": 200,
+          "providerFetches": null
+        },
+        {
+          "path": "/api/quotes",
+          "startMs": 137.3,
+          "finishMs": 2327.8,
+          "durationMs": 2190.5,
+          "decodedBodyBytes": 1486,
+          "status": 200,
+          "providerFetches": 0
+        },
+        {
+          "path": "/api/personalized-news",
+          "startMs": 137.7,
+          "finishMs": 2923.2,
+          "durationMs": 2785.5,
+          "decodedBodyBytes": 26885,
+          "status": 200,
+          "providerFetches": null
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "rows": [
+        {
+          "path": "/api/market-now",
+          "startMs": 93.3,
+          "finishMs": 849.7,
+          "durationMs": 756.3,
+          "decodedBodyBytes": 2381,
+          "status": 200,
+          "providerFetches": null
+        },
+        {
+          "path": "/api/home-snapshot",
+          "startMs": 93.6,
+          "finishMs": 849.7,
+          "durationMs": 756.1,
+          "decodedBodyBytes": 68275,
+          "status": 200,
+          "providerFetches": null
+        },
+        {
+          "path": "/api/home-bootstrap",
+          "startMs": 93.8,
+          "finishMs": 884.3,
+          "durationMs": 790.5,
+          "decodedBodyBytes": 25536,
+          "status": 200,
+          "providerFetches": null
+        },
+        {
+          "path": "/api/quotes",
+          "startMs": 136.7,
+          "finishMs": 849.6,
+          "durationMs": 712.9,
+          "decodedBodyBytes": 1486,
+          "status": 200,
+          "providerFetches": 0
+        },
+        {
+          "path": "/api/personalized-news",
+          "startMs": 137.1,
+          "finishMs": 1148.1,
+          "durationMs": 1011.0,
+          "decodedBodyBytes": 26885,
+          "status": 200,
+          "providerFetches": null
+        }
+      ]
+    }
+  ],
+  "warmServerFullHeatmap": {
+    "initialFocusedResponses": 13,
+    "completeRefreshing": {
+      "(True, True)": 13
+    },
+    "allInitial60ValidNoStale": true,
+    "followup": "refresh_stopped",
+    "followupResponses": [
+      {
+        "responseMs": 887.523756,
+        "complete": true,
+        "refreshing": false,
+        "counts": {
+          "KR": {
+            "rows": 20,
+            "stale": 0,
+            "retained": 0,
+            "valid": 20
+          },
+          "US": {
+            "rows": 40,
+            "stale": 0,
+            "retained": 0,
+            "valid": 40
+          }
+        }
+      }
+    ],
+    "partial20of20PersistentSymptomReproduced": false
+  },
+  "pathnameHeatmap": {
+    "primaryFirstObservedMs": 604.3999999999069,
+    "apiCalls": [
+      "/api/market-now",
+      "/api/home-snapshot",
+      "/api/home-bootstrap",
+      "/api/activity",
+      "/api/heatmap/full"
+    ],
+    "extraHomeWarmupCallsComparedToHash": [
+      "/api/market-now",
+      "/api/home-bootstrap"
+    ]
+  },
+  "duplicateSameKeyRequests": 0
+}

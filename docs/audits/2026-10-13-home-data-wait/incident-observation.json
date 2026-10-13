@@ -1,0 +1,17 @@
+{
+  "observedAt": "2026-10-13T06:12:53Z",
+  "userReport": "Home index data appeared after about 20 seconds",
+  "operatingRevision": "9824a49e0e8410c35e8bf60880d623f38c4e1f97",
+  "currentHealth": {"status": 200, "ttfbMs": 324.301, "totalMs": 324.452},
+  "currentOrdinaryMarket": {"status": 200, "ttfbMs": 353.335, "totalMs": 353.475, "cacheAgeSec": 217.3, "refreshing": false, "refreshScheduled": true},
+  "recentInstance": "srv-dao4a50473hc73bclej0-hkk78",
+  "recentRestartFailureEvents": 0,
+  "recentCPU1minMax": {"usage": 0.10695822, "limit": 0.15},
+  "recentMemoryLatest": {"bytes": 393412600, "limit": 536870900},
+  "limits": [
+    "Server access logs record response timestamps but not request start or handler duration; the user's exact 20-second phase cannot be attributed from these logs.",
+    "A later healthy cached response does not disprove the user's earlier delay.",
+    "Confirmed source susceptibility: early HTML fetch has no total deadline; cold market request waits all eight providers through a two-worker shared queue and sequential fallback timeouts.",
+    "Controlled held-provider reproductions will establish code-path improvement, not identify the unseen original episode."
+  ]
+}
