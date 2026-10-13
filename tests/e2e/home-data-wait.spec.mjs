@@ -1,11 +1,39 @@
-import { test, expect, noOverflow } from './fixtures.mjs';
-import { quotes, payloadFor, asOf } from './data.mjs';
+import { test, expect, noOverflow, touchable } from './fixtures.mjs';
+import { quotes, payloadFor, asOf, top10History, recommendations } from './data.mjs';
 import { formatKst } from '../../src/dataPresentation.js';
 
 const marketPath = '/api/market-now';
 const marketCalls = qa => qa.calls.filter(row => row.path === marketPath);
 const marketPayload = () => payloadFor(new URL(`https://data.example${marketPath}`));
 const marketPrice = (page, ticker = '^KS11') => page.locator(`#market-card [data-stock-detail="${ticker}"] strong`);
+
+test('preserved deployed TOP10 history remains lazy and returns to verified Home prices', async ({ page, qa }) => {
+  const historyPath = '/static/data/top10_history.json';
+  await page.goto('/#home');
+  await expect(marketPrice(page)).toHaveText('3,500');
+  expect(qa.calls.filter(row => row.path === historyPath)).toHaveLength(0);
+  await page.getByRole('navigation', { name: '주요 메뉴' }).getByRole('button', { name: '분석', exact: true }).click();
+  const entry = page.locator('button[data-tab="history"]');
+  await touchable(entry);
+  await entry.click();
+  await expect(page.locator('.top10h-kpis')).toBeVisible();
+  await expect(page.locator('.top10h-day')).toHaveCount(top10History.days.length);
+  const complete = page.locator('.top10h-day').filter({ hasText: top10History.days[0].tradeDate });
+  await expect(complete.locator('.top10h-coverage')).toHaveText('TOP10 전체');
+  await expect(complete.locator('.top10h-row.is-selected')).toContainText('삼성전자');
+  await expect(complete.locator('.top10h-row.is-selected')).toContainText('PICK');
+  const partial = page.locator('.top10h-day').filter({ hasText: top10History.days[1].tradeDate });
+  await expect(partial.locator('.top10h-coverage')).toHaveText('부분 기록');
+  await page.getByRole('combobox', { name: '기록 필터' }).selectOption('partial');
+  await expect(page.locator('.top10h-day')).toHaveCount(1);
+  await expect(page.locator('.top10h-day')).toContainText(top10History.days[1].tradeDate);
+  expect(qa.calls.filter(row => row.path === historyPath)).toHaveLength(1);
+  await noOverflow(page);
+  await page.getByRole('navigation', { name: '주요 메뉴' }).getByRole('button', { name: '홈', exact: true }).click();
+  await expect(marketPrice(page)).toHaveText('3,500');
+  await expect(page.locator(`#home-watchlist [data-stock-detail="${quotes[0].ticker}"] .watch-price`)).toContainText('103,700원');
+  await noOverflow(page);
+});
 
 test('one held Home market request leaves actual watch prices and snapshot usable', async ({ page, qa }) => {
   let release;
@@ -194,4 +222,42 @@ test('Home preload body timeout cannot start a second budget or replace an expli
   await expect(page.locator('#market-card [data-stock-detail="^KS11"] .quote-asof')).toHaveText(formatKst('2026-10-07T06:31:00Z'));
   expect(marketCalls(qa)).toHaveLength(2);
   await noOverflow(page);
+});
+
+
+test('late optional Home observations cannot move a dated PICK action during its pointer gesture', async ({ page, qa }) => {
+  qa.overrides.set('/api/home-bootstrap', route => route.fulfill({ json: { day: { tradeDate: recommendations[0].recommendedDate, top3: recommendations.slice(0, 3) }, recommendations } }));
+  let release, requested;
+  const held = new Promise(resolve => { release = resolve; });
+  const started = new Promise(resolve => { requested = resolve; });
+  qa.overrides.set('/static/data/screener.json', async route => {
+    requested(); await held;
+    await route.fulfill({ json: payloadFor(new URL('https://data.example/static/data/screener.json')) });
+  });
+  try {
+    await page.goto('/#home');
+    await page.locator('[data-home-changes]').scrollIntoViewIfNeeded();
+    await started;
+    await expect(marketPrice(page)).toHaveText('3,500');
+    await expect(page.locator('[data-home-changes]')).toContainText('전체 수출');
+    const key = `${recommendations[0].recommendedDate}:${recommendations[0].code}`;
+    const action = page.locator(`.home-selection-link[data-feature-target="${key}"]`);
+    await touchable(action);
+    const rect = await action.boundingBox();
+    await page.mouse.move(rect.x + rect.width / 2, rect.y + rect.height / 2);
+    await page.mouse.down();
+    const responseReady = page.waitForResponse(response => new URL(response.url()).pathname.endsWith('/static/data/screener.json'));
+    release();
+    await (await responseReady).finished();
+    // Give the fulfilled response its normal paint opportunity while the user
+    // still holds the button. No loading wait is added before the gesture.
+    await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+    await expect(page.locator('[data-home-changes]')).not.toContainText('거래량 2배 이상');
+    const heldRect = await action.boundingBox();
+    expect(Math.abs(heldRect.y - rect.y)).toBeLessThan(2);
+    await page.mouse.up();
+    await expect(page).toHaveURL(new RegExp('#picks/' + encodeURIComponent(key) + '$'));
+    await expect(page.locator(`[data-pick-key="${key}"] [data-pick-expand]`)).toHaveAttribute('aria-expanded', 'true');
+    await noOverflow(page);
+  } finally { release(); await page.mouse.up().catch(() => {}); }
 });

@@ -1,0 +1,68 @@
+{
+  "recordedAt": "2026-10-13T13:50:10.077267+00:00",
+  "project": "github:shoon94parkk-del/chart-view-toss",
+  "branch": "fix/preserve-render-home-wait-20261013",
+  "integrationParent": "54e72957525cde8c6d99f00da8c3d95852a0d4ef",
+  "preservedLiveFrontend": "f60f83c5e0553947e2d695ababba42baae8cb160",
+  "originalHomeMerge": "f84358d5fe5bdc79a25744669ab005a29b8b7630",
+  "packageVersion": "0.15.1",
+  "nodeVersion": "24.19.0",
+  "ciNodeVersion": "24.21.0",
+  "frontend": {
+    "command": "npm run qa:prepush",
+    "exitCode": 0,
+    "nodePassed": 525,
+    "previewRoutes": 26,
+    "e2eStats": {
+      "startTime": "2026-10-13T13:38:28.316Z",
+      "duration": 669067.368,
+      "expected": 824,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "e2ePassed": 824,
+    "focusedPointerPassed": 16,
+    "relatedLegacySuites": [
+      "analysis_qa",
+      "progressive_qa",
+      "mobile_continuity_qa",
+      "audit_plan_qa",
+      "home_journey_qa"
+    ],
+    "asset": {
+      "path": "/assets/index-DYb6qk9a.js",
+      "bytes": 322228,
+      "sha256": "8e283971ccd42ffb2b3c7a34b450867573623c924ca5e2e62ce67c7b6c6ecaa1"
+    },
+    "relatedLegacyPassed": 5
+  },
+  "priorResults": {
+    "firstHome": {
+      "nodePassed": 519,
+      "e2ePassed": 816
+    },
+    "firstIntegration": {
+      "passed": 819,
+      "failed": 1
+    },
+    "originalFailureReproduction": {
+      "passed": 6,
+      "failed": 2
+    },
+    "deterministicPointerRegressionBeforeFix": {
+      "passed": 0,
+      "failed": 1
+    }
+  },
+  "review": {
+    "independentReview": "no remaining source blockers",
+    "restoredContract": "Late optional Home observations cannot reflow a PICK target while its pointer gesture is active; first lazy module mount is protected without starting data requests early."
+  },
+  "backend": {
+    "mergedAndLiveCommit": "3b0cfec877975a383b61a33dd0f56804bd54cfb9",
+    "pythonPassed": 748,
+    "nodeContractsPassed": 52
+  },
+  "meaning": "Final integrated application source/build in this worktree before documentation/source commit; exact main CI and production live bytes are separate proof."
+}

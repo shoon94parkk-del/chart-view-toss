@@ -1,3 +1,4 @@
+import {deferHomePaint} from './homeGesturePaint.js';
 import {loadExportMomentumSnapshot} from './exportMomentumData.js';
 import {screenerData} from './api.js';
 import {homeChanges} from './insightModel.js';
@@ -7,6 +8,7 @@ export async function mountHomeChanges(host){
  const sources={exports:{value:{},status:'idle',run:0},stocks:{value:{},status:'idle',run:0}};
  function paint(){
   if(!host.isConnected)return;
+  if(deferHomePaint(host,paint))return;
   const element=typeof document==='undefined'?null:document.activeElement;
   const focused=element&&host.contains?.(element)&&element.matches?.('[data-feature-route]')?{route:element.dataset.featureRoute,target:element.dataset.featureTarget,top:element.getBoundingClientRect().top}:null;
   const rows=homeChanges(sources.exports.value,sources.stocks.value);
