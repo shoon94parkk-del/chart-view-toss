@@ -120,7 +120,7 @@ let watchOrderEditing=false;
 let toastTimer=null;
 let homeJourneyStorageReady=false;
 let usageRouteKey='',usageOperation=newUsageOperation(),usageStarted=performance.now();
-const usageScreen=tab=>['home','watch','chart','detail','discover','valuation','macro','news','picks','gurus','exports','heatmap','ideas','more'].includes(tab)?tab:['memory','tools','bands','consensus'].includes(tab)?'analysis':'other';
+const usageScreen=tab=>['home','watch','chart','detail','discover','valuation','macro','news','picks','history','gurus','exports','heatmap','ideas','more'].includes(tab)?tab:['memory','tools','bands','consensus'].includes(tab)?'analysis':'other';
 function reportUsableScreen(screen,operationId=usageOperation,started=usageStarted){
  void trackUsage('screen_load',{operationId,params:{screen,outcome:'success',duration_ms:performance.now()-started}});
 }
@@ -272,7 +272,7 @@ function dataDisclosure(){
 function shell(content,title='차트뷰'){
  document.title=title==='차트뷰'?'차트뷰':`${title} | 차트뷰`;
  const identity=surfaceIdentity(state.tab);
- const secondary=ANALYSIS_ROUTES.has(state.tab)||['valuation','macro','exports','memory','discover','ideas','picks','news','detail','info'].includes(state.tab);
+ const secondary=ANALYSIS_ROUTES.has(state.tab)||['valuation','macro','exports','memory','discover','ideas','picks','history','news','detail','info'].includes(state.tab);
  const navTab=state.tab==='detail'?state.detailOrigin:(secondary?'more':state.tab);
  const leading=secondary?`<button class="icon-button back-button" aria-label="뒤로가기" data-back>${iconSvg('back',22)}</button>`:`<span class="brand-mark">${(state.tab==='home'?iconSvg('spark',18):uiIcon(identity.icon,18))}</span>`;
  const offline=typeof navigator!=='undefined'&&navigator.onLine===false;
@@ -293,7 +293,7 @@ function shareDetails(){
  else if(tab==='gurus')url.hash=`gurus/${state.guruStrategy||'buffett'}`;
  else if(tab==='exports')url.hash=state.exportFocus?`exports/${encodeURIComponent(state.exportFocus)}`:'exports';
  else if(tab!=='home')url.hash=tab;
- const titleByTab={gurus:'거장 투자법 | 차트뷰',home:'차트뷰',chart:'수익률 비교 | 차트뷰',watch:'관심종목 | 차트뷰',valuation:'밸류에이션 | 차트뷰',macro:'경제 지표 | 차트뷰',exports:'수출 데이터 | 차트뷰',memory:'반도체 가격 추적 | 차트뷰',discover:'조건별 종목 찾기 | 차트뷰',heatmap:'시장 히트맵 | 차트뷰',consensus:'실적 전망 | 차트뷰',bands:'역사적 밸류에이션 | 차트뷰',ideas:'투자 아이디어 LAB | 차트뷰',picks:'선정 기록·성과 | 차트뷰',news:'관심종목 뉴스 | 차트뷰',more:'차트뷰',info:'데이터 안내 | 차트뷰',tools:'투자 도구 | 차트뷰'};
+ const titleByTab={gurus:'거장 투자법 | 차트뷰',home:'차트뷰',chart:'수익률 비교 | 차트뷰',watch:'관심종목 | 차트뷰',valuation:'밸류에이션 | 차트뷰',macro:'경제 지표 | 차트뷰',exports:'수출 데이터 | 차트뷰',memory:'반도체 가격 추적 | 차트뷰',discover:'조건별 종목 찾기 | 차트뷰',heatmap:'시장 히트맵 | 차트뷰',consensus:'실적 전망 | 차트뷰',bands:'역사적 밸류에이션 | 차트뷰',ideas:'투자 아이디어 LAB | 차트뷰',picks:'선정 기록·성과 | 차트뷰',history:'TOP10 히스토리 | 차트뷰',news:'관심종목 뉴스 | 차트뷰',more:'차트뷰',info:'데이터 안내 | 차트뷰',tools:'투자 도구 | 차트뷰'};
  return {url:url.toString(),title:tab==='detail'?`${name} (${symbol}) | 차트뷰`:titleByTab[tab]||'차트뷰',text:tab==='detail'?`${name} 종목의 차트와 기업 정보를 확인해보세요.`:'차트뷰에서 시장 데이터와 종목 정보를 확인해보세요.'};
 }
 async function shareCurrent(){
@@ -1685,7 +1685,7 @@ function renderMore(){
  const epoch=viewEpoch;
  document.querySelector('#app').innerHTML=shell(`
    <section class="page-intro more-intro"><h2>분석과 도구</h2><p>종목 찾기부터 기록·비교·시장 근거까지</p></section>
-   <nav class="analysis-category-nav" aria-label="분석 목적 바로가기"><a href="#analysis-find" data-menu-jump="analysis-find">${uiIcon('filter',15)}종목 찾기</a>${SHOW_SPOTLIGHT?'<a href="#analysis-records" data-menu-jump="analysis-records">'+uiIcon('ledger',15)+'선정 기록</a>':''}<a href="#analysis-compare" data-menu-jump="analysis-compare">${uiIcon('compare',15)}종목 비교</a><a href="#analysis-evidence" data-menu-jump="analysis-evidence">${uiIcon('evidence',15)}시장 근거</a></nav>
+   <nav class="analysis-category-nav" aria-label="분석 목적 바로가기"><a href="#analysis-find" data-menu-jump="analysis-find">${uiIcon('filter',15)}종목 찾기</a><a href="#analysis-records" data-menu-jump="analysis-records">${uiIcon('ledger',15)}선정 기록</a><a href="#analysis-compare" data-menu-jump="analysis-compare">${uiIcon('compare',15)}종목 비교</a><a href="#analysis-evidence" data-menu-jump="analysis-evidence">${uiIcon('evidence',15)}시장 근거</a></nav>
    <details class="calculation-guide tab-usage-guide"><summary>각 탭에서는 무엇을 볼 수 있나요?</summary><dl><div><dt>홈</dt><dd>주요 시장과 내 관심종목, 분석 요약</dd></div><div><dt>수익률</dt><dd>최대 6개 종목의 기간 수익률 비교</dd></div><div><dt>관심</dt><dd>기기에 저장한 내 종목 관리</dd></div><div><dt>분석</dt><dd>조건 검색, 선정 기록, 재무·수출·경제 데이터</dd></div></dl></details>
    <section class="menu-group" id="analysis-find"><h3><i class="section-symbol" aria-hidden="true">${uiIcon('filter',18)}</i>종목 찾기</h3><div class="feature-menu">
      <button class="feature-row" data-tab="discover" data-tool-tone="${surfaceIdentity('discover').tone}"><span class="feature-icon yellow">${iconSvg('discover',22)}</span><span><strong>${featureLabel('discover')}</strong><small>조건으로 종목 찾기</small></span><b>${iconSvg('arrow',19)}</b></button>
@@ -1693,9 +1693,10 @@ function renderMore(){
      <button class="feature-row" data-tab="ideas" data-tool-tone="${surfaceIdentity('ideas').tone}"><span class="feature-icon yellow">${iconSvg('ideas',22)}</span><span><strong>투자 아이디어 LAB</strong><small>관찰 패턴과 다음 확인 질문 보기</small></span><b>${iconSvg('arrow',19)}</b></button>
      <button class="feature-row" data-tab="heatmap" data-tool-tone="${surfaceIdentity('heatmap').tone}"><span class="feature-icon coral">${iconSvg('heatmap',22)}</span><span><strong>시장 히트맵</strong><small>업종별 종목 등락 지도</small></span><b>${iconSvg('arrow',19)}</b></button>
    </div></section>
-   ${SHOW_SPOTLIGHT?'<section class="menu-group" id="analysis-records"><h3><i class="section-symbol" aria-hidden="true">'+uiIcon('ledger',18)+'</i>선정 기록 점검</h3><p class="menu-group-copy">과거에 선정한 이유와 이후 결과를 확인해요. 실시간 인기 순위가 아니에요.</p><div class="feature-menu">':''}
-     ${SHOW_SPOTLIGHT?`<button class="feature-row" data-tab="picks" data-tool-tone="${surfaceIdentity('picks').tone}"><span class="feature-icon coral">${iconSvg('picks',22)}</span><span><strong>선정 기록·성과</strong><small>선정 이유·이후 성과·현재 점검 상태</small></span><b>${iconSvg('arrow',19)}</b></button>`:''}
-   ${SHOW_SPOTLIGHT?'</div></section>':''}
+   <section class="menu-group" id="analysis-records"><h3><i class="section-symbol" aria-hidden="true">${uiIcon('ledger',18)}</i>선정 기록 점검</h3><p class="menu-group-copy">그날 제시한 TOP10과 최종 PICK, 선정 이후 성과를 나눠 확인해요.</p><div class="feature-menu">
+     <button class="feature-row" data-tab="history" data-tool-tone="calm"><span class="feature-icon blue">${uiIcon('ledger',22)}</span><span><strong>TOP10 히스토리</strong><small>일자별 TOP10 추천과 최종 PICK 원장</small></span><b>${iconSvg('arrow',19)}</b></button>
+     ${SHOW_SPOTLIGHT?`<button class="feature-row" data-tab="picks" data-tool-tone="${surfaceIdentity('picks').tone}"><span class="feature-icon coral">${iconSvg('picks',22)}</span><span><strong>선정 기록·성과</strong><small>최종 PICK의 선정 이유·이후 성과·현재 상태</small></span><b>${iconSvg('arrow',19)}</b></button>`:''}
+   </div></section>
    <section class="menu-group" id="analysis-compare"><h3><i class="section-symbol" aria-hidden="true">${uiIcon('compare',18)}</i>종목 비교하기</h3><div class="feature-menu">
      <button class="feature-row" data-tab="chart" data-tool-tone="${surfaceIdentity('chart').tone}"><span class="feature-icon blue">${iconSvg('chart',22)}</span><span><strong>수익률 비교</strong><small>최대 6개 종목의 기간 흐름 비교</small></span><b>${iconSvg('arrow',19)}</b></button>
      <button class="feature-row" data-tab="valuation" data-tool-tone="${surfaceIdentity('valuation').tone}"><span class="feature-icon purple">${iconSvg('value',22)}</span><span><strong>밸류에이션</strong><small>같은 재무지표를 종목별로 비교</small></span><b>${iconSvg('arrow',19)}</b></button>
@@ -1826,6 +1827,10 @@ function render(){
  if(state.tab==='picks'&&SHOW_SPOTLIGHT){
    const restoreView=state.restoreScroll!=null;
    renderLazyAnalysis({tab:'picks',title:'선정 기록·성과',load:()=>Promise.all([import('./pickLedger.js'),import('./pickLedger.css')]),mount:([ledger])=>ledger.renderPickLedger({shell,bindNav,displayName,focusKey:state.pickFocusKey,restoreView,viewState:state.pickLedger||(state.pickLedger={})})});
+   return;
+ }
+ if(state.tab==='history'){
+   renderLazyAnalysis({tab:'history',title:'TOP10 히스토리',load:()=>Promise.all([import('./top10HistoryView.js'),import('./top10HistoryView.css')]),mount:([historyView])=>historyView.renderTop10History({shell,bindNav})});
    return;
  }
  if(ANALYSIS_ROUTES.has(state.tab)){
