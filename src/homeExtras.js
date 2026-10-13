@@ -1,3 +1,4 @@
+import {watchHomeGestures} from './homeGesturePaint.js';
 import {uiIcon} from './uiIdentity.js';
 import { recentSelections, selectionCardMarkup } from './valueDiscovery.js';
 import { homeBootstrap, homeSnapshot, homeHeatmap } from './api.js';
@@ -183,6 +184,7 @@ function createSections(marketSection) {
   const revisit=document.querySelector('.saved-research')||document.querySelector('#home-secondary-start')||document.querySelector('.watch-section');
   revisit.insertAdjacentElement('afterend',heatmap);
   const discovery=document.querySelector('#home-discovery-feed');
+  watchHomeGestures(discovery);
   const exportPreview=document.createElement('section');exportPreview.className='home-export-preview home-changes';
   exportPreview.innerHTML='<div class="home-changes-title"><h2><i class="section-symbol" aria-hidden="true">' + uiIcon('evidence',16) + '</i>지금 확인할 변화</h2><p>핵심 숫자만 보고, 필요할 때 상세로 들어가요.</p></div><div class="home-change-grid" data-home-changes></div><button type="button" class="text-button" data-home-change-toggle aria-expanded="false" hidden>변화 더 보기</button><p role="status" data-home-change-status></p><button type="button" class="text-button" data-home-change-retry hidden>변화 자료 다시 확인</button>';
   discovery.prepend(exportPreview);

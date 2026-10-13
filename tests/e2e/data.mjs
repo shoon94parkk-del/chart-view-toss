@@ -67,6 +67,13 @@ export const memoryPrices = {
 };
 export { existing };
 
+export const top10History = { days: [
+  { tradeDate: '2026-10-07', coverage: 'complete', selectedPicks: [{ code: '005930', name: '삼성전자', status: 'user_confirmed' }],
+    top10: [['005930','삼성전자'],['000660','SK하이닉스'],['035420','NAVER'],['005380','현대차'],['068270','셀트리온'],['051910','LG화학'],['006400','삼성SDI'],['000270','기아'],['017670','SK텔레콤'],['055550','신한지주']].map(([code,name],i)=>({rank:i+1,code,name,score:82-i})) },
+  { tradeDate: '2026-10-06', coverage: 'partial', selectedPicks: [],
+    top10: [{ rank: 1, code: '000660', name: 'SK하이닉스', score: 79 }], note: '확인 가능한 당시 기록만 보존' },
+] };
+
 export function payloadFor(url) {
   const path = url.pathname.replace(/^\/backend/, '');
   const tickers = (url.searchParams.get('tickers') || symbol).split(',');
@@ -102,6 +109,7 @@ export function payloadFor(url) {
     '/static/data/pick_monitor.json': monitor,
     '/static/data/screener.json': screener,
     '/static/data/company_context.json': existing.companyContext,
+    '/static/data/top10_history.json': top10History,
   };
   if (!(path in map)) throw new Error(`Unmocked data endpoint: ${path}`);
   return structuredClone(map[path]);

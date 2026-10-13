@@ -1,0 +1,79 @@
+{
+  "recordedAt": "2026-10-13T14:11:15.997267+00:00",
+  "project": "github:shoon94parkk-del/chart-view-toss",
+  "branch": "fix/preserve-render-home-wait-20261013",
+  "integrationParent": "54e72957525cde8c6d99f00da8c3d95852a0d4ef",
+  "preservedLiveFrontend": "f60f83c5e0553947e2d695ababba42baae8cb160",
+  "originalHomeMerge": "f84358d5fe5bdc79a25744669ab005a29b8b7630",
+  "packageVersion": "0.15.1",
+  "nodeVersion": "24.19.0",
+  "ciNodeVersion": "24.21.0",
+  "frontend": {
+    "command": "npm run qa:prepush",
+    "exitCode": 0,
+    "nodePassed": 527,
+    "previewRoutes": 26,
+    "e2eStats": {
+      "startTime": "2026-10-13T13:59:29.877Z",
+      "duration": 670184.115,
+      "expected": 824,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "e2ePassed": 824,
+    "focusedPointerPassed": 16,
+    "relatedLegacySuites": [
+      "analysis_qa",
+      "progressive_qa",
+      "mobile_continuity_qa",
+      "audit_plan_qa",
+      "home_journey_qa",
+      "insight_research_qa"
+    ],
+    "asset": {
+      "path": "/assets/index-BiploiZa.js",
+      "bytes": 322262,
+      "sha256": "0d2f4aff89a06b336e12d792a5c38e26991a0d91f6d394b00c503e4fb31beb1a"
+    },
+    "relatedLegacyPassed": 6
+  },
+  "priorResults": {
+    "firstHome": {
+      "nodePassed": 519,
+      "e2ePassed": 816
+    },
+    "firstIntegration": {
+      "passed": 819,
+      "failed": 1
+    },
+    "originalFailureReproduction": {
+      "passed": 6,
+      "failed": 2
+    },
+    "deterministicPointerRegressionBeforeFix": {
+      "passed": 0,
+      "failed": 1
+    },
+    "initialGestureGuard": {
+      "nodePassed": 525,
+      "e2ePassed": 824,
+      "ciHead": "fbdd393eb9eda2ffe0b070eac1d7dd3d645c78a1",
+      "ciChecksPassed": 8,
+      "ciChecksFailed": 1,
+      "failure": "Unchanged insight_research legacy immediate toggle expected3 visible cards but saw2; corrected application explicit-click scope, not the test."
+    }
+  },
+  "review": {
+    "independentReview": "no remaining source blockers",
+    "restoredContract": "Late optional Home observations cannot reflow a PICK target while its pointer gesture is active; first lazy module mount is protected without starting data requests early.",
+    "explicitToggle": "Already-dispatched toggle remains immediate once all pointers release; another held pointer still protects layout. Actual runtime11/11 tests passed; original mobile test unchanged."
+  },
+  "backend": {
+    "mergedAndLiveCommit": "3b0cfec877975a383b61a33dd0f56804bd54cfb9",
+    "pythonPassed": 748,
+    "nodeContractsPassed": 52
+  },
+  "meaning": "Final integrated application source/build in this worktree before documentation/source commit; exact main CI and production live bytes are separate proof.",
+  "testedSourceParent": "fbdd393eb9eda2ffe0b070eac1d7dd3d645c78a1"
+}
