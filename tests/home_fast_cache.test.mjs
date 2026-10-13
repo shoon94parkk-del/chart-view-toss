@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import { readHomeFast, writeHomeFast, earlyHome } from '../src/homeFastCache.js';
+import { readHomeFast, writeHomeFast, adoptEarlyHome } from '../src/homeFastCache.js';
+import { createRequestClient } from '../src/requestClient.js';
 
 function makeStorage(){
   const data=new Map();
@@ -32,12 +33,15 @@ test('Home fast cache ignores expired data',()=>{
 });
 
 test('early Home preload is consumed before fallback network work',async()=>{
-  let fallbackCalls=0;
+  let fallbackCalls=0;const base='https://data.example';
   globalThis.__chartviewHomeWarm={
-    market:{startedAt:Date.now(),promise:Promise.resolve({results:[{ticker:'FAST'}]})},
+    market:{base,path:'/api/market-now',startedAt:Date.now(),settledAt:Date.now(),status:'fulfilled',promise:Promise.resolve({results:[{ticker:'FAST'}]})},
   };
-  const value=await earlyHome('market',async()=>{fallbackCalls+=1;return {results:[]};});
+  const request=createRequestClient({base,fetchImpl:async()=>{fallbackCalls+=1;return Response.json({results:[]});}});
+  adoptEarlyHome(request,base);
+  const value=await request('/api/market-now',{ttlMs:15000});
   assert.equal(value.results[0].ticker,'FAST');
   assert.equal(fallbackCalls,0);
+  assert.equal(globalThis.__chartviewHomeWarm.market,undefined);
   delete globalThis.__chartviewHomeWarm;
 });

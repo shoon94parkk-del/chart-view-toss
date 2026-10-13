@@ -18,7 +18,7 @@ async function renderHome(watchlist) {
     savedResearchHtml: () => '<section data-saved-research>저장한 조사</section>', valueEntriesMarkup: () => '<section class="home-value-entries">기존 핵심 입구</section>',
     loadingIndicator: () => '확인 중', bindNav: noop, cleanupChart: noop, openHomeSearch: noop, bindHomeMarketToggle: noop,
     readHomeFast: () => null, seedWatchQuoteCache: noop, rememberLiveQuotes: noop, getLiveQuote: () => null,
-    paintHomeWatch: noop, paintHomeBrief: noop, paintHomeMarket: noop, writeHomeFast: noop, saveWatchQuoteCache: noop,
+    paintHomeWatch: noop, paintHomeBrief: noop, paintHomeMarket: noop, persistHomeMarket:noop, writeHomeFast: noop, saveWatchQuoteCache: noop, HOME_DATA_TIMEOUT_MS:5000,
     mergeRowsWithLive: rows => rows, newsCard: () => '',
     marketNow: async () => ({ results: [] }), quoteSnapshots: async () => ({ results: [] }),
     homeSnapshot: async () => ({ heatmap: { results: [] } }), personalizedNews: async () => ({ items: [] }),

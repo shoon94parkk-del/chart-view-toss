@@ -120,7 +120,8 @@ async function pullMarketNow(){
   marketBusy=true;
   try{
     const payload=await marketNowLive();
-    if(canRun()&&surface==='home'&&Array.isArray(payload?.results)&&payload.results.length){
+    // An empty market response can settle pending indices as confirmed errors.
+    if(canRun()&&surface==='home'&&Array.isArray(payload?.results)){
       document.dispatchEvent(new CustomEvent('chartview:market-now-live',{detail:payload}));
     }
   }catch{}

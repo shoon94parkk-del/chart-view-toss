@@ -37,14 +37,54 @@
       const hash = location.hash || '#home';
       if (hash !== '#home' && !hash.startsWith('#home?')) return;
       const base = 'https://chart-view-pkv8.onrender.com';
-      const startedAt = Date.now();
-      const get = (path) => fetch(base + path, { headers: { Accept: 'application/json' } })
-        .then((response) => response.ok ? response.json() : null)
-        .catch(() => null);
+      const get = (path) => {
+        const controller = new AbortController();
+        const entry = { base, path, startedAt: Date.now(), settledAt: null, status: 'pending' };
+        const startedTick = performance.now();
+        const failure = (code, status = null) => Object.assign(new Error(code), { code, status });
+        let timer, timedOut = false, rejectDeadline, deadlineTick, settledTick;
+        const deadline = new Promise((_, reject) => { rejectDeadline = reject; });
+        const expire = () => {
+          timedOut = true;
+          controller.abort();
+          rejectDeadline(failure('timeout'));
+        };
+        entry.rebudget = (milliseconds) => {
+          if (entry.status !== 'pending') return settledTick - startedTick <= milliseconds;
+          if (timedOut) return false;
+          deadlineTick = Math.min(deadlineTick ?? Infinity, startedTick + milliseconds);
+          clearTimeout(timer);
+          timer = setTimeout(expire, Math.max(0, deadlineTick - performance.now()));
+          return true;
+        };
+        const checkDeadline = () => {
+          if (timedOut || performance.now() >= deadlineTick) { expire(); throw failure('timeout'); }
+        };
+        entry.rebudget(5000);
+        const transport = (async () => {
+          let response;
+          try { response = await fetch(base + path, { headers: { Accept: 'application/json' }, signal: controller.signal }); }
+          catch { throw failure(timedOut ? 'timeout' : 'network'); }
+          checkDeadline();
+          if (!response.ok) throw failure(response.status === 429 ? 'rate_limited' : 'http', response.status);
+          let value;
+          try { value = await response.json(); }
+          catch { throw failure(timedOut ? 'timeout' : 'invalid_json'); }
+          checkDeadline();
+          return value;
+        })();
+        entry.promise = Promise.race([transport, deadline]).then(value => {
+          entry.status = 'fulfilled'; entry.settledAt = Date.now(); settledTick = performance.now(); return value;
+        }, error => {
+          entry.status = 'rejected'; entry.settledAt = Date.now(); settledTick = performance.now(); throw error;
+        }).finally(() => clearTimeout(timer));
+        entry.promise.catch(() => {});
+        return entry;
+      };
       window.__chartviewHomeWarm = {
-        market: { startedAt, promise: get('/api/market-now') },
-        snapshot: { startedAt, promise: get('/api/home-snapshot') },
-        bootstrap: { startedAt, promise: get('/api/home-bootstrap') },
+        market: get('/api/market-now'),
+        snapshot: get('/api/home-snapshot'),
+        bootstrap: get('/api/home-bootstrap'),
       };
     })();
   </script>

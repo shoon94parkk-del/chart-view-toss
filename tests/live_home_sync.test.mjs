@@ -10,6 +10,9 @@ import {
   activitySurface,
   mergeLiveRows,
   pollDelayForVisitor,
+  setLiveSurface,
+  startHomeLiveSync,
+  stopHomeLiveSync,
 } from '../src/liveHomeSync.js';
 
 test('Home live polling uses lightweight intervals and route surfaces',()=>{
@@ -60,4 +63,34 @@ test('first Home paint is protected from immediate live/market fetch contention'
   assert.match(source,/initial\?INITIAL_HOME_LIVE_DELAY_MS/);
   assert.match(source,/initial\?INITIAL_HOME_MARKET_DELAY_MS/);
   assert.doesNotMatch(source,/changed\|\|next==='home'/);
+});
+
+test('scheduled market sync dispatches empty terminal errors without treating empty Home live quotes as data',async()=>{
+  const keys=['document','window','navigator','fetch','setTimeout','clearTimeout'];
+  const originals=new Map(keys.map(key=>[key,Object.getOwnPropertyDescriptor(globalThis,key)]));
+  const doc=Object.assign(new EventTarget(),{visibilityState:'visible'}),win=new EventTarget();
+  const timers=new Map(),marketEvents=[],liveEvents=[];
+  const terminal={results:[],refreshing:false,errors:[{ticker:'^KS11',message:'provider unavailable'}]};
+  let id=0;
+  const values={document:doc,window:win,navigator:{onLine:true},
+    fetch:async url=>Response.json(String(url).includes('/api/market-now')?terminal:{results:[]}),
+    setTimeout:(callback,delay)=>{timers.set(++id,{callback,delay});return id;},
+    clearTimeout:timer=>timers.delete(timer)};
+  for(const key of keys)Object.defineProperty(globalThis,key,{value:values[key],writable:true,configurable:true});
+  doc.addEventListener('chartview:market-now-live',event=>marketEvents.push(event.detail));
+  doc.addEventListener('chartview:home-live',event=>liveEvents.push(event.detail));
+  const fire=async delay=>{
+    const [key,timer]=[...timers].find(([,timer])=>timer.delay===delay);
+    timers.delete(key);timer.callback();await new Promise(resolve=>setImmediate(resolve));
+  };
+  try{
+    setLiveSurface('home');startHomeLiveSync('qa-local-sync');
+    await fire(INITIAL_HOME_MARKET_DELAY_MS);
+    assert.deepEqual(marketEvents,[terminal]);
+    await fire(INITIAL_HOME_LIVE_DELAY_MS);
+    assert.deepEqual(liveEvents,[]);
+  }finally{
+    stopHomeLiveSync();
+    for(const key of keys){const descriptor=originals.get(key);if(descriptor)Object.defineProperty(globalThis,key,descriptor);else delete globalThis[key];}
+  }
 });

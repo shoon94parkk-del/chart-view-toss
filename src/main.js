@@ -26,7 +26,7 @@ import packageInfo from '../package.json';
 import { finiteNumber } from './analysisData.js';
 import { marketNowLive } from './api.js';
 import { loadChartRuntime } from './chartRuntime.js';
-import { API_BASE, quoteSnapshots, quoteSnapshotsLive, compareStocks, marketNow, homeSnapshot, searchStocks, valuationStocks, macroData, homeInsights, personalizedNews, screenerData, companyContextData, businessReportData, financialHistoryData, relationshipEvidenceData } from './api.js';
+import { API_BASE, HOME_DATA_TIMEOUT_MS, quoteSnapshots, quoteSnapshotsLive, compareStocks, marketNow, homeSnapshot, searchStocks, valuationStocks, macroData, homeInsights, personalizedNews, screenerData, companyContextData, businessReportData, financialHistoryData, relationshipEvidenceData } from './api.js';
 import { applyRuntimeClass, haptic, openExternal, syncNativeBackHandler, closeMiniApp, isAppsInTossRuntime } from './tossBridge.js';
 import { openStockSelector, closeStockSelector, formatSelectedStockLabel } from './stockSelector.js';
 import { initializeStorage, readStored, writeStored, clearStored, getActivityVisitorId, HOME_JOURNEY_KEY } from './storage.js';
@@ -140,6 +140,8 @@ let homeMarketCached=false;
 let homeMarketExtraPromise=null;
 let homeMarketExtrasPending=false;
 let homeMarketRetryPending=false;
+let homeMarketPendingSymbols=[];
+let homeMarketFailedSymbols=[];
 const scrollPositions=new Map();
 // A feature deep link has no app-owned history entry to return to.
 let navigationDepth=0;
@@ -436,34 +438,44 @@ function paintHomeMarket(market,{allowError=true,cached=homeMarketCached}={}){
  if(!host)return false;
  if(market){
    homeMarketCached=cached;
-   // Primary live refreshes omit optional indicators; retain their dated observations.
    const incoming=Array.isArray(market.results)?market.results:[];
+   const refreshing=market.refreshing||market.refreshScheduled;
+   const failed=new Set((Array.isArray(market.errors)?market.errors:[]).map(error=>String(error?.ticker||'').toUpperCase()));
+   if(market!==homeMarketPayload){
+     homeMarketPendingSymbols=refreshing?HOME_MARKET_PRIMARY.filter(item=>!failed.has(item.symbol)&&!incoming.some(row=>String(row.ticker||'').toUpperCase()===item.symbol&&finiteNumber(row.price)!==null)).map(item=>item.symbol):[];
+     homeMarketFailedSymbols=HOME_MARKET_PRIMARY.filter(item=>failed.has(item.symbol)).map(item=>item.symbol);
+   }
    rememberLiveQuotes(incoming,{priority:20});
    const included=new Set(incoming.map(row=>String(row.ticker||'').toUpperCase()));
-   const extras=(homeMarketPayload?.results||[]).filter(row=>HOME_MARKET_EXTRA.some(item=>item.symbol===String(row.ticker||'').toUpperCase())&&!included.has(String(row.ticker||'').toUpperCase()));
-   homeMarketPayload={...market,results:[...incoming,...extras]};
+   // An owned refresh may finish only some primary indices. Keep each omitted
+   // dated observation, alongside optional indicators omitted by live refreshes.
+   const retained=(homeMarketPayload?.results||[]).filter(row=>!included.has(String(row.ticker||'').toUpperCase())&&(HOME_MARKET_EXTRA.some(item=>item.symbol===String(row.ticker||'').toUpperCase())||(refreshing||failed.has(String(row.ticker||'').toUpperCase()))&&HOME_MARKET_PRIMARY.some(item=>item.symbol===String(row.ticker||'').toUpperCase())));
+   homeMarketPayload={...market,results:mergeRowsWithLive([...incoming,...retained])};
  }
  const rows=Array.isArray(homeMarketPayload?.results)?homeMarketPayload.results:[];
  const byTicker=new Map(rows.map(row=>[String(row.ticker||'').toUpperCase(),row]));
  const primary=HOME_MARKET_PRIMARY.map(item=>({item,row:byTicker.get(item.symbol)})).filter(x=>finiteNumber(x.row?.price)!==null);
  const time=document.querySelector('#market-time');
  const toggle=document.querySelector('#market-expand');
- if(primary.length){
-   if(time)time.textContent=homeMarketCached?'이전 저장 시세 · 새 시세 확인 중':'각 지표의 실제 기준 시각';
-   const primaryGrid=`<div class="market-grid">${HOME_MARKET_PRIMARY.map((item,i)=>marketCard(item,byTicker.get(item.symbol),i,{pending:homeMarketRetryPending})).join('')}</div>`;
-   const partialNote=primary.length<HOME_MARKET_PRIMARY.length?`<div class="market-partial-note" role="status">${homeMarketRetryPending?loadingIndicator('누락된 시장 지표를 다시 확인하고 있어요'):'일부 시장 지표가 제공되지 않았어요.'}<button type="button" data-retry-market-missing ${homeMarketRetryPending?'disabled':''}>시장 지표 다시 확인</button></div>`:'';
+ const pendingMissing=homeMarketPendingSymbols.length>0;
+ const failedPrimary=homeMarketFailedSymbols.length>0;
+ if(primary.length||pendingMissing||homeMarketRetryPending){
+   if(time)time.textContent=homeMarketCached?'이전 저장 시세 · 새 시세 확인 중':pendingMissing?'새 시장 지표 확인 중 · 표시된 시세의 기준 시각':failedPrimary?'지표 갱신 실패 · 표시된 시세의 기준 시각':'각 지표의 실제 기준 시각';
+   const primaryGrid=`<div class="market-grid">${HOME_MARKET_PRIMARY.map((item,i)=>marketCard(item,byTicker.get(item.symbol),i,{pending:homeMarketRetryPending||homeMarketPendingSymbols.includes(item.symbol)})).join('')}</div>`;
+   const failedNote=failedPrimary?'일부 지표 갱신을 확인하지 못했어요. 표시된 시세는 이전 기준을 유지해요.':'';
+   const partialNote=primary.length<HOME_MARKET_PRIMARY.length||pendingMissing||failedPrimary?`<div class="market-partial-note" role="status">${homeMarketRetryPending?loadingIndicator('누락된 시장 지표를 다시 확인하고 있어요'):pendingMissing?'지수 응답이 지연되고 있어요. 나머지 지표를 확인 중이에요.'+failedNote:failedNote||'일부 시장 지표가 제공되지 않았어요.'}<button type="button" data-retry-market-missing ${homeMarketRetryPending?'disabled':''}>시장 지표 다시 확인</button></div>`:'';
    const extraMissing=HOME_MARKET_EXTRA.some(item=>finiteNumber(byTicker.get(item.symbol)?.price)===null);
    const extraGrid=homeMarketExpanded?`<div class="market-extra-wrap"><div class="market-extra-grid">${HOME_MARKET_EXTRA.map((item,i)=>marketCard(item,byTicker.get(item.symbol),i+4,{extra:true,pending:homeMarketExtrasPending})).join('')}</div><p class="market-extra-note">미 10년물·VIX·WTI·원/달러 · 직전 종가 대비</p>${homeMarketExtrasPending?loadingIndicator('보조 시장 지표를 확인하고 있어요'):extraMissing?'<div class="market-partial-note" role="status">일부 보조 지표를 확인하지 못했어요.<button type="button" data-retry-market-extra>보조 지표 다시 확인</button></div>':''}</div>`:'';
    host.innerHTML=primaryGrid+partialNote+extraGrid;
    host.querySelector('[data-retry-market-missing]')?.addEventListener('click',retryHomeMarket);
    host.querySelector('[data-retry-market-extra]')?.addEventListener('click',()=>ensureHomeMarketExtras({force:true}));
    if(toggle){
-     toggle.hidden=false;
+     toggle.hidden=!primary.length;
      toggle.setAttribute('aria-expanded',String(homeMarketExpanded));
      toggle.innerHTML=homeMarketExpanded?`지표 접기 <span>⌃</span>`:`지표 더 보기 <span>⌄</span>`;
    }
    bindNav();
-   return true;
+   return primary.length>0;
  }
  if(toggle)toggle.hidden=true;
  if(!allowError)return false;
@@ -476,19 +488,27 @@ function mergeHomeMarketRows(extraRows){
  const base=Array.isArray(homeMarketPayload?.results)?homeMarketPayload.results:[];
  const map=new Map(base.map(row=>[String(row.ticker||'').toUpperCase(),row]));
  (extraRows||[]).forEach(row=>{if(row?.ticker)map.set(String(row.ticker).toUpperCase(),row);});
- homeMarketPayload={...(homeMarketPayload||{}),results:[...map.values()]};
+ rememberLiveQuotes(extraRows,{priority:20});
+ homeMarketPayload={...(homeMarketPayload||{}),results:mergeRowsWithLive([...map.values()])};
  return homeMarketPayload;
+}
+function persistHomeMarket(){
+ const rows=homeMarketPayload?.results||[];
+ const valid=HOME_MARKET_PRIMARY.filter(item=>rows.some(row=>String(row.ticker||'').toUpperCase()===item.symbol&&finiteNumber(row.price)!==null)).length;
+ // Pending empty/partial responses must not replace a previously complete
+ // device snapshot. Retained valid rows already carry their original dates.
+ if(valid&&(!(homeMarketPayload.refreshing||homeMarketPayload.refreshScheduled)||valid===HOME_MARKET_PRIMARY.length))writeHomeFast('market',{...homeMarketPayload,results:mergeRowsWithLive(rows)});
 }
 async function retryHomeMarket(){
  if(homeMarketRetryPending)return;
  homeMarketRetryPending=true;
  const epoch=viewEpoch;
  const host=document.querySelector('#market-card');
- if(!paintHomeMarket(homeMarketPayload,{allowError:false})&&host)host.innerHTML=loadingIndicator('시장 지표를 다시 확인하고 있어요');
+ if(!paintHomeMarket(homeMarketPayload,{allowError:false})&&host&&!homeMarketPendingSymbols.length)host.innerHTML=loadingIndicator('시장 지표를 다시 확인하고 있어요');
  try{
-   const payload=await marketNowLive();
+   const payload=await marketNowLive({fresh:true});
    if(epoch!==viewEpoch)return;
-   if(payload?.results?.length){homeMarketCached=false;mergeHomeMarketRows(payload.results);writeHomeFast('market',homeMarketPayload);}
+   if(Array.isArray(payload?.results)){paintHomeMarket(payload,{allowError:false,cached:false});persistHomeMarket();}
  }catch{/* Retain available observations and a retry action. */}
  finally{homeMarketRetryPending=false;if(state.tab==='home')paintHomeMarket(homeMarketPayload,{allowError:true});}
 }
@@ -654,13 +674,13 @@ async function renderHome(){
  jobs.push(settle(marketNow(),marketRes=>{
  const market=marketRes.status==='fulfilled'?marketRes.value:null;
  if(market){
-   writeHomeFast('market',market);
    paintHomeMarket(market,{allowError:true,cached:false});
+   persistHomeMarket();
    homeReady(market.results?.filter(row=>HOME_MARKET_PRIMARY.some(item=>item.symbol===row?.ticker)));
  }else if(!cachedMarket)paintHomeMarket(null,{allowError:true});
  else {const time=document.querySelector('#market-time');if(time)time.textContent='시세 갱신 실패 · 이전 저장 시세';}
  }));
- jobs.push(settle(watchSymbols.length?quoteSnapshots(watchSymbols):Promise.resolve({results:[]}),watchRes=>{
+ jobs.push(settle(watchSymbols.length?quoteSnapshots(watchSymbols,{timeoutMs:HOME_DATA_TIMEOUT_MS}):Promise.resolve({results:[]}),watchRes=>{
  const payload=watchRes.status==='fulfilled'?watchRes.value:null;
  const fetchedQuotes=payload?.results||[];
  rememberLiveQuotes(fetchedQuotes,{priority:40});
@@ -1851,9 +1871,9 @@ document.addEventListener('chartview:home-live',(event)=>{
 document.addEventListener('chartview:market-now-live',(event)=>{
  if(state.tab!=='home')return;
  const payload=event.detail;
- if(!Array.isArray(payload?.results)||!payload.results.length)return;
- writeHomeFast('market',payload);
- paintHomeMarket(payload,{allowError:false,cached:false});
+ if(!Array.isArray(payload?.results))return;
+ paintHomeMarket(payload,{allowError:true,cached:false});
+ persistHomeMarket();
  bindHomeMarketToggle();
 });
 async function startApp(){

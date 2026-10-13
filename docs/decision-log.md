@@ -1,5 +1,9 @@
 # Chart View Toss decision log
 
+## 2026-10-13 — Bound the original Home transport and publish available indexes
+
+Reuse the HTML Home request through the existing requestClient pending/cache owner; include headers/body within one monotonic5s budget from the original start. Do not restart that budget with automatic fallback or cache late completion. Home watch initial requests receive5s; non-Home ordinary defaults remain12s. Existing canonical liveQuoteStore supplies displayed/persisted market rows so newer detail quotes cannot roll back. Pending market payloads are not completion TTL cache entries or successful empty device snapshots. Distinguish confirmed failures per ticker from pending extras, retain actual dated prices, and use fresh=true only for explicit market retry; ordinary polling/cadence stay unchanged. Shared backend publishes per-row and returns ordinary cold readiness within2s while the same owner continues8 providers. Preserve TTL/concurrency/source semantics; controlled20s improvement is not exact user incident attribution or all-index SLA. See [evidence and release record](HOME_DATA_WAIT_2026-10-13.md).
+
 Append-only high-risk decisions.
 
 ## 2026-09-22 — Durable project memory

@@ -16,6 +16,9 @@ Last updated: 2026-09-22
 - Detail in-page shortcuts must scroll within the current detail route; they must not replace the hash route or native back stack.
 
 ## Data/loading
+
+- Home HTML preload and its module consumer share one pending/cache owner and original monotonic5s headers/body deadline. Failed preload must not silently start a second request budget; explicit retry can start a new one.
+- Pending empty/partial market responses do not become completed success TTL cache entries or erase a valid dated device snapshot. Confirmed ticker failures differ from pending; newer canonical market observations win for both DOM and device storage.
 - API timeout/retry/offline states remain visible and recoverable.
 - Late/stale responses cannot overwrite a newer route/selection.
 - Partial failures do not blank unrelated valid sections.
