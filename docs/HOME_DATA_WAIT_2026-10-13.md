@@ -66,4 +66,13 @@
 
 실제 늦은 screener 응답을 pointer down 사이에 전달하는 브라우저 회귀는 수정 전 실패했다. 수정 후 신규 회귀와 기존 PICK 날짜/필터/부재 키 이동을4프로젝트에서각2회, 총16/16 통과했다. 실제 runtime Node9/9은 클릭 종료 전 응답·cancel·끊어진 host·다른 영역 pointer·재마운트·첫 lazy 진입을 검사한다. 임시 클릭 계측은 제품/test source에 남기지 않았다.
 
-최종 통합 전체 QA는 Node525/build26/E2E206×4=824 전부 통과했다. 실패·skip·flaky0이며 재시도는0이었다. [통합 검증 요약](audits/2026-10-13-home-data-wait/integrated-qa.json)을 따로 보존한다. 통합 자산은 `index-DYb6qk9a.js`/322,228bytes/SHA-256 `8e283971ccd42ffb2b3c7a34b450867573623c924ca5e2e62ce67c7b6c6ecaa1`이다. 관련 기존 analysis/progressive/mobile_continuity/audit_plan/home_journey QA5종도 전부 통과했다. 정확한 main CI·운영 배포 결과는 후속 공개 기록으로 연결한다.
+첫 gesture 보호 통합 전체 QA는 Node525/build26/E2E206×4=824 전부 통과했다. 실패·skip·flaky0이며 재시도는0이었다. [통합 검증 요약](audits/2026-10-13-home-data-wait/integrated-qa.json)을 따로 보존한다. 통합 자산은 `index-DYb6qk9a.js`/322,228bytes/SHA-256 `8e283971ccd42ffb2b3c7a34b450867573623c924ca5e2e62ce67c7b6c6ecaa1`이다. 관련 기존 analysis/progressive/mobile_continuity/audit_plan/home_journey QA5종도 전부 통과했다. 정확한 main CI·운영 배포 결과는 후속 공개 기록으로 연결한다.
+
+
+## 명시 펼치기 계약 유지
+
+첫 gesture 보호 head `fbdd393`의 PR CI는 네 브라우저·Node·AIT·API·audit8검사가 통과했고 기존 모바일 QA1검사가 실패했다. `insight_research_qa.mjs`의 사용자 클릭 직후 변화 카드3개 표시 assertion은2개를 관찰했다. 보호 범위가 명시 펼치기까지 다음 task로 미룬 것이 원인이다. 이 기존 테스트의 조건이나 기다림을 변경하지 않았다.
+
+모든 pointer가 해제되고 이미 click이 dispatch된 명시 펼치기만 즉시 paint한다. 다른 pointer가 여전히 눌려 있거나 데이터 응답만 도착한 경우에는 기존 보류를 유지한다. 즉시 반영한 host의 이전 queued paint도 지운다. 기존 모바일 검사는 변경 없이320/390px 모두 통과했고 실제 runtime Node11/11에 즉시 펼치기·다른 pointer 보호 회귀를 추가했다. 최종 source의 전체 prepush는 Node527/build26/E2E824 전부 통과했다. 실패·skip·flaky0, 재시도0이다. 관련 기존 QA6종(기존5종+insight_research)도 전부 통과했다. 앞선525/824 기록은 첫 gesture 보호 source에 해당한다.
+
+최종 통합 main 자산은 `index-BiploiZa.js`/322,262bytes/SHA-256 `0d2f4aff89a06b336e12d792a5c38e26991a0d91f6d394b00c503e4fb31beb1a`이다. 실제 직전 운영 f60 자산317,848bytes 대비 약1.4% 증가하며 번들 감소로 설명하지 않는다. 정확한 운영 제공 bytes를 후속 배포 기록에서 대조한다.

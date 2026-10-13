@@ -150,3 +150,42 @@ test('early Home gesture tracking protects a pointer already held when the lazy 
  h.flush();
  assert.match(nodes['data-home-changes'].innerHTML,/전체 수출.*거래량 2배 이상/s);
 });
+
+test('explicit Home observation toggle stays synchronous after release while unsolicited source paint stays deferred',async()=>{
+ const h=pointerHarness(),{host,nodes}=h.makeHost(),mounted=h.context.mountHomeChanges(host);
+ h.requests.exports[0].resolve(exportObservation);await drain();
+ const before=h.snapshot(nodes);h.dispatch('pointerdown');
+ h.requests.stocks[0].resolve(stockObservation);await mounted;
+ h.dispatch('pointerup');
+ assert.equal(h.snapshot(nodes),before,'the actual late source remains blocked through pointer release');
+ h.flush();
+ const toggle=nodes['data-home-change-toggle'];
+ assert.equal(toggle.hidden,false);
+ assert.match(nodes['data-home-changes'].innerHTML,/home-change-more[^>]*hidden/,'the third observation starts collapsed');
+ h.dispatch('pointerdown');h.dispatch('pointerup');
+ toggle.onclick();
+ assert.equal(toggle['aria-expanded'],'true','the already-dispatched explicit click takes effect synchronously');
+ assert.doesNotMatch(nodes['data-home-changes'].innerHTML,/home-change-more[^>]*hidden/);
+ assert.equal((nodes['data-home-changes'].innerHTML.match(/<article class="home-change-card/g)||[]).length,3);
+ h.flush();
+ assert.equal(toggle['aria-expanded'],'true','later queued work keeps the user selection');
+ assert.doesNotMatch(nodes['data-home-changes'].innerHTML,/home-change-more[^>]*hidden/);
+ assert.equal(h.requests.exports.length,1);assert.equal(h.requests.stocks.length,1,'toggle never starts a new provider request');
+ for(const type of ['pointerdown','pointerup','pointercancel'])assert.equal(h.listeners.get(type)?.length,1);
+});
+
+test('an explicit observation toggle cannot reflow another PICK pointer that remains held',async()=>{
+ const h=pointerHarness(),{host,nodes}=h.makeHost(),mounted=h.context.mountHomeChanges(host);
+ h.requests.exports[0].resolve(exportObservation);h.requests.stocks[0].resolve(stockObservation);await mounted;
+ const before=h.snapshot(nodes),toggle=nodes['data-home-change-toggle'];
+ h.dispatch('pointerdown',{pointerId:1});h.dispatch('pointerdown',{pointerId:2});
+ h.dispatch('pointerup',{pointerId:2});toggle.onclick();
+ assert.equal(h.snapshot(nodes),before,'the second pointer click cannot move the first pointer target');
+ assert.equal(h.timers.length,0,'one pointer release cannot flush while the other remains active');
+ h.dispatch('pointerup',{pointerId:1});
+ assert.equal(h.snapshot(nodes),before,'the final release still preserves its pending click target');
+ h.flush();
+ assert.equal(toggle['aria-expanded'],'true','the explicit choice is published after all held pointers release');
+ assert.doesNotMatch(nodes['data-home-changes'].innerHTML,/home-change-more[^>]*hidden/);
+ assert.equal(h.requests.exports.length,1);assert.equal(h.requests.stocks.length,1);
+});

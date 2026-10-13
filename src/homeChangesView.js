@@ -6,9 +6,9 @@ const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 export async function mountHomeChanges(host){
  let expanded=false;
  const sources={exports:{value:{},status:'idle',run:0},stocks:{value:{},status:'idle',run:0}};
- function paint(){
+ function paint(fromClick=false){
   if(!host.isConnected)return;
-  if(deferHomePaint(host,paint))return;
+  if(deferHomePaint(host,paint,fromClick))return;
   const element=typeof document==='undefined'?null:document.activeElement;
   const focused=element&&host.contains?.(element)&&element.matches?.('[data-feature-route]')?{route:element.dataset.featureRoute,target:element.dataset.featureTarget,top:element.getBoundingClientRect().top}:null;
   const rows=homeChanges(sources.exports.value,sources.stocks.value);
@@ -47,6 +47,6 @@ export async function mountHomeChanges(host){
  }
  host.querySelector('[data-home-change-retry]').onclick=()=>void load(Object.keys(sources).filter(key=>sources[key].status==='error'),true);
  const toggle=host.querySelector('[data-home-change-toggle]');
- if(toggle)toggle.onclick=()=>{expanded=!expanded;paint();};
+ if(toggle)toggle.onclick=()=>{expanded=!expanded;paint(true);};
  await load(Object.keys(sources));
 }

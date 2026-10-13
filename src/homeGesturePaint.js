@@ -29,9 +29,14 @@ export function watchHomeGestures(host){
  }
  return state;
 }
-export function deferHomePaint(host,paint){
+export function deferHomePaint(host,paint,fromClick=false){
  const state=watchHomeGestures(host);
- if(!state||(!state.pointers.size&&!state.scheduled))return false;
+ if(!state)return false;
+ // An explicit click has its target already resolved. Preserve its immediate
+ // toggle contract, while protecting any other pointer still held in the feed.
+ if(!state.pointers.size&&(fromClick||!state.scheduled)){
+  state.pending.delete(host);return false;
+ }
  state.pending.set(host,paint);
  return true;
 }
