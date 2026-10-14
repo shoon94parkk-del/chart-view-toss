@@ -6,7 +6,7 @@ const dateValue=value=>Date.parse(`${value}T00:00:00+09:00`)||0;
 const formatPrice=value=>positivePrice(value)===null?'—':Math.round(Number(value)).toLocaleString('ko-KR')+'원';
 const formatReturn=value=>finiteReturn(value)===null?'—':`${Number(value)>0?'+':''}${Number(value).toFixed(2)}%`;
 const tone=value=>finiteReturn(value)===null?'missing':Number(value)>0?'up':Number(value)<0?'down':'flat';
-const selectedKeys=day=>new Set((day.selectedPicks||[]).flatMap(p=>[p.code,p.name,p.symbol].filter(Boolean).map(String));
+const selectedKeys=day=>new Set((day.selectedPicks||[]).flatMap(p=>[p.code,p.name,p.symbol].filter(Boolean)).map(String));
 const selected=(day,row)=>{const keys=selectedKeys(day);return keys.has(String(row.code||''))||keys.has(String(row.name||''))||keys.has(String(row.symbol||''));};
 const latestDate=()=>{
  const parts=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());
