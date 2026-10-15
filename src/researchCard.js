@@ -72,6 +72,7 @@ export function mountResearchCard(host,options){
   selectedPeer=null;sequence++;result.innerHTML='';result.setAttribute('aria-busy','false');
   host.querySelector('#research-peer-selection').textContent='선택하지 않으면 이전 실적과 비교해요.';
   host.querySelector('[data-research-clear-peer]').hidden=true;
+  saveState.textContent=matchesSaved(input.value,selectedPeer)?'저장한 질문과 같은 내용이에요.':unsavedMessage;
   updateDraft();
   updateExample();
  });

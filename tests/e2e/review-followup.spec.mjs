@@ -66,7 +66,7 @@ test('review diagnostics: performance probes recognize the actual grouped full h
   await expect(page.locator('.home-heatmap-cell')).toHaveCount(0);
   const configs = path => {
     const source = readFileSync(new URL(path, import.meta.url), 'utf8');
-    const declaration = source.match(/const routes=\[[\s\S]*?\];/)[0];
+    const declaration = source.match(/^const routes=\[[\s\S]*?\];\r?$/m)[0];
     return runInNewContext(`${declaration}\nroutes;`);
   };
   const selector = configs('../../scripts/measure-site.mjs').find(row => row[0] === 'heatmap')[2];

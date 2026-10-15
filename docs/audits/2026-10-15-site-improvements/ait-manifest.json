@@ -1,9 +1,10 @@
 {
   "generatedFile": "chartview.ait",
-  "bytes": 10460307,
-  "sha256": "a7aa93de5792f1f2517f15dc29c4038603a4e8eb749b20ddc320fa6247806b0f",
+  "bytes": 10460335,
+  "sha256": "a2dd60092940b0646deaa867ed3fee357d3ee3d030ccc1dc0c43cfc410bb9f09",
   "sourceAndPublicMatch": true,
   "compiledAssetsMatch": true,
+  "runtimeSourceManifest": "runtime-source-manifest.json",
   "renderDeployed": false,
   "tossSandboxTested": false
 }

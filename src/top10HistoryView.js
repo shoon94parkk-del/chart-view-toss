@@ -184,6 +184,11 @@ export async function renderTop10History({shell,bindNav,isCurrent=()=>true}){
   if(!isCurrent())return;
   app.innerHTML=shell('<div class="empty" role="alert"><strong>TOP10 히스토리를 불러오지 못했어요.</strong><span>잠시 후 다시 확인해주세요.</span><button type="button" class="retry" data-top10h-retry>다시 시도</button></div>','TOP10 히스토리');
   bindNav();
-  app.querySelector('[data-top10h-retry]')?.addEventListener('click',()=>renderTop10History({shell,bindNav,isCurrent}),{once:true});
+  let retryCleanup=null,disposed=false;
+  app.querySelector('[data-top10h-retry]')?.addEventListener('click',async()=>{
+   const cleanup=await renderTop10History({shell,bindNav,isCurrent});
+   if(disposed)cleanup?.();else retryCleanup=cleanup;
+  },{once:true});
+  return ()=>{disposed=true;retryCleanup?.();};
  }
 }

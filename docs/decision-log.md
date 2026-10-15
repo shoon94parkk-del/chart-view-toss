@@ -727,3 +727,15 @@ Recent five verified detail identities and watch sort use existing account-local
 ### 2026-10-15 — Performance audit remains compatible with the deployed revision
 
 PR performance CI audits the existing operating site before deploying this change. Detect actual legacy quote/digest terminal markup when the new load-state attributes are absent; placeholders and failed refreshes remain pending/error, never successful latency. Four red/green Node regressions and an independent two-route actual-production run verify the distinction. Node547/build27 pass. This tooling-only follow-up leaves app source, compiled assets and the generated AIT unchanged. Final exact-head CI remains separately recorded on PR134.
+
+
+### 2026-10-15 — Close independent review findings
+
+Saved research status must change when a saved comparison peer is cleared; reload still restores the actual saved peer. History route cleanup must forward the observer returned by a successful retry, including leaving while that retry remains pending. Both browser contracts were reproduced failing before fixes; the full affected file passes32 cases across4projects after fixes (Node547/build27). Protected row/day markup and calculations remain unchanged. AIT is regenerated for this final runtime, not reused from the earlier reviewed candidate. The legacy Oct12 scope checker differs on the already-deployed Oct13 liveHomeSync; current liveHomeSync is byte-identical to operating9bd17db, and Oct15 scope evidence remains separate.
+
+
+### 2026-10-15 — Preserve grouped-heatmap diagnostics after readiness expansion
+
+CI0665eb0 exposed an existing source-extraction regex stopping at the new nested prices array in the watch readiness function. Each browser passed216 and failed the same grouped-heatmap VM parse. Reproduce locally, then anchor the outer routes declaration at line end in the test helper; preserve all original real grouped-map readiness and empty-shell assertions. This is a test parser correction, not a heatmap/API change. Full CI failure evidence is retained and exact final-head CI is required.
+
+Parser correction verification: the entire existing review-followup file passes12 cases across4projects through qa:prepush, including Node547 and build27. Product runtime source and the newly regenerated reviewed AIT are unchanged by the parser-only correction.

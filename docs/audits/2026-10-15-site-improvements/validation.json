@@ -1,6 +1,6 @@
 {
   "baselineDeployedSha": "9bd17dbe410065eb09a743c72506be36c2bc4d30",
-  "runtimeSourceSha256": "b881f0a95059ff552fda030f7f0bf79d19327be6663f5e32e1132b6164580cb7",
+  "runtimeSourceSha256": "ca32892211af84f1b2b5abf71cc1c0ede8278f1ccfe420524b651d71e9d279ee",
   "node": {
     "passed": 547,
     "failed": 0
@@ -64,10 +64,11 @@
   },
   "ait": {
     "generatedFile": "chartview.ait",
-    "bytes": 10460307,
-    "sha256": "a7aa93de5792f1f2517f15dc29c4038603a4e8eb749b20ddc320fa6247806b0f",
+    "bytes": 10460335,
+    "sha256": "a2dd60092940b0646deaa867ed3fee357d3ee3d030ccc1dc0c43cfc410bb9f09",
     "sourceAndPublicMatch": true,
     "compiledAssetsMatch": true,
+    "runtimeSourceManifest": "runtime-source-manifest.json",
     "renderDeployed": false,
     "tossSandboxTested": false
   },
@@ -91,5 +92,79 @@
     "readiness": "actual quote text / actual provisional digest; pending, failure, empty outcomes distinguished",
     "evidence": "performance-legacy-production.json",
     "comparisonClaim": false
-  }
+  },
+  "runtimeSourceManifest": "runtime-source-manifest.json",
+  "independentReview": {
+    "status": "no critical or important remaining findings after source correction review",
+    "findingsFixed": [
+      "clear comparison peer updates saved/unsaved status",
+      "history retry forwards eventual observer cleanup"
+    ],
+    "browserRegressions": 32,
+    "command": "npm run qa:prepush -- tests/e2e/site-audit-regressions.spec.mjs",
+    "testsRerunByReviewer": false
+  },
+  "legacyOct12ScopeChecker": {
+    "status": "failed on already-deployed Oct13 liveHomeSync change",
+    "comparisonBaseline": "e15f2358aa265815ed6dcb6c872eae63a2198c50",
+    "fileUnchangedAgainstOperating9bd17db": true,
+    "currentScopeEvidence": "protected-scope.json"
+  },
+  "intermediateCiFailure": {
+    "head": "0665eb01a0b0a806d85b30473fb4e28906029dd1",
+    "run": "https://github.com/shoon94parkk-del/chart-view-toss/actions/runs/38710534478",
+    "jobs": [
+      {
+        "job": "1_E2E (narrow-chromium).txt",
+        "passed": [
+          "216"
+        ],
+        "failed": [
+          "1"
+        ],
+        "failure": "review diagnostics grouped full heatmap: nested routes array declaration truncated by test helper regex"
+      },
+      {
+        "job": "3_E2E (android-chromium).txt",
+        "passed": [
+          "216"
+        ],
+        "failed": [
+          "1"
+        ],
+        "failure": "review diagnostics grouped full heatmap: nested routes array declaration truncated by test helper regex"
+      },
+      {
+        "job": "4_E2E (iphone-small-webkit).txt",
+        "passed": [
+          "216"
+        ],
+        "failed": [
+          "1"
+        ],
+        "failure": "review diagnostics grouped full heatmap: nested routes array declaration truncated by test helper regex"
+      },
+      {
+        "job": "5_E2E (desktop-chromium).txt",
+        "passed": [
+          "216"
+        ],
+        "failed": [
+          "1"
+        ],
+        "failure": "review diagnostics grouped full heatmap: nested routes array declaration truncated by test helper regex"
+      }
+    ],
+    "classification": "test source-extraction parser regressed when a nested array was added to readiness function; product/data assertions unchanged",
+    "correction": "anchor complete routes declaration at line end; confirmed local red and rerun same existing browser test",
+    "correctedContract": {
+      "passed": 12,
+      "failed": 0,
+      "projects": 4,
+      "command": "npm run qa:prepush -- tests/e2e/review-followup.spec.mjs",
+      "nodePassed": 547,
+      "build": "passed,27 routes"
+    }
+  },
+  "finalFullE2EExpected": 876
 }
