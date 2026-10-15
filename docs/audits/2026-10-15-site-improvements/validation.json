@@ -2,7 +2,7 @@
   "baselineDeployedSha": "9bd17dbe410065eb09a743c72506be36c2bc4d30",
   "runtimeSourceSha256": "b881f0a95059ff552fda030f7f0bf79d19327be6663f5e32e1132b6164580cb7",
   "node": {
-    "passed": 543,
+    "passed": 547,
     "failed": 0
   },
   "vite": "passed;27 direct entry paths",
@@ -79,5 +79,17 @@
     "native Android/iOS Toss Sandbox",
     "console conversion/event delivery/cohort/retention settings",
     "exact tested main integration and authorized Render publishing"
-  ]
+  ],
+  "performanceAuditLegacyCompatibility": {
+    "status": "passed",
+    "site": "existing production frontend",
+    "routes": [
+      "watch",
+      "exports"
+    ],
+    "samplesPerRoute": 1,
+    "readiness": "actual quote text / actual provisional digest; pending, failure, empty outcomes distinguished",
+    "evidence": "performance-legacy-production.json",
+    "comparisonClaim": false
+  }
 }

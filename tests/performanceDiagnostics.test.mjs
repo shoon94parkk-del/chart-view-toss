@@ -65,3 +65,51 @@ test('aborted response headers do not become completed body latency',async()=>{
   assert.equal(collector.rows[0].bodyComplete,false);
   assert.equal(collector.rows[0].ms,null);
 });
+
+function routeReady(route,document){
+ const line=readFileSync(new URL('./production_performance_audit.mjs',import.meta.url),'utf8').split('\n').find(line=>line.includes(`route:'${route}'`));
+ const expression=line.slice(line.indexOf('ready:')+6,line.lastIndexOf('},'));
+ return runInNewContext('('+expression+')',{document});
+}
+test('watch readiness works against deployed markup without new state attributes',()=>{
+ let loaded=false,error=false;
+ const host={dataset:{},querySelector:s=>s.includes('.watch-refresh-note')&&error?{}:null,querySelectorAll:()=>[{textContent:loaded?'103,700원':'확인 중'}]};
+ const ready=routeReady('watch',{querySelector:()=>host});
+ assert.equal(ready(),false);loaded=true;assert.equal(ready(),true);
+ loaded=false;error=true;assert.equal(ready(),true,'a terminal error must settle for separate classification');
+ host.dataset.loadState='loading';assert.equal(ready(),false,'cached numbers do not settle an active refresh');
+});
+test('provisional readiness works against the currently deployed digest markup',()=>{
+ let loaded=false,error=false;
+ const radar={dataset:{},querySelector:s=>s.includes('.export-provisional-error')&&error?{}:s.includes('[data-export-digest]')&&loaded?{}:null};
+ const panel={dataset:{loadState:'ready'},querySelector:()=>radar};
+ const ready=routeReady('exports',{querySelector:()=>panel});
+ assert.equal(ready(),false);loaded=true;assert.equal(ready(),true);
+ loaded=false;error=true;assert.equal(ready(),true);
+});
+
+function outcomeFor(route, {watch=null,panel=null}={}) {
+ const source=readFileSync(new URL('../scripts/performance-outcome.mjs',import.meta.url),'utf8');
+ const fn=source.slice(source.indexOf('export function performanceOutcome'),source.indexOf('export function dataRequestPath')).replace('export function','function');
+ const visible=element=>element&&Object.assign(element,{closest:()=>null,getClientRects:()=>[{}]});
+ const document={querySelector:()=>watch,querySelectorAll:selector=>selector==='[data-export-panel]:not([hidden])'&&panel?[visible(panel)]:[]};
+ return runInNewContext(`${fn}\nperformanceOutcome`,{document})(route);
+}
+test('legacy watch placeholders and failed refreshes are excluded from successful latency',()=>{
+ let value='확인 중',failed=false;
+ const watch={dataset:{},querySelector:()=>failed?{}:null,querySelectorAll:()=>[{textContent:value}]};
+ assert.equal(outcomeFor('watch',{watch}),'pending');
+ value='103,700원';assert.equal(outcomeFor('watch',{watch}),'ready');
+ failed=true;assert.equal(outcomeFor('watch',{watch}),'error');
+ failed=false;value='-';assert.equal(outcomeFor('watch',{watch}),'unavailable');
+});
+test('legacy provisional loading and errors cannot become a successful export measurement',()=>{
+ let loaded=false,failed=false;
+ const radar={dataset:{},querySelector:s=>s.includes('error')&&failed?{}:s.includes('data-export-digest')&&loaded?{}:null};
+ const panel={dataset:{loadState:'ready'},querySelector:()=>radar};
+ assert.equal(outcomeFor('exports',{panel}),'pending');
+ loaded=true;assert.equal(outcomeFor('exports',{panel}),'ready');
+ loaded=false;failed=true;assert.equal(outcomeFor('exports',{panel}),'error');
+ radar.dataset.loadState='loading';assert.equal(outcomeFor('exports',{panel}),'pending');
+ panel.dataset.loadState='error';assert.equal(outcomeFor('exports',{panel}),'error');
+});
