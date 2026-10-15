@@ -3,6 +3,12 @@ export function performanceOutcome(route) {
   const visible = element => element && !element.closest('[hidden]') && element.getClientRects().length > 0;
   const elements = selector => [...document.querySelectorAll(selector)].filter(visible);
   const exportPanel = elements('[data-export-panel]:not([hidden])')[0];
+  if(route==='watch'){
+    const state=document.querySelector('#watch-rich-list')?.dataset.loadState;
+    if(state)return state==='loading'?'pending':state;
+  }
+  const provisional=exportPanel?.querySelector('#export-provisional-radar');
+  if(route.startsWith('exports')&&provisional?.dataset.loadState)return provisional.dataset.loadState==='loading'?'pending':provisional.dataset.loadState;
   if (route.startsWith('exports') && exportPanel?.dataset.loadState) return exportPanel.dataset.loadState === 'loading' ? 'pending' : exportPanel.dataset.loadState;
   if (route === 'home' && !elements('#market-card .quote-card:not(.market-missing) strong').some(el => /\d/.test(el.textContent))) return 'unavailable';
   if(route.startsWith('gurus')&&elements('.guru-coverage strong span').some(el=>/검증\s*0\s*\//.test(el.textContent)))return 'unavailable';

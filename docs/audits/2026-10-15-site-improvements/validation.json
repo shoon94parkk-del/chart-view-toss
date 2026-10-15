@@ -1,0 +1,83 @@
+{
+  "baselineDeployedSha": "9bd17dbe410065eb09a743c72506be36c2bc4d30",
+  "runtimeSourceSha256": "b881f0a95059ff552fda030f7f0bf79d19327be6663f5e32e1132b6164580cb7",
+  "node": {
+    "passed": 543,
+    "failed": 0
+  },
+  "vite": "passed;27 direct entry paths",
+  "localFullE2E": {
+    "startTime": "2026-10-15T08:07:30.416Z",
+    "duration": 1883009.507,
+    "expected": 866,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  },
+  "localFullFailureClassification": "2 iPhone assertions used a 1500ms bound starting before primary response arrival; both original tests passed in isolation; replace with explicit primary body arrival plus proof that monitoring remains held",
+  "correctedContractPrepush": {
+    "passed": 20,
+    "failed": 0,
+    "projects": 4,
+    "command": "npm run qa:prepush -- tests/e2e/pick-loading-recovery.spec.mjs"
+  },
+  "remoteFullE2E": "See immutable PR head checks; local report and targeted follow-up are preserved separately, not represented as a single green local full run",
+  "mobileReleaseQa": {
+    "status": "passed isolated original script",
+    "initialFailures": "Home market/selection waits during concurrent QA; retained in session logs"
+  },
+  "liveBackendSmoke": "passed on existing production backend",
+  "liveE2E": {
+    "passed": 5,
+    "failed": 0,
+    "frontend": "local modified preview",
+    "data": "actual backend plus companion PR150 public branch",
+    "productionFrontendDeployed": false
+  },
+  "responsive": {
+    "cases": 24,
+    "widths": [
+      320,
+      390,
+      430
+    ],
+    "overflow": 0,
+    "pageErrors": 0,
+    "axeAudits": [
+      {
+        "route": "recent-selector",
+        "violations": 0
+      },
+      {
+        "route": "news",
+        "violations": 0
+      }
+    ]
+  },
+  "backend": {
+    "sha": "4428ae970ed0705d344605209b0c0eddd69d57f4",
+    "pr": "https://github.com/shoon94parkk-del/chart_View/pull/150",
+    "pythonPassed": 768,
+    "pythonWarnings": 79,
+    "nodePassed": 21,
+    "webBundleFreshness": "passed"
+  },
+  "ait": {
+    "generatedFile": "chartview.ait",
+    "bytes": 10460307,
+    "sha256": "a7aa93de5792f1f2517f15dc29c4038603a4e8eb749b20ddc320fa6247806b0f",
+    "sourceAndPublicMatch": true,
+    "compiledAssetsMatch": true,
+    "renderDeployed": false,
+    "tossSandboxTested": false
+  },
+  "renderDeployed": false,
+  "mainMerged": false,
+  "tossSandboxTested": false,
+  "remaining": [
+    "protected PICK/TOP10 contrast and intraday/close label unchanged per original user restriction",
+    "native Android/iOS Toss Sandbox",
+    "console conversion/event delivery/cohort/retention settings",
+    "exact tested main integration and authorized Render publishing"
+  ]
+}

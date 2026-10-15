@@ -104,7 +104,7 @@ test('live 산업 상세: 실제 화장품 응답 → 모델 → 금액·등락�
 test('live 거장 다섯 전략: 실제 snapshot 범위와 같은 버전의 후보 근거 게시 검증',async({page},info)=>{
   const proofResponses=[],publication=[];
   page.on('response',response=>{
-    if(!new URL(response.url()).pathname.startsWith('/api/guru-investing/'))return;
+    if(!/^\/api\/guru-investing\//.test(new URL(response.url()).pathname)&&!/^\/.*guru_evidence\/[^/]+\/\d{6}\.(KS|KQ)\.json$/.test(new URL(response.url()).pathname))return;
     // Capture immediately; retain body failures as evidence without stopping
     // the remaining strategies before their strict HTTP200 checks can run.
     proofResponses.push({url:response.url(),status:response.status(),ok:response.ok(),
@@ -136,9 +136,17 @@ test('live 거장 다섯 전략: 실제 snapshot 범위와 같은 버전의 후�
     expect(summary.results.some(row=>row.symbol===symbol)).toBe(true);
     if(await candidate.getAttribute('aria-expanded')!=='true')await candidate.click();
     await expect.poll(()=>proofResponses.some(response=>new URL(response.url).pathname.endsWith('/'+symbol)&&new URL(response.url).searchParams.get('version')===data.snapshotVersion)).toBe(true);
-    const response=proofResponses.findLast(response=>new URL(response.url).pathname.endsWith('/'+symbol)&&new URL(response.url).searchParams.get('version')===data.snapshotVersion);
+    let response=proofResponses.findLast(response=>new URL(response.url).pathname.endsWith('/'+symbol)&&new URL(response.url).searchParams.get('version')===data.snapshotVersion);
+    const apiStatus=response.status;
+    if(apiStatus===409){
+      // A 409 alone never passes. The new flow must actually request and
+      // render HTTP200 immutable evidence for this exact displayed version.
+      const suffix='/guru_evidence/'+encodeURIComponent(data.snapshotVersion)+'/'+symbol+'.json';
+      await expect.poll(()=>proofResponses.some(row=>new URL(row.url).pathname.endsWith(suffix))).toBe(true);
+      response=proofResponses.findLast(row=>new URL(row.url).pathname.endsWith(suffix));
+    }
     const {payload:proof,bodyError}=await response.body;
-    publication.push({strategy,symbol,requestedVersion:data.snapshotVersion,status:response.status,responseVersion:proof?.snapshotVersion,detail:proof?.detail,bodyError});
+    publication.push({strategy,symbol,requestedVersion:data.snapshotVersion,apiStatus,sourceUrl:response.url,status:response.status,responseVersion:proof?.snapshotVersion,detail:proof?.detail,bodyError});
     await info.attach(`real-guru-${strategy}-evidence`,{body:JSON.stringify({url:response.url,status:response.status,payload:proof,bodyError}),contentType:'application/json'});
     expect.soft(response.status,`${strategy} ${symbol}: published candidate evidence must be HTTP200 for snapshot ${data.snapshotVersion}; deployment publication mismatch must not be hidden`).toBe(200);
     expect.soft(bodyError,`${strategy} ${symbol}: candidate evidence response body must be readable JSON`).toBeNull();
@@ -148,6 +156,8 @@ test('live 거장 다섯 전략: 실제 snapshot 범위와 같은 버전의 후�
     }
     expect(proof.snapshotVersion).toBe(data.snapshotVersion);
     expect(proof.symbol).toBe(symbol);
+    expect(proof.tradeDate).toBe(data.tradeDate);
+    if(apiStatus===409)expect(proof.criteriaVersion).toBe(data.criteriaVersion);
     expect(proof.strategies?.[strategy]?.status).toBe('matched');
     await expect(page.locator('.guru-evidence-basis')).toBeVisible();
     await expect(page.locator('.guru-retry-evidence')).toHaveCount(0);

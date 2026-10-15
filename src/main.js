@@ -31,6 +31,7 @@ import { applyRuntimeClass, haptic, openExternal, syncNativeBackHandler, closeMi
 import { openStockSelector, closeStockSelector, formatSelectedStockLabel } from './stockSelector.js';
 import { initializeStorage, readStored, writeStored, clearStored, getActivityVisitorId, HOME_JOURNEY_KEY } from './storage.js';
 import { parseStoredList } from './storedLists.js';
+import { rememberRecentStock, readWatchSort, saveWatchSort } from './revisitPreferences.js';
 import { startHomeLiveSync, setLiveSurface } from './liveHomeSync.js';
 import { readHomeFast, writeHomeFast } from './homeFastCache.js';
 import { rememberLiveQuotes, getLiveQuote, mergeRowsWithLive, resolveLiveQuote } from './liveQuoteStore.js';
@@ -720,7 +721,7 @@ async function renderChart(){
  document.querySelector('#app').innerHTML=shell(`
    <section class="task-head"><div><h2>수익률 비교</h2><p>선택한 종목의 기간 수익률을 같은 화면에서 확인해요.</p></div><button class="primary-subtle" id="open-compare-selector">종목 변경</button></section>
    <div class="selected-summary" id="chart-selected-summary">${esc(chartSelectionSummaryText())}</div>
-   <div class="segmented period-tabs">${[['1mo','1개월'],['3mo','3개월'],['6mo','6개월'],['1y','1년'],['5y','5년'],['max','전체']].map(([p,l])=>`<button data-period="${p}" aria-pressed="${state.period===p}" class="${state.period===p?'active':''}">${l}</button>`).join('')}</div>
+   <div class="segmented period-tabs">${[['1mo','1개월'],['3mo','3개월'],['6mo','6개월'],['1y','1년'],['5y','5년'],['max','전체']].map(([p,l])=>`<button data-period="${p}" aria-pressed="${!state.customRange&&state.period===p}" class="${!state.customRange&&state.period===p?'active':''}">${l}</button>`).join('')}</div>
    <details class="calculation-guide"><summary>기간 직접 지정${state.customRange?' · 적용 중':''}</summary><form id="custom-range" class="analysis-filters"><label>시작일<input type="date" name="start" required value="${esc(state.customRange?.start||'')}"></label><label>종료일<input type="date" name="end" required value="${esc(state.customRange?.end||'')}" max="${new Date().toISOString().slice(0,10)}"></label><button class="primary-subtle" type="submit">기간 적용</button><span id="range-error" role="alert"></span></form></details>
    <section class="surface chart-surface elevated-panel"><div class="chart-heading"><div><strong>기간 수익률</strong><small>각 종목의 첫 가용 관측값을 0%로 표시해요</small></div><span id="chart-status" role="status">불러오는 중</span></div><div class="chart-plot-wrap"><div id="chart-canvas" class="chart-canvas"></div><div id="chart-loading" class="chart-loading">${chartLoadingPreview('수익률 차트를 불러오고 있어요')}</div><div id="chart-tooltip" class="chart-tooltip" hidden></div></div><div id="chart-legend" class="chart-legend interactive-legend chart-legend-loading" aria-hidden="true"><span></span><span></span><span></span></div></section>
    <section id="chart-table-wrap" class="chart-table-wrap"></section>
@@ -926,8 +927,19 @@ async function renderWatch(){
  document.querySelector('#watch-add')?.addEventListener('click',openEditor);
  document.querySelector('#watch-edit')?.addEventListener('click',openEditor);
  document.querySelector('#watch-empty-add')?.addEventListener('click',openEditor);
- document.querySelector('#watch-order-edit')?.addEventListener('click',()=>{watchOrderEditing=!watchOrderEditing;state.watchSort='manual';renderWatch();document.querySelector('#watch-order-edit')?.focus({preventScroll:true});});
- document.querySelectorAll('[data-watch-sort]').forEach(b=>b.onclick=()=>{state.watchSort=b.dataset.watchSort;if(state.watchSort!=='manual')watchOrderEditing=false;renderWatch()});
+ const chooseSort=async(sort,editing=false)=>{
+   const buttons=[...document.querySelectorAll('.watch-sort button')];
+   if(buttons.some(button=>button.disabled))return;
+   buttons.forEach(button=>button.disabled=true);
+   try{
+     await saveWatchSort(sort);
+     if(!current())return;
+     state.watchSort=sort;watchOrderEditing=editing;renderWatch();
+     document.querySelector(editing?'#watch-order-edit':`[data-watch-sort="${sort}"]`)?.focus({preventScroll:true});
+   }catch{if(current()){buttons.forEach(button=>button.disabled=false);showToast('정렬 설정을 저장하지 못했어요. 다시 시도해주세요.');}}
+ };
+ document.querySelector('#watch-order-edit')?.addEventListener('click',()=>void chooseSort('manual',!watchOrderEditing));
+ document.querySelectorAll('[data-watch-sort]').forEach(b=>b.onclick=()=>void chooseSort(b.dataset.watchSort));
  if(!state.watchlist.length)return;
  const tickers=state.watchlist.slice(0,WATCHLIST_LIMIT).map(x=>x.symbol);
  rememberLiveQuotes(readHomeFast('snapshot',6*60*60*1000)?.heatmap?.results||[],{priority:20});
@@ -936,6 +948,7 @@ async function renderWatch(){
    if(!current())return;
    const quotes=tickers.map(symbol=>getLiveQuote(symbol)).filter(Boolean);
    let items=state.watchlist.map((x,index)=>({x,index,q:quotes.find(r=>r.ticker===String(x.symbol).toUpperCase())||{}}));
+   document.querySelector('#watch-rich-list').dataset.loadState=pending?'loading':failed?'error':items.some(({q})=>Number(q.price)>0)?'ready':'empty';
    if(state.watchSort==='name')items.sort((a,b)=>displayName(a.x.symbol,a.x.name).localeCompare(displayName(b.x.symbol,b.x.name),'ko'));
    if(state.watchSort==='change')items.sort((a,b)=>(finiteNumber(b.q.change)??-Infinity)-(finiteNumber(a.q.change)??-Infinity));
    const notice=failed?'<div class="watch-refresh-note" role="status">새 시세를 확인하지 못했어요. 표시된 기준시각을 확인해주세요. <button class="retry" id="retry-watch">다시 시도</button></div>':'';
@@ -1250,6 +1263,11 @@ async function renderDetail(){
  const sectionNav=document.querySelector('.detail-jump-nav');
  const updateSection=()=>{
   if(epoch!==viewEpoch||!sectionNav?.isConnected)return;
+  const reading=sectionNav.querySelector('[data-detail-reading-context]');
+  if(reading){
+    reading.hidden=(document.querySelector('.detail-brand')?.getBoundingClientRect().bottom??0)>=0;
+    reading.textContent=`${knownName||symbol} · ${({'1mo':'1개월','3mo':'3개월','6mo':'6개월','1y':'1년'}[state.detailPeriod]||state.detailPeriod)}`;
+  }
   const buttons=[...sectionNav.querySelectorAll('[data-detail-jump]')];
   let active=buttons[0],nearest=-Infinity;
   const atEnd=window.scrollY+window.innerHeight>=document.documentElement.scrollHeight-2;
@@ -1257,6 +1275,7 @@ async function renderDetail(){
   for(const button of buttons){const target=document.getElementById(button.dataset.detailJump);const top=target?.getBoundingClientRect().top;if(top<=threshold&&top>nearest){active=button;nearest=top;}}
   buttons.forEach(button=>{if(button===active)button.setAttribute('aria-current','location');else button.removeAttribute('aria-current');});
  };
+ sectionNav?.insertAdjacentHTML('afterbegin','<span class="detail-reading-context" data-detail-reading-context hidden></span>');
  window.addEventListener('scroll',updateSection,{passive:true});detailJumpCleanup=()=>window.removeEventListener('scroll',updateSection);updateSection();
 
  if(koreanDetail)detailModuleCleanups.add(loadDetailModule({host:document.querySelector('#research-card-body'),key:'research',isCurrent:()=>epoch===viewEpoch,load:()=>import('./researchCard.js'),mount:({mountResearchCard})=>{
@@ -1386,6 +1405,7 @@ async function renderDetail(){
    priceBox.classList.add('quote-compact');
    priceBox.innerHTML=quoteHtml(current,closingQuote?{...closingQuote,priceLabel:formatCurrencyPrice(closingQuote.price,'KRW')}:null,{basis:quoteBasisLabel(current),price:current?.price!=null?(isIndex?Number(current.price).toLocaleString('ko-KR',{maximumFractionDigits:2})+' pt':formatCurrencyPrice(current.price,current.currency)):'확인 불가',change:dayChange===null?'확인 불가':fmtChange(dayChange),asOf:current?.asOf?formatKst(current.asOf):'',queriedAt:formatKst(new Date().toISOString())})+(failed?'<button class="retry" data-retry-detail>시세 다시 시도</button>':'');
    if(Number.isFinite(Number(current?.price))&&Number(current.price)>0){
+     if(!isIndex)void rememberRecentStock({symbol,name:knownName||current.name});
      void trackUsage('stock_detail_view',{operationId:detailUsageOperation,params:{screen:'detail'}});
      reportUsableScreen('detail',detailUsageOperation,detailUsageStarted);
    }else if(failed){
@@ -1651,7 +1671,7 @@ function renderInfo(){
      resetHomeJourneySession();
      homeJourneyStorageReady=true;
      clearDiagnostics();
-     state.watchlist=[];researchDrafts.clear();state.screener={filters:{},count:30,activePreset:''};state.researchPeer=null;
+     state.watchlist=[];researchDrafts.clear();state.screener={filters:{},count:30,activePreset:''};state.researchPeer=null;state.watchSort='manual';
      state.selected=DEFAULTS.map(x=>x.symbol);
      if(['chart','valuation'].includes(state.tab))refreshListSurface('selected');
      else refreshListSurface('watchlist');
@@ -1830,7 +1850,10 @@ function render(){
    return;
  }
  if(state.tab==='history'){
-   renderLazyAnalysis({tab:'history',title:'TOP10 히스토리',load:()=>Promise.all([import('./top10HistoryView.js'),import('./top10HistoryView.css')]),mount:([historyView])=>historyView.renderTop10History({shell,bindNav})});
+   renderLazyAnalysis({tab:'history',title:'TOP10 히스토리',load:()=>Promise.all([import('./top10HistoryView.js'),import('./top10HistoryView.css')]),mount:([historyView])=>{
+     const epoch=viewEpoch;
+     return historyView.renderTop10History({shell,bindNav,isCurrent:()=>epoch===viewEpoch&&state.tab==='history'});
+   }});
    return;
  }
  if(ANALYSIS_ROUTES.has(state.tab)){
@@ -1896,6 +1919,7 @@ async function startApp(){
    homeJourneyStorageReady=true;
    state.watchlist=load(WATCHLIST_KEY,[]);
    state.selected=load(SELECTED_KEY,DEFAULTS.map(x=>x.symbol));
+   state.watchSort=readWatchSort();
    const activityId=getActivityVisitorId();
    if(activityId)startHomeLiveSync(activityId);
    syncFromLocation();

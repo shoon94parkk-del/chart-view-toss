@@ -5,17 +5,20 @@ const monitoringPath = '/static/data/pick_monitor.json';
 const rowFor = (page, name) => page.locator('.pick-ledger-item').filter({ has: page.locator('.pick-ledger-stock strong', { hasText: name }) }).first();
 
 test('PICK independent loading: real performance and usable rows precede held optional monitor', async ({ page, qa }, info) => {
-  let release, requested;
+  let release, requested, monitoringDelivered=false;
   const gate = new Promise(resolve => { release = resolve; });
   const started = new Promise(resolve => { requested = resolve; });
-  qa.overrides.set(monitoringPath, async route => { requested(); await gate; return route.fulfill({ json: monitor }); });
+  qa.overrides.set(monitoringPath, async route => { requested(); await gate; await route.fulfill({ json: monitor }); monitoringDelivered=true; });
   try {
+    const primary=page.waitForResponse(response=>new URL(response.url()).pathname==='/api/home-bootstrap'&&response.ok());
     await page.goto('/#picks');
     await started;
+    await (await primary).body();
     // This must succeed before releasing the optional response: the old
     // Promise.all path cannot display already available bootstrap data here.
     const performance = page.getByTestId('pick-performance');
-    await expect(performance).toBeVisible({ timeout: 1500 });
+    await expect(performance).toBeVisible();
+    expect(monitoringDelivered, 'Primary data must render while monitoring is still held').toBe(false);
     await expect(performance).toContainText('평가 3/4건');
     await expect(page.locator('[data-pick-expand]')).toHaveCount(recommendations.length);
     await expect(page.locator('#pick-ledger-status-strip')).toContainText('확인하고 있어요');
@@ -124,14 +127,17 @@ test('PICK primary malformed response has its own retry and never publishes fabr
 });
 
 test('PICK pending monitoring completion cannot mount stale content after navigating home', async ({ page, qa }) => {
-  let release, requested;
+  let release, requested, monitoringDelivered=false;
   const gate = new Promise(resolve => { release = resolve; });
   const started = new Promise(resolve => { requested = resolve; });
-  qa.overrides.set(monitoringPath, async route => { requested(); await gate; return route.fulfill({ json: monitor }); });
+  qa.overrides.set(monitoringPath, async route => { requested(); await gate; await route.fulfill({ json: monitor }); monitoringDelivered=true; });
   try {
+    const primary=page.waitForResponse(response=>new URL(response.url()).pathname==='/api/home-bootstrap'&&response.ok());
     await page.goto('/#picks');
     await started;
-    await expect(page.getByTestId('pick-performance')).toBeVisible({ timeout: 1500 });
+    await (await primary).body();
+    await expect(page.getByTestId('pick-performance')).toBeVisible();
+    expect(monitoringDelivered, 'Primary data must render while monitoring is still held').toBe(false);
     await page.getByRole('navigation', { name: '주요 메뉴' }).getByRole('button', { name: '홈', exact: true }).click();
     const response = page.waitForResponse(value => new URL(value.url()).pathname.endsWith('/pick_monitor.json'));
     release();

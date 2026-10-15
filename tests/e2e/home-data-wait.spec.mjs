@@ -20,8 +20,8 @@ test('preserved deployed TOP10 history remains lazy and returns to verified Home
   await expect(page.locator('.top10h-day')).toHaveCount(top10History.days.length);
   const complete = page.locator('.top10h-day').filter({ hasText: top10History.days[0].tradeDate });
   await expect(complete.locator('.top10h-coverage')).toHaveText('TOP10 전체');
-  await expect(complete.locator('.top10h-row.is-selected')).toContainText('삼성전자');
-  await expect(complete.locator('.top10h-row.is-selected')).toContainText('PICK');
+  await expect(complete.locator('.top10h-entry.is-selected')).toContainText('삼성전자');
+  await expect(complete.locator('.top10h-entry.is-selected')).toContainText('PICK');
   const partial = page.locator('.top10h-day').filter({ hasText: top10History.days[1].tradeDate });
   await expect(partial.locator('.top10h-coverage')).toHaveText('부분 기록');
   await page.getByRole('combobox', { name: '기록 필터' }).selectOption('partial');

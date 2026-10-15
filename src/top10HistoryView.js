@@ -81,12 +81,14 @@ function dayMarkup(day,record){
  </article>`;
 }
 
-export async function renderTop10History({shell,bindNav}){
+export async function renderTop10History({shell,bindNav,isCurrent=()=>true}){
+ if(!isCurrent())return;
  const app=document.querySelector('#app');
  app.innerHTML=shell('<section class="top10h-intro"><span class="page-kicker">DAILY TOP10 ARCHIVE</span><h2>TOP10 히스토리</h2><p>그날 제시한 추천과 추천일 대비 수익률을 불러오고 있어요.</p></section><div class="top10h-loading">기록을 불러오고 있어요.</div>','TOP10 히스토리');
  bindNav();
  try{
   const data=await api('/static/data/top10_history.json',{ttlMs:45000,timeoutMs:8000,retries:1});
+  if(!isCurrent())return;
   const days=Array.isArray(data?.days)?data.days:[];
   const s=stats(days);
   app.innerHTML=shell(`
@@ -177,9 +179,11 @@ export async function renderTop10History({shell,bindNav}){
   coverage?.addEventListener('change',paint);
   sort?.addEventListener('change',paint);
   paint();
+  return ()=>observer?.disconnect();
  }catch(error){
+  if(!isCurrent())return;
   app.innerHTML=shell('<div class="empty" role="alert"><strong>TOP10 히스토리를 불러오지 못했어요.</strong><span>잠시 후 다시 확인해주세요.</span><button type="button" class="retry" data-top10h-retry>다시 시도</button></div>','TOP10 히스토리');
   bindNav();
-  app.querySelector('[data-top10h-retry]')?.addEventListener('click',()=>renderTop10History({shell,bindNav}),{once:true});
+  app.querySelector('[data-top10h-retry]')?.addEventListener('click',()=>renderTop10History({shell,bindNav,isCurrent}),{once:true});
  }
 }

@@ -29,6 +29,9 @@ export function mountResearchCard(host,options){
  let saved=null,sequence=0,lastQuestion='',lastTarget=null,lastConfirmed=false,selectedPeer=null;
  try{saved=readResearchNote(symbol);}catch{}
  selectedPeer=options.initialPeer||(options.draft?options.draft.peer:saved?.peer)||null;
+ const unsavedMessage='작성 중 · 이 화면을 떠나도 이번 방문 동안 유지돼요. 다음 방문에도 보려면 저장하세요.';
+ const matchesSaved=(question,peer)=>Boolean(saved)&&String(question||'').trim()===saved.question&&(peer?.symbol||null)===(saved.peer?.symbol||null);
+ const initialQuestion=options.draft?.question??saved?.question??'';
  const korean=/\.(KS|KQ)$/i.test(symbol);
  let examplePeer=null,peerRows=[];
  const examples=[
@@ -48,7 +51,7 @@ export function mountResearchCard(host,options){
   ${korean?`<details class="research-peer-picker" ${selectedPeer?'open':''}><summary>비교할 회사 선택 · 선택 사항</summary><div id="research-peer-selection" role="status">${selectedPeer?`${esc(selectedPeer.name)} (${esc(selectedPeer.symbol)}) 선택됨`:'선택하지 않으면 이전 실적과 비교해요.'}</div><div id="research-peer-options"></div>${onChoosePeer?'<button type="button" data-research-choose-peer>관심종목·검색에서 선택</button>':''}<button type="button" data-research-clear-peer ${selectedPeer?'':'hidden'}>회사 선택 해제</button><small>산업 분류가 같아도 사업 구성은 달라요. 회사 전체 공시를 비교해요.</small></details>`:''}
   <button type="submit" class="research-analyze">비교 분석하기</button>
  </form><div id="research-result" aria-live="polite"></div>
- <div class="research-foot"><span id="research-save-state" role="status">${saved?'저장한 질문을 불러왔어요.':'질문은 이 기기에서만 처리해요.'}</span><div><button type="button" data-research-save>질문 저장</button><button type="button" data-research-delete ${saved?'':'hidden'}>저장한 질문 삭제</button></div></div>
+ <div class="research-foot"><span id="research-save-state" role="status">${matchesSaved(initialQuestion,selectedPeer)?'저장한 질문을 불러왔어요.':initialQuestion?unsavedMessage:'질문은 이 기기에서만 처리해요.'}</span><div><button type="button" data-research-save>질문 저장</button><button type="button" data-research-delete ${saved?'':'hidden'}>저장한 질문 삭제</button></div></div>
  ${saved&&(saved.support||saved.challenge||saved.reviewOn)?`<details class="research-legacy"><summary>이전에 적은 메모</summary><p>${esc(saved.support)}</p><p>${esc(saved.challenge)}</p>${saved.reviewOn?`<p>다시 볼 날짜 ${esc(saved.reviewOn)}</p>`:''}</details>`:''}`;
  const form=host.querySelector('form'),input=host.querySelector('textarea'),result=host.querySelector('#research-result'),saveState=host.querySelector('#research-save-state');
  const updateDraft=()=>options.onDraftChange?.({question:input.value,peer:selectedPeer});
@@ -216,7 +219,9 @@ export function mountResearchCard(host,options){
    saved=await saveResearchNote(symbol,{...saved,question:input.value,peer},{confirmed:true});
    void trackUsage('research_save_success',{operationId,params:{source:'research',screen:'detail'}});
    if(!host.isConnected)return;
-   host.querySelector('[data-research-delete]').hidden=false;saveState.textContent=peer?'질문과 비교 회사를 이 기기에 저장했어요.':'질문을 이 기기에 저장했어요.';onNotice?.('질문을 저장했어요.');
+   host.querySelector('[data-research-delete]').hidden=false;
+   saveState.textContent=matchesSaved(input.value,selectedPeer)?(peer?'질문과 비교 회사를 이 기기에 저장했어요.':'질문을 이 기기에 저장했어요.'):unsavedMessage;
+   onNotice?.('질문을 저장했어요.');
    void offerReviewOpportunity(host,{source:'research',operationId});
   }catch{
    void trackUsage('research_save_failure',{operationId,params:{source:'research',screen:'detail',code:'storage'}});
