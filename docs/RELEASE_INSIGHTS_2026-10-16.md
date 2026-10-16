@@ -29,12 +29,12 @@ DRAM은 백엔드에서 중복 HSK 전월 분모를 교정한다. 같은 수출�
 
 ## 검증과 재현
 
-- Node577개·Vite/직접 진입27경로 빌드 통과. 최초 통합의 CSS 직접 Node import/VM helper 오류를 수정했고 실패 로그를 보존했다. 기존 테스트를 삭제하거나 약화하지 않았다. 홈 비교 상태·기준기간의 보이는 텍스트와 ARIA 이름 구분자가 달라 기존 접근성 검사가 실패한 것은 실제 UI 결함으로 수정했다. 최초 E2E의 연구 저장 상태 기대는 비교회사 선택 전 상태를 잘못 가정한 테스트 오류였으며, CTA 전후 실제 상태 완전 일치로 바로잡았다. [실패 원본 기록](evidence/release-insights-20261016/failure-history/).
-- 백엔드 Python815·Node52와 두 생성 번들 최신성 통과. 공급자 없이 선택 API를 읽고 Home payload 원형을 보존하는 회귀 테스트 포함.
+- Node578개·Vite/직접 진입27경로 빌드 통과. 최초 통합의 CSS 직접 Node import/VM helper 오류를 수정했고 실패 로그를 보존했다. 기존 테스트를 삭제하거나 약화하지 않았다. 홈 비교 상태·기준기간의 보이는 텍스트와 ARIA 이름 구분자가 달라 기존 접근성 검사가 실패한 것은 실제 UI 결함으로 수정했다. 최초 E2E의 연구 저장 상태 기대는 비교회사 선택 전 상태를 잘못 가정한 테스트 오류였으며, CTA 전후 실제 상태 완전 일치로 바로잡았다. [실패 원본 기록](evidence/release-insights-20261016/failure-history/).
+- 백엔드 통합 Python815·Node52, 공식 수집 보완 최종 Python840·Node52와 두 생성 번들 최신성 통과. 공급자 없이 선택 API를 읽고 Home payload 원형을 보존하는 회귀 테스트 포함.
 - 신규 E2E: API→물가4종/결측/기준/일정/재시도, 공식 콜 분리·실패 복구·화면이탈, 연구 상태 유지, DRAM MoM/수출액 막대 일치. 320/390/430px 터치44px·가로 넘침 및 접근성 검증 포함.
 - 기존 PICK/거장/LAB 관련34개 백엔드 파일·14개 프런트 파일 변경0. 공통 `homeExtras`는 홈 브리핑 제목·lazy import 두 줄 외 완전 동일. [해시 비교 결과](evidence/release-insights-20261016/protected-files.json). 기존 회귀 테스트도 유지한다.
 - 독립 코드 검토의 잘못된 일정 타입 예외와 혼합 문자를 수정했고 미해결 Critical/High 없음.
-- 로컬 전체 E2E904개를 실행했고2CPU 환경의4worker 영상 기록 부하에서896통과/8실패였다. 8개는 전체 흐름30초 제한, 의도된8초 API기한 초과에 따른 기존값 복구, 재렌더 중 DOM 이탈이었다. 동일 코드·타임아웃·데이터·검증식을 단독1worker로 다시 실행해8개 모두 통과했고 `qa:prepush -- -- --last-failed --workers=1` 종료0이다. 테스트나 시세·저장·PICK 로직은 바꾸지 않았다. 이를 단일 전체실행904/904 성공으로 바꾸어 기록하지 않는다. 독립 GitHub CI의 전체904개 결과와 최종 배포는 PR 댓글에 기록한다. 별도 Mobile release QA와 운영 Live backend contract smoke는 통과했다. 새 AIT 빌드도 성공했다(10475438bytes, SHA256 `719a0359c916a3afbaed789a788f48796e0a9747ae9df65ec874965d275d716d`, 2026-10-16 03:07UTC). 기존 AIT를 별도 보존한 뒤 빌드했으며 공개 콘솔 제출은 실행하지 않았다. 실제 Toss Sandbox는 별도 미검증이다.
+- 로컬 전체 E2E904개를 실행했고2CPU 환경의4worker 영상 기록 부하에서896통과/8실패였다. 8개는 전체 흐름30초 제한, 의도된8초 API기한 초과에 따른 기존값 복구, 재렌더 중 DOM 이탈이었다. 동일 코드·타임아웃·데이터·검증식을 단독1worker로 다시 실행해8개 모두 통과했고 `qa:prepush -- -- --last-failed --workers=1` 종료0이다. 테스트나 시세·저장·PICK 로직은 바꾸지 않았다. 이를 단일 전체실행904/904 성공으로 바꾸어 기록하지 않는다. 독립 GitHub CI의 전체904개 결과와 최종 배포는 PR 댓글에 기록한다. 별도 Mobile release QA와 운영 Live backend contract smoke는 통과했다. 새 AIT 빌드도 성공했다(10475675bytes, SHA256 `dafa4b6e3ccdd21e3968f567fc8981f1bffd38549e30bc3cddbbb6c38e930221`, 2026-10-16 03:22UTC). 기존 AIT를 별도 보존한 뒤 빌드했으며 공개 콘솔 제출은 실행하지 않았다. 실제 Toss Sandbox는 별도 미검증이다.
 
 ```sh
 npm ci
@@ -45,17 +45,19 @@ node tests/live_api_contract.mjs
 npm run build:ait
 ```
 
+별도 Mobile release QA의 320px 추정 카드 높이 검사가 실패한 실제 제품 회귀도 수정했다. 출처·수집일과 자료 기준 접기를 한 행으로 합쳐 413.78→377.78px로 줄였고, 390/430px는 331.78/313.78px다. 12px 이상 출처와 44px 이상 native summary를 유지하며 기존 380px 검사와 펼침/키보드 흐름을 통과했다. 추정 회계기간 종료는 실제 관측일과 구분한다. 최초 PR135 전체 E2E는 [226개×4프로젝트 성공](https://github.com/shoon94parkk-del/chart-view-toss/actions/runs/38844177501)이었으며 별도 카드 높이 실패를 감추지 않았다. 최종 수정본의 CI·AIT·배포 결과는 PR 댓글에 추가한다.
+
 ## 같은 조건의 성능 비교
 
 운영 API 속도와 구분한 로컬390px Chromium 측정이다. PR134의 정확한1dd69 소스457개 검증, 각 화면 워밍업 제외7개 성공 표본, 고정 응답·80ms 요청지연을 양쪽에 똑같이 적용했다. p50/최대만 보고하며 작은 표본으로 p95나 운영 SLA를 주장하지 않는다.
 
 | 유효 콘텐츠 | 전 중앙값/최대 | 후 중앙값/최대 | 초기 API 수 |
 | --- | ---: | ---: | ---: |
-| 홈 시세 |132/141ms|133/214ms|9→9|
-| 종목 상세 현재가 |276/331ms|280/370ms|10→10|
-| 기존 경제지표16개 |201/238ms|220/248ms|2→2|
+| 홈 시세 |132/141ms|130/157ms|9→9|
+| 종목 상세 현재가 |276/331ms|289/300ms|10→10|
+| 기존 경제지표16개 |201/238ms|220/226ms|2→2|
 
-신규 물가 그래프269/305ms. main JS gzip108615→108943B(+328B). 시세 제공자/API/캐시를 변경하지 않았으므로 시세가 빨라졌다고 주장하지 않는다. 두 빌드 모두 새 macro payload를 받아 UI 비용을 분리했고 Home 응답은 동일하다. 모든 측정 성공, JS/미정의 요청/가로누출0. [측정 원본과 보고서](evidence/release-insights-20261016/performance/REPORT.md), [독립 재현 harness](evidence/release-insights-20261016/performance/portable/README.md).
+신규 물가 그래프277/286ms. main JS gzip108615→108950B(+335B). 시세 제공자/API/캐시를 변경하지 않았으므로 시세가 빨라졌다고 주장하지 않는다. 두 빌드 모두 새 macro payload를 받아 UI 비용을 분리했고 Home 응답은 동일하다. 모든 측정 성공, JS/미정의 요청/가로누출0. [측정 원본과 보고서](evidence/release-insights-20261016/performance/REPORT.md), [독립 재현 harness](evidence/release-insights-20261016/performance/portable/README.md).
 
 ## 토스·운영 경계
 

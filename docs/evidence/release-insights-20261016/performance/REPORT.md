@@ -10,12 +10,12 @@
 
 | Visible content | Before median / max | After median / max | Median change | Startup API requests |
 | --- | ---: | ---: | ---: | ---: |
-| home | 132 / 141 ms | 133 / 214 ms | +1 ms (+0.8%) | 9 → 9 |
-| detail/005930.KS | 276 / 331 ms | 280 / 370 ms | +4 ms (+1.4%) | 10 → 10 |
-| macro | 201 / 238 ms | 220 / 248 ms | +19 ms (+9.5%) | 2 → 2 |
+| home | 132 / 141 ms | 130 / 157 ms | -2 ms (-1.5%) | 9 → 9 |
+| detail/005930.KS | 276 / 331 ms | 289 / 300 ms | +13 ms (+4.7%) | 10 → 10 |
+| macro | 201 / 238 ms | 220 / 226 ms | +19 ms (+9.5%) | 2 → 2 |
 
-- New CPI/core CPI/PPI/core PPI graph readiness: median 269 ms / max 305 ms, from navigation. The baseline has no equivalent graph.
-- Main JavaScript: 325,948 B / gzip 108,615 B → 327,103 B / gzip 108,943 B.
+- New CPI/core CPI/PPI/core PPI graph readiness: median 277 ms / max 286 ms, from navigation. The baseline has no equivalent graph.
+- Main JavaScript: 325,948 B / gzip 108,615 B → 327,103 B / gzip 108,950 B.
 - Existing current-price API remains unchanged in this release. Any sub-second local median change reflects rendering/build variance and must not be advertised as a quote-provider speed gain.
 - Both builds receive the enriched macro fixture (same bytes), isolating UI work from network payload differences. The enriched macro payload appears only on the macro route; the home fixture remains unchanged.
 - All measured samples completed successfully; page runtime errors, unmocked external/API requests and horizontal overflow were zero.

@@ -3,7 +3,9 @@ const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;
 const instant=value=>typeof value==='string'&&/^\d{4}-\d{2}-\d{2}T.+(?:Z|[+-]\d{2}:\d{2})$/.test(value)&&Number.isFinite(Date.parse(value));
 const stamp=value=>instant(value)?formatKst(value):typeof value==='string'&&/^\d{4}-\d{2}(?:-\d{2})?$/.test(value)?value.replaceAll('-','.'):'미제공';
 export function sourceTimingHtml(data={}){
- return `<details class="release-timing"><summary>기간·발표·확인 기준</summary><dl><div><dt>관측 기준</dt><dd>${esc(stamp(data.observedAt))}</dd></div><div><dt>공식 발표</dt><dd>${esc(stamp(data.publishedAt))}</dd></div><div><dt>자료 수집</dt><dd>${esc(stamp(data.collectedAt))}</dd></div>${data.builtAt?`<div><dt>자료 생성</dt><dd>${esc(stamp(data.builtAt))}</dd></div>`:''}<div><dt>마지막 확인</dt><dd>${esc(stamp(data.checkedAt))}</dd></div><div><dt>수정 여부</dt><dd>${data.revisionStatus==='revised'?'기존 값 수정 확인':'미확인'}</dd></div></dl><p>자료 수집·화면 조회 시각은 공식 발표 시각과 달라요. 시각이 없으면 임의로 채우지 않아요.</p></details>`;
+ const sourceSummary=typeof data.sourceSummary==='string'&&data.sourceSummary.trim();
+ const summary=sourceSummary?`<span class="analysis-meta">${esc(sourceSummary)}</span><span class="release-timing-label">자료 기준 <span aria-hidden="true">⌄</span></span>`:'기간·발표·확인 기준';
+ return `<details class="release-timing${sourceSummary?' release-timing--source':''}"><summary>${summary}</summary><dl><div><dt>${esc(data.observedLabel||'관측 기준')}</dt><dd>${esc(stamp(data.observedAt))}</dd></div><div><dt>공식 발표</dt><dd>${esc(stamp(data.publishedAt))}</dd></div><div><dt>자료 수집</dt><dd>${esc(stamp(data.collectedAt))}</dd></div>${data.builtAt?`<div><dt>자료 생성</dt><dd>${esc(stamp(data.builtAt))}</dd></div>`:''}<div><dt>마지막 확인</dt><dd>${esc(stamp(data.checkedAt))}</dd></div><div><dt>수정 여부</dt><dd>${data.revisionStatus==='revised'?'기존 값 수정 확인':'미확인'}</dd></div></dl><p>자료 수집·화면 조회 시각은 공식 발표 시각과 달라요. 시각이 없으면 임의로 채우지 않아요.</p></details>`;
 }
 export function researchContinuationHtml(data){
  if(!data?.available)return '';

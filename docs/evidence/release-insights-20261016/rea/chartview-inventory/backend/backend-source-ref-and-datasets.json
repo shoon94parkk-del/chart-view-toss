@@ -1,0 +1,273 @@
+{
+  "observedAt": "2026-10-16T01:18:05.642046+00:00",
+  "repo": "/workspace/chartview-quote-release-main-20261015",
+  "localHead": "1ee91ef2088854ce3c2d4c2cbac8dd09944ccd93",
+  "fetchedOriginMain": "f0f0d3b4278460591770796c5849aa090f0f4517",
+  "originMainCommit": "f0f0d3b4278460591770796c5849aa090f0f4517 2026-10-16T00:37:57Z data: refresh valuation detail cache",
+  "filesChangedSinceLocalHead": [
+    "static/data/dart_business_context.json",
+    "static/data/full_heatmap_snapshot.json",
+    "static/data/guru_evidence.json",
+    "static/data/guru_financials.json",
+    "static/data/guru_market.json",
+    "static/data/guru_quarters.json",
+    "static/data/guru_screening.json",
+    "static/data/home_snapshot.json",
+    "static/data/macro_cache.json",
+    "static/data/valuation_cache.json"
+  ],
+  "sourceEvidenceOnly": true,
+  "liveServiceVerified": false,
+  "operatingApisCalled": false,
+  "datasetMetadata": {
+    "macro_cache.json": {
+      "generatedAt": "2026-10-15T21:22:40.506467+00:00",
+      "count": 16,
+      "freshCount": 16,
+      "staleCount": 0,
+      "source": "FRED/Federal Reserve data precomputed by GitHub Actions via FRED CSV + Equibles + DBnomics",
+      "indicators": [
+        {
+          "symbol": "T10Y2Y",
+          "value": 0.33,
+          "asOf": "2026-10-15",
+          "source": "FRED mirror · Equibles CSV",
+          "stale": false,
+          "link": "https://fred.stlouisfed.org/series/T10Y2Y",
+          "chartPoints": 100
+        },
+        {
+          "symbol": "T10Y3M",
+          "value": 0.82,
+          "asOf": "2026-10-15",
+          "source": "FRED mirror · Equibles CSV",
+          "stale": false,
+          "link": "https://fred.stlouisfed.org/series/T10Y3M",
+          "chartPoints": 100
+        },
+        {
+          "symbol": "BAMLH0A0HYM2",
+          "value": 3.25,
+          "asOf": "2026-10-14",
+          "source": "FRED mirror · Equibles CSV",
+          "stale": false,
+          "link": "https://fred.stlouisfed.org/series/BAMLH0A0HYM2",
+          "chartPoints": 100
+        },
+        {
+          "symbol": "RRPONTSYD",
+          "value": 1.201,
+          "asOf": "2026-10-15",
+          "source": "FRED mirror · Equibles CSV",
+          "stale": false,
+          "link": "https://fred.stlouisfed.org/series/RRPONTSYD",
+          "chartPoints": 100
+        },
+        {
+          "symbol": "DFII10",
+          "value": 2.88,
+          "asOf": "2026-10-13",
+          "source": "Federal Reserve mirror · DBnomics",
+          "stale": false,
+          "link": "https://fred.stlouisfed.org/series/DFII10",
+          "chartPoints": 100
+        },
+        {
+          "symbol": "T10YIE",
+          "value": 2.32,
+          "asOf": "2026-10-15",
+          "source": "FRED mirror · Equibles CSV",
+          "stale": false,
+          "link": "https://fred.stlouisfed.org/series/T10YIE",
+          "chartPoints": 100
+        },
+        {
+          "symbol": "PCEPI",
+          "value": 3.4,
+          "asOf": "2026-08-01",
+          "source": "Federal Reserve Bank of Dallas · PCE",
+          "stale": false,
+          "link": "https://fred.stlouisfed.org/series/PCEPI",
+          "chartPoints": 6
+        },
+        {
+          "symbol": "PCETRIM12M159SFRBDAL",
+          "value": 2.2,
+          "asOf": "2026-08-01",
+          "source": "Federal Reserve Bank of Dallas · PCE",
+          "stale": false,
+          "link": "https://fred.stlouisfed.org/series/PCETRIM12M159SFRBDAL",
+          "chartPoints": 6
+        },
+        {
+          "symbol": "UNRATE",
+          "value": 4.2,
+          "asOf": "2026-09-01",
+          "source": "FRED mirror · Equibles CSV",
+          "stale": false,
+          "link": "https://fred.stlouisfed.org/series/UNRATE",
+          "chartPoints": 80
+        },
+        {
+          "symbol": "RSAFS",
+          "value": 745021.0,
+          "asOf": "2026-09-01",
+          "source": "FRED mirror · Equibles CSV",
+          "stale": false,
+          "link": "https://fred.stlouisfed.org/series/RSAFS",
+          "chartPoints": 81
+        },
+        {
+          "symbol": "WALCL",
+          "value": 6755639.0,
+          "asOf": "2026-10-14",
+          "source": "FRED mirror · Equibles CSV",
+          "stale": false,
+          "link": "https://fred.stlouisfed.org/series/WALCL",
+          "chartPoints": 100
+        },
+        {
+          "symbol": "WTREGEN",
+          "value": 885783.0,
+          "asOf": "2026-10-07",
+          "source": "Federal Reserve mirror · DBnomics",
+          "stale": false,
+          "link": "https://fred.stlouisfed.org/series/WTREGEN",
+          "chartPoints": 100
+        },
+        {
+          "symbol": "M2SL",
+          "value": 23342.8,
+          "asOf": "2026-08-01",
+          "source": "FRED mirror · Equibles CSV",
+          "stale": false,
+          "link": "https://fred.stlouisfed.org/series/M2SL",
+          "chartPoints": 80
+        },
+        {
+          "symbol": "FEDTARGET",
+          "value": 3.875,
+          "asOf": "2026-10-15",
+          "source": "Federal Reserve / FRED mirror · Equibles daily target range",
+          "stale": false,
+          "link": "https://fred.stlouisfed.org/series/DFEDTARU",
+          "chartPoints": 100
+        },
+        {
+          "symbol": "DFF",
+          "value": 3.88,
+          "asOf": "2026-10-14",
+          "source": "FRED mirror · Equibles CSV",
+          "stale": false,
+          "link": "https://fred.stlouisfed.org/series/DFF",
+          "chartPoints": 100
+        },
+        {
+          "symbol": "^VIX",
+          "value": 16.87,
+          "asOf": "2026-10-14",
+          "source": "FRED mirror · Equibles CSV",
+          "stale": false,
+          "link": "https://fred.stlouisfed.org/series/VIXCLS",
+          "chartPoints": 100
+        }
+      ]
+    },
+    "dart_business_context.json": {
+      "updated": "2026-10-16T08:45:39+09:00",
+      "count": 14,
+      "source": "OpenDART + DART viewer, fail-closed parser",
+      "companyCount": 14,
+      "codes": [
+        "000270",
+        "000660",
+        "005380",
+        "005490",
+        "005930",
+        "006400",
+        "033500",
+        "035420",
+        "035720",
+        "042660",
+        "066570",
+        "068270",
+        "207940",
+        "373220"
+      ],
+      "rowsWithCheckedAt": 0,
+      "availableCount": 14,
+      "failures": []
+    },
+    "dart_financial_history.json": {
+      "generatedAt": "2026-10-10T10:09:08+09:00",
+      "source": "OpenDART fnlttSinglAcntAll",
+      "companyCount": 14,
+      "codes": [
+        "000270",
+        "000660",
+        "005380",
+        "005490",
+        "005930",
+        "006400",
+        "033500",
+        "035420",
+        "035720",
+        "042660",
+        "066570",
+        "068270",
+        "207940",
+        "373220"
+      ],
+      "rowsWithCheckedAt": 0,
+      "availableCount": 14
+    },
+    "dart_financial_quarters.json": {
+      "schemaVersion": 1,
+      "companyCount": 14,
+      "codes": [
+        "000270",
+        "000660",
+        "005380",
+        "005490",
+        "005930",
+        "006400",
+        "033500",
+        "035420",
+        "035720",
+        "042660",
+        "066570",
+        "068270",
+        "207940",
+        "373220"
+      ],
+      "rowsWithCheckedAt": 0,
+      "availableCount": 14,
+      "latestQuarterPeriods": [
+        "2026 Q2"
+      ]
+    },
+    "consensus_cache.json": {
+      "generatedAt": "2026-10-15T01:48:54.462889+00:00",
+      "count": 56,
+      "source": "Yahoo Finance earningsTrend + adjusted price chart"
+    },
+    "consensus_history.json": {
+      "generatedAt": "2026-10-15T01:48:54.462889+00:00",
+      "retentionDays": 180,
+      "symbolCount": 56,
+      "dateRange": [
+        "2026-09-10",
+        "2026-10-15"
+      ]
+    },
+    "company_context.json": {
+      "updated": "2026-10-15T13:31:57+09:00",
+      "count": 2648,
+      "source": "KRX KIND 상장법인목록"
+    },
+    "valuation_cache.json": {
+      "generatedAt": "2026-10-16T00:37:57.091251+00:00",
+      "count": 67
+    }
+  }
+}

@@ -10,6 +10,14 @@ test('source timing never presents collection as an official publication or revi
  assert.match(html||'',/마지막 확인.*미제공/s);
  assert.match(html||'',/수정 여부.*미확인/s);
 });
+test('compact estimate source stays visible and identifies the forecast fiscal-period end',()=>{
+ const html=view.sourceTimingHtml?.({sourceSummary:'Yahoo <source> · 10. 02. 15:00 KST 수집',observedAt:'2026-12-31',observedLabel:'추정 회계기간 종료',collectedAt:'2026-10-02T06:00:00Z'});
+ const summary=html?.match(/<summary>(.*?)<\/summary>/s)?.[1];
+ assert.match(summary||'',/analysis-meta.*Yahoo &lt;source&gt;.*KST 수집/s);
+ assert.match(summary||'',/자료 기준/);
+ assert.match(html||'',/추정 회계기간 종료.*2026.12.31/s);
+ assert.match(html||'',/공식 발표.*미제공/s);
+});
 test('a research continuation is available only after a usable report and preserves the current form',()=>{
  assert.equal(view.researchContinuationHtml?.({available:false}),'');
  const html=view.researchContinuationHtml?.({available:true});

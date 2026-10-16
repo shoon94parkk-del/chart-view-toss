@@ -1,0 +1,486 @@
+{
+  "schemaVersion": 1,
+  "researchDate": "2026-10-16",
+  "archiveDate": "2026-10-16",
+  "sourceDirectory": "/workspace/research/chartview-afterns-20261016",
+  "scope": "Portable Markdown/JSON support for the historical REA report; no new observation, product test or deployment claim. Existing PNGs remain unchanged. Canonical source files are represented by the original SHA256 when compacted.",
+  "files": [
+    {
+      "path": "chartview-inventory/INVENTORY.md",
+      "bytes": 17819,
+      "sha256": "0ab1d1e210a32e0a7c23240768c73e9f967bf72834132c9de6ef05ec92f5d64d",
+      "archiveMethod": "verbatim",
+      "originalPath": "chartview-inventory/INVENTORY.md",
+      "originalBytes": 17819,
+      "originalSha256": "0ab1d1e210a32e0a7c23240768c73e9f967bf72834132c9de6ef05ec92f5d64d"
+    },
+    {
+      "path": "chartview-inventory/inventory.json",
+      "bytes": 13858,
+      "sha256": "2a48b8fa7ff819b4b43065958ea5ed02fed0c3ac637f7d00f5f65240342d3d41",
+      "archiveMethod": "verbatim",
+      "originalPath": "chartview-inventory/inventory.json",
+      "originalBytes": 13858,
+      "originalSha256": "2a48b8fa7ff819b4b43065958ea5ed02fed0c3ac637f7d00f5f65240342d3d41"
+    },
+    {
+      "path": "chartview-inventory/ref-state.json",
+      "bytes": 612,
+      "sha256": "54ce8e2267a5f5a8a701308bfd42c5ae2dc64888dee369d89a70d7eeb5720194",
+      "archiveMethod": "verbatim",
+      "originalPath": "chartview-inventory/ref-state.json",
+      "originalBytes": 612,
+      "originalSha256": "54ce8e2267a5f5a8a701308bfd42c5ae2dc64888dee369d89a70d7eeb5720194"
+    },
+    {
+      "path": "chartview-inventory/open-prs.json",
+      "bytes": 1945,
+      "sha256": "27fc58ee3df189ecce0af559371e0620f04639daf83a6e29c5b3f9cde66bc2bc",
+      "archiveMethod": "verbatim",
+      "originalPath": "chartview-inventory/open-prs.json",
+      "originalBytes": 1945,
+      "originalSha256": "27fc58ee3df189ecce0af559371e0620f04639daf83a6e29c5b3f9cde66bc2bc"
+    },
+    {
+      "path": "chartview-inventory/pr-127.json",
+      "bytes": 4569,
+      "sha256": "923ad9b70ee6d9062260437c1a65a280bbcaa61cc3c731228a09d085432c8876",
+      "archiveMethod": "verbatim",
+      "originalPath": "chartview-inventory/pr-127.json",
+      "originalBytes": 4569,
+      "originalSha256": "923ad9b70ee6d9062260437c1a65a280bbcaa61cc3c731228a09d085432c8876"
+    },
+    {
+      "path": "chartview-inventory/pr-134.json",
+      "bytes": 11604,
+      "sha256": "1381fdc6595ab2139d09f96b1293853585db6640418e158b8decfccae6956efc",
+      "archiveMethod": "verbatim",
+      "originalPath": "chartview-inventory/pr-134.json",
+      "originalBytes": 11604,
+      "originalSha256": "1381fdc6595ab2139d09f96b1293853585db6640418e158b8decfccae6956efc"
+    },
+    {
+      "path": "chartview-inventory/backend/backend-inventory.md",
+      "bytes": 16257,
+      "sha256": "9edeae575e193d5e020abb471211da2447439fe77a5b2afda1d54ac29f013e06",
+      "archiveMethod": "verbatim",
+      "originalPath": "chartview-inventory/backend/backend-inventory.md",
+      "originalBytes": 16257,
+      "originalSha256": "9edeae575e193d5e020abb471211da2447439fe77a5b2afda1d54ac29f013e06"
+    },
+    {
+      "path": "chartview-inventory/backend/backend-source-ref-and-datasets.json",
+      "bytes": 7968,
+      "sha256": "0b5f1cf79e0ad137c2ced7cff983d4af4f944a99e9fdeae94d2051471b58a650",
+      "archiveMethod": "verbatim",
+      "originalPath": "chartview-inventory/backend/backend-source-ref-and-datasets.json",
+      "originalBytes": 7968,
+      "originalSha256": "0b5f1cf79e0ad137c2ced7cff983d4af4f944a99e9fdeae94d2051471b58a650"
+    },
+    {
+      "path": "official-sources/research-summary.md",
+      "bytes": 6629,
+      "sha256": "6c79f9882288bd0812b70411f7dac2ddc0a55c5f5ea8c129acfe7af889fb5af7",
+      "archiveMethod": "verbatim",
+      "originalPath": "official-sources/research-summary.md",
+      "originalBytes": 6629,
+      "originalSha256": "6c79f9882288bd0812b70411f7dac2ddc0a55c5f5ea8c129acfe7af889fb5af7"
+    },
+    {
+      "path": "official-sources/facts.json",
+      "bytes": 10202,
+      "sha256": "102224ef91e2177629ce127e84a5f025ae3e9c776dffa53e6aada60d8dc8bb0d",
+      "archiveMethod": "verbatim",
+      "originalPath": "official-sources/facts.json",
+      "originalBytes": 10202,
+      "originalSha256": "102224ef91e2177629ce127e84a5f025ae3e9c776dffa53e6aada60d8dc8bb0d"
+    },
+    {
+      "path": "official-sources/fetch-metadata.json",
+      "bytes": 2206,
+      "sha256": "9348449d3183f779a86380b3bac25539d49256bfcb5a65ef394ad67bea0d2713",
+      "archiveMethod": "verbatim",
+      "originalPath": "official-sources/fetch-metadata.json",
+      "originalBytes": 2206,
+      "originalSha256": "9348449d3183f779a86380b3bac25539d49256bfcb5a65ef394ad67bea0d2713"
+    },
+    {
+      "path": "official-sources/NVDA-relevant-public-attributes.json",
+      "bytes": 1110,
+      "sha256": "13779bd54718db818c0c264ed089dfa8c2275c03ad4d74656a3d6ee05c9bea19",
+      "archiveMethod": "verbatim",
+      "originalPath": "official-sources/NVDA-relevant-public-attributes.json",
+      "originalBytes": 1110,
+      "originalSha256": "13779bd54718db818c0c264ed089dfa8c2275c03ad4d74656a3d6ee05c9bea19"
+    },
+    {
+      "path": "official-sources/stock--NVDA.links.json",
+      "bytes": 1874,
+      "sha256": "e72d0e7e77294b8468044fcbe5af9b5db51ad65f3f542644071c1d1d618da587",
+      "archiveMethod": "verbatim",
+      "originalPath": "official-sources/stock--NVDA.links.json",
+      "originalBytes": 1874,
+      "originalSha256": "e72d0e7e77294b8468044fcbe5af9b5db51ad65f3f542644071c1d1d618da587"
+    },
+    {
+      "path": "13-chartview-macro.driver.json",
+      "bytes": 809,
+      "sha256": "77426bc12197d057f2e5a99bd9a9713f829868f44a3218121f09d2c04ff15a09",
+      "archiveMethod": "verbatim",
+      "originalPath": "13-chartview-macro.driver.json",
+      "originalBytes": 809,
+      "originalSha256": "77426bc12197d057f2e5a99bd9a9713f829868f44a3218121f09d2c04ff15a09"
+    },
+    {
+      "path": "rea/01-home-desktop.capture-web-screenshot.json",
+      "bytes": 2618,
+      "sha256": "956c39ba5dddfc84e1310c941189662c0bd453e7b4cd99400d99a2a7e9b75d10",
+      "archiveMethod": "derived extract; see archive.omitted",
+      "originalPath": "rea/01-home-desktop.capture-web-screenshot.json",
+      "originalBytes": 582673,
+      "originalSha256": "24a6491a80776096b2feb8dc6f58a078749e0eb90b5d97559bac2ff2cb3489f4"
+    },
+    {
+      "path": "rea/01-home-desktop.inspect-web-page.json",
+      "bytes": 35818,
+      "sha256": "60fc2968b985397fc33fdf74b5de33fd184d2632ff85026208fa60adba6241bc",
+      "archiveMethod": "derived extract; see archive.omitted",
+      "originalPath": "rea/01-home-desktop.inspect-web-page.json",
+      "originalBytes": 1390691,
+      "originalSha256": "d11aeb5228d1bc1f6e9094f56a7fb636b7a5031d433438e09b73e990ce37161b"
+    },
+    {
+      "path": "rea/01-home-desktop.targets.json",
+      "bytes": 1608,
+      "sha256": "c16629d8f092919eeaa4e70c8cfb9f4d17b9c779f787618dba26c4d8d9aae102",
+      "archiveMethod": "verbatim",
+      "originalPath": "rea/01-home-desktop.targets.json",
+      "originalBytes": 1608,
+      "originalSha256": "c16629d8f092919eeaa4e70c8cfb9f4d17b9c779f787618dba26c4d8d9aae102"
+    },
+    {
+      "path": "rea/02-good-but-fell.capture-web-screenshot.json",
+      "bytes": 2620,
+      "sha256": "e8592227d1d2b5c47d6077f14d9b9032d6b203af037ed01f16b09cb0aa0a1d16",
+      "archiveMethod": "derived extract; see archive.omitted",
+      "originalPath": "rea/02-good-but-fell.capture-web-screenshot.json",
+      "originalBytes": 548345,
+      "originalSha256": "6e4704225ff48a97bba2a7b07543f16aa3b4167a5e477fced6d7eb0855c49e84"
+    },
+    {
+      "path": "rea/02-good-but-fell.inspect-web-page.json",
+      "bytes": 36651,
+      "sha256": "4d351c4f282236a6c7338f7b156aa10b1e3073af8e2e75f8265cd4eae371a764",
+      "archiveMethod": "derived extract; see archive.omitted",
+      "originalPath": "rea/02-good-but-fell.inspect-web-page.json",
+      "originalBytes": 1396424,
+      "originalSha256": "40beddfa1fabb3228c0c029905d2fc12b9c825412709b76fdb110d18faedb54a"
+    },
+    {
+      "path": "rea/02-good-but-fell.targets.json",
+      "bytes": 1608,
+      "sha256": "c16629d8f092919eeaa4e70c8cfb9f4d17b9c779f787618dba26c4d8d9aae102",
+      "archiveMethod": "verbatim",
+      "originalPath": "rea/02-good-but-fell.targets.json",
+      "originalBytes": 1608,
+      "originalSha256": "c16629d8f092919eeaa4e70c8cfb9f4d17b9c779f787618dba26c4d8d9aae102"
+    },
+    {
+      "path": "rea/03-nvda-desktop.capture-web-screenshot.json",
+      "bytes": 2629,
+      "sha256": "903f9e01c7849d147cf95f72a6a15b739628ad233ef760a6043e1573e9f97570",
+      "archiveMethod": "derived extract; see archive.omitted",
+      "originalPath": "rea/03-nvda-desktop.capture-web-screenshot.json",
+      "originalBytes": 236212,
+      "originalSha256": "fdd505902be4811479d70a55d38729cada81f1514a7f1a9f52d5e596f05464b9"
+    },
+    {
+      "path": "rea/03-nvda-desktop.inspect-web-page.json",
+      "bytes": 34291,
+      "sha256": "f7d5046769686ae24389624ee5b3396d8088e0ce24d00a00655f1b903f30929e",
+      "archiveMethod": "derived extract; see archive.omitted",
+      "originalPath": "rea/03-nvda-desktop.inspect-web-page.json",
+      "originalBytes": 609987,
+      "originalSha256": "59514becc0d743a384514c9b2a3e304a3e6ec51088d079f9893d40b21c7097a1"
+    },
+    {
+      "path": "rea/03-nvda-desktop.targets.json",
+      "bytes": 1681,
+      "sha256": "d8049243bc09e2450bb70b69acd07190d0da600b024be721ff800b571f2f92b0",
+      "archiveMethod": "verbatim",
+      "originalPath": "rea/03-nvda-desktop.targets.json",
+      "originalBytes": 1681,
+      "originalSha256": "d8049243bc09e2450bb70b69acd07190d0da600b024be721ff800b571f2f92b0"
+    },
+    {
+      "path": "rea/04-nvda-mobile.capture-web-screenshot.json",
+      "bytes": 2624,
+      "sha256": "322d8c40fe45d0d17c163a80995442d8721c8e86cc46f10f5ff1edeac5b16edd",
+      "archiveMethod": "derived extract; see archive.omitted",
+      "originalPath": "rea/04-nvda-mobile.capture-web-screenshot.json",
+      "originalBytes": 103381,
+      "originalSha256": "8b99f7eb9e250122ed0adfe3b791bf83223ae08e6bcff6f7e26228bcfce739d1"
+    },
+    {
+      "path": "rea/04-nvda-mobile.inspect-web-page.json",
+      "bytes": 33922,
+      "sha256": "f4df9feea7acf3267c1c7496b7487ec188c5ead4666730f4050d02bf30ee6ca8",
+      "archiveMethod": "derived extract; see archive.omitted",
+      "originalPath": "rea/04-nvda-mobile.inspect-web-page.json",
+      "originalBytes": 606414,
+      "originalSha256": "ca050ee7834f248c831d5e2a5eb9aac24e13c642076a14682a2a8622a9326b0d"
+    },
+    {
+      "path": "rea/04-nvda-mobile.targets.json",
+      "bytes": 1681,
+      "sha256": "d8049243bc09e2450bb70b69acd07190d0da600b024be721ff800b571f2f92b0",
+      "archiveMethod": "verbatim",
+      "originalPath": "rea/04-nvda-mobile.targets.json",
+      "originalBytes": 1681,
+      "originalSha256": "d8049243bc09e2450bb70b69acd07190d0da600b024be721ff800b571f2f92b0"
+    },
+    {
+      "path": "rea/05-nvda-call-mobile.capture-web-screenshot.json",
+      "bytes": 2633,
+      "sha256": "ce8af4fe2c27e8cee45fb5a04f8dcc5d65070ad2c8bbb694bdfb46e536811613",
+      "archiveMethod": "derived extract; see archive.omitted",
+      "originalPath": "rea/05-nvda-call-mobile.capture-web-screenshot.json",
+      "originalBytes": 95513,
+      "originalSha256": "2b3cc78c178669a6c2d861a1656a7bc64a1b7a3e6e4f45605a84036e78b1d130"
+    },
+    {
+      "path": "rea/05-nvda-call-mobile.inspect-web-page.json",
+      "bytes": 33927,
+      "sha256": "898d5d1f0f6980fe4cf4c0f1cd32570530c0c1bec84abd19ddfa5125f971359b",
+      "archiveMethod": "derived extract; see archive.omitted",
+      "originalPath": "rea/05-nvda-call-mobile.inspect-web-page.json",
+      "originalBytes": 606414,
+      "originalSha256": "8626386f7ec4b9208ca88879128aafbd806e2c99b77acb1e99fdc6c12748fd5c"
+    },
+    {
+      "path": "rea/05-nvda-call-mobile.targets.json",
+      "bytes": 1681,
+      "sha256": "d8049243bc09e2450bb70b69acd07190d0da600b024be721ff800b571f2f92b0",
+      "archiveMethod": "verbatim",
+      "originalPath": "rea/05-nvda-call-mobile.targets.json",
+      "originalBytes": 1681,
+      "originalSha256": "d8049243bc09e2450bb70b69acd07190d0da600b024be721ff800b571f2f92b0"
+    },
+    {
+      "path": "rea/06-calendar-mobile.capture-web-screenshot.json",
+      "bytes": 2631,
+      "sha256": "b11bbc5090d51ee96509b3e196529437cd17e151e486c535d58decc3d6f42cd9",
+      "archiveMethod": "derived extract; see archive.omitted",
+      "originalPath": "rea/06-calendar-mobile.capture-web-screenshot.json",
+      "originalBytes": 147732,
+      "originalSha256": "32de3e9bcaef1c20636d2adf0b3929dd6d41f8ae9a774258af0e3f7665c3b5e1"
+    },
+    {
+      "path": "rea/06-calendar-mobile.inspect-web-page.json",
+      "bytes": 29515,
+      "sha256": "381e89dcb43c22513fd6ef7aaebf7e85dbb4aa76c24ce6f714d474f5713e6d16",
+      "archiveMethod": "derived extract; see archive.omitted",
+      "originalPath": "rea/06-calendar-mobile.inspect-web-page.json",
+      "originalBytes": 997979,
+      "originalSha256": "94024e2a2bddcb1056a3463d0772ed491ba66925606a22e1c210b6f3542df465"
+    },
+    {
+      "path": "rea/06-calendar-mobile.targets.json",
+      "bytes": 1630,
+      "sha256": "81d085b4b01c876f068bdf4f7125e4823bd374fb870725c975838ef68ef411c6",
+      "archiveMethod": "verbatim",
+      "originalPath": "rea/06-calendar-mobile.targets.json",
+      "originalBytes": 1630,
+      "originalSha256": "81d085b4b01c876f068bdf4f7125e4823bd374fb870725c975838ef68ef411c6"
+    },
+    {
+      "path": "rea/07-calendar-results-mobile.capture-web-screenshot.json",
+      "bytes": 2645,
+      "sha256": "e305316053666edb9d599a31b35a575299da10ab9e3b2df5485717d7a092129e",
+      "archiveMethod": "derived extract; see archive.omitted",
+      "originalPath": "rea/07-calendar-results-mobile.capture-web-screenshot.json",
+      "originalBytes": 97223,
+      "originalSha256": "dd66fe32e19fcfd23b52728bcffff44d7ad620e00c54eaa732d9add859e87762"
+    },
+    {
+      "path": "rea/07-calendar-results-mobile.inspect-web-page.json",
+      "bytes": 29523,
+      "sha256": "e57e483fdc7d356fe562b6c06b17075b5fae79dee0037b5ef595ac2ce5a37b51",
+      "archiveMethod": "derived extract; see archive.omitted",
+      "originalPath": "rea/07-calendar-results-mobile.inspect-web-page.json",
+      "originalBytes": 998238,
+      "originalSha256": "8f8c110697165c9752d799c6c6eb6aded4f869e9b9e9ca0456a294c4b57d2bbf"
+    },
+    {
+      "path": "rea/07-calendar-results-mobile.targets.json",
+      "bytes": 1630,
+      "sha256": "81d085b4b01c876f068bdf4f7125e4823bd374fb870725c975838ef68ef411c6",
+      "archiveMethod": "verbatim",
+      "originalPath": "rea/07-calendar-results-mobile.targets.json",
+      "originalBytes": 1630,
+      "originalSha256": "81d085b4b01c876f068bdf4f7125e4823bd374fb870725c975838ef68ef411c6"
+    },
+    {
+      "path": "rea/08-brief-mobile.capture-web-screenshot.json",
+      "bytes": 2622,
+      "sha256": "38820e6db655d72bd091514af4e7f307f47f16876c91adb2ca34cbf8fdbffdf4",
+      "archiveMethod": "derived extract; see archive.omitted",
+      "originalPath": "rea/08-brief-mobile.capture-web-screenshot.json",
+      "originalBytes": 158649,
+      "originalSha256": "0e407ccba74774ea5d95bef3e3b634e70ffe29007445f29ce32fd4205624b74f"
+    },
+    {
+      "path": "rea/08-brief-mobile.inspect-web-page.json",
+      "bytes": 66824,
+      "sha256": "6d7293891d4b174e3877bdb642e00ce166dd99991d98909e9cfb78543be905bb",
+      "archiveMethod": "derived extract; see archive.omitted",
+      "originalPath": "rea/08-brief-mobile.inspect-web-page.json",
+      "originalBytes": 1438975,
+      "originalSha256": "a095379dcbb2e1667cc57fad8a4405b7125b15b798c1735d57e4f695e3d9f0a0"
+    },
+    {
+      "path": "rea/08-brief-mobile.targets.json",
+      "bytes": 1621,
+      "sha256": "3d136a6fce473c9cabfdcfde4e55990fe7fca5f74286e8c6a63497787a9e5406",
+      "archiveMethod": "verbatim",
+      "originalPath": "rea/08-brief-mobile.targets.json",
+      "originalBytes": 1621,
+      "originalSha256": "3d136a6fce473c9cabfdcfde4e55990fe7fca5f74286e8c6a63497787a9e5406"
+    },
+    {
+      "path": "rea/09-season-mobile.capture-web-screenshot.json",
+      "bytes": 2634,
+      "sha256": "c9bd70dcba0c89004a4341c2b2835ba03fc3e69d2a5603a167a00f4a64502a49",
+      "archiveMethod": "derived extract; see archive.omitted",
+      "originalPath": "rea/09-season-mobile.capture-web-screenshot.json",
+      "originalBytes": 223879,
+      "originalSha256": "349f0f9494e4a42c1ea01c10f478f0e01d566fe4b95569e6471952ce0171aba6"
+    },
+    {
+      "path": "rea/09-season-mobile.inspect-web-page.json",
+      "bytes": 48842,
+      "sha256": "fb4a177c249599a405c15dedc457a8d0cf0adabb33ad1f1c876be09a34261ba3",
+      "archiveMethod": "derived extract; see archive.omitted",
+      "originalPath": "rea/09-season-mobile.inspect-web-page.json",
+      "originalBytes": 626016,
+      "originalSha256": "e8f771705fab500b35b74a89b64ce0133d544c12420853f4657b766b1f3a1f04"
+    },
+    {
+      "path": "rea/09-season-mobile.targets.json",
+      "bytes": 1674,
+      "sha256": "ef32fb771b825741c6678e47b8991d81d3dbdec359907d7485139afdab68643a",
+      "archiveMethod": "verbatim",
+      "originalPath": "rea/09-season-mobile.targets.json",
+      "originalBytes": 1674,
+      "originalSha256": "ef32fb771b825741c6678e47b8991d81d3dbdec359907d7485139afdab68643a"
+    },
+    {
+      "path": "rea/10-home-mobile.capture-web-screenshot.json",
+      "bytes": 2614,
+      "sha256": "0ca3bdcd8c325ef3aa01c14c9ff59cf25ea2a8d70b1d4bc0e63635f921713bed",
+      "archiveMethod": "derived extract; see archive.omitted",
+      "originalPath": "rea/10-home-mobile.capture-web-screenshot.json",
+      "originalBytes": 193915,
+      "originalSha256": "e97d4ae8e7af6fec31dcb3e24bc5add77606657dadd86ce7fe538da9bad623d5"
+    },
+    {
+      "path": "rea/10-home-mobile.inspect-web-page.json",
+      "bytes": 20332,
+      "sha256": "ed95e2e4c95bc868919f4db05b4a0871d79bf6fbea49efbd8e57e2cb629e7054",
+      "archiveMethod": "derived extract; see archive.omitted",
+      "originalPath": "rea/10-home-mobile.inspect-web-page.json",
+      "originalBytes": 1032676,
+      "originalSha256": "e1b730d4bdbb0e4e4c28969611be038125e9eec045e58eadde2ec7cdd3629e63"
+    },
+    {
+      "path": "rea/10-home-mobile.targets.json",
+      "bytes": 1608,
+      "sha256": "c16629d8f092919eeaa4e70c8cfb9f4d17b9c779f787618dba26c4d8d9aae102",
+      "archiveMethod": "verbatim",
+      "originalPath": "rea/10-home-mobile.targets.json",
+      "originalBytes": 1608,
+      "originalSha256": "c16629d8f092919eeaa4e70c8cfb9f4d17b9c779f787618dba26c4d8d9aae102"
+    },
+    {
+      "path": "rea/11-chartview-live-desktop.capture-web-screenshot.json",
+      "bytes": 2687,
+      "sha256": "05266d1273da5367c8de4bf43615e04f83dfea3e8432a2f81b40f03d8b05422a",
+      "archiveMethod": "derived extract; see archive.omitted",
+      "originalPath": "rea/11-chartview-live-desktop.capture-web-screenshot.json",
+      "originalBytes": 163278,
+      "originalSha256": "6a09d37f323fdd91bbd984aa537ce50d1b918ee3e976f8fdbb4ab61dcb2b474c"
+    },
+    {
+      "path": "rea/11-chartview-live-desktop.inspect-web-page.json",
+      "bytes": 17011,
+      "sha256": "c319e5b75cbc0b2ea09d575d6c8daf7740e3b89b9db412cd4eee3b9435566a43",
+      "archiveMethod": "derived extract; see archive.omitted",
+      "originalPath": "rea/11-chartview-live-desktop.inspect-web-page.json",
+      "originalBytes": 169639,
+      "originalSha256": "27217df046e80e094cb6efd9e56b5d7c9325ea696c448aaaca41b0020d9292c1"
+    },
+    {
+      "path": "rea/11-chartview-live-desktop.targets.json",
+      "bytes": 1814,
+      "sha256": "5c758b1f4ac89d881941457cc2fe4e5ab8e288de0773680a6a8fe14b7a550a68",
+      "archiveMethod": "verbatim",
+      "originalPath": "rea/11-chartview-live-desktop.targets.json",
+      "originalBytes": 1814,
+      "originalSha256": "5c758b1f4ac89d881941457cc2fe4e5ab8e288de0773680a6a8fe14b7a550a68"
+    },
+    {
+      "path": "rea/12-chartview-live-mobile.capture-web-screenshot.json",
+      "bytes": 2682,
+      "sha256": "9d4890597759ab137dab3fa7295b58c57c94df1f1859461e90326a8a6d01c146",
+      "archiveMethod": "derived extract; see archive.omitted",
+      "originalPath": "rea/12-chartview-live-mobile.capture-web-screenshot.json",
+      "originalBytes": 112135,
+      "originalSha256": "86787a37bb8ea487a860042da92ee97f242b4b0f8ebfab18847d365ae267220e"
+    },
+    {
+      "path": "rea/12-chartview-live-mobile.inspect-web-page.json",
+      "bytes": 17060,
+      "sha256": "187dd5ff7a2aafcd1532af306bda56247d2183f222c89c6e1c8abc54eec0da69",
+      "archiveMethod": "derived extract; see archive.omitted",
+      "originalPath": "rea/12-chartview-live-mobile.inspect-web-page.json",
+      "originalBytes": 170609,
+      "originalSha256": "6b3a4a58615826fe96db6f3c327122b61da8ea3c60b6b94bf4a5c97300e84191"
+    },
+    {
+      "path": "rea/12-chartview-live-mobile.targets.json",
+      "bytes": 1814,
+      "sha256": "5c758b1f4ac89d881941457cc2fe4e5ab8e288de0773680a6a8fe14b7a550a68",
+      "archiveMethod": "verbatim",
+      "originalPath": "rea/12-chartview-live-mobile.targets.json",
+      "originalBytes": 1814,
+      "originalSha256": "5c758b1f4ac89d881941457cc2fe4e5ab8e288de0773680a6a8fe14b7a550a68"
+    },
+    {
+      "path": "rea/13-chartview-live-macro.capture-web-screenshot.json",
+      "bytes": 2680,
+      "sha256": "2fd58245d0392f135e9e51b10bc4350527faffec04fb2ff68fe39cbe7e468e7a",
+      "archiveMethod": "derived extract; see archive.omitted",
+      "originalPath": "rea/13-chartview-live-macro.capture-web-screenshot.json",
+      "originalBytes": 111407,
+      "originalSha256": "5138ec94f9df72b6d516ecec635ee909020c9f385a804acf396732ec947aa1f7"
+    },
+    {
+      "path": "rea/13-chartview-live-macro.inspect-web-page.json",
+      "bytes": 15770,
+      "sha256": "6fa2562df9bb67a8e771e7c4c6925942e475859747ba6229b497d91a905b31e6",
+      "archiveMethod": "derived extract; see archive.omitted",
+      "originalPath": "rea/13-chartview-live-macro.inspect-web-page.json",
+      "originalBytes": 239077,
+      "originalSha256": "1266b363bd5da1c5edd9d9edce5744bddcbc661f92e9713ca8d6ca0642c54f46"
+    },
+    {
+      "path": "rea/13-chartview-live-macro.targets.json",
+      "bytes": 1836,
+      "sha256": "579825640234d1c4b2582f07e42ff0efd1db2547668d10334882ea7624608e25",
+      "archiveMethod": "verbatim",
+      "originalPath": "rea/13-chartview-live-macro.targets.json",
+      "originalBytes": 1836,
+      "originalSha256": "579825640234d1c4b2582f07e42ff0efd1db2547668d10334882ea7624608e25"
+    }
+  ]
+}

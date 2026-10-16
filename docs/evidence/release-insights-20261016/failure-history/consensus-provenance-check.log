@@ -1,0 +1,124 @@
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+320px native keyboard/click disclosure, 44px control, 12px visible/expanded source and overflow passed
+{
+  "viewport": 320,
+  "height": 377.78125,
+  "children": [
+    {
+      "tag": "BUTTON",
+      "cls": "text-button",
+      "text": "삼성전자 · 005930.KS",
+      "height": 44,
+      "marginTop": "0px",
+      "marginBottom": "0px"
+    },
+    {
+      "tag": "DETAILS",
+      "cls": "release-timing release-timing--source",
+      "text": "Yahoo Finance earningsTrend · cached fallback · 10. 02. 15:00 KST 수집자료 기준 ⌄추정 회계기간 종료2026.12.31공식 발표미제공자료 수집10",
+      "height": 54,
+      "marginTop": "7px",
+      "marginBottom": "7px"
+    },
+    {
+      "tag": "P",
+      "cls": "",
+      "text": "회계연도 전체 추정치 · 회계기간 종료 2026-12-31 · KRW",
+      "height": 36,
+      "marginTop": "7px",
+      "marginBottom": "7px"
+    },
+    {
+      "tag": "DL",
+      "cls": "analysis-metrics",
+      "text": "연간 EPS 평균 추정47,789EPS 범위40,609 ~ 60,367참여 애널리스트33명연간 매출 평균 추정723.27조 원원값 723,269,936,280,000 KRWEPS 30일 변경-1.6",
+      "height": 197.78125,
+      "marginTop": "10px",
+      "marginBottom": "0px"
+    }
+  ],
+  "summaryHeight": 54
+}
+320px: menu/destination identities, card density, readable sources and touch targets passed
+390px native keyboard/click disclosure, 44px control, 12px visible/expanded source and overflow passed
+{
+  "viewport": 390,
+  "height": 331.78125,
+  "children": [
+    {
+      "tag": "BUTTON",
+      "cls": "text-button",
+      "text": "삼성전자 · 005930.KS",
+      "height": 44,
+      "marginTop": "0px",
+      "marginBottom": "0px"
+    },
+    {
+      "tag": "DETAILS",
+      "cls": "release-timing release-timing--source",
+      "text": "Yahoo Finance earningsTrend · cached fallback · 10. 02. 15:00 KST 수집자료 기준 ⌄추정 회계기간 종료2026.12.31공식 발표미제공자료 수집10",
+      "height": 44,
+      "marginTop": "7px",
+      "marginBottom": "7px"
+    },
+    {
+      "tag": "P",
+      "cls": "",
+      "text": "회계연도 전체 추정치 · 회계기간 종료 2026-12-31 · KRW",
+      "height": 18,
+      "marginTop": "7px",
+      "marginBottom": "7px"
+    },
+    {
+      "tag": "DL",
+      "cls": "analysis-metrics",
+      "text": "연간 EPS 평균 추정47,789EPS 범위40,609 ~ 60,367참여 애널리스트33명연간 매출 평균 추정723.27조 원원값 723,269,936,280,000 KRWEPS 30일 변경-1.6",
+      "height": 179.78125,
+      "marginTop": "10px",
+      "marginBottom": "0px"
+    }
+  ],
+  "summaryHeight": 44
+}
+390px: menu/destination identities, card density, readable sources and touch targets passed
+430px native keyboard/click disclosure, 44px control, 12px visible/expanded source and overflow passed
+{
+  "viewport": 430,
+  "height": 313.78125,
+  "children": [
+    {
+      "tag": "BUTTON",
+      "cls": "text-button",
+      "text": "삼성전자 · 005930.KS",
+      "height": 44,
+      "marginTop": "0px",
+      "marginBottom": "0px"
+    },
+    {
+      "tag": "DETAILS",
+      "cls": "release-timing release-timing--source",
+      "text": "Yahoo Finance earningsTrend · cached fallback · 10. 02. 15:00 KST 수집자료 기준 ⌄추정 회계기간 종료2026.12.31공식 발표미제공자료 수집10",
+      "height": 44,
+      "marginTop": "7px",
+      "marginBottom": "7px"
+    },
+    {
+      "tag": "P",
+      "cls": "",
+      "text": "회계연도 전체 추정치 · 회계기간 종료 2026-12-31 · KRW",
+      "height": 18,
+      "marginTop": "7px",
+      "marginBottom": "7px"
+    },
+    {
+      "tag": "DL",
+      "cls": "analysis-metrics",
+      "text": "연간 EPS 평균 추정47,789EPS 범위40,609 ~ 60,367참여 애널리스트33명연간 매출 평균 추정723.27조 원원값 723,269,936,280,000 KRWEPS 30일 변경-1.6",
+      "height": 161.78125,
+      "marginTop": "10px",
+      "marginBottom": "0px"
+    }
+  ],
+  "summaryHeight": 44
+}
+430px: menu/destination identities, card density, readable sources and touch targets passed

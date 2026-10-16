@@ -1,5 +1,5 @@
 {
-  "comparedAt": "2026-10-16T02:27:39.507Z",
+  "comparedAt": "2026-10-16T03:21:22.614Z",
   "conditions": {
     "viewport": "390x844",
     "browser": "140.0.7339.16",
@@ -27,10 +27,10 @@
   ],
   "afterMain": [
     {
-      "file": "index-CPuYGV3J.js",
+      "file": "index-D9fZBdX5.js",
       "bytes": 327103,
-      "gzipBytes": 108943,
-      "sha256": "7860a442c9bf211f0a0bc4165f85d0cacdafc0154d08ad2bcfa611534ed43df6"
+      "gzipBytes": 108950,
+      "sha256": "b50eede2a7639e9f3b62aa40b1b10fb7f5acd6432a17b91cf69828455516e536"
     }
   ],
   "compared": [
@@ -38,11 +38,11 @@
       "route": "home",
       "samples": 7,
       "beforeMedianMs": 132,
-      "afterMedianMs": 133,
-      "medianChangeMs": 1,
-      "medianChangePercent": 0.8,
+      "afterMedianMs": 130,
+      "medianChangeMs": -2,
+      "medianChangePercent": -1.5,
       "beforeMaxMs": 141,
-      "afterMaxMs": 214,
+      "afterMaxMs": 157,
       "beforeStartupRequestCounts": [
         9,
         9,
@@ -109,11 +109,11 @@
       "route": "detail/005930.KS",
       "samples": 7,
       "beforeMedianMs": 276,
-      "afterMedianMs": 280,
-      "medianChangeMs": 4,
-      "medianChangePercent": 1.4,
+      "afterMedianMs": 289,
+      "medianChangeMs": 13,
+      "medianChangePercent": 4.7,
       "beforeMaxMs": 331,
-      "afterMaxMs": 370,
+      "afterMaxMs": 300,
       "beforeStartupRequestCounts": [
         10,
         10,
@@ -186,7 +186,7 @@
       "medianChangeMs": 19,
       "medianChangePercent": 9.5,
       "beforeMaxMs": 238,
-      "afterMaxMs": 248,
+      "afterMaxMs": 226,
       "beforeStartupRequestCounts": [
         2,
         2,
@@ -231,8 +231,8 @@
         115504,
         115504
       ],
-      "afterInflationMedianMs": 269,
-      "afterInflationMaxMs": 305,
+      "afterInflationMedianMs": 277,
+      "afterInflationMaxMs": 286,
       "overflowPx": 0
     }
   ]

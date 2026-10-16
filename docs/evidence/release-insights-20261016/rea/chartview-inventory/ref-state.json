@@ -1,0 +1,13 @@
+{
+  "observedAt": "2026-10-16T01:16:06.126531+00:00",
+  "frontendRefs": {
+    "main": "02cb31170ce4ce78cc724611189e06a1e4347bac",
+    "pending-pr134": "1dd69ac67412980064db76ebe35b97e914934a50",
+    "frontend-release-branch": "9bd17dbe410065eb09a743c72506be36c2bc4d30"
+  },
+  "liveFrontendRevision": "not established by this source-only agent",
+  "sourceRepo": "https://github.com/shoon94parkk-del/chart-view-toss",
+  "constraints": "read-only source/PR audit; no app/data/PICK/deploy/PR mutations",
+  "backendOriginMain": "f0f0d3b4278460591770796c5849aa090f0f4517",
+  "backendLiveRevision": "not established"
+}
