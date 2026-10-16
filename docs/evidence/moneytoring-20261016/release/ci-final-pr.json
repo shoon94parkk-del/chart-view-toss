@@ -1,0 +1,96 @@
+{
+  "headRefOid": "a99d925564d20dcd13efbad03a1e12560f5cb222",
+  "state": "OPEN",
+  "statusCheckRollup": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-16T08:25:18Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/shoon94parkk-del/chart-view-toss/actions/runs/38873507919/job/116882961355",
+      "name": "build-ait",
+      "startedAt": "2026-10-16T08:24:48Z",
+      "status": "COMPLETED",
+      "workflowName": "Apps in Toss bundle"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-16T08:25:01Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/shoon94parkk-del/chart-view-toss/actions/runs/38873507930/job/116882961403",
+      "name": "api-smoke",
+      "startedAt": "2026-10-16T08:24:49Z",
+      "status": "COMPLETED",
+      "workflowName": "Live backend contract smoke"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-16T08:25:17Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/shoon94parkk-del/chart-view-toss/actions/runs/38873507935/job/116882961723",
+      "name": "test",
+      "startedAt": "2026-10-16T08:24:49Z",
+      "status": "COMPLETED",
+      "workflowName": "Main regression contract"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-16T08:28:50Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/shoon94parkk-del/chart-view-toss/actions/runs/38873507929/job/116882961511",
+      "name": "chromium-mobile",
+      "startedAt": "2026-10-16T08:24:49Z",
+      "status": "COMPLETED",
+      "workflowName": "Mobile release QA"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-16T08:25:44Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/shoon94parkk-del/chart-view-toss/actions/runs/38873507935/job/116882961898",
+      "name": "audit-browser",
+      "startedAt": "2026-10-16T08:24:49Z",
+      "status": "COMPLETED",
+      "workflowName": "Main regression contract"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-16T08:27:37Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/shoon94parkk-del/chart-view-toss/actions/runs/38873507935/job/116882961924",
+      "name": "E2E (desktop-chromium)",
+      "startedAt": "2026-10-16T08:24:49Z",
+      "status": "COMPLETED",
+      "workflowName": "Main regression contract"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-16T08:28:49Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/shoon94parkk-del/chart-view-toss/actions/runs/38873507935/job/116882961970",
+      "name": "E2E (android-chromium)",
+      "startedAt": "2026-10-16T08:24:49Z",
+      "status": "COMPLETED",
+      "workflowName": "Main regression contract"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-16T08:28:23Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/shoon94parkk-del/chart-view-toss/actions/runs/38873507935/job/116882962087",
+      "name": "E2E (narrow-chromium)",
+      "startedAt": "2026-10-16T08:24:49Z",
+      "status": "COMPLETED",
+      "workflowName": "Main regression contract"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-16T08:31:42Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/shoon94parkk-del/chart-view-toss/actions/runs/38873507935/job/116882962034",
+      "name": "E2E (iphone-small-webkit)",
+      "startedAt": "2026-10-16T08:24:49Z",
+      "status": "COMPLETED",
+      "workflowName": "Main regression contract"
+    }
+  ]
+}

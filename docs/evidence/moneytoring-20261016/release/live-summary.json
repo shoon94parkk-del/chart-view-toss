@@ -1,0 +1,106 @@
+{
+  "status": "passed",
+  "checks": 28,
+  "devices": [
+    {
+      "device": "chromium-320",
+      "checks": 7,
+      "passed": 7,
+      "newsRelaySamplesMs": [
+        2341,
+        5176,
+        429,
+        464,
+        238,
+        383,
+        197
+      ],
+      "maxNewsRelayMs": 5176,
+      "hasActualNewsRows": true,
+      "markerOnOffExercised": true,
+      "summaryAutoRequests": 0,
+      "networkFailureRecordsRetained": 27
+    },
+    {
+      "device": "chromium-390",
+      "checks": 7,
+      "passed": 7,
+      "newsRelaySamplesMs": [
+        156,
+        649,
+        580,
+        418,
+        909,
+        384,
+        273
+      ],
+      "maxNewsRelayMs": 909,
+      "hasActualNewsRows": true,
+      "markerOnOffExercised": false,
+      "summaryAutoRequests": 0,
+      "networkFailureRecordsRetained": 16
+    },
+    {
+      "device": "chromium-430",
+      "checks": 7,
+      "passed": 7,
+      "newsRelaySamplesMs": [
+        240,
+        502,
+        367,
+        469,
+        288,
+        510,
+        163
+      ],
+      "maxNewsRelayMs": 510,
+      "hasActualNewsRows": true,
+      "markerOnOffExercised": true,
+      "summaryAutoRequests": 0,
+      "networkFailureRecordsRetained": 15
+    },
+    {
+      "device": "iphone-webkit",
+      "checks": 7,
+      "passed": 7,
+      "newsRelaySamplesMs": [
+        172,
+        361,
+        314,
+        272,
+        220,
+        303,
+        179
+      ],
+      "maxNewsRelayMs": 361,
+      "hasActualNewsRows": true,
+      "markerOnOffExercised": true,
+      "summaryAutoRequests": 0,
+      "networkFailureRecordsRetained": 3
+    }
+  ],
+  "frontendRevision": "ee6511364d9ec7c7ac52e4b355fc01d7c138a5b1",
+  "backendRevision": "d8c2b0e4c903b3c3c767a9b8fa58c2a2f51f84bd",
+  "method": "Identical actual-response harness after required production CI finished; four sequential isolated browser contexts. Backend/server caches already warm. Not native Toss Sandbox or controlled before/after production latency.",
+  "startedAt": "2026-10-16T09:14:44.756Z",
+  "finishedAt": "2026-10-16T09:16:10.749Z",
+  "scriptSha256": "0910a2c89719841c14f5e1874b3abf7fe9ffc494d4a2e7bf02d992c3123ae2c9",
+  "allSixInflationPointsUnchangedSinceA406": true,
+  "inflationIds": [
+    "cpi",
+    "core_cpi",
+    "ppi",
+    "core_ppi",
+    "pce",
+    "core_pce"
+  ],
+  "forecasts": {
+    "cpi": "not_configured",
+    "core_cpi": "not_configured",
+    "ppi": "not_configured",
+    "core_ppi": "not_configured",
+    "pce": "not_configured",
+    "core_pce": "not_configured"
+  },
+  "networkRecords": "All abort/relay-closure records retained in raw report; no claim of zero transport failures."
+}

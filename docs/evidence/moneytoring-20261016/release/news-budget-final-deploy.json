@@ -1,0 +1,9 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"commit\":{\"createdAt\":\"2026-10-16T09:04:20Z\",\"id\":\"d8c2b0e4c903b3c3c767a9b8fa58c2a2f51f84bd\",\"message\":\"fix: bound public news collection and reuse completed cached groups (#158)\\n\\nCo-authored-by: sanghoon park \\u003cshoon94.park@gmail.com\\u003e\"},\"createdAt\":\"2026-10-16T09:06:53.919757Z\",\"finishedAt\":\"2026-10-16T09:08:05.903488Z\",\"id\":\"dep-db8uibbl550s73f8kcgg\",\"startedAt\":\"2026-10-16T09:06:53.888521Z\",\"status\":\"live\",\"trigger\":\"api\",\"updatedAt\":\"2026-10-16T09:08:40.76056Z\"}"
+    }
+  ],
+  "isError": false
+}

@@ -1,0 +1,10 @@
+{
+  "sourceCommit": "a99d925564d20dcd13efbad03a1e12560f5cb222",
+  "entry": "/assets/index-mzSYbuZg.js",
+  "sha256": "92ebc66ab886f07cce00da325a222eeed64e9a1af3d9fc9ad8f81357a4db731b",
+  "publicPrivacySha256": "f32c9d5b2535ed5b44cc7515c39fb9f2186b04349103466929131faba0944940",
+  "buildFlags": {
+    "VITE_CHARTVIEW_API_BASE": "https://chart-view-pkv8.onrender.com",
+    "VITE_CHARTVIEW_STATIC_DATA_BASE": "https://raw.githubusercontent.com/shoon94parkk-del/chart_View/main/static/data"
+  }
+}

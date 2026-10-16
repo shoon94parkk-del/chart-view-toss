@@ -1,0 +1,26 @@
+{
+  "at": {
+    "current_time": "2026-10-16 08:41:08 UTC"
+  },
+  "first": {
+    "status": "fulfilled",
+    "value": {
+      "content": [
+        {
+          "type": "text",
+          "text": "[{\"commit\":{\"createdAt\":\"2026-10-16T05:15:11Z\",\"id\":\"95d6b8361e22958f9cea6773afcf6ca446c2447a\",\"message\":\"Merge PR #136: PCE graphs and macro publication clarity\\n\\nfeat: PCE·근원 PCE 그래프와 물가 발표일·예상 대비 표시\"},\"createdAt\":\"2026-10-16T05:23:29.181619Z\",\"finishedAt\":\"2026-10-16T05:23:54.183089Z\",\"id\":\"dep-db8r9kbl550s73eu3980\",\"startedAt\":\"2026-10-16T05:23:29.18023Z\",\"status\":\"live\",\"trigger\":\"api\",\"updatedAt\":\"2026-10-16T05:23:54.183327Z\"},{\"commit\":{\"createdAt\":\"2026-10-16T03:41:45Z\",\"id\":\"637507cd4a5ab892e25510772a0610756447f8c2\",\"message\":\"Merge PR #135: REA insights, official inflation and mobile reading UX\\n\\nfeat: REA 기반 홈 재방문·물가 그래프·발표 일정 개선\"},\"createdAt\":\"2026-10-16T03:48:05.433029Z\",\"finishedAt\":\"2026-10-16T03:48:35.12009Z\",\"id\":\"dep-db8pstbl550s73epaog0\",\"startedAt\":\"2026-10-16T03:48:05.431088Z\",\"status\":\"deactivated\",\"trigger\":\"api\",\"updatedAt\":\"2026-10-16T05:23:54.182359Z\"},{\"commit\":{\"createdAt\":\"2026-10-14T07:56:45Z\",\"id\":\"9bd17dbe410065eb09a743c72506be36c2bc4d30\",\"message\":\"fix: compile Toss TOP10 performance view after selected-key helper correction\"},\"createdAt\":\"2026-10-14T07:58:04.808738Z\",\"finishedAt\":\"2026-10-14T07:58:35.128531Z\",\"id\":\"dep-db7jc32vcj2c73dsck10\",\"startedAt\":\"2026-10-14T07:58:04.806688Z\",\"status\":\"deactivated\",\"trigger\":\"api\",\"updatedAt\":\"2026-10-16T03:48:35.119001Z\"}]\n\n cursor: 9_A7KoI4uw1jMzJ2Y2oyYzczZHNjazEw"
+        }
+      ],
+      "isError": false
+    }
+  },
+  "second": {
+    "content": [
+      {
+        "type": "text",
+        "text": "[{\"commit\":{\"createdAt\":\"2026-10-16T05:15:11Z\",\"id\":\"95d6b8361e22958f9cea6773afcf6ca446c2447a\",\"message\":\"Merge PR #136: PCE graphs and macro publication clarity\\n\\nfeat: PCE·근원 PCE 그래프와 물가 발표일·예상 대비 표시\"},\"createdAt\":\"2026-10-16T05:23:29.181619Z\",\"finishedAt\":\"2026-10-16T05:23:54.183089Z\",\"id\":\"dep-db8r9kbl550s73eu3980\",\"startedAt\":\"2026-10-16T05:23:29.18023Z\",\"status\":\"live\",\"trigger\":\"api\",\"updatedAt\":\"2026-10-16T05:23:54.183327Z\"},{\"commit\":{\"createdAt\":\"2026-10-16T03:41:45Z\",\"id\":\"637507cd4a5ab892e25510772a0610756447f8c2\",\"message\":\"Merge PR #135: REA insights, official inflation and mobile reading UX\\n\\nfeat: REA 기반 홈 재방문·물가 그래프·발표 일정 개선\"},\"createdAt\":\"2026-10-16T03:48:05.433029Z\",\"finishedAt\":\"2026-10-16T03:48:35.12009Z\",\"id\":\"dep-db8pstbl550s73epaog0\",\"startedAt\":\"2026-10-16T03:48:05.431088Z\",\"status\":\"deactivated\",\"trigger\":\"api\",\"updatedAt\":\"2026-10-16T05:23:54.182359Z\"},{\"commit\":{\"createdAt\":\"2026-10-14T07:56:45Z\",\"id\":\"9bd17dbe410065eb09a743c72506be36c2bc4d30\",\"message\":\"fix: compile Toss TOP10 performance view after selected-key helper correction\"},\"createdAt\":\"2026-10-14T07:58:04.808738Z\",\"finishedAt\":\"2026-10-14T07:58:35.128531Z\",\"id\":\"dep-db7jc32vcj2c73dsck10\",\"startedAt\":\"2026-10-14T07:58:04.806688Z\",\"status\":\"deactivated\",\"trigger\":\"api\",\"updatedAt\":\"2026-10-16T03:48:35.119001Z\"}]\n\n cursor: 9_A7KoI4uw1jMzJ2Y2oyYzczZHNjazEw"
+      }
+    ],
+    "isError": false
+  }
+}

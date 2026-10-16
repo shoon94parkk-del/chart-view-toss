@@ -1,0 +1,14 @@
+{
+  "sourceCommit": "a99d925564d20dcd13efbad03a1e12560f5cb222",
+  "sourceTree": "4d0319877d051593ff021f725bac8710aa8678f8",
+  "runtimeDigest": "dbc89fa5ed81597837e73dd9dfe7e81bd2b121ecac47aff6213f24b5d44121a4",
+  "file": "/workspace/chartview-audit-20261015/chartview.ait",
+  "bytes": 10494994,
+  "sha256": "64a7b9a4952972b719fd3c7e567bf55ca214a6408bf7729a03c658bc1497f224",
+  "generatedAt": "2026-10-16T08:27:59.120424+00:00",
+  "nativeSandbox": "not verified",
+  "consolePublish": "not performed",
+  "deployedSourceCommit": "ee6511364d9ec7c7ac52e4b355fc01d7c138a5b1",
+  "deployedSourceTree": "4d0319877d051593ff021f725bac8710aa8678f8",
+  "wholeTreeIdentical": true
+}

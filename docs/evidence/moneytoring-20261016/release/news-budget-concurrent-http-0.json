@@ -1,0 +1,12 @@
+{
+  "status": "fulfilled",
+  "value": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"resourceId\":\"srv-dao4a50473hc73bclej0\",\"timeRange\":{\"start\":\"2026-10-16T09:04:00Z\",\"end\":\"2026-10-16T09:13:00Z\"},\"metrics\":[{\"type\":\"http_latency\",\"data\":[]},{\"type\":\"http_request_count\",\"data\":[]}]}"
+      }
+    ],
+    "isError": false
+  }
+}

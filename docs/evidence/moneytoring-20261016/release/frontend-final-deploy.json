@@ -1,0 +1,9 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"commit\":{\"createdAt\":\"2026-10-16T08:32:06Z\",\"id\":\"ee6511364d9ec7c7ac52e4b355fc01d7c138a5b1\",\"message\":\"feat: 물가 발표·뉴스 읽기·로컬 연구 기록 UX 개선 (#137)\\n\\n* docs: compare Moneytoring with Toss and verify CPI consensus sources\\n\\n* docs: define Moneytoring UX implementation scope and validation plan\\n\\n* feat: connect macro releases, readable news and local research checkpoints\\n\\n* test: verify unsupported news links through current safety controls\\n\\n---------\\n\\nCo-authored-by: sanghoon park \\u003cshoon94.park@gmail.com\\u003e\"},\"createdAt\":\"2026-10-16T08:41:20.142775Z\",\"finishedAt\":\"2026-10-16T08:41:49.113907Z\",\"id\":\"dep-db8u6c3rjlhs73dignbg\",\"startedAt\":\"2026-10-16T08:41:20.140822Z\",\"status\":\"live\",\"trigger\":\"api\",\"updatedAt\":\"2026-10-16T08:41:49.114081Z\"}"
+    }
+  ],
+  "isError": false
+}

@@ -1,0 +1,82 @@
+{
+  "baseline": "95d6b8361e22958f9cea6773afcf6ca446c2447a",
+  "identicalProtectedFiles": [
+    {
+      "path": "src/guruEvidenceSource.js",
+      "sha256": "254e2974b6ec490c19ee6991f083d98917093ac5dc1f692738b3aa24ad108680"
+    },
+    {
+      "path": "src/guruInvestingExtensions.js",
+      "sha256": "a2f22cba7d7fae8c7a7aa4b66d8238ee0875fe5bd7846d0a197c4f13bc8f3e99"
+    },
+    {
+      "path": "src/guruInvestingModel.js",
+      "sha256": "acdbf74e4126ff9b1e9515492adebdb74610678e6f850726df999ba0894319f0"
+    },
+    {
+      "path": "src/guruInvestingView.css",
+      "sha256": "6eb414235c3d8dad0307df4905a7676702e907ece13173a73c5dd0217f4a798c"
+    },
+    {
+      "path": "src/guruInvestingView.js",
+      "sha256": "0a849aa0334ae02597fdce87fc247573624ba30358b4af024311ed690dde221e"
+    },
+    {
+      "path": "src/ideaEngine.js",
+      "sha256": "4ef2a9784a99e32be72850ce2747a6efc6dd97832f1d4d4dedd8b61c6ccbb85d"
+    },
+    {
+      "path": "src/ideaView.css",
+      "sha256": "14ac36d3fca2c7fd995bf4fc8b8621bec88b8d1d51a2977405da0e77d2d692b1"
+    },
+    {
+      "path": "src/ideaView.js",
+      "sha256": "e7266c2e2647343b1e9d01419b931e8ec2b9662d97436477812cdc8897314ada"
+    },
+    {
+      "path": "src/investmentReview.css",
+      "sha256": "58fc1380226c2253091e5a7d69dcdccf7d70acb0a85c2272cb983a5ebba58fbb"
+    },
+    {
+      "path": "src/investmentReview.js",
+      "sha256": "4c82ad8e992c362d0015f72f3f12572d73de0f933d8f660467dbf1e900200e8a"
+    },
+    {
+      "path": "src/pickLedger.css",
+      "sha256": "1a25401e200035ff7a2c791d0f8d4ea119e9cfc77b906bc99fb8140abcb331a2"
+    },
+    {
+      "path": "src/pickLedger.js",
+      "sha256": "2cad685b7355e805cdf17480921d9bab5866dc29674c7d3cefeadf105d840644"
+    },
+    {
+      "path": "src/pickPerformanceBasis.js",
+      "sha256": "b9bc7ca271266491d807714f91a478fbde98913d78953c4d97a2f3c4def92fa2"
+    }
+  ],
+  "changedProtectedFiles": [],
+  "commonMainLayout": "Full944 E2E and corrected audit/Mobile QA passed at identical a99 source tree; exact-main CI and live proof recorded separately",
+  "additionalUnchangedCalculationAndQuoteFiles": [
+    {
+      "path": "src/analysisData.js",
+      "sha256": "15daf507f7c868aea6e773863abe707faa245721e040646a37f2fdacc6446240"
+    },
+    {
+      "path": "src/analysisViews.js",
+      "sha256": "558e721399f21faa0c4302c21782cd5e4967e14955935fe4d46a4b8cd677fc20"
+    },
+    {
+      "path": "src/detailPresentation.js",
+      "sha256": "5eb63c58a9b10e6d5197ef9ee535968abda355312b670e1c6eb45b7cd5c9bc62"
+    },
+    {
+      "path": "src/dataPresentation.js",
+      "sha256": "ea913dadc3dffe66e9ed1a68705abf4d1edcb6541e2c9bfa9d09160b9f35a844"
+    },
+    {
+      "path": "src/liveQuoteStore.js",
+      "sha256": "20f5edd399b92b12a16ae4839c3367bb906effbaa11847cf9760ad75b97565e8"
+    }
+  ],
+  "releaseSource": "ee6511364d9ec7c7ac52e4b355fc01d7c138a5b1"
+}

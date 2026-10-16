@@ -45,14 +45,14 @@
 | 최종 기록 항목 | 상태·기록할 근거 |
 |---|---|
 | 최종 소스 SHA·변경/보호 파일 해시 | [런타임 소스 SHA](evidence/moneytoring-20261016/runtime-source.json), 보호13개 및 계산/시세5개 파일은 기준과 동일; 최종 커밋/배포 SHA는 릴리스 PR 기록 |
-| 전체 Node/Python·build·4기기 prepush·모바일/접근성·AIT | Node673·Python960·Vite/직접진입27개 통과. `CI=1 npm run qa:prepush` 브라우저940/940 통과, skipped0/unexpected0/flaky0(31.3분). 모바일 출시 QA 통과. 독립 개인정보 페이지4기기 axe/가로 넘침/데이터 요청0 검사 통과. 현재 suite944개=기존940+신규개인정보4이며 최종 CI는944개를 실행. AIT는 정확한 커밋에서 새로 생성 후 릴리스 증거로 확정 |
+| 전체 Node/Python·build·4기기 prepush·모바일/접근성·AIT | Node673·Python975(초기 백엔드960 이후 뉴스 응답 예산 보완)·Vite/직접진입27개 통과. `CI=1 npm run qa:prepush` 브라우저940/940 통과, skipped0/unexpected0/flaky0(31.3분). 모바일 출시 QA 통과. 독립 개인정보 페이지4기기 axe/가로 넘침/데이터 요청0 검사 통과. 현재 suite944개=기존940+신규개인정보4이며 최종 CI는944개를 실행. AIT는 정확한 커밋에서 새로 생성 후 릴리스 증거로 확정 |
 | 동일 조건 성능·Home 요청 수 | [AB/BA 각7회, 합산14개 비교](evidence/moneytoring-20261016/performance/README.md): 홈137→152ms, 상세331→342.5ms, 경제지표246→262.5ms; 시작 요청9/10/2 유지. 물가 그래프330→367ms. 속도 개선·운영p95 주장은 하지 않음 |
-| 최종 리뷰·PR/CI·main 반영 | **PENDING** — 정확한 최종 커밋·PR·CI 결과 추가 |
-| Render 게시·실제 revision/자산·운영 smoke | **PENDING** — 웹 미리보기 성공과 구분하여 실제 게시 결과 추가 |
+| 최종 리뷰·PR/CI·main 반영 | 프런트 PR137→`ee65113`, 정확한 PR/main944 E2E·673 Node 통과. 백엔드 PR156/157/158→`d8c2b0e`,975 Python·정확한 main App Regression12개(운영4개 포함) 통과. 별도 기존 PICK 정기 갱신 실패는 아래 구분 |
+| Render 게시·실제 revision/자산·운영 smoke | 프런트08:41:49Z, 백엔드09:08:05Z 게시. 정확한 health·자산 해시 확인. 필수 운영 CI 종료 후 단독 실응답4기기28/28 통과. 동시 부하 실패·CPU한도는 별도 보존 |
 | Android/iOS Toss Sandbox | **PENDING** — 실제 앱 런타임·계정 저장·외부 원문·뒤로가기 검증 필요 |
 | 컨센서스 공급자 권한·실제 응답 | **PENDING** — 사용자 인증과 캘린더·표시·보관 범위, CPI/PPI/PCE 실응답 검증 필요 |
 
-최종 수치·상태는 root가 실제 검증을 마친 뒤 이 표에 갱신한다. 로컬 모듈 통과·문서 예제·미리보기만으로 배포 또는 공개 출시가 끝났다고 판단하지 않는다.
+최종 수치·상태는 [릴리스 기록](evidence/moneytoring-20261016/release/RELEASE.md)과 원본 증거에서 확인한다. 로컬 모듈 통과·문서 예제·미리보기만으로 배포 또는 공개 출시가 끝났다고 판단하지 않는다.
 
 ## 재현 중 발견해 수정한 결함
 
@@ -67,3 +67,11 @@
 수출→연구 저장·비교·LAB·Home의 기존 모바일 QA(320/390px)와 차트/뉴스 실패 복구·상세 이동 QA(320/390/430px)도 통과했다. 아래 PR/게시 대기는 이 문서를 커밋하는 시점의 기록이며, 정확한 커밋 CI·AIT·게시 완료 결과는 릴리스 PR 최종 댓글과 불변 증거 브랜치에서 확정한다.
 
 첫 PR CI에서는944개 E2E·Node·AIT·live contract가 통과했고, 별도 Main 감사와 Mobile QA는 같은 오래된 미지원 기사 클릭 가정으로 실패했다. [실패 상태](evidence/moneytoring-20261016/ci-initial-4d61275.json), [실제 원인](evidence/moneytoring-20261016/mobile-release-38872566031-diagnosis.md), [로컬 RED](evidence/moneytoring-20261016/audit-default-red.log), [수정 후320/390/1440 GREEN](evidence/moneytoring-20261016/audit-default-green.log)을 보존했다. 테스트만 안전한 링크 안내 동선에 맞췄고 정상 HTTPS 열기와 위험 주소 차단을 모두 검사한다. 앱 파일은 변경되지 않았다. 최종 CI·운영 배포 결과는 PR의 릴리스 기록에서 확정한다.
+
+## 최종 게시 결과와 남은 항목
+
+[최종 릴리스 기록](evidence/moneytoring-20261016/release/RELEASE.md)에 PR·커밋·AIT·실제 게시 시각·CI·28/28 단독 운영 검증을 확정했다. 추가 서버 PR158은 기존10초 클라이언트 예산을 넘는 뉴스 대기를 보완한다. 캐시를 작업 대기열 전에 반환하고 동일 키 공개 조회를 최대64개 소유자로 합치며7초에 완료된 실제 그룹과 명시적 지연 오류를 반환한다. 실제 늦은 완료는 원래 캐시에 저장한다. 내부 강제 조회는 자신이 받은 원본 결과를 유지한다. 기사 순위/관계/제공처·PICK/LAB·투자 계산·Web 번들은 변경하지 않았다.
+
+운영 동시 검사에서는 CPU0.15 한도에 도달하고 뉴스15–16초 및 홈5초 대기 실패가 관찰돼 보존했다. 같은 스크립트를 필수 운영 CI가 끝난 후 단독으로 실행했을 때4기기28개가 통과했다. 동시 부하 문제를 모두 해결했다는 결과가 아니며 운영p50/p95도 확보하지 못했다.
+
+별도 정기 `Update Korean Stock Screener`는 이번 PR 병합 전부터 `TOP3 symbol not found in screener: 069500.KS`로 실패한다. 뒤따른 Screener Production Freshness 실패와 함께 원본 로그를 남겼고, PICK 변경 금지에 따라 수정·재실행하지 않았다. 컨센서스 공급자 인증/표시권한, 실제 토스 Android/iOS Sandbox, PICK 허용 정책 확인도 남아 있다.

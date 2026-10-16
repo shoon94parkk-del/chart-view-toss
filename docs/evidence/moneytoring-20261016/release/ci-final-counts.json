@@ -1,0 +1,149 @@
+{
+  "recordedAt": "2026-10-16T08:33:32.777281+00:00",
+  "repository": "shoon94parkk-del/chart-view-toss",
+  "pr": 137,
+  "testedHead": "a99d925564d20dcd13efbad03a1e12560f5cb222",
+  "testedTree": "4d0319877d051593ff021f725bac8710aa8678f8",
+  "prState": "MERGED",
+  "mergedAt": "2026-10-16T08:32:06Z",
+  "mergeCommit": "ee6511364d9ec7c7ac52e4b355fc01d7c138a5b1",
+  "scope": "PR-head proof only; exact merged-main promotion gate is separate. No local test/browser execution by evidence collector.",
+  "checks": {
+    "total": 9,
+    "allCompletedSuccess": true
+  },
+  "mobile": {
+    "runId": 38873507929,
+    "jobId": 116882961511,
+    "headSha": "a99d925564d20dcd13efbad03a1e12560f5cb222",
+    "status": "completed",
+    "conclusion": "success",
+    "auditWidthsPassed": [
+      320,
+      390,
+      1440
+    ],
+    "url": "https://github.com/shoon94parkk-del/chart-view-toss/actions/runs/38873507929",
+    "log": "ci-mobile-final-job-116882961511.log",
+    "metadata": "ci-mobile-final-job-116882961511.json"
+  },
+  "main": {
+    "runId": 38873507935,
+    "headSha": "a99d925564d20dcd13efbad03a1e12560f5cb222",
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "id": 116882961723,
+        "name": "test",
+        "conclusion": "success"
+      },
+      {
+        "id": 116882961898,
+        "name": "audit-browser",
+        "conclusion": "success"
+      },
+      {
+        "id": 116882961924,
+        "name": "E2E (desktop-chromium)",
+        "conclusion": "success"
+      },
+      {
+        "id": 116882961970,
+        "name": "E2E (android-chromium)",
+        "conclusion": "success"
+      },
+      {
+        "id": 116882962034,
+        "name": "E2E (iphone-small-webkit)",
+        "conclusion": "success"
+      },
+      {
+        "id": 116882962087,
+        "name": "E2E (narrow-chromium)",
+        "conclusion": "success"
+      }
+    ],
+    "url": "https://github.com/shoon94parkk-del/chart-view-toss/actions/runs/38873507935",
+    "log": "ci-main-final-run-38873507935.log",
+    "metadata": "ci-main-final-run-38873507935-jobs.json",
+    "unitTests": {
+      "tests": 673,
+      "passed": 673,
+      "failed": 0,
+      "skipped": 0
+    },
+    "e2e": {
+      "projects": {
+        "desktop-chromium": {
+          "jobId": 116882961924,
+          "conclusion": "success",
+          "running": 236,
+          "passed": 236,
+          "individualSuccessLines": 236,
+          "failed": 0,
+          "flaky": 0,
+          "skipped": 0,
+          "retryMarkers": 0,
+          "summaryLine": "E2E (desktop-chromium)\tRun deterministic E2E, data integration and axe accessibility tests\t2026-10-16T08:27:32.8732593Z   236 passed (2.1m)",
+          "log": "ci-main-final-desktop-chromium-116882961924.log"
+        },
+        "android-chromium": {
+          "jobId": 116882961970,
+          "conclusion": "success",
+          "running": 236,
+          "passed": 236,
+          "individualSuccessLines": 236,
+          "failed": 0,
+          "flaky": 0,
+          "skipped": 0,
+          "retryMarkers": 0,
+          "summaryLine": "E2E (android-chromium)\tRun deterministic E2E, data integration and axe accessibility tests\t2026-10-16T08:28:44.5745300Z   236 passed (3.2m)",
+          "log": "ci-main-final-android-chromium-116882961970.log"
+        },
+        "iphone-small-webkit": {
+          "jobId": 116882962034,
+          "conclusion": "success",
+          "running": 236,
+          "passed": 236,
+          "individualSuccessLines": 236,
+          "failed": 0,
+          "flaky": 0,
+          "skipped": 0,
+          "retryMarkers": 0,
+          "summaryLine": "E2E (iphone-small-webkit)\tRun deterministic E2E, data integration and axe accessibility tests\t2026-10-16T08:31:37.0447887Z   236 passed (5.7m)",
+          "log": "ci-main-final-iphone-small-webkit-116882962034.log"
+        },
+        "narrow-chromium": {
+          "jobId": 116882962087,
+          "conclusion": "success",
+          "running": 236,
+          "passed": 236,
+          "individualSuccessLines": 236,
+          "failed": 0,
+          "flaky": 0,
+          "skipped": 0,
+          "retryMarkers": 0,
+          "summaryLine": "E2E (narrow-chromium)\tRun deterministic E2E, data integration and axe accessibility tests\t2026-10-16T08:28:19.5185565Z   236 passed (2.6m)",
+          "log": "ci-main-final-narrow-chromium-116882962087.log"
+        }
+      },
+      "total": 944,
+      "passed": 944,
+      "failed": 0,
+      "flaky": 0,
+      "skipped": 0,
+      "method": "Each project logs Running 236, exactly 236 individual success lines and 236 passed summary; no failure/flaky/skipped/retry markers in E2E step. All job API outcomes success."
+    }
+  },
+  "logIntegrity": {
+    "ci-main-final-run-38873507935.log": {
+      "bytes": 1658927,
+      "sha256": "9cc17d4456f3d47829b9b0983081bc6ad871d3f6feb93e2a7b2643f5522d66cb"
+    },
+    "ci-mobile-final-job-116882961511.log": {
+      "bytes": 374814,
+      "sha256": "d24dc15a046a6ca02a5457b7a30545580fd80492a0fdd09f4182d3aae949046c"
+    }
+  }
+}

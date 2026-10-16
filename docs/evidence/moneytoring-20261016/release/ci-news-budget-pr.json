@@ -1,0 +1,106 @@
+{
+  "headRefOid": "40f10484841f57286cf4d86d3b5f6f1217f1c904",
+  "state": "OPEN",
+  "statusCheckRollup": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-16T09:02:15Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/shoon94parkk-del/chart_View/actions/runs/38877631250/job/116896398721",
+      "name": "check",
+      "startedAt": "2026-10-16T09:01:43Z",
+      "status": "COMPLETED",
+      "workflowName": "App Regression Check"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-16T09:02:03Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/shoon94parkk-del/chart_View/actions/runs/38877631453/job/116896400514",
+      "name": "build",
+      "startedAt": "2026-10-16T09:01:43Z",
+      "status": "COMPLETED",
+      "workflowName": "Build Frontend Release Bundle"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-16T09:03:07Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/shoon94parkk-del/chart_View/actions/runs/38877631250/job/116896399293",
+      "name": "mobile (mobile_smoke)",
+      "startedAt": "2026-10-16T09:01:43Z",
+      "status": "COMPLETED",
+      "workflowName": "App Regression Check"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-16T09:02:46Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/shoon94parkk-del/chart_View/actions/runs/38877631250/job/116896399239",
+      "name": "mobile (app_release_stage12)",
+      "startedAt": "2026-10-16T09:01:43Z",
+      "status": "COMPLETED",
+      "workflowName": "App Regression Check"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-16T09:02:40Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/shoon94parkk-del/chart_View/actions/runs/38877631250/job/116896399218",
+      "name": "mobile (v41_my_hub)",
+      "startedAt": "2026-10-16T09:01:43Z",
+      "status": "COMPLETED",
+      "workflowName": "App Regression Check"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-16T09:02:41Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/shoon94parkk-del/chart_View/actions/runs/38877631250/job/116896399127",
+      "name": "mobile (news_summary_expand_v48)",
+      "startedAt": "2026-10-16T09:01:43Z",
+      "status": "COMPLETED",
+      "workflowName": "App Regression Check"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-16T09:02:41Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/shoon94parkk-del/chart_View/actions/runs/38877631250/job/116896399093",
+      "name": "mobile (prelaunch_v42)",
+      "startedAt": "2026-10-16T09:01:43Z",
+      "status": "COMPLETED",
+      "workflowName": "App Regression Check"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-16T09:02:52Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/shoon94parkk-del/chart_View/actions/runs/38877631250/job/116896399199",
+      "name": "mobile (cross_device_sync_v64)",
+      "startedAt": "2026-10-16T09:01:43Z",
+      "status": "COMPLETED",
+      "workflowName": "App Regression Check"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-16T09:02:38Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/shoon94parkk-del/chart_View/actions/runs/38877631250/job/116896399166",
+      "name": "mobile (share_deeplink_v68)",
+      "startedAt": "2026-10-16T09:01:43Z",
+      "status": "COMPLETED",
+      "workflowName": "App Regression Check"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-16T09:03:07Z",
+      "conclusion": "SKIPPED",
+      "detailsUrl": "https://github.com/shoon94parkk-del/chart_View/actions/runs/38877631250/job/116896935109",
+      "name": "production",
+      "startedAt": "2026-10-16T09:03:07Z",
+      "status": "COMPLETED",
+      "workflowName": "App Regression Check"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+[
+  {
+    "file": "ci-main-final-run-38873507935.log.gz",
+    "uncompressedBytes": 1658927,
+    "compressedBytes": 303097,
+    "sha256": "6a52240cc1628a44f36dd8d3abd29af8d7e3dcaf04d1d18bfa5e30e163fd2021",
+    "uncompressedSha256": "9cc17d4456f3d47829b9b0983081bc6ad871d3f6feb93e2a7b2643f5522d66cb"
+  },
+  {
+    "file": "ci-mobile-final-job-116882961511.log.gz",
+    "uncompressedBytes": 374814,
+    "compressedBytes": 77650,
+    "sha256": "0445f834d92793735ef7d507b639fe99575a95576bac0d4eedb643eeafbffb4b",
+    "uncompressedSha256": "d24dc15a046a6ca02a5457b7a30545580fd80492a0fdd09f4182d3aae949046c"
+  }
+]

@@ -1,0 +1,153 @@
+{
+  "recordedAt": "2026-10-16T08:42:09.811054+00:00",
+  "repository": "shoon94parkk-del/chart-view-toss",
+  "runId": 38874337665,
+  "url": "https://github.com/shoon94parkk-del/chart-view-toss/actions/runs/38874337665",
+  "headSha": "ee6511364d9ec7c7ac52e4b355fc01d7c138a5b1",
+  "headBranch": "main",
+  "status": "completed",
+  "conclusion": "success",
+  "runAttempt": 1,
+  "jobs": [
+    {
+      "id": 116885635812,
+      "name": "qa / test",
+      "headSha": "ee6511364d9ec7c7ac52e4b355fc01d7c138a5b1",
+      "conclusion": "success"
+    },
+    {
+      "id": 116885636145,
+      "name": "qa / E2E (iphone-small-webkit)",
+      "headSha": "ee6511364d9ec7c7ac52e4b355fc01d7c138a5b1",
+      "conclusion": "success"
+    },
+    {
+      "id": 116885636159,
+      "name": "qa / E2E (desktop-chromium)",
+      "headSha": "ee6511364d9ec7c7ac52e4b355fc01d7c138a5b1",
+      "conclusion": "success"
+    },
+    {
+      "id": 116885636292,
+      "name": "qa / E2E (narrow-chromium)",
+      "headSha": "ee6511364d9ec7c7ac52e4b355fc01d7c138a5b1",
+      "conclusion": "success"
+    },
+    {
+      "id": 116885636427,
+      "name": "qa / audit-browser",
+      "headSha": "ee6511364d9ec7c7ac52e4b355fc01d7c138a5b1",
+      "conclusion": "success"
+    },
+    {
+      "id": 116885636528,
+      "name": "qa / E2E (android-chromium)",
+      "headSha": "ee6511364d9ec7c7ac52e4b355fc01d7c138a5b1",
+      "conclusion": "success"
+    },
+    {
+      "id": 116888146945,
+      "name": "sync",
+      "headSha": "ee6511364d9ec7c7ac52e4b355fc01d7c138a5b1",
+      "conclusion": "success"
+    }
+  ],
+  "unitTests": {
+    "tests": 673,
+    "passed": 673,
+    "failed": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "rawZipEntry": "qa _ test/5_Run npm test.txt"
+  },
+  "e2e": {
+    "total": 944,
+    "passed": 944,
+    "failed": 0,
+    "flaky": 0,
+    "skipped": 0,
+    "projects": {
+      "desktop-chromium": {
+        "jobId": 116885636159,
+        "passed": 236,
+        "failed": 0,
+        "flaky": 0,
+        "skipped": 0,
+        "individualSuccessLines": 236,
+        "retryMarkers": 0,
+        "summary": "2026-10-16T08:35:02.3294863Z   236 passed (2.2m)",
+        "rawZipEntry": "qa _ E2E (desktop-chromium)/8_Run deterministic E2E, data integration and axe accessibility tests.txt",
+        "log": "ci-main-ee65113-e2e-desktop-chromium.log"
+      },
+      "android-chromium": {
+        "jobId": 116885636528,
+        "passed": 236,
+        "failed": 0,
+        "flaky": 0,
+        "skipped": 0,
+        "individualSuccessLines": 236,
+        "retryMarkers": 0,
+        "summary": "2026-10-16T08:36:01.2680245Z   236 passed (3.1m)",
+        "rawZipEntry": "qa _ E2E (android-chromium)/8_Run deterministic E2E, data integration and axe accessibility tests.txt",
+        "log": "ci-main-ee65113-e2e-android-chromium.log"
+      },
+      "narrow-chromium": {
+        "jobId": 116885636292,
+        "passed": 236,
+        "failed": 0,
+        "flaky": 0,
+        "skipped": 0,
+        "individualSuccessLines": 236,
+        "retryMarkers": 0,
+        "summary": "2026-10-16T08:34:51.8029840Z   236 passed (2.0m)",
+        "rawZipEntry": "qa _ E2E (narrow-chromium)/8_Run deterministic E2E, data integration and axe accessibility tests.txt",
+        "log": "ci-main-ee65113-e2e-narrow-chromium.log"
+      },
+      "iphone-small-webkit": {
+        "jobId": 116885636145,
+        "passed": 236,
+        "failed": 0,
+        "flaky": 0,
+        "skipped": 0,
+        "individualSuccessLines": 236,
+        "retryMarkers": 0,
+        "summary": "2026-10-16T08:39:02.7052631Z   236 passed (5.7m)",
+        "rawZipEntry": "qa _ E2E (iphone-small-webkit)/8_Run deterministic E2E, data integration and axe accessibility tests.txt",
+        "log": "ci-main-ee65113-e2e-iphone-small-webkit.log"
+      }
+    },
+    "method": "For each of 4 raw E2E step logs: Running236,236individualsuccesslines,236passed summary, no failure/flaky/skipped/retry markers; job API completion success."
+  },
+  "promotion": {
+    "syncJobId": 116888146945,
+    "syncConclusion": "success",
+    "pushedSha": "ee6511364d9ec7c7ac52e4b355fc01d7c138a5b1",
+    "branch": "feat/apps-in-toss-mvp",
+    "apiBranchSha": "ee6511364d9ec7c7ac52e4b355fc01d7c138a5b1",
+    "branchRefEvidence": "ci-main-ee65113-render-branch-ref.json",
+    "renderPublication": "Not asserted; coordinator owns Render publication."
+  },
+  "sourceTree": {
+    "mergedMainTree": "4d0319877d051593ff021f725bac8710aa8678f8",
+    "equalsTestedPrHeadTree": "4d0319877d051593ff021f725bac8710aa8678f8",
+    "testedPrHead": "a99d925564d20dcd13efbad03a1e12560f5cb222"
+  },
+  "evidence": {
+    "run": "ci-main-ee65113-run-38874337665.json",
+    "jobs": "ci-main-ee65113-jobs-38874337665.json",
+    "rawZip": "ci-main-ee65113-run-38874337665.zip",
+    "fullLog": "ci-main-ee65113-run-38874337665.log",
+    "retrieval": "gh run --log omitted reusable-workflow jobs; gh api /actions/runs/38874337665/logs returned complete rawZIP. FullLog concatenates the7unmodified top-level job text entries.",
+    "integrity": {
+      "ci-main-ee65113-run-38874337665.zip": {
+        "bytes": 639644,
+        "sha256": "0824a9b96afd660d1dfbe1305c68b19684f02487aa03dab3823d9d7ad98744e5"
+      },
+      "ci-main-ee65113-run-38874337665.log": {
+        "bytes": 1108612,
+        "sha256": "23fabbb8b385adefc25d541a6e4885d08e1103f575a689ea4c5aea597edfb9d8"
+      }
+    }
+  },
+  "limits": "Read-only CI evidence collection; no source edits, local tests, browser execution or live production smoke performed."
+}

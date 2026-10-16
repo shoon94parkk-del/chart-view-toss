@@ -1,0 +1,47 @@
+{
+  "revision": "a406a4c074a086017363e2c99d677488ce8da55d",
+  "publicRetryParameter": {
+    "name": "force",
+    "in": "query",
+    "required": false,
+    "schema": {
+      "type": "boolean",
+      "default": false,
+      "title": "Force"
+    }
+  },
+  "macroBytes": 163256,
+  "indicators": 16,
+  "inflation": [
+    {
+      "id": "cpi",
+      "month": "2026-09",
+      "forecastStatus": "not_configured"
+    },
+    {
+      "id": "core_cpi",
+      "month": "2026-09",
+      "forecastStatus": "not_configured"
+    },
+    {
+      "id": "ppi",
+      "month": "2026-09",
+      "forecastStatus": "not_configured"
+    },
+    {
+      "id": "core_ppi",
+      "month": "2026-09",
+      "forecastStatus": "not_configured"
+    },
+    {
+      "id": "pce",
+      "month": "2026-08",
+      "forecastStatus": "not_configured"
+    },
+    {
+      "id": "core_pce",
+      "month": "2026-08",
+      "forecastStatus": "not_configured"
+    }
+  ]
+}

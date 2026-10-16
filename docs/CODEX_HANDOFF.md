@@ -131,3 +131,7 @@ PR122 실제 API smoke의 CLOSE=regular_close 가정도 수정했다. timezone�
 ## 2026-10-16 — Moneytoring 승인 적용
 
 [통합 보고서](MONEYTORING_IMPROVEMENTS_2026-10-16.md)와 [API 가입·표시 권한](MACRO_API_ONBOARDING_2026-10-16.md)을 먼저 읽는다. 뉴스의 기존 두 태그/언어 표시를 유지하고, 영속 연구 작업 ID에는 세션 사용량 카운터를 쓰지 않는다. 변경·실패 재현·전체 QA·성능·정확한 Render 증거는 통합 보고서에서 확인한다. 공급자 키 발급/폼 제출은 각0건이며 라이선스·실응답·native Sandbox 완료를 웹 검사에서 추론하지 않는다.
+
+## 2026-10-16 Moneytoring 적용 릴리스 추가 인계
+
+실제 프런트운영ee6511364d9ec7c7ac52e4b355fc01d7c138a5b1, API운영d8c2b0e4c903b3c3c767a9b8fa58c2a2f51f84bd. [릴리스 증거](evidence/moneytoring-20261016/release/RELEASE.md)와 이전 main 구현 보고서를 함께 읽는다. 앱 코드와 AIT 전체 소스 트리가 같은지 확인했고,944 E2E/673 Node/975 Python/실제28검사 통과. 컨센서스 키/표시권한0·Sandbox미검증·동시부하CPU포화·기존정기PICK069500검증실패를 유지한다. PICK/LAB는 사용자 절대 보호범위다. 문서 증거 브랜치는 운영앱 소스 변경이 아니다.

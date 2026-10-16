@@ -1,0 +1,432 @@
+{
+  "base": "95d6b8361e22958f9cea6773afcf6ca446c2447a",
+  "source": "ee6511364d9ec7c7ac52e4b355fc01d7c138a5b1",
+  "count": 85,
+  "files": [
+    {
+      "status": "M",
+      "path": "docs/CODEX_HANDOFF.md",
+      "sha256": "bee7c9f8398b4f331cc62d9a7888aecd1abe0f3f85661c4215d3208dd71c6ffc"
+    },
+    {
+      "status": "A",
+      "path": "docs/MACRO_API_ONBOARDING_2026-10-16.md",
+      "sha256": "d13eb2053a0ddbc1f8e29510629956efa9a675e28e601d2b0076b3d2d37de8d5"
+    },
+    {
+      "status": "A",
+      "path": "docs/MONEYTORING_IMPROVEMENTS_2026-10-16.md",
+      "sha256": "1610ee99573b96dba072646a6facc5e4ca051c3f5138754f4639438d2ca351af"
+    },
+    {
+      "status": "A",
+      "path": "docs/MONEYTORING_RESEARCH_2026-10-16.md",
+      "sha256": "75b9ea6d615ac1367257a7c295547c6c94fdf486285bb225f644ce7b220e1bfc"
+    },
+    {
+      "status": "M",
+      "path": "docs/decision-log.md",
+      "sha256": "2a24503b1640a160c074e8a0435cbdef88475edb789d27b5d71fc7e9b17f6ea6"
+    },
+    {
+      "status": "A",
+      "path": "docs/evidence/moneytoring-20261016/01-moneytoring-home-desktop.png",
+      "sha256": "30e15e03580c4edc826407220e30fcb8285556daed6ca001d639376156249e03"
+    },
+    {
+      "status": "A",
+      "path": "docs/evidence/moneytoring-20261016/02-moneytoring-home-mobile.png",
+      "sha256": "4f7807da6f82deaceb3e2e143fcc3b887515bbd854cce0390548542263e9ea8b"
+    },
+    {
+      "status": "A",
+      "path": "docs/evidence/moneytoring-20261016/06-cpi-selected-desktop.png",
+      "sha256": "5585a88cb78d1bb5cefa4b18698db45a161afddfba934767797b143144546ae3"
+    },
+    {
+      "status": "A",
+      "path": "docs/evidence/moneytoring-20261016/METHOD.md",
+      "sha256": "b7451944dc40d6ad7ad8fc494f41ce3d12b2667e3048ae0ad83a8a45ebc46e56"
+    },
+    {
+      "status": "A",
+      "path": "docs/evidence/moneytoring-20261016/audit-default-green.log",
+      "sha256": "172d4a34321d95c1a19050b738d52014f8b8de33518944db31cad1dea72199af"
+    },
+    {
+      "status": "A",
+      "path": "docs/evidence/moneytoring-20261016/audit-default-red.log",
+      "sha256": "bf84575f893a74ce82f415a17333d873b6b6e4e772fce6fde37899e37d774efc"
+    },
+    {
+      "status": "A",
+      "path": "docs/evidence/moneytoring-20261016/audit-selector-review.md",
+      "sha256": "574159f7ca2fd38eeb42b150c062f392f79e7c364ebf12f47cff6826c6b04b73"
+    },
+    {
+      "status": "A",
+      "path": "docs/evidence/moneytoring-20261016/backend-final-api-proof.json",
+      "sha256": "f240085b5b17faaac7ef5d73186cadde119fbd54148957936e40d64f38da69e1"
+    },
+    {
+      "status": "A",
+      "path": "docs/evidence/moneytoring-20261016/backend-final-deployed.json",
+      "sha256": "8bc9dfbb2cec964cf3583afb7d1aaf60e154e3165fcbfa91c76be71a4cb9dafe"
+    },
+    {
+      "status": "A",
+      "path": "docs/evidence/moneytoring-20261016/chartview-inventory.md",
+      "sha256": "e1b7f1c1fd274c53a6f226b238e8398639a672eec2f36fa0cd33befdcfc9d697"
+    },
+    {
+      "status": "A",
+      "path": "docs/evidence/moneytoring-20261016/chartview-macro-research.md",
+      "sha256": "5fa587f58b1da84008e1cc59ae085acaeee0b8b763f1c07e963cc114189dce89"
+    },
+    {
+      "status": "A",
+      "path": "docs/evidence/moneytoring-20261016/ci-initial-4d61275.json",
+      "sha256": "bb293648c6261b0b57a6b0656d8c808b9c53bdb4b66fcafc82a1947243f89d5e"
+    },
+    {
+      "status": "A",
+      "path": "docs/evidence/moneytoring-20261016/inflation-live-regression.json",
+      "sha256": "37c3c87c8b7148c77480f80c1e0ea09e242ba74be540e2b9f43f8bee3f15dfa7"
+    },
+    {
+      "status": "A",
+      "path": "docs/evidence/moneytoring-20261016/mobile-release-38872566031-diagnosis.md",
+      "sha256": "48fb4f384a8d9e32ffa679aaade863a8a7ed2e3e1fb229b4fca97cdee80e3483"
+    },
+    {
+      "status": "A",
+      "path": "docs/evidence/moneytoring-20261016/official-store-image-sources.json",
+      "sha256": "c14b5c3409ad7c1fd396b7777ea19509f9fe6e799905b8a5757b438e003aa926"
+    },
+    {
+      "status": "A",
+      "path": "docs/evidence/moneytoring-20261016/performance/README.md",
+      "sha256": "d5071891e8091e36d199617e1d7b2d914468e39bb11e6abdc389ddb7adba5b7d"
+    },
+    {
+      "status": "A",
+      "path": "docs/evidence/moneytoring-20261016/performance/after.json",
+      "sha256": "f8def6d042d7c0cd25b6c1e3328921172e8305ddc41adb23ebd684e22ba72332"
+    },
+    {
+      "status": "A",
+      "path": "docs/evidence/moneytoring-20261016/performance/balanced.json",
+      "sha256": "13b9f5af7bbc7367f685b3498a65459f202829807744cf5a17d1f908e67bd8a6"
+    },
+    {
+      "status": "A",
+      "path": "docs/evidence/moneytoring-20261016/performance/before.json",
+      "sha256": "32c25e029b9e42ffc8bb2c707ab40ee1c887d0754f419700cef283452b92674a"
+    },
+    {
+      "status": "A",
+      "path": "docs/evidence/moneytoring-20261016/performance/compare.mjs",
+      "sha256": "f4cd31a04adb1624ef847b15bd53f6e644d4b2f179f69019375f466ce5c7cbd2"
+    },
+    {
+      "status": "A",
+      "path": "docs/evidence/moneytoring-20261016/performance/comparison.json",
+      "sha256": "53697c7b78b68dcd2f81e69ff66eca45500ebcc58ac82c48e5390926cd5af5a8"
+    },
+    {
+      "status": "A",
+      "path": "docs/evidence/moneytoring-20261016/performance/fixture-macro.json",
+      "sha256": "2805fe511ae35d96cd7729e1fdf82abe4359977df15fbf8b07eed3b02d3350cd"
+    },
+    {
+      "status": "A",
+      "path": "docs/evidence/moneytoring-20261016/performance/fixtures/data.mjs",
+      "sha256": "0a8118452e9a7330b12b6c1c22b8c39c0c4278a37581c7e11ae059bb009a64c6"
+    },
+    {
+      "status": "A",
+      "path": "docs/evidence/moneytoring-20261016/performance/fixtures/export-recovery.mjs",
+      "sha256": "c9b218f711cf76068077136ca04c594aa15528fdf8154bd9feefeb176d843f89"
+    },
+    {
+      "status": "A",
+      "path": "docs/evidence/moneytoring-20261016/performance/measure.mjs",
+      "sha256": "a7d11a9aa3cc479e268222f050712f43636d5b292ef1178c3705a160ad963672"
+    },
+    {
+      "status": "A",
+      "path": "docs/evidence/moneytoring-20261016/performance/reverse/after.json",
+      "sha256": "ffaad0b190e21d4710e8bde1ef0573b29eba6fd905d8fec8f600d462d2d0526b"
+    },
+    {
+      "status": "A",
+      "path": "docs/evidence/moneytoring-20261016/performance/reverse/before.json",
+      "sha256": "6de07bd7cabf3daa0af7909e2f2f077ed54826d4c7bb93c3bf59a09c0a1232c5"
+    },
+    {
+      "status": "A",
+      "path": "docs/evidence/moneytoring-20261016/performance/reverse/comparison.json",
+      "sha256": "e66d151c61af380413d777ad93346934f4e301741f8988a1dae21fc28412d7b6"
+    },
+    {
+      "status": "A",
+      "path": "docs/evidence/moneytoring-20261016/performance/summarize-balanced.mjs",
+      "sha256": "49174929699976577977e2a500125388def1a18c5fdb90cbcb111da808131b12"
+    },
+    {
+      "status": "A",
+      "path": "docs/evidence/moneytoring-20261016/privacy-review.md",
+      "sha256": "44551e9c8ed5d697bde0554aca3884643a51ec36bf506aba75aa2a7a65f48441"
+    },
+    {
+      "status": "A",
+      "path": "docs/evidence/moneytoring-20261016/privacy/after-summary.json",
+      "sha256": "29718e20759c17c673786a7f5aa3c8f7899ca1ce06d712fb51f19aa587cc0979"
+    },
+    {
+      "status": "A",
+      "path": "docs/evidence/moneytoring-20261016/privacy/before.json",
+      "sha256": "0aa3567c76d2e2fac8b6f19c928cc6ee2a25b121436dae8206fb1f764fb17787"
+    },
+    {
+      "status": "A",
+      "path": "docs/evidence/moneytoring-20261016/protected-files.json",
+      "sha256": "6429b95182f7ca4c68ee766467be9cff77234a0fbf4abfcf5fab5f298c1ba7a1"
+    },
+    {
+      "status": "A",
+      "path": "docs/evidence/moneytoring-20261016/rea-evidence-index.json",
+      "sha256": "87360885f61cd4b53997191c3252680c46f63905602e01086556987ea759b63e"
+    },
+    {
+      "status": "A",
+      "path": "docs/evidence/moneytoring-20261016/reviews/integration-review.md",
+      "sha256": "82e327db7be50f1b7139bde83339b6672c9d19ad23da91b0cd50328223126ac3"
+    },
+    {
+      "status": "A",
+      "path": "docs/evidence/moneytoring-20261016/reviews/task-1-review.md",
+      "sha256": "81046531008084492b3558a8380ef1080bbdabbe03aa9b6b5a187abcefe5de99"
+    },
+    {
+      "status": "A",
+      "path": "docs/evidence/moneytoring-20261016/reviews/task-2-review.md",
+      "sha256": "dbfa6f4849e297d8b50ce34d290959a085ae70a11749e6c7aa23e6f7ea4fb02e"
+    },
+    {
+      "status": "A",
+      "path": "docs/evidence/moneytoring-20261016/reviews/task-3-review.md",
+      "sha256": "81094e400fb925d43bdeb5affe427064f7bd1c98b021bac06d974786a97c806e"
+    },
+    {
+      "status": "A",
+      "path": "docs/evidence/moneytoring-20261016/reviews/task-4-review.md",
+      "sha256": "fbf03dc685a96a3e039df45f2bc86352ec14002dac909b43b19c781efdb39504"
+    },
+    {
+      "status": "A",
+      "path": "docs/evidence/moneytoring-20261016/reviews/task-5-review.md",
+      "sha256": "1dec3c7b5b69d88b743002f75e0ef7d015ed02a3f9523067bfee89a64e61d621"
+    },
+    {
+      "status": "A",
+      "path": "docs/evidence/moneytoring-20261016/reviews/task-news-retry-review.md",
+      "sha256": "d5f2226748cbc70c8c4f036ea89c18c75362c5670b4615a4c6ba292e4ff21177"
+    },
+    {
+      "status": "A",
+      "path": "docs/evidence/moneytoring-20261016/runtime-source.json",
+      "sha256": "fd525997687d9a0e8cb0f03fb57bc68bc36ae61ea00adc4a8273449d8cb7973c"
+    },
+    {
+      "status": "A",
+      "path": "docs/evidence/moneytoring-20261016/validation-history.json",
+      "sha256": "cc06d39b2c7283d06ab9c636672275da4a9006e4dc4ca830375567b98fa6e068"
+    },
+    {
+      "status": "A",
+      "path": "docs/evidence/moneytoring-20261016/verified-cpi-values.json",
+      "sha256": "d033d6ea2c95e508c0f49de8470dd8ba5fafa99b2c552c353762498553c69aed"
+    },
+    {
+      "status": "M",
+      "path": "docs/project-memory.md",
+      "sha256": "c9cd5b5230d32e245ec4819c2cd06db9585611b0c6c7bdab6e462ee4c85080fa"
+    },
+    {
+      "status": "M",
+      "path": "docs/regression-guardrails.md",
+      "sha256": "497075bc4115fc807ef49ee104fb791546931210c0c826c9f7d734c023154972"
+    },
+    {
+      "status": "A",
+      "path": "docs/superpowers/plans/2026-10-16-moneytoring-ux.md",
+      "sha256": "35151b1abe3b1900addf5e92a2ab66e401c364099b6cf6065f379d7d3ab2c952"
+    },
+    {
+      "status": "A",
+      "path": "docs/superpowers/specs/2026-10-16-moneytoring-ux.md",
+      "sha256": "78d779d5d0789a275c25fe3d1dd8fe986b4308c71a2c6f4a52eeca86c16c9c93"
+    },
+    {
+      "status": "M",
+      "path": "public/privacy.html",
+      "sha256": "f32c9d5b2535ed5b44cc7515c39fb9f2186b04349103466929131faba0944940"
+    },
+    {
+      "status": "M",
+      "path": "src/api.js",
+      "sha256": "cf71200ab759f1b6435abec56a84443cd7726b7b215caf118682a473762bc183"
+    },
+    {
+      "status": "A",
+      "path": "src/chartEvidence.css",
+      "sha256": "723bcfd889e859926e817b95a4cae1d6c2ef9bba4f6fd1b9794f32bb5a15671d"
+    },
+    {
+      "status": "A",
+      "path": "src/chartEvidence.js",
+      "sha256": "9ef66f69d5943d92438acb74cf73897063e4394cd0c5295c5afc151de856350e"
+    },
+    {
+      "status": "M",
+      "path": "src/macroInflationModel.js",
+      "sha256": "e60aea710d0e3c50dfa0720b4c40eff3793de5118abdb36a8314342d16ed618e"
+    },
+    {
+      "status": "M",
+      "path": "src/macroInflationView.css",
+      "sha256": "d12adaca7d1e5a4cec2ad49a623c0f298c00631b7c93faebb8156c15f4ac5557"
+    },
+    {
+      "status": "M",
+      "path": "src/macroInflationView.js",
+      "sha256": "1c7eb0f08cb0ff78cc5be03625f9aebaf7133a4104012a75cb750be3eee1ad5a"
+    },
+    {
+      "status": "M",
+      "path": "src/main.js",
+      "sha256": "47367794cda7df6c1806e87098c658a6df8a1779e9297a6a548c2f40bb8a56ff"
+    },
+    {
+      "status": "A",
+      "path": "src/newsReaderModel.js",
+      "sha256": "ef88871129bf3bd712b690d0fee81c7b64962a84ff2485cc99b4e75349fc7730"
+    },
+    {
+      "status": "A",
+      "path": "src/newsReaderView.css",
+      "sha256": "ba125c097096e48b87fea21a8af2623a8f5b3bef71e69eee111ef1daff8fedfc"
+    },
+    {
+      "status": "A",
+      "path": "src/newsReaderView.js",
+      "sha256": "76ff10dc7a1ce3ea50a8b7772feb2ece086228817477c933b0040156f34d5390"
+    },
+    {
+      "status": "A",
+      "path": "src/newsResponse.js",
+      "sha256": "ecda31d09ae96ee1257f286f1c0cd63de118c032c88f044d4f08bd967ef001c0"
+    },
+    {
+      "status": "M",
+      "path": "src/researchCard.js",
+      "sha256": "4085f5c082c9564f81b95f778105719f25f63e84c3d5ff32e5d4c84569c43f2e"
+    },
+    {
+      "status": "A",
+      "path": "src/researchCheckpoints.css",
+      "sha256": "5bd5c7fc4c901b41c2d3d34e5b290bee9a16086e3591b85155fe8a24220e8359"
+    },
+    {
+      "status": "A",
+      "path": "src/researchCheckpoints.js",
+      "sha256": "f0de9aac7e8ab2894d725a9518bfebcedb7acafc03f009cb21fa10e28e07ef8c"
+    },
+    {
+      "status": "M",
+      "path": "src/researchNotes.js",
+      "sha256": "8d22a55ba6de13c173fc96468182d371c0930befd93ebe4d82031c087ece892f"
+    },
+    {
+      "status": "M",
+      "path": "tests/apiExplicitRetry.test.mjs",
+      "sha256": "e32956d4e19f80bd28bc611a9b700cbbb11334582ec7a6acbe16ad782a5c1fb7"
+    },
+    {
+      "status": "M",
+      "path": "tests/audit_plan_qa.mjs",
+      "sha256": "56c9dd65cf32e8a207d51231d945d3a0b0c3aa95188c65e57ab277447ec7ec58"
+    },
+    {
+      "status": "A",
+      "path": "tests/chartEvidence.test.mjs",
+      "sha256": "0409ee6434a0fe2f6e6e841376bb4d2646195b49301e7bb27dbf74cdddf67880"
+    },
+    {
+      "status": "M",
+      "path": "tests/e2e/comprehensive-mobile.spec.mjs",
+      "sha256": "768c9d256cbc2e51d7d3d05e4db3b0f1a121357a1effeda7b74c947c4f63b40f"
+    },
+    {
+      "status": "A",
+      "path": "tests/e2e/moneytoring-ux.spec.mjs",
+      "sha256": "e611f569426ececedc1087e6ace7c7220579f35c29fe1176beb222eb7eaafd47"
+    },
+    {
+      "status": "A",
+      "path": "tests/e2e/privacy.spec.mjs",
+      "sha256": "243d85b43cf3f5a64b232d9c0e9372f4f26005e5c55c4a08b1e2adf7aacc0b1e"
+    },
+    {
+      "status": "A",
+      "path": "tests/fixtures/moneytoring-ux.mjs",
+      "sha256": "19212bb193cf4272f06d50345c2f424aad26e62e51b7dbd5e85a2821ad51f76e"
+    },
+    {
+      "status": "M",
+      "path": "tests/macroInflationModel.test.mjs",
+      "sha256": "ff1ea15671d756fba2201d022616f122c958212b9ac4ab1ec0bd780c0125f477"
+    },
+    {
+      "status": "M",
+      "path": "tests/macroInflationView.test.mjs",
+      "sha256": "1edf7cd1d184936000ad6f358cdda1e03c62843f4b4e47efd1cf1afd0013e6cc"
+    },
+    {
+      "status": "M",
+      "path": "tests/mobile_release_qa.mjs",
+      "sha256": "16c4946f58c98dacebaefbafe1f7044b3e65d86316f1e6e0f1d4151d569ebfdb"
+    },
+    {
+      "status": "A",
+      "path": "tests/newsReaderModel.test.mjs",
+      "sha256": "a441052ae99e3bfb8c9445abc0571d93e5211808d7a7618e97136650c7a57549"
+    },
+    {
+      "status": "A",
+      "path": "tests/newsReaderView.test.mjs",
+      "sha256": "531a1aaa10e3b213dc3d1765311b1ac6556953e1ce5e03617af671d38e44344c"
+    },
+    {
+      "status": "A",
+      "path": "tests/newsResponse.test.mjs",
+      "sha256": "b10667e6cedb08070f86b0c07c2a24fb4f145b7e08270cb128b990e443010b94"
+    },
+    {
+      "status": "A",
+      "path": "tests/researchCheckpoints.test.mjs",
+      "sha256": "23126ddb2d31cb7aecab171fc5f35c0cadb10d69a3b3801749a05b8c09cffd4e"
+    },
+    {
+      "status": "M",
+      "path": "tests/researchNotes.test.mjs",
+      "sha256": "62c6e57831bdbf6c808d432fc795350dc56949ca265b1d0910ce790a19782071"
+    },
+    {
+      "status": "M",
+      "path": "tests/researchUsage.test.mjs",
+      "sha256": "ab4c779324ac5099dcf9b2991846ac06c2d692e6f08fd0aa43eb1c8310fc9264"
+    }
+  ]
+}

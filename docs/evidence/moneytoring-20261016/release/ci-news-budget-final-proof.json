@@ -1,0 +1,294 @@
+{
+  "recordedAt": "2026-10-16T09:15:51.233695+00:00",
+  "repository": "shoon94parkk-del/chart_View",
+  "pr": {
+    "number": 158,
+    "url": "https://github.com/shoon94parkk-del/chart_View/pull/158",
+    "headSha": "40f10484841f57286cf4d86d3b5f6f1217f1c904",
+    "mergeCommit": "d8c2b0e4c903b3c3c767a9b8fa58c2a2f51f84bd",
+    "mergedAt": "2026-10-16T09:04:22Z",
+    "headChecks": {
+      "success": 9,
+      "skipped": 1,
+      "skippedName": "production",
+      "skipReason": "Main-only production job; skipped on PR."
+    },
+    "appRegressionRun": 38877631250,
+    "appRegressionConclusion": "success"
+  },
+  "exactMainAppRegression": {
+    "runId": 38877940337,
+    "url": "https://github.com/shoon94parkk-del/chart_View/actions/runs/38877940337",
+    "headSha": "d8c2b0e4c903b3c3c767a9b8fa58c2a2f51f84bd",
+    "conclusion": "success",
+    "totalJobs": 12,
+    "predeployJobs": 8,
+    "productionJobs": 4,
+    "jobs": [
+      {
+        "id": 116897416127,
+        "name": "check",
+        "headSha": "d8c2b0e4c903b3c3c767a9b8fa58c2a2f51f84bd",
+        "conclusion": "success"
+      },
+      {
+        "id": 116897416250,
+        "name": "mobile (mobile_smoke)",
+        "headSha": "d8c2b0e4c903b3c3c767a9b8fa58c2a2f51f84bd",
+        "conclusion": "success"
+      },
+      {
+        "id": 116897416277,
+        "name": "mobile (share_deeplink_v68)",
+        "headSha": "d8c2b0e4c903b3c3c767a9b8fa58c2a2f51f84bd",
+        "conclusion": "success"
+      },
+      {
+        "id": 116897416358,
+        "name": "mobile (cross_device_sync_v64)",
+        "headSha": "d8c2b0e4c903b3c3c767a9b8fa58c2a2f51f84bd",
+        "conclusion": "success"
+      },
+      {
+        "id": 116897416386,
+        "name": "mobile (v41_my_hub)",
+        "headSha": "d8c2b0e4c903b3c3c767a9b8fa58c2a2f51f84bd",
+        "conclusion": "success"
+      },
+      {
+        "id": 116897416459,
+        "name": "mobile (news_summary_expand_v48)",
+        "headSha": "d8c2b0e4c903b3c3c767a9b8fa58c2a2f51f84bd",
+        "conclusion": "success"
+      },
+      {
+        "id": 116897416476,
+        "name": "mobile (app_release_stage12)",
+        "headSha": "d8c2b0e4c903b3c3c767a9b8fa58c2a2f51f84bd",
+        "conclusion": "success"
+      },
+      {
+        "id": 116897416495,
+        "name": "mobile (prelaunch_v42)",
+        "headSha": "d8c2b0e4c903b3c3c767a9b8fa58c2a2f51f84bd",
+        "conclusion": "success"
+      },
+      {
+        "id": 116897975252,
+        "name": "production (v41_my_hub)",
+        "headSha": "d8c2b0e4c903b3c3c767a9b8fa58c2a2f51f84bd",
+        "conclusion": "success"
+      },
+      {
+        "id": 116897975265,
+        "name": "production (prelaunch_v42)",
+        "headSha": "d8c2b0e4c903b3c3c767a9b8fa58c2a2f51f84bd",
+        "conclusion": "success"
+      },
+      {
+        "id": 116897975273,
+        "name": "production (news_summary_expand_v48)",
+        "headSha": "d8c2b0e4c903b3c3c767a9b8fa58c2a2f51f84bd",
+        "conclusion": "success"
+      },
+      {
+        "id": 116897975429,
+        "name": "production (production_stage12)",
+        "headSha": "d8c2b0e4c903b3c3c767a9b8fa58c2a2f51f84bd",
+        "conclusion": "success"
+      }
+    ],
+    "pythonRegression": {
+      "passed": 975,
+      "failed": 0,
+      "skipped": 0,
+      "warnings": 5,
+      "summaryLine": "check\tAPI and frontend regressions\t2026-10-16T09:05:04.9146053Z 975 passed, 5 warnings in 12.81s"
+    },
+    "staticCache": {
+      "stocks": 2497,
+      "consensus": 56,
+      "validation": "cache checks OK; app UX invariants OK"
+    },
+    "production": [
+      {
+        "name": "production (v41_my_hub)",
+        "jobId": 116897975252,
+        "conclusion": "success",
+        "exactRevisionBeforeAndAfter": "d8c2b0e4c903b3c3c767a9b8fa58c2a2f51f84bd",
+        "passLine": "production (v41_my_hub)\tVerify production UI and navigation\t2026-10-16T09:12:07.1591362Z V41_MY_HUB_PASS"
+      },
+      {
+        "name": "production (prelaunch_v42)",
+        "jobId": 116897975265,
+        "conclusion": "success",
+        "exactRevisionBeforeAndAfter": "d8c2b0e4c903b3c3c767a9b8fa58c2a2f51f84bd",
+        "passLine": "production (prelaunch_v42)\tVerify production UI and navigation\t2026-10-16T09:13:57.1758112Z PRELAUNCH_V42_PASS"
+      },
+      {
+        "name": "production (news_summary_expand_v48)",
+        "jobId": 116897975273,
+        "conclusion": "success",
+        "exactRevisionBeforeAndAfter": "d8c2b0e4c903b3c3c767a9b8fa58c2a2f51f84bd",
+        "passLine": "production (news_summary_expand_v48)\tVerify production UI and navigation\t2026-10-16T09:13:07.6471051Z NEWS_SUMMARY_EXPAND_V48_PASS {\"before\":{\"clientHeight\":36,\"scrollHeight\":125,\"display\":\"flow-root\"},\"after\":{\"clientHeight\":125,\"scrollHeight\":125,\"display\":\"block\",\"overflow\":\"visible\",\"clamp\":\"none\"}}"
+      },
+      {
+        "name": "production (production_stage12)",
+        "jobId": 116897975429,
+        "conclusion": "success",
+        "exactRevisionBeforeAndAfter": "d8c2b0e4c903b3c3c767a9b8fa58c2a2f51f84bd",
+        "passLine": "production (production_stage12)\tVerify production UI and navigation\t2026-10-16T09:08:59.2473964Z PRODUCTION_STAGE12_PASS {\"detailChartTop\":395.65625,\"compareTop\":223.1875,\"priceText\":\"—\",\"compareText\":\"비교 중\",\"consensusCacheMode\":\"daily\",\"realSummaryTextLength\":53,\"summaryBefore\":{\"clientHeight\":36,\"scrollHeight\":338,\"clamp\":\"2\"},\"summaryAfter\":{\"ariaExpanded\":\"true\",\"buttonText\":\"접기\",\"clientHeight\":338,\"scrollHeight\":338,\"clamp\":\"none\",\"overflow\":\"visible\",\"rowClientHeight\":596,\"rowScrollHeight\":691,\"rowBottom\":1015.5625,\"textBottom\":912.0625,\"connected\":true}}"
+      }
+    ]
+  },
+  "allCommitChecksGreen": false,
+  "commitCheckSnapshot": {
+    "source": "ci-news-budget-main-all-check-runs.json",
+    "conclusions": [
+      {
+        "name": "verify",
+        "status": "in_progress",
+        "conclusion": null,
+        "url": "https://github.com/shoon94parkk-del/chart_View/actions/runs/38879044392/job/116901022429"
+      },
+      {
+        "name": "production (production_stage12)",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/shoon94parkk-del/chart_View/actions/runs/38877940337/job/116897975429"
+      },
+      {
+        "name": "production (news_summary_expand_v48)",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/shoon94parkk-del/chart_View/actions/runs/38877940337/job/116897975273"
+      },
+      {
+        "name": "production (prelaunch_v42)",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/shoon94parkk-del/chart_View/actions/runs/38877940337/job/116897975265"
+      },
+      {
+        "name": "production (v41_my_hub)",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/shoon94parkk-del/chart_View/actions/runs/38877940337/job/116897975252"
+      },
+      {
+        "name": "Workers Builds: chart-view-screener-watchdog",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://dash.cloudflare.com/99eb15dead228945dd03b5d2fa092935/workers/services/view/chart-view-screener-watchdog/production/builds/8f60c4c3-9e0f-4129-b929-f87a867600cb"
+      },
+      {
+        "name": "mobile (prelaunch_v42)",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/shoon94parkk-del/chart_View/actions/runs/38877940337/job/116897416495"
+      },
+      {
+        "name": "mobile (app_release_stage12)",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/shoon94parkk-del/chart_View/actions/runs/38877940337/job/116897416476"
+      },
+      {
+        "name": "mobile (news_summary_expand_v48)",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/shoon94parkk-del/chart_View/actions/runs/38877940337/job/116897416459"
+      },
+      {
+        "name": "mobile (v41_my_hub)",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/shoon94parkk-del/chart_View/actions/runs/38877940337/job/116897416386"
+      },
+      {
+        "name": "mobile (cross_device_sync_v64)",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/shoon94parkk-del/chart_View/actions/runs/38877940337/job/116897416358"
+      },
+      {
+        "name": "mobile (share_deeplink_v68)",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/shoon94parkk-del/chart_View/actions/runs/38877940337/job/116897416277"
+      },
+      {
+        "name": "mobile (mobile_smoke)",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/shoon94parkk-del/chart_View/actions/runs/38877940337/job/116897416250"
+      },
+      {
+        "name": "check",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/shoon94parkk-del/chart_View/actions/runs/38877940337/job/116897416127"
+      },
+      {
+        "name": "generate",
+        "status": "completed",
+        "conclusion": "skipped",
+        "url": "https://github.com/shoon94parkk-del/chart_View/actions/runs/38877937546/job/116897410687"
+      },
+      {
+        "name": "verify",
+        "status": "completed",
+        "conclusion": "failure",
+        "url": "https://github.com/shoon94parkk-del/chart_View/actions/runs/38877937595/job/116897408416"
+      }
+    ]
+  },
+  "separateExistingFailure": {
+    "workflow": "Screener Production Freshness",
+    "runId": 38877937595,
+    "headSha": "d8c2b0e4c903b3c3c767a9b8fa58c2a2f51f84bd",
+    "conclusion": "failure",
+    "createdAt": "2026-10-16T09:04:23Z",
+    "url": "https://github.com/shoon94parkk-del/chart_View/actions/runs/38877937595",
+    "rootCause": "Wrapper reports existing upstream Update Korean Stock Screener failure; not a news-budget regression.",
+    "upstream": {
+      "runId": 38877514345,
+      "headSha": "a406a4c074a086017363e2c99d677488ce8da55d",
+      "conclusion": "failure",
+      "createdAt": "2026-10-16T09:00:41Z",
+      "completedAt": "2026-10-16T09:04:20Z",
+      "url": "https://github.com/shoon94parkk-del/chart_View/actions/runs/38877514345",
+      "failure": "ValueError: TOP3 symbol not found in screener: 069500.KS",
+      "failurePredatesPrMerge": true
+    },
+    "scope": "PICK repair is outside user-authorized scope. No fix or rerun performed by evidence collector."
+  },
+  "evidence": {
+    "mainMetadata": "ci-news-budget-main-run-38877940337.json",
+    "mainJobs": "ci-news-budget-main-jobs-38877940337.json",
+    "mainLog": "ci-news-budget-main-run-38877940337.log",
+    "mainRawZip": "ci-news-budget-main-run-38877940337.zip",
+    "prLog": "ci-news-budget-pr-regression-38877631250.log",
+    "unrelatedFreshnessLog": "ci-news-budget-unrelated-screener-38877937595.log",
+    "unrelatedUpstreamLog": "ci-news-budget-unrelated-upstream-38877514345.log",
+    "integrity": {
+      "ci-news-budget-main-run-38877940337.log": {
+        "bytes": 595033,
+        "sha256": "7ac7105e69de8c574b7c0cc9432662299b493ecfa41b4d78194df70935d20241"
+      },
+      "ci-news-budget-main-run-38877940337.zip": {
+        "bytes": 226374,
+        "sha256": "20429ab5ca1bf21ade245a022ec616fc701a8b54c2b5c6d746a19a092a5f8418"
+      },
+      "ci-news-budget-unrelated-upstream-38877514345.log": {
+        "bytes": 51598,
+        "sha256": "d470dcd3e79e36bdf8d14639dd2603d1b2de0cecc32d10bf096d171fe4e89a32"
+      },
+      "ci-news-budget-unrelated-screener-38877937595.log": {
+        "bytes": 14557,
+        "sha256": "84e48ffd79920783154828ecfd23ebe7d8e3ea1f7d3854b9b3b26d5cbc419726"
+      }
+    }
+  },
+  "limits": "Read-only CI evidence collection. No source edits, local tests, browsers, PICK changes, Render actions or independent four-device live-smoke execution; coordinator owns Render health and final live smoke. App Regression success is not a claim that every commit check is green."
+}
