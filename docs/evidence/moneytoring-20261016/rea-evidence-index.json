@@ -1,0 +1,226 @@
+[
+  {
+    "stage": "01-moneytoring-home-desktop",
+    "operation": "inspect-web-page",
+    "evidence_id": "ev_aec7519bbeb0661ff9fba2f0f09d990b7aa0fa2d7c0ccf3bbbc62af4b113e5f4",
+    "url": "https://www.moneytoring.ai/",
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "Observation starts when REA attaches; prior network and console activity is unavailable.",
+      "Raw network headers, bodies, cookies, storage values, console objects, and WebSocket payloads are never retained; explicitly requested primitive console text is retained verbatim, while payload captures retain value-free shapes.",
+      "Source maps are reported only as declarative URLs and are not fetched.",
+      "URL-less scripts and console events without an allowed source URL are excluded because their origin cannot be proven.",
+      "Browser host platform and architecture were not observed."
+    ],
+    "canonicalFile": "rea/01-moneytoring-home-desktop.inspect-web-page.json",
+    "canonicalSha256": "c9e398f37e49efbeb108585b25c2d8e01a29a2e43cccfa9bf4c997eca805cad9"
+  },
+  {
+    "stage": "01-moneytoring-home-desktop",
+    "operation": "capture-web-screenshot",
+    "evidence_id": "ev_28ccb609094bc6492b78ff7f996f141319e354ab58871765128610f4865fc1de",
+    "url": "https://www.moneytoring.ai/",
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "The screenshot contains the visible viewport, including on-screen content.",
+      "REA does not scroll, evaluate JavaScript, or capture beyond the current viewport.",
+      "Browser host platform and architecture were not observed."
+    ],
+    "canonicalFile": "rea/01-moneytoring-home-desktop.capture-web-screenshot.json",
+    "canonicalSha256": "c24bcd2609d2956f07cd63acb77c01bbfc5a7e85a0f924fe75325fc71a950b7e",
+    "pngFile": "screens/01-moneytoring-home-desktop.png",
+    "pngSha256": "30e15e03580c4edc826407220e30fcb8285556daed6ca001d639376156249e03"
+  },
+  {
+    "stage": "02-moneytoring-home-mobile",
+    "operation": "inspect-web-page",
+    "evidence_id": "ev_cba4cdf2ae6868910a0bd49fbf6b3954561e3c1b7790d34ec20fcd874d041366",
+    "url": "https://www.moneytoring.ai/",
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "Observation starts when REA attaches; prior network and console activity is unavailable.",
+      "Raw network headers, bodies, cookies, storage values, console objects, and WebSocket payloads are never retained; explicitly requested primitive console text is retained verbatim, while payload captures retain value-free shapes.",
+      "Source maps are reported only as declarative URLs and are not fetched.",
+      "URL-less scripts and console events without an allowed source URL are excluded because their origin cannot be proven.",
+      "Browser host platform and architecture were not observed."
+    ],
+    "canonicalFile": "rea/02-moneytoring-home-mobile.inspect-web-page.json",
+    "canonicalSha256": "9e99e3e46b02c3d76914dad8fb5118ee2edc4670e009f88b4a5758fdd848db3d"
+  },
+  {
+    "stage": "02-moneytoring-home-mobile",
+    "operation": "capture-web-screenshot",
+    "evidence_id": "ev_6b158dde79b98e19b2e665d26164e3e60cd8d310205695bd57f8337e8dc9ebf7",
+    "url": "https://www.moneytoring.ai/",
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "The screenshot contains the visible viewport, including on-screen content.",
+      "REA does not scroll, evaluate JavaScript, or capture beyond the current viewport.",
+      "Browser host platform and architecture were not observed."
+    ],
+    "canonicalFile": "rea/02-moneytoring-home-mobile.capture-web-screenshot.json",
+    "canonicalSha256": "f395d25e9a95f6ccdd48bdd0eefc94eb9d6cdfde289a91997fd392e3bd612895",
+    "pngFile": "screens/02-moneytoring-home-mobile.png",
+    "pngSha256": "4f7807da6f82deaceb3e2e143fcc3b887515bbd854cce0390548542263e9ea8b"
+  },
+  {
+    "stage": "03-moneytoring-stock-mobile",
+    "operation": "inspect-web-page",
+    "evidence_id": "ev_5fffe33c9c627d3f5f24e807764e35b4eec9e9e54bbabc476900f41e9c223069",
+    "url": "https://www.moneytoring.ai/stock/458870",
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "Observation starts when REA attaches; prior network and console activity is unavailable.",
+      "Raw network headers, bodies, cookies, storage values, console objects, and WebSocket payloads are never retained; explicitly requested primitive console text is retained verbatim, while payload captures retain value-free shapes.",
+      "Source maps are reported only as declarative URLs and are not fetched.",
+      "URL-less scripts and console events without an allowed source URL are excluded because their origin cannot be proven.",
+      "Browser host platform and architecture were not observed."
+    ],
+    "canonicalFile": "rea/03-moneytoring-stock-mobile.inspect-web-page.json",
+    "canonicalSha256": "e8d72c5de56c376de06eeba34d5252a3a79369e28636177b3e8fec2fec7fe764"
+  },
+  {
+    "stage": "03-moneytoring-stock-mobile",
+    "operation": "capture-web-screenshot",
+    "evidence_id": "ev_e257e42063e26191f81a30b420677e5e885c8cda44a5fbfa4318a3028f262773",
+    "url": "https://www.moneytoring.ai/stock/458870",
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "The screenshot contains the visible viewport, including on-screen content.",
+      "REA does not scroll, evaluate JavaScript, or capture beyond the current viewport.",
+      "Browser host platform and architecture were not observed."
+    ],
+    "canonicalFile": "rea/03-moneytoring-stock-mobile.capture-web-screenshot.json",
+    "canonicalSha256": "23d006a8f5fefd7cc837fafcffc109f74831c2bd011e39feccd3d9749aba9736",
+    "pngFile": "screens/03-moneytoring-stock-mobile.png",
+    "pngSha256": "d2f350271785555393415127cd0e21dc0ad047a012436e663b37ed64033da35b"
+  },
+  {
+    "stage": "04-calendar",
+    "operation": "inspect-web-page",
+    "evidence_id": "ev_273e4fdb6178823681ccfc440155cddd2641648ef4acc3469aca12b83bbb00f7",
+    "url": "https://www.moneytoring.ai/market/calendar",
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "Observation starts when REA attaches; prior network and console activity is unavailable.",
+      "Raw network headers, bodies, cookies, storage values, console objects, and WebSocket payloads are never retained; explicitly requested primitive console text is retained verbatim, while payload captures retain value-free shapes.",
+      "Source maps are reported only as declarative URLs and are not fetched.",
+      "URL-less scripts and console events without an allowed source URL are excluded because their origin cannot be proven.",
+      "Browser host platform and architecture were not observed."
+    ],
+    "canonicalFile": "rea/04-calendar.inspect-web-page.json",
+    "canonicalSha256": "47762aa35b4ab333344fd951ea0f067c5fad86a90f5078a3f1d046336a0e5baf"
+  },
+  {
+    "stage": "04-calendar",
+    "operation": "capture-web-screenshot",
+    "evidence_id": "ev_dc9afb70488fdedcbd10e33a71cc9115ff041c5ca0ada632fbee0aee834c1394",
+    "url": "https://www.moneytoring.ai/market/calendar",
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "The screenshot contains the visible viewport, including on-screen content.",
+      "REA does not scroll, evaluate JavaScript, or capture beyond the current viewport.",
+      "Browser host platform and architecture were not observed."
+    ],
+    "canonicalFile": "rea/04-calendar.capture-web-screenshot.json",
+    "canonicalSha256": "9c3ca1c9976d1eeeb6de721f498f736ea6069fbf2bc570da77b642233abf41ce",
+    "pngFile": "screens/04-calendar.png",
+    "pngSha256": "19b3db0821bf7fbc6da492fcafcc674183a37acb7e9ae6f01e4b1998b0631817"
+  },
+  {
+    "stage": "05-marketvoice",
+    "operation": "inspect-web-page",
+    "evidence_id": "ev_f6c9bfc25cb5e6b77796c880e2f47d7bce01712ddda09b3771deafe52c1dc698",
+    "url": "https://www.moneytoring.ai/mv/2308928",
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "Observation starts when REA attaches; prior network and console activity is unavailable.",
+      "Raw network headers, bodies, cookies, storage values, console objects, and WebSocket payloads are never retained; explicitly requested primitive console text is retained verbatim, while payload captures retain value-free shapes.",
+      "Source maps are reported only as declarative URLs and are not fetched.",
+      "URL-less scripts and console events without an allowed source URL are excluded because their origin cannot be proven.",
+      "Browser host platform and architecture were not observed."
+    ],
+    "canonicalFile": "rea/05-marketvoice.inspect-web-page.json",
+    "canonicalSha256": "ec39029fae00db9cdb23edcc8023aaa94b8bfb339829fa15741fe96304a0e00f"
+  },
+  {
+    "stage": "05-marketvoice",
+    "operation": "capture-web-screenshot",
+    "evidence_id": "ev_84801b3d087b41c5c10edb1146dc43e7c1ca513acb9e02110c1e6428ff30da7f",
+    "url": "https://www.moneytoring.ai/mv/2308928",
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "The screenshot contains the visible viewport, including on-screen content.",
+      "REA does not scroll, evaluate JavaScript, or capture beyond the current viewport.",
+      "Browser host platform and architecture were not observed."
+    ],
+    "canonicalFile": "rea/05-marketvoice.capture-web-screenshot.json",
+    "canonicalSha256": "770566200e37ac2405df308b9bf2d515cb251d39e8d669b7d8a36de246b17cf9",
+    "pngFile": "screens/05-marketvoice.png",
+    "pngSha256": "8149cd6b5d10a74b3935faf9c415dab4abd2ed34d90be647df085208bdeca147"
+  },
+  {
+    "stage": "06-cpi-selected-desktop",
+    "operation": "inspect-web-page",
+    "evidence_id": "ev_4e6fbf19fc2d73dc33b8d3d33e5692556db5838dc5e04bfb6b1b6111b5954b3a",
+    "url": "https://www.moneytoring.ai/market/calendar/100401?date=2026-10-14",
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "Observation starts when REA attaches; prior network and console activity is unavailable.",
+      "Raw network headers, bodies, cookies, storage values, console objects, and WebSocket payloads are never retained; explicitly requested primitive console text is retained verbatim, while payload captures retain value-free shapes.",
+      "Source maps are reported only as declarative URLs and are not fetched.",
+      "URL-less scripts and console events without an allowed source URL are excluded because their origin cannot be proven.",
+      "Browser host platform and architecture were not observed."
+    ],
+    "canonicalFile": "rea/06-cpi-selected-desktop.inspect-web-page.json",
+    "canonicalSha256": "df21cc7e6644a152a90e156c6b96127335f5439faf5da3c1f1aab139ec0b8b1e"
+  },
+  {
+    "stage": "06-cpi-selected-desktop",
+    "operation": "capture-web-screenshot",
+    "evidence_id": "ev_59feb93d869cf8f52b4a63dd8237e4d55b2a2f8d3ee85265d97f53294b97f567",
+    "url": "https://www.moneytoring.ai/market/calendar/100401?date=2026-10-14",
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "The screenshot contains the visible viewport, including on-screen content.",
+      "REA does not scroll, evaluate JavaScript, or capture beyond the current viewport.",
+      "Browser host platform and architecture were not observed."
+    ],
+    "canonicalFile": "rea/06-cpi-selected-desktop.capture-web-screenshot.json",
+    "canonicalSha256": "758bff7eac071a962bbab495f492b69d78bda0c8e88585b38c5583eb4f43957c",
+    "pngFile": "screens/06-cpi-selected-desktop.png",
+    "pngSha256": "5585a88cb78d1bb5cefa4b18698db45a161afddfba934767797b143144546ae3"
+  },
+  {
+    "stage": "07-mv-group-loaded",
+    "operation": "inspect-web-page",
+    "evidence_id": "ev_d1ebc3654fe44011a85aacaaad4d1d38661066e6312d3b1953093176e95f5de6",
+    "url": "https://www.moneytoring.ai/mv/2308928",
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "Observation starts when REA attaches; prior network and console activity is unavailable.",
+      "Raw network headers, bodies, cookies, storage values, console objects, and WebSocket payloads are never retained; explicitly requested primitive console text is retained verbatim, while payload captures retain value-free shapes.",
+      "Source maps are reported only as declarative URLs and are not fetched.",
+      "URL-less scripts and console events without an allowed source URL are excluded because their origin cannot be proven.",
+      "Browser host platform and architecture were not observed."
+    ],
+    "canonicalFile": "rea/07-mv-group-loaded.inspect-web-page.json",
+    "canonicalSha256": "1029f821236b5ff55219e0d2bfa870ae7231ad65b5d9a41d78920e2aaa176703"
+  },
+  {
+    "stage": "07-mv-group-loaded",
+    "operation": "capture-web-screenshot",
+    "evidence_id": "ev_ba2f28ca84d2ab40350410c623caf73cbec670273ff397e0ae9b746b7cc62aec",
+    "url": "https://www.moneytoring.ai/mv/2308928",
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "The screenshot contains the visible viewport, including on-screen content.",
+      "REA does not scroll, evaluate JavaScript, or capture beyond the current viewport.",
+      "Browser host platform and architecture were not observed."
+    ],
+    "canonicalFile": "rea/07-mv-group-loaded.capture-web-screenshot.json",
+    "canonicalSha256": "16f678465776f4693638199d5125e9360a3a2905d64ad2a68c4aa17454e1ab81",
+    "pngFile": "screens/07-mv-group-loaded.png",
+    "pngSha256": "b765642132510de0c5866d17c243e34455c8fede0e8f0479f91d805e0e0edbc1"
+  }
+]
