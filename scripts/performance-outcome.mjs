@@ -3,7 +3,29 @@ export function performanceOutcome(route) {
   const visible = element => element && !element.closest('[hidden]') && element.getClientRects().length > 0;
   const elements = selector => [...document.querySelectorAll(selector)].filter(visible);
   const exportPanel = elements('[data-export-panel]:not([hidden])')[0];
-  if (route.startsWith('exports') && exportPanel?.dataset.loadState) return exportPanel.dataset.loadState === 'loading' ? 'pending' : exportPanel.dataset.loadState;
+  if(route==='watch'){
+    const host=document.querySelector('#watch-rich-list');
+    const state=host?.dataset.loadState;
+    if(state)return state==='loading'?'pending':state;
+    // The production audit can run before this PR is deployed. Inspect the
+    // existing terminal markup as well as the newer explicit state markers.
+    if(host?.querySelector('.watch-refresh-note'))return 'error';
+    if(host?.querySelector('.watch-empty'))return 'empty';
+    const prices=[...host?.querySelectorAll('.watch-card-price > strong')||[]];
+    if(!prices.length||prices.some(el=>String(el.textContent).includes('확인 중')))return 'pending';
+    return prices.some(el=>/\d/.test(el.textContent))?'ready':'unavailable';
+  }
+  const provisional=exportPanel?.querySelector('#export-provisional-radar');
+  if(route.startsWith('exports')){
+    const state=exportPanel?.dataset.loadState;
+    if(state&&state!=='ready')return state==='loading'?'pending':state;
+    if(provisional){
+      if(provisional.dataset.loadState)return provisional.dataset.loadState==='loading'?'pending':provisional.dataset.loadState;
+      if(provisional.querySelector('.export-provisional-error'))return 'error';
+      if(!provisional.querySelector('[data-export-digest]'))return 'pending';
+    }
+    if(state)return state;
+  }
   if (route === 'home' && !elements('#market-card .quote-card:not(.market-missing) strong').some(el => /\d/.test(el.textContent))) return 'unavailable';
   if(route.startsWith('gurus')&&elements('.guru-coverage strong span').some(el=>/검증\s*0\s*\//.test(el.textContent)))return 'unavailable';
   if(route.startsWith('detail')){

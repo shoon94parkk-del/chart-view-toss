@@ -1,3 +1,4 @@
+import {sourceTimingHtml} from './releaseReading.js';
 import { loadExportCompanyContext, loadExportItemDetail, loadExportMomentumMap, loadExportMomentumSnapshot, loadExportProvisionalRadar, loadSemiconductorCountryMatrix, loadSemiconductorTrends } from './exportMomentumData.js';
 import {exportCompanyCandidates,memoryMovements} from './insightModel.js';
 import { bindHorizontalTabs, focusSelectedTab } from './accessibleTabs.js';
@@ -72,7 +73,7 @@ function loading(){
 
 function provisionalPlaceholder(){
   return `
-    <section id="export-provisional-radar" class="export-section export-provisional-shell">
+    <section id="export-provisional-radar" class="export-section export-provisional-shell" data-load-state="loading">
       <div class="export-section-head"><div><span>수출 속보</span><h3>10일 단위 잠정 수출 레이더</h3></div><small>관세청 · 별도 로딩</small></div>
       <div class="export-provisional-loading" role="status"><span></span><strong>1~10일 · 1~20일 · 월말 잠정치를 확인하고 있어요.</strong></div>
     </section>
@@ -86,7 +87,7 @@ function renderProvisionalRadar(radar,{adjusted=false}={}){
   const maxItem=Math.max(...radar.items.map(row=>row.exportsUsdBillion||0),1);
   const stageWidth=stage=>stage===10?33.3:stage===20?66.7:100;
   return `
-    <section id="export-provisional-radar" class="export-section export-provisional-shell">
+    <section id="export-provisional-radar" class="export-section export-provisional-shell" data-load-state="ready">
       <div class="export-section-head">
         <div><span>수출 속보</span><h3>10일 단위 잠정 수출 레이더</h3></div>
         <small>${esc(radar.periodLabel)} · ${esc(radar.latestStageLabel)}</small>
@@ -144,7 +145,7 @@ function renderProvisionalRadar(radar,{adjusted=false}={}){
 
 function provisionalError(message){
   return `
-    <section id="export-provisional-radar" class="export-section export-provisional-shell">
+    <section id="export-provisional-radar" class="export-section export-provisional-shell" data-load-state="error">
       <div class="export-section-head"><div><span>수출 속보</span><h3>10일 단위 잠정 수출 레이더</h3></div><small>잠정치</small></div>
       <div class="export-provisional-error"><strong>10일 단위 속보를 불러오지 못했어요.</strong><span>${esc(message||'월간 수출 데이터는 계속 이용할 수 있습니다.')}</span><button type="button" data-export-provisional-retry>잠정치 다시 시도</button></div>
     </section>
@@ -948,7 +949,7 @@ function sources(snapshot){
   const apiBacked=snapshot.status==='official_api';
   const dates=[
     snapshot.publishedAt?`발표일 ${dateLabel(snapshot.publishedAt)}`:'',
-    snapshot.updatedAt?`데이터 갱신 ${dateLabel(snapshot.updatedAt)}`:'',
+    snapshot.updatedAt?`자료 생성 ${dateLabel(snapshot.updatedAt)}`:'',
   ].filter(Boolean).join(' · ');
   return `
     <details class="export-source">
@@ -959,6 +960,7 @@ function sources(snapshot){
           ${snapshot.sources.map(source=>`<button type="button" data-external-url="${esc(source.url)}"><span>${esc(source.name)}</span><small>${esc(source.role)}</small></button>`).join('')}
         </div>
         ${dates?`<small>${esc(dates)}</small>`:''}
+        ${sourceTimingHtml({observedAt:snapshot.itemPeriod||snapshot.period,publishedAt:snapshot.publishedAt,builtAt:snapshot.updatedAt,checkedAt:snapshot.meta?.checkedAt})}
       </div>
     </details>
   `;

@@ -1,0 +1,4 @@
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+320px: menu/destination identities, card density, readable sources and touch targets passed
+390px: menu/destination identities, card density, readable sources and touch targets passed
+430px: menu/destination identities, card density, readable sources and touch targets passed

@@ -1,0 +1,558 @@
+{
+  "algorithm": "sha256 of UTF-8 JSON.stringify(files), sorted by path; each object contains path then sha256",
+  "sha256": "ca32892211af84f1b2b5abf71cc1c0ede8278f1ccfe420524b651d71e9d279ee",
+  "files": [
+    {
+      "path": "apps-in-toss.config.ts",
+      "sha256": "cfcfe3accf8800897ae94ff7b4976b95d188b9adcaaa25c25be332887c33d63e"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "c60d1453a66c974505aa6b4214f2605781108ca2b79d43c35b461dae802c369f"
+    },
+    {
+      "path": "package.json",
+      "sha256": "cb70fcb51839c735b0bcea99062d6dd4f7ff2c0e7ee40272254a3dcae4a1d792"
+    },
+    {
+      "path": "public/chartview-logo-600.png",
+      "sha256": "e2ea793bae13effd21b25c670a049924984c553ad575d7d1016be9ff2f875c80"
+    },
+    {
+      "path": "public/chartview-logo.svg",
+      "sha256": "a5f1baa4091c8833e7a5abb63e110f68f55fb8bcc4a0272183ad64714471ba47"
+    },
+    {
+      "path": "public/data-guide.html",
+      "sha256": "35df0fe1ba82cf89d3ffbbb9dc06d062fe3927bd023b10dfed325a56c04cba7c"
+    },
+    {
+      "path": "public/data/export-momentum.json",
+      "sha256": "3c8546ff930bc87bcf00ad654357f3b3445a336abe6dd7e5152fc331054faae7"
+    },
+    {
+      "path": "public/marketing/2026-09/chartview-toss-promo-clean-tiktok.webp",
+      "sha256": "d8dc8daf489283df3a20e2f624f7c54c30759788e1bc6625085563ce4215096a"
+    },
+    {
+      "path": "public/marketing/2026-09/chartview-toss-promo-clean.png",
+      "sha256": "96ef3b12765461f6b61afcf6c660886f35204f16f299f065ad083cfb07ae9981"
+    },
+    {
+      "path": "public/marketing/2026-09/chartview-toss-promo-clean.webp",
+      "sha256": "7fe3b5c10c02fd3dd7d44792b622ee8e9603919f5275003a8f6f76561c39f945"
+    },
+    {
+      "path": "public/marketing/2026-09/chartview-toss-promo-dark-tiktok.webp",
+      "sha256": "292cf1b8986b98616d37f00d90ef8756197db0a0d70494390fea82def7b2fbac"
+    },
+    {
+      "path": "public/marketing/2026-09/chartview-toss-promo-dark.png",
+      "sha256": "44d7d75cbdc2ff3be61a11f9a314b0c8a7e3007c3ee946fbc67aa9cdb7d8eb03"
+    },
+    {
+      "path": "public/marketing/2026-09/chartview-toss-promo-dark.webp",
+      "sha256": "3737d6abd7b46e24fc1c78e2fe8bfc5bd43f3a507896402f9802da2f8b9a9bca"
+    },
+    {
+      "path": "public/marketing/2026-09/chartview-toss-promo-soft-tiktok.webp",
+      "sha256": "6773b2311ee1497b37d4ad4568843efd910afe1b4c3600163577cc054d494ede"
+    },
+    {
+      "path": "public/marketing/2026-09/chartview-toss-promo-soft.png",
+      "sha256": "37b1077777c86c532b583b8952e4c5b905bc9eb6df91f4939f66360fcff3657f"
+    },
+    {
+      "path": "public/marketing/2026-09/chartview-toss-promo-soft.webp",
+      "sha256": "76714e8e9a55fb8540453e1dad32ba06b88c214cbdd5ff1f0e8d17c24aacc74f"
+    },
+    {
+      "path": "public/marketing/2026-09/chartview-toss-promo-story-tiktok.webp",
+      "sha256": "387b3d9be65c7f516d1d761cb0fb6618b614cc3707561db1d96c7cf028c0f2db"
+    },
+    {
+      "path": "public/marketing/2026-09/chartview-toss-promo-story.png",
+      "sha256": "7adbb0982bae71cfb694f04ef3944fabae89860f9df6d7aba4c9878953e226f8"
+    },
+    {
+      "path": "public/marketing/2026-09/chartview-toss-promo-story.webp",
+      "sha256": "f7c31ed44aacc3f17f7de82c7cc8d49a0385a50f9466b8a4fd4c1d2a2988b2ba"
+    },
+    {
+      "path": "public/marketing/2026-09/tiktok/chartview-toss-promo-clean-1080.webp",
+      "sha256": "7c72b2f48213bf3810d0c920248998730e7383be14af390cac846f3d12de04b2"
+    },
+    {
+      "path": "public/marketing/2026-09/tiktok/chartview-toss-promo-dark-1080.webp",
+      "sha256": "17e4e0eed28b72ec797f6525fd8c651dd4d70d8c05f09542e9991e40a61533ec"
+    },
+    {
+      "path": "public/marketing/2026-09/tiktok/chartview-toss-promo-soft-1080.webp",
+      "sha256": "22bed316079092479dd3b17ddbb43f3d044bcaa7f1aa3feb4e07e64986a53e91"
+    },
+    {
+      "path": "public/marketing/2026-09/tiktok/chartview-toss-promo-story-1080.webp",
+      "sha256": "d46d829c2adb3efa3bc39bf981bee1bf297fd8342d26e84ec9951e0c9397ae8b"
+    },
+    {
+      "path": "public/marketing/chartview-toss-instagram-20260930.png",
+      "sha256": "5d1b74dd04158a46cfc74996c57687ac494f5143ae3f0f785345169062fc4aad"
+    },
+    {
+      "path": "public/privacy.html",
+      "sha256": "7dfd8c78782af8c24cee69188f11cd7345787b44649a29a9408ffc248bfdbb34"
+    },
+    {
+      "path": "public/site.webmanifest",
+      "sha256": "cf3c3db80db1bb3dcc0c5827f9a6898aa41ef64a4f2e3037c6c67c7a55d9e432"
+    },
+    {
+      "path": "public/terms.html",
+      "sha256": "215d664f570c607d3bc677bf5bf4541a6cc81d4ac4036f714bf5fee72f36399d"
+    },
+    {
+      "path": "src/accessibility.css",
+      "sha256": "6f1b5a64a14afdd7fe0943d90c5306a539d0df99a676ede07e9137bef90c59a9"
+    },
+    {
+      "path": "src/accessibleTabs.js",
+      "sha256": "bf32c175dfed52ea4d8297b2528c522c7de6cf7ac90ac4be4b884fbf7031ba33"
+    },
+    {
+      "path": "src/analysisData.js",
+      "sha256": "15daf507f7c868aea6e773863abe707faa245721e040646a37f2fdacc6446240"
+    },
+    {
+      "path": "src/analysisRecovery.css",
+      "sha256": "d90f5ba066a798215454a22abe90c92d5fb3ef8d25af1ffc82962b43ce597944"
+    },
+    {
+      "path": "src/analysisViews.js",
+      "sha256": "f6be772a5ede861a64dde9a71685cc719228dc31f12f90b10525e42390ffa8b8"
+    },
+    {
+      "path": "src/api.js",
+      "sha256": "1d3461c4aaa509fcc721543d9d88da842337cd74c9766742969f14a22aab49b5"
+    },
+    {
+      "path": "src/auditExperience.css",
+      "sha256": "d6856a93d025610c0488f1173197f1a690068a4b4a5989d7d206972a06bc7aa3"
+    },
+    {
+      "path": "src/auditExperience.js",
+      "sha256": "d21d332de55ee8efe5108f13f221636d10be0fbb854c07477749c418c308f141"
+    },
+    {
+      "path": "src/chartRuntime.js",
+      "sha256": "9f11b7ea68dc7f755dfd18a85cd5ea233782a79d5fa552343b2802e02a3ad327"
+    },
+    {
+      "path": "src/dataPresentation.js",
+      "sha256": "ea913dadc3dffe66e9ed1a68705abf4d1edcb6541e2c9bfa9d09160b9f35a844"
+    },
+    {
+      "path": "src/detailModuleRecovery.js",
+      "sha256": "1ede8bd259b9667d103265f8bad3983b4443b5106420955f74d2dbb01a8f8b8f"
+    },
+    {
+      "path": "src/detailPresentation.js",
+      "sha256": "5eb63c58a9b10e6d5197ef9ee535968abda355312b670e1c6eb45b7cd5c9bc62"
+    },
+    {
+      "path": "src/detailReviewSummary.js",
+      "sha256": "59fa988987d81e92f89ac0a712a6abced82201576ba584941e0df253273a84e8"
+    },
+    {
+      "path": "src/diagnostics.js",
+      "sha256": "84106ef5488552b0dacaf71bc6287f4a754bf27496d6f8313461c5d464a30912"
+    },
+    {
+      "path": "src/emphasis.css",
+      "sha256": "3c899b5c3e239ac014863737e3a908e8bdff9e38c20fb8aaf4f4e66dcf56588b"
+    },
+    {
+      "path": "src/experience.css",
+      "sha256": "8def0353507d5d02461170d9e186e9ccd209535344944706355d73e621bee1fc"
+    },
+    {
+      "path": "src/experienceState.js",
+      "sha256": "d5293c897cbbcae82457d982055e9027037e438047338a2b7cc7fc53b6abe377"
+    },
+    {
+      "path": "src/exportMomentum.css",
+      "sha256": "f64b20984f2ae7bc56420eed99ba39d18bf01a7193245c1b8d9f9459332a4c2f"
+    },
+    {
+      "path": "src/exportMomentumData.js",
+      "sha256": "31b229d07a3e629cc1f6ce1d67db13cdf3f05cc0facb305ab874cd5a4ad8e8a8"
+    },
+    {
+      "path": "src/exportMomentumModel.js",
+      "sha256": "3dde7fec786e544182d05f6b52b265f84264efa91adbda3b0b2fe40b893dfc51"
+    },
+    {
+      "path": "src/exportMomentumView.js",
+      "sha256": "9498e79a3de38a3fcb852f19a4a3208aa494918661502bd93e78fd3d72e682ce"
+    },
+    {
+      "path": "src/exportProvisionalDigest.js",
+      "sha256": "cad5da10fb632105dda60f915841547e460c7288947c079fcba6a3c12a20edef"
+    },
+    {
+      "path": "src/exportResearchView.js",
+      "sha256": "ffcffc63b9044ae225dbea92fd7e42ecd9e82b83cbe6490b1da0f5f62016874a"
+    },
+    {
+      "path": "src/externalLinks.js",
+      "sha256": "db672b7500efc72469ef4b8f7852a80fed1891b484430ae8a14d65ccdd76fdaa"
+    },
+    {
+      "path": "src/filingComparison.js",
+      "sha256": "84b3c8b0fdc7fda35b48b8bb747951756975730d5298b2bf58189518e083afa6"
+    },
+    {
+      "path": "src/financialHistoryView.css",
+      "sha256": "4c32984eaf513b9ee923d2061ace40c991cef2e5257ddff9a850da4655bd40d5"
+    },
+    {
+      "path": "src/financialHistoryView.js",
+      "sha256": "88b591cc032cd17eb3071a4432cb37c7d40b3cffe729fe90e91ed13425e2c6bb"
+    },
+    {
+      "path": "src/financialQuality.js",
+      "sha256": "cff0ec1af2480e6d2bb36633ff254bad16d0bd32f1bdf07c9791c9ae60c304dc"
+    },
+    {
+      "path": "src/financialQualityView.css",
+      "sha256": "4913b458c700ada02695fddbb0edb9e431dfdb84462e77b31e8ff527d5288c22"
+    },
+    {
+      "path": "src/financialQualityView.js",
+      "sha256": "5af9361622b235b173575914ff7a48b9874124b99b6dc3d2770e5fb77fcb126e"
+    },
+    {
+      "path": "src/fullHeatmapSnapshot.js",
+      "sha256": "a293ba14837d5003bec53af6e73cb3899f89ad1699e12210c0ac04c9c0d989d4"
+    },
+    {
+      "path": "src/guruEvidenceSource.js",
+      "sha256": "254e2974b6ec490c19ee6991f083d98917093ac5dc1f692738b3aa24ad108680"
+    },
+    {
+      "path": "src/guruInvestingExtensions.js",
+      "sha256": "a2f22cba7d7fae8c7a7aa4b66d8238ee0875fe5bd7846d0a197c4f13bc8f3e99"
+    },
+    {
+      "path": "src/guruInvestingModel.js",
+      "sha256": "acdbf74e4126ff9b1e9515492adebdb74610678e6f850726df999ba0894319f0"
+    },
+    {
+      "path": "src/guruInvestingView.css",
+      "sha256": "6eb414235c3d8dad0307df4905a7676702e907ece13173a73c5dd0217f4a798c"
+    },
+    {
+      "path": "src/guruInvestingView.js",
+      "sha256": "0a849aa0334ae02597fdce87fc247573624ba30358b4af024311ed690dde221e"
+    },
+    {
+      "path": "src/heatmapAlignment.js",
+      "sha256": "f793e71d292edcdf6dedb8b85eb58dc5d2267f3721fbfbd2da2e05376f1b2f96"
+    },
+    {
+      "path": "src/heatmapView.js",
+      "sha256": "395aacd0e44f6b6bc3c73d85160f4f0dc4d293cdb0a404c7d00fd78e6b0a16a4"
+    },
+    {
+      "path": "src/homeChangesView.js",
+      "sha256": "ccb1fe7abe7345b2b2af6867415f81c5d9f627a5b6bb69d74a0a53fe4ef5119f"
+    },
+    {
+      "path": "src/homeExportPreview.js",
+      "sha256": "75d51c0dc9d1302323d5e74697a5e2b0a7888eaccdbedda0100af67e852899a5"
+    },
+    {
+      "path": "src/homeExtras.css",
+      "sha256": "44818e612a2e4a58665e357be82f5431812ea9d8003aea7eb310399cd1008ff9"
+    },
+    {
+      "path": "src/homeExtras.js",
+      "sha256": "f8ed43a7abb7e2c84527540d143f3eb0b794fefd584dd322863eef36d337b04e"
+    },
+    {
+      "path": "src/homeFastCache.js",
+      "sha256": "fd7e73dcee092d02ef4fe9d736a8c24d6531515f667e12ebeff0593e725e83b3"
+    },
+    {
+      "path": "src/homeGesturePaint.js",
+      "sha256": "a1ee294565de0f3a29056f1d52627f30efca6067c3b3f46498bd322a9665009a"
+    },
+    {
+      "path": "src/homeJourney.css",
+      "sha256": "63984a72b942c35bb9a1c6e4df0dd09d2b159c0db6d386e506441e23873269e9"
+    },
+    {
+      "path": "src/homeJourney.js",
+      "sha256": "cfeebc5f860abb63a8b51eacf5afe8796c0da7f141fbe9b249454afdcf7ac0df"
+    },
+    {
+      "path": "src/homeLogos.js",
+      "sha256": "be5c28f222ffb09923e4ec420920c391f340445a740af0e2623c2cf7b791a0f2"
+    },
+    {
+      "path": "src/ideaEngine.js",
+      "sha256": "4ef2a9784a99e32be72850ce2747a6efc6dd97832f1d4d4dedd8b61c6ccbb85d"
+    },
+    {
+      "path": "src/ideaView.css",
+      "sha256": "14ac36d3fca2c7fd995bf4fc8b8621bec88b8d1d51a2977405da0e77d2d692b1"
+    },
+    {
+      "path": "src/ideaView.js",
+      "sha256": "e7266c2e2647343b1e9d01419b931e8ec2b9662d97436477812cdc8897314ada"
+    },
+    {
+      "path": "src/industryContext.js",
+      "sha256": "7a0dd7a884ee869c5f92677f89f7ebcd9eb62fecdc7ffecf966c307633e4176d"
+    },
+    {
+      "path": "src/industryContextView.css",
+      "sha256": "d7ffbc567078f8b53d30937f1e6cb7e7ce4bf494187927e86ab667d66615a05e"
+    },
+    {
+      "path": "src/industryContextView.js",
+      "sha256": "20a8fd2fb213a8095179c144496e9ac05a3c70938e5880f8a24e9193dde5d027"
+    },
+    {
+      "path": "src/insight.css",
+      "sha256": "50d37dd30272d526551b1a71efc98e0e4428091b059aa81af7ada2121e002ea0"
+    },
+    {
+      "path": "src/insightModel.js",
+      "sha256": "9b7b68b1b7a5705811b0e22fcd648da347fa35080b23e5df1329d46c58d2276f"
+    },
+    {
+      "path": "src/insightView.js",
+      "sha256": "c5287115936fe25c675dbf339a62c7fcdadaca38a46c4f2001bd0625a8f97f21"
+    },
+    {
+      "path": "src/investmentReview.css",
+      "sha256": "58fc1380226c2253091e5a7d69dcdccf7d70acb0a85c2272cb983a5ebba58fbb"
+    },
+    {
+      "path": "src/investmentReview.js",
+      "sha256": "4c82ad8e992c362d0015f72f3f12572d73de0f933d8f660467dbf1e900200e8a"
+    },
+    {
+      "path": "src/investmentTools.js",
+      "sha256": "6fc7df9edd5713e6c904b0a0cf7727a8d89a83158a7b7b79dad3bc6f0a55b474"
+    },
+    {
+      "path": "src/liveHomeSync.js",
+      "sha256": "973820905e1d7b5567c793b9b33ce3873c1ddb2e6853d12efce526e908868c0f"
+    },
+    {
+      "path": "src/liveQuoteStore.js",
+      "sha256": "20f5edd399b92b12a16ae4839c3367bb906effbaa11847cf9760ad75b97565e8"
+    },
+    {
+      "path": "src/loadingView.js",
+      "sha256": "6aa8a6fb2ea3c20bb20828745229eab1416ac82428527761e025b346d938a8f5"
+    },
+    {
+      "path": "src/main.js",
+      "sha256": "8546a495e803badebfb69fe52482677a72bfcc61a3168f14b770ba96f52ecd12"
+    },
+    {
+      "path": "src/marketMap.css",
+      "sha256": "0dec50017c7d2419cb3eba474750bdef0ba6fe3ed85d110eddb6e5cc7cdcef44"
+    },
+    {
+      "path": "src/marketMapView.js",
+      "sha256": "625141ac4610efd0513a3b2a689243a0b8e1875f24cd0b975d6f9e47d069bde5"
+    },
+    {
+      "path": "src/memoryPriceView.js",
+      "sha256": "e5eab39489882d7d0c147cef06b51c4d1653c74d58bb162621a4c732c6e8e001"
+    },
+    {
+      "path": "src/memorySpotView.js",
+      "sha256": "aeeed2959b749186b96564ce6813a2f880a172ffb981fd8bca0a53e31c6a71d1"
+    },
+    {
+      "path": "src/mobileContinuity.css",
+      "sha256": "00588d137863f8ebf9fc21c7c99823686b6070bdefe991bc5492d38675a42377"
+    },
+    {
+      "path": "src/pickLedger.css",
+      "sha256": "1a25401e200035ff7a2c791d0f8d4ea119e9cfc77b906bc99fb8140abcb331a2"
+    },
+    {
+      "path": "src/pickLedger.js",
+      "sha256": "2cad685b7355e805cdf17480921d9bab5866dc29674c7d3cefeadf105d840644"
+    },
+    {
+      "path": "src/pickPerformanceBasis.js",
+      "sha256": "b9bc7ca271266491d807714f91a478fbde98913d78953c4d97a2f3c4def92fa2"
+    },
+    {
+      "path": "src/quarterView.js",
+      "sha256": "cdeffaec1ed8ad507ff3238019d8de1f6d0a545ccd22272809a7ac9455ae9f79"
+    },
+    {
+      "path": "src/releaseScope.js",
+      "sha256": "a16fd068e1184f4b5aeac4a07a825193d0efb400cea869a262f17b5d0ad2a753"
+    },
+    {
+      "path": "src/reportReviewView.js",
+      "sha256": "e908dfa5f06aecfbde8ca4533a1a962c48b9be0e60f6c8ce11f933fa18bde89f"
+    },
+    {
+      "path": "src/requestClient.js",
+      "sha256": "37c58b036c6e5364333230fbc4b2b45d73cc0c2ea05d39ad25f7b455b6f076de"
+    },
+    {
+      "path": "src/researchAnalysis.js",
+      "sha256": "294e52ce15e86b61f1db0e24a052f6d42510bd8898c32702be2bb85a54d132a3"
+    },
+    {
+      "path": "src/researchCard.css",
+      "sha256": "5591c04af9d8874ae1f5e8e51b375e03f8a6a3f5b49dd16d8927fceae859a742"
+    },
+    {
+      "path": "src/researchCard.js",
+      "sha256": "1fb8ab508c84d9b9c8b0def3f7351911d14cdc711351cf2b4a65b4cd4ee1988c"
+    },
+    {
+      "path": "src/researchNotes.js",
+      "sha256": "ca721ca7535c304a915c97d3c0f7c130c1044c931607778eb37e9eb23b62b386"
+    },
+    {
+      "path": "src/reviewPrompt.css",
+      "sha256": "ffd2ed618a7d204e306b07411d95a65519a56ff910de46498c3c417aa0902543"
+    },
+    {
+      "path": "src/reviewPrompt.js",
+      "sha256": "bd0e2a9d609d085a949da93118219b43df019a26b1b8155e7aae1be4d0e7851e"
+    },
+    {
+      "path": "src/reviewRevisit.js",
+      "sha256": "255762e99b0f3b9c8d189e25b1cb7fa2fe000a060cdd0a3024b45e33354d1a3a"
+    },
+    {
+      "path": "src/reviewStorage.js",
+      "sha256": "2733024c4645367eb109b82edb739c0d954400217612af9422045353e952679c"
+    },
+    {
+      "path": "src/revisitPreferences.js",
+      "sha256": "cf4996f0c15b4e27e327183bec1dfae52c72d3dec0afa3e161f6e28f6f9eb7a9"
+    },
+    {
+      "path": "src/revisitRefresh.js",
+      "sha256": "42284c1caba0a00e20a1c15c2d36f3ed3ab099495293f1c6b0a74c11c00a1ecd"
+    },
+    {
+      "path": "src/revisitStatus.js",
+      "sha256": "9e6f5dd901462f624577c72a27d99a8045bde405ad535e0285a478ca9eb574bc"
+    },
+    {
+      "path": "src/routes.js",
+      "sha256": "8dde36c50a5b911e5810499e2ceb307c25af0350187f3b533ed1c82d1fa2f626"
+    },
+    {
+      "path": "src/savedResearch.js",
+      "sha256": "5c55a59d2d7e1bcaac7463a525ca6f5a5db9d9996f696d91f7ec85a2f40763a7"
+    },
+    {
+      "path": "src/savedResearchView.js",
+      "sha256": "02ae096f5d4cec9167816fa2c12fe3bc3c3ce697bdb8f46aad061b60c6592aa4"
+    },
+    {
+      "path": "src/searchIdentity.js",
+      "sha256": "a2152bca55ef539887948014355de2d3a5d0b644e9a68f16d246c801ccbdfe04"
+    },
+    {
+      "path": "src/sectorHeatmap.css",
+      "sha256": "9d147db6bd7e997d0311def923ec5eb6e34d61e6d8a11c4bf6345dded778fe2b"
+    },
+    {
+      "path": "src/sectorHeatmap.js",
+      "sha256": "f5a527c8c4f9e408cc5b9d2d736b47c28e1e65bb34b4d8a6d687406aea74cad6"
+    },
+    {
+      "path": "src/sectorHeatmapLoader.js",
+      "sha256": "fb06cea66ff04a5b2ee791aede8de46e235b0cdc1e8b56dd74b09929fe3c05f3"
+    },
+    {
+      "path": "src/sectorHeatmapView.js",
+      "sha256": "0d36923b77e04f4bb2238a8f4dc02034fe68b340d4ee1d5ea9c23b0234426c28"
+    },
+    {
+      "path": "src/staticData.js",
+      "sha256": "524e340f5ae60b00225a44669ef6ad28ec370d1450c213e434259993ba9d96b9"
+    },
+    {
+      "path": "src/stockSelector.js",
+      "sha256": "1473d8b3460fcc97d1e5c545ace0e5c322c87c1ba308268ef12790d87a776723"
+    },
+    {
+      "path": "src/storage.js",
+      "sha256": "d83479e2200a36f20c903f7c18028ba868a7c1e5a19a61b0dde98f64206e4950"
+    },
+    {
+      "path": "src/storedLists.js",
+      "sha256": "ff988a29bd0c9e67766263fff1e7ef44b1656f9cad16ff4f3b8ac93165a16117"
+    },
+    {
+      "path": "src/styles.css",
+      "sha256": "0e3396d1038b15130ee3d83bd8f05a45f1a81299b85490823a43e6026e1617de"
+    },
+    {
+      "path": "src/top10HistoryPerformance.js",
+      "sha256": "b03645b9c5b63240c2eee1299820176cb3d071069804773db50e19edd69971c2"
+    },
+    {
+      "path": "src/top10HistoryView.css",
+      "sha256": "00a1653dc383eff4ec14328106e411df0bcc8ad3793b40460d55cd63b25349af"
+    },
+    {
+      "path": "src/top10HistoryView.js",
+      "sha256": "04b09a4638178547e910d8781a8dfed093e57f6836f875d8e47e41034a0e824c"
+    },
+    {
+      "path": "src/tossBridge.js",
+      "sha256": "690e6f3fd0faad6744bf2e6cfb655e058dcbc47506768637e1d2fb77d1db6432"
+    },
+    {
+      "path": "src/uiExperience.css",
+      "sha256": "797793c1d067e0ffb71aae2b5140c991583c569e79df5ae577f744e12dfa78c0"
+    },
+    {
+      "path": "src/uiIdentity.js",
+      "sha256": "e014e90ff7ed0941f8a461cdbc093374f6663e35fdf953ce90902153490c0de6"
+    },
+    {
+      "path": "src/usageMetrics.js",
+      "sha256": "3c4e65cbb7e4284b3e7bf93f386b13fa79c07087da1d850aa3bc6f4fa19765ec"
+    },
+    {
+      "path": "src/valueDiscovery.css",
+      "sha256": "a93e3791ee9a343fc53d0a3cc1c3a25bba0c960b720f201bd4a168f4373454e7"
+    },
+    {
+      "path": "src/valueDiscovery.js",
+      "sha256": "29ac9d3f16f45244fc3579f904e4ae90a6eea163401915b71eee06c3f7fc252b"
+    },
+    {
+      "path": "src/visualIdentity.css",
+      "sha256": "451acfcdd82b3e09835793f18e635918417ca9190278b03d65a725de959a4bb2"
+    },
+    {
+      "path": "src/watchQuoteCache.js",
+      "sha256": "4c42f8123e6ed7a6dda30c16b6fec19747e1157725f33e04ab24c0893fc109dc"
+    },
+    {
+      "path": "src/watchlist.css",
+      "sha256": "d1d492d3c197b442bc4a23cb86e5163b0cc5bd92ea46ce71192db72ca55abb97"
+    }
+  ]
+}

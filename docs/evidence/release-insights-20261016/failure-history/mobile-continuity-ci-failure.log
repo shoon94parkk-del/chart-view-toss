@@ -1,0 +1,20 @@
+chromium-mobile	Verify mobile hierarchy continuity and readable evidence	﻿2026-10-16T03:13:41.6062275Z ##[group]Run node tests/mobile_continuity_qa.mjs
+chromium-mobile	Verify mobile hierarchy continuity and readable evidence	2026-10-16T03:13:41.6062673Z [36;1mnode tests/mobile_continuity_qa.mjs[0m
+chromium-mobile	Verify mobile hierarchy continuity and readable evidence	2026-10-16T03:13:41.6125385Z shell: /usr/bin/bash -e {0}
+chromium-mobile	Verify mobile hierarchy continuity and readable evidence	2026-10-16T03:13:41.6125642Z ##[endgroup]
+chromium-mobile	Verify mobile hierarchy continuity and readable evidence	2026-10-16T03:13:42.4448037Z node:internal/modules/run_main:107
+chromium-mobile	Verify mobile hierarchy continuity and readable evidence	2026-10-16T03:13:42.4448729Z     triggerUncaughtException(
+chromium-mobile	Verify mobile hierarchy continuity and readable evidence	2026-10-16T03:13:42.4449200Z     ^
+chromium-mobile	Verify mobile hierarchy continuity and readable evidence	2026-10-16T03:13:42.4449382Z 
+chromium-mobile	Verify mobile hierarchy continuity and readable evidence	2026-10-16T03:13:42.4449868Z AssertionError [ERR_ASSERTION]: first estimate fits a compact mobile card
+chromium-mobile	Verify mobile hierarchy continuity and readable evidence	2026-10-16T03:13:42.4450861Z     at file:///home/runner/work/chart-view-toss/chart-view-toss/tests/mobile_continuity_qa.mjs:38:9 {
+chromium-mobile	Verify mobile hierarchy continuity and readable evidence	2026-10-16T03:13:42.4451360Z   generatedMessage: false,
+chromium-mobile	Verify mobile hierarchy continuity and readable evidence	2026-10-16T03:13:42.4451603Z   code: 'ERR_ASSERTION',
+chromium-mobile	Verify mobile hierarchy continuity and readable evidence	2026-10-16T03:13:42.4451826Z   actual: false,
+chromium-mobile	Verify mobile hierarchy continuity and readable evidence	2026-10-16T03:13:42.4452028Z   expected: true,
+chromium-mobile	Verify mobile hierarchy continuity and readable evidence	2026-10-16T03:13:42.4452226Z   operator: '==',
+chromium-mobile	Verify mobile hierarchy continuity and readable evidence	2026-10-16T03:13:42.4452425Z   diff: 'simple'
+chromium-mobile	Verify mobile hierarchy continuity and readable evidence	2026-10-16T03:13:42.4452614Z }
+chromium-mobile	Verify mobile hierarchy continuity and readable evidence	2026-10-16T03:13:42.4452709Z 
+chromium-mobile	Verify mobile hierarchy continuity and readable evidence	2026-10-16T03:13:42.4452835Z Node.js v24.21.0
+chromium-mobile	Verify mobile hierarchy continuity and readable evidence	2026-10-16T03:13:42.4543794Z ##[error]Process completed with exit code 1.

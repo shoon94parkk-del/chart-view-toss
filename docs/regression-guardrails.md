@@ -521,3 +521,16 @@ A CLOSE status by itself must never certify regular_close. Match shared realtime
 Integrate the already-live Render-only TOP10 commits through normal ancestry, without force promotion or reimplementing its files. The first integrated QA exposed a genuine small-iPhone PICK click cancellation: optional Home observation data arrived between pointer down/up and moved the target. Preserve independent data requests; defer only the Home change-region paint until after click dispatch. Install the lightweight pointer tracker before lazy module load, retain focused-action restoration, coalesce per connected host, and share one document listener owner. Keep all original dated PICK/filter/absent-key assertions; do not add a loading wait or accept flaky retries. Runtime and held-response browser regressions protect the restored selection contract. See [Home wait report](HOME_DATA_WAIT_2026-10-13.md) for failed-run evidence, final QA and deployment status. No new provider/cache layer, API/key or paid infrastructure.
 
 The first gesture guard also deferred the explicit observation-toggle click, violating the existing immediate3-card contract in mobile insight_research QA. Keep that test unchanged: after all pointers release, an already-dispatched explicit toggle may paint immediately and supersede its queued host paint. Unsolicited source completions and another still-held pointer remain protected. Actual-runtime regressions cover both paths; final full QA and exact CI are rerun for the corrected source.
+### 2026-10-15 audit follow-up
+
+- Initial TOP10 success/error and retry must not write after leaving its view. Existing row/day markup, score and return calculation stay identical to the deployed baseline.
+- A restored research draft differing from persisted question/peer is unsaved; a delayed native save cannot label a newer edit saved.
+- Custom comparison dates exclude preset selection on first render and Back.
+- Recent stock identities and sort are bounded, account-local, resettable and excluded from analytics. They add no Home quote/search request and cannot replace watchlist order.
+- Only exact version/symbol static Guru proof may satisfy an API409. Missing/different proof retains publication waiting; healthy APIs make no extra proof request.
+- Watch and provisional performance timing must wait for usable content or a distinct terminal outcome, not a removed skeleton alone.
+
+### 2026-10-16 — Public observation receipts and release data
+- Keep one publicationJournal confirmation queue across Home mounts. Freeze each mount baseline behind prior confirmed writes; stale/account/reset work cannot repopulate receipts. Same source/period/value is not a new update. Older observations cannot replace newer topics.
+- Keep optional macro/issuer modules independent, lazy and generation guarded. No Home provider call or graph payload additions. NSA YoY/SA MoM and null calendar gaps must survive API→UI.
+- Conference-call time, fiscal period end, collection/check time and actual official publication are different. Unknown stays unknown. Never derive historical surprise from current analyst estimates.

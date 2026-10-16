@@ -1,6 +1,6 @@
 # Apps in Toss P0 release gate
 
-Updated: 2026-09-21
+Updated: 2026-10-15. The checklist contains historical completion records; current audit follow-up is in `SITE_AUDIT_IMPROVEMENTS_2026-10-15.md`.
 
 ## Completed
 
@@ -14,7 +14,7 @@ Updated: 2026-09-21
 - [x] `package-lock.json` committed
 - [x] Apps in Toss CI uses `npm ci`
 - [x] CI verifies web build + `chartview.ait` generation + artifact upload
-- [x] Render preview branch is automatically kept identical to `main`
+- [ ] Render preview branch is identical to `main`: the 2026-10-15 audit found five deployed commits absent from main. The audit-improvement branch preserves them; main integration and exact-SHA promotion remain pending.
 - [x] Render preview build passes and is live
 - [x] backend CORS includes Apps in Toss production/private origins and Render preview origin
 - [x] backend exposes `/health`

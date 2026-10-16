@@ -13,6 +13,7 @@
   .home-change-copy > small, .home-pick-summary small,
   .home-heatmap-meta, .home-heatmap-market-head > span, .home-heatmap-legend > span,
   .watch-sort button:not(.active),
+  .news-tags span,
   .market-map-controls button[aria-pressed="false"], .market-map-legend > span,
   .detail-metric > span, .page-kicker,
   .financial-subhead > span, .financial-pair small, .financial-year small,

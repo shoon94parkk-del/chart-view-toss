@@ -1,0 +1,49 @@
+[
+  {
+    "strategy": "buffett",
+    "symbol": "009450.KS",
+    "requestedVersion": "fc1f0aa6383d1e98bf0e",
+    "apiStatus": 409,
+    "sourceUrl": "https://raw.githubusercontent.com/shoon94parkk-del/chart_View/fix/versioned-guru-publication-20261015/static/data/guru_evidence/fc1f0aa6383d1e98bf0e/009450.KS.json",
+    "status": 200,
+    "responseVersion": "fc1f0aa6383d1e98bf0e",
+    "bodyError": null
+  },
+  {
+    "strategy": "lynch",
+    "symbol": "036620.KQ",
+    "requestedVersion": "fc1f0aa6383d1e98bf0e",
+    "apiStatus": 409,
+    "sourceUrl": "https://raw.githubusercontent.com/shoon94parkk-del/chart_View/fix/versioned-guru-publication-20261015/static/data/guru_evidence/fc1f0aa6383d1e98bf0e/036620.KQ.json",
+    "status": 200,
+    "responseVersion": "fc1f0aa6383d1e98bf0e",
+    "bodyError": null
+  },
+  {
+    "strategy": "oneil",
+    "state": "empty",
+    "version": "fc1f0aa6383d1e98bf0e",
+    "evaluated": 1038,
+    "pending": 0
+  },
+  {
+    "strategy": "minervini",
+    "symbol": "950190.KQ",
+    "requestedVersion": "fc1f0aa6383d1e98bf0e",
+    "apiStatus": 409,
+    "sourceUrl": "https://raw.githubusercontent.com/shoon94parkk-del/chart_View/fix/versioned-guru-publication-20261015/static/data/guru_evidence/fc1f0aa6383d1e98bf0e/950190.KQ.json",
+    "status": 200,
+    "responseVersion": "fc1f0aa6383d1e98bf0e",
+    "bodyError": null
+  },
+  {
+    "strategy": "greenblatt",
+    "symbol": "171090.KQ",
+    "requestedVersion": "fc1f0aa6383d1e98bf0e",
+    "apiStatus": 409,
+    "sourceUrl": "https://raw.githubusercontent.com/shoon94parkk-del/chart_View/fix/versioned-guru-publication-20261015/static/data/guru_evidence/fc1f0aa6383d1e98bf0e/171090.KQ.json",
+    "status": 200,
+    "responseVersion": "fc1f0aa6383d1e98bf0e",
+    "bodyError": null
+  }
+]

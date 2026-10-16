@@ -1,0 +1,147 @@
+{
+  "observedAt": "2026-10-16",
+  "method": "Read-only fetch of eight ordinary linked public HTML pages; parsed SSR text and normal attributes; no login, subscriptions, form submissions, hidden API discovery, or data copying for product reuse.",
+  "pages": [
+    {
+      "url": "https://afterns.com/en/about",
+      "fetchedAt": "2026-10-16T01:16:04Z",
+      "status": 200,
+      "finalUrl": "https://afterns.com/en/about",
+      "bytes": 53006,
+      "title": "About AFTERNS · Data Sources & Methodology | AFTERNS"
+    },
+    {
+      "url": "https://afterns.com/en/guide",
+      "fetchedAt": "2026-10-16T01:16:05Z",
+      "status": 200,
+      "finalUrl": "https://afterns.com/en/guide",
+      "bytes": 73412,
+      "title": "Earnings & Stock Reaction Glossary · EPS, Consensus, Guidance | AFTERNS"
+    },
+    {
+      "url": "https://afterns.com/en/calendar",
+      "fetchedAt": "2026-10-16T01:16:05Z",
+      "status": 200,
+      "finalUrl": "https://afterns.com/en/calendar",
+      "bytes": 819120,
+      "title": "US Stock Earnings Calendar · 166 Reports This Week | AFTERNS"
+    },
+    {
+      "url": "https://afterns.com/en/guide/earnings-calendar",
+      "fetchedAt": "2026-10-16T01:16:06Z",
+      "status": 200,
+      "finalUrl": "https://afterns.com/en/guide/earnings-calendar",
+      "bytes": 404826,
+      "title": "US Earnings Calendar Subscription · Auto Alerts for Report Dates | AFTERNS"
+    },
+    {
+      "url": "https://afterns.com/en/privacy",
+      "fetchedAt": "2026-10-16T01:16:07Z",
+      "status": 200,
+      "finalUrl": "https://afterns.com/en/privacy",
+      "bytes": 34479,
+      "title": "Privacy Policy · AFTERNS"
+    },
+    {
+      "url": "https://afterns.com/en/terms",
+      "fetchedAt": "2026-10-16T01:16:07Z",
+      "status": 200,
+      "finalUrl": "https://afterns.com/en/terms",
+      "bytes": 33194,
+      "title": "Terms of Service · AFTERNS"
+    },
+    {
+      "url": "https://afterns.com/en/guide/earnings-consensus",
+      "fetchedAt": "2026-10-16T01:16:36Z",
+      "status": 200,
+      "finalUrl": "https://afterns.com/en/guide/earnings-consensus",
+      "bytes": 432052,
+      "title": "Consensus Estimates Explained | How Accurate Analyst EPS Forecasts Really Are | AFTERNS"
+    },
+    {
+      "url": "https://afterns.com/en/stock/NVDA",
+      "fetchedAt": "2026-10-16T01:16:37Z",
+      "status": 200,
+      "finalUrl": "https://afterns.com/en/stock/NVDA",
+      "bytes": 147789,
+      "title": "NVIDIA Corporation (NVDA) Earnings Date & Time · Earnings Call · Stock Reaction After Earnings | AFTERNS"
+    }
+  ],
+  "facts": [
+    {
+      "id": "coverage",
+      "url": "https://afterns.com/en/about",
+      "claim": "About claims 1,266 US-listed stocks including every S&P 500 constituent; roughly 12 quarters each; 14,756 reports; earnings calls for 101 stocks.",
+      "excerpt": "History ~12 quarters each · Three years of reports and same-day price reactions.",
+      "limit": "Site-reported changing coverage as of today; not independently enumerated or audited."
+    },
+    {
+      "id": "providers",
+      "url": "https://afterns.com/en/about",
+      "claim": "Fundamentals (EPS/revenue/quarters) from SEC EDGAR 10-Q/10-K XBRL; actual announcement dates, consensus EPS, reported EPS including non-GAAP, and adjusted closes from Yahoo Finance aggregates; says sources are cross-checked.",
+      "excerpt": "Actual announcement dates, consensus EPS estimates, reported EPS (incl. non-GAAP), and adjusted close prices come from Yahoo Finance aggregates.",
+      "limit": "Public source statement, not provider-license proof or independently verified data lineage."
+    },
+    {
+      "id": "beat-comparability-missing",
+      "url": "https://afterns.com/en/guide/earnings-consensus",
+      "claim": "Reported EPS above consensus is a beat and below a miss; consensus and actual are compared as adjusted non-GAAP on the same basis. Article excludes releases missing consensus.",
+      "excerpt": "4,926 reports with both a consensus and an actual EPS. Of 5,005 total releases in the period, 79 (1.6%) had no consensus and were excluded.",
+      "limit": "Article sample is 2025-09-01 through 2026-08-31; no explicit equality/tolerance policy, zero-denominator policy, estimate revision cutoff, or general product-wide missing-data algorithm found in reviewed pages. Error formula is |actual-consensus|/|consensus|*100 and uses medians; it is an accuracy-error formula, not necessarily a signed surprise formula."
+    },
+    {
+      "id": "reaction-method",
+      "url": "https://afterns.com/en/about",
+      "relatedUrl": "https://afterns.com/en/guide",
+      "claim": "Next-day reaction goes from last close before announcement to first close after it; same BMO/AMC rule. Guide makes BMO same-day close and AMC next-session close explicit. 5-day drift uses pre-announcement close to 5th trading-day close; excess subtracts same-day SPY; intensity uses trailing 63-day daily volatility.",
+      "excerpt": "Next-day reaction: percent change from the last close before the announcement to the first close after it. The same rule applies to before-market (BMO) and after-market (AMC) reports.",
+      "limit": "Documented definition, not an independent recalculation. Reviewed pages do not fully specify unknown/intraday release times, holidays, bad/missing prices, adjustment vendor details, SPY alignment, or volatility estimator. NVDA history footnote describes five-day figure as cumulative from that point, which is less precise than About."
+    },
+    {
+      "id": "sample-display",
+      "url": "https://afterns.com/en/stock/NVDA",
+      "relatedUrl": "https://afterns.com/en/about",
+      "claim": "Public NVDA SSR displays n beside statistics: 5/12 up (42%), 7/12 fell despite beat, +0.8% average over 12 beats, missing-case dash with never missed, ±5.6% average absolute-style move, and 12-report timeline. About says up-probability statistics hidden below 4 quarters.",
+      "excerpt": "Up probability: share of sampled quarters with a positive reaction; stats are hidden below 4 quarters of sample.",
+      "limit": "These are one stock/page observed values on 2026-10-16; no confidence intervals or formal predictive guarantee is claimed by the reviewed methodology. The direction statistic is historical and does not establish a guidance cause."
+    },
+    {
+      "id": "freshness",
+      "url": "https://afterns.com/en/about",
+      "claim": "About claims EPS/revenue flash right after release, AMC within hours that evening, call summaries a few hours after call ends; permanent reaction computed after next session close. Upcoming dates can be tentative until company confirmation.",
+      "excerpt": "Earnings data updates automatically the trading day after each report.",
+      "limit": "Published cadence claim only; no refresh SLA, per-field as-of timestamp, provider delay table, or actual freshness validation was established by this read-only sample."
+    },
+    {
+      "id": "calendar-date-status-timezone",
+      "url": "https://afterns.com/en/calendar",
+      "relatedUrl": "https://afterns.com/en/guide/earnings-calendar",
+      "claim": "Calendar FAQ says dates are ET, confirmed dates shown when available and otherwise past-cadence estimates with dashed borders. Subscription guide claims confirmed dates only, session shown in local time and automatic updates. NVDA explicitly labels its next date from an earnings calendar and may not be company-confirmed, with ET plus KST display.",
+      "excerpt": "Before a company confirms its date, we show an estimate based on past reporting cycles, marked with a dashed border on the calendar.",
+      "limit": "Calendar display and subscription feed can be different scopes; guide confirmed-only claim is not proof every displayed date is confirmed. Feed contents, timezone handling and subscription refresh behavior were not tested. Copy has a scope ambiguity."
+    },
+    {
+      "id": "calendar-account-scope",
+      "url": "https://afterns.com/en/calendar",
+      "relatedUrl": "https://afterns.com/en/guide/earnings-calendar",
+      "claim": "Calendar FAQ says free; no-login user can select one preset; login allows combining presets and up to 50 searched tickers. Guide says free without login and personal watchlist calendar benefits from login; About more broadly says calendar subscription requires an account.",
+      "excerpt": "Without logging in you can pick one preset such as Big Tech or Semiconductors and subscribe right away. Logging in lets you combine presets and add up to 50 tickers by search.",
+      "limit": "Observed documentation conflict/overbroad About copy. No account, subscription, calendar export, or action was performed."
+    },
+    {
+      "id": "call-source-labels",
+      "url": "https://afterns.com/en/stock/NVDA",
+      "claim": "Public SSR has Earnings call headline, named management quote blocks, positives/concerns and a dated transcript statement: Based on the Aug 26, 2026 earnings-call transcript. Quotes are verbatim.",
+      "excerpt": "Based on the Aug 26, 2026 earnings-call transcript. Quotes are verbatim.",
+      "limit": "No external transcript/source link found among this page anchors; quote fidelity not independently checked. No AI summary or AI-generated label found in the sampled public SSR text/attributes; this does not rule out client-only labels or backend AI. About claims original English with Korean translation."
+    },
+    {
+      "id": "terms-reuse",
+      "url": "https://afterns.com/en/terms",
+      "relatedUrl": "https://afterns.com/en/privacy",
+      "claim": "Terms last updated 2026-08-26 say data based on public sources may be delayed or erroneous, with no accuracy guarantee. Reviewed terms contain no explicit license for copying/redistributing site data or content. Privacy repeats SEC/Yahoo sources.",
+      "excerpt": "Data is based on public sources (e.g., SEC) and may be delayed or contain errors. We make no guarantee of accuracy.",
+      "limit": "Absence of an explicit reuse grant does not establish that reuse is permitted or forbidden. Source availability/robots allowance are not licensing evidence. This is a statement about reviewed text, not legal advice."
+    }
+  ]
+}

@@ -1,0 +1,249 @@
+{
+  "project": "chartview-afterns-20261016",
+  "observedAt": "2026-10-16T01:18:35.614910+00:00",
+  "mainSha": "02cb31170ce4ce78cc724611189e06a1e4347bac",
+  "pr134Sha": "1dd69ac67412980064db76ebe35b97e914934a50",
+  "releaseBranchSha": "9bd17dbe410065eb09a743c72506be36c2bc4d30",
+  "liveFrontend": "unverified by inventory agent",
+  "backend": "See backend/backend-inventory.md and backend-source-ref-and-datasets.json; fetched source is separate from live revision",
+  "capabilities": [
+    {
+      "id": "macro-series",
+      "status": "implemented-main",
+      "capability": "Economic-indicator page",
+      "existing": "Per-series units, observation dates, change basis, sparklines, publication metadata, original FRED links, rule-based market summary; not one common latest date. Frontend also independently flags observation age (monthly50d, slowmonthly65d, weekly18d, daily4d).",
+      "evidence": [
+        "src/main.js:1072",
+        "src/main.js:1090",
+        "src/main.js:1099",
+        "src/dataPresentation.js:205",
+        "src/api.js:67",
+        "src/dataPresentation.js:90"
+      ],
+      "limits": "Current served series list depends on backend; frontend CPIAUCSL display mapping alone does not establish CPI availability."
+    },
+    {
+      "id": "cpi-ppi",
+      "status": "gap-in-current-backend-source",
+      "capability": "CPI/PPI",
+      "existing": "Current backend source defines PCE and trimmed PCE instead.",
+      "evidence": [
+        "src/insightModel.js:6"
+      ],
+      "limits": "Backend child audit supplies exact definitions. Additions require explicit source, units, seasonal adjustment, observation/release dates, revisions; do not relabel PCE as CPI."
+    },
+    {
+      "id": "release-calendar-surprise",
+      "status": "gap-in-inspected-source",
+      "capability": "Economic calendar and forecast-versus-actual release surprise",
+      "existing": "No economic calendar route/dataset/forecast/previous/actual release model found in Toss main. Corporate consensus and export model actuals are separate existing features.",
+      "evidence": [
+        "src/routes.js:3",
+        "src/api.js:67",
+        "src/api.js:79",
+        "src/analysisViews.js:237"
+      ],
+      "limits": "A provider/source and permission basis is needed for consensus forecasts. Root has not authorized implementation this turn. This is a macro-specific gap; Afterns public methodology primarily describes corporate earnings events, which are mapped separately below."
+    },
+    {
+      "id": "industry-news-links",
+      "status": "implemented-main",
+      "capability": "Sector, related companies, supply-chain candidates and article links",
+      "existing": "KRX industry/products, DART sales mix/source link, sector peer counts/5-day performance, chain stages, article-backed specific contract/delivery clues, direct/industry news badges and source/date.",
+      "evidence": [
+        "src/industryContext.js:8",
+        "src/industryContext.js:96",
+        "src/industryContextView.js:22",
+        "src/industryContextView.js:47",
+        "src/industryContextView.js:122",
+        "src/industryContextView.js:143",
+        "src/main.js:1584",
+        "src/main.js:1591"
+      ],
+      "limits": "Regex/product-based industry candidates are explicitly distinguished from evidenced relationships. No curated event-timed theme board is established by these features."
+    },
+    {
+      "id": "financial-provenance",
+      "status": "implemented-main",
+      "capability": "Financial reports, dates, methodology and raw evidence",
+      "existing": "DART annual/interim revenue and operating profit; eight discrete quarters and TTM; quality/cash-flow/balance-sheet checks; original filing links, account IDs/receipt numbers/raw values/units and formulas.",
+      "evidence": [
+        "src/financialHistoryView.js:28",
+        "src/financialHistoryView.js:44",
+        "src/quarterView.js:30",
+        "src/quarterView.js:35",
+        "src/financialQualityView.js:21",
+        "src/financialQualityView.js:26",
+        "src/financialQualityView.js:27"
+      ],
+      "limits": "Annual/interim accumulations and standalone quarters differ; Q4 revenue/profit derived from annual minus Q3 is labeled. Lack of data is not zero; filing revisions may change values."
+    },
+    {
+      "id": "company-consensus-bands",
+      "status": "implemented-main",
+      "capability": "Corporate estimates and valuation history",
+      "existing": "Selected-company Yahoo EPS/revenue estimates for current/next fiscal year or quarter, analyst count/range, EPS 30-day trend/revisions; historical PER/PBR with coverage, source/date and reconstruction warning.",
+      "evidence": [
+        "src/analysisViews.js:237",
+        "src/analysisViews.js:240",
+        "src/analysisViews.js:251",
+        "src/analysisViews.js:273"
+      ],
+      "limits": "Forecasts are not final financial results; a macro release surprise table would be a separate data model."
+    },
+    {
+      "id": "exports-research-bridge",
+      "status": "implemented-main",
+      "capability": "Exports, provenance, product/company research links",
+      "existing": "Monthly customs/HS items/countries, 12-month value/weight/unit-value trends; provisional digest and business-day option; KRX-product evidence leads into company financial research; source/methodology disclosures.",
+      "evidence": [
+        "src/exportMomentumView.js:398",
+        "src/exportMomentumView.js:402",
+        "src/exportMomentumView.js:407",
+        "src/exportMomentumView.js:938",
+        "src/exportMomentumView.js:953",
+        "src/exportMomentumView.js:976",
+        "src/exportResearchView.js:27",
+        "src/exportResearchView.js:37",
+        "src/exportProvisionalDigest.js:24"
+      ],
+      "limits": "Country-month compatibility and non-additive semiconductor groupings already protected. Customs proxy classification does not establish corporate exports, customers or beneficiaries. PR127 is overlapping old work, not a missing module."
+    },
+    {
+      "id": "memory-prices",
+      "status": "implemented-main",
+      "capability": "DRAM/NAND market-price series",
+      "existing": "Independent memory route, TrendForce/DRAMeXchange attribution, several chip/wafer/module groups and collected date-based history; link into semiconductor exports.",
+      "evidence": [
+        "src/memoryPriceView.js:4",
+        "src/memorySpotView.js:26",
+        "src/memorySpotView.js:40",
+        "src/main.js:1630"
+      ],
+      "limits": "History starts from Chart View collection; distinct from customs unit value and company earnings. Source rights/release gates remain separate."
+    },
+    {
+      "id": "saved-research",
+      "status": "implemented-main-with-pending-save-state-fix",
+      "capability": "Saved questions, notes, filing comparisons and revisits",
+      "existing": "Device-local question with optional one peer, support/challenge/review date fields in data model; explicit question save/delete; saved baseline filing acknowledgment; max three evidence conditions; saved research panel on Home/Watch; explicit refresh of up to three saved companies.",
+      "evidence": [
+        "src/researchNotes.js:42",
+        "src/researchNotes.js:56",
+        "src/researchCard.js:42",
+        "src/researchCard.js:208",
+        "src/savedResearch.js:5",
+        "src/savedResearchView.js:10",
+        "src/reportReviewView.js:25",
+        "src/reportReviewView.js:34",
+        "src/revisitRefresh.js:6"
+      ],
+      "limits": "Current UI primarily edits a research question/peer; older support/challenge/review date appear as legacy notes. No cross-device cloud sync is established. PR134 corrects draft-versus-saved question/peer status; do not propose building saved research from scratch."
+    },
+    {
+      "id": "compare",
+      "status": "implemented-main",
+      "capability": "Stock and filing comparison",
+      "existing": "Up to six stocks for period returns and shared selection across valuation/consensus; custom date ranges; same-period one-company-peer DART comparison and source links.",
+      "evidence": [
+        "src/main.js:721",
+        "src/main.js:779",
+        "src/main.js:1004",
+        "src/researchCard.js:34",
+        "src/researchCard.js:47",
+        "src/experienceState.js:8"
+      ],
+      "limits": "Public share links carry view conditions; private watchlists/questions/notes are excluded. PR134 fixes period-tab restoration and saved-peer state."
+    },
+    {
+      "id": "search-watch-recent-settings",
+      "status": "implemented-main-plus-pending-pr134",
+      "capability": "Search, watchlist, recent stocks and settings",
+      "existing": "Main: search selector preserves favorite selection during failures; max20 new watch stocks, manual/name/change sort, reorder, account-separated device storage and reset/data guide. PR134: latest5 viewed stocks with clear action, persisted watch-sort, company/period context on long detail.",
+      "evidence": [
+        "src/stockSelector.js:77",
+        "src/stockSelector.js:150",
+        "src/main.js:897",
+        "src/main.js:930",
+        "src/main.js:1623",
+        "src/main.js:1635",
+        "src/storage.js:1"
+      ],
+      "pendingEvidence": [
+        "src/revisitPreferences.js:9",
+        "src/revisitPreferences.js:17",
+        "src/revisitPreferences.js:29",
+        "src/revisitPreferences.js:35",
+        "src/stockSelector.js:168",
+        "src/main.js:1408",
+        "src/main.js:1922"
+      ],
+      "limits": "Recent5 and restored sort are pending PR134, not verified live. Main routes include history for dated TOP10 records; this audit intentionally avoids changes or recommendations to protected PICK/TOP10 core."
+    },
+    {
+      "id": "home-return",
+      "status": "implemented-main",
+      "capability": "Home dashboard and return visits",
+      "existing": "Saved stocks move ahead for return users; market levels, evidence entry points, saved research, quick comparisons, market summary and watch news. Last-visit actual watched-price comparison plus source-dated changes cards and latest-filing revisit prompts.",
+      "evidence": [
+        "src/main.js:625",
+        "src/main.js:632",
+        "src/main.js:642",
+        "src/main.js:645",
+        "src/main.js:646",
+        "src/homeJourney.js:76",
+        "src/homeJourney.js:128",
+        "src/homeChangesView.js:14",
+        "src/savedResearchView.js:10"
+      ],
+      "limits": "Already a revisit workflow. A new dashboard should first improve scan order and re-entry within these existing surfaces; data/live performance not measured by this agent."
+    },
+    {
+      "id": "earnings-calendar",
+      "status": "gap-in-inspected-frontend-and-backend-source",
+      "capability": "Earnings calendar with date confidence, BMO/AMC and timezone",
+      "existing": "Corporate consensus is available, but no earnings-event calendar or confirmed/estimated event timing route/model/UI is found in current Toss src.",
+      "evidence": [
+        "src/routes.js:3",
+        "src/api.js:79",
+        "src/analysisViews.js:237"
+      ],
+      "limits": "Upcoming date must be distinguished from confirmed company announcement; estimated/unknown session and ET/KST require explicit handling. Calendar subscriptions or reminders are not established.",
+      "backendEvidence": "backend/backend-inventory.md: Afterns-style earnings events versus existing consensus"
+    },
+    {
+      "id": "earnings-event-surprise-reaction",
+      "status": "gap-in-inspected-frontend-and-backend-source",
+      "capability": "Same-basis earnings beat/miss and event-window stock reaction",
+      "existing": "Existing building blocks: corporate estimates, independent filed financial results and general price-return comparisons. No historical earnings-event consensus/actual basis-matched surprise table, event-close window, beat/miss conditional denominator, SPY excess, 5-day drift or volatility-standardized event surface is found.",
+      "evidence": [
+        "src/analysisViews.js:237",
+        "src/financialHistoryView.js:28",
+        "src/main.js:721"
+      ],
+      "limits": "General period returns and corporate estimate revisions do not establish event-reaction calculations. Any later proposal must specify adjusted-vs-GAAP basis, as-of/revision cutoff, missing/zero/equal/unknown-session cases, split-adjusted price basis, trading-calendar boundaries and minimum valid sample. Do not modify PICK/LAB core or performance tracking.",
+      "backendEvidence": "backend/backend-inventory.md: Afterns-style earnings events versus existing consensus"
+    },
+    {
+      "id": "earnings-call-summary",
+      "status": "uncertain-not-found-in-inspected-frontend-source",
+      "capability": "Earnings-call transcript and attributed summary",
+      "existing": "DART source-linked business/financial reports and article-based relations exist; no separate earnings-call transcript/management-quote summary surface found in current Toss routes/src.",
+      "evidence": [
+        "src/routes.js:3",
+        "src/industryContextView.js:22",
+        "src/main.js:1584"
+      ],
+      "limits": "A transcript summary is new scope, requiring source/date traceability and original transcript links. Existing data/research answers intentionally avoid free-form future/causal interpretation; do not replace them silently."
+    }
+  ],
+  "restrictions": [
+    "No product code/data edits",
+    "No deployment/PR mutations",
+    "No operating API or provider/collector calls",
+    "No PICK/LAB core, selection, records, score, UI, API, strategy or formula changes"
+  ],
+  "externalComparisonEvidence": "/workspace/research/chartview-afterns-20261016/official-sources/research-summary.md",
+  "backendSourceSha": "f0f0d3b4278460591770796c5849aa090f0f4517",
+  "backendLiveRevision": "not verified by source-only inventory agent"
+}

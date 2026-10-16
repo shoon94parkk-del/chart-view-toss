@@ -14,7 +14,7 @@ const TIMEOUT=options.timeoutMs;
 const routes=[
   {route:'home',label:'홈',ready:()=>Boolean(document.querySelector('#market-card .quote-card:not(.market-card-loading)'))&&document.querySelectorAll('#home-daily-heatmap .skeleton').length===0},
   {route:'chart',label:'차트',ready:()=>{const s=document.querySelector('#chart-status');return Boolean(s)&&!String(s.textContent||'').includes('불러오는 중')&&Boolean(document.querySelector('#chart-table-wrap .return-table,#chart-table-wrap .empty'))}},
-  {route:'watch',label:'관심종목',ready:()=>Boolean(document.querySelector('#watch-rich-list'))&&document.querySelectorAll('#watch-rich-list .skeleton').length===0},
+  {route:'watch',label:'관심종목',ready:()=>{const host=document.querySelector('#watch-rich-list');if(!host)return false;if(host.dataset.loadState)return host.dataset.loadState!=='loading';if(host.querySelector('.watch-empty,.watch-refresh-note'))return true;const prices=[...host.querySelectorAll('.watch-card-price > strong')];return prices.length>0&&prices.every(el=>!String(el.textContent).includes('확인 중'));}},
   {route:'valuation',label:'밸류에이션',ready:()=>Boolean(document.querySelector('#valuation-list'))&&document.querySelectorAll('#valuation-list .skeleton').length===0},
   {route:'macro',label:'경제지표',ready:()=>Boolean(document.querySelector('#macro-groups'))&&document.querySelectorAll('#macro-groups .skeleton').length===0&&Boolean(document.querySelector('#macro-groups .macro-group,#macro-groups .empty'))},
   {route:'discover',label:'조건별 종목 찾기',ready:()=>Boolean(document.querySelector('#analysis-body'))&&document.querySelectorAll('#analysis-body .skeleton').length===0&&Boolean(document.querySelector('#analysis-body .analysis-list,#analysis-body .empty'))},
@@ -25,7 +25,7 @@ const routes=[
   {route:'detail/005930.KS',label:'종목 상세',ready:()=>Boolean(document.querySelector('#detail-price'))&&!document.querySelector('#detail-price')?.classList.contains('skeleton')},
   {route:'tools',label:'투자 도구',ready:()=>Boolean(document.querySelector('#analysis-body .investment-tool-card,#analysis-body .empty'))},
   {route:'info',label:'데이터·이용 안내',ready:()=>Boolean(document.querySelector('.info-stack'))},
-  {route:'exports',label:'수출 데이터',ready:()=>Boolean(document.querySelector('[data-export-panel]:not([hidden])[data-load-state="ready"],[data-export-panel]:not([hidden])[data-load-state="error"],[data-export-panel]:not([hidden])[data-load-state="empty"]'))},
+  {route:'exports',label:'수출 데이터',ready:()=>{const panel=document.querySelector('[data-export-panel]:not([hidden])'),radar=panel?.querySelector('#export-provisional-radar');if(!panel?.dataset.loadState||panel.dataset.loadState==='loading')return false;if(panel.dataset.loadState!=='ready'||!radar)return true;if(radar.dataset.loadState)return radar.dataset.loadState!=='loading';return Boolean(radar.querySelector('[data-export-digest],.export-provisional-error'));}},
   {route:'gurus',label:'거장 투자법',ready:()=>Boolean(document.querySelector('#guru-data .guru-coverage,#guru-data .guru-empty'))},
   {route:'picks',label:'선정 기록',ready:()=>Boolean(document.querySelector('[data-testid="pick-performance"],#pick-ledger-summary .empty'))},
   {route:'memory',label:'반도체 가격',ready:()=>Boolean(document.querySelector('.dram-spot-price,.memory-price-page .empty'))},

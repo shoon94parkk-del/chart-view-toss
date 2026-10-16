@@ -43,7 +43,7 @@ test('native storage restores and serializes writes before clear',async()=>{
 });
 test('home return baselines and review cooldowns follow account isolation and reset',async()=>{
  const s=setup(); await s.initializeStorage();
- const keys=['chartview-toss-home-journey-v1','chartview-toss-review-prompt-v1'];
+ const keys=['chartview-toss-home-journey-v1','chartview-toss-review-prompt-v1','chartview-toss-recent-stocks-v1','chartview-toss-watch-sort-v1'];
  for(const key of keys)await s.writeStored(key,'{"checkedAt":"2026-10-12"}',{confirmed:true});
  s.setIdentity({type:'HASH',hash:'user-B'});await s.initializeStorage();
  for(const key of keys)assert.equal(s.readStored(key),null);
@@ -57,7 +57,7 @@ test('home return baselines and review cooldowns follow account isolation and re
 });
 test('browser reset also removes return baselines and review cooldowns',async()=>{
  const s=setup({native:false});
- const keys=['chartview-toss-home-journey-v1','chartview-toss-review-prompt-v1'];
+ const keys=['chartview-toss-home-journey-v1','chartview-toss-review-prompt-v1','chartview-toss-recent-stocks-v1','chartview-toss-watch-sort-v1'];
  for(const key of keys)s.writeStored(key,'{}');
  await s.clearStored();
  for(const key of keys)assert.equal(s.readStored(key),null);

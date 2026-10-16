@@ -69,15 +69,20 @@ export { existing };
 
 export const top10History = { days: [
   { tradeDate: '2026-10-07', coverage: 'complete', selectedPicks: [{ code: '005930', name: '삼성전자', status: 'user_confirmed' }],
-    top10: [['005930','삼성전자'],['000660','SK하이닉스'],['035420','NAVER'],['005380','현대차'],['068270','셀트리온'],['051910','LG화학'],['006400','삼성SDI'],['000270','기아'],['017670','SK텔레콤'],['055550','신한지주']].map(([code,name],i)=>({rank:i+1,code,name,score:82-i})) },
+    top10: [['005930','삼성전자'],['000660','SK하이닉스'],['035420','NAVER'],['005380','현대차'],['068270','셀트리온'],['051910','LG화학'],['006400','삼성SDI'],['000270','기아'],['017670','SK텔레콤'],['055550','신한지주']].map(([code,name],i)=>({rank:i+1,code,symbol:code+'.KS',name,score:82-i})) },
   { tradeDate: '2026-10-06', coverage: 'partial', selectedPicks: [],
-    top10: [{ rank: 1, code: '000660', name: 'SK하이닉스', score: 79 }], note: '확인 가능한 당시 기록만 보존' },
+    top10: [{ rank: 1, code: '000660', symbol:'000660.KS', name: 'SK하이닉스', score: 79 }], note: '확인 가능한 당시 기록만 보존' },
 ] };
 
 export function payloadFor(url) {
   const path = url.pathname.replace(/^\/backend/, '');
   const tickers = (url.searchParams.get('tickers') || symbol).split(',');
   const selected = quotes.filter(row => tickers.includes(row.ticker));
+  if(path==='/api/compare'&&url.searchParams.has('start')&&!url.searchParams.has('period')){
+    const start=url.searchParams.get('start'),end=url.searchParams.get('end');
+    const archived=top10History.days.flatMap(day=>day.top10);
+    return {stocks:tickers.map(ticker=>{const row=archived.find(row=>row.symbol===ticker);if(!row)return null;const price=quotes.find(q=>q.ticker===ticker)?.price||10000;return {ticker,name:row.name,priceBasis:'adjusted_close',startDate:start,endDate:end,data:[{time:Date.parse(start)/1000,price},...(end!==start?[{time:Date.parse(end)/1000,price:price*1.1}]:[])]};}).filter(Boolean),errors:[]};
+  }
   const macro = { summary: { text: '기준일 시장 환경 확인', level: 'yellow', latestBasisDate: '2026-10-07' }, results: [] };
   const map = {
     '/api/activity': { ok: true, heartbeatSec: 20 },
@@ -93,12 +98,13 @@ export function payloadFor(url) {
     '/api/search': { results: quotes.filter(row => `${row.name} ${row.ticker}`.includes(url.searchParams.get('q') || '')).map(row => ({ symbol: row.ticker, name: row.name, market: row.market, type: 'EQUITY' })) },
     '/api/compare': { stocks: selected.map(row => ({ ...row, return: 10, startDate: '2026-09-01', endDate: '2026-10-07', data: [{ time: '2026-09-01', value: 0, price: row.price / 1.1 }, { time: '2026-10-07', value: 10, price: row.price }] })) },
     '/api/valuation': { stocks: selected.map(row => ({ ...row, trailingPE: 15.2, forwardPE: 12.3, pbr: 1.2, roe: 11.3, operatingMargin: 14, dividendYield: 2.1, fieldMeta: {}, generatedAt: asOf })) },
-    '/api/personalized-news': { items: [{ symbol, name: '삼성전자', title: '삼성전자 실적 공시 확인', url: 'https://example.com/news', source: 'QA News', publishedAt: asOf, relationType: 'direct' }] },
+    '/api/personalized-news': { items: [{ symbol, name: '삼성전자', title: '삼성전자 실적 공시 확인', url: 'https://example.com/news', source: 'QA News', publishedAt: asOf, relationType: 'direct', investmentTags:['earnings'] }] },
     '/api/financial-history': financial,
     '/api/financial-quarters': { available: false },
     '/api/business-report': { available: false },
     '/api/relationship-evidence': { available: false, relations: [] },
     '/api/macro': macro,
+    '/api/earnings-events': {status:'partial',events:[],coverage:{missing:[]},comparison:{status:'unavailable'}},
     '/api/export-momentum': exportSnapshot,
     '/api/export-momentum/provisional': existing.radar,
     '/api/export-momentum/momentum-map': existing.momentumMap,

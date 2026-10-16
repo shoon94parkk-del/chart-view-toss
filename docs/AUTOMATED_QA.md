@@ -119,3 +119,6 @@ E2E_BASE_URL=https://chart-view-toss.onrender.com npm run test:e2e:live
 이번 작업은 핵심 화면 screenshot을 증거로 저장하고 geometry 회귀를 자동 비교한다. OS/글꼴 차이를 숨기는 임의 허용치를 두는 픽셀 baseline 시각 비교는 추가하지 않았다.
 
 tester-army/e2e는 사용하지 않았다. Codex가 코드·실제 브라우저·실패 trace를 직접 분석하고 CI는 결정론적인 Playwright/axe 검사만 실행한다. 핵심 CI에 외부 API 호출/LLM API 비용은 없다. 수동 live 진단은 기존 Chart View 백엔드의 일반 조회만 사용한다. GitHub Actions/Artifact 사용량은 계정의 기존 무료 한도 및 요금 정책을 따른다. 새 유료 서비스나 Render 플랜은 만들지 않았다.
+# 2026-10-15 감사 후속
+
+현재 브라우저219개 ×4프로젝트=876개다. 기존206개를 유지하고 화면 생명주기·저장/기간·최근 조회/정렬·직접 진입·완료 측정·거장 정적 근거·뉴스 대비11개와 리뷰 후 저장한 비교 회사 해제·히스토리 재시도 observer 정리2개를 추가했다. 두 PICK 독립 로딩 검사는 물리적1.5초 가정 대신 실제 주 응답 본문 도착 및 보조 응답 차단 상태를 함께 확인한다. 숫자·분모·상태와 늦은 응답의 화면 보호 assertion은 유지한다. 최초 전체866/2 및 독립/수정 후20개 결과, 최종 head CI와 native 미검증은 `SITE_AUDIT_IMPROVEMENTS_2026-10-15.md`에 구분한다.

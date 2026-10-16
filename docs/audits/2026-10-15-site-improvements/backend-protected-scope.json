@@ -1,0 +1,42 @@
+{
+  "baseline": "e9192b0",
+  "checks": [
+    {
+      "path": "guru_snapshot.py",
+      "section": "def build_snapshot(",
+      "unchanged": true,
+      "sha256": "f33b26ca38f622f0c0552b35690d2f07c5b4f6b4a947caa71ff704a8d97db731"
+    },
+    {
+      "path": "export_momentum_service.py",
+      "section": "def _build_provisional_radar(",
+      "unchanged": true,
+      "sha256": "f067349f90b3711ac118631fcff7ff0061be3ee71093a2bb43948d2e509fedb4"
+    },
+    {
+      "path": "guru_rules.py",
+      "unchanged": true,
+      "sha256": "d1c1a33742eaf9e1d17d87460d7d92127555bcd973f6ce4f5b9442cbae10c5ea"
+    },
+    {
+      "path": "guru_extensions.py",
+      "unchanged": true,
+      "sha256": "817354da3eb0c5a1cf50474e9bc1084a5a31bcdc9509a6e363f7d77c9ab109fa"
+    },
+    {
+      "path": "static/data/guru_screening.json",
+      "unchanged": true,
+      "sha256": "99f0981077731703f982ef48d65f75d09b22a28666ff2c2e6efb337b6fcfeac3"
+    },
+    {
+      "path": "static/data/guru_evidence.json",
+      "unchanged": true,
+      "sha256": "e8fc323899df2412a779f30b1720da71f781f936d91df34082bf1c4102e0a29a"
+    },
+    {
+      "path": "static/data/top10_history.json",
+      "unchanged": true,
+      "sha256": "fa1f1e6772e2472a634206db0b607be0ba2a86a5405a7b14983f292a3a640351"
+    }
+  ]
+}

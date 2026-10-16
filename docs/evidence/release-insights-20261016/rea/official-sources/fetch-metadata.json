@@ -1,0 +1,66 @@
+[
+  {
+    "url": "https://afterns.com/en/about",
+    "fetchedAt": "2026-10-16T01:16:04Z",
+    "status": 200,
+    "finalUrl": "https://afterns.com/en/about",
+    "bytes": 53006,
+    "title": "About AFTERNS \u00b7 Data Sources & Methodology | AFTERNS"
+  },
+  {
+    "url": "https://afterns.com/en/guide",
+    "fetchedAt": "2026-10-16T01:16:05Z",
+    "status": 200,
+    "finalUrl": "https://afterns.com/en/guide",
+    "bytes": 73412,
+    "title": "Earnings & Stock Reaction Glossary \u00b7 EPS, Consensus, Guidance | AFTERNS"
+  },
+  {
+    "url": "https://afterns.com/en/calendar",
+    "fetchedAt": "2026-10-16T01:16:05Z",
+    "status": 200,
+    "finalUrl": "https://afterns.com/en/calendar",
+    "bytes": 819120,
+    "title": "US Stock Earnings Calendar \u00b7 166 Reports This Week | AFTERNS"
+  },
+  {
+    "url": "https://afterns.com/en/guide/earnings-calendar",
+    "fetchedAt": "2026-10-16T01:16:06Z",
+    "status": 200,
+    "finalUrl": "https://afterns.com/en/guide/earnings-calendar",
+    "bytes": 404826,
+    "title": "US Earnings Calendar Subscription \u00b7 Auto Alerts for Report Dates | AFTERNS"
+  },
+  {
+    "url": "https://afterns.com/en/privacy",
+    "fetchedAt": "2026-10-16T01:16:07Z",
+    "status": 200,
+    "finalUrl": "https://afterns.com/en/privacy",
+    "bytes": 34479,
+    "title": "Privacy Policy \u00b7 AFTERNS"
+  },
+  {
+    "url": "https://afterns.com/en/terms",
+    "fetchedAt": "2026-10-16T01:16:07Z",
+    "status": 200,
+    "finalUrl": "https://afterns.com/en/terms",
+    "bytes": 33194,
+    "title": "Terms of Service \u00b7 AFTERNS"
+  },
+  {
+    "url": "https://afterns.com/en/guide/earnings-consensus",
+    "fetchedAt": "2026-10-16T01:16:36Z",
+    "status": 200,
+    "finalUrl": "https://afterns.com/en/guide/earnings-consensus",
+    "bytes": 432052,
+    "title": "Consensus Estimates Explained | How Accurate Analyst EPS Forecasts Really Are | AFTERNS"
+  },
+  {
+    "url": "https://afterns.com/en/stock/NVDA",
+    "fetchedAt": "2026-10-16T01:16:37Z",
+    "status": 200,
+    "finalUrl": "https://afterns.com/en/stock/NVDA",
+    "bytes": 147789,
+    "title": "NVIDIA Corporation (NVDA) Earnings Date & Time \u00b7 Earnings Call \u00b7 Stock Reaction After Earnings | AFTERNS"
+  }
+]

@@ -1,0 +1,347 @@
+{
+  "schemaVersion": 1,
+  "base": "https://chart-view-toss.onrender.com",
+  "sourceRevision": null,
+  "measuredAt": "2026-10-15T09:04:36.639Z",
+  "browser": "Chromium",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "runs": 1,
+  "phases": [
+    "cold"
+  ],
+  "readiness": "Primary route content; optional loaders, failures and partial coverage reported separately",
+  "coldMeaning": "New browser context; not a controlled Render server cold start",
+  "warmMeaning": "Same session route → more → route (more uses home); no fixed settling sleep",
+  "decodedBodyBytesMeaning": "Decoded response-body bytes, not compressed wire bytes",
+  "proxyRelay": true,
+  "browserHttpCacheDisabled": true,
+  "scenario": {
+    "mode": "normal"
+  },
+  "summary": [
+    {
+      "route": "watch",
+      "phase": "cold",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 1417,
+      "minReadyMs": 1417,
+      "maxReadyMs": 1417
+    },
+    {
+      "route": "exports",
+      "phase": "cold",
+      "samples": 1,
+      "readySamples": 1,
+      "outcomes": {
+        "ready": 1
+      },
+      "medianReadyMs": 1551,
+      "minReadyMs": 1551,
+      "maxReadyMs": 1551
+    }
+  ],
+  "results": [
+    {
+      "route": "watch",
+      "label": "관심종목",
+      "run": 0,
+      "browserColdMs": 1417,
+      "usableDataMs": 1417,
+      "coldMs": 1417,
+      "coldShellMs": 1239,
+      "coldReadyState": "ready",
+      "navTtfbMs": 520,
+      "apiCold": [
+        {
+          "key": "/api/quotes?tickers=005930.KS%2CNVDA%2CAAPL",
+          "path": "/api/quotes",
+          "calls": 1,
+          "ms": 319,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 1484,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 225,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        }
+      ],
+      "requestsCold": [
+        {
+          "path": "/api/quotes",
+          "key": "/api/quotes?tickers=005930.KS%2CNVDA%2CAAPL",
+          "method": "GET",
+          "state": "complete",
+          "ms": 319,
+          "headersMs": 318,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 1484,
+          "meta": null
+        },
+        {
+          "path": "/api/activity",
+          "key": "/api/activity",
+          "method": "POST",
+          "state": "complete",
+          "ms": 225,
+          "headersMs": 224,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 29,
+          "meta": null
+        }
+      ],
+      "coldDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 1004
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 1004
+          }
+        ],
+        "resources": [
+          {
+            "path": "/assets/index-CF9uo1sD.js",
+            "initiator": "script",
+            "durationMs": 398,
+            "transferBytes": 107871,
+            "encodedBodyBytes": 107571,
+            "decodedBodyBytes": 322264
+          },
+          {
+            "path": "/assets/index-DqczN_vl.css",
+            "initiator": "link",
+            "durationMs": 399,
+            "transferBytes": 33115,
+            "encodedBodyBytes": 32815,
+            "decodedBodyBytes": 173577
+          }
+        ],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 1,
+          "totalMs": 147,
+          "maxMs": 147
+        },
+        "visibleLoaders": [],
+        "partialStates": [],
+        "pageErrors": []
+      }
+    },
+    {
+      "route": "exports",
+      "label": "수출 데이터",
+      "run": 0,
+      "browserColdMs": 1551,
+      "usableDataMs": 1551,
+      "coldMs": 1551,
+      "coldShellMs": 348,
+      "coldReadyState": "ready",
+      "navTtfbMs": 80,
+      "apiCold": [
+        {
+          "key": "/api/export-momentum/provisional",
+          "path": "/api/export-momentum/provisional",
+          "calls": 1,
+          "ms": 436,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 4519,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum/momentum-map",
+          "path": "/api/export-momentum/momentum-map",
+          "calls": 1,
+          "ms": 382,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 2318,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/export-momentum?balanceBasis=signed-v1",
+          "path": "/api/export-momentum",
+          "calls": 1,
+          "ms": 341,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 10487,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        },
+        {
+          "key": "/api/activity",
+          "path": "/api/activity",
+          "calls": 1,
+          "ms": 210,
+          "completedBodies": 1,
+          "pending": 0,
+          "failed": 0,
+          "canceled": 0,
+          "decodedBodyBytes": 29,
+          "httpErrors": 0,
+          "status": "200",
+          "meta": null
+        }
+      ],
+      "requestsCold": [
+        {
+          "path": "/api/activity",
+          "key": "/api/activity",
+          "method": "POST",
+          "state": "complete",
+          "ms": 210,
+          "headersMs": 208,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 29,
+          "meta": null
+        },
+        {
+          "path": "/api/export-momentum",
+          "key": "/api/export-momentum?balanceBasis=signed-v1",
+          "method": "GET",
+          "state": "complete",
+          "ms": 341,
+          "headersMs": 338,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 10487,
+          "meta": null
+        },
+        {
+          "path": "/api/export-momentum/momentum-map",
+          "key": "/api/export-momentum/momentum-map",
+          "method": "GET",
+          "state": "complete",
+          "ms": 382,
+          "headersMs": 380,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 2318,
+          "meta": null
+        },
+        {
+          "path": "/api/export-momentum/provisional",
+          "key": "/api/export-momentum/provisional",
+          "method": "GET",
+          "state": "complete",
+          "ms": 436,
+          "headersMs": 433,
+          "bodyComplete": true,
+          "status": 200,
+          "decodedBodyBytes": 4519,
+          "meta": null
+        }
+      ],
+      "coldDiagnostics": {
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 220
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 220
+          }
+        ],
+        "resources": [
+          {
+            "path": "/assets/index-CF9uo1sD.js",
+            "initiator": "script",
+            "durationMs": 90,
+            "transferBytes": 107871,
+            "encodedBodyBytes": 107571,
+            "decodedBodyBytes": 322264
+          },
+          {
+            "path": "/assets/index-DqczN_vl.css",
+            "initiator": "link",
+            "durationMs": 90,
+            "transferBytes": 33115,
+            "encodedBodyBytes": 32815,
+            "decodedBodyBytes": 173577
+          },
+          {
+            "path": "/assets/exportMomentumView-BhV4hze3.js",
+            "initiator": "script",
+            "durationMs": 293,
+            "transferBytes": 20497,
+            "encodedBodyBytes": 20197,
+            "decodedBodyBytes": 75916
+          },
+          {
+            "path": "/assets/exportMomentumData-CIU-Q6S8.js",
+            "initiator": "script",
+            "durationMs": 371,
+            "transferBytes": 5024,
+            "encodedBodyBytes": 4724,
+            "decodedBodyBytes": 17844
+          },
+          {
+            "path": "/assets/exportMomentum-D5P28fmQ.css",
+            "initiator": "link",
+            "durationMs": 338,
+            "transferBytes": 12316,
+            "encodedBodyBytes": 12016,
+            "decodedBodyBytes": 70786
+          }
+        ],
+        "overflow": false,
+        "runtimeEvents": [],
+        "longTasks": {
+          "count": 3,
+          "totalMs": 226,
+          "maxMs": 109
+        },
+        "visibleLoaders": [],
+        "partialStates": [
+          {
+            "state": "ready",
+            "text": "수출 속보10일 단위 잠정 수출 레이더\n        2026년 10월 · 1~10일\n      \n      관세청 잠정 수출 · 1~10일2026년 10월 10일 기준갱신 ↻당월5영업일전월8영업일-37.5%전년동월3영업일+66.7%영업일 수 기준: "
+          }
+        ],
+        "pageErrors": []
+      }
+    }
+  ]
+}

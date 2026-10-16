@@ -97,3 +97,15 @@ test('409 publication waiting identifies the last check, deduplicates retry and 
  expect(qa.calls.filter(call=>call.path===`/api/guru-investing/${ticker}`).map(call=>new URLSearchParams(call.query).get('version'))).toEqual([data.snapshotVersion,data.snapshotVersion]);
  await noOverflow(page);
 });
+
+test('same-version published proof opens while deployed evidence API is behind',async({page,qa})=>{
+ const data=installAnnual(qa,annualSnapshot());
+ qa.overrides.set(`/api/guru-investing/${ticker}`,route=>route.fulfill({status:409,json:{detail:{code:'snapshot_changed',currentVersion:'older-backend'}}}));
+ qa.overrides.set(`/static/data/guru_evidence/${data.snapshotVersion}/${ticker}.json`,route=>route.fulfill({json:{snapshotVersion:data.snapshotVersion,criteriaVersion:data.criteriaVersion,symbol:ticker,tradeDate:data.tradeDate,basis:'CFS',annual:[],sources:{},strategies:{greenblatt:{status:'matched',metrics:annualRow.metrics,checks:[]}}}}));
+ await page.goto('/#gurus/greenblatt');
+ await page.locator(`[data-guru-expand="${ticker}"]`).click();
+ await expect(page.locator('.guru-evidence')).toContainText('ROA/PER 대안');
+ await expect(page.locator('.guru-evidence')).not.toContainText('게시 대기');
+ expect(count(qa,`/api/guru-investing/${ticker}`)).toBe(1);
+ expect(count(qa,`/static/data/guru_evidence/${data.snapshotVersion}/${ticker}.json`)).toBe(1);
+});

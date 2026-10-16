@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import {readFileSync} from 'node:fs';
 import * as model from '../src/exportMomentumModel.js';
+import {sourceTimingHtml} from '../src/releaseReading.js';
 import {snapshot,industryDetails} from './fixtures/export-recovery.mjs';
 
 const deferred=()=>{let resolve,reject;const promise=new Promise((yes,no)=>{resolve=yes;reject=no;});return {promise,resolve,reject};};
@@ -72,7 +73,7 @@ function harness(focus=null,state={}){
   let usageSequence=0;
   document={querySelector:selector=>selector==='#app'?app:null,createElement:()=>new Element(),activeElement:null};
   const context=vm.createContext({
-    ...model,document,window:{},console,Intl,Date,setTimeout,requestAnimationFrame:fn=>fn(),
+    ...model,sourceTimingHtml,document,window:{},console,Intl,Date,setTimeout,requestAnimationFrame:fn=>fn(),
     exportCompanyCandidates:()=>[],memoryMovements:()=>[],
     newUsageOperation:()=> 'export-operation-'+(++usageSequence),
     trackUsage:(name,options)=>usageEvents.push(JSON.parse(JSON.stringify({name,...options}))),

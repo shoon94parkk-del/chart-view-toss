@@ -1,0 +1,11 @@
+.app-shell .home-change-copy > small.home-briefing-observation{
+ display:flex;align-items:baseline;gap:6px;min-width:0;
+ font-size:12px!important;line-height:1.35;white-space:nowrap;overflow:hidden;
+}
+.app-shell .home-briefing-state{
+ flex:0 0 auto;font-size:12px;font-weight:650;color:#4e5968;
+}
+.app-shell .home-briefing-state[data-publication-state="newer"]{color:#087a65}
+.app-shell .home-briefing-state[data-publication-state="changed"]{color:#8a5700}
+.app-shell .home-briefing-state[data-publication-state="older"]{color:#596773}
+.app-shell .home-briefing-basis{min-width:0;overflow:hidden;text-overflow:ellipsis}

@@ -10,7 +10,7 @@ function setup({ results = [{ symbol: '005930.KS', name: '삼성전자', type: '
   const node = () => ({ value: '', hidden: false, disabled: false, innerHTML: '', textContent: '', scrollTop: 0, isConnected: true, classList: { toggle() {}, add() {}, remove() {} }, listeners: {}, addEventListener(name, fn) { this.listeners[name] = fn; }, querySelector: () => node(), querySelectorAll: () => [], contains: () => false, focus() {}, insertAdjacentHTML(_, html) { this.innerHTML += html; } });
   const overlay = { ...node(), remove() { this.isConnected = false; }, querySelector(selector) { if (!controls.has(selector)) controls.set(selector, node()); return controls.get(selector); } };
   const context = vm.createContext({
-    AbortController, document: { activeElement: null, querySelector: () => ({ inert: false }), createElement: () => overlay, body: { appendChild() {}, classList: { add() {}, remove() {} } }, addEventListener() {}, removeEventListener() {} },
+    readRecentStocks:()=>[], clearRecentStocks:async()=>{}, AbortController, document: { activeElement: null, querySelector: () => ({ inert: false }), createElement: () => overlay, body: { appendChild() {}, classList: { add() {}, remove() {} } }, addEventListener() {}, removeEventListener() {} },
     searchStocks: async () => { await gate; if (fail) throw Error('network private query'); return { results, partialFailure }; },
     loadingIndicator: () => '<span>loading</span>', haptic: () => {}, syncNativeBackHandler: () => {}, requestAnimationFrame: callback => callback(),
     setTimeout: callback => { timers.set(++timerId, callback); return timerId; }, clearTimeout: id => timers.delete(id),

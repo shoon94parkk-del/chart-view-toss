@@ -1,6 +1,7 @@
 import { createRequestClient } from './requestClient.js';
 import { recordMetric } from './diagnostics.js';
 import { staticData } from './staticData.js';
+import { readGuruEvidence } from './guruEvidenceSource.js';
 import { adoptEarlyHome } from './homeFastCache.js';
 import { searchAlias, verifiedSearchRows } from './searchIdentity.js';
 export { ApiError } from './requestClient.js';
@@ -65,11 +66,18 @@ export const fullHeatmap=({force=false}={})=>api('/api/heatmap/full',{ttlMs:1500
 export const fullHeatmapSnapshot=()=>staticData('full_heatmap_snapshot.json',()=>api('/static/data/full_heatmap_snapshot.json',{ttlMs:60000,timeoutMs:5000,retries:0}));
 export const valuationStocks=(tickers,{force=false}={})=>api(`/api/valuation?tickers=${list(tickers)}`,{ttlMs:300000,force});
 export const macroData=({force=false}={})=>api('/api/macro',{ttlMs:300000,force});
+export const earningsEventsData=({force=false}={})=>api('/api/earnings-events',{ttlMs:300000,timeoutMs:8000,retries:0,force});
 export const homeInsights=(tickers=[])=>api(`/api/home-insights?tickers=${list(tickers)}`,{ttlMs:60000});
 export const personalizedNews=(tickers=[],names=[])=>api(`/api/personalized-news?tickers=${list(tickers)}&names=${encodeURIComponent(names.join('|'))}`,{timeoutMs:10000,retries:0,ttlMs:60000});
 export const screenerData=()=>staticData('screener.json',()=>api('/static/data/screener.json',{ttlMs:60000}));
 export const guruScreeningData=({force=false}={})=>force?api('/static/data/guru_screening.json',{ttlMs:60000,force:true}):staticData('guru_screening.json',()=>api('/static/data/guru_screening.json',{ttlMs:60000}));
-export const guruEvidenceData=(ticker,version,{force=false}={})=>api(`/api/guru-investing/${encodeURIComponent(ticker)}?version=${encodeURIComponent(version)}`,{ttlMs:300000,force,timeoutMs:8000,retries:0});
+export const guruEvidenceData=(ticker,version,{force=false}={})=>readGuruEvidence(ticker,version,{
+ readApi:()=>api(`/api/guru-investing/${encodeURIComponent(ticker)}?version=${encodeURIComponent(version)}`,{ttlMs:300000,force,timeoutMs:8000,retries:0}),
+ readPublished:()=>{
+   const filename=`guru_evidence/${encodeURIComponent(version)}/${encodeURIComponent(ticker)}.json`;
+   return staticData(filename,()=>api('/static/data/'+filename,{ttlMs:300000,force,timeoutMs:5000,retries:0}));
+ },
+});
 export const companyContextData=({force=false}={})=>force?api('/static/data/company_context.json',{ttlMs:3600000,force:true}):staticData('company_context.json',()=>api('/static/data/company_context.json',{ttlMs:3600000}));
 export const businessReportData=(ticker,name='',{force=false}={})=>api(`/api/business-report?ticker=${encodeURIComponent(ticker)}&name=${encodeURIComponent(name)}`,{ttlMs:300000,timeoutMs:45000,retries:0,force});
 export const financialHistoryData=(ticker,{force=false}={})=>api(`/api/financial-history?ticker=${encodeURIComponent(ticker)}`,{ttlMs:300000,timeoutMs:35000,retries:0,force});

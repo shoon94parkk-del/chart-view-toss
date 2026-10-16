@@ -186,9 +186,9 @@ function createSections(marketSection) {
   const discovery=document.querySelector('#home-discovery-feed');
   watchHomeGestures(discovery);
   const exportPreview=document.createElement('section');exportPreview.className='home-export-preview home-changes';
-  exportPreview.innerHTML='<div class="home-changes-title"><h2><i class="section-symbol" aria-hidden="true">' + uiIcon('evidence',16) + '</i>지금 확인할 변화</h2><p>핵심 숫자만 보고, 필요할 때 상세로 들어가요.</p></div><div class="home-change-grid" data-home-changes></div><button type="button" class="text-button" data-home-change-toggle aria-expanded="false" hidden>변화 더 보기</button><p role="status" data-home-change-status></p><button type="button" class="text-button" data-home-change-retry hidden>변화 자료 다시 확인</button>';
+  exportPreview.innerHTML='<div class="home-changes-title"><h2><i class="section-symbol" aria-hidden="true">' + uiIcon('evidence',16) + '</i>지난 조회와 비교할 자료</h2><p>핵심 숫자만 보고, 필요할 때 상세로 들어가요.</p></div><div class="home-change-grid" data-home-changes></div><button type="button" class="text-button" data-home-change-toggle aria-expanded="false" hidden>변화 더 보기</button><p role="status" data-home-change-status></p><button type="button" class="text-button" data-home-change-retry hidden>변화 자료 다시 확인</button>';
   discovery.prepend(exportPreview);
-  const loadPreview=()=>void import('./homeChangesView.js').then(module=>{if(exportPreview.isConnected)void module.mountHomeChanges(exportPreview);}).catch(()=>{if(exportPreview.isConnected)exportPreview.querySelector('[data-home-changes]').textContent='수출·조건 검색 화면에서 자료를 확인해주세요.';});
+  const loadPreview=()=>void import('./homeBriefingBootstrap.js').then(module=>{if(exportPreview.isConnected)void module.mountHomeChanges(exportPreview);}).catch(()=>{if(exportPreview.isConnected)exportPreview.querySelector('[data-home-changes]').textContent='수출·조건 검색 화면에서 자료를 확인해주세요.';});
   const previewObserver=new IntersectionObserver(entries=>{if(entries.some(entry=>entry.isIntersecting)){previewObserver.disconnect();loadPreview();}else if(!exportPreview.isConnected)previewObserver.disconnect();},{rootMargin:'120px'});
   previewObserver.observe(exportPreview);
   heatmap.querySelector('.home-extra-caption').textContent='한 시장의 대표 6종목 미리보기예요. 전체 화면에서 더 많은 종목과 섹터를 탐색해요.';

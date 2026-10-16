@@ -1,0 +1,30 @@
+[
+  {
+    "attribute": "title",
+    "value": "From an earnings calendar. May not be a company-confirmed date, and updates automatically if it changes"
+  },
+  {
+    "attribute": "title",
+    "value": "What the company itself projected in its last earnings release (8-K). Separate from the analyst consensus."
+  },
+  {
+    "attribute": "title",
+    "value": "From an earnings calendar. It may not be a company-confirmed date and updates automatically if it changes."
+  },
+  {
+    "attribute": "title",
+    "value": "Adjusted (non-GAAP) EPS, the same basis as the consensus forecast. It excludes one-off items, so it can differ from the GAAP figure in SEC filings"
+  },
+  {
+    "attribute": "title",
+    "value": "The average of analyst forecasts. This is not the company's own guidance"
+  },
+  {
+    "attribute": "title",
+    "value": "Adjusted (non-GAAP) EPS, the same basis as the consensus forecast. It excludes one-off items, so it can differ from the GAAP figure in SEC filings"
+  },
+  {
+    "attribute": "title",
+    "value": "The average of analyst forecasts. This is not the company's own guidance"
+  }
+]

@@ -34,6 +34,7 @@ const views = [
   ['discover', '#discover', '.analysis-stock'],
   ['ideas', '#ideas', '.idea-candidate'],
   ['more', '#more', '.feature-menu'],
+  ['news', '#news', '.news-tags span'],
   ['memory', '#memory', '.memory-price-tabs'],
   ['exports-overview', '#exports', '#export-momentum-map .export-momentum-list button'],
   ['exports-semiconductor', '#exports', '.export-semi-trend-bars'],

@@ -1,0 +1,20 @@
+{
+  "cases": 24,
+  "widths": [
+    320,
+    390,
+    430
+  ],
+  "overflow": 0,
+  "pageErrors": 0,
+  "axeAudits": [
+    {
+      "route": "recent-selector",
+      "violations": 0
+    },
+    {
+      "route": "news",
+      "violations": 0
+    }
+  ]
+}

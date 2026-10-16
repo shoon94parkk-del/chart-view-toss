@@ -2,6 +2,7 @@ import { searchStocks } from './api.js';
 import { loadingIndicator } from './loadingView.js';
 import { haptic, syncNativeBackHandler } from './tossBridge.js';
 import { trackUsage, newUsageOperation } from './usageMetrics.js';
+import { readRecentStocks, clearRecentStocks } from './revisitPreferences.js';
 
 const esc = (value = '') => String(value).replace(/[&<>"']/g, (c) => ({
   '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
@@ -78,6 +79,7 @@ export function openStockSelector({
     symbol: row.symbol, name: row.name || nameFor(row.symbol), market: row.market || '',
   })));
   const favoriteSymbols = new Set(favoriteRows.map(row => String(row.symbol).toUpperCase()));
+  let recentRows=readRecentStocks().filter(row=>!favoriteSymbols.has(row.symbol));
   const favoriteNames = new Map(favoriteRows.map(row => [String(row.symbol).toUpperCase(), resolvedSelectorName(row.name, row.symbol)]));
   const names = new Map(initial.map((symbol) => {
     const favoriteName = favoriteNames.get(String(symbol).toUpperCase());
@@ -163,6 +165,15 @@ export function openStockSelector({
           </button>`;
         }).join('')}`
       : searchState === 'idle' ? `<div class="selector-empty">${query ? '검색 결과가 없어요. 이름·6자리 코드·영문 티커를 확인해보세요.<button type="button" class="selector-retry" data-selector-retry>검색 다시 확인</button>' : '관심종목이 없어요. 이름이나 티커로 검색해보세요.'}</div>` : '';
+    if(!query&&recentRows.length){
+      if(!favoriteRows.length)resultEl.innerHTML='';
+      resultEl.insertAdjacentHTML('beforeend',`<section data-selector-recent><div class="selector-group-heading">최근 본 종목</div>${recentRows.map(row=>`<button type="button" class="${!searchOnly&&draft.has(row.symbol)?'selected':''}" ${searchOnly?'':`aria-pressed="${draft.has(row.symbol)}"`} data-selector-symbol="${esc(row.symbol)}" data-selector-name="${esc(row.name)}"><span><strong>${esc(row.name)}</strong><small>${esc(row.symbol)}</small></span><b>${searchOnly?esc(pickLabel):draft.has(row.symbol)?'선택됨':'선택'}</b></button>`).join('')}<button type="button" data-clear-recent>최근 본 기록 지우기</button></section>`);
+      resultEl.querySelector('[data-clear-recent]').onclick=async event=>{
+        event.currentTarget.disabled=true;
+        try{await clearRecentStocks();recentRows=[];if(overlay.isConnected){paintResults(lastRows);input.focus({preventScroll:true});}}
+        catch{if(overlay.isConnected){event.target.disabled=false;messageEl.textContent='최근 본 기록을 지우지 못했어요. 다시 시도해주세요.';}}
+      };
+    }
     if (searchState === 'loading') resultEl.insertAdjacentHTML('beforeend', loadingIndicator('종목을 검색하고 있어요'));
     if (searchState === 'error') {
       resultEl.insertAdjacentHTML('beforeend', '<div class="selector-empty" role="status">검색을 완료하지 못했어요. 관심종목은 계속 선택할 수 있어요.<button type="button" class="selector-retry" data-selector-retry>검색 다시 시도</button></div>');

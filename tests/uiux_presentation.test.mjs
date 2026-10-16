@@ -81,7 +81,7 @@ test('Home shows three compact recent records when the source supplies three',()
 
 test('detail current section follows document position rather than button order',()=>{
  const buttons=['price','news','research'].map(id=>({dataset:{detailJump:id},setAttribute(k,v){this[k]=v;},removeAttribute(k){delete this[k];}}));
- const sectionNav={isConnected:true,querySelectorAll:()=>buttons,getBoundingClientRect:()=>({bottom:80})};
+ const sectionNav={isConnected:true,querySelector:()=>null,querySelectorAll:()=>buttons,getBoundingClientRect:()=>({bottom:80})};
  const source=readFileSync(new URL('../src/main.js',import.meta.url),'utf8').match(/const updateSection=\(\)=>\{[\s\S]*?\n \};/)[0];
  const context=vm.createContext({sectionNav,epoch:1,viewEpoch:1,window:{scrollY:100,innerHeight:800},document:{documentElement:{scrollHeight:3000},getElementById:id=>({getBoundingClientRect:()=>({top:{price:-1400,news:90,research:-700}[id]})})}});
  vm.runInContext(source+'updateSection();',context);assert.equal(buttons[1]['aria-current'],'location');assert.equal(buttons[2]['aria-current'],undefined);
@@ -95,7 +95,7 @@ test('export candidate carries the exact qualifying product phrase for its summa
 
 test('detail current section includes a short final section at the scroll boundary',()=>{
  const buttons=['price','news','research'].map(id=>({dataset:{detailJump:id},setAttribute(k,v){this[k]=v;},removeAttribute(k){delete this[k];}}));
- const sectionNav={isConnected:true,querySelectorAll:()=>buttons,getBoundingClientRect:()=>({bottom:56})};
+ const sectionNav={isConnected:true,querySelector:()=>null,querySelectorAll:()=>buttons,getBoundingClientRect:()=>({bottom:56})};
  const source=readFileSync(new URL('../src/main.js',import.meta.url),'utf8').match(/const updateSection=\(\)=>\{[\s\S]*?\n \};/)[0];
  const context=vm.createContext({sectionNav,epoch:1,viewEpoch:1,window:{scrollY:2200,innerHeight:800},document:{documentElement:{scrollHeight:3000},getElementById:id=>({getBoundingClientRect:()=>({top:{price:-2000,news:430,research:-500}[id]})})}});
  vm.runInContext(source+'updateSection();',context);assert.equal(buttons[1]['aria-current'],'location');
