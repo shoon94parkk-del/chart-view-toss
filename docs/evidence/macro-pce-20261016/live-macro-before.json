@@ -1,0 +1,139 @@
+{
+  "phase": "before",
+  "recordedAt": "2026-10-16T04:45:48Z",
+  "revision": "01929d488a2d3cfbe715bce1a357a9302c6b171f",
+  "endpoint": "https://chart-view-pkv8.onrender.com/api/macro",
+  "method": "Sequential requests.Session with verified TLS/inherited proxy, same client region, one discarded warmup, seven measured complete responses. No forced server sleep, no API fixtures. Warm HTTP including internet and body transfer; not a cold-start comparison/SLA/p95. Data refresh differences recorded separately.",
+  "medianMs": 206.859,
+  "maxMs": 287.867,
+  "samples": [
+    {
+      "index": 0,
+      "discardedWarmup": true,
+      "ms": 441.048,
+      "status": 200,
+      "decodedBytes": 140712,
+      "bodySha256": "0930cbc900a7f7c424c01f09007e56b8ba5d0e792f0536d396f6aa28601115b0",
+      "series": 4,
+      "asOf": {
+        "cpi": "2026-09",
+        "core_cpi": "2026-09",
+        "ppi": "2026-09",
+        "core_ppi": "2026-09"
+      },
+      "contentEncoding": "gzip"
+    },
+    {
+      "index": 1,
+      "discardedWarmup": false,
+      "ms": 287.867,
+      "status": 200,
+      "decodedBytes": 140712,
+      "bodySha256": "0930cbc900a7f7c424c01f09007e56b8ba5d0e792f0536d396f6aa28601115b0",
+      "series": 4,
+      "asOf": {
+        "cpi": "2026-09",
+        "core_cpi": "2026-09",
+        "ppi": "2026-09",
+        "core_ppi": "2026-09"
+      },
+      "contentEncoding": "gzip"
+    },
+    {
+      "index": 2,
+      "discardedWarmup": false,
+      "ms": 216.964,
+      "status": 200,
+      "decodedBytes": 140712,
+      "bodySha256": "0930cbc900a7f7c424c01f09007e56b8ba5d0e792f0536d396f6aa28601115b0",
+      "series": 4,
+      "asOf": {
+        "cpi": "2026-09",
+        "core_cpi": "2026-09",
+        "ppi": "2026-09",
+        "core_ppi": "2026-09"
+      },
+      "contentEncoding": "gzip"
+    },
+    {
+      "index": 3,
+      "discardedWarmup": false,
+      "ms": 191.687,
+      "status": 200,
+      "decodedBytes": 140712,
+      "bodySha256": "0930cbc900a7f7c424c01f09007e56b8ba5d0e792f0536d396f6aa28601115b0",
+      "series": 4,
+      "asOf": {
+        "cpi": "2026-09",
+        "core_cpi": "2026-09",
+        "ppi": "2026-09",
+        "core_ppi": "2026-09"
+      },
+      "contentEncoding": "gzip"
+    },
+    {
+      "index": 4,
+      "discardedWarmup": false,
+      "ms": 189.204,
+      "status": 200,
+      "decodedBytes": 140712,
+      "bodySha256": "0930cbc900a7f7c424c01f09007e56b8ba5d0e792f0536d396f6aa28601115b0",
+      "series": 4,
+      "asOf": {
+        "cpi": "2026-09",
+        "core_cpi": "2026-09",
+        "ppi": "2026-09",
+        "core_ppi": "2026-09"
+      },
+      "contentEncoding": "gzip"
+    },
+    {
+      "index": 5,
+      "discardedWarmup": false,
+      "ms": 206.859,
+      "status": 200,
+      "decodedBytes": 140712,
+      "bodySha256": "0930cbc900a7f7c424c01f09007e56b8ba5d0e792f0536d396f6aa28601115b0",
+      "series": 4,
+      "asOf": {
+        "cpi": "2026-09",
+        "core_cpi": "2026-09",
+        "ppi": "2026-09",
+        "core_ppi": "2026-09"
+      },
+      "contentEncoding": "gzip"
+    },
+    {
+      "index": 6,
+      "discardedWarmup": false,
+      "ms": 183.965,
+      "status": 200,
+      "decodedBytes": 140712,
+      "bodySha256": "0930cbc900a7f7c424c01f09007e56b8ba5d0e792f0536d396f6aa28601115b0",
+      "series": 4,
+      "asOf": {
+        "cpi": "2026-09",
+        "core_cpi": "2026-09",
+        "ppi": "2026-09",
+        "core_ppi": "2026-09"
+      },
+      "contentEncoding": "gzip"
+    },
+    {
+      "index": 7,
+      "discardedWarmup": false,
+      "ms": 253.884,
+      "status": 200,
+      "decodedBytes": 140712,
+      "bodySha256": "0930cbc900a7f7c424c01f09007e56b8ba5d0e792f0536d396f6aa28601115b0",
+      "series": 4,
+      "asOf": {
+        "cpi": "2026-09",
+        "core_cpi": "2026-09",
+        "ppi": "2026-09",
+        "core_ppi": "2026-09"
+      },
+      "contentEncoding": "gzip"
+    }
+  ]
+}

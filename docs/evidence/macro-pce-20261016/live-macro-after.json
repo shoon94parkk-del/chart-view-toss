@@ -1,0 +1,155 @@
+{
+  "phase": "after",
+  "recordedAt": "2026-10-16T04:52:24Z",
+  "revision": "b08af11f4bca7703c8d9c6d7a0f551249c4323b2",
+  "endpoint": "https://chart-view-pkv8.onrender.com/api/macro",
+  "method": "Sequential requests.Session with verified TLS/inherited proxy, same client region, one discarded warmup, seven measured complete responses. No forced server sleep, no API fixtures. Warm HTTP including internet and body transfer; not a cold-start comparison/SLA/p95. Data refresh differences recorded separately.",
+  "medianMs": 188.796,
+  "maxMs": 200.786,
+  "samples": [
+    {
+      "index": 0,
+      "discardedWarmup": true,
+      "ms": 440.365,
+      "status": 200,
+      "decodedBytes": 162235,
+      "bodySha256": "e91fe6242aa44090904e689de719f92402c157d0dbee1b7d4d4ad47f017e048b",
+      "series": 6,
+      "asOf": {
+        "cpi": "2026-09",
+        "core_cpi": "2026-09",
+        "ppi": "2026-09",
+        "core_ppi": "2026-09",
+        "pce": "2026-08",
+        "core_pce": "2026-08"
+      },
+      "contentEncoding": "gzip"
+    },
+    {
+      "index": 1,
+      "discardedWarmup": false,
+      "ms": 184.979,
+      "status": 200,
+      "decodedBytes": 162235,
+      "bodySha256": "e91fe6242aa44090904e689de719f92402c157d0dbee1b7d4d4ad47f017e048b",
+      "series": 6,
+      "asOf": {
+        "cpi": "2026-09",
+        "core_cpi": "2026-09",
+        "ppi": "2026-09",
+        "core_ppi": "2026-09",
+        "pce": "2026-08",
+        "core_pce": "2026-08"
+      },
+      "contentEncoding": "gzip"
+    },
+    {
+      "index": 2,
+      "discardedWarmup": false,
+      "ms": 188.796,
+      "status": 200,
+      "decodedBytes": 162235,
+      "bodySha256": "e91fe6242aa44090904e689de719f92402c157d0dbee1b7d4d4ad47f017e048b",
+      "series": 6,
+      "asOf": {
+        "cpi": "2026-09",
+        "core_cpi": "2026-09",
+        "ppi": "2026-09",
+        "core_ppi": "2026-09",
+        "pce": "2026-08",
+        "core_pce": "2026-08"
+      },
+      "contentEncoding": "gzip"
+    },
+    {
+      "index": 3,
+      "discardedWarmup": false,
+      "ms": 182.089,
+      "status": 200,
+      "decodedBytes": 162235,
+      "bodySha256": "e91fe6242aa44090904e689de719f92402c157d0dbee1b7d4d4ad47f017e048b",
+      "series": 6,
+      "asOf": {
+        "cpi": "2026-09",
+        "core_cpi": "2026-09",
+        "ppi": "2026-09",
+        "core_ppi": "2026-09",
+        "pce": "2026-08",
+        "core_pce": "2026-08"
+      },
+      "contentEncoding": "gzip"
+    },
+    {
+      "index": 4,
+      "discardedWarmup": false,
+      "ms": 195.353,
+      "status": 200,
+      "decodedBytes": 162235,
+      "bodySha256": "e91fe6242aa44090904e689de719f92402c157d0dbee1b7d4d4ad47f017e048b",
+      "series": 6,
+      "asOf": {
+        "cpi": "2026-09",
+        "core_cpi": "2026-09",
+        "ppi": "2026-09",
+        "core_ppi": "2026-09",
+        "pce": "2026-08",
+        "core_pce": "2026-08"
+      },
+      "contentEncoding": "gzip"
+    },
+    {
+      "index": 5,
+      "discardedWarmup": false,
+      "ms": 193.751,
+      "status": 200,
+      "decodedBytes": 162235,
+      "bodySha256": "e91fe6242aa44090904e689de719f92402c157d0dbee1b7d4d4ad47f017e048b",
+      "series": 6,
+      "asOf": {
+        "cpi": "2026-09",
+        "core_cpi": "2026-09",
+        "ppi": "2026-09",
+        "core_ppi": "2026-09",
+        "pce": "2026-08",
+        "core_pce": "2026-08"
+      },
+      "contentEncoding": "gzip"
+    },
+    {
+      "index": 6,
+      "discardedWarmup": false,
+      "ms": 188.004,
+      "status": 200,
+      "decodedBytes": 162235,
+      "bodySha256": "e91fe6242aa44090904e689de719f92402c157d0dbee1b7d4d4ad47f017e048b",
+      "series": 6,
+      "asOf": {
+        "cpi": "2026-09",
+        "core_cpi": "2026-09",
+        "ppi": "2026-09",
+        "core_ppi": "2026-09",
+        "pce": "2026-08",
+        "core_pce": "2026-08"
+      },
+      "contentEncoding": "gzip"
+    },
+    {
+      "index": 7,
+      "discardedWarmup": false,
+      "ms": 200.786,
+      "status": 200,
+      "decodedBytes": 162235,
+      "bodySha256": "e91fe6242aa44090904e689de719f92402c157d0dbee1b7d4d4ad47f017e048b",
+      "series": 6,
+      "asOf": {
+        "cpi": "2026-09",
+        "core_cpi": "2026-09",
+        "ppi": "2026-09",
+        "core_ppi": "2026-09",
+        "pce": "2026-08",
+        "core_pce": "2026-08"
+      },
+      "contentEncoding": "gzip"
+    }
+  ]
+}

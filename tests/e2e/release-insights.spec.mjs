@@ -1,7 +1,7 @@
 import AxeBuilder from '@axe-core/playwright';
 import { test, expect, noOverflow, touchable } from './fixtures.mjs';
 import { exportSnapshot, trends } from './data.mjs';
-import { releaseNow, legacyMacro, inflationMacro, earningsCalls, consensus, dramAmounts, dramMoM, withCorrectedDram } from '../fixtures/release-insights.mjs';
+import { releaseNow, legacyMacro, inflationMacro, pceInflationMacro, comparisonInflationMacro, earningsCalls, consensus, dramAmounts, dramMoM, withCorrectedDram } from '../fixtures/release-insights.mjs';
 
 test.beforeEach(async ({ page }) => {
   await page.clock.setFixedTime(new Date(releaseNow));
@@ -17,7 +17,9 @@ test('inflation response renders four series, honest chart gaps, bases and confi
   const raw = await (await response).json();
   expect(raw.inflation.series).toHaveLength(4);
   await expect(page.locator('.macro-tile')).toHaveCount(16);
-  await expect(page.locator('[data-inflation-series]')).toHaveCount(4);
+  await expect(page.locator('[data-inflation-series]')).toHaveCount(6);
+  await expect(page.locator('[data-inflation-series="pce"]')).toBeDisabled();
+  await expect(page.locator('[data-inflation-series="core_pce"]')).toBeDisabled();
   const reading = page.locator('.inflation-reading');
   for (const row of raw.inflation.series) {
     const button = page.locator(`[data-inflation-series="${row.id}"]`);
@@ -70,6 +72,60 @@ test('inflation response renders four series, honest chart gaps, bases and confi
     await reading.scrollIntoViewIfNeeded();
     await info.attach(`inflation-${width}px`, { body: await page.screenshot(), contentType: 'image/png' });
   }
+});
+
+test('PCE and core PCE show both SA rates, the real observation/publication months and a missing forecast', async ({ page, qa }, info) => {
+  qa.overrides.set('/api/macro', route => route.fulfill({ json: pceInflationMacro }));
+  await page.goto('/#macro');
+  await expect(page.locator('[data-inflation-series]')).toHaveCount(6);
+  await expect(page.locator('.macro-tile')).toHaveCount(16);
+  const reading = page.locator('.inflation-reading');
+  for (const id of ['pce', 'core_pce']) {
+    const row = pceInflationMacro.inflation.series.find(row => row.id === id);
+    await page.locator(`[data-inflation-series="${id}"]`).click();
+    await expect(reading).toContainText('2026.08');
+    await expect(reading).toContainText('09.30');
+    for (const rate of ['yoy', 'mom']) {
+      await page.locator(`[data-inflation-rate="${rate}"]`).click();
+      await expect(reading.locator('.inflation-chart-basis')).toContainText('단위 % · 계절조정 (SA)');
+      await expect(reading.locator('.inflation-source [data-external-url]')).toHaveAttribute('data-external-url', row.source.saUrl);
+      await expect(reading.locator('[data-inflation-comparison]')).toHaveAttribute('data-inflation-comparison', 'missing');
+      await expect(reading.locator('[data-inflation-comparison]')).toContainText('지수 계산값');
+      await expect(reading.locator('[data-inflation-comparison]')).toContainText('미제공');
+    }
+  }
+  await expect(page.getByRole('region', { name: '공식 발표 예정' })).toContainText('2026.10.29 21:30 KST');
+  for (const width of [320, 390, 430]) {
+    await page.setViewportSize({ width, height: 844 });
+    await noOverflow(page);
+    await touchable(page.locator('[data-inflation-series="pce"]'));
+    await touchable(page.locator('[data-inflation-series="core_pce"]'));
+    await reading.scrollIntoViewIfNeeded();
+    await info.attach(`pce-${width}px`, { body: await page.screenshot(), contentType: 'image/png' });
+  }
+  const audit = await new AxeBuilder({ page }).include('#macro-inflation')
+    .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze();
+  expect(audit.violations).toEqual([]);
+  expect(qa.calls.filter(row => row.path === '/api/macro')).toHaveLength(1);
+});
+
+test('forecast traffic lights use text, match the rate and reject an after-release forecast receipt', async ({ page, qa }) => {
+  const data = structuredClone(comparisonInflationMacro);
+  const invalid = data.inflation.series.find(row => row.id === 'core_ppi');
+  invalid.comparisons = [{ ...data.inflation.series[0].comparisons[0], forecastCapturedAt: '2026-10-14T12:31:00Z' }];
+  qa.overrides.set('/api/macro', route => route.fulfill({ json: data }));
+  await page.goto('/#macro');
+  const comparison = page.locator('[data-inflation-comparison]');
+  for (const [id, status, label] of [['cpi', 'lower', '예상보다 낮음'], ['core_cpi', 'equal', '예상과 같음'], ['ppi', 'higher', '예상보다 높음'], ['core_ppi', 'missing', '비교 미제공']]) {
+    await page.locator(`[data-inflation-series="${id}"]`).click();
+    await expect(comparison).toHaveAttribute('data-inflation-comparison', status);
+    await expect(comparison).toContainText(label);
+  }
+  await page.locator('[data-inflation-series="cpi"]').click();
+  await expect(comparison).toContainText('최초 발표값');
+  await page.locator('[data-inflation-rate="mom"]').click();
+  await expect(comparison).toHaveAttribute('data-inflation-comparison', 'missing');
+  await noOverflow(page);
 });
 
 test('legacy macro data stays usable while missing optional inflation is retried', async ({ page, qa }) => {

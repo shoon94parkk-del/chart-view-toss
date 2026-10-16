@@ -743,3 +743,10 @@ Parser correction verification: the entire existing review-followup file passes1
 ## 2026-10-16 — Approved REA release-reading improvements
 
 Classification: approved new behavior plus DRAM regression release. Preserve PR134 ancestry; reuse Home cards/providers, research forms and account-local storage. A bounded public receipt journal compares actual basis period/value, never collection time or personal watchlists, and guards queued native confirmations/reset/remounts. Four optional official inflation histories and BLS agendas mount lazily after the existing macro response; failed optional data leaves the sixteen original indicators usable. Official issuer calls load separately on consensus with generation cleanup and isolated retry. Research continuation preserves the existing draft/peer/status. Historical earnings surprise/reaction remains unavailable because immutable pre-event estimates and matching accounting/trading evidence are absent. No PICK/LAB/strategy/display-condition changes. See RELEASE_INSIGHTS_2026-10-16.md for validation, same-harness results and remaining native/policy gates.
+
+
+## 2026-10-16 — PCE 6종 물가와 관측·발표·예상 비교 구분
+
+분류: 승인된 신규 기능 및 발표일 정합성 보완. 기존 선택형 물가 화면을 CPI·근원 CPI·PPI·근원 PPI·PCE·근원 PCE의 6종으로 확장했다. PCE의 전년·전월은 모두 SA 지수와 정확한 달을 비교하며, 관측월과 공식 발표일을 항상 구분한다. 날짜만 있는 공표를 임의 KST 시각으로 바꾸지 않는다. CPI·PPI의 2026.09 관측치는 10.14·10.15 발표이며, PCE의 2026.08 관측치는 9.30 발표다.
+
+시장 예상 비교는 선택적 `row.comparisons`의 같은 `month`·변화 기준·계절조정·단위, 유한한 값, 최초 발표 vintage, 발표 전 예상 공개·수집 시각과 두 원문 출처가 확인된 경우에만 허용한다. 알려진 공식 발표의 시각 또는 미국 동부 날짜도 일치해야 한다. 한 자리 half-up 반올림 뒤 초록 낮음·노랑 같음·빨강 높음으로 표시한다. 승인된 예상치 공급자·동결 수집 이력은 미완료이므로 기본은 회색 미제공이고, 현재 수정 지수 기반 값은 `지수 계산값`으로 구분한다. 기존 16개 경제지표·Home·PICK/LAB는 별도로 유지한다. [구현·출처·검증 범위](MACRO_PCE_2026-10-16.md)와 [계획](superpowers/plans/2026-10-16-macro-pce.md)을 따른다. 초기 Node592 확인 이후 최종 QA·CI·운영 게시 결과는 통합 기록에서 확정하며 실제 Toss Sandbox는 미확인이다.

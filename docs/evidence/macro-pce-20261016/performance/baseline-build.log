@@ -1,0 +1,59 @@
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 179 modules transformed.
+rendering chunks...
+[plugin vite:reporter] 
+(!) /workspace/scratch/chartview-macro-pce-before/src/industryContext.js is dynamically imported by /workspace/scratch/chartview-macro-pce-before/src/main.js but also statically imported by /workspace/scratch/chartview-macro-pce-before/src/ideaEngine.js, /workspace/scratch/chartview-macro-pce-before/src/insightModel.js, /workspace/scratch/chartview-macro-pce-before/src/researchCard.js, /workspace/scratch/chartview-macro-pce-before/src/sectorHeatmap.js, dynamic import will not move module into another chunk.
+
+[plugin vite:reporter] 
+(!) /workspace/chart-view-toss/node_modules/@apps-in-toss/web-framework/dist/index.js is dynamically imported by /workspace/scratch/chartview-macro-pce-before/src/reviewPrompt.js, /workspace/scratch/chartview-macro-pce-before/src/usageMetrics.js but also statically imported by /workspace/scratch/chartview-macro-pce-before/src/storage.js, /workspace/scratch/chartview-macro-pce-before/src/tossBridge.js, dynamic import will not move module into another chunk.
+
+[plugin vite:reporter] 
+(!) /workspace/scratch/chartview-macro-pce-before/src/api.js is dynamically imported by /workspace/scratch/chartview-macro-pce-before/src/homeExtras.js but also statically imported by /workspace/scratch/chartview-macro-pce-before/src/analysisViews.js, /workspace/scratch/chartview-macro-pce-before/src/detailReviewSummary.js, /workspace/scratch/chartview-macro-pce-before/src/earningsEventView.js, /workspace/scratch/chartview-macro-pce-before/src/exportMomentumData.js, /workspace/scratch/chartview-macro-pce-before/src/guruInvestingView.js, /workspace/scratch/chartview-macro-pce-before/src/homeChangesView.js, /workspace/scratch/chartview-macro-pce-before/src/homeExtras.js, /workspace/scratch/chartview-macro-pce-before/src/ideaView.js, /workspace/scratch/chartview-macro-pce-before/src/liveHomeSync.js, /workspace/scratch/chartview-macro-pce-before/src/main.js, /workspace/scratch/chartview-macro-pce-before/src/pickLedger.js, /workspace/scratch/chartview-macro-pce-before/src/quarterView.js, /workspace/scratch/chartview-macro-pce-before/src/reportReviewView.js, /workspace/scratch/chartview-macro-pce-before/src/researchCard.js, /workspace/scratch/chartview-macro-pce-before/src/revisitRefresh.js, /workspace/scratch/chartview-macro-pce-before/src/stockSelector.js, /workspace/scratch/chartview-macro-pce-before/src/top10HistoryView.js, dynamic import will not move module into another chunk.
+
+computing gzip size...
+dist/index.html                                          5.30 kB │ gzip:   1.98 kB
+dist/assets/homeBriefingBootstrap-Bhd3mbHB.css           0.60 kB │ gzip:   0.29 kB
+dist/assets/analysisViews-BM0ySziZ.css                   0.74 kB │ gzip:   0.36 kB
+dist/assets/financialHistoryView-C6pzh8Yo.css            1.74 kB │ gzip:   0.61 kB
+dist/assets/financialQualityView-CpbI4CS1.css            1.96 kB │ gzip:   0.70 kB
+dist/assets/investmentReview-gLMHc1ie.css                3.84 kB │ gzip:   1.16 kB
+dist/assets/marketMap-K_dLf464.css                       4.48 kB │ gzip:   1.32 kB
+dist/assets/top10HistoryView-CJlD3flJ.css                5.42 kB │ gzip:   1.50 kB
+dist/assets/guruInvestingView-BzLAuFMQ.css               5.63 kB │ gzip:   1.49 kB
+dist/assets/macroInflationView-C5kFa1kc.css              7.00 kB │ gzip:   1.83 kB
+dist/assets/researchCard-BZfmWDM1.css                    7.29 kB │ gzip:   1.80 kB
+dist/assets/industryContextView-CTbXbUND.css             9.42 kB │ gzip:   2.37 kB
+dist/assets/ideaView--asePfxF.css                       11.10 kB │ gzip:   2.53 kB
+dist/assets/pickLedger-BYNTcGLT.css                     12.22 kB │ gzip:   2.62 kB
+dist/assets/exportMomentum-D5P28fmQ.css                 70.79 kB │ gzip:  11.00 kB
+dist/assets/index-ctCIFiGY.css                         176.17 kB │ gzip:  31.12 kB
+dist/assets/reviewRevisit-CqgO2sST.js                    0.30 kB │ gzip:   0.25 kB
+dist/assets/revisitRefresh-BYVHtmkq.js                   0.79 kB │ gzip:   0.52 kB
+dist/assets/earningsEventView-YmhfxlBn.js                0.80 kB │ gzip:   0.56 kB
+dist/assets/investmentReview-PJsqz1EJ.js                 2.73 kB │ gzip:   1.34 kB
+dist/assets/detailReviewSummary-CMmbemH4.js              3.11 kB │ gzip:   1.69 kB
+dist/assets/financialHistoryView-DGz54kXK.js             3.69 kB │ gzip:   1.66 kB
+dist/assets/financialQualityView-CgiQgoty.js             3.75 kB │ gzip:   2.00 kB
+dist/assets/exportResearchView-CKYMKxdH.js               3.90 kB │ gzip:   2.11 kB
+dist/assets/releaseReading-DTzrdQON.js                   4.07 kB │ gzip:   2.08 kB
+dist/assets/financialQuality-CtZE4PYc.js                 5.27 kB │ gzip:   2.30 kB
+dist/assets/homeBriefingBootstrap-5kMiMfbS.js            6.18 kB │ gzip:   2.96 kB
+dist/assets/marketMapView-DzIL0u_o.js                    6.21 kB │ gzip:   3.11 kB
+dist/assets/researchAnalysis-DHsF-5l8.js                 6.42 kB │ gzip:   3.09 kB
+dist/assets/memoryPriceView-wS2gQrOS.js                  7.24 kB │ gzip:   3.17 kB
+dist/assets/quarterView-Donap9_5.js                      7.68 kB │ gzip:   3.62 kB
+dist/assets/reportReviewView-DP5J9U2c.js                 7.73 kB │ gzip:   3.39 kB
+dist/assets/top10HistoryView-Bo70YWGl.js                10.80 kB │ gzip:   4.62 kB
+dist/assets/industryContextView-Con686HH.js             11.03 kB │ gzip:   4.15 kB
+dist/assets/ideaView-BY6jx4z2.js                        15.91 kB │ gzip:   6.21 kB
+dist/assets/macroInflationView-DQ6Pus_Q.js              16.40 kB │ gzip:   6.36 kB
+dist/assets/exportMomentumData-C33feTop.js              17.84 kB │ gzip:   4.64 kB
+dist/assets/pickLedger-_G5Xxb1T.js                      20.91 kB │ gzip:   7.43 kB
+dist/assets/researchCard-BFzkpmZ3.js                    22.31 kB │ gzip:   7.66 kB
+dist/assets/guruInvestingView-CT40z2a8.js               22.88 kB │ gzip:   8.83 kB
+dist/assets/analysisViews-J3semxxx.js                   31.59 kB │ gzip:  11.92 kB
+dist/assets/exportMomentumView-CWuv7r_1.js              76.16 kB │ gzip:  19.63 kB
+dist/assets/lightweight-charts.production-d2CSQ3C3.js  162.84 kB │ gzip:  51.89 kB
+dist/assets/index-D9fZBdX5.js                          327.10 kB │ gzip: 108.95 kB
+✓ built in 2.49s

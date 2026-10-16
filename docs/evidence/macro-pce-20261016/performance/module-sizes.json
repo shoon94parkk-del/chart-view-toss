@@ -1,0 +1,26 @@
+{
+  "before": [
+    {
+      "name": "macroInflationView-C5kFa1kc.css",
+      "bytes": 7001,
+      "gzipBytes": 1834
+    },
+    {
+      "name": "macroInflationView-DQ6Pus_Q.js",
+      "bytes": 16396,
+      "gzipBytes": 6360
+    }
+  ],
+  "after": [
+    {
+      "name": "macroInflationView-CKF49Q0b.js",
+      "bytes": 20443,
+      "gzipBytes": 7582
+    },
+    {
+      "name": "macroInflationView-DZJg6Npc.css",
+      "bytes": 8811,
+      "gzipBytes": 2169
+    }
+  ]
+}

@@ -17,6 +17,23 @@
 .inflation-series-row b{display:block;font-size:13px}.inflation-series-row small{display:block;line-height:1.4;font-weight:400;overflow-wrap:anywhere}
 .inflation-series-row>strong{font-size:15px;font-weight:650;font-variant-numeric:tabular-nums;white-space:nowrap}
 .inflation-reading{min-width:0;margin-top:14px}
+.inflation-observation-publication{margin:7px 0;font-size:12px;color:#44566a;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+.inflation-comparison{margin-top:9px;padding:9px 8px 4px;border:1px solid var(--border,#e2e8ef);border-radius:7px;min-width:0}
+.inflation-comparison dl{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,.9fr) minmax(0,1.3fr);gap:6px;margin:0;align-items:start}
+.inflation-comparison dl>div{min-width:0}
+.inflation-comparison dt,.inflation-comparison dd small,.inflation-comparison-note,.inflation-comparison-legend{font-size:12px;color:#586b7f}
+.inflation-comparison dd{margin:4px 0 0;font-size:15px;font-weight:650;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.inflation-comparison dd small{display:block;font-weight:400;margin-top:2px}
+.inflation-comparison .inflation-comparison-state{font-size:12px;padding:4px 5px;border-radius:5px;line-height:1.5;text-align:center}
+.inflation-comparison .is-lower{color:#12663b}.inflation-comparison-state.is-lower{background:#eaf8ed}
+.inflation-comparison .is-equal{color:#755700}.inflation-comparison-state.is-equal{background:#fff5cd}
+.inflation-comparison .is-higher{color:#aa2931}.inflation-comparison-state.is-higher{background:#fff0f0}
+.inflation-comparison .is-missing{color:#536273}.inflation-comparison-state.is-missing{background:#edf0f3}
+.inflation-comparison-legend{display:flex;flex-wrap:wrap;gap:3px 9px;margin:8px 0 4px;line-height:1.5}
+.inflation-comparison-legend span{display:inline-flex;align-items:center;gap:4px}
+.inflation-comparison-legend span::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0}
+.inflation-comparison-note{margin:5px 0 4px;overflow-wrap:anywhere;line-height:1.5}
+.inflation-comparison-sources{display:flex;flex-wrap:wrap;gap:0 10px;min-width:0}
 .inflation-reading-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;min-width:0}
 .inflation-reading-head>div:first-child{min-width:0;flex:1}
 .inflation-reading-head h3{font-size:15px;margin:0}

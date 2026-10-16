@@ -1,0 +1,243 @@
+{
+  "backendRevision": "b08af11f4bca7703c8d9c6d7a0f551249c4323b2",
+  "series": [
+    {
+      "id": "cpi",
+      "basis": {
+        "yoy": "NSA",
+        "mom": "SA"
+      },
+      "asOf": "2026-09",
+      "publishedAt": "2026-10-14T12:30:00Z",
+      "collectedAt": "2026-10-16T04:38:47Z",
+      "checkedAt": "2026-10-16T04:38:47Z",
+      "source": {
+        "name": "U.S. Bureau of Labor Statistics Public Data API",
+        "url": "https://api.bls.gov/publicAPI/v2/timeseries/data/",
+        "saSeriesId": "CUSR0000SA0",
+        "nsaSeriesId": "CUUR0000SA0",
+        "saUrl": "https://api.bls.gov/publicAPI/v2/timeseries/data/CUSR0000SA0",
+        "nsaUrl": "https://api.bls.gov/publicAPI/v2/timeseries/data/CUUR0000SA0"
+      },
+      "coverage": {
+        "startMonth": "2021-10",
+        "endMonth": "2026-09",
+        "months": 60,
+        "yoyCount": 59,
+        "momCount": 58
+      },
+      "latest": {
+        "month": "2026-09",
+        "yoy": 3.737685,
+        "mom": 0.648548,
+        "publishedAt": "2026-10-14T12:30:00Z",
+        "sourceFootnotes": {
+          "yoy": [],
+          "mom": []
+        }
+      },
+      "originalRatesUnchanged": true,
+      "originalIndexValuesUnchanged": true
+    },
+    {
+      "id": "core_cpi",
+      "basis": {
+        "yoy": "NSA",
+        "mom": "SA"
+      },
+      "asOf": "2026-09",
+      "publishedAt": "2026-10-14T12:30:00Z",
+      "collectedAt": "2026-10-16T04:38:47Z",
+      "checkedAt": "2026-10-16T04:38:47Z",
+      "source": {
+        "name": "U.S. Bureau of Labor Statistics Public Data API",
+        "url": "https://api.bls.gov/publicAPI/v2/timeseries/data/",
+        "saSeriesId": "CUSR0000SA0L1E",
+        "nsaSeriesId": "CUUR0000SA0L1E",
+        "saUrl": "https://api.bls.gov/publicAPI/v2/timeseries/data/CUSR0000SA0L1E",
+        "nsaUrl": "https://api.bls.gov/publicAPI/v2/timeseries/data/CUUR0000SA0L1E"
+      },
+      "coverage": {
+        "startMonth": "2021-10",
+        "endMonth": "2026-09",
+        "months": 60,
+        "yoyCount": 59,
+        "momCount": 58
+      },
+      "latest": {
+        "month": "2026-09",
+        "yoy": 2.564358,
+        "mom": 0.334848,
+        "publishedAt": "2026-10-14T12:30:00Z",
+        "sourceFootnotes": {
+          "yoy": [],
+          "mom": []
+        }
+      },
+      "originalRatesUnchanged": true,
+      "originalIndexValuesUnchanged": true
+    },
+    {
+      "id": "ppi",
+      "basis": {
+        "yoy": "NSA",
+        "mom": "SA"
+      },
+      "asOf": "2026-09",
+      "publishedAt": "2026-10-15T12:30:00Z",
+      "collectedAt": "2026-10-16T04:38:47Z",
+      "checkedAt": "2026-10-16T04:38:47Z",
+      "source": {
+        "name": "U.S. Bureau of Labor Statistics Public Data API",
+        "url": "https://api.bls.gov/publicAPI/v2/timeseries/data/",
+        "saSeriesId": "WPSFD4",
+        "nsaSeriesId": "WPUFD4",
+        "saUrl": "https://api.bls.gov/publicAPI/v2/timeseries/data/WPSFD4",
+        "nsaUrl": "https://api.bls.gov/publicAPI/v2/timeseries/data/WPUFD4"
+      },
+      "coverage": {
+        "startMonth": "2021-10",
+        "endMonth": "2026-09",
+        "months": 60,
+        "yoyCount": 60,
+        "momCount": 60
+      },
+      "latest": {
+        "month": "2026-09",
+        "yoy": 6.337775,
+        "mom": 1.34338,
+        "publishedAt": "2026-10-15T12:30:00Z",
+        "sourceFootnotes": {
+          "yoy": [
+            {
+              "code": "P",
+              "text": "Preliminary. All indexes are subject to monthly revisions up to four months after original publication."
+            }
+          ],
+          "mom": [
+            {
+              "code": "P",
+              "text": "Preliminary. All indexes are subject to monthly revisions up to four months after original publication."
+            }
+          ]
+        }
+      },
+      "originalRatesUnchanged": true,
+      "originalIndexValuesUnchanged": true
+    },
+    {
+      "id": "core_ppi",
+      "basis": {
+        "yoy": "NSA",
+        "mom": "SA"
+      },
+      "asOf": "2026-09",
+      "publishedAt": "2026-10-15T12:30:00Z",
+      "collectedAt": "2026-10-16T04:38:47Z",
+      "checkedAt": "2026-10-16T04:38:47Z",
+      "source": {
+        "name": "U.S. Bureau of Labor Statistics Public Data API",
+        "url": "https://api.bls.gov/publicAPI/v2/timeseries/data/",
+        "saSeriesId": "WPSFD49104",
+        "nsaSeriesId": "WPUFD49104",
+        "saUrl": "https://api.bls.gov/publicAPI/v2/timeseries/data/WPSFD49104",
+        "nsaUrl": "https://api.bls.gov/publicAPI/v2/timeseries/data/WPUFD49104"
+      },
+      "coverage": {
+        "startMonth": "2021-10",
+        "endMonth": "2026-09",
+        "months": 60,
+        "yoyCount": 60,
+        "momCount": 60
+      },
+      "latest": {
+        "month": "2026-09",
+        "yoy": 4.969638,
+        "mom": 0.68143,
+        "publishedAt": "2026-10-15T12:30:00Z",
+        "sourceFootnotes": {
+          "yoy": [
+            {
+              "code": "P",
+              "text": "Preliminary. All indexes are subject to monthly revisions up to four months after original publication."
+            }
+          ],
+          "mom": [
+            {
+              "code": "P",
+              "text": "Preliminary. All indexes are subject to monthly revisions up to four months after original publication."
+            }
+          ]
+        }
+      },
+      "originalRatesUnchanged": true,
+      "originalIndexValuesUnchanged": true
+    },
+    {
+      "id": "pce",
+      "basis": {
+        "yoy": "SA",
+        "mom": "SA"
+      },
+      "asOf": "2026-08",
+      "publishedAt": "2026-09-30T12:30:00Z",
+      "collectedAt": "2026-10-16T04:38:47Z",
+      "checkedAt": "2026-10-16T04:38:47Z",
+      "source": {
+        "name": "U.S. Bureau of Economic Analysis",
+        "url": "https://apps.bea.gov/national/Release/XLS/Underlying/Section2All_xls.xlsx",
+        "saUrl": "https://apps.bea.gov/national/Release/XLS/Underlying/Section2All_xls.xlsx",
+        "saSeriesId": "DPCERG",
+        "beaAccountCode": "DPCERG",
+        "table": "Table 2.3.4U. Price Indexes for Personal Consumption Expenditures by Major Type of Product and by Major Function",
+        "indexBase": "2017=100"
+      },
+      "coverage": {
+        "startMonth": "2021-09",
+        "endMonth": "2026-08",
+        "months": 60,
+        "yoyCount": 60,
+        "momCount": 60
+      },
+      "latest": {
+        "month": "2026-08",
+        "yoy": 3.419032,
+        "mom": 0.31028,
+        "publishedAt": "2026-09-30T12:30:00Z"
+      }
+    },
+    {
+      "id": "core_pce",
+      "basis": {
+        "yoy": "SA",
+        "mom": "SA"
+      },
+      "asOf": "2026-08",
+      "publishedAt": "2026-09-30T12:30:00Z",
+      "collectedAt": "2026-10-16T04:38:47Z",
+      "checkedAt": "2026-10-16T04:38:47Z",
+      "source": {
+        "name": "U.S. Bureau of Economic Analysis",
+        "url": "https://apps.bea.gov/national/Release/XLS/Underlying/Section2All_xls.xlsx",
+        "saUrl": "https://apps.bea.gov/national/Release/XLS/Underlying/Section2All_xls.xlsx",
+        "saSeriesId": "DPCCRG",
+        "beaAccountCode": "DPCCRG",
+        "table": "Table 2.3.4U. Price Indexes for Personal Consumption Expenditures by Major Type of Product and by Major Function",
+        "indexBase": "2017=100"
+      },
+      "coverage": {
+        "startMonth": "2021-09",
+        "endMonth": "2026-08",
+        "months": 60,
+        "yoyCount": 60,
+        "momCount": 60
+      },
+      "latest": {
+        "month": "2026-08",
+        "yoy": 3.007596,
+        "mom": 0.247439,
+        "publishedAt": "2026-09-30T12:30:00Z"
+      }
+    }
+  ]
+}
