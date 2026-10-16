@@ -12,6 +12,8 @@ import {bandCoverage,discoveryContext} from './insightModel.js';
 import {encodeSharedView} from './experienceState.js';
 import {featureLabel} from './uiIdentity.js';
 import './analysisRecovery.css';
+import {sourceTimingHtml} from './releaseReading.js';
+import './releaseReading.css';
 
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const number=(v,suffix='')=>finiteNumber(v)===null?'—':Number(v).toLocaleString('ko-KR',{maximumFractionDigits:2})+suffix;
@@ -46,7 +48,7 @@ export function screenerRangeErrors(filters={}){
 }
 export const ANALYSIS_ROUTES=new Set(['discover','heatmap','consensus','bands','tools']);
 export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareSheet}){
- let disposed=false,chart,observer;
+ let disposed=false,chart,observer,earningsCleanup;
  const titles={discover:featureLabel('discover'),heatmap:'시장 히트맵',consensus:'실적 전망 조회',bands:'역사적 밸류에이션',tools:'투자 도구'};
  const descriptions={discover:'내가 고른 조건으로 찾기 · 장마감 자료예요.',heatmap:'업종별로 묶은 주요 종목의 전일 대비 등락 · 종목을 누르면 상세로 이동해요.',consensus:'선택한 종목의 애널리스트 추정치와 변경 내역을 확인해요.',bands:'과거 가격과 재무자료로 재구성한 PER·PBR을 확인해요.',tools:'차트·공시·거시 데이터를 확인할 수 있는 12개 외부 사이트예요.'};
  const selection=['consensus','bands'].includes(tab);
@@ -59,7 +61,7 @@ export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareS
  async function load(){
   const gen=++generation;
   const current=()=>alive()&&gen===generation;
-  chart?.remove();chart=null;observer?.disconnect();
+  chart?.remove();chart=null;observer?.disconnect();earningsCleanup?.();earningsCleanup=null;
   host.innerHTML=loadingIndicator(`${titles[tab]} 데이터를 불러오고 있어요`)+'<div class="skeleton quote"></div>';
   try{
    if(tab==='discover'){
@@ -239,6 +241,16 @@ export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareS
     if(!symbols.length){host.innerHTML=empty('종목 변경에서 조회할 종목을 선택해주세요.');return;}
     controls.innerHTML='<p class="consensus-caution">Yahoo earningsTrend 추정치예요. 확정 실적이 아니며 연간 수치를 분기 실적과 직접 비교하지 마세요. EPS가 0을 넘나드는 변경률은 표시하지 않아요.</p><label class="analysis-period">추정 기간<select id="consensus-period"><option value="0y">현재 회계연도 · 연간</option><option value="+1y">다음 회계연도 · 연간</option><option value="0q">현재 분기</option><option value="+1q">다음 분기</option></select></label>';
     host.innerHTML=symbols.map((symbol,i)=>`<section id="estimate-${i}" class="analysis-card"><h3>${esc(displayName(symbol))}</h3>${loadingIndicator('추정치를 불러오고 있어요')}</section>`).join('');
+    const eventsHost=document.createElement('section');eventsHost.className='earnings-events';host.prepend(eventsHost);
+    const mountEvents=()=>void import('./earningsEventView.js').then(view=>{
+     if(!current()||!eventsHost.isConnected)return;
+     earningsCleanup=view.mountEarningsEvents(eventsHost,{symbols,nameFor:displayName,bindNav,isCurrent:current});
+    }).catch(()=>{
+     if(!current())return;
+     eventsHost.innerHTML='<p role="status">공식 일정 화면을 불러오지 못했어요.</p><button type="button" class="retry">일정 다시 확인</button>';
+     eventsHost.querySelector('button').onclick=mountEvents;
+    });
+    mountEvents();
     const loaded=new Map();
     function paint(i,result){
      if(!current())return;
@@ -248,7 +260,7 @@ export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareS
      const annual=period.endsWith('y');
      const surface= document.querySelector('.surface-label');if(surface)surface.textContent=annual?'연간 실적 추정치':'분기 실적 추정치';
      const periodKind=annual?'회계연도 전체':'분기';
-     box.innerHTML=`<button class="text-button" data-stock-detail="${esc(symbol)}">${esc(displayName(symbol,d.name))} · ${esc(symbol)}</button><p class="analysis-meta">${esc(formatDataSource(d.source||'출처 미제공'))} · ${esc(formatKst(d.asOf))}</p>${row?`<p><strong>${esc(periodKind)} 추정치</strong> · 회계기간 종료 ${esc(row.endDate)} · ${esc(d.currency||'통화 미제공')}</p><dl class="analysis-metrics"><div><dt>${annual?'연간 ':''}EPS 평균 추정</dt><dd>${number(row.earnings?.avg)}</dd></div><div><dt>EPS 범위</dt><dd>${number(row.earnings?.low)} ~ ${number(row.earnings?.high)}</dd></div><div><dt>참여 애널리스트</dt><dd>${number(row.earnings?.analysts,'명')}</dd></div><div><dt>${annual?'연간 ':''}매출 평균 추정</dt><dd>${esc(formatFinancialAmount(row.revenue?.avg,d.currency))}<small>원값 ${esc(number(row.revenue?.avg))} ${esc(d.currency||'')}</small></dd></div><div><dt>EPS 30일 변경</dt><dd>${pct(estimateRevision(row.epsTrend?.current??row.earnings?.avg,row.epsTrend?.['30daysAgo']))}</dd></div><div><dt>30일 상향 / 하향 건수</dt><dd>${number(row.revisions?.up30)} / ${number(row.revisions?.down30)}</dd></div></dl>`:empty('이 기간의 추정치가 제공되지 않아요.')}`;bindNav();
+     box.innerHTML=`<button class="text-button" data-stock-detail="${esc(symbol)}">${esc(displayName(symbol,d.name))} · ${esc(symbol)}</button><p class="analysis-meta">${esc(formatDataSource(d.source||'출처 미제공'))} · ${esc(formatKst(d.asOf))} 수집</p>${sourceTimingHtml({observedAt:row?.endDate,collectedAt:d.asOf,publishedAt:d.publishedAt,checkedAt:d.checkedAt})}${row?`<p><strong>${esc(periodKind)} 추정치</strong> · 회계기간 종료 ${esc(row.endDate)} · ${esc(d.currency||'통화 미제공')}</p><dl class="analysis-metrics"><div><dt>${annual?'연간 ':''}EPS 평균 추정</dt><dd>${number(row.earnings?.avg)}</dd></div><div><dt>EPS 범위</dt><dd>${number(row.earnings?.low)} ~ ${number(row.earnings?.high)}</dd></div><div><dt>참여 애널리스트</dt><dd>${number(row.earnings?.analysts,'명')}</dd></div><div><dt>${annual?'연간 ':''}매출 평균 추정</dt><dd>${esc(formatFinancialAmount(row.revenue?.avg,d.currency))}<small>원값 ${esc(number(row.revenue?.avg))} ${esc(d.currency||'')}</small></dd></div><div><dt>EPS 30일 변경</dt><dd>${pct(estimateRevision(row.epsTrend?.current??row.earnings?.avg,row.epsTrend?.['30daysAgo']))}</dd></div><div><dt>30일 상향 / 하향 건수</dt><dd>${number(row.revisions?.up30)} / ${number(row.revisions?.down30)}</dd></div></dl>`:empty('이 기간의 추정치가 제공되지 않아요.')}`;bindNav();
     }
     async function fetchOne(symbol,i){const result=await consensusData(symbol).then(value=>({status:'fulfilled',value}),reason=>({status:'rejected',reason}));loaded.set(i,result);paint(i,result);}
     controls.querySelector('select').value=state.consensusPeriod||'0y';
@@ -302,5 +314,5 @@ export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareS
    }
   }catch(error){if(current())fail(error,load);}
  }
- void load();return()=>{disposed=true;generation++;chart?.remove();observer?.disconnect();};
+ void load();return()=>{disposed=true;generation++;earningsCleanup?.();chart?.remove();observer?.disconnect();};
 }

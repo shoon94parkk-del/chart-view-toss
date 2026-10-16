@@ -104,6 +104,7 @@ export function payloadFor(url) {
     '/api/business-report': { available: false },
     '/api/relationship-evidence': { available: false, relations: [] },
     '/api/macro': macro,
+    '/api/earnings-events': {status:'partial',events:[],coverage:{missing:[]},comparison:{status:'unavailable'}},
     '/api/export-momentum': exportSnapshot,
     '/api/export-momentum/provisional': existing.radar,
     '/api/export-momentum/momentum-map': existing.momentumMap,

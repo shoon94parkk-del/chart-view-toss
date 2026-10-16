@@ -1,0 +1,69 @@
+.macro-inflation{display:grid;gap:16px;min-width:0;color:var(--text,#17212b);font-size:13px;line-height:1.5}
+.macro-inflation *{box-sizing:border-box}
+.inflation-panel,.inflation-agenda{min-width:0;border:1px solid var(--border,#e2e8ef);border-radius:12px;background:var(--card,#fff);padding:12px}
+.inflation-section-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.inflation-section-head h2{margin:0;font-size:16px;line-height:1.4}
+.inflation-section-head>span,.inflation-intro,.inflation-overview-head,.inflation-series-row small,.inflation-current small,.inflation-chart-basis,.inflation-chart-note,.inflation-source small,.inflation-calendar-source small,.inflation-agenda-list small,.inflation-event-meta{font-size:12px;color:#586b7f}
+.inflation-section-head>span{flex-shrink:0}
+.inflation-intro{margin:5px 0 10px;line-height:1.5}
+.inflation-warning{font-size:12px;color:#855400;background:#fff8e7;border-radius:6px;padding:7px 8px;margin:8px 0;overflow-wrap:anywhere}
+.inflation-overview-head,.inflation-series-row{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(64px,.8fr) minmax(64px,.8fr);gap:6px;align-items:center;text-align:right}
+.inflation-overview-head{padding:0 8px 4px}
+.inflation-overview-head>span:first-child,.inflation-series-row>span{text-align:left}
+.inflation-series-list{border-top:1px solid var(--border,#e2e8ef)}
+.inflation-series-row{width:100%;min-height:56px;border:0;border-bottom:1px solid var(--border,#e2e8ef);padding:6px 8px;background:transparent;color:inherit;font:inherit;cursor:pointer;border-radius:0}
+.inflation-series-row[aria-pressed=true]{background:#edf6f6;box-shadow:inset 3px 0 #147579}
+.inflation-series-row:disabled{opacity:1;color:#697786;cursor:default}
+.inflation-series-row b{display:block;font-size:13px}.inflation-series-row small{display:block;line-height:1.4;font-weight:400;overflow-wrap:anywhere}
+.inflation-series-row>strong{font-size:15px;font-weight:650;font-variant-numeric:tabular-nums;white-space:nowrap}
+.inflation-reading{min-width:0;margin-top:14px}
+.inflation-reading-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;min-width:0}
+.inflation-reading-head>div:first-child{min-width:0;flex:1}
+.inflation-reading-head h3{font-size:15px;margin:0}
+.inflation-reading-head p{font-size:12px;margin:3px 0 0;color:#586b7f;overflow-wrap:anywhere}
+.inflation-current{text-align:right;flex:0 0 auto}
+.inflation-current b{display:block;font-size:21px;line-height:1.3;font-variant-numeric:tabular-nums;color:#125f64}
+.inflation-current small{display:block;max-width:145px}
+.inflation-chart-controls{display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;margin:9px 0 0}
+.inflation-chart-controls>div{display:flex;gap:4px}
+.macro-inflation button:focus-visible,.macro-inflation summary:focus-visible{outline:2px solid #147579;outline-offset:2px}
+.inflation-chart-controls button{min-height:44px;min-width:44px;border:1px solid #d3dde5;border-radius:7px;background:#fff;color:#44566a;font:inherit;font-size:12px;padding:6px 9px;white-space:nowrap}
+.inflation-chart-controls button[aria-pressed=true]{background:#edf6f6;color:#125f64;border-color:#72a7a9;font-weight:700}
+.inflation-chart-basis{margin:7px 0 0;overflow-wrap:anywhere}
+.inflation-chart-svg{display:block;width:100%;max-height:220px;margin-top:2px;overflow:visible}
+.inflation-chart-svg text{font-family:inherit;font-size:11px;fill:#586b7f}
+.inflation-gridline{stroke:#e5ebf0;stroke-width:1}
+.inflation-zero{stroke:#8997a6;stroke-width:1;stroke-dasharray:3 3}
+.inflation-line{fill:none;stroke:#147579;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.inflation-dot{fill:#147579}
+.inflation-chart-note{margin:3px 0 7px}
+.inflation-chart-empty,.inflation-empty{padding:12px 0;font-size:13px;color:#586b7f;line-height:1.6}
+.inflation-empty strong{color:var(--text,#17212b);font-size:13px}
+.inflation-empty p{font-size:12px;margin:4px 0 0}
+.inflation-provenance,.inflation-table-details{border-top:1px solid var(--border,#e2e8ef);min-width:0}
+.macro-inflation summary{min-height:44px;display:flex;align-items:center;cursor:pointer;font-size:12px;font-weight:600;color:#3f586b;gap:6px}
+.macro-inflation summary::before{content:'+';font-size:16px;width:12px;text-align:center;font-weight:400}
+.macro-inflation details[open]>summary::before{content:'−'}
+.inflation-provenance dl{margin:0 0 8px;font-size:12px}
+.inflation-provenance dl>div{display:grid;grid-template-columns:72px minmax(0,1fr);gap:7px;margin:5px 0}
+.inflation-provenance dt{font-weight:600;color:#44566a}.inflation-provenance dd{margin:0;overflow-wrap:anywhere;color:#586b7f}
+.inflation-table-wrap{max-width:100%;overflow-x:auto}
+.inflation-table-wrap table{width:100%;table-layout:fixed;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums}
+.inflation-table-wrap caption{text-align:left;color:#586b7f;margin-bottom:6px}
+.inflation-table-wrap th,.inflation-table-wrap td{border-bottom:1px solid #e5ebf0;text-align:right;padding:7px 3px;overflow-wrap:anywhere}
+.inflation-table-wrap th:first-child{text-align:left;width:27%}.inflation-table-wrap th{font-weight:600}
+.inflation-table-wrap th small{font-size:12px;font-weight:400;color:#586b7f}
+.inflation-source,.inflation-calendar-source{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:0 8px;border-top:1px solid var(--border,#e2e8ef);min-width:0}
+.inflation-source small,.inflation-calendar-source small{overflow-wrap:anywhere;min-width:0}
+.macro-inflation [data-external-url],.inflation-retry{min-width:44px;min-height:44px;color:#125f64;border:0;background:transparent;padding:7px 0;font:inherit;font-size:12px;text-align:left;overflow-wrap:anywhere;cursor:pointer}
+.inflation-retry{font-weight:600}
+.inflation-agenda-list{list-style:none;padding:0;margin:0}
+.inflation-agenda-list li{padding:9px 0 4px;border-top:1px solid var(--border,#e2e8ef)}
+.inflation-event-top{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:3px 8px}
+.inflation-event-top strong{font-size:13px;overflow-wrap:anywhere}
+.inflation-certainty{font-size:12px;color:#44566a}
+.inflation-event-kst{display:block;font-size:14px;margin-top:3px;font-variant-numeric:tabular-nums}
+.inflation-agenda-list small{display:block;overflow-wrap:anywhere}
+.inflation-event-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.inflation-action-feedback{margin:0;font-size:12px;color:#855400;overflow-wrap:anywhere}.inflation-action-feedback:empty{display:none}
+@media(max-width:350px){.inflation-panel,.inflation-agenda{padding:10px}.inflation-chart-controls{gap:4px}.inflation-chart-controls button{padding:6px 7px}.inflation-overview-head,.inflation-series-row{grid-template-columns:minmax(0,1.05fr) minmax(62px,.8fr) minmax(62px,.8fr);gap:3px}.inflation-series-row>strong{font-size:14px}.inflation-current small{max-width:120px}.inflation-reading-head{gap:7px}.inflation-provenance dl>div{grid-template-columns:66px minmax(0,1fr)}}

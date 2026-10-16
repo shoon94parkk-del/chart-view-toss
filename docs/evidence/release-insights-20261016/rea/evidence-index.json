@@ -1,0 +1,340 @@
+[
+  {
+    "stage": "01-home-desktop",
+    "operation": "inspect-web-page",
+    "evidence_id": "ev_d480b4ca4857b79aa2dd3c274ceef30568c8c4c412a4d04665f26e998bf58233",
+    "url": "https://afterns.com/en",
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "Observation starts when REA attaches; prior network and console activity is unavailable.",
+      "Raw network headers, bodies, cookies, storage values, console objects, and WebSocket payloads are never retained; explicitly requested primitive console text is retained verbatim, while payload captures retain value-free shapes.",
+      "Source maps are reported only as declarative URLs and are not fetched.",
+      "URL-less scripts and console events without an allowed source URL are excluded because their origin cannot be proven.",
+      "Browser host platform and architecture were not observed."
+    ]
+  },
+  {
+    "stage": "01-home-desktop",
+    "operation": "capture-web-screenshot",
+    "evidence_id": "ev_b73bbb87a95c58fc93cf85c0422015eb69feae9924037a0bd4a624b247da4f36",
+    "url": "https://afterns.com/en",
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "The screenshot contains the visible viewport, including on-screen content.",
+      "REA does not scroll, evaluate JavaScript, or capture beyond the current viewport.",
+      "Browser host platform and architecture were not observed."
+    ]
+  },
+  {
+    "stage": "02-good-but-fell",
+    "operation": "inspect-web-page",
+    "evidence_id": "ev_dcbfa5e343d792e98e2af86f064f2799b5cd63330d099592419def8ba6017952",
+    "url": "https://afterns.com/en",
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "Observation starts when REA attaches; prior network and console activity is unavailable.",
+      "Raw network headers, bodies, cookies, storage values, console objects, and WebSocket payloads are never retained; explicitly requested primitive console text is retained verbatim, while payload captures retain value-free shapes.",
+      "Source maps are reported only as declarative URLs and are not fetched.",
+      "URL-less scripts and console events without an allowed source URL are excluded because their origin cannot be proven.",
+      "Browser host platform and architecture were not observed."
+    ]
+  },
+  {
+    "stage": "02-good-but-fell",
+    "operation": "capture-web-screenshot",
+    "evidence_id": "ev_73bb97df83f6617a37c5b98cb1230a69855da3e5f380cab1311681c16968e09a",
+    "url": "https://afterns.com/en",
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "The screenshot contains the visible viewport, including on-screen content.",
+      "REA does not scroll, evaluate JavaScript, or capture beyond the current viewport.",
+      "Browser host platform and architecture were not observed."
+    ]
+  },
+  {
+    "stage": "03-nvda-desktop",
+    "operation": "inspect-web-page",
+    "evidence_id": "ev_da3253291fd2fa3860d37c583cc9b0a289a265aec586c2b71b75cd0ea66ca167",
+    "url": "https://afterns.com/en/stock/NVDA",
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "Observation starts when REA attaches; prior network and console activity is unavailable.",
+      "Raw network headers, bodies, cookies, storage values, console objects, and WebSocket payloads are never retained; explicitly requested primitive console text is retained verbatim, while payload captures retain value-free shapes.",
+      "Source maps are reported only as declarative URLs and are not fetched.",
+      "URL-less scripts and console events without an allowed source URL are excluded because their origin cannot be proven.",
+      "Browser host platform and architecture were not observed."
+    ]
+  },
+  {
+    "stage": "03-nvda-desktop",
+    "operation": "capture-web-screenshot",
+    "evidence_id": "ev_f2657fe4cd8b44344b9f05465b0012cccb8363424cf8123b868deec59cb40955",
+    "url": "https://afterns.com/en/stock/NVDA",
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "The screenshot contains the visible viewport, including on-screen content.",
+      "REA does not scroll, evaluate JavaScript, or capture beyond the current viewport.",
+      "Browser host platform and architecture were not observed."
+    ]
+  },
+  {
+    "stage": "04-nvda-mobile",
+    "operation": "inspect-web-page",
+    "evidence_id": "ev_6fed01807a20d27fd993afc659630bf654f3b6ad8b869ac286e4326b9865d2b0",
+    "url": "https://afterns.com/en/stock/NVDA",
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "Observation starts when REA attaches; prior network and console activity is unavailable.",
+      "Raw network headers, bodies, cookies, storage values, console objects, and WebSocket payloads are never retained; explicitly requested primitive console text is retained verbatim, while payload captures retain value-free shapes.",
+      "Source maps are reported only as declarative URLs and are not fetched.",
+      "URL-less scripts and console events without an allowed source URL are excluded because their origin cannot be proven.",
+      "Browser host platform and architecture were not observed."
+    ]
+  },
+  {
+    "stage": "04-nvda-mobile",
+    "operation": "capture-web-screenshot",
+    "evidence_id": "ev_740a5c7c0f7225ba9d912b2be2868c20a7da4129d45390311f6f9b6a23f2e759",
+    "url": "https://afterns.com/en/stock/NVDA",
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "The screenshot contains the visible viewport, including on-screen content.",
+      "REA does not scroll, evaluate JavaScript, or capture beyond the current viewport.",
+      "Browser host platform and architecture were not observed."
+    ]
+  },
+  {
+    "stage": "05-nvda-call-mobile",
+    "operation": "inspect-web-page",
+    "evidence_id": "ev_c18a95c6cb721191bf604a4495bac07823dba4c8b9aa745f19276ffd9e1516d2",
+    "url": "https://afterns.com/en/stock/NVDA",
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "Observation starts when REA attaches; prior network and console activity is unavailable.",
+      "Raw network headers, bodies, cookies, storage values, console objects, and WebSocket payloads are never retained; explicitly requested primitive console text is retained verbatim, while payload captures retain value-free shapes.",
+      "Source maps are reported only as declarative URLs and are not fetched.",
+      "URL-less scripts and console events without an allowed source URL are excluded because their origin cannot be proven.",
+      "Browser host platform and architecture were not observed."
+    ]
+  },
+  {
+    "stage": "05-nvda-call-mobile",
+    "operation": "capture-web-screenshot",
+    "evidence_id": "ev_3509ed4a414f3fba65a9f24522cde430f4c411f9d572419b7a360747dd473c01",
+    "url": "https://afterns.com/en/stock/NVDA",
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "The screenshot contains the visible viewport, including on-screen content.",
+      "REA does not scroll, evaluate JavaScript, or capture beyond the current viewport.",
+      "Browser host platform and architecture were not observed."
+    ]
+  },
+  {
+    "stage": "06-calendar-mobile",
+    "operation": "inspect-web-page",
+    "evidence_id": "ev_0360d24f28e0e16e5f579aca481b29904890a22d11b3440d6eeb6d8f03780945",
+    "url": "https://afterns.com/en/calendar",
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "Observation starts when REA attaches; prior network and console activity is unavailable.",
+      "Raw network headers, bodies, cookies, storage values, console objects, and WebSocket payloads are never retained; explicitly requested primitive console text is retained verbatim, while payload captures retain value-free shapes.",
+      "Source maps are reported only as declarative URLs and are not fetched.",
+      "URL-less scripts and console events without an allowed source URL are excluded because their origin cannot be proven.",
+      "Browser host platform and architecture were not observed."
+    ]
+  },
+  {
+    "stage": "06-calendar-mobile",
+    "operation": "capture-web-screenshot",
+    "evidence_id": "ev_35c750677f2802f057c38ec5ef2f1a2f51af80bc1d766c2b6e28df3690178289",
+    "url": "https://afterns.com/en/calendar",
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "The screenshot contains the visible viewport, including on-screen content.",
+      "REA does not scroll, evaluate JavaScript, or capture beyond the current viewport.",
+      "Browser host platform and architecture were not observed."
+    ]
+  },
+  {
+    "stage": "07-calendar-results-mobile",
+    "operation": "inspect-web-page",
+    "evidence_id": "ev_e52a7b553359c1b4a64120d9aed8d4cd02647250abd225967e191464ee5e2b4e",
+    "url": "https://afterns.com/en/calendar",
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "Observation starts when REA attaches; prior network and console activity is unavailable.",
+      "Raw network headers, bodies, cookies, storage values, console objects, and WebSocket payloads are never retained; explicitly requested primitive console text is retained verbatim, while payload captures retain value-free shapes.",
+      "Source maps are reported only as declarative URLs and are not fetched.",
+      "URL-less scripts and console events without an allowed source URL are excluded because their origin cannot be proven.",
+      "Browser host platform and architecture were not observed."
+    ]
+  },
+  {
+    "stage": "07-calendar-results-mobile",
+    "operation": "capture-web-screenshot",
+    "evidence_id": "ev_6061d92dffd0e0cc7ff16a4194220f88df3888955dd609df5a15e226d30421b6",
+    "url": "https://afterns.com/en/calendar",
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "The screenshot contains the visible viewport, including on-screen content.",
+      "REA does not scroll, evaluate JavaScript, or capture beyond the current viewport.",
+      "Browser host platform and architecture were not observed."
+    ]
+  },
+  {
+    "stage": "08-brief-mobile",
+    "operation": "inspect-web-page",
+    "evidence_id": "ev_bc17cf973864fd9832e3355621647aeab7230b891eb17a724b79f9d64248bb50",
+    "url": "https://afterns.com/en/brief",
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "Observation starts when REA attaches; prior network and console activity is unavailable.",
+      "Raw network headers, bodies, cookies, storage values, console objects, and WebSocket payloads are never retained; explicitly requested primitive console text is retained verbatim, while payload captures retain value-free shapes.",
+      "Source maps are reported only as declarative URLs and are not fetched.",
+      "URL-less scripts and console events without an allowed source URL are excluded because their origin cannot be proven.",
+      "Browser host platform and architecture were not observed."
+    ]
+  },
+  {
+    "stage": "08-brief-mobile",
+    "operation": "capture-web-screenshot",
+    "evidence_id": "ev_1be9c851543dddadf557bb30b81cd38e1493ced200732b9d1b7a94d8d8dc4243",
+    "url": "https://afterns.com/en/brief",
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "The screenshot contains the visible viewport, including on-screen content.",
+      "REA does not scroll, evaluate JavaScript, or capture beyond the current viewport.",
+      "Browser host platform and architecture were not observed."
+    ]
+  },
+  {
+    "stage": "09-season-mobile",
+    "operation": "inspect-web-page",
+    "evidence_id": "ev_996da3e0ed4b4dfeaf2ca752f372ee107ff6dabc67cea0472f549db111021ad2",
+    "url": "https://afterns.com/en/earnings-season",
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "Observation starts when REA attaches; prior network and console activity is unavailable.",
+      "Raw network headers, bodies, cookies, storage values, console objects, and WebSocket payloads are never retained; explicitly requested primitive console text is retained verbatim, while payload captures retain value-free shapes.",
+      "Source maps are reported only as declarative URLs and are not fetched.",
+      "URL-less scripts and console events without an allowed source URL are excluded because their origin cannot be proven.",
+      "Browser host platform and architecture were not observed."
+    ]
+  },
+  {
+    "stage": "09-season-mobile",
+    "operation": "capture-web-screenshot",
+    "evidence_id": "ev_3aca239c9c3b5f2f906e8799ee187585d969fdd4f29a35a063d1976b63a08804",
+    "url": "https://afterns.com/en/earnings-season",
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "The screenshot contains the visible viewport, including on-screen content.",
+      "REA does not scroll, evaluate JavaScript, or capture beyond the current viewport.",
+      "Browser host platform and architecture were not observed."
+    ]
+  },
+  {
+    "stage": "10-home-mobile",
+    "operation": "inspect-web-page",
+    "evidence_id": "ev_57dd03f3745f9fb7d3e73d30b28c392a0569d7548e072406be6c56a4154d0c4a",
+    "url": "https://afterns.com/en",
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "Observation starts when REA attaches; prior network and console activity is unavailable.",
+      "Raw network headers, bodies, cookies, storage values, console objects, and WebSocket payloads are never retained; explicitly requested primitive console text is retained verbatim, while payload captures retain value-free shapes.",
+      "Source maps are reported only as declarative URLs and are not fetched.",
+      "URL-less scripts and console events without an allowed source URL are excluded because their origin cannot be proven.",
+      "Browser host platform and architecture were not observed."
+    ]
+  },
+  {
+    "stage": "10-home-mobile",
+    "operation": "capture-web-screenshot",
+    "evidence_id": "ev_8e1d4cfa221fa0e1231cc5cc2bd4cd6ceabb551cd2bd40e4920a8cfcfee27f82",
+    "url": "https://afterns.com/en",
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "The screenshot contains the visible viewport, including on-screen content.",
+      "REA does not scroll, evaluate JavaScript, or capture beyond the current viewport.",
+      "Browser host platform and architecture were not observed."
+    ]
+  },
+  {
+    "stage": "11-chartview-live-desktop",
+    "operation": "inspect-web-page",
+    "evidence_id": "ev_37ff32cbcc3e8cab1cb731a1858689c72fe5e3263e6cbd11a42108839e4991e9",
+    "url": "https://chart-view-toss.onrender.com/",
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "Observation starts when REA attaches; prior network and console activity is unavailable.",
+      "Raw network headers, bodies, cookies, storage values, console objects, and WebSocket payloads are never retained; explicitly requested primitive console text is retained verbatim, while payload captures retain value-free shapes.",
+      "Source maps are reported only as declarative URLs and are not fetched.",
+      "URL-less scripts and console events without an allowed source URL are excluded because their origin cannot be proven.",
+      "Browser host platform and architecture were not observed."
+    ]
+  },
+  {
+    "stage": "11-chartview-live-desktop",
+    "operation": "capture-web-screenshot",
+    "evidence_id": "ev_6da7feef330ff08bd7cb78d25b29bccdf315c8b26b07a36851cfd86010166569",
+    "url": "https://chart-view-toss.onrender.com/",
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "The screenshot contains the visible viewport, including on-screen content.",
+      "REA does not scroll, evaluate JavaScript, or capture beyond the current viewport.",
+      "Browser host platform and architecture were not observed."
+    ]
+  },
+  {
+    "stage": "12-chartview-live-mobile",
+    "operation": "inspect-web-page",
+    "evidence_id": "ev_7ffdf6da705b9209476d60e830fe814714d4961e40b29cd6811000c9803bd132",
+    "url": "https://chart-view-toss.onrender.com/",
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "Observation starts when REA attaches; prior network and console activity is unavailable.",
+      "Raw network headers, bodies, cookies, storage values, console objects, and WebSocket payloads are never retained; explicitly requested primitive console text is retained verbatim, while payload captures retain value-free shapes.",
+      "Source maps are reported only as declarative URLs and are not fetched.",
+      "URL-less scripts and console events without an allowed source URL are excluded because their origin cannot be proven.",
+      "Browser host platform and architecture were not observed."
+    ]
+  },
+  {
+    "stage": "12-chartview-live-mobile",
+    "operation": "capture-web-screenshot",
+    "evidence_id": "ev_58daed20cef5fd0aa513ceb6550ab14cfeeb4960acf18d51c167f322d9008993",
+    "url": "https://chart-view-toss.onrender.com/",
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "The screenshot contains the visible viewport, including on-screen content.",
+      "REA does not scroll, evaluate JavaScript, or capture beyond the current viewport.",
+      "Browser host platform and architecture were not observed."
+    ]
+  },
+  {
+    "stage": "13-chartview-live-macro",
+    "operation": "inspect-web-page",
+    "evidence_id": "ev_522522b812eab6bf44cb9e8e1ff4c5b5c9145b0c4e85993127173d3597edf2c7",
+    "url": "https://chart-view-toss.onrender.com/",
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "Observation starts when REA attaches; prior network and console activity is unavailable.",
+      "Raw network headers, bodies, cookies, storage values, console objects, and WebSocket payloads are never retained; explicitly requested primitive console text is retained verbatim, while payload captures retain value-free shapes.",
+      "Source maps are reported only as declarative URLs and are not fetched.",
+      "URL-less scripts and console events without an allowed source URL are excluded because their origin cannot be proven.",
+      "Browser host platform and architecture were not observed."
+    ]
+  },
+  {
+    "stage": "13-chartview-live-macro",
+    "operation": "capture-web-screenshot",
+    "evidence_id": "ev_7ebc8a9ba88bb0851021e318c3c941cde2a9febb6bb400e5ef4fc6c2e807e906",
+    "url": "https://chart-view-toss.onrender.com/",
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "The screenshot contains the visible viewport, including on-screen content.",
+      "REA does not scroll, evaluate JavaScript, or capture beyond the current viewport.",
+      "Browser host platform and architecture were not observed."
+    ]
+  }
+]

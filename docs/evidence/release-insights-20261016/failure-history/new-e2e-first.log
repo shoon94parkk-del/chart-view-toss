@@ -1,0 +1,77 @@
+[2m[WebServer] [22m(node:8637) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+[2m[WebServer] [22m(node:8650) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 7 tests using 1 worker
+
+(node:8662) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:8662) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+  ✓  1 [desktop-chromium] › tests/e2e/release-insights.spec.mjs:10:1 › inflation response renders four series, honest chart gaps, bases and confirmed KST schedules (7.1s)
+  ✓  2 [desktop-chromium] › tests/e2e/release-insights.spec.mjs:86:1 › legacy macro data stays usable while missing optional inflation is retried (750ms)
+  ✓  3 [desktop-chromium] › tests/e2e/release-insights.spec.mjs:121:3 › official calls alongside estimates › verified calls use KST and unknown result comparisons stay explicit (2.2s)
+  ✓  4 [desktop-chromium] › tests/e2e/release-insights.spec.mjs:164:3 › official calls alongside estimates › a failed optional call lookup retries alone and never replaces valid estimates (689ms)
+  ✓  5 [desktop-chromium] › tests/e2e/release-insights.spec.mjs:189:3 › official calls alongside estimates › a delayed call lookup cannot paint into Home after leaving consensus (850ms)
+  ✘  6 [desktop-chromium] › tests/e2e/release-insights.spec.mjs:226:1 › the report continuation returns to the existing research form without changing its draft or peer (10.2s)
+(node:8973) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:8973) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+  ✓  7 [desktop-chromium] › tests/e2e/release-insights.spec.mjs:247:1 › corrected DRAM MoM agrees with the August-to-September graph amounts (1.1s)
+
+
+  1) [desktop-chromium] › tests/e2e/release-insights.spec.mjs:226:1 › the report continuation returns to the existing research form without changing its draft or peer 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoContainText[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator: locator('#research-save-state')
+    Expected string: [32m"작성 중"[39m
+    Received string: [31m"비교할 회사를 선택했어요. 비교 분석하기를 눌러주세요."[39m
+    Timeout: 8000ms
+
+    Call log:
+    [2m  - Expect "toContainText" with timeout 8000ms[22m
+    [2m  - waiting for locator('#research-save-state')[22m
+    [2m    12 × locator resolved to <span role="status" id="research-save-state">비교할 회사를 선택했어요. 비교 분석하기를 눌러주세요.</span>[22m
+    [2m       - unexpected value "비교할 회사를 선택했어요. 비교 분석하기를 눌러주세요."[22m
+
+
+      180 |   await expect(page.locator('#research-question')).toHaveValue('공시 확인 뒤 비교할 연구 질문');
+      181 |   await expect(page.locator('#research-peer-selection')).toContainText('000660.KS');
+    > 182 |   await expect(page.locator('#research-save-state')).toContainText('작성 중');
+          |                                                      ^
+      183 |   expect(qa.calls.filter(row => row.path === '/api/financial-history')).toHaveLength(before);
+      184 |   await noOverflow(page);
+      185 | });
+        at /workspace/chartview-audit-20261015/tests/e2e/release-insights.spec.mjs:182:54
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/release-insights-the-repor-9be8b--changing-its-draft-or-peer-desktop-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #4: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/release-insights-the-repor-9be8b--changing-its-draft-or-peer-desktop-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/release-insights-the-repor-9be8b--changing-its-draft-or-peer-desktop-chromium/error-context.md
+
+    attachment #6: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/release-insights-the-repor-9be8b--changing-its-draft-or-peer-desktop-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/release-insights-the-repor-9be8b--changing-its-draft-or-peer-desktop-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [desktop-chromium] › tests/e2e/release-insights.spec.mjs:226:1 › the report continuation returns to the existing research form without changing its draft or peer 
+  6 passed (26.7s)
+
+To open last HTML report run:
+[36m[39m
+[36m  npx playwright show-report[39m
+[36m[39m

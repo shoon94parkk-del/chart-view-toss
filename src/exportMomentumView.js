@@ -1,3 +1,4 @@
+import {sourceTimingHtml} from './releaseReading.js';
 import { loadExportCompanyContext, loadExportItemDetail, loadExportMomentumMap, loadExportMomentumSnapshot, loadExportProvisionalRadar, loadSemiconductorCountryMatrix, loadSemiconductorTrends } from './exportMomentumData.js';
 import {exportCompanyCandidates,memoryMovements} from './insightModel.js';
 import { bindHorizontalTabs, focusSelectedTab } from './accessibleTabs.js';
@@ -948,7 +949,7 @@ function sources(snapshot){
   const apiBacked=snapshot.status==='official_api';
   const dates=[
     snapshot.publishedAt?`발표일 ${dateLabel(snapshot.publishedAt)}`:'',
-    snapshot.updatedAt?`데이터 갱신 ${dateLabel(snapshot.updatedAt)}`:'',
+    snapshot.updatedAt?`자료 생성 ${dateLabel(snapshot.updatedAt)}`:'',
   ].filter(Boolean).join(' · ');
   return `
     <details class="export-source">
@@ -959,6 +960,7 @@ function sources(snapshot){
           ${snapshot.sources.map(source=>`<button type="button" data-external-url="${esc(source.url)}"><span>${esc(source.name)}</span><small>${esc(source.role)}</small></button>`).join('')}
         </div>
         ${dates?`<small>${esc(dates)}</small>`:''}
+        ${sourceTimingHtml({observedAt:snapshot.itemPeriod||snapshot.period,publishedAt:snapshot.publishedAt,builtAt:snapshot.updatedAt,checkedAt:snapshot.meta?.checkedAt})}
       </div>
     </details>
   `;

@@ -1,0 +1,2292 @@
+{
+  "sourceCommit": "1dd69ac67412980064db76ebe35b97e914934a50",
+  "matchedTrackedFiles": 457,
+  "mismatches": [],
+  "files": [
+    {
+      "file": ".agents/skills/chartview-agent-review/SKILL.md",
+      "gitBlob": "e789032faa01d60359ad371e48caaaa6c2f7bb9e",
+      "sha256": "5cd2923d5f2697138ac8fbd006dea42239e03d0281b7f404fc7ce989b0fe8775"
+    },
+    {
+      "file": ".agents/skills/chartview-qa/SKILL.md",
+      "gitBlob": "2b8570faf8b3ba83dbedc74ba17a611e4451855a",
+      "sha256": "e0f62baedfe075f64a836ab6f9616957b0bfd09f6422db86a63212f69a0c5881"
+    },
+    {
+      "file": ".env.example",
+      "gitBlob": "b252432e32ba3d0440669787c8d328d9d901a41a",
+      "sha256": "86db982f7660dc50638999e624b88b196b9aeca71fe4124da54bcd4565c53f30"
+    },
+    {
+      "file": ".github/workflows/ait-build.yml",
+      "gitBlob": "148875f453318081c5c1a62cc785c4f47a8e8221",
+      "sha256": "691e1956b9a8ed52597d14bbe1e3e143ea4f03183f9f343b997e124445ec40ba"
+    },
+    {
+      "file": ".github/workflows/live-backend-contract.yml",
+      "gitBlob": "44ab197c6f120e735371382d71b6a265dec547ad",
+      "sha256": "587c349a6cd9abb910aab424b3cb6196daf10f5eacdf0c25c9a64a54aba655d1"
+    },
+    {
+      "file": ".github/workflows/live-dart-latency.yml",
+      "gitBlob": "ad934f797fbfdcf6e1714c5ed09a48d7b321a65b",
+      "sha256": "5aacdde8b5b1be48a3aa2bcc6d573490d10bc8fd8d5aeeff1421cc6ebc401a17"
+    },
+    {
+      "file": ".github/workflows/live-dart-ui-smoke.yml",
+      "gitBlob": "d42ef415fe0814660f353f81148b06cfbcbee658",
+      "sha256": "c4d8e5bda88b6daf860d2b2830b929c4041557a8a6bdf0871d1cbc30e143fa81"
+    },
+    {
+      "file": ".github/workflows/live-e2e.yml",
+      "gitBlob": "3d60c6f0cf43a21f333dfc9180f0b72705703412",
+      "sha256": "634152063654a06637d1034effc3f6fdec4cc4d965f8b1cf1cc93443c3580b6c"
+    },
+    {
+      "file": ".github/workflows/main-regression.yml",
+      "gitBlob": "db68157082030936e882ae32c025e668898f19bb",
+      "sha256": "86740c02ba2196277a2caf92520fa7a9418421fccf4be9da4e01443a60e7d96a"
+    },
+    {
+      "file": ".github/workflows/major-dart-latency.yml",
+      "gitBlob": "0d8fced1e16039571291f9009ce3d18286e60ff8",
+      "sha256": "9217586d888d6ab2efc968aa2dcb9c1bec59275b20f98398ce6c2b28fcc5aa69"
+    },
+    {
+      "file": ".github/workflows/major-detail-stage-timing.yml",
+      "gitBlob": "3e523d9336f267fa168456d367c938efcdcefa6d",
+      "sha256": "4993f4cc160f1baa8c19c453525e35c1b8a11ee9f5ffc7af74d359de2428f715"
+    },
+    {
+      "file": ".github/workflows/mobile-release-qa.yml",
+      "gitBlob": "ebeba65bad625fc89ddfb423bdae3b03c24197f0",
+      "sha256": "954180bfa3aa5cdeb3f19b4cbbb6046557be7dd812c927d51234b8030c634f0b"
+    },
+    {
+      "file": ".github/workflows/perf-audit.yml",
+      "gitBlob": "918000fecf67de7e85c613f1b18a7cdbed1a42bd",
+      "sha256": "59a0a443976a14951ee314c8b9de999d813efa28419df1e1ebb36426d1afb2e9"
+    },
+    {
+      "file": ".github/workflows/perf-postopt.yml",
+      "gitBlob": "d8283697576940585e09184901bcd0f801da57ca",
+      "sha256": "94c171db040a944ab49acc4fbcc39a8949d679092321c83a463c3ef6d171b787"
+    },
+    {
+      "file": ".github/workflows/perf-targeted-final.yml",
+      "gitBlob": "00c326dded90e79f2c52b3c3225268333e6fda76",
+      "sha256": "8d00c6dbd32ed626d1f4270f06bb007d464fa9a7f9c8f040342a23c4c72e1b6f"
+    },
+    {
+      "file": ".github/workflows/production-performance-audit.yml",
+      "gitBlob": "947e82fade33538d154663cc51dc49c3e8b9ab00",
+      "sha256": "016c8cc5bd54f43d687250a181d5dadb302222c62d20cae68895653d4f192a31"
+    },
+    {
+      "file": ".github/workflows/sync-render-preview.yml",
+      "gitBlob": "ad1232f598781729a7d096ea327d3d6692eee889",
+      "sha256": "7e2beaaf2a1eed744c6d20cd1f6fb1e15eb34fb2c0acdf9f3f2470c188812534"
+    },
+    {
+      "file": ".gitignore",
+      "gitBlob": "f4b86130432450e398ba817dbe2588c0d08b0c05",
+      "sha256": "12a61cb77c15137e62f750749601f94b99d54b95b838840264f8f69e07996a7a"
+    },
+    {
+      "file": ".gstack/qa-reports/qa-report-chart-view-toss-onrender-com-2026-09-28.md",
+      "gitBlob": "5494cff3920e4fb46e3e27c2a50748b0601f7fe0",
+      "sha256": "10f579bd0c13fd3742f13f52e625ffd972f25515369845037391d9a998d63647"
+    },
+    {
+      "file": ".nvmrc",
+      "gitBlob": "df6ae3370f9f89272d88629c442cf554d6c1f9fb",
+      "sha256": "73fb1b615e2043a933be1c0895cde4358036acc28d785692509b822aa53c761f"
+    },
+    {
+      "file": "AGENTS.md",
+      "gitBlob": "8514d38a4087b287a112cf8f87c1d3e1b8c814ea",
+      "sha256": "c3984aff4bbbb37153699c76c6820c8e09a6544e9e668960fd079b90180a2063"
+    },
+    {
+      "file": "README.md",
+      "gitBlob": "f25aba4710f8473bc3bcb0e144d7a1209e9330b2",
+      "sha256": "f078b7838dab4823038e16c5d5b4a2542b2734f5a0aad4958f7a322ceb424e85"
+    },
+    {
+      "file": "apps-in-toss.config.ts",
+      "gitBlob": "b1689e02073fad29d89886069342ba5ec7855afb",
+      "sha256": "cfcfe3accf8800897ae94ff7b4976b95d188b9adcaaa25c25be332887c33d63e"
+    },
+    {
+      "file": "docs/AGENT_WORKFLOW.md",
+      "gitBlob": "4504aaab043b388dc59ae1c66fbfa18b824b3ab2",
+      "sha256": "59481ef2fde209a2a2c48e85c7f9e68b15f831d7839a993d839c2e36818531c6"
+    },
+    {
+      "file": "docs/APPS_IN_TOSS_POLICY_REVIEW_PACKET.md",
+      "gitBlob": "a82444039100b876b5524ceb082f1990552d25d6",
+      "sha256": "0ce62ed27bdc87047c2e7be6c7c06b21ab8374485976e513c093c6a055f29fbb"
+    },
+    {
+      "file": "docs/APPS_IN_TOSS_RELEASE.md",
+      "gitBlob": "c845b577bdf9523217d8d390651dfb08baa6c13c",
+      "sha256": "170fe7262128b44418ddc50a129c53454d8d25f46b7b9d90c0f63ce686110b39"
+    },
+    {
+      "file": "docs/ARCHITECTURE.md",
+      "gitBlob": "126b663459dd182a44768f818000ed0bee941843",
+      "sha256": "de6acd809daa1a8eb1b1aea40496cb7ae1c8e59dcd993d75ba8f1237aede5182"
+    },
+    {
+      "file": "docs/AUDIT_IMPLEMENTATION_2026-10-06.md",
+      "gitBlob": "1587cc4e4707a627ac20cf68e6ba931abda04f98",
+      "sha256": "f5f905f775208b1702d452c2f8ee82427db091b4f857db25f3447dbf4df21fcf"
+    },
+    {
+      "file": "docs/AUTOMATED_QA.md",
+      "gitBlob": "36d0e724cc44c403523522169cd2445794fc06c6",
+      "sha256": "5c6fcdd50184ca61a637db7a9e64cb66e4deab268cacfc9f8589b02e0ccec8f7"
+    },
+    {
+      "file": "docs/CLOUD_CODEX_TOOLS.md",
+      "gitBlob": "95c330a090a54c606acaf548009f51b674fe4743",
+      "sha256": "154a09650f174f7c7aa911c2ca87acfba2b2c3e6de82449241eedba39435fc1e"
+    },
+    {
+      "file": "docs/CODEX_BOOTSTRAP_PROMPT.md",
+      "gitBlob": "6848a009097305fa15ebc457cff4e77a3c5fb136",
+      "sha256": "ac5fe6790f778cf0b83eae5aa547759d6bb241e5e56a58376f9b857940eaecd5"
+    },
+    {
+      "file": "docs/CODEX_HANDOFF.md",
+      "gitBlob": "dd1063a2977740a233461a7e4723ed8ae2dccc96",
+      "sha256": "5d3406290b71cd98940aa46c8a76cabdc8a8e460e1762135211c5974680d0acd"
+    },
+    {
+      "file": "docs/CODEX_TRANSFER.md",
+      "gitBlob": "a9ed351e6b478547a1b4a34a35c672edf7bf4462",
+      "sha256": "b4927bc8acb8d64fecef2ac25ec918d71f2afef1e9d3f37a96e646048cb4ca81"
+    },
+    {
+      "file": "docs/CODEX_TRANSFER_AUDIT_2026-10-08.md",
+      "gitBlob": "1f83326388207cf5627a24ea29be66810c051c6a",
+      "sha256": "69ce002fc0c7f6f0432efd3f818dc68ac8342345315150fbed39aca7f18cd550"
+    },
+    {
+      "file": "docs/COMPREHENSIVE_QA_2026-10-07.md",
+      "gitBlob": "425dbaf99e46bdfcef979211e6766ec57f916e99",
+      "sha256": "324afabcdf96c65e9c5901684006e5fbf50f5eda9398774bf02c7d269ae45675"
+    },
+    {
+      "file": "docs/DATA_PROVIDER_INVENTORY.md",
+      "gitBlob": "cac29322220dab714ab0db4be1bd7f807e9d6125",
+      "sha256": "72d4e2085c18e20e898330a4041c6575e48abfff60b1956cb23e893c2644cf59"
+    },
+    {
+      "file": "docs/FREE_HOSTING_AND_RELEASE.md",
+      "gitBlob": "8dc04907379da71321666af5fd88fe9f97a87535",
+      "sha256": "93f4accdf239ab918217194400e0248a9916706883cdc861c555785ffa3be0e1"
+    },
+    {
+      "file": "docs/GURU_HEATMAP_QA_2026-10-07.md",
+      "gitBlob": "62eafcf7eb1f0bb8a162308c47ba9e63977c8808",
+      "sha256": "9034cb60502e840d055c9ac5736f5271bb7bc30f2e763fdbf69dbb9acd53d74a"
+    },
+    {
+      "file": "docs/HOME_DATA_WAIT_2026-10-13.md",
+      "gitBlob": "5e766d7ccfb87560712efa722ae23e0f3fb67aa7",
+      "sha256": "b18134121dd2f4cf985f68de0112bed4a4087c6d693bb7bc6ab1e7ae58f110cb"
+    },
+    {
+      "file": "docs/HOME_JOURNEY_2026-10-04.md",
+      "gitBlob": "4ca57163d84811fc0c846c0b69cf56969e2f9066",
+      "sha256": "8e2da8922318487ac0fd689c75b20c96f5718c9723736cc529d55a1ef7727a4f"
+    },
+    {
+      "file": "docs/IMPROVEMENT_PLAN_PROGRESS_2026-09-21.md",
+      "gitBlob": "3242eb0c0d8acc5e222cd2f556168c2294c8c8b1",
+      "sha256": "69c0bebb864a783399a3af0a281fb66ae36f17f5052176d6be1bb0830cb8082b"
+    },
+    {
+      "file": "docs/INSIGHT_FOLLOWUP_2026-10-04.md",
+      "gitBlob": "c0d28e467fa6bbf3bd516d5ea05d6b95d10eb492",
+      "sha256": "d9fc393b47ae81ba37f892e22e6e3378f8bae8c5e7cdef847023645639a56550"
+    },
+    {
+      "file": "docs/INSIGHT_IMPLEMENTATION_2026-10-04.md",
+      "gitBlob": "932d2232ad88fd49f61cf7314c1581a6ab82700d",
+      "sha256": "e7a17d8fb645c980b35adb42a106a80fbd1eb17397ebde2383bf5f3592779798"
+    },
+    {
+      "file": "docs/OSS_QA_2026-10-07.md",
+      "gitBlob": "1d29dc56454e8559f7da4a6d6351ac39c3a84f1e",
+      "sha256": "18daed207eadf25e003e050460f6e736720d36345f564946c758ffa6df9272aa"
+    },
+    {
+      "file": "docs/OSS_REVIEW_2026-10-07.md",
+      "gitBlob": "bcd9183de215fec1aa77e5d80457af2e9703cb2f",
+      "sha256": "6ce4a2e9541376a369e2f5868b6f731ea2ed5de9b88dde187b3ed41787cdd742"
+    },
+    {
+      "file": "docs/P0_RELEASE_GATE.md",
+      "gitBlob": "0a21d6439c0a0ba7ba31f4b40cab7dcad4800180",
+      "sha256": "37439231f2a7d32a6a106761b12bfb788fbae0ae5f05552b2aaed7098b228adf"
+    },
+    {
+      "file": "docs/PERFORMANCE_AUDIT_2026-10-11.md",
+      "gitBlob": "92bf634e8a768db37f5aea408bc74b832760fb12",
+      "sha256": "fb1b0ff0ca418f4791d5afb4d236c130f125e991ebbd7e350f580de346f5dd09"
+    },
+    {
+      "file": "docs/QA_2026-10-07.md",
+      "gitBlob": "16591574ab28c5796660e72861248d9cc4fc9aa7",
+      "sha256": "41f26baa84310b101a3e1b9fe89c23a86d54a9fb9da4cc4949b28ccc0fd25f26"
+    },
+    {
+      "file": "docs/REDESIGN_REVIEW_VALIDATION_2026-10-04.md",
+      "gitBlob": "f99b83d80956418f4338f8eda71c1a89df1452a1",
+      "sha256": "9984a26ee8e7ec8be79c6549fccb824c99256864c86f9eb166b0a6e7f75ab54c"
+    },
+    {
+      "file": "docs/RELEASE_PARITY_PLAN.md",
+      "gitBlob": "82f49b3ccabf69accdd98814601c087bf0c250f4",
+      "sha256": "51fbf66cab0c81e449311b0e8fb1ae45f9c48e8925426e7e6907d9d0ad0fe191"
+    },
+    {
+      "file": "docs/RELIABILITY_UX_AUDIT_2026-10-02.md",
+      "gitBlob": "e99803c9b91ad0b9f49514bd55dc0017b52de85d",
+      "sha256": "a68a677152dacd572babc7aec49886bc9d585df19ab2a1a691426f0b326c9fd7"
+    },
+    {
+      "file": "docs/REVIEW_FIXES_20260921.md",
+      "gitBlob": "468fce323184960e505db93f3c45cdec54e005a2",
+      "sha256": "31c65dcaf1ee73adf11fdd8ac77e4c4aef3913cb73492efaac41fb964a988e94"
+    },
+    {
+      "file": "docs/REVIEW_VALIDATION_2026-10-03.md",
+      "gitBlob": "a5095118b2e044e5528caad19bcd836f8cef5cad",
+      "sha256": "e61623c99e6090e4f919b549b9f74874797ebd1ff868beb6f73dd99a5a205bdc"
+    },
+    {
+      "file": "docs/SECTOR_PERFORMANCE_AUDIT_2026-10-02.md",
+      "gitBlob": "256201f4f75516be83c0b23485fbbe1b6f95d8e3",
+      "sha256": "7b53d8c5bbad5b98a508b0e61ab3ecf4976e44c97f0a8b6468e8c80a2a8e71ff"
+    },
+    {
+      "file": "docs/SITE_AUDIT_IMPROVEMENTS_2026-10-15.md",
+      "gitBlob": "0c282ef31652d9c4d4441ff50477618de33ac053",
+      "sha256": "45541af4a41de1237cdd5ebaecfcd1743d6e99f5f857c535b8205d730757fc15"
+    },
+    {
+      "file": "docs/STRATEGY_REVALIDATION_2026-10-03.md",
+      "gitBlob": "5e6cc822f50599618d1d4d2bcf56f932c1a0262b",
+      "sha256": "fb4c8109540314671940801db86865fa37509980981f129268c4d389e6c010a1"
+    },
+    {
+      "file": "docs/TOSS_EXPOSURE_2026-10-12.md",
+      "gitBlob": "42a07d316c4d0f0ff260ae0ad86a529679ed170d",
+      "sha256": "b857ee07450f157f1f45e62cff1ae918e7d07529bad69020d29824179ada3c06"
+    },
+    {
+      "file": "docs/TOSS_SPOTLIGHT_SCOPE_QUESTION.md",
+      "gitBlob": "253b028b27cd5d7c3923569f7ef80ab4a8eb744c",
+      "sha256": "58515a3c3f46dd0e570fa6101006ec69b6a4831c99c0ce86281ef995ec29b8d2"
+    },
+    {
+      "file": "docs/UIUX_IMPLEMENTATION_2026-10-04.md",
+      "gitBlob": "a0ff4bf916a20f999831c253f939984dcaebcaf7",
+      "sha256": "656f48547866de1e70c9551514d1988abc190600951c6feb2de3c57d53e3180a"
+    },
+    {
+      "file": "docs/UI_UX_AUDIT_2026-10-11.md",
+      "gitBlob": "637fefdfeb304e074bddfe799a18a4428db52807",
+      "sha256": "1097d006e7257e05fd880a60739680d258579ceb154e9e8e9ee553c13759cd37"
+    },
+    {
+      "file": "docs/UI_UX_AUDIT_PLAN_2026-10-06.md",
+      "gitBlob": "3dd81be1d0866ce4776916605f79dcadf55e0977",
+      "sha256": "0c7972eeba8d6daecb171c6cc7af5be311e31a4291524df397a9b3ee54b2d25b"
+    },
+    {
+      "file": "docs/UX_AUDIT_2026-10-01.md",
+      "gitBlob": "5d4e19bb46b04d956e43884972bebba4bfe44bf6",
+      "sha256": "60e016c3bc7583eebc40dcc933d3d4bb283958f9ea5bc4fd8e177334d5c8514d"
+    },
+    {
+      "file": "docs/UX_IMPROVEMENTS_2026-10-11.md",
+      "gitBlob": "f6d7513b8f769c5de927973f88ffb33ea4c6e8d3",
+      "sha256": "06c7288e8132a3f4e198580593160dc7bb785874d04870d0ae72a91705a861e6"
+    },
+    {
+      "file": "docs/UX_LOADING_IMPROVEMENTS_20261008.md",
+      "gitBlob": "931bd65ddd1061c70291e199a53364cf5a4adb74",
+      "sha256": "6cfc8ccc275a101e4be663978cab852df5304c578f1b97bcb4248bc1d2a095a1"
+    },
+    {
+      "file": "docs/UX_USABILITY_FOLLOWUP_2026-10-01.md",
+      "gitBlob": "80f59ac4cd40dafbc7da3039867ebfd071f06c0d",
+      "sha256": "04c1c8c9ca71a8fa0e65fd9914cf2032e10e7f6e39723aaebdbade4ddbe603fb"
+    },
+    {
+      "file": "docs/V08_QA_EVIDENCE.md",
+      "gitBlob": "0d01e30a6dfb1a1a514d3b4fee0db86f6cab94ed",
+      "sha256": "4b084920af155efe028721dc47cece8aaf484c0e76358946aff727d4ba2a75a0"
+    },
+    {
+      "file": "docs/agents/HANDOFF_TEMPLATE.md",
+      "gitBlob": "4acf89b5864c42b2316d2652052fd2e1f75ac128",
+      "sha256": "8aa4cf25a4cacfe41d2686987efb8322cd10fccaf939760e9ee08964b3a06241"
+    },
+    {
+      "file": "docs/agents/LICENSE.agency-agents.txt",
+      "gitBlob": "523078c01624b9b1b1c551e75054b9d3a9f953ab",
+      "sha256": "9a45258434d5cedf0af73c9ad4771373701225038d246c49219026c33677f66f"
+    },
+    {
+      "file": "docs/agents/ROLES.md",
+      "gitBlob": "41cc2db767ec721a724f13200a1899f21d4937e5",
+      "sha256": "8fbe9e8a139fa0762b755c2348dd07bc2a8e26e249d48c1b9c2e12d50caad4ec"
+    },
+    {
+      "file": "docs/audits/2026-10-11-performance/failure-exports-after.json",
+      "gitBlob": "d7a78cb7d1ad437faeeee146fb09cd13adb75ebb",
+      "sha256": "d243055cd82a2c288f8009150ccf0209eed05607da2bb5b074618d696721c440"
+    },
+    {
+      "file": "docs/audits/2026-10-11-performance/failure-exports-before.json",
+      "gitBlob": "104d4d31a4eddee62914a9af4e234311879c2588",
+      "sha256": "7e0e3ad4e159d1cc24f0cc06c10a70423cda0ccdba813cff9ee51d358590361d"
+    },
+    {
+      "file": "docs/audits/2026-10-11-performance/failure-picks-after.json",
+      "gitBlob": "e3655e0d4a50d12d78a646659734a766afb2b133",
+      "sha256": "8a8bd927f6ec0a49036ccff3c180bb7c05b549e09d76a362b0e73bced6d5beda"
+    },
+    {
+      "file": "docs/audits/2026-10-11-performance/failure-picks-before.json",
+      "gitBlob": "3d45d93e105a1b342fe7a3ffe83eb5656d8c23e6",
+      "sha256": "bdedc827610118f0ccbf7491ddc3f5752c0ae17cd69dc422677a55751048c9a6"
+    },
+    {
+      "file": "docs/audits/2026-10-11-performance/local-after.json",
+      "gitBlob": "511e18219fbb4658700f1908c370ae5465e78c89",
+      "sha256": "7409f4a301655e2ac6df8a493e10d75c1bd4745e254d814c470dcbed13704f55"
+    },
+    {
+      "file": "docs/audits/2026-10-11-performance/local-before.json",
+      "gitBlob": "b81a06032a6d7db51c5d2bcfbc828545f89adabe",
+      "sha256": "f4a308591478f0d55c37dac3c37aceccce1e1a7bd8217e98e8562a811a789ed2"
+    },
+    {
+      "file": "docs/audits/2026-10-11-performance/measurement-manifest.json",
+      "gitBlob": "e386e0765d8c2c1cc12248d3ebeb70a40921e4e6",
+      "sha256": "449ab26eeb358f577bfd56c612f6a156d7ccf923fa1e2f82d37e16da068016fa"
+    },
+    {
+      "file": "docs/audits/2026-10-11-performance/production-baseline.json",
+      "gitBlob": "808ed96dac6104daf24998c49f0ada8158ecc8e3",
+      "sha256": "877ccbd730bf6a7efa7b3077be44d92094aa134c79f9e2feba2a8a8ce3f626d8"
+    },
+    {
+      "file": "docs/audits/2026-10-11-performance/render-before.json",
+      "gitBlob": "8d409cad7d6539c0c9a7e78dc20ad7bfa5c864cd",
+      "sha256": "f4d8471cefc7ea66741eadd01a270ae88b76bf091429559e2bcf3c7619069eaf"
+    },
+    {
+      "file": "docs/audits/2026-10-11-performance/render-deploy-event-before.json",
+      "gitBlob": "3a52f337e3837c59ad5cb6489f2b356d3b8fe499",
+      "sha256": "91f2966048773f69f879eb39572ea6785aabe87d8d4edb88663187fa8a09c0e8"
+    },
+    {
+      "file": "docs/audits/2026-10-11-performance/render-followup.json",
+      "gitBlob": "2f237b73b946ab58a96b7a26852222f350d0abf2",
+      "sha256": "687f402e00e1f74a30269e1bad040ae0b2ccf77731f4df78dc6b407ac4c9005a"
+    },
+    {
+      "file": "docs/audits/2026-10-11-performance/validation.json",
+      "gitBlob": "b2f7566a51e485465921fbcc9804bccfa7ec0560",
+      "sha256": "539e1f6b7ba51b990af1562223f09b8ff8a941687b220d0093baf2315cac6977"
+    },
+    {
+      "file": "docs/audits/2026-10-11/1440-desktop-ideas.png",
+      "gitBlob": "3afaa3cfd4dabf23d0dc078d531cdc9af7e5ca45",
+      "sha256": "13b778b4c14f6e54bf6e2b10323e5a94c02541577637a49e2a53ab8d5c3b0abe"
+    },
+    {
+      "file": "docs/audits/2026-10-11/320-heatmap-us-financial.png",
+      "gitBlob": "a7e9fd4dbf01c34dce182b3d5c36eb10e05fa53d",
+      "sha256": "ddc06183d91d67d76bc7a07d7179ebe21f552cc451ac8c8c08322c6c310481ba"
+    },
+    {
+      "file": "docs/audits/2026-10-11/320-idea-hanwha.png",
+      "gitBlob": "8525fb1630ceb95adf32f451778e8b34f049e131",
+      "sha256": "0479f78a696aa6adb966e5a1e7f68212bbfdbe48316894d74a1d5b8cabce93ab"
+    },
+    {
+      "file": "docs/audits/2026-10-11/320-screener-query-closed.png",
+      "gitBlob": "72c97da5d54da44bb4fb46b078047a5a26652e67",
+      "sha256": "5048a9ec22fe16d5712c831d90199949e18056e80ed7ed7e6eb32dbdadb003c6"
+    },
+    {
+      "file": "docs/audits/2026-10-11/after/320-idea-expanded.png",
+      "gitBlob": "64b6e54d05cc581641705ef646a657c272e065af",
+      "sha256": "aae2adb35fd2ab6f4dc4d3812a15fe64569f798dd7ac5e98e3f64e4a085c5c21"
+    },
+    {
+      "file": "docs/audits/2026-10-11/after/320-screener-expanded.png",
+      "gitBlob": "5b90f338e29db13a089d246dbdf4edfe3550db41",
+      "sha256": "925bc087310166688af2c84e181ccc487b94aae52b1a0c4fc2953c90ae4e9667"
+    },
+    {
+      "file": "docs/audits/2026-10-11/after/320-us-sector.png",
+      "gitBlob": "348abc964217eae3904dfbb96b38f89ddcb7409c",
+      "sha256": "c6256dfa3b9fb1a0b5a1e8e86b5353b09072f171812a8e5ea4fbb0fd05339ef9"
+    },
+    {
+      "file": "docs/audits/2026-10-11/after/README.md",
+      "gitBlob": "693530ad031a2ace5f8b5bb6494ce5fb68470df2",
+      "sha256": "8d26e4c99af12eb4f00e76c45a49200724dc116679738df61b5ebba5d35dd0f9"
+    },
+    {
+      "file": "docs/audits/2026-10-11/after/iphone-financial-basis.png",
+      "gitBlob": "d2271321850390c9f8b48d538c6fef71037fe595",
+      "sha256": "92572d886a9adc7353385d3d72c7b6cb728cf37be3020e19d35e5bf629519537"
+    },
+    {
+      "file": "docs/audits/2026-10-11/after/live-guru-publication.json",
+      "gitBlob": "3c702574e48c361e03712d88bd01cda4802dbe33",
+      "sha256": "0888f682e74b33cba8f873ea7e3d75b623e7428e414fed1dd0dd0dfaeb15de93"
+    },
+    {
+      "file": "docs/audits/2026-10-11/after/live-guru-waiting.png",
+      "gitBlob": "ce96d19ec29a180ce0c8da51e243afaa488dfcd2",
+      "sha256": "7da9e18e133fc09dad4f003a8f9826ecc3c0fd7e492fc819d24478567f0a1619"
+    },
+    {
+      "file": "docs/audits/2026-10-11/after/production-publication.json",
+      "gitBlob": "ec631ac1314512461f2173e90372f530eae2aa0a",
+      "sha256": "ffad5c3f49cf8957661b102216135857eef430f0dd8176546b2435a393dea15a"
+    },
+    {
+      "file": "docs/audits/2026-10-11/after/runtime-oracle-controls.json",
+      "gitBlob": "7c2d357fae56fc5071ab0af046b23cba209ed9bb",
+      "sha256": "5d0da431e4c621b24370e4393a14860cef8f36589589a4fac583bd9546b1907a"
+    },
+    {
+      "file": "docs/audits/2026-10-11/after/validation-overview.json",
+      "gitBlob": "2f6d5cdc69965ed2e75fbb9609cba30f5f39f9f9",
+      "sha256": "a31612c539cd2d02362dbb705d89c29c2892910eace07c75614ebad4229576d7"
+    },
+    {
+      "file": "docs/audits/2026-10-11/gurus-buffett-recheck.png",
+      "gitBlob": "827f907d9e0b973fe7054bfb0b079d68795de145",
+      "sha256": "2e833bc2cb1eaa1a65c7e62183d34073c58989510bc72017256198f0c1e86572"
+    },
+    {
+      "file": "docs/audits/2026-10-11/recheck-gurus-buffett.json",
+      "gitBlob": "06d830c57ad73906f908c04228fdc71dc1f78a25",
+      "sha256": "5c3c8e8650cfd988d1ccbb8708270d287b65185e6892059b0ae042722ced8094"
+    },
+    {
+      "file": "docs/audits/2026-10-11/survey-summary.json",
+      "gitBlob": "68a0e9faddf472d2037714bb601d657069ed7234",
+      "sha256": "754383d9e11ed9efb4e95f5505cb024d9e76870092707e312df1d9f658cc4a40"
+    },
+    {
+      "file": "docs/audits/2026-10-11/targeted-findings.json",
+      "gitBlob": "e045ab6394d1f8af8d1c568c1a361d383f6530ac",
+      "sha256": "fd42772db82a65406718047fedb1df2a57612fac42abc7341aa6281e64b773ea"
+    },
+    {
+      "file": "docs/audits/2026-10-11/watch-limit-21.png",
+      "gitBlob": "40dc7ab6cad165182fc31cd2c772af39c08e7f36",
+      "sha256": "afff3167b80637a6e63f2ba6850c1bedfc9bb608fa51889b64673fbbf970cc6a"
+    },
+    {
+      "file": "docs/audits/2026-10-12-exposure/live-export.json",
+      "gitBlob": "a46cab9388e59605243e15986c9fad07a105807c",
+      "sha256": "565c22de788ffecf15680f7ff77d05befb1dca34d57920f21a564d9f6bfece10"
+    },
+    {
+      "file": "docs/audits/2026-10-12-exposure/performance-after.json",
+      "gitBlob": "951e8b897f522462b0126e1002f4255252f4886d",
+      "sha256": "ccdd879f529f9a0282659cb4a3d9d2c76b5910837d1f358f5dc000f66c7ad4e6"
+    },
+    {
+      "file": "docs/audits/2026-10-12-exposure/performance-before.json",
+      "gitBlob": "f7d0daec54c4737ea137d124744d92931483d365",
+      "sha256": "d6ef22a61061e9c68d8ef420444b3e099c6850f45c59c30bf0bfec5d1494a441"
+    },
+    {
+      "file": "docs/audits/2026-10-12-exposure/protected-scope.json",
+      "gitBlob": "40df2c3c104ded5e7d50726bf1bf698e5c30f810",
+      "sha256": "b43996be46ce804a7ecb9bf12e5a288c52846b1322d0475985d8989656a0f158"
+    },
+    {
+      "file": "docs/audits/2026-10-12-exposure/validation.json",
+      "gitBlob": "58c2cc111e262c0ab4b6db73cdf3f04dfb7f68c4",
+      "sha256": "42c70af839ee25a7943300ce53d4ebe5d8e564f2df2defe59b69f7e0754c2d44"
+    },
+    {
+      "file": "docs/audits/2026-10-13-home-data-wait/browser-before-summary.json",
+      "gitBlob": "06c148b7dc03a0117131ad41a2993dd99ccd3185",
+      "sha256": "b58a1748478866b7af1c83e493f4a25b213dfe69783fd79652299589b01d8fc1"
+    },
+    {
+      "file": "docs/audits/2026-10-13-home-data-wait/controlled-http.json",
+      "gitBlob": "a0fe8707216e2e9caa11947fcca06d30f1bcbf15",
+      "sha256": "fb4d828ac69dca24fa564370aad39a295820b964f1774e4f6f08a3f192019123"
+    },
+    {
+      "file": "docs/audits/2026-10-13-home-data-wait/focused-home-heatmap.mjs",
+      "gitBlob": "c65e742daef3cb7923cd8703d9d7960fb675c986",
+      "sha256": "33a0b51e84de7394bedf13357a38c0f224feb1fb4b04391cd265bfbde52e7c75"
+    },
+    {
+      "file": "docs/audits/2026-10-13-home-data-wait/incident-observation.json",
+      "gitBlob": "01e08e6c30b67073840a1e1b56c50d2cbb96345e",
+      "sha256": "9fc0594460de7fa78caf2ed657ed2feb3ddc9347f8bc661fd17e261605d5933d"
+    },
+    {
+      "file": "docs/audits/2026-10-13-home-data-wait/integrated-qa.json",
+      "gitBlob": "378ae708510cba8f55545da8f1a86d595628184b",
+      "sha256": "f2824e6cb246403a410c82eff1238efbe4ed2bd72b78458afac2285dd58b4925"
+    },
+    {
+      "file": "docs/audits/2026-10-13-home-data-wait/local-qa.json",
+      "gitBlob": "6d819accc834e97d50091c0538d7b530ff60e474",
+      "sha256": "0c3c5ea495a5e24c99c5e272b4ac468d61ef878db41c0e01b1ccd2e548713445"
+    },
+    {
+      "file": "docs/audits/2026-10-15-site-improvements/ait-manifest.json",
+      "gitBlob": "15b5c85f3892aa1657effb2661803c00eac43b3c",
+      "sha256": "ccd18aae283f1010357de2ed201134313e6bf2d6314e182e79f981b0488abaab"
+    },
+    {
+      "file": "docs/audits/2026-10-15-site-improvements/backend-protected-scope.json",
+      "gitBlob": "fa684ef86e4f6c7e6dd3cd1c6abbf305f43269d0",
+      "sha256": "af0405f05582f5598c327c947c065ee1e37930f87f4228a691f06c904ce7ff60"
+    },
+    {
+      "file": "docs/audits/2026-10-15-site-improvements/live-guru-publication.json",
+      "gitBlob": "6e2f55da670d2538808154a04b18a00a9b95a678",
+      "sha256": "73e9b0b2af79dc4aed5b1ff2b56ec44d3fd4d3e11d3465420f6386aafea39ca1"
+    },
+    {
+      "file": "docs/audits/2026-10-15-site-improvements/performance-after.json",
+      "gitBlob": "cffb738457cb70c78aaa7c0af4463509886dae53",
+      "sha256": "ff2fbf1f6518b1c32dd0d4802bc0bb95c111f0d6183becff120c4b1c22818601"
+    },
+    {
+      "file": "docs/audits/2026-10-15-site-improvements/performance-before.json",
+      "gitBlob": "575088391cf29136bf840975bd281e8a49778e56",
+      "sha256": "65fa6a78306d533e2daa462b58d4d541347987212619e8e7e9251fa325bceb42"
+    },
+    {
+      "file": "docs/audits/2026-10-15-site-improvements/performance-legacy-production.json",
+      "gitBlob": "f12c156717db20e3f3be86f0e68aef743e342049",
+      "sha256": "2e8c81e20c56a27a70dd9d3fc6a8dd1b74844936b51ede872d7c115d5512625e"
+    },
+    {
+      "file": "docs/audits/2026-10-15-site-improvements/performance-reviewed-after.json",
+      "gitBlob": "3a0bbbbb368adca4d44a7ce14589893cc0374a12",
+      "sha256": "74c18f0657a704813577b6860bcdd7b74e6ae60157e8f25b01ff076097b7f794"
+    },
+    {
+      "file": "docs/audits/2026-10-15-site-improvements/protected-scope.json",
+      "gitBlob": "814d28af82d660ff50404b45692592ad78224b0c",
+      "sha256": "9ca979c51593fc108fbe8b356bfc6af13e8253c35fcbc17a2ed7cffbe61d3114"
+    },
+    {
+      "file": "docs/audits/2026-10-15-site-improvements/responsive.json",
+      "gitBlob": "cb3dd64e0bff61e3d26811d4387896ced4f434fc",
+      "sha256": "86dd5b6fd7fce3e0027915a5bb1ffbaf8a89fcfac5ce92a240011268921e5424"
+    },
+    {
+      "file": "docs/audits/2026-10-15-site-improvements/runtime-source-manifest.json",
+      "gitBlob": "cad56117e948e3fee7bb83b19741e0c308d7a063",
+      "sha256": "9b78a29de02176f388bae0988f38b35285ba76dd1a92442c3bec99e94509c063"
+    },
+    {
+      "file": "docs/audits/2026-10-15-site-improvements/validation.json",
+      "gitBlob": "b645bfd41162ca889629be221ebf38e730240f38",
+      "sha256": "09fa88a41a746aa6e8768cc10464a95f503e5eedf4eaae35d26e539396518c0e"
+    },
+    {
+      "file": "docs/decision-log.md",
+      "gitBlob": "c2f5d39d9c06cce3d06f1b6f3de96f4a1e69b7db",
+      "sha256": "4b2f0307542610071c4db21ce20b9c62082642eb19c7dec258d403ff6bd92601"
+    },
+    {
+      "file": "docs/export-momentum-foundation.md",
+      "gitBlob": "91e690c62c6f32b89afb4b9c18fa43d4b95599fb",
+      "sha256": "5776d0ce1b92ae357c535c432f9d410495ff3fc682a39c8d88e4bf50cc222d7d"
+    },
+    {
+      "file": "docs/guru-investing-verification-2026-10-05.md",
+      "gitBlob": "ef8c0aecbbe5ff006f1021ac67c923b50e78aa10",
+      "sha256": "f59ef0533410caf65ea84a0defd528dcdc74b645664e28210e800e8d8d34147d"
+    },
+    {
+      "file": "docs/marketing/README.md",
+      "gitBlob": "5bfa86c824a802b25d031bee84248f4ddb851e59",
+      "sha256": "4c218f4c414e3450b4db79b7126f6a0914f8fd107c7cfda3693cfe3935c04ff6"
+    },
+    {
+      "file": "docs/no-repeat-regression-policy.md",
+      "gitBlob": "18c7448fdbff1aee66dbe8bcbdf61f672eb74815",
+      "sha256": "f0ca855d685131ec89fc5e04e5789b42e2574f0ec27d3498d9d953a6578b8da1"
+    },
+    {
+      "file": "docs/performance-latest.json",
+      "gitBlob": "93f7fd892b928a064eed7766f4051db06df46d99",
+      "sha256": "2f6a4ed471c3d64bc995f18e46ebd24eea996c5d43c9d67d498f4032dc710b56"
+    },
+    {
+      "file": "docs/performance-postopt.json",
+      "gitBlob": "48dc20fc63a14226caa32e99bb9fed39c097b6b3",
+      "sha256": "b44a51becbf5b95b3399717873b7b05e6fa15c02ccf694abebca46fc92b1ce06"
+    },
+    {
+      "file": "docs/performance-targeted-final.json",
+      "gitBlob": "057ea0356e97972e1210f01ef0cba5611533c3ad",
+      "sha256": "3722a1bd2d4670447113e6a99365c1c30350e622e8c4d87ac551e0218dcdff87"
+    },
+    {
+      "file": "docs/project-memory.md",
+      "gitBlob": "6c58c431d5b6c89accea0877a6cb663faa21ee9c",
+      "sha256": "c2c72dfc7a07747453bfa63c0fb305c51018a8974ed87f8c83f5c5fce981c4be"
+    },
+    {
+      "file": "docs/regression-guardrails.md",
+      "gitBlob": "ce845bcaa1263bad1fd6e29751bbfbb4f698ccc0",
+      "sha256": "ccf5e487494a92124f8c80f7c758c5368441a488b99cfee283400d1f1e1b8913"
+    },
+    {
+      "file": "docs/research-card-prototype.md",
+      "gitBlob": "8ea6c5fac1ab79bbf4203f1bee6778689f083678",
+      "sha256": "20d10de6bfab094d41b509ff9ed0eafbbc10e95a47e5dcf361ec357a0497de4f"
+    },
+    {
+      "file": "docs/superpowers/plans/2026-10-02-investment-review.md",
+      "gitBlob": "5a626032bb572d4c602b2f3185ff7208ab08b247",
+      "sha256": "540390dbadaaad2ae48c11a3b1f9d55d55703360bba90b393a470788944097cf"
+    },
+    {
+      "file": "docs/superpowers/plans/2026-10-05-guru-investing.md",
+      "gitBlob": "c029054973e4ca2aec0e2574ebe22ddff90882c4",
+      "sha256": "7e17f21e830914aa32bdfcbfb4e664cb8c0594800e33c8e76dad5c2d5295c4be"
+    },
+    {
+      "file": "docs/superpowers/plans/2026-10-11-user-experience-improvements.md",
+      "gitBlob": "60c07655a1f1f1e259e14c52ff7b2a77fdaeadcd",
+      "sha256": "a1b83a0033a1f64fb9e66e98d62da3926e387c7c4aa9e3998f06266a03d6f65f"
+    },
+    {
+      "file": "docs/superpowers/specs/2026-10-05-guru-investing-design.md",
+      "gitBlob": "6711c05bfa26e12c5125e4c02f17e7465d546355",
+      "sha256": "96835ced9b26f5f2b94524de2d7c48dfdc845b651bcab0d8e98234d6e38d3a3c"
+    },
+    {
+      "file": "index.html",
+      "gitBlob": "ee8f676fb82a8ff0d56fdc54cb4d9455e34e1f4a",
+      "sha256": "2b6039eb528791eded0aec46fac4570f53d58640009055583b9b2b047e388823"
+    },
+    {
+      "file": "package-lock.json",
+      "gitBlob": "8eaa572c6f18b9a07b12416139a55a15a9b6cefa",
+      "sha256": "c60d1453a66c974505aa6b4214f2605781108ca2b79d43c35b461dae802c369f"
+    },
+    {
+      "file": "package.json",
+      "gitBlob": "5cd84eb1364e08ccd1420a35894d1fc03aa5ba23",
+      "sha256": "cb70fcb51839c735b0bcea99062d6dd4f7ff2c0e7ee40272254a3dcae4a1d792"
+    },
+    {
+      "file": "playwright.config.mjs",
+      "gitBlob": "df3b859465110b21cd9f6b3b65f65001beacb5a8",
+      "sha256": "54ad328c4d616af8ddfde9880895829af523c9e13d50ada784ba9bac6ba2bb97"
+    },
+    {
+      "file": "playwright.live.config.mjs",
+      "gitBlob": "ccbd3ed144edb69f8e84a51a7d63365e959f467c",
+      "sha256": "bc984ccdc32b4cb1a4526c30056cfc4dba71d13d1b27c91a1977a5e383cb5ba9"
+    },
+    {
+      "file": "public/chartview-logo-600.png",
+      "gitBlob": "f5d4afa53c0d9176825ba350123cfa80e87d4a2c",
+      "sha256": "e2ea793bae13effd21b25c670a049924984c553ad575d7d1016be9ff2f875c80"
+    },
+    {
+      "file": "public/chartview-logo.svg",
+      "gitBlob": "534d88c235509966cadec1dd87999603ee318667",
+      "sha256": "a5f1baa4091c8833e7a5abb63e110f68f55fb8bcc4a0272183ad64714471ba47"
+    },
+    {
+      "file": "public/data-guide.html",
+      "gitBlob": "f6e67e8bcdaf3ff51c294434a108c508b1f3975a",
+      "sha256": "35df0fe1ba82cf89d3ffbbb9dc06d062fe3927bd023b10dfed325a56c04cba7c"
+    },
+    {
+      "file": "public/data/export-momentum.json",
+      "gitBlob": "bda9735cbaca6b04ecacc2da0507b0fad5b138ea",
+      "sha256": "3c8546ff930bc87bcf00ad654357f3b3445a336abe6dd7e5152fc331054faae7"
+    },
+    {
+      "file": "public/marketing/2026-09/chartview-toss-promo-clean-tiktok.webp",
+      "gitBlob": "f615fa7457aecab626f0d0a6c5f1b1ff164bd42c",
+      "sha256": "d8dc8daf489283df3a20e2f624f7c54c30759788e1bc6625085563ce4215096a"
+    },
+    {
+      "file": "public/marketing/2026-09/chartview-toss-promo-clean.png",
+      "gitBlob": "78ea19000a5eb22eb2e0e021d535266042c11390",
+      "sha256": "96ef3b12765461f6b61afcf6c660886f35204f16f299f065ad083cfb07ae9981"
+    },
+    {
+      "file": "public/marketing/2026-09/chartview-toss-promo-clean.webp",
+      "gitBlob": "c56113f0e0c3cdecfb7098aad6de8f45e7d9c912",
+      "sha256": "7fe3b5c10c02fd3dd7d44792b622ee8e9603919f5275003a8f6f76561c39f945"
+    },
+    {
+      "file": "public/marketing/2026-09/chartview-toss-promo-dark-tiktok.webp",
+      "gitBlob": "f2191b654454b3451fd55238491dcfd46cb00ee8",
+      "sha256": "292cf1b8986b98616d37f00d90ef8756197db0a0d70494390fea82def7b2fbac"
+    },
+    {
+      "file": "public/marketing/2026-09/chartview-toss-promo-dark.png",
+      "gitBlob": "8226cae15a52c4bfa7e0181a32d8e9b4dbb7916b",
+      "sha256": "44d7d75cbdc2ff3be61a11f9a314b0c8a7e3007c3ee946fbc67aa9cdb7d8eb03"
+    },
+    {
+      "file": "public/marketing/2026-09/chartview-toss-promo-dark.webp",
+      "gitBlob": "c2d19789eb6c50134c46b88140a98168c7e9b09c",
+      "sha256": "3737d6abd7b46e24fc1c78e2fe8bfc5bd43f3a507896402f9802da2f8b9a9bca"
+    },
+    {
+      "file": "public/marketing/2026-09/chartview-toss-promo-soft-tiktok.webp",
+      "gitBlob": "a36bce4ac8dff2fa6909bfedbb88637df2cf1d4f",
+      "sha256": "6773b2311ee1497b37d4ad4568843efd910afe1b4c3600163577cc054d494ede"
+    },
+    {
+      "file": "public/marketing/2026-09/chartview-toss-promo-soft.png",
+      "gitBlob": "48dbb253c1879464a827aa4d82158959445d09f2",
+      "sha256": "37b1077777c86c532b583b8952e4c5b905bc9eb6df91f4939f66360fcff3657f"
+    },
+    {
+      "file": "public/marketing/2026-09/chartview-toss-promo-soft.webp",
+      "gitBlob": "ff619fbf2a22f648cd28fe4ae12e95372d677216",
+      "sha256": "76714e8e9a55fb8540453e1dad32ba06b88c214cbdd5ff1f0e8d17c24aacc74f"
+    },
+    {
+      "file": "public/marketing/2026-09/chartview-toss-promo-story-tiktok.webp",
+      "gitBlob": "1b09e5981b86fce5a4ac81a6da07ddc04266e889",
+      "sha256": "387b3d9be65c7f516d1d761cb0fb6618b614cc3707561db1d96c7cf028c0f2db"
+    },
+    {
+      "file": "public/marketing/2026-09/chartview-toss-promo-story.png",
+      "gitBlob": "833b9ea5fc8f4811dc8c2960f6898f36710e36db",
+      "sha256": "7adbb0982bae71cfb694f04ef3944fabae89860f9df6d7aba4c9878953e226f8"
+    },
+    {
+      "file": "public/marketing/2026-09/chartview-toss-promo-story.webp",
+      "gitBlob": "7a43a27c32d8469e27f526722fd8589a388fc7f2",
+      "sha256": "f7c31ed44aacc3f17f7de82c7cc8d49a0385a50f9466b8a4fd4c1d2a2988b2ba"
+    },
+    {
+      "file": "public/marketing/2026-09/tiktok/chartview-toss-promo-clean-1080.webp",
+      "gitBlob": "8a49391032d4d5db9e8a270e2efc2a8c963310e3",
+      "sha256": "7c72b2f48213bf3810d0c920248998730e7383be14af390cac846f3d12de04b2"
+    },
+    {
+      "file": "public/marketing/2026-09/tiktok/chartview-toss-promo-dark-1080.webp",
+      "gitBlob": "1e69a68a67b763bb9c33ccb653d8132e82675c06",
+      "sha256": "17e4e0eed28b72ec797f6525fd8c651dd4d70d8c05f09542e9991e40a61533ec"
+    },
+    {
+      "file": "public/marketing/2026-09/tiktok/chartview-toss-promo-soft-1080.webp",
+      "gitBlob": "283eda25d425c1f0d517f8ea3f77d660d979964f",
+      "sha256": "22bed316079092479dd3b17ddbb43f3d044bcaa7f1aa3feb4e07e64986a53e91"
+    },
+    {
+      "file": "public/marketing/2026-09/tiktok/chartview-toss-promo-story-1080.webp",
+      "gitBlob": "a8c43d51bd8b3dfbe45d32d23bc67edf20f45561",
+      "sha256": "d46d829c2adb3efa3bc39bf981bee1bf297fd8342d26e84ec9951e0c9397ae8b"
+    },
+    {
+      "file": "public/marketing/chartview-toss-instagram-20260930.png",
+      "gitBlob": "21192bdd400e4d277e32ff0fbe76160dc70c531d",
+      "sha256": "5d1b74dd04158a46cfc74996c57687ac494f5143ae3f0f785345169062fc4aad"
+    },
+    {
+      "file": "public/privacy.html",
+      "gitBlob": "a2afc75f2e03726a9be19056e0d571a3a0a1e613",
+      "sha256": "7dfd8c78782af8c24cee69188f11cd7345787b44649a29a9408ffc248bfdbb34"
+    },
+    {
+      "file": "public/site.webmanifest",
+      "gitBlob": "8b7a46fa96425ac90d5d0d04230d7bad25a28fe0",
+      "sha256": "cf3c3db80db1bb3dcc0c5827f9a6898aa41ef64a4f2e3037c6c67c7a55d9e432"
+    },
+    {
+      "file": "public/terms.html",
+      "gitBlob": "810d4969b46e915046781f817cb51dad21c120f5",
+      "sha256": "215d664f570c607d3bc677bf5bf4541a6cc81d4ac4036f714bf5fee72f36399d"
+    },
+    {
+      "file": "scripts/benchmark-loading.mjs",
+      "gitBlob": "d4128fa566ae758200ee81289a779f4cebc0c971",
+      "sha256": "95f676275937cf7ea19b3290f5b5065307d963c5501625c86b04feb232b8ec58"
+    },
+    {
+      "file": "scripts/build-data-cdn.mjs",
+      "gitBlob": "efa843fad65cf4664a7f7c9b524f459e5062ed2a",
+      "sha256": "e45d3c39420c74a0e9678ee07fafd90ef9213a4f3faba70c355ce792b84dcee2"
+    },
+    {
+      "file": "scripts/export-preview-routes.mjs",
+      "gitBlob": "eea15e23175cbf3000048d56159648328b1d0a63",
+      "sha256": "885f000cbd47dc78d237f1d3ec5a4d5b52d717aca235f89dd7e6bf1520226f5a"
+    },
+    {
+      "file": "scripts/exposure-mobile-qa.mjs",
+      "gitBlob": "67e98e2b9d8c19839f4ca1529d4b2ff3f194da31",
+      "sha256": "d4780c7ed6468898f4ba36be2dea8d8a9207e425feb6669582add4d86123c6f5"
+    },
+    {
+      "file": "scripts/exposure-performance.mjs",
+      "gitBlob": "1dcd2a26501155798885450105f19f6bb3b0f868",
+      "sha256": "25fdea681dff62972e2ef97812e188d33660e22d8a87f6a6a74a4a741199f26b"
+    },
+    {
+      "file": "scripts/local-research-preview.config.mjs",
+      "gitBlob": "8668a6f5239c689537aba3c7d158c618a98af0f8",
+      "sha256": "685f3a666f7b140e9ebda4ea6b45023ac24bcc0cd310a2404ffeb4fbb3a47929"
+    },
+    {
+      "file": "scripts/measure-site.mjs",
+      "gitBlob": "0d8ba3c2aa737e5cd7aa6a2fd4059082f9b8d1c6",
+      "sha256": "c5c4b759944bfa65feeca1f897a6147436ac2157103ae18210b27e47c701d722"
+    },
+    {
+      "file": "scripts/measure-targeted-final.mjs",
+      "gitBlob": "d37015f7b7ce14ec8ac901950be4cedca9ad70ae",
+      "sha256": "1ba80eaa5dd8ef7c6bb9a2b20b3b6800c8ae39b81750fa44235ef4d69ae10985"
+    },
+    {
+      "file": "scripts/performance-harness.mjs",
+      "gitBlob": "478b3f1863009a9ad46136a1d4c1b9b6107c7bcf",
+      "sha256": "ec45e4616f5dbfdb63175b11d8a3b14477514a5f90cd342be60eae78b0ed55e2"
+    },
+    {
+      "file": "scripts/performance-outcome.mjs",
+      "gitBlob": "8ed092b89dbb233dfdb6047ecdd408d176c3bfd1",
+      "sha256": "0f082c645ba8f16a926d3bbfc511bdd419ed7fe92207588919311739a4eb9e98"
+    },
+    {
+      "file": "scripts/validate-render-sync.mjs",
+      "gitBlob": "7769439dca446d76044fcb576f189825ac2b5be3",
+      "sha256": "32daa14493c25da147a5c5ce0b5f750ddc347e51b0118a734ddc49c9dd0d6de7"
+    },
+    {
+      "file": "scripts/verify-protected-scope.mjs",
+      "gitBlob": "9608d40b0dfb3e416f96ebd69995af2f2d80ee2b",
+      "sha256": "56af60f231b635efbe10f198caf881a6716e40e3382b83ceb29fe6dfe3d85249"
+    },
+    {
+      "file": "src/accessibility.css",
+      "gitBlob": "89919ab92a74227a2e34e7ccf0af397c7a3c897b",
+      "sha256": "6f1b5a64a14afdd7fe0943d90c5306a539d0df99a676ede07e9137bef90c59a9"
+    },
+    {
+      "file": "src/accessibleTabs.js",
+      "gitBlob": "d523de8de4cdd8e63b973077583fa6471bfb5fa9",
+      "sha256": "bf32c175dfed52ea4d8297b2528c522c7de6cf7ac90ac4be4b884fbf7031ba33"
+    },
+    {
+      "file": "src/analysisData.js",
+      "gitBlob": "2f5d47632c40b582927fe7237e07c56ad2021148",
+      "sha256": "15daf507f7c868aea6e773863abe707faa245721e040646a37f2fdacc6446240"
+    },
+    {
+      "file": "src/analysisRecovery.css",
+      "gitBlob": "7fcc367bd57061a0683f632b149a456fb2ef1719",
+      "sha256": "d90f5ba066a798215454a22abe90c92d5fb3ef8d25af1ffc82962b43ce597944"
+    },
+    {
+      "file": "src/analysisViews.js",
+      "gitBlob": "a3708fbc0780ac814c205cdf0365bb24d5554acb",
+      "sha256": "f6be772a5ede861a64dde9a71685cc719228dc31f12f90b10525e42390ffa8b8"
+    },
+    {
+      "file": "src/api.js",
+      "gitBlob": "2ef992d157adc302a88d3dff50c9ae539dcd169f",
+      "sha256": "1d3461c4aaa509fcc721543d9d88da842337cd74c9766742969f14a22aab49b5"
+    },
+    {
+      "file": "src/auditExperience.css",
+      "gitBlob": "20560725f8f7cd774a499d99a95235234a488f2c",
+      "sha256": "d6856a93d025610c0488f1173197f1a690068a4b4a5989d7d206972a06bc7aa3"
+    },
+    {
+      "file": "src/auditExperience.js",
+      "gitBlob": "ada38decf49e029abf5cb0509202a4b5ce1e2ca3",
+      "sha256": "d21d332de55ee8efe5108f13f221636d10be0fbb854c07477749c418c308f141"
+    },
+    {
+      "file": "src/chartRuntime.js",
+      "gitBlob": "c42bf7e91ef8bb70c8839c5a2d30fe3bb926dce8",
+      "sha256": "9f11b7ea68dc7f755dfd18a85cd5ea233782a79d5fa552343b2802e02a3ad327"
+    },
+    {
+      "file": "src/dataPresentation.js",
+      "gitBlob": "03b2e50c2d0be18fb2aac56aada28ddc1b9a9ea7",
+      "sha256": "ea913dadc3dffe66e9ed1a68705abf4d1edcb6541e2c9bfa9d09160b9f35a844"
+    },
+    {
+      "file": "src/detailModuleRecovery.js",
+      "gitBlob": "e285d7802946a263a306fb13fd9ceaf9f80834ae",
+      "sha256": "1ede8bd259b9667d103265f8bad3983b4443b5106420955f74d2dbb01a8f8b8f"
+    },
+    {
+      "file": "src/detailPresentation.js",
+      "gitBlob": "d5b298aff42faf2e482928abee1f5453eed99533",
+      "sha256": "5eb63c58a9b10e6d5197ef9ee535968abda355312b670e1c6eb45b7cd5c9bc62"
+    },
+    {
+      "file": "src/detailReviewSummary.js",
+      "gitBlob": "718d69d5d3bf5160721c9c8154b8b8225da8cae8",
+      "sha256": "59fa988987d81e92f89ac0a712a6abced82201576ba584941e0df253273a84e8"
+    },
+    {
+      "file": "src/diagnostics.js",
+      "gitBlob": "7ca697cade21902c80deec3f1a0f14015303548e",
+      "sha256": "84106ef5488552b0dacaf71bc6287f4a754bf27496d6f8313461c5d464a30912"
+    },
+    {
+      "file": "src/emphasis.css",
+      "gitBlob": "0b030886613d66783f7633404d8ec2e0c17e0fa6",
+      "sha256": "3c899b5c3e239ac014863737e3a908e8bdff9e38c20fb8aaf4f4e66dcf56588b"
+    },
+    {
+      "file": "src/experience.css",
+      "gitBlob": "abfb36d109973ac2085648ba1f23bdec71f5c5a9",
+      "sha256": "8def0353507d5d02461170d9e186e9ccd209535344944706355d73e621bee1fc"
+    },
+    {
+      "file": "src/experienceState.js",
+      "gitBlob": "75a91a4a2abfab25d22eff0b1d83a706b1486770",
+      "sha256": "d5293c897cbbcae82457d982055e9027037e438047338a2b7cc7fc53b6abe377"
+    },
+    {
+      "file": "src/exportMomentum.css",
+      "gitBlob": "089a27c3ab3420f8494f77e94ba7c54dbbe59c22",
+      "sha256": "f64b20984f2ae7bc56420eed99ba39d18bf01a7193245c1b8d9f9459332a4c2f"
+    },
+    {
+      "file": "src/exportMomentumData.js",
+      "gitBlob": "d95a1b5c4b307ccc4d675ad6025bd79087c69e4a",
+      "sha256": "31b229d07a3e629cc1f6ce1d67db13cdf3f05cc0facb305ab874cd5a4ad8e8a8"
+    },
+    {
+      "file": "src/exportMomentumModel.js",
+      "gitBlob": "29083a3d1cd252549500ea55900d49145d704a60",
+      "sha256": "3dde7fec786e544182d05f6b52b265f84264efa91adbda3b0b2fe40b893dfc51"
+    },
+    {
+      "file": "src/exportMomentumView.js",
+      "gitBlob": "5f8ec2884f5b2b095f9bc65d1487bbb53585192b",
+      "sha256": "9498e79a3de38a3fcb852f19a4a3208aa494918661502bd93e78fd3d72e682ce"
+    },
+    {
+      "file": "src/exportProvisionalDigest.js",
+      "gitBlob": "a8cc6c9b5b5c53e79152d6715b65aeb402471541",
+      "sha256": "cad5da10fb632105dda60f915841547e460c7288947c079fcba6a3c12a20edef"
+    },
+    {
+      "file": "src/exportResearchView.js",
+      "gitBlob": "859e79281ca6e7333a6e87e440ba2a0391bce752",
+      "sha256": "ffcffc63b9044ae225dbea92fd7e42ecd9e82b83cbe6490b1da0f5f62016874a"
+    },
+    {
+      "file": "src/externalLinks.js",
+      "gitBlob": "36523038249b06a2f7b8408f8d79a28dce389da6",
+      "sha256": "db672b7500efc72469ef4b8f7852a80fed1891b484430ae8a14d65ccdd76fdaa"
+    },
+    {
+      "file": "src/filingComparison.js",
+      "gitBlob": "ac72c73e12a4b5932c928e07fb1b00c936e23909",
+      "sha256": "84b3c8b0fdc7fda35b48b8bb747951756975730d5298b2bf58189518e083afa6"
+    },
+    {
+      "file": "src/financialHistoryView.css",
+      "gitBlob": "89de063885698fe157263cd3d2954d27a6319a6a",
+      "sha256": "4c32984eaf513b9ee923d2061ace40c991cef2e5257ddff9a850da4655bd40d5"
+    },
+    {
+      "file": "src/financialHistoryView.js",
+      "gitBlob": "ca1388f7cfb98bbde12dc641ebd69238ae162de2",
+      "sha256": "88b591cc032cd17eb3071a4432cb37c7d40b3cffe729fe90e91ed13425e2c6bb"
+    },
+    {
+      "file": "src/financialQuality.js",
+      "gitBlob": "6fb5fb297b3d5841b660cffe07daec0e95a69e9e",
+      "sha256": "cff0ec1af2480e6d2bb36633ff254bad16d0bd32f1bdf07c9791c9ae60c304dc"
+    },
+    {
+      "file": "src/financialQualityView.css",
+      "gitBlob": "ce27652b28efb87e7469b8d171eb4a390a6260fc",
+      "sha256": "4913b458c700ada02695fddbb0edb9e431dfdb84462e77b31e8ff527d5288c22"
+    },
+    {
+      "file": "src/financialQualityView.js",
+      "gitBlob": "5ac05b882a4ef8ec513814b5c6cf301e6b56281f",
+      "sha256": "5af9361622b235b173575914ff7a48b9874124b99b6dc3d2770e5fb77fcb126e"
+    },
+    {
+      "file": "src/fullHeatmapSnapshot.js",
+      "gitBlob": "527ec66103a776a1743c586de7971aa2d8257c89",
+      "sha256": "a293ba14837d5003bec53af6e73cb3899f89ad1699e12210c0ac04c9c0d989d4"
+    },
+    {
+      "file": "src/guruEvidenceSource.js",
+      "gitBlob": "793e4c80f54ebd8005ebb91c888ac30e78b90f69",
+      "sha256": "254e2974b6ec490c19ee6991f083d98917093ac5dc1f692738b3aa24ad108680"
+    },
+    {
+      "file": "src/guruInvestingExtensions.js",
+      "gitBlob": "7bffd69bd4106102032e789aea6c53a60220542b",
+      "sha256": "a2f22cba7d7fae8c7a7aa4b66d8238ee0875fe5bd7846d0a197c4f13bc8f3e99"
+    },
+    {
+      "file": "src/guruInvestingModel.js",
+      "gitBlob": "24a37558db883575a0e6a67f40589f2dbe87b4db",
+      "sha256": "acdbf74e4126ff9b1e9515492adebdb74610678e6f850726df999ba0894319f0"
+    },
+    {
+      "file": "src/guruInvestingView.css",
+      "gitBlob": "ff9789f02956ada28ce08caf1a5774852dbad1fe",
+      "sha256": "6eb414235c3d8dad0307df4905a7676702e907ece13173a73c5dd0217f4a798c"
+    },
+    {
+      "file": "src/guruInvestingView.js",
+      "gitBlob": "f9f7dcb275086ad17ead64857a3b3bc5784782b3",
+      "sha256": "0a849aa0334ae02597fdce87fc247573624ba30358b4af024311ed690dde221e"
+    },
+    {
+      "file": "src/heatmapAlignment.js",
+      "gitBlob": "40c10efc6dfbd87cdb3e7dba0482b4e7252288da",
+      "sha256": "f793e71d292edcdf6dedb8b85eb58dc5d2267f3721fbfbd2da2e05376f1b2f96"
+    },
+    {
+      "file": "src/heatmapView.js",
+      "gitBlob": "211586053b8a3ecf2cae5995e6f0d50c33f3ab79",
+      "sha256": "395aacd0e44f6b6bc3c73d85160f4f0dc4d293cdb0a404c7d00fd78e6b0a16a4"
+    },
+    {
+      "file": "src/homeChangesView.js",
+      "gitBlob": "ccf6334cbdd0b0650dc5025e2f7c079596604dc3",
+      "sha256": "ccb1fe7abe7345b2b2af6867415f81c5d9f627a5b6bb69d74a0a53fe4ef5119f"
+    },
+    {
+      "file": "src/homeExportPreview.js",
+      "gitBlob": "41790f7c13a6b1969cd6ca70c896c3b449343e17",
+      "sha256": "75d51c0dc9d1302323d5e74697a5e2b0a7888eaccdbedda0100af67e852899a5"
+    },
+    {
+      "file": "src/homeExtras.css",
+      "gitBlob": "1fe3a03e91f7c7ad03e0d764a36a9d57569bbd42",
+      "sha256": "44818e612a2e4a58665e357be82f5431812ea9d8003aea7eb310399cd1008ff9"
+    },
+    {
+      "file": "src/homeExtras.js",
+      "gitBlob": "31786eed0c3891170767d022375b16ed761b1f07",
+      "sha256": "f8ed43a7abb7e2c84527540d143f3eb0b794fefd584dd322863eef36d337b04e"
+    },
+    {
+      "file": "src/homeFastCache.js",
+      "gitBlob": "0005f5aa71b51c3be8b16b63a431cafb66fe04dd",
+      "sha256": "fd7e73dcee092d02ef4fe9d736a8c24d6531515f667e12ebeff0593e725e83b3"
+    },
+    {
+      "file": "src/homeGesturePaint.js",
+      "gitBlob": "d4787d4a84ba975122b3c64bab915500e1c638e1",
+      "sha256": "a1ee294565de0f3a29056f1d52627f30efca6067c3b3f46498bd322a9665009a"
+    },
+    {
+      "file": "src/homeJourney.css",
+      "gitBlob": "3ef854adc26a6e697b384a788187d7aa48a0a7f7",
+      "sha256": "63984a72b942c35bb9a1c6e4df0dd09d2b159c0db6d386e506441e23873269e9"
+    },
+    {
+      "file": "src/homeJourney.js",
+      "gitBlob": "933b3c34dbe1dcc4ef2b33bf281a667eba1c016f",
+      "sha256": "cfeebc5f860abb63a8b51eacf5afe8796c0da7f141fbe9b249454afdcf7ac0df"
+    },
+    {
+      "file": "src/homeLogos.js",
+      "gitBlob": "5fe842b1bd76426aca28d1c17688bf54929d4225",
+      "sha256": "be5c28f222ffb09923e4ec420920c391f340445a740af0e2623c2cf7b791a0f2"
+    },
+    {
+      "file": "src/ideaEngine.js",
+      "gitBlob": "79eb7ea5ae2f7327e9d12e800aa7f50fc8c625bd",
+      "sha256": "4ef2a9784a99e32be72850ce2747a6efc6dd97832f1d4d4dedd8b61c6ccbb85d"
+    },
+    {
+      "file": "src/ideaView.css",
+      "gitBlob": "c527b916202e4dae12aeab34ecbc3854bb710370",
+      "sha256": "14ac36d3fca2c7fd995bf4fc8b8621bec88b8d1d51a2977405da0e77d2d692b1"
+    },
+    {
+      "file": "src/ideaView.js",
+      "gitBlob": "4bb896eb29634aec7bfc7963d00b8c7db877ed71",
+      "sha256": "e7266c2e2647343b1e9d01419b931e8ec2b9662d97436477812cdc8897314ada"
+    },
+    {
+      "file": "src/industryContext.js",
+      "gitBlob": "138d296ddb3326c53ecf6eb95db55a8064ca8a89",
+      "sha256": "7a0dd7a884ee869c5f92677f89f7ebcd9eb62fecdc7ffecf966c307633e4176d"
+    },
+    {
+      "file": "src/industryContextView.css",
+      "gitBlob": "b659e04946e8c33b05c0fc6f14c7647bbdf8a2b9",
+      "sha256": "d7ffbc567078f8b53d30937f1e6cb7e7ce4bf494187927e86ab667d66615a05e"
+    },
+    {
+      "file": "src/industryContextView.js",
+      "gitBlob": "d2bc880f5cdf538e1ad01580a2f8d2fa2c25c9a3",
+      "sha256": "20a8fd2fb213a8095179c144496e9ac05a3c70938e5880f8a24e9193dde5d027"
+    },
+    {
+      "file": "src/insight.css",
+      "gitBlob": "bd6b15603d9b57fab29a31c43a73f75cb4005a3b",
+      "sha256": "50d37dd30272d526551b1a71efc98e0e4428091b059aa81af7ada2121e002ea0"
+    },
+    {
+      "file": "src/insightModel.js",
+      "gitBlob": "74d227544580559ae309bf0dc99d0b7d41d7f3fe",
+      "sha256": "9b7b68b1b7a5705811b0e22fcd648da347fa35080b23e5df1329d46c58d2276f"
+    },
+    {
+      "file": "src/insightView.js",
+      "gitBlob": "29fea74e384cadeef468dcf7b90f4f50d13ca79f",
+      "sha256": "c5287115936fe25c675dbf339a62c7fcdadaca38a46c4f2001bd0625a8f97f21"
+    },
+    {
+      "file": "src/investmentReview.css",
+      "gitBlob": "cbd2483c899c2e463eee43f27bf03395b91d0a7b",
+      "sha256": "58fc1380226c2253091e5a7d69dcdccf7d70acb0a85c2272cb983a5ebba58fbb"
+    },
+    {
+      "file": "src/investmentReview.js",
+      "gitBlob": "45538fd97f46e4908178d0b95c44fb69fea3217d",
+      "sha256": "4c82ad8e992c362d0015f72f3f12572d73de0f933d8f660467dbf1e900200e8a"
+    },
+    {
+      "file": "src/investmentTools.js",
+      "gitBlob": "645e1c39301d1f2479fe1c89b9e3487599fc20ff",
+      "sha256": "6fc7df9edd5713e6c904b0a0cf7727a8d89a83158a7b7b79dad3bc6f0a55b474"
+    },
+    {
+      "file": "src/liveHomeSync.js",
+      "gitBlob": "0c3fe9a05cce545c065012f6fd834002beaaeabb",
+      "sha256": "973820905e1d7b5567c793b9b33ce3873c1ddb2e6853d12efce526e908868c0f"
+    },
+    {
+      "file": "src/liveQuoteStore.js",
+      "gitBlob": "0873dce95092acd5250d739c03d55bc1bbf42966",
+      "sha256": "20f5edd399b92b12a16ae4839c3367bb906effbaa11847cf9760ad75b97565e8"
+    },
+    {
+      "file": "src/loadingView.js",
+      "gitBlob": "dcc7ce534274936d24fe89c58ca536c38abac1ab",
+      "sha256": "6aa8a6fb2ea3c20bb20828745229eab1416ac82428527761e025b346d938a8f5"
+    },
+    {
+      "file": "src/main.js",
+      "gitBlob": "5c3946bbc40da0b02b3508714204deb350005a02",
+      "sha256": "8546a495e803badebfb69fe52482677a72bfcc61a3168f14b770ba96f52ecd12"
+    },
+    {
+      "file": "src/marketMap.css",
+      "gitBlob": "bbf88fcc007dc98fc8ac0ea75ee2fe44bf1b025b",
+      "sha256": "0dec50017c7d2419cb3eba474750bdef0ba6fe3ed85d110eddb6e5cc7cdcef44"
+    },
+    {
+      "file": "src/marketMapView.js",
+      "gitBlob": "4ad393548e81a6695fcd974e471a5c0992e72c87",
+      "sha256": "625141ac4610efd0513a3b2a689243a0b8e1875f24cd0b975d6f9e47d069bde5"
+    },
+    {
+      "file": "src/memoryPriceView.js",
+      "gitBlob": "c250bde9f81c4bd45a75bf692bfb2678fb84becb",
+      "sha256": "e5eab39489882d7d0c147cef06b51c4d1653c74d58bb162621a4c732c6e8e001"
+    },
+    {
+      "file": "src/memorySpotView.js",
+      "gitBlob": "e0ba8b3435ba6955864d72866962c598f590e7da",
+      "sha256": "aeeed2959b749186b96564ce6813a2f880a172ffb981fd8bca0a53e31c6a71d1"
+    },
+    {
+      "file": "src/mobileContinuity.css",
+      "gitBlob": "627e4008dc9272b07dfacd78d84af473d8eed2e0",
+      "sha256": "00588d137863f8ebf9fc21c7c99823686b6070bdefe991bc5492d38675a42377"
+    },
+    {
+      "file": "src/pickLedger.css",
+      "gitBlob": "2a636498f98332b06ef6be0250f21e66f0ddf6f3",
+      "sha256": "1a25401e200035ff7a2c791d0f8d4ea119e9cfc77b906bc99fb8140abcb331a2"
+    },
+    {
+      "file": "src/pickLedger.js",
+      "gitBlob": "9441efe46df5c27a05fefa24843941d9424df354",
+      "sha256": "2cad685b7355e805cdf17480921d9bab5866dc29674c7d3cefeadf105d840644"
+    },
+    {
+      "file": "src/pickPerformanceBasis.js",
+      "gitBlob": "94111f8c294e60662e425a384dd2a0a02c6de89b",
+      "sha256": "b9bc7ca271266491d807714f91a478fbde98913d78953c4d97a2f3c4def92fa2"
+    },
+    {
+      "file": "src/quarterView.js",
+      "gitBlob": "558e20638620e6e2ce8be9577762a3a4fbb7e668",
+      "sha256": "cdeffaec1ed8ad507ff3238019d8de1f6d0a545ccd22272809a7ac9455ae9f79"
+    },
+    {
+      "file": "src/releaseScope.js",
+      "gitBlob": "96011be81c74344a87aeb649a75128dec8ed4acf",
+      "sha256": "a16fd068e1184f4b5aeac4a07a825193d0efb400cea869a262f17b5d0ad2a753"
+    },
+    {
+      "file": "src/reportReviewView.js",
+      "gitBlob": "ada0e9f6fd0dc08c0ab095355f3fbf3dd820380d",
+      "sha256": "e908dfa5f06aecfbde8ca4533a1a962c48b9be0e60f6c8ce11f933fa18bde89f"
+    },
+    {
+      "file": "src/requestClient.js",
+      "gitBlob": "efca2278d08d95c7c7e95a7ec93e3a9e7193b21f",
+      "sha256": "37c58b036c6e5364333230fbc4b2b45d73cc0c2ea05d39ad25f7b455b6f076de"
+    },
+    {
+      "file": "src/researchAnalysis.js",
+      "gitBlob": "b6c727deb86dd687b1964667f83913f25d10237d",
+      "sha256": "294e52ce15e86b61f1db0e24a052f6d42510bd8898c32702be2bb85a54d132a3"
+    },
+    {
+      "file": "src/researchCard.css",
+      "gitBlob": "e15f15d0cc701f18a8c00386f2396818851cd0ed",
+      "sha256": "5591c04af9d8874ae1f5e8e51b375e03f8a6a3f5b49dd16d8927fceae859a742"
+    },
+    {
+      "file": "src/researchCard.js",
+      "gitBlob": "0033fb621c05694a923f164e617b897ea6550763",
+      "sha256": "1fb8ab508c84d9b9c8b0def3f7351911d14cdc711351cf2b4a65b4cd4ee1988c"
+    },
+    {
+      "file": "src/researchNotes.js",
+      "gitBlob": "d16ee191acf3f89cf20825aebd2ef2d718e2d2ab",
+      "sha256": "ca721ca7535c304a915c97d3c0f7c130c1044c931607778eb37e9eb23b62b386"
+    },
+    {
+      "file": "src/reviewPrompt.css",
+      "gitBlob": "119d125c64ded721a23369491a0f4b27dd767d09",
+      "sha256": "ffd2ed618a7d204e306b07411d95a65519a56ff910de46498c3c417aa0902543"
+    },
+    {
+      "file": "src/reviewPrompt.js",
+      "gitBlob": "d086cde2f40ec7e3038a1b7d3f5f42e8bc132472",
+      "sha256": "bd0e2a9d609d085a949da93118219b43df019a26b1b8155e7aae1be4d0e7851e"
+    },
+    {
+      "file": "src/reviewRevisit.js",
+      "gitBlob": "36e310c7cf05ff4548e342c1c83bec3e931a1dff",
+      "sha256": "255762e99b0f3b9c8d189e25b1cb7fa2fe000a060cdd0a3024b45e33354d1a3a"
+    },
+    {
+      "file": "src/reviewStorage.js",
+      "gitBlob": "8b3751ea5fa2f46f088c1bb6713f8104e33c2a79",
+      "sha256": "2733024c4645367eb109b82edb739c0d954400217612af9422045353e952679c"
+    },
+    {
+      "file": "src/revisitPreferences.js",
+      "gitBlob": "40f44ae675e8e2d9d998739576aae22e54897790",
+      "sha256": "cf4996f0c15b4e27e327183bec1dfae52c72d3dec0afa3e161f6e28f6f9eb7a9"
+    },
+    {
+      "file": "src/revisitRefresh.js",
+      "gitBlob": "04996b50e0a2157a2b97b204a8ee4d87d55b1dbb",
+      "sha256": "42284c1caba0a00e20a1c15c2d36f3ed3ab099495293f1c6b0a74c11c00a1ecd"
+    },
+    {
+      "file": "src/revisitStatus.js",
+      "gitBlob": "5112e426211714ad93d1809c6e29f22412d2b542",
+      "sha256": "9e6f5dd901462f624577c72a27d99a8045bde405ad535e0285a478ca9eb574bc"
+    },
+    {
+      "file": "src/routes.js",
+      "gitBlob": "fb2406c46f1019b42db746e140eb9cd2bdd8a624",
+      "sha256": "8dde36c50a5b911e5810499e2ceb307c25af0350187f3b533ed1c82d1fa2f626"
+    },
+    {
+      "file": "src/savedResearch.js",
+      "gitBlob": "5c2673247df9f5eb3bea87c6eb6b26622a81bd0d",
+      "sha256": "5c55a59d2d7e1bcaac7463a525ca6f5a5db9d9996f696d91f7ec85a2f40763a7"
+    },
+    {
+      "file": "src/savedResearchView.js",
+      "gitBlob": "83e2f69fb8d6e8969ca4a1c9cd2f54ae9094634a",
+      "sha256": "02ae096f5d4cec9167816fa2c12fe3bc3c3ce697bdb8f46aad061b60c6592aa4"
+    },
+    {
+      "file": "src/searchIdentity.js",
+      "gitBlob": "d4d0a9828e03bc11243fae870f189e3f1e77676b",
+      "sha256": "a2152bca55ef539887948014355de2d3a5d0b644e9a68f16d246c801ccbdfe04"
+    },
+    {
+      "file": "src/sectorHeatmap.css",
+      "gitBlob": "8a2f458ab7884d9a51a2635754416f491c90c44d",
+      "sha256": "9d147db6bd7e997d0311def923ec5eb6e34d61e6d8a11c4bf6345dded778fe2b"
+    },
+    {
+      "file": "src/sectorHeatmap.js",
+      "gitBlob": "3dab393d1b6750573cfbf14ef05b9ce1d89835d2",
+      "sha256": "f5a527c8c4f9e408cc5b9d2d736b47c28e1e65bb34b4d8a6d687406aea74cad6"
+    },
+    {
+      "file": "src/sectorHeatmapLoader.js",
+      "gitBlob": "f4d6d85f33eebc5832dce16a97e17cb3a0995652",
+      "sha256": "fb06cea66ff04a5b2ee791aede8de46e235b0cdc1e8b56dd74b09929fe3c05f3"
+    },
+    {
+      "file": "src/sectorHeatmapView.js",
+      "gitBlob": "9748f89a51d566f8063a80e9f1888c394c9fea1e",
+      "sha256": "0d36923b77e04f4bb2238a8f4dc02034fe68b340d4ee1d5ea9c23b0234426c28"
+    },
+    {
+      "file": "src/staticData.js",
+      "gitBlob": "0fbe6d43f24420168204867e94c86d7faefd6078",
+      "sha256": "524e340f5ae60b00225a44669ef6ad28ec370d1450c213e434259993ba9d96b9"
+    },
+    {
+      "file": "src/stockSelector.js",
+      "gitBlob": "f082466e3204916f00d055990f0d949148d125b3",
+      "sha256": "1473d8b3460fcc97d1e5c545ace0e5c322c87c1ba308268ef12790d87a776723"
+    },
+    {
+      "file": "src/storage.js",
+      "gitBlob": "8fc357a8efc63b36894fb9c74a593f148ecb0296",
+      "sha256": "d83479e2200a36f20c903f7c18028ba868a7c1e5a19a61b0dde98f64206e4950"
+    },
+    {
+      "file": "src/storedLists.js",
+      "gitBlob": "b554bec21c48a78ae2b090b178ca151d1c6927af",
+      "sha256": "ff988a29bd0c9e67766263fff1e7ef44b1656f9cad16ff4f3b8ac93165a16117"
+    },
+    {
+      "file": "src/styles.css",
+      "gitBlob": "ec01fdb4d2d8fe592bdc89636b718853a2dda870",
+      "sha256": "0e3396d1038b15130ee3d83bd8f05a45f1a81299b85490823a43e6026e1617de"
+    },
+    {
+      "file": "src/top10HistoryPerformance.js",
+      "gitBlob": "adbc24378f4368a864748d47ffd68d475677310b",
+      "sha256": "b03645b9c5b63240c2eee1299820176cb3d071069804773db50e19edd69971c2"
+    },
+    {
+      "file": "src/top10HistoryView.css",
+      "gitBlob": "fade80adfac04eaac757c70a1d02b9cc5758931b",
+      "sha256": "00a1653dc383eff4ec14328106e411df0bcc8ad3793b40460d55cd63b25349af"
+    },
+    {
+      "file": "src/top10HistoryView.js",
+      "gitBlob": "fa0b08c83334bb0da1b4ce23f836d51560daf32f",
+      "sha256": "04b09a4638178547e910d8781a8dfed093e57f6836f875d8e47e41034a0e824c"
+    },
+    {
+      "file": "src/tossBridge.js",
+      "gitBlob": "aaf04d751d94fd045edb6483d5e8ad0edd8e88c0",
+      "sha256": "690e6f3fd0faad6744bf2e6cfb655e058dcbc47506768637e1d2fb77d1db6432"
+    },
+    {
+      "file": "src/uiExperience.css",
+      "gitBlob": "19a5ca38123b83c5c52033b3ec7a187ccabd3140",
+      "sha256": "797793c1d067e0ffb71aae2b5140c991583c569e79df5ae577f744e12dfa78c0"
+    },
+    {
+      "file": "src/uiIdentity.js",
+      "gitBlob": "4252f8c8fd120aca64fd321cbc2349456b098b10",
+      "sha256": "e014e90ff7ed0941f8a461cdbc093374f6663e35fdf953ce90902153490c0de6"
+    },
+    {
+      "file": "src/usageMetrics.js",
+      "gitBlob": "2110788ec942feb6690b708c5519f55f25e42390",
+      "sha256": "3c4e65cbb7e4284b3e7bf93f386b13fa79c07087da1d850aa3bc6f4fa19765ec"
+    },
+    {
+      "file": "src/valueDiscovery.css",
+      "gitBlob": "28d279fd09b5d702ea8d07c172d17bf4cfb8f571",
+      "sha256": "a93e3791ee9a343fc53d0a3cc1c3a25bba0c960b720f201bd4a168f4373454e7"
+    },
+    {
+      "file": "src/valueDiscovery.js",
+      "gitBlob": "4df37f0bdcf4bb62171a85608207213d7a886658",
+      "sha256": "29ac9d3f16f45244fc3579f904e4ae90a6eea163401915b71eee06c3f7fc252b"
+    },
+    {
+      "file": "src/visualIdentity.css",
+      "gitBlob": "1b01039155b9970e999468c51793f6c9875b746f",
+      "sha256": "451acfcdd82b3e09835793f18e635918417ca9190278b03d65a725de959a4bb2"
+    },
+    {
+      "file": "src/watchQuoteCache.js",
+      "gitBlob": "048a96ccdc81fe5cd850f97297504fa14ac15f14",
+      "sha256": "4c42f8123e6ed7a6dda30c16b6fec19747e1157725f33e04ab24c0893fc109dc"
+    },
+    {
+      "file": "src/watchlist.css",
+      "gitBlob": "f29bbd31ebaeac2e38cdcd235bb1761af35e76b8",
+      "sha256": "d1d492d3c197b442bc4a23cb86e5163b0cc5bd92ea46ce71192db72ca55abb97"
+    },
+    {
+      "file": "tests/ait_contract.cjs",
+      "gitBlob": "7c52f9fcb634d46f52021c283b7c158570ffc11c",
+      "sha256": "3ce86f7802e4c9d7009e9e3c7c4a2556e80f079ff09748c30e819da3ff182037"
+    },
+    {
+      "file": "tests/analysisData.test.mjs",
+      "gitBlob": "87941d0869485f282ea30044bb68e123ef742310",
+      "sha256": "8b49b888e51250a16ade54fcab01e4870f36c2c30ab7aecd83024a33594da7fb"
+    },
+    {
+      "file": "tests/analysisFeedback.test.mjs",
+      "gitBlob": "242feb0e9455e14b1315967f5591b6c8879c45b6",
+      "sha256": "7093727caf06ea13906e8bd570e6c3365fa4ce0bb30ddb3106830e22eb1709b1"
+    },
+    {
+      "file": "tests/analysis_qa.mjs",
+      "gitBlob": "124d4a4e7df18d79d1a9c220587f7797fce91c70",
+      "sha256": "997ecaf8e6b5db723e924ee8521eb55ddccc1ec3b642ef67d8eed19fec47dff4"
+    },
+    {
+      "file": "tests/apiExplicitRetry.test.mjs",
+      "gitBlob": "1506549e75dfc5170fbd162a61c6f5b58b3ab7e5",
+      "sha256": "e27ebe591b74316c7b5ebe4f4c61300d1df9bd7c76d9189a512f50c58b641880"
+    },
+    {
+      "file": "tests/auditExperience.test.mjs",
+      "gitBlob": "dd4e516b46914e68e64b0359c174ec0875899c8c",
+      "sha256": "5e7e76067217dfbb2b943b974b05c4a0f14fa9fe0db23f260724646801e22009"
+    },
+    {
+      "file": "tests/audit_plan_qa.mjs",
+      "gitBlob": "a0bfa3c1756a997c1202fe00f68e9dca868cc074",
+      "sha256": "8db2a89e501b5dd87358dc44ba5cdd4accfc77f00f60a1df6b26652677f83254"
+    },
+    {
+      "file": "tests/capture_release.mjs",
+      "gitBlob": "2590e85a2c52904ec6266040eb75415b140c0e90",
+      "sha256": "1e5ec3fa0ebebc34986c39ede8a3e9607b7166149c237dfd1046ec781b880e64"
+    },
+    {
+      "file": "tests/dartBusinessReport.test.mjs",
+      "gitBlob": "f41251571331ac75137bb367130f1abe1e7ea3f0",
+      "sha256": "fdfbad2c7796a45145f87a3deafe44c1606c21c136d6917968f4666c3f09efb5"
+    },
+    {
+      "file": "tests/dataPresentation.test.mjs",
+      "gitBlob": "a789f3bb58dbddc78d4da4257ad16e82dd0230c0",
+      "sha256": "69e0c5d83bb797b6cbf7f9cbff198d99305dbf5e1111bafa5b37b68ae4a86a55"
+    },
+    {
+      "file": "tests/detailIndustryContext.test.mjs",
+      "gitBlob": "f1a90bca96052bfe3d097930b6e5c3d721e80399",
+      "sha256": "5c1b48d1ec06c1610492f8ea031227ca0eff2fa5302a820c4a99f3f125d9a459"
+    },
+    {
+      "file": "tests/detailModuleRecovery.test.mjs",
+      "gitBlob": "fb0681a41db11e45a85dc53372f7dab6c50eb145",
+      "sha256": "d398740a9b84424d2e8a9f913b2355da9a0764934afb1f6c62e22bea3d23d427"
+    },
+    {
+      "file": "tests/detailPresentation.test.mjs",
+      "gitBlob": "1eeb852bfd42cabfe6a0066b743307f775590b2b",
+      "sha256": "78c0a1869384c20e67249676588bea0413633a32b1db074e69ad0958466e6e8d"
+    },
+    {
+      "file": "tests/detail_quote_failure_qa.mjs",
+      "gitBlob": "6ec57861103731f56a0e61d83e49a477937d3546",
+      "sha256": "4ef51bf8dc2e137081d33b2f8a3a205dec91b9e0cfa769610bae2d334322a42d"
+    },
+    {
+      "file": "tests/dram_spot_view.test.mjs",
+      "gitBlob": "0ef8cd3a40f79dbc7ca0af5c7f85bfd6829907cb",
+      "sha256": "d670e73fa0226b2c54b5964ad700d9dc9894cfa5aa6ad611453a09e72e707726"
+    },
+    {
+      "file": "tests/e2e/accessibility.spec.mjs",
+      "gitBlob": "23fe2db7e6374533af2fc84bbdc7cbe8d95e6910",
+      "sha256": "e9032dbd15190a0a3362c58f0427ed637386399e177d573690281000a21b07f3"
+    },
+    {
+      "file": "tests/e2e/accuracy.spec.mjs",
+      "gitBlob": "194d399e37a595a03d5c01b5d2c98afa45122d19",
+      "sha256": "4348a6443c6b7c42c1563acb43484b58554f882c955a56d4fa27edb3a74bcd3c"
+    },
+    {
+      "file": "tests/e2e/analysis-recovery.spec.mjs",
+      "gitBlob": "dd491617e0e9040ef535f161361abaf34b20d4fb",
+      "sha256": "14c2dd896d1798e2ffffaf12272aee35a5dc296ba3e752fb9411a2bdbf8929be"
+    },
+    {
+      "file": "tests/e2e/comprehensive-data.spec.mjs",
+      "gitBlob": "38e2d5cccb1ad9142c600dab1aa7e058d6478363",
+      "sha256": "f2b6c983e468a9430638fc2c452cb1290f528225a5f2b0b8066992f9063abdfb"
+    },
+    {
+      "file": "tests/e2e/comprehensive-mobile.spec.mjs",
+      "gitBlob": "187e3ece44d4f5f0209a388a833218b71eb8e3c6",
+      "sha256": "4b361d4853991ff5e4b29d44a7050bbb0a8cf3a74f346005a60c539e2902e37a"
+    },
+    {
+      "file": "tests/e2e/comprehensive-runtime.spec.mjs",
+      "gitBlob": "49098d56f7d4b2d452c7c5924c2db12a88b977ce",
+      "sha256": "3c3d915265053e4ec1d630f1b1a08e70ad372ee727f6bfa3980ec6c8dcaec177"
+    },
+    {
+      "file": "tests/e2e/core.spec.mjs",
+      "gitBlob": "d09df2eaf2d723b9314a99e62dab89e2feb3ce97",
+      "sha256": "8a89fb58081d287284bc76fa44816740a3b16a71b6149ab6797a34c03ae0711a"
+    },
+    {
+      "file": "tests/e2e/data.mjs",
+      "gitBlob": "19d1a05e78cb53fbf70cc924672286ccb16c5c7c",
+      "sha256": "0a8118452e9a7330b12b6c1c22b8c39c0c4278a37581c7e11ae059bb009a64c6"
+    },
+    {
+      "file": "tests/e2e/detail-module-recovery.spec.mjs",
+      "gitBlob": "5db80d9fc496f4c318316c3ea533c620d6038b04",
+      "sha256": "3374e569916a542125b7bf2d894f4053bfaad5cae26effa6301227112d94b340"
+    },
+    {
+      "file": "tests/e2e/export-evidence.spec.mjs",
+      "gitBlob": "e3879bb560024ec1512ad20863333c39eacc6edb",
+      "sha256": "8304c9649221773ffaba522dc4208b7b81822e8a86d168188983b6731248c19d"
+    },
+    {
+      "file": "tests/e2e/export-loading-isolation.spec.mjs",
+      "gitBlob": "1a0ad2a6b083f4db5013087e0c70bffc9bc72095",
+      "sha256": "936961198bea2a92006356c026d101a3580ab4c331be043d5ee0e35fe23a45b4"
+    },
+    {
+      "file": "tests/e2e/export-provisional.spec.mjs",
+      "gitBlob": "9b697a21bc2d8da75b2bda2651233f0d781f6a3c",
+      "sha256": "78443ae3a59509c1144b8dc433885c39ae72606d949f3068bd30d912d1ec6654"
+    },
+    {
+      "file": "tests/e2e/exports.spec.mjs",
+      "gitBlob": "09e4ff48ae3e1d54eb63cc0fc9eee9ae1626d3e9",
+      "sha256": "191ba0e31582caf174f3015f3db54057e92b2521f76f2c1384ab33f107ab67ab"
+    },
+    {
+      "file": "tests/e2e/fixtures.mjs",
+      "gitBlob": "16e9e08fc8bcd8f1b309cc028f9874b6bd9bd6be",
+      "sha256": "545a266d488998e2bb3ab0802cd1c6422ee1848950dbb9dc1dc43787ecca3d48"
+    },
+    {
+      "file": "tests/e2e/guru-coverage.spec.mjs",
+      "gitBlob": "e8cee00eb52f7a752efb6c72a4de2b3f28981404",
+      "sha256": "3352168492a71cc82c5c04410bff6456a46bfa552b5fcda9250b28f398e8dbff"
+    },
+    {
+      "file": "tests/e2e/guru-data.mjs",
+      "gitBlob": "970e986269cd014a618d49838e3891f8298a973c",
+      "sha256": "537bf417cf16250fd9d05518ff98504b0b93258c95971eef5db8deb3eacdc864"
+    },
+    {
+      "file": "tests/e2e/guru-recovery.spec.mjs",
+      "gitBlob": "7375e857fbef906441d0b1df6138bba51cee979f",
+      "sha256": "f3e55b1c1c8f949f9441699cf225f3eb3dbbe7881d2ebf85f25272e123930eb6"
+    },
+    {
+      "file": "tests/e2e/heatmap-progress.spec.mjs",
+      "gitBlob": "97501195d6fb54423928e9fa5a1563fe3b2df89a",
+      "sha256": "4d490db49e1906adeae20c7d16b916283a121a2ff43dc43ac0e4ef2c5b25711b"
+    },
+    {
+      "file": "tests/e2e/home-data-wait.spec.mjs",
+      "gitBlob": "cbea81e7d3b4642a2a3c207926ba8f6691e696a2",
+      "sha256": "02b94a99c6c1e275ffebb0519a4f3f109465a0f70f879f261221383d5856d709"
+    },
+    {
+      "file": "tests/e2e/home-revisit.spec.mjs",
+      "gitBlob": "f3deb05197c75ef667c2692ae83543fe3714dcf9",
+      "sha256": "2b870662eab183085e3b5ca4829d2eaf6794b5a524378fd49a69db3e0ae51902"
+    },
+    {
+      "file": "tests/e2e/lazy-analysis-recovery.spec.mjs",
+      "gitBlob": "dc69b814c61905f2ef1973503c82da1e92110b1d",
+      "sha256": "1de015bd34992344116f3419cbbfaa0fc3152a8a91e5a7ff33e4569500b9f220"
+    },
+    {
+      "file": "tests/e2e/mobile-evidence.spec.mjs",
+      "gitBlob": "ac3a68dd1c8ca80c5bd63403c2390eb9405d0a70",
+      "sha256": "86f1f00f14dc954dc79d190d2d6a9be1e1f80741345dac566ca7527378dfd11c"
+    },
+    {
+      "file": "tests/e2e/pick-loading-recovery.spec.mjs",
+      "gitBlob": "bda03c5a2cc8521fc67a42e735b8b38a977e0f91",
+      "sha256": "c388715a4a9863d4621c50dfa716ca3a2e4f14c8e7ab9ecaa2c3bca6ab3ef388"
+    },
+    {
+      "file": "tests/e2e/review-followup.spec.mjs",
+      "gitBlob": "a2a4a30cb083a3be77b40db83480ef42a04c74f9",
+      "sha256": "de004f19ceaf3f85fa0b9e691fcccae6194d2d2cb9572da00459ab9a3f610e2a"
+    },
+    {
+      "file": "tests/e2e/revisit-experience.spec.mjs",
+      "gitBlob": "d6d47d4764c2616c9df408951c6ad7aa90357d6a",
+      "sha256": "fc5f90bf0fe3d3d2eef1555f5eef1913410e6738755489d1c559703243da3739"
+    },
+    {
+      "file": "tests/e2e/share-industry-news.spec.mjs",
+      "gitBlob": "796f67338cfb616bce55a083062502c2c13fdd32",
+      "sha256": "a57dba30bc4455602354c85a2a8ec7c0809ba0f2643a7cccf19c753ada8737b0"
+    },
+    {
+      "file": "tests/e2e/site-audit-regressions.spec.mjs",
+      "gitBlob": "7ac711dd1ee6425f797d09269e90fe701afbe36e",
+      "sha256": "7061fcbbda70bcd9e43c6f89c279eacbb2dc1e504e5ce393b2a4f8eb198b34e2"
+    },
+    {
+      "file": "tests/e2e/usage-metrics.spec.mjs",
+      "gitBlob": "e52ce50d56d781854e2d3fd684660ab371955460",
+      "sha256": "bdbf2e18722fa4692c21c77927ac60d2e8f01b9eea9d939d0af51f56b129c6c1"
+    },
+    {
+      "file": "tests/e2e/user-audit-followup.spec.mjs",
+      "gitBlob": "d61884b11e561d4dd680bdead38810b26c3c840b",
+      "sha256": "ef03e325035d1d2617b464596497934e01f1205c3dc141838e405dc24ddd612d"
+    },
+    {
+      "file": "tests/e2e/ux-readiness.spec.mjs",
+      "gitBlob": "749f8ed8fb1872a51bf6fbbfa68539f8e3014d85",
+      "sha256": "dcea7a3917e7f2a77f0c70fa904201cc1024107348b1de8f6b405c2e90478931"
+    },
+    {
+      "file": "tests/e2e/watch-persistence.spec.mjs",
+      "gitBlob": "06f8e6160c985cb294c850a20d222ff3088c876d",
+      "sha256": "23498a4a3dc0ce3807388089fbc37c75d3c89789718573692f889c2f6bbe11c6"
+    },
+    {
+      "file": "tests/e2e/watch-runtime-errors.mjs",
+      "gitBlob": "6b5980176773858038cf99b2b129233bfa36f000",
+      "sha256": "2475ad335a43828c08157a4e8a1a0250c7ae9d462656f4bf6a8d2f04696d27e9"
+    },
+    {
+      "file": "tests/e2e/watch-runtime-errors.spec.mjs",
+      "gitBlob": "611d1f746b9825103ed8f5ac87a69323ac057c79",
+      "sha256": "0eb075cf3684250e343a3bf27c7f07e6ac9a2deb52644da46a5c71db4f432484"
+    },
+    {
+      "file": "tests/experienceState.test.mjs",
+      "gitBlob": "db52963df5dfa20500e46f2e15b59bb159a634fe",
+      "sha256": "9b9816e8365119d850d1139bde24bfbcfaff2c42b3b93233b2314a8884f5fd53"
+    },
+    {
+      "file": "tests/experience_audit_qa.mjs",
+      "gitBlob": "630305a908576f7b968a1316136a4a61ec14845f",
+      "sha256": "46c7a276b0782f43283a67a57ff8000fca7ff2422a4313692b8da8f183fe0d94"
+    },
+    {
+      "file": "tests/exportLoadingIsolation.test.mjs",
+      "gitBlob": "f8c1806c77e420ede7014766fc80585e82096d24",
+      "sha256": "17b6d3312eb3de20d62dbe809666998458ae76ecac5f190fef6e70b37ad478e4"
+    },
+    {
+      "file": "tests/export_balance_cache.test.mjs",
+      "gitBlob": "a009cf708b2d27695e0d27c4f05824d926ac4326",
+      "sha256": "f47af4f980b1776343db454accfdd60cf08b79f794ac05da860e194b5e985eff"
+    },
+    {
+      "file": "tests/export_company_candidates.test.mjs",
+      "gitBlob": "5af230a3d73c7eb9c95c7b44782f33b1d1b33ed0",
+      "sha256": "ce617a097abfae61fe7da2865369c26015c24cac6fc5bb95b26a5df154e45eee"
+    },
+    {
+      "file": "tests/export_evidence.test.mjs",
+      "gitBlob": "c7c13ae608972bcf98041e7b0a397920629dfe96",
+      "sha256": "025dac6ff89dc6b903959c0ec2c414379b1ed10db4918969be947de9c5a9f051"
+    },
+    {
+      "file": "tests/export_history_view.test.mjs",
+      "gitBlob": "44e428164c52fb14a5acba068b45e060fae3cd23",
+      "sha256": "284da3702a215f5a5b54403dccf65a94f806c67cf6edfa83fa208b74da179cf2"
+    },
+    {
+      "file": "tests/export_momentum.test.mjs",
+      "gitBlob": "83729000e560e525c976572d69eda0c25e8712d3",
+      "sha256": "c554683afc300a39c2388c506c259294e4ff9f4526a1a634e03c110553c25280"
+    },
+    {
+      "file": "tests/export_provisional_digest.test.mjs",
+      "gitBlob": "f92ccb12584718dff21a3f1e1d7fa74c88244a43",
+      "sha256": "d7e4234cc2b31da1e46933dd69d8d64fca57f1697c0fb6bf3c7ab0efc9c2d952"
+    },
+    {
+      "file": "tests/export_recovery_qa.mjs",
+      "gitBlob": "5fba94d8a6ccef6072fae32697f1c4cea29cbfd0",
+      "sha256": "fe2b68a38a2276b4edc49c9990a12436d52eab988c453f0a6e521b5c77c7fe87"
+    },
+    {
+      "file": "tests/export_tabs.test.mjs",
+      "gitBlob": "e9f5c0e1951bbcb8389927c5a62cdd127b2d6b80",
+      "sha256": "99b2ec5a1ce09e85a45b7781cf120c2f34ce796721875b28446c0d1fe57d6380"
+    },
+    {
+      "file": "tests/financialQuality.test.mjs",
+      "gitBlob": "b4a08f9a12cca1a12550cf7779dc75053e2d80c2",
+      "sha256": "a807d017ce08e566ce7edf1dac0f511c24c5127b9ace41a5e7de4b1d2888c6ca"
+    },
+    {
+      "file": "tests/financial_flow_qa.mjs",
+      "gitBlob": "9a26686e18254615fd85652a9a238fcd47269bb0",
+      "sha256": "54ef364e96b5f45e1c072aad71406b3f745b8ad2ad7e260e39dbc165929959f3"
+    },
+    {
+      "file": "tests/fixtures/export-recovery.mjs",
+      "gitBlob": "fa5b4e1369a645e0c2d990f12b57cc6a8b2a010b",
+      "sha256": "c9b218f711cf76068077136ca04c594aa15528fdf8154bd9feefeb176d843f89"
+    },
+    {
+      "file": "tests/fullHeatmapSnapshot.test.mjs",
+      "gitBlob": "c86bb9fc297ed4ccf9bee11248f87959f83cf765",
+      "sha256": "4a87f24ab7572f1b4e020ac178f765a73bf711e4919e5cba9e5b6832636b8dae"
+    },
+    {
+      "file": "tests/guruEvidenceSource.test.mjs",
+      "gitBlob": "c560f67eb821726fce21a636e56f57b477630bc7",
+      "sha256": "1f9ab15247bbe65b59249755655bfb904ab98ff6d9d2b6047eb39f458904b7b3"
+    },
+    {
+      "file": "tests/guruFive.test.mjs",
+      "gitBlob": "afeabeb7372a6f5232e1c49eca30108caf562d91",
+      "sha256": "d10009568fb0c22f4fce392faf85b91f90366195f703b6406d428a8e6519b669"
+    },
+    {
+      "file": "tests/guruInvesting.test.mjs",
+      "gitBlob": "fa22673f08550386e031a73949d14fd93ec23d1d",
+      "sha256": "500434420af60952d5fafa88a40125518ddae2da51f3c62701435720c05a36c1"
+    },
+    {
+      "file": "tests/guruProvenance.test.mjs",
+      "gitBlob": "e6cc934fd4134e64b7c1e3dd4daf5c2a4e222002",
+      "sha256": "a4d9e4303b07d71e5c762e88489365fb673ffc6cdf9208548eb4553e90eaa62b"
+    },
+    {
+      "file": "tests/guruRetryApi.test.mjs",
+      "gitBlob": "8c67216bc69fc28de56b5130ce531ebfea5f3228",
+      "sha256": "28cb33215cd399ddc788697500d32a0c2ecdf3570a3199e92b59d5db36ef6cd6"
+    },
+    {
+      "file": "tests/guru_investing_qa.mjs",
+      "gitBlob": "9fdc03a796ce24ed4bd924f53663033a42076b45",
+      "sha256": "b31cdf52dc1b52c55f5c492f2c7196c1cdf1b47d46a9884852d28f2359e95f8a"
+    },
+    {
+      "file": "tests/guru_performance_qa.mjs",
+      "gitBlob": "96d927b4699514db3337149a4bd70a2cd29ea4ca",
+      "sha256": "586bc5e72b6ee3858c9cfd01c8bc8546048f9ae52debfb3ef6240166e241f8bd"
+    },
+    {
+      "file": "tests/heatmapProgress.test.mjs",
+      "gitBlob": "09aa2b234182a5eec430058cd8ba1e30d5d864d1",
+      "sha256": "eb5ed93cc4aec8256963bddd27692493ac5b83bba6056a2a451329934d2c7d1b"
+    },
+    {
+      "file": "tests/heatmap_shared.test.mjs",
+      "gitBlob": "e01ff0847549caaf21d96fcd11350ee6b925306e",
+      "sha256": "9f08c443f71f3570480cc7788e3fdd60890608413e81ec63f2ea681e61099bca"
+    },
+    {
+      "file": "tests/helpers/koreanQuoteContract.mjs",
+      "gitBlob": "1cf3785d9095ee4e396aa8c4f9adf06e3750d799",
+      "sha256": "04a674d676470997b7e83669fcdcb6d7085a25c4091b5c8bdec7ff128a2ea7fc"
+    },
+    {
+      "file": "tests/home_changes.test.mjs",
+      "gitBlob": "f93f76c3103171a5a476bcec515157d49b0e057d",
+      "sha256": "725c57686d786b83d42a86a6f7151f307576211e68a49cab71cf70e4a6619b8d"
+    },
+    {
+      "file": "tests/home_fast_cache.test.mjs",
+      "gitBlob": "8da85169ed37cf1975f58276bc37ef4cd123989b",
+      "sha256": "37aeb9b6633eed66b5073f324c4b8f1e360ea976ec034ffd03cc65ba6bdc4e60"
+    },
+    {
+      "file": "tests/home_journey.test.mjs",
+      "gitBlob": "39592ff6d15d403edd2ce10581479c8032443ce1",
+      "sha256": "55bdd4aab50591efa01c9312677a5ab6b108d31dfb9a29aacacdf64977fc07d4"
+    },
+    {
+      "file": "tests/home_journey_provenance.test.mjs",
+      "gitBlob": "ba391d69b877660f65cc459491e3e487f117060d",
+      "sha256": "4203280143e87ca6df50546c4785ecc8d3cb36f7b6f72891850ba24ae75a8d21"
+    },
+    {
+      "file": "tests/home_journey_qa.mjs",
+      "gitBlob": "43c30031007f95909f5f35f052a9cfccaf54b872",
+      "sha256": "ad663f25d9cb18a3e1bf8dad35e6a909912a8312e7b8fb44a98e7735e23b940f"
+    },
+    {
+      "file": "tests/home_journey_render.test.mjs",
+      "gitBlob": "6e1f8387f66aa14d0d925485ef06c673c1cb2543",
+      "sha256": "9a356b0d2b9820c5e83403560791e14126f7a08c5ee72e7a3b611d695ca83199"
+    },
+    {
+      "file": "tests/home_market_delivery.test.mjs",
+      "gitBlob": "beabfb09d0636406680dc408c09317c345105411",
+      "sha256": "52f891fbe91d027f65ddcf0789ad80124a5b134b7d0ff512bfb00dbfa0c968f0"
+    },
+    {
+      "file": "tests/home_preload_transport.test.mjs",
+      "gitBlob": "4212440a05156d3c898839a6018946d79832aedd",
+      "sha256": "089e485e45526641d1e85e8b78f2e29e087c068485b5272145b438972c635633"
+    },
+    {
+      "file": "tests/ideaEngine.test.mjs",
+      "gitBlob": "4d2c8dff5b64d38f145ed7ff3409bd02103e2e2b",
+      "sha256": "6e880247e9e0ef057f8383ac389b804e3480225993546ea7a78201a03ee72ab5"
+    },
+    {
+      "file": "tests/ideaEvidence.test.mjs",
+      "gitBlob": "dad30e226a9addb36399330aeb5b6e108107c55d",
+      "sha256": "6034e3a0b71ecd2ce79840ae6372199ccb9e2308588fec5de4998227a9df1cf7"
+    },
+    {
+      "file": "tests/indexQuoteFreshness.test.mjs",
+      "gitBlob": "229bea1fb289f1611428c6f36ec2f86b671d5c89",
+      "sha256": "b6d6ddf638cb527dc00005cc2eb837880896a749ccb3ce9dfbec5976335c2b11"
+    },
+    {
+      "file": "tests/industryContext.test.mjs",
+      "gitBlob": "26854de6420a142bd2333b15e3e270c6fba1ad74",
+      "sha256": "76cee3dd5b0adf5ddaa079b27f1ad2c445af097a5cda94946e8be9cf97bd7154"
+    },
+    {
+      "file": "tests/insight_flow_qa.mjs",
+      "gitBlob": "08f76e5159bef5ff023de9b7fdfe9dd97ba50e1f",
+      "sha256": "f8f28e3c50a63fd2032781250b8cc9ba70193796832d913efec71abe27901300"
+    },
+    {
+      "file": "tests/insight_followup.test.mjs",
+      "gitBlob": "e6e7c86437572413fc642bacb86f5d221b08b8d8",
+      "sha256": "eceec86a4eae2bd62daa7633a5f09b94aac0378d8db670e3984c988d56897d09"
+    },
+    {
+      "file": "tests/insight_followup_qa.mjs",
+      "gitBlob": "6734b144ea6c246cdd22c9bdf35a92b9e531dd9e",
+      "sha256": "5e8229dc629004fea130766aaf995d8191797f18dbfc7213aa8d679ee4d12e2d"
+    },
+    {
+      "file": "tests/insight_model.test.mjs",
+      "gitBlob": "4f25088456cadcc10ef98b1af76d09c38aa463e3",
+      "sha256": "a2b4fda505c4dd1ee997bef297b776e964562b9f82193268f05960402cb0bf2f"
+    },
+    {
+      "file": "tests/insight_research_qa.mjs",
+      "gitBlob": "e300e22d4d99c447302c900171a4e858d502e01f",
+      "sha256": "2ed2691e4c7bf5e5c9abbce7a8f89b0ba0518a1009503fa29eda10b75746a458"
+    },
+    {
+      "file": "tests/investmentReview.test.mjs",
+      "gitBlob": "fd7741315f3cddb9ae1ad679526d4b69f23c3876",
+      "sha256": "390a8727adbb3db385b9cdd191b9393a79eb672a57b8e8c8b5c133a5d8e5ab49"
+    },
+    {
+      "file": "tests/investmentTools.test.mjs",
+      "gitBlob": "82d3285b78327d3dff1d59a822aff22cd3625017",
+      "sha256": "edf797326fe6d8f06eabffb19d92c7a2868cc6b6782da7a696f874bc5a676304"
+    },
+    {
+      "file": "tests/investment_review_qa.mjs",
+      "gitBlob": "9fcfb9108cfcac853c059033dd26a4209d945d63",
+      "sha256": "23f8be8420ac39e9a6dbe990d0e320bd0e2da28973f3c7797fcab54c64305672"
+    },
+    {
+      "file": "tests/koreanQuoteContract.test.mjs",
+      "gitBlob": "0ee743850f6d5deae81f0492785095c4d7117faa",
+      "sha256": "72cb2950cdb0d44eacb0a9ecc59d92c43fcc2f6244526c13e445e6d5fd60911c"
+    },
+    {
+      "file": "tests/lazyAnalysisRoutes.test.mjs",
+      "gitBlob": "3f5528898f9983ac3b953b64e4a5af7cc144b060",
+      "sha256": "dfb247a40f966373db2b5761ad7fb9c40708599804908f239ac98517b6b76fb2"
+    },
+    {
+      "file": "tests/live-e2e/live.spec.mjs",
+      "gitBlob": "fb5d5483f6e0db614659f680f93e3d6fbd0dbe21",
+      "sha256": "c08eb9d28d41c4599fe254bb048bfac2247d4c9e5049766dbe81f33fc949f860"
+    },
+    {
+      "file": "tests/live_api_contract.mjs",
+      "gitBlob": "b2095771a90a801bffd8af9974e1c5d6fecb412e",
+      "sha256": "ff30cdd82390d20868876a6aca1a8d40fb671233676e1689119bdbe2fdfa9338"
+    },
+    {
+      "file": "tests/live_chart_diagnostics.mjs",
+      "gitBlob": "e30b17cff7cd5c2e41414aefb6bdf00863f0a236",
+      "sha256": "e18b4667e1e6eae56dbddc2da6431d80f1cae80453f6fd69f70834644823ba28"
+    },
+    {
+      "file": "tests/live_home_sync.test.mjs",
+      "gitBlob": "6d847c2d81e9e321c7cdb0df8f3da58edb98d148",
+      "sha256": "a3753db25acb7eac883a284ac7d9284b6f1eca32498c6385d505ee8703192109"
+    },
+    {
+      "file": "tests/live_quote_parity.test.mjs",
+      "gitBlob": "a23411e79e7e497a22d3c7afdb0f13138d433089",
+      "sha256": "56747932265830326a09ae4b33efa03fd67bed88571ec2c20c3244402f2848a4"
+    },
+    {
+      "file": "tests/live_research_qa.mjs",
+      "gitBlob": "660ede0390069ac0abc8ab9b3b725d68bfee6d56",
+      "sha256": "81ad15048ef1fb82de3d39f2d26da137d9826e349b28aab4dbe1fbcd6d9179f6"
+    },
+    {
+      "file": "tests/live_spotlight_qa.mjs",
+      "gitBlob": "b36b02892163fcabbe923728659d84f329e2edfb",
+      "sha256": "ca960d72ab3732d2e7eccbf1280b72e5f0da23f88518d00218787d76665e66f6"
+    },
+    {
+      "file": "tests/live_user_journey.mjs",
+      "gitBlob": "ad79012605f3687b3376a88aa7415724a1ddfa88",
+      "sha256": "f7504e8898b9cb2a071cbf46cc96f9a167f9549642d66a30c57a59e6f8c776b5"
+    },
+    {
+      "file": "tests/loadingShare.test.mjs",
+      "gitBlob": "d56d1d3a700d05faf8460fe0050192940e9de2c0",
+      "sha256": "e9fe9e4f3e3bdc081c3213cef03b2255497e29e28b4103a8f3c5f6b3c568656b"
+    },
+    {
+      "file": "tests/loading_share_qa.mjs",
+      "gitBlob": "69ef2973e82c814eca8f9776e4154ad50856a2f5",
+      "sha256": "5a588d8d604675f972cfd2f5642b9b82650c41c283bb490fefb2ed80ca19aae1"
+    },
+    {
+      "file": "tests/loading_states_qa.mjs",
+      "gitBlob": "35bca85af093050de3fdd0773ed238b58f6c63f9",
+      "sha256": "18b57d595871076f18b7a3050f08349997c244d8839c78a5d016798971c0f1da"
+    },
+    {
+      "file": "tests/market_map.test.mjs",
+      "gitBlob": "9082d12e21f7c179f5daed6bd3a443cb6b5c5744",
+      "sha256": "0779738cc23cb50b04591d15c25da273845f4ce4f28f997a10749763b4918ab5"
+    },
+    {
+      "file": "tests/mobile_continuity_qa.mjs",
+      "gitBlob": "59d09d5ff056d09209a9babeb1e2bb52f9988c2d",
+      "sha256": "15dbc9b0a342b82ac0fd2f2cb7c8f3d72bd8211a7a963b2d799aec1d8d7253d4"
+    },
+    {
+      "file": "tests/mobile_density.test.mjs",
+      "gitBlob": "9dafeed13261a75bd7a319da98363073570a1109",
+      "sha256": "480edf71cbaf8a0ab738324dfb76e1c7c389a0c3a4ec5b0e6ff3245298eba179"
+    },
+    {
+      "file": "tests/mobile_density_qa.mjs",
+      "gitBlob": "41b4ea97bafbe9c000834c5217452baf76f32780",
+      "sha256": "479191c35f03a11e25398d09b355072bb08fed096eef26d4a1896d9110ded413"
+    },
+    {
+      "file": "tests/mobile_release_qa.mjs",
+      "gitBlob": "ee7b0e8acf3d50d749f9d3c48c64cf2089b30557",
+      "sha256": "dca2c8231c381a6bfbe1fa008febdafc0677f2d0028fcb30c6be70709b8e5a4c"
+    },
+    {
+      "file": "tests/performanceDiagnostics.test.mjs",
+      "gitBlob": "ba5338bffc2071083d6f1c8c4c56bd2a05d39a0b",
+      "sha256": "2a547db1c0d843a7e62e4002e3e9fa4ad05d643ac9d7f39e74a0911347d63b06"
+    },
+    {
+      "file": "tests/performanceHarness.test.mjs",
+      "gitBlob": "b180fa3d10cc6a0d0045fd67971f2b3950659636",
+      "sha256": "8c557f5941ed2e3b3e93fb4c01b5d054c712ffeac9a5f75a65e1e39c70e9daf7"
+    },
+    {
+      "file": "tests/pickLedgerLoading.test.mjs",
+      "gitBlob": "3661de162a2973a590f22d43ce0d45042d4f8e06",
+      "sha256": "7058e1fbac3ccb3680c67f3f71f476ba97b75b459af6b30565655edc3886a180"
+    },
+    {
+      "file": "tests/pickPerformanceBasis.test.mjs",
+      "gitBlob": "b7dd7578c645959774e2fcfd98d194513aa488d1",
+      "sha256": "61d05654fa307624eeaaf396ae62fc64ad9d8409aac2cbb237875559b479412b"
+    },
+    {
+      "file": "tests/pick_management.test.mjs",
+      "gitBlob": "d39105f5332ba6c4e6a244ee50923a7bbeda4158",
+      "sha256": "e77911c83843983b7484dc09df3033ed52a3c227b3572cfc80ccf6665600d722"
+    },
+    {
+      "file": "tests/presentation.test.mjs",
+      "gitBlob": "a835d03cce98db779536f3fdbf0a17c71db3ea8c",
+      "sha256": "ee224a422df83e8e2466d2003d8136e48fb10ac29003b68c0b5280c6cd5f7b70"
+    },
+    {
+      "file": "tests/production_performance_audit.mjs",
+      "gitBlob": "99af4cd254b44ede69aaa012744ee616c793c4dc",
+      "sha256": "a7403748edf7675cba504fc75ec9286c657e497061388d1d89169572be39d89a"
+    },
+    {
+      "file": "tests/progressive_qa.mjs",
+      "gitBlob": "04b306d9195ed4a992da046190b623abe68df340",
+      "sha256": "fa39064f2563335846c3ad24a905ecfd0bdc67aaadae5e760f1dc4755a599fcf"
+    },
+    {
+      "file": "tests/project-memory.test.mjs",
+      "gitBlob": "3f40920f9bc69e728c9f71ac2dbd6d4a874461b8",
+      "sha256": "32a9aecf4f92ea9c2d5ad895faa30862405cdf0ab00d441b7d20154b62cade0b"
+    },
+    {
+      "file": "tests/redesign-review.test.mjs",
+      "gitBlob": "f4e3d895d32e41e48e181e88668aebe86206efdd",
+      "sha256": "2ee1f56e4f8fb0de82124d624159716cf4d7c7b422be6c31987d9146e70ea8b7"
+    },
+    {
+      "file": "tests/redesign_review_qa.mjs",
+      "gitBlob": "cc3c71255fc8b88ca4e02dc4c8e33ca783b1a59e",
+      "sha256": "6c4ecfbed42f5d6af1005b7247b031d696a32523ab37f988d66fbba2ea56eb26"
+    },
+    {
+      "file": "tests/release_gates_qa.mjs",
+      "gitBlob": "f92ecae4fc2e843c286bac924b9a1af45e68f76c",
+      "sha256": "d388477f0fce7032eba37e3e175839d8feed36d109e4c4dbb38b9221f831702e"
+    },
+    {
+      "file": "tests/reliability_audit_qa.mjs",
+      "gitBlob": "3eff6100b9953bf5e1aafbb55dd9040240c632d9",
+      "sha256": "b417d64ec6cb51682935abd5101959f92a3d7fd605d27387e56da5150193f51e"
+    },
+    {
+      "file": "tests/renderSync.test.mjs",
+      "gitBlob": "149662e0a62b8dcbc14e9c8f0747809cfec009aa",
+      "sha256": "2e46643987b27feb75a2dde9c69c1c4bb9c4ec7e99730230f2535a51495f1c99"
+    },
+    {
+      "file": "tests/requestClient.test.mjs",
+      "gitBlob": "7b7f963def4d673c8c3cd08c4c0fbde14c5ab2f7",
+      "sha256": "86e2cf3a9835f48c2fc7ff218a34e78feaa0e6569cf49b03910c4295f4b9fddf"
+    },
+    {
+      "file": "tests/researchAnalysis.test.mjs",
+      "gitBlob": "6dab2388f411b52b91abd29bd7cf12006b4d32dc",
+      "sha256": "e1779258c8e46ed78f263702b07a036f9a0dfb7c855bf07aa46e045ebbdb6915"
+    },
+    {
+      "file": "tests/researchNotes.test.mjs",
+      "gitBlob": "698eded57d788e071c81f4fa63298fac4b576669",
+      "sha256": "9f08111c7c419cb444ff0acc1fa3f1c13d916d77279f13413ee4898df3cb8673"
+    },
+    {
+      "file": "tests/researchSaveConfirmation.test.mjs",
+      "gitBlob": "e659416605ba04cb3fb5218faa3ffc5ff16f145b",
+      "sha256": "610f08bd0cae82fa7186b2975d0f51deb28b45b0e7ede7ca82b21d05362b9426"
+    },
+    {
+      "file": "tests/researchTransactions.test.mjs",
+      "gitBlob": "bb17a64669cc9ffe42449ea01ac81b87d995ca0d",
+      "sha256": "60275be82a56722688885b87f74829030346041eb00db1bb39a1fb1f21e6b545"
+    },
+    {
+      "file": "tests/researchUsage.test.mjs",
+      "gitBlob": "946e2e4940535532b5e12e219e4e924005e0b9c7",
+      "sha256": "36bd11908bda03ffe3ee8ffc3b55740ffaa419f71283ac141d5cfbc2677653f9"
+    },
+    {
+      "file": "tests/research_card_qa.mjs",
+      "gitBlob": "e1447713a9b884d6a0430c0a3f3c97a33d981c63",
+      "sha256": "82f948670564a4d8653ab79c67917ba4af1f2b1bbb72356e23fb80594be40499"
+    },
+    {
+      "file": "tests/reviewPrompt.test.mjs",
+      "gitBlob": "7012a8ba5afb74050d3e0e34f083d99e88f6bd06",
+      "sha256": "73a048aa0a3ea41f547afcc770dca31138c81ff076544e6f0f3d040d92b5a021"
+    },
+    {
+      "file": "tests/review_disclaimer.test.mjs",
+      "gitBlob": "7e65a2c12b00becb69ce155baa385002a9828723",
+      "sha256": "64c2340cad923bed0971dc61b894663b4fab01a77cd723f032704fc21ba6801d"
+    },
+    {
+      "file": "tests/review_validation.test.mjs",
+      "gitBlob": "1e4b5262374d10063978c852422ca2227d46ecab",
+      "sha256": "5b041fc7bd63dbfedc262f135c49c2662c1c87379986f14ef170876ab4e2a448"
+    },
+    {
+      "file": "tests/review_validation_qa.mjs",
+      "gitBlob": "eea05f3ad9e122a6dca74b9dbd388529b8632a67",
+      "sha256": "21d46474450105eb4cc11a52ecdd63c025f2d6b59448778933c606c1b72b1fec"
+    },
+    {
+      "file": "tests/revisitPreferences.test.mjs",
+      "gitBlob": "93e970deedaa9ccb3c40f9db40efd456bd173b90",
+      "sha256": "eb8f2363f10a529c2a2adf03259e78449c1146e7b5f3ef5fd09c117238bd0e5c"
+    },
+    {
+      "file": "tests/routes.test.mjs",
+      "gitBlob": "3d84fe9492b47bf8d03cf0caf3642570e995fa38",
+      "sha256": "eef3c15fb0c0a32849df6495aa2b85af586cb69a206cdd7160ed0960c2999cfc"
+    },
+    {
+      "file": "tests/saved_research.test.mjs",
+      "gitBlob": "c0fb0dc434a3eaae34840f3dfeac696a1ff8ee17",
+      "sha256": "e22dcb627aa068858bff29bd580ff8ea69727c418836cdcc8c31a20f17ff1dea"
+    },
+    {
+      "file": "tests/searchReliability.test.mjs",
+      "gitBlob": "a38d04f8d4e923feb178e0aee323c1373315cd7e",
+      "sha256": "dfc2b5d8ba2d25394b975c822ab72f83a6cbce3e51eec1fe52acf86fb953d0e9"
+    },
+    {
+      "file": "tests/sectorHeatmap.test.mjs",
+      "gitBlob": "c1b9982249d44e0b045af1f948c2bc0110ae7108",
+      "sha256": "43319975af2cac85099bc896bf4699a0b3f3da579df4ed617e069c40bf4651c8"
+    },
+    {
+      "file": "tests/sector_heatmap_qa.mjs",
+      "gitBlob": "b0a8add74ed49bb82a467d725632939f9d22606c",
+      "sha256": "4d6b4cb6643df6bb9cbfb00b90379efd7b8904674110ff738e6c05f7b4b4647c"
+    },
+    {
+      "file": "tests/selection_usability_qa.mjs",
+      "gitBlob": "184d755d5e5c6c8f6cf85b2c6e28fd231db6f9a8",
+      "sha256": "25d3def572e7aed6119e4d2e080993f886b31bb9168a26234e89ee75db99e44f"
+    },
+    {
+      "file": "tests/selectorUsage.test.mjs",
+      "gitBlob": "f8504172475a85768cd3a04482fff0e6b6438945",
+      "sha256": "14197df97a77d2b7590e427be4bdc3dd8a8c20a7f756730240abc188cbe2509f"
+    },
+    {
+      "file": "tests/stockSelector.test.mjs",
+      "gitBlob": "1d1275a391500acbdb9b33c019811ab892015eab",
+      "sha256": "7f349de53106e8953ad3c1a81d5dcc853f2d9a1fa4500077c533f0a146123eae"
+    },
+    {
+      "file": "tests/stock_detail_identity_qa.mjs",
+      "gitBlob": "ac45a435aeb738a133e99d7f9ce3898345de1e65",
+      "sha256": "e3576b234f21b4e5c076ff7b59e792c567ee0e6184d16b8fd947da47fefec1c6"
+    },
+    {
+      "file": "tests/storage.test.mjs",
+      "gitBlob": "a9fa280fddd6d4dea9401e463a516586df7e5517",
+      "sha256": "c87189e4c8409be16d6932a10e7d3d72b47eff128cf2d5744fe45cbe0a561b42"
+    },
+    {
+      "file": "tests/storedLists.test.mjs",
+      "gitBlob": "fd08c45abb27313c944aaccb3f827f86b1641774",
+      "sha256": "732437ea5a180f0e0feee7223304d5317d8102327d29e9477120366adc96668a"
+    },
+    {
+      "file": "tests/strategy_report_qa.mjs",
+      "gitBlob": "0c3cbfa21b033435f1bdda03657cab343fc2c21f",
+      "sha256": "cacd433be47215d04ac82774f2bc2e8845de7181e69530f71c79ef09d12b4fa2"
+    },
+    {
+      "file": "tests/top10_history_performance.test.mjs",
+      "gitBlob": "028c7ceb5616fd8a51465ea359619e7f6b55eefa",
+      "sha256": "eb17b3f897ca659c311d10e048687f470e2f7ce9dde2f56fae22a732f8fd49be"
+    },
+    {
+      "file": "tests/ui-identity.test.mjs",
+      "gitBlob": "c3e850cfaa4666a17b7a75e138724491b77ecf57",
+      "sha256": "203a063391ee42c52533cf14acfc724a61b82c1a063f908e07e36aa0a2b9e676"
+    },
+    {
+      "file": "tests/uiux_presentation.test.mjs",
+      "gitBlob": "f90c5217802b7778b6bc9a4110782e6e8c86c5fc",
+      "sha256": "9d5490c6c66428e3707aa81a10cd9e13c309ac8e57a23f85eb8bd94c5fefb5c6"
+    },
+    {
+      "file": "tests/usageIntegration.test.mjs",
+      "gitBlob": "ff645797fe56dba93c9e4922c1e2688289239797",
+      "sha256": "14af7149c1cd397f4a7f99b30ccf769c89f01be3918d61d065570d2a796b37b7"
+    },
+    {
+      "file": "tests/usageMetrics.test.mjs",
+      "gitBlob": "c40566996bb64002be0a5fea18bdf88558b8c159",
+      "sha256": "4a1f669246c57d44622c1358363eb043a9ccddd9e2bc0051a95b7c3208964eb8"
+    },
+    {
+      "file": "tests/usagePrivacy.test.mjs",
+      "gitBlob": "67ba92bab1e771e5f2f17543d2b81b01f305b21a",
+      "sha256": "a13d4f78fcf8566b4860747620b88e2a173bfd95f55317e79f131848c01f396a"
+    },
+    {
+      "file": "tests/value-discovery.test.mjs",
+      "gitBlob": "97888efa39d3994208a3915773883ce321274163",
+      "sha256": "9351756039142a2229aa5f3f9c57867ae8d8396c4d7dbdca4b82896170996bfc"
+    },
+    {
+      "file": "tests/value_discovery_qa.mjs",
+      "gitBlob": "3ce02e4172e15126e88009e95ada1e97c6474326",
+      "sha256": "a030fd21dae5254a3b06a831554e719fff001bf7ea006aa7dc9c1cd67203e6d2"
+    },
+    {
+      "file": "tests/verify_preview_routes.mjs",
+      "gitBlob": "770cfe235af96552428198edc7f0874b430700b5",
+      "sha256": "710c655d20343a3235302d7ea96ff5997054be50ec6a3d19efbb6d0e9f015803"
+    },
+    {
+      "file": "tests/visual_emphasis.test.mjs",
+      "gitBlob": "fa6bb2e23536870ddfda9c688146931ab92fdddb",
+      "sha256": "ec44f5f5503d943dee61b001fa01e10a93812c171b9ebbca3b5f49da1b206599"
+    },
+    {
+      "file": "tests/watch_quote_parity_qa.mjs",
+      "gitBlob": "018c5c02422f174355be40a64f12a78022482c67",
+      "sha256": "238c08e5af34544315e6fae9ee9ff054cb9717e227467884231dd6571c69b2a5"
+    },
+    {
+      "file": "tests/weekly_selector_qa.mjs",
+      "gitBlob": "c3133842240236fddebbc1bd1d5d7b7c97a3a7e2",
+      "sha256": "0c461b5f5a0d48c3dfe1b407d183d2acf0261357d89e0ba0ff3af543b5dda370"
+    },
+    {
+      "file": "tools/codex/knip.json",
+      "gitBlob": "1646565886cdc945e86a35acf32981f3637509e9",
+      "sha256": "2eb7c23d6c265c569ec9acc5e20a707d9f01382297755771f2762215fde1fe96"
+    },
+    {
+      "file": "tools/codex/mobile-audit.mjs",
+      "gitBlob": "59c40b4cadf0e55b825edc8f7506868d6988d08e",
+      "sha256": "5044588686cc40c05adba5e81ab6e3dece11a360b27054b15f4922d75e504deb"
+    },
+    {
+      "file": "tools/codex/package-lock.json",
+      "gitBlob": "b40f6a686d742bcca75486e1149c7359d9953fd0",
+      "sha256": "8c03b5662229f6d8f76ca409b45357f078b7d33057ba5862db8aa5300a52834f"
+    },
+    {
+      "file": "tools/codex/package.json",
+      "gitBlob": "c897445418572d0e790eb4ca847308a046a267f0",
+      "sha256": "499403856204098ed017d3b4002c0068f94e9aa96cb170c3c92b1fb65bd7eec3"
+    },
+    {
+      "file": "tools/codex/properties.mjs",
+      "gitBlob": "e00af2bbf75c0d49e108c83e6117769d6ea75f2e",
+      "sha256": "33182ec7c4d70336973e067a12103f08f54f5e47ed2a9849bc4a08ee89989093"
+    },
+    {
+      "file": "tools/codex/run.mjs",
+      "gitBlob": "1617dc23a23eb00f29e4eba41eff4c9ad80cebb8",
+      "sha256": "0a368b57e6dccffdc65483e4b1f25c4ec02915a075a9818575aea0851f6368f3"
+    },
+    {
+      "file": "tools/codex/setup.mjs",
+      "gitBlob": "62be776cc59734917431bceb6cec5b9d57800b4f",
+      "sha256": "b3f47af9e031133978ccde1369d9503d9ee729399fcf602db5a0423a4721939c"
+    }
+  ]
+}

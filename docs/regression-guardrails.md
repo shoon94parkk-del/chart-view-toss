@@ -529,3 +529,8 @@ The first gesture guard also deferred the explicit observation-toggle click, vio
 - Recent stock identities and sort are bounded, account-local, resettable and excluded from analytics. They add no Home quote/search request and cannot replace watchlist order.
 - Only exact version/symbol static Guru proof may satisfy an API409. Missing/different proof retains publication waiting; healthy APIs make no extra proof request.
 - Watch and provisional performance timing must wait for usable content or a distinct terminal outcome, not a removed skeleton alone.
+
+### 2026-10-16 — Public observation receipts and release data
+- Keep one publicationJournal confirmation queue across Home mounts. Freeze each mount baseline behind prior confirmed writes; stale/account/reset work cannot repopulate receipts. Same source/period/value is not a new update. Older observations cannot replace newer topics.
+- Keep optional macro/issuer modules independent, lazy and generation guarded. No Home provider call or graph payload additions. NSA YoY/SA MoM and null calendar gaps must survive API→UI.
+- Conference-call time, fiscal period end, collection/check time and actual official publication are different. Unknown stays unknown. Never derive historical surprise from current analyst estimates.

@@ -66,6 +66,7 @@ export const fullHeatmap=({force=false}={})=>api('/api/heatmap/full',{ttlMs:1500
 export const fullHeatmapSnapshot=()=>staticData('full_heatmap_snapshot.json',()=>api('/static/data/full_heatmap_snapshot.json',{ttlMs:60000,timeoutMs:5000,retries:0}));
 export const valuationStocks=(tickers,{force=false}={})=>api(`/api/valuation?tickers=${list(tickers)}`,{ttlMs:300000,force});
 export const macroData=({force=false}={})=>api('/api/macro',{ttlMs:300000,force});
+export const earningsEventsData=({force=false}={})=>api('/api/earnings-events',{ttlMs:300000,timeoutMs:8000,retries:0,force});
 export const homeInsights=(tickers=[])=>api(`/api/home-insights?tickers=${list(tickers)}`,{ttlMs:60000});
 export const personalizedNews=(tickers=[],names=[])=>api(`/api/personalized-news?tickers=${list(tickers)}&names=${encodeURIComponent(names.join('|'))}`,{timeoutMs:10000,retries:0,ttlMs:60000});
 export const screenerData=()=>staticData('screener.json',()=>api('/static/data/screener.json',{ttlMs:60000}));

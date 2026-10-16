@@ -1,3 +1,4 @@
+import './releaseReading.css';
 import {uiIcon, surfaceIdentity,featureLabel} from './uiIdentity.js';
 import { valueEntriesMarkup } from './valueDiscovery.js';
 import {marketBrief} from './insightModel.js';
@@ -109,6 +110,7 @@ let viewEpoch=0;
 let detailJumpCleanup=null;
 const detailModuleCleanups=new Set();
 let analysisCleanup=null;
+let macroCleanup=null;
 const lazyAnalysisRetryAssets=new Map();
 let searchSeq=0;
 let chartLoadSeq=0;
@@ -392,7 +394,7 @@ function openHomeSearch(){
    restoreBack:restoreNativeBack,
  });
 }
-function cleanupChart(){for(const cleanup of detailModuleCleanups)cleanup();detailModuleCleanups.clear();detailJumpCleanup?.();detailJumpCleanup=null;analysisCleanup?.();analysisCleanup=null;viewEpoch++;chartLoadSeq++;chartResizeObserver?.disconnect();chartResizeObserver=null;if(detailLiveTimer){clearTimeout(detailLiveTimer);detailLiveTimer=null;}if(chartInstance){try{chartInstance.remove()}catch{}chartInstance=null}}
+function cleanupChart(){for(const cleanup of detailModuleCleanups)cleanup();detailModuleCleanups.clear();detailJumpCleanup?.();detailJumpCleanup=null;analysisCleanup?.();analysisCleanup=null;macroCleanup?.();macroCleanup=null;viewEpoch++;chartLoadSeq++;chartResizeObserver?.disconnect();chartResizeObserver=null;if(detailLiveTimer){clearTimeout(detailLiveTimer);detailLiveTimer=null;}if(chartInstance){try{chartInstance.remove()}catch{}chartInstance=null}}
 
 function previousFromPct(price,changePct){
  const p=finiteNumber(price),c=finiteNumber(changePct);
@@ -1089,6 +1091,7 @@ async function renderMacro({force=false}={}){
    <section class="task-head"><div><h2>경제 지표</h2><p>지표마다 단위와 관측 시점이 달라요. 같은 ‘최신일’로 묶지 않고 각각 표시해요.</p></div></section>
    <div id="macro-freshness" class="freshness-card skeleton">${loadingIndicator('갱신 시각을 확인하고 있어요')}</div>
    <div id="macro-summary" class="macro-summary rich-macro-summary skeleton">${loadingIndicator('경제 지표를 불러오고 있어요')}</div>
+   <div id="macro-inflation"></div>
    <div id="macro-groups" class="macro-groups">${loadingIndicator('지표별 추이를 확인하고 있어요')}<div class="skeleton macro-tile"></div><div class="skeleton macro-tile"></div></div>
  `,'경제 지표');
  bindNav();
@@ -1110,6 +1113,15 @@ async function renderMacro({force=false}={}){
    (d?.results||[]).forEach(row=>{const category=macroCategory(row);if(!groups.has(category))groups.set(category,[]);groups.get(category).push(row)});
    const order=['금리','물가','유동성','위험','고용','경기','기타'];
    document.querySelector('#macro-groups').innerHTML=order.filter(k=>groups.has(k)).map(category=>`<section class="macro-group"><div class="section-head"><h2>${category}</h2><small>${groups.get(category).length}개 지표</small></div><div class="macro-grid">${groups.get(category).map((r)=>{const change=formatMacroChange(r);const chart=Array.isArray(r.chart_data)?r.chart_data:[];const isUp=Number(r.delta??r.change)>=0;const spark=macroSparklineSvg(chart,isUp);const status=macroFreshness(r);return `<article class="macro-tile neutral-macro"><div class="macro-tile-top"><span class="macro-symbol">${esc(r.symbol||r.original_symbol||'')}</span><small class="${status.stale?'stale-text':''}">${status.stale?'관측일 확인 필요':'최근 관측'}</small></div><strong>${esc(r.name||r.symbol)}</strong><div class="macro-value"><b>${esc(formatMacroValue(r))}</b><em>${esc(change)}</em></div><div class="macro-mini-chart" role="img" aria-label="${esc(r.name||r.symbol)} ${spark?'추세':'시계열 없음'}">${spark||'<span>시계열 없음</span>'}</div>${spark?`<div class="macro-mini-dates"><span>${esc(formatChartDate(chart[0]?.time||''))}</span><span>${esc(formatChartDate(chart.at(-1)?.time||r.asOf||''))}</span></div>`:''}<p>${esc(r.desc||'')}</p><div class="macro-meta-line"><span>${esc(observationLabel(r))}</span><span>${esc(changeBasisLabel(r.changeBasis))}</span>${macroPublicationLabel(r)?`<span>${esc(macroPublicationLabel(r))}</span>`:''}</div><div class="source-row"><small class="source-line">${esc(r.source||'출처 미제공')}</small>${macroSourceUrl(r)?`<button type="button" data-external-url="${esc(macroSourceUrl(r))}">원본 시리즈</button>`:''}</div></article>`}).join('')}</div></section>`).join('');
+   const inflationHost=document.querySelector('#macro-inflation');
+   void Promise.all([import('./macroInflationView.js'),import('./macroInflationView.css')]).then(([view])=>{
+     if(epoch!==viewEpoch||!inflationHost?.isConnected)return;
+     macroCleanup=view.mountMacroInflation(inflationHost,d,{onRender:bindNav,onRetry:()=>renderMacro({force:true})});
+   }).catch(()=>{
+     if(epoch!==viewEpoch||!inflationHost?.isConnected)return;
+     inflationHost.innerHTML='<div class="empty"><strong>물가·일정 화면을 열지 못했어요</strong><span>기존 경제 지표는 아래에서 계속 확인할 수 있어요.</span><button type="button" class="retry" data-retry-inflation-view>다시 열기</button></div>';
+     inflationHost.querySelector('button').onclick=()=>renderMacro({force:true});
+   });
    bindNav();
  }catch(e){
    if(epoch!==viewEpoch)return;
@@ -1519,7 +1531,7 @@ async function renderDetail(){
        const target=document.querySelector('#detail-financial-history');
        if(!target)return;
        if(result.status!=='fulfilled'){target.innerHTML='<div class="financial-empty">DART 재무제표를 불러오지 못했어요. <button type="button" class="retry" data-retry-financial>다시 시도</button></div>';}
-       else{const [data,view,review]=result.value;target.innerHTML=view.financialHistoryHtml(data);review?.mountReportReview(reviewHost,{symbol,data,onNotice:showToast,onJump:jumpToDetail});}
+       else{const [data,view,review]=result.value;target.innerHTML=view.financialHistoryHtml(data);review?.mountReportReview(reviewHost,{symbol,data,onNotice:showToast,onJump:jumpToDetail});target.querySelector('[data-return-research]')?.addEventListener('click',()=>jumpToDetail('detail-research-card'));}
        target.querySelector('[data-retry-financial]')?.addEventListener('click',loadFinancial);
      });
    };
