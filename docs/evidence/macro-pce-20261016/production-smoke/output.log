@@ -1,0 +1,8 @@
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+{"device":"chromium-320","checks":[{"name":"deployed-revisions","status":"passed"},{"name":"home-watch-detail","status":"passed"},{"name":"official-inflation","status":"passed"},{"name":"official-company-calls","status":"passed"},{"name":"dram-monthly-consistency","status":"passed"}],"failures":[],"pageErrors":[]}
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+{"device":"chromium-390","checks":[{"name":"deployed-revisions","status":"passed"},{"name":"home-watch-detail","status":"passed"},{"name":"official-inflation","status":"passed"},{"name":"official-company-calls","status":"passed"},{"name":"dram-monthly-consistency","status":"passed"}],"failures":[],"pageErrors":[]}
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+{"device":"chromium-430","checks":[{"name":"deployed-revisions","status":"passed"},{"name":"home-watch-detail","status":"passed"},{"name":"official-inflation","status":"passed"},{"name":"official-company-calls","status":"passed"},{"name":"dram-monthly-consistency","status":"passed"}],"failures":[],"pageErrors":[]}
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+{"device":"iphone-webkit","checks":[{"name":"deployed-revisions","status":"passed"},{"name":"home-watch-detail","status":"passed"},{"name":"official-inflation","status":"passed"},{"name":"official-company-calls","status":"passed"},{"name":"dram-monthly-consistency","status":"passed"}],"failures":[],"pageErrors":[]}

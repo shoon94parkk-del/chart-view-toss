@@ -1,0 +1,14 @@
+{
+  "commit": {
+    "createdAt": "2026-10-16T04:43:39Z",
+    "id": "b08af11f4bca7703c8d9c6d7a0f551249c4323b2",
+    "message": "data: refresh verified guru screening"
+  },
+  "createdAt": "2026-10-16T04:46:31.293638Z",
+  "finishedAt": "2026-10-16T04:47:58.640333Z",
+  "id": "dep-db8qo9ui0phs738mbea0",
+  "startedAt": "2026-10-16T04:46:31.26308Z",
+  "status": "live",
+  "trigger": "api",
+  "updatedAt": "2026-10-16T04:48:29.818939Z"
+}

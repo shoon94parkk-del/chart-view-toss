@@ -1,0 +1,824 @@
+{
+  "schemaVersion": 1,
+  "period": "2026-09",
+  "total": {
+    "name": "반도체",
+    "exportsUsdBillion": 43.6009,
+    "priorExportsUsdBillion": 13.9324,
+    "deltaUsdBillion": 29.6685,
+    "exportYoY": 212.9
+  },
+  "memoryTotalDeltaUsdBillion": 28.2433,
+  "segments": [
+    {
+      "key": "memory-total",
+      "name": "메모리 IC",
+      "code": "854232",
+      "group": "memory",
+      "note": "HS 854232 메모리 전체",
+      "period": "2026-09",
+      "exportsUsdBillion": 37.5893,
+      "priorExportsUsdBillion": 9.346,
+      "deltaUsdBillion": 28.2433,
+      "exportYoY": 302.2,
+      "overallContributionPct": 95.2,
+      "memoryContributionPct": null,
+      "history": [
+        {
+          "period": "2025-10",
+          "exportsUsdBillion": 8.8866,
+          "priorExportsUsdBillion": 6.2207,
+          "deltaUsdBillion": 2.666,
+          "exportYoY": 42.9
+        },
+        {
+          "period": "2025-11",
+          "exportsUsdBillion": 10.1637,
+          "priorExportsUsdBillion": 6.4436,
+          "deltaUsdBillion": 3.72,
+          "exportYoY": 57.7
+        },
+        {
+          "period": "2025-12",
+          "exportsUsdBillion": 12.6369,
+          "priorExportsUsdBillion": 7.4442,
+          "deltaUsdBillion": 5.1927,
+          "exportYoY": 69.8
+        },
+        {
+          "period": "2026-01",
+          "exportsUsdBillion": 12.112,
+          "priorExportsUsdBillion": 4.7657,
+          "deltaUsdBillion": 7.3463,
+          "exportYoY": 154.1
+        },
+        {
+          "period": "2026-02",
+          "exportsUsdBillion": 15.8107,
+          "priorExportsUsdBillion": 4.7259,
+          "deltaUsdBillion": 11.0848,
+          "exportYoY": 234.6
+        },
+        {
+          "period": "2026-03",
+          "exportsUsdBillion": 20.759,
+          "priorExportsUsdBillion": 6.6943,
+          "deltaUsdBillion": 14.0647,
+          "exportYoY": 210.1
+        },
+        {
+          "period": "2026-04",
+          "exportsUsdBillion": 20.8298,
+          "priorExportsUsdBillion": 5.7611,
+          "deltaUsdBillion": 15.0687,
+          "exportYoY": 261.6
+        },
+        {
+          "period": "2026-05",
+          "exportsUsdBillion": 24.952,
+          "priorExportsUsdBillion": 7.3375,
+          "deltaUsdBillion": 17.6146,
+          "exportYoY": 240.1
+        },
+        {
+          "period": "2026-06",
+          "exportsUsdBillion": 29.0399,
+          "priorExportsUsdBillion": 8.2303,
+          "deltaUsdBillion": 20.8096,
+          "exportYoY": 252.8
+        },
+        {
+          "period": "2026-07",
+          "exportsUsdBillion": 28.0072,
+          "priorExportsUsdBillion": 7.5608,
+          "deltaUsdBillion": 20.4464,
+          "exportYoY": 270.4
+        },
+        {
+          "period": "2026-08",
+          "exportsUsdBillion": 33.108,
+          "priorExportsUsdBillion": 8.5046,
+          "deltaUsdBillion": 24.6033,
+          "exportYoY": 289.3
+        },
+        {
+          "period": "2026-09",
+          "exportsUsdBillion": 37.5893,
+          "priorExportsUsdBillion": 9.346,
+          "deltaUsdBillion": 28.2433,
+          "exportYoY": 302.2
+        }
+      ]
+    },
+    {
+      "key": "dram",
+      "name": "DRAM",
+      "code": "8542321010",
+      "group": "memory",
+      "note": "HSK 8542321010 · HBM은 별도 HSK 코드가 없어 독립 집계 불가",
+      "period": "2026-09",
+      "exportsUsdBillion": 16.777,
+      "priorExportsUsdBillion": 2.6541,
+      "deltaUsdBillion": 14.123,
+      "exportYoY": 532.1,
+      "overallContributionPct": null,
+      "memoryContributionPct": 50,
+      "history": [
+        {
+          "period": "2025-10",
+          "exportsUsdBillion": 2.8553,
+          "priorExportsUsdBillion": 1.912,
+          "deltaUsdBillion": 0.9432,
+          "exportYoY": 49.3
+        },
+        {
+          "period": "2025-11",
+          "exportsUsdBillion": 3.6042,
+          "priorExportsUsdBillion": 1.8251,
+          "deltaUsdBillion": 1.7791,
+          "exportYoY": 97.5
+        },
+        {
+          "period": "2025-12",
+          "exportsUsdBillion": 4.1563,
+          "priorExportsUsdBillion": 2.0965,
+          "deltaUsdBillion": 2.0599,
+          "exportYoY": 98.3
+        },
+        {
+          "period": "2026-01",
+          "exportsUsdBillion": 5.0594,
+          "priorExportsUsdBillion": 1.8363,
+          "deltaUsdBillion": 3.223,
+          "exportYoY": 175.5
+        },
+        {
+          "period": "2026-02",
+          "exportsUsdBillion": 6.4908,
+          "priorExportsUsdBillion": 1.6815,
+          "deltaUsdBillion": 4.8093,
+          "exportYoY": 286
+        },
+        {
+          "period": "2026-03",
+          "exportsUsdBillion": 8.0124,
+          "priorExportsUsdBillion": 2.1066,
+          "deltaUsdBillion": 5.9058,
+          "exportYoY": 280.3
+        },
+        {
+          "period": "2026-04",
+          "exportsUsdBillion": 9.248,
+          "priorExportsUsdBillion": 2.1033,
+          "deltaUsdBillion": 7.1447,
+          "exportYoY": 339.7
+        },
+        {
+          "period": "2026-05",
+          "exportsUsdBillion": 11.4284,
+          "priorExportsUsdBillion": 2.2449,
+          "deltaUsdBillion": 9.1835,
+          "exportYoY": 409.1
+        },
+        {
+          "period": "2026-06",
+          "exportsUsdBillion": 11.1756,
+          "priorExportsUsdBillion": 2.2917,
+          "deltaUsdBillion": 8.8839,
+          "exportYoY": 387.7
+        },
+        {
+          "period": "2026-07",
+          "exportsUsdBillion": 13.5516,
+          "priorExportsUsdBillion": 2.3877,
+          "deltaUsdBillion": 11.1638,
+          "exportYoY": 467.6
+        },
+        {
+          "period": "2026-08",
+          "exportsUsdBillion": 15.7331,
+          "priorExportsUsdBillion": 2.6159,
+          "deltaUsdBillion": 13.1172,
+          "exportYoY": 501.4
+        },
+        {
+          "period": "2026-09",
+          "exportsUsdBillion": 16.777,
+          "priorExportsUsdBillion": 2.6541,
+          "deltaUsdBillion": 14.123,
+          "exportYoY": 532.1
+        }
+      ]
+    },
+    {
+      "key": "flash",
+      "name": "Flash memory",
+      "code": "8542321030",
+      "group": "memory",
+      "note": "HSK 8542321030 · NAND/NOR 등을 포함하는 Flash memory 분류",
+      "period": "2026-09",
+      "exportsUsdBillion": 3.2968,
+      "priorExportsUsdBillion": 0.7067,
+      "deltaUsdBillion": 2.59,
+      "exportYoY": 366.5,
+      "overallContributionPct": null,
+      "memoryContributionPct": 9.2,
+      "history": [
+        {
+          "period": "2025-10",
+          "exportsUsdBillion": 0.6729,
+          "priorExportsUsdBillion": 0.4404,
+          "deltaUsdBillion": 0.2325,
+          "exportYoY": 52.8
+        },
+        {
+          "period": "2025-11",
+          "exportsUsdBillion": 1.1013,
+          "priorExportsUsdBillion": 0.4789,
+          "deltaUsdBillion": 0.6223,
+          "exportYoY": 129.9
+        },
+        {
+          "period": "2025-12",
+          "exportsUsdBillion": 1.2756,
+          "priorExportsUsdBillion": 0.613,
+          "deltaUsdBillion": 0.6626,
+          "exportYoY": 108.1
+        },
+        {
+          "period": "2026-01",
+          "exportsUsdBillion": 1.435,
+          "priorExportsUsdBillion": 0.3073,
+          "deltaUsdBillion": 1.1277,
+          "exportYoY": 367
+        },
+        {
+          "period": "2026-02",
+          "exportsUsdBillion": 1.4062,
+          "priorExportsUsdBillion": 0.2941,
+          "deltaUsdBillion": 1.1121,
+          "exportYoY": 378.1
+        },
+        {
+          "period": "2026-03",
+          "exportsUsdBillion": 2.5446,
+          "priorExportsUsdBillion": 0.5267,
+          "deltaUsdBillion": 2.0179,
+          "exportYoY": 383.2
+        },
+        {
+          "period": "2026-04",
+          "exportsUsdBillion": 1.6737,
+          "priorExportsUsdBillion": 0.4303,
+          "deltaUsdBillion": 1.2435,
+          "exportYoY": 289
+        },
+        {
+          "period": "2026-05",
+          "exportsUsdBillion": 1.7217,
+          "priorExportsUsdBillion": 0.5613,
+          "deltaUsdBillion": 1.1605,
+          "exportYoY": 206.8
+        },
+        {
+          "period": "2026-06",
+          "exportsUsdBillion": 2.4862,
+          "priorExportsUsdBillion": 0.6207,
+          "deltaUsdBillion": 1.8654,
+          "exportYoY": 300.5
+        },
+        {
+          "period": "2026-07",
+          "exportsUsdBillion": 1.7806,
+          "priorExportsUsdBillion": 0.4616,
+          "deltaUsdBillion": 1.3191,
+          "exportYoY": 285.8
+        },
+        {
+          "period": "2026-08",
+          "exportsUsdBillion": 2.8622,
+          "priorExportsUsdBillion": 0.6455,
+          "deltaUsdBillion": 2.2167,
+          "exportYoY": 343.4
+        },
+        {
+          "period": "2026-09",
+          "exportsUsdBillion": 3.2968,
+          "priorExportsUsdBillion": 0.7067,
+          "deltaUsdBillion": 2.59,
+          "exportYoY": 366.5
+        }
+      ]
+    },
+    {
+      "key": "sram",
+      "name": "SRAM",
+      "code": "8542321020",
+      "group": "memory",
+      "note": "HSK 8542321020",
+      "period": "2026-09",
+      "exportsUsdBillion": 0.0011,
+      "priorExportsUsdBillion": 0.0007,
+      "deltaUsdBillion": 0.0004,
+      "exportYoY": 56.9,
+      "overallContributionPct": null,
+      "memoryContributionPct": 0,
+      "history": [
+        {
+          "period": "2025-10",
+          "exportsUsdBillion": 0.0014,
+          "priorExportsUsdBillion": 0.0003,
+          "deltaUsdBillion": 0.0011,
+          "exportYoY": 328.9
+        },
+        {
+          "period": "2025-11",
+          "exportsUsdBillion": 0.0004,
+          "priorExportsUsdBillion": 0.0004,
+          "deltaUsdBillion": 0,
+          "exportYoY": 1.6
+        },
+        {
+          "period": "2025-12",
+          "exportsUsdBillion": 0.0007,
+          "priorExportsUsdBillion": 0.0002,
+          "deltaUsdBillion": 0.0005,
+          "exportYoY": 225.4
+        },
+        {
+          "period": "2026-01",
+          "exportsUsdBillion": 0.0009,
+          "priorExportsUsdBillion": 0.0002,
+          "deltaUsdBillion": 0.0007,
+          "exportYoY": 317.4
+        },
+        {
+          "period": "2026-02",
+          "exportsUsdBillion": 0.0008,
+          "priorExportsUsdBillion": 0.0003,
+          "deltaUsdBillion": 0.0006,
+          "exportYoY": 191.8
+        },
+        {
+          "period": "2026-03",
+          "exportsUsdBillion": 0.0017,
+          "priorExportsUsdBillion": 0.0006,
+          "deltaUsdBillion": 0.0011,
+          "exportYoY": 170.1
+        },
+        {
+          "period": "2026-04",
+          "exportsUsdBillion": 0.0008,
+          "priorExportsUsdBillion": 0.0004,
+          "deltaUsdBillion": 0.0004,
+          "exportYoY": 92.1
+        },
+        {
+          "period": "2026-05",
+          "exportsUsdBillion": 0.0007,
+          "priorExportsUsdBillion": 0.0009,
+          "deltaUsdBillion": -0.0001,
+          "exportYoY": -14.1
+        },
+        {
+          "period": "2026-06",
+          "exportsUsdBillion": 0.0009,
+          "priorExportsUsdBillion": 0.0005,
+          "deltaUsdBillion": 0.0004,
+          "exportYoY": 79
+        },
+        {
+          "period": "2026-07",
+          "exportsUsdBillion": 0.0487,
+          "priorExportsUsdBillion": 0.0011,
+          "deltaUsdBillion": 0.0476,
+          "exportYoY": 4499.6
+        },
+        {
+          "period": "2026-08",
+          "exportsUsdBillion": 0.0005,
+          "priorExportsUsdBillion": 0.0008,
+          "deltaUsdBillion": -0.0003,
+          "exportYoY": -41.1
+        },
+        {
+          "period": "2026-09",
+          "exportsUsdBillion": 0.0011,
+          "priorExportsUsdBillion": 0.0007,
+          "deltaUsdBillion": 0.0004,
+          "exportYoY": 56.9
+        }
+      ]
+    },
+    {
+      "key": "mcp-memory",
+      "name": "MCP",
+      "code": "8542323000",
+      "group": "memory",
+      "note": "HSK 8542323000 · 복합구조칩 메모리(Multichip integrated circuits)",
+      "period": "2026-09",
+      "exportsUsdBillion": 15.014,
+      "priorExportsUsdBillion": 5.234,
+      "deltaUsdBillion": 9.78,
+      "exportYoY": 186.9,
+      "overallContributionPct": null,
+      "memoryContributionPct": 34.6,
+      "history": [
+        {
+          "period": "2025-10",
+          "exportsUsdBillion": 4.7182,
+          "priorExportsUsdBillion": 3.4828,
+          "deltaUsdBillion": 1.2354,
+          "exportYoY": 35.5
+        },
+        {
+          "period": "2025-11",
+          "exportsUsdBillion": 4.6752,
+          "priorExportsUsdBillion": 3.5877,
+          "deltaUsdBillion": 1.0875,
+          "exportYoY": 30.3
+        },
+        {
+          "period": "2025-12",
+          "exportsUsdBillion": 6.1615,
+          "priorExportsUsdBillion": 4.3311,
+          "deltaUsdBillion": 1.8304,
+          "exportYoY": 42.3
+        },
+        {
+          "period": "2026-01",
+          "exportsUsdBillion": 4.8834,
+          "priorExportsUsdBillion": 2.2364,
+          "deltaUsdBillion": 2.647,
+          "exportYoY": 118.4
+        },
+        {
+          "period": "2026-02",
+          "exportsUsdBillion": 6.7488,
+          "priorExportsUsdBillion": 2.2868,
+          "deltaUsdBillion": 4.4621,
+          "exportYoY": 195.1
+        },
+        {
+          "period": "2026-03",
+          "exportsUsdBillion": 8.5772,
+          "priorExportsUsdBillion": 3.6646,
+          "deltaUsdBillion": 4.9127,
+          "exportYoY": 134.1
+        },
+        {
+          "period": "2026-04",
+          "exportsUsdBillion": 8.1572,
+          "priorExportsUsdBillion": 2.8458,
+          "deltaUsdBillion": 5.3115,
+          "exportYoY": 186.6
+        },
+        {
+          "period": "2026-05",
+          "exportsUsdBillion": 9.6216,
+          "priorExportsUsdBillion": 4.0067,
+          "deltaUsdBillion": 5.6148,
+          "exportYoY": 140.1
+        },
+        {
+          "period": "2026-06",
+          "exportsUsdBillion": 12.6822,
+          "priorExportsUsdBillion": 4.6876,
+          "deltaUsdBillion": 7.9946,
+          "exportYoY": 170.5
+        },
+        {
+          "period": "2026-07",
+          "exportsUsdBillion": 10.0869,
+          "priorExportsUsdBillion": 4.1946,
+          "deltaUsdBillion": 5.8924,
+          "exportYoY": 140.5
+        },
+        {
+          "period": "2026-08",
+          "exportsUsdBillion": 12.2253,
+          "priorExportsUsdBillion": 4.6037,
+          "deltaUsdBillion": 7.6217,
+          "exportYoY": 165.6
+        },
+        {
+          "period": "2026-09",
+          "exportsUsdBillion": 15.014,
+          "priorExportsUsdBillion": 5.234,
+          "deltaUsdBillion": 9.78,
+          "exportYoY": 186.9
+        }
+      ]
+    },
+    {
+      "key": "dram-module",
+      "name": "DRAM 모듈",
+      "code": "8473304060",
+      "group": "module",
+      "note": "HSK 8473304060 · DRAM modules",
+      "period": "2026-09",
+      "exportsUsdBillion": 16.4835,
+      "priorExportsUsdBillion": 2.4454,
+      "deltaUsdBillion": 14.0381,
+      "exportYoY": 574.1,
+      "overallContributionPct": null,
+      "memoryContributionPct": null,
+      "history": [
+        {
+          "period": "2025-10",
+          "exportsUsdBillion": 2.0019,
+          "priorExportsUsdBillion": 1.1743,
+          "deltaUsdBillion": 0.8276,
+          "exportYoY": 70.5
+        },
+        {
+          "period": "2025-11",
+          "exportsUsdBillion": 2.6181,
+          "priorExportsUsdBillion": 1.5209,
+          "deltaUsdBillion": 1.0972,
+          "exportYoY": 72.1
+        },
+        {
+          "period": "2025-12",
+          "exportsUsdBillion": 3.4898,
+          "priorExportsUsdBillion": 2.3594,
+          "deltaUsdBillion": 1.1304,
+          "exportYoY": 47.9
+        },
+        {
+          "period": "2026-01",
+          "exportsUsdBillion": 3.6079,
+          "priorExportsUsdBillion": 1.4146,
+          "deltaUsdBillion": 2.1933,
+          "exportYoY": 155
+        },
+        {
+          "period": "2026-02",
+          "exportsUsdBillion": 5.2065,
+          "priorExportsUsdBillion": 1.0874,
+          "deltaUsdBillion": 4.1191,
+          "exportYoY": 378.8
+        },
+        {
+          "period": "2026-03",
+          "exportsUsdBillion": 7.4104,
+          "priorExportsUsdBillion": 2.125,
+          "deltaUsdBillion": 5.2854,
+          "exportYoY": 248.7
+        },
+        {
+          "period": "2026-04",
+          "exportsUsdBillion": 6.1438,
+          "priorExportsUsdBillion": 1.3734,
+          "deltaUsdBillion": 4.7704,
+          "exportYoY": 347.3
+        },
+        {
+          "period": "2026-05",
+          "exportsUsdBillion": 7.186,
+          "priorExportsUsdBillion": 1.7173,
+          "deltaUsdBillion": 5.4687,
+          "exportYoY": 318.5
+        },
+        {
+          "period": "2026-06",
+          "exportsUsdBillion": 10.6705,
+          "priorExportsUsdBillion": 2.2134,
+          "deltaUsdBillion": 8.4571,
+          "exportYoY": 382.1
+        },
+        {
+          "period": "2026-07",
+          "exportsUsdBillion": 7.6742,
+          "priorExportsUsdBillion": 1.9062,
+          "deltaUsdBillion": 5.768,
+          "exportYoY": 302.6
+        },
+        {
+          "period": "2026-08",
+          "exportsUsdBillion": 7.8362,
+          "priorExportsUsdBillion": 1.9873,
+          "deltaUsdBillion": 5.8489,
+          "exportYoY": 294.3
+        },
+        {
+          "period": "2026-09",
+          "exportsUsdBillion": 16.4835,
+          "priorExportsUsdBillion": 2.4454,
+          "deltaUsdBillion": 14.0381,
+          "exportYoY": 574.1
+        }
+      ]
+    },
+    {
+      "key": "processor-controller",
+      "name": "프로세서·컨트롤러",
+      "code": "854231",
+      "group": "logic",
+      "note": "HS 854231",
+      "period": "2026-09",
+      "exportsUsdBillion": 4.4346,
+      "priorExportsUsdBillion": 3.2005,
+      "deltaUsdBillion": 1.234,
+      "exportYoY": 38.6,
+      "overallContributionPct": 4.2,
+      "memoryContributionPct": null,
+      "history": [
+        {
+          "period": "2025-10",
+          "exportsUsdBillion": 3.3968,
+          "priorExportsUsdBillion": 3.6229,
+          "deltaUsdBillion": -0.2261,
+          "exportYoY": -6.2
+        },
+        {
+          "period": "2025-11",
+          "exportsUsdBillion": 2.8834,
+          "priorExportsUsdBillion": 3.0563,
+          "deltaUsdBillion": -0.1729,
+          "exportYoY": -5.7
+        },
+        {
+          "period": "2025-12",
+          "exportsUsdBillion": 2.8296,
+          "priorExportsUsdBillion": 2.9131,
+          "deltaUsdBillion": -0.0834,
+          "exportYoY": -2.9
+        },
+        {
+          "period": "2026-01",
+          "exportsUsdBillion": 3.3992,
+          "priorExportsUsdBillion": 2.7012,
+          "deltaUsdBillion": 0.698,
+          "exportYoY": 25.8
+        },
+        {
+          "period": "2026-02",
+          "exportsUsdBillion": 2.8993,
+          "priorExportsUsdBillion": 2.6181,
+          "deltaUsdBillion": 0.2812,
+          "exportYoY": 10.7
+        },
+        {
+          "period": "2026-03",
+          "exportsUsdBillion": 3.1499,
+          "priorExportsUsdBillion": 2.7149,
+          "deltaUsdBillion": 0.435,
+          "exportYoY": 16
+        },
+        {
+          "period": "2026-04",
+          "exportsUsdBillion": 3.5382,
+          "priorExportsUsdBillion": 3.0882,
+          "deltaUsdBillion": 0.45,
+          "exportYoY": 14.6
+        },
+        {
+          "period": "2026-05",
+          "exportsUsdBillion": 3.5189,
+          "priorExportsUsdBillion": 3.2327,
+          "deltaUsdBillion": 0.2862,
+          "exportYoY": 8.9
+        },
+        {
+          "period": "2026-06",
+          "exportsUsdBillion": 3.4274,
+          "priorExportsUsdBillion": 2.9829,
+          "deltaUsdBillion": 0.4445,
+          "exportYoY": 14.9
+        },
+        {
+          "period": "2026-07",
+          "exportsUsdBillion": 3.7322,
+          "priorExportsUsdBillion": 3.8141,
+          "deltaUsdBillion": -0.0818,
+          "exportYoY": -2.1
+        },
+        {
+          "period": "2026-08",
+          "exportsUsdBillion": 4.1376,
+          "priorExportsUsdBillion": 3.2222,
+          "deltaUsdBillion": 0.9153,
+          "exportYoY": 28.4
+        },
+        {
+          "period": "2026-09",
+          "exportsUsdBillion": 4.4346,
+          "priorExportsUsdBillion": 3.2005,
+          "deltaUsdBillion": 1.234,
+          "exportYoY": 38.6
+        }
+      ]
+    },
+    {
+      "key": "other-ic",
+      "name": "기타 IC",
+      "code": "854239",
+      "group": "logic",
+      "note": "HS 854239",
+      "period": "2026-09",
+      "exportsUsdBillion": 1.0299,
+      "priorExportsUsdBillion": 1.0286,
+      "deltaUsdBillion": 0.0013,
+      "exportYoY": 0.1,
+      "overallContributionPct": 0,
+      "memoryContributionPct": null,
+      "history": [
+        {
+          "period": "2025-10",
+          "exportsUsdBillion": 0.8489,
+          "priorExportsUsdBillion": 0.9448,
+          "deltaUsdBillion": -0.0959,
+          "exportYoY": -10.2
+        },
+        {
+          "period": "2025-11",
+          "exportsUsdBillion": 0.8627,
+          "priorExportsUsdBillion": 0.8724,
+          "deltaUsdBillion": -0.0098,
+          "exportYoY": -1.1
+        },
+        {
+          "period": "2025-12",
+          "exportsUsdBillion": 1.2141,
+          "priorExportsUsdBillion": 1.2724,
+          "deltaUsdBillion": -0.0583,
+          "exportYoY": -4.6
+        },
+        {
+          "period": "2026-01",
+          "exportsUsdBillion": 0.8371,
+          "priorExportsUsdBillion": 0.7617,
+          "deltaUsdBillion": 0.0754,
+          "exportYoY": 9.9
+        },
+        {
+          "period": "2026-02",
+          "exportsUsdBillion": 0.6972,
+          "priorExportsUsdBillion": 0.7267,
+          "deltaUsdBillion": -0.0296,
+          "exportYoY": -4.1
+        },
+        {
+          "period": "2026-03",
+          "exportsUsdBillion": 0.9401,
+          "priorExportsUsdBillion": 1.0048,
+          "deltaUsdBillion": -0.0647,
+          "exportYoY": -6.4
+        },
+        {
+          "period": "2026-04",
+          "exportsUsdBillion": 0.8154,
+          "priorExportsUsdBillion": 0.875,
+          "deltaUsdBillion": -0.0596,
+          "exportYoY": -6.8
+        },
+        {
+          "period": "2026-05",
+          "exportsUsdBillion": 0.9119,
+          "priorExportsUsdBillion": 0.9595,
+          "deltaUsdBillion": -0.0476,
+          "exportYoY": -5
+        },
+        {
+          "period": "2026-06",
+          "exportsUsdBillion": 1.0321,
+          "priorExportsUsdBillion": 0.9996,
+          "deltaUsdBillion": 0.0325,
+          "exportYoY": 3.3
+        },
+        {
+          "period": "2026-07",
+          "exportsUsdBillion": 0.9168,
+          "priorExportsUsdBillion": 0.8679,
+          "deltaUsdBillion": 0.0489,
+          "exportYoY": 5.6
+        },
+        {
+          "period": "2026-08",
+          "exportsUsdBillion": 0.9291,
+          "priorExportsUsdBillion": 0.8442,
+          "deltaUsdBillion": 0.0848,
+          "exportYoY": 10
+        },
+        {
+          "period": "2026-09",
+          "exportsUsdBillion": 1.0299,
+          "priorExportsUsdBillion": 1.0286,
+          "deltaUsdBillion": 0.0013,
+          "exportYoY": 0.1
+        }
+      ]
+    }
+  ],
+  "meta": {
+    "provider": "Korea Customs Service / data.go.kr",
+    "scope": "2026 HSK semiconductor segment proxies with 12-month history",
+    "overallContributionBasis": "HS 8541+8542 semiconductor net YoY change; memory IC / processor-controller / other IC are partial, non-exhaustive contributors",
+    "memoryContributionBasis": "HS 854232 memory IC net YoY change; DRAM / SRAM / Flash memory / MCP are subcategories",
+    "moduleCaution": "DRAM module 8473304060 is outside HS 8541+8542, so it has no semiconductor-total contribution percentage",
+    "errors": [],
+    "cacheTtlSec": 43200,
+    "cacheStatus": "fresh"
+  }
+}

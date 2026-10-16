@@ -1,0 +1,9 @@
+{
+  "entry": "/assets/index-Bd1oWwEb.js",
+  "bytes": 327105,
+  "sha256": "951d6d631720cceaffb56b974631de755e2821f742c778279097b6279615ad38",
+  "publicBuildEnvironment": {
+    "VITE_CHARTVIEW_API_BASE": "https://chart-view-pkv8.onrender.com",
+    "VITE_CHARTVIEW_STATIC_DATA_BASE": "https://raw.githubusercontent.com/shoon94parkk-del/chart_View/main/static/data"
+  }
+}

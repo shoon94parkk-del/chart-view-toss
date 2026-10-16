@@ -77,7 +77,7 @@ for(const config of [
  {name:'chromium-430',type:chromium,width:430},
  {name:'iphone-webkit',type:webkit,device:'iPhone 13'},
 ]){
- const result={device:config.name,startedAt:new Date().toISOString(),checks:[],failures:[],pageErrors:[],networkFailures:[],requests:[],screenshots:[]};
+ const result={device:config.name,startedAt:new Date().toISOString(),checks:[],failures:[],pageErrors:[],networkFailures:[],requests:[],responses:[],screenshots:[],timings:{}};
  report.results.push(result);
  const browser=await config.type.launch({headless:true});
  const context=await browser.newContext({
@@ -89,7 +89,12 @@ for(const config of [
  const observedResponses=new Map();
  page.on('response',response=>{
   const url=new URL(response.url());
-  if(url.origin===BACKEND&&response.request().method()==='GET'&&url.pathname.startsWith('/api/'))observedResponses.set(url.pathname,response);
+  if(url.origin===BACKEND&&response.request().method()==='GET'&&url.pathname==='/api/export-momentum'){
+   // Capture while this document owns the browser response. Full navigation
+   // may release its CDP resource even though the application cached the JSON.
+   const status=response.status(),body=response.json();body.catch(()=>{});
+   observedResponses.set(url.pathname,{status:()=>status,json:()=>body});
+  }
  });
  page.on('pageerror',error=>result.pageErrors.push(error.message));
  page.on('requestfailed',request=>result.networkFailures.push({url:request.url(),error:request.failure()?.errorText}));
@@ -108,7 +113,8 @@ for(const config of [
  // The proxy may reject browser CORS plumbing. Preserve every original status,
  // header and body while Playwright's API transport reaches the same public URL.
  await page.route(/\/(?:api|static\/data)\//,async route=>{
-  try{const response=await route.fetch({timeout:60000});await route.fulfill({response});}
+  const started=performance.now();
+  try{const response=await route.fetch({timeout:60000});result.responses.push({url:route.request().url(),status:response.status(),durationMs:Math.round(performance.now()-started)});await route.fulfill({response});}
   catch(error){result.networkFailures.push({url:route.request().url(),relayError:error.message});await route.abort().catch(()=>{});}
  });
  const step=async(name,action)=>{
@@ -173,10 +179,23 @@ for(const config of [
    await expect(page.locator('[data-watch-sort="name"]')).toHaveAttribute('aria-pressed','true');
    assert.deepEqual(await page.evaluate(({WATCH,SELECTED})=>({watch:localStorage.getItem(WATCH),selected:localStorage.getItem(SELECTED)}),{WATCH,SELECTED}),bytes);
    await geometry();await screenshot('watch');
+   const chartFetched=pendingResponse(response=>{
+    const url=new URL(response.url());
+    return url.origin===BACKEND&&response.request().method()==='GET'&&url.pathname==='/api/compare'&&url.searchParams.get('tickers')==='005930.KS'&&url.searchParams.get('period')==='3mo';
+   });
+   const detailStarted=performance.now();
    await page.locator('#watch-rich-list .watch-main[data-stock-detail="005930.KS"]').click();
    await expect(page.locator('#detail-name')).toContainText('삼성전자');
    await expect(page.locator('#detail-price .quote-main>div:first-child>strong')).toContainText(/\d/);
+   const chartResponse=await chartFetched;
+   result.timings.detailChartHeadersMs=Math.round(performance.now()-detailStarted);
+   assert.equal(chartResponse.status(),200);const chartRaw=await chartResponse.json();
+   result.timings.detailChartBodyMs=Math.round(performance.now()-detailStarted);
+   await captureData('detail-chart',chartRaw);
+   const chartStock=chartRaw.stocks.find(row=>row.ticker==='005930.KS'||row.symbol==='005930.KS');
+   assert.ok(chartStock?.data?.some(point=>Number.isFinite(point.value)),'Actual chart response has no finite stock observations');
    await expect(page.locator('#detail-chart canvas').first()).toBeVisible();
+   result.timings.detailChartVisibleMs=Math.round(performance.now()-detailStarted);
    await expect(page.locator('#research-question')).toBeVisible();
    const savedQuestion='운영 QA: 최근 공시 매출과 영업이익 비교';
    await page.locator('#research-question').fill(savedQuestion);

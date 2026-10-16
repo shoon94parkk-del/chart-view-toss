@@ -1,0 +1,14 @@
+{
+  "commit": {
+    "createdAt": "2026-10-16T05:15:11Z",
+    "id": "95d6b8361e22958f9cea6773afcf6ca446c2447a",
+    "message": "Merge PR #136: PCE graphs and macro publication clarity\n\nfeat: PCE·근원 PCE 그래프와 물가 발표일·예상 대비 표시"
+  },
+  "createdAt": "2026-10-16T05:23:29.181619Z",
+  "finishedAt": "2026-10-16T05:23:54.183089Z",
+  "id": "dep-db8r9kbl550s73eu3980",
+  "startedAt": "2026-10-16T05:23:29.18023Z",
+  "status": "live",
+  "trigger": "api",
+  "updatedAt": "2026-10-16T05:23:54.183327Z"
+}

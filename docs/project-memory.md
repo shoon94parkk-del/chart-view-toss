@@ -454,3 +454,8 @@ The site-audit branch preserves deployed9bd17db before fixing navigation, draft/
 
 
 2026-10-16 물가 6종: 별도 선택형 물가 캐시에 PCE·근원 PCE를 추가하며 두 변화율 모두 SA와 `source.saUrl`을 사용한다. CPI/PPI는 기존 NSA YoY·SA MoM을 유지한다. `2026.09 지표 · 10.14 발표`처럼 관측월·발표일을 구분하고 날짜만 알면 원문 날짜·시각 미제공으로 남긴다. 선택적 `row.comparisons`의 `month`·기준·단위·최초 발표·발표 전 동결 예상·출처·공식 날짜가 모두 맞을 때만 한 자리 반올림 후 색상 비교한다. 미승인 예상이나 현재 수정 지수를 최초 발표값으로 만들지 않는다. 기본은 회색 예상 미제공과 명시된 `지수 계산값`이다. 기존16/Home/PICK/LAB를 바꾸지 않는다. [구현·출처 한계·검증 범위](MACRO_PCE_2026-10-16.md)를 읽고 최종 QA·운영 게시·실기기 Sandbox 상태는 별도로 확인한다.
+
+
+## 2026-10-16 — PCE 운영 웹 게시 증거
+
+PR136은 main `95d6b83`로 병합됐고, exact main 전체 QA와 정상 배포 브랜치 승격 뒤 Render 프런트 `dep-db8r9kbl550s73eu3980`으로05:23:54 UTC 게시했다. 백엔드는 PR155 및 정기 데이터 포함 `b08af11`을04:47:58 UTC 게시했다. 실제 운영20/20 검사가 통과했다. 최초16/20·차트5초/네트워크 예외와 QA Response 수명 오류도 보존했다. [게시·실패·AIT·성능 증거](evidence/macro-pce-20261016/RELEASE.md)는 별도 문서 브랜치에서 보관하며 제품 게시 커밋을 바꾸지 않는다. 시장 예상 수집과 실제 Toss Sandbox는 미완료다.

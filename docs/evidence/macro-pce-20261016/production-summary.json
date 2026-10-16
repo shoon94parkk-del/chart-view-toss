@@ -1,0 +1,137 @@
+{
+  "status": "passed",
+  "startedAt": "2026-10-16T05:27:44.495Z",
+  "finishedAt": "2026-10-16T05:28:39.819Z",
+  "expected": {
+    "backendSha": "b08af11f4bca7703c8d9c6d7a0f551249c4323b2",
+    "frontendSha": "95d6b8361e22958f9cea6773afcf6ca446c2447a",
+    "entry": "/assets/index-Bd1oWwEb.js",
+    "assetSha256": "951d6d631720cceaffb56b974631de755e2821f742c778279097b6279615ad38"
+  },
+  "checksPassed": 20,
+  "checksFailed": 0,
+  "nativeSandbox": "not_verified",
+  "forecastCollection": "pending_approved_source",
+  "devices": [
+    {
+      "device": "chromium-320",
+      "timings": {
+        "detailChartHeadersMs": 1018,
+        "detailChartBodyMs": 1279,
+        "detailChartVisibleMs": 1360
+      },
+      "checks": [
+        {
+          "name": "deployed-revisions",
+          "status": "passed"
+        },
+        {
+          "name": "home-watch-detail",
+          "status": "passed"
+        },
+        {
+          "name": "official-inflation",
+          "status": "passed"
+        },
+        {
+          "name": "official-company-calls",
+          "status": "passed"
+        },
+        {
+          "name": "dram-monthly-consistency",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "device": "chromium-390",
+      "timings": {
+        "detailChartHeadersMs": 496,
+        "detailChartBodyMs": 517,
+        "detailChartVisibleMs": 544
+      },
+      "checks": [
+        {
+          "name": "deployed-revisions",
+          "status": "passed"
+        },
+        {
+          "name": "home-watch-detail",
+          "status": "passed"
+        },
+        {
+          "name": "official-inflation",
+          "status": "passed"
+        },
+        {
+          "name": "official-company-calls",
+          "status": "passed"
+        },
+        {
+          "name": "dram-monthly-consistency",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "device": "chromium-430",
+      "timings": {
+        "detailChartHeadersMs": 436,
+        "detailChartBodyMs": 447,
+        "detailChartVisibleMs": 476
+      },
+      "checks": [
+        {
+          "name": "deployed-revisions",
+          "status": "passed"
+        },
+        {
+          "name": "home-watch-detail",
+          "status": "passed"
+        },
+        {
+          "name": "official-inflation",
+          "status": "passed"
+        },
+        {
+          "name": "official-company-calls",
+          "status": "passed"
+        },
+        {
+          "name": "dram-monthly-consistency",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "device": "iphone-webkit",
+      "timings": {
+        "detailChartHeadersMs": 590,
+        "detailChartBodyMs": 629,
+        "detailChartVisibleMs": 1071
+      },
+      "checks": [
+        {
+          "name": "deployed-revisions",
+          "status": "passed"
+        },
+        {
+          "name": "home-watch-detail",
+          "status": "passed"
+        },
+        {
+          "name": "official-inflation",
+          "status": "passed"
+        },
+        {
+          "name": "official-company-calls",
+          "status": "passed"
+        },
+        {
+          "name": "dram-monthly-consistency",
+          "status": "passed"
+        }
+      ]
+    }
+  ]
+}

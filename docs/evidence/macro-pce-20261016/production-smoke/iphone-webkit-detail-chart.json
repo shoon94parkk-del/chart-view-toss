@@ -1,0 +1,343 @@
+{
+  "stocks": [
+    {
+      "ticker": "005930.KS",
+      "name": "삼성전자",
+      "price": 221500,
+      "return": -13.14,
+      "data": [
+        {
+          "time": 1784160000,
+          "value": 0,
+          "price": 255000
+        },
+        {
+          "time": 1784505600,
+          "value": -4.31,
+          "price": 244000
+        },
+        {
+          "time": 1784592000,
+          "value": 1.57,
+          "price": 259000
+        },
+        {
+          "time": 1784678400,
+          "value": 2.16,
+          "price": 260500
+        },
+        {
+          "time": 1784764800,
+          "value": 5.88,
+          "price": 270000
+        },
+        {
+          "time": 1784851200,
+          "value": -2.16,
+          "price": 249500
+        },
+        {
+          "time": 1785110400,
+          "value": -0.39,
+          "price": 254000
+        },
+        {
+          "time": 1785196800,
+          "value": -13.73,
+          "price": 220000
+        },
+        {
+          "time": 1785283200,
+          "value": -18.24,
+          "price": 208500
+        },
+        {
+          "time": 1785369600,
+          "value": -18.82,
+          "price": 207000
+        },
+        {
+          "time": 1785456000,
+          "value": 2.94,
+          "price": 262500
+        },
+        {
+          "time": 1785715200,
+          "value": -6.08,
+          "price": 239500
+        },
+        {
+          "time": 1785801600,
+          "value": -5.88,
+          "price": 240000
+        },
+        {
+          "time": 1785888000,
+          "value": -3.53,
+          "price": 246000
+        },
+        {
+          "time": 1785974400,
+          "value": -9.61,
+          "price": 230500
+        },
+        {
+          "time": 1786060800,
+          "value": -9.41,
+          "price": 231000
+        },
+        {
+          "time": 1786320000,
+          "value": -9.8,
+          "price": 230000
+        },
+        {
+          "time": 1786406400,
+          "value": -6.08,
+          "price": 239500
+        },
+        {
+          "time": 1786492800,
+          "value": 0.2,
+          "price": 255500
+        },
+        {
+          "time": 1786579200,
+          "value": 5.1,
+          "price": 268000
+        },
+        {
+          "time": 1786665600,
+          "value": 7.65,
+          "price": 274500
+        },
+        {
+          "time": 1787011200,
+          "value": 5.29,
+          "price": 268500
+        },
+        {
+          "time": 1787097600,
+          "value": -2.94,
+          "price": 247500
+        },
+        {
+          "time": 1787184000,
+          "value": 6.27,
+          "price": 271000
+        },
+        {
+          "time": 1787270400,
+          "value": 10.39,
+          "price": 281500
+        },
+        {
+          "time": 1787529600,
+          "value": 0.78,
+          "price": 257000
+        },
+        {
+          "time": 1787616000,
+          "value": 0.78,
+          "price": 257000
+        },
+        {
+          "time": 1787702400,
+          "value": 2.55,
+          "price": 261500
+        },
+        {
+          "time": 1787788800,
+          "value": 4.31,
+          "price": 266000
+        },
+        {
+          "time": 1787875200,
+          "value": 0.78,
+          "price": 257000
+        },
+        {
+          "time": 1788134400,
+          "value": 1.96,
+          "price": 260000
+        },
+        {
+          "time": 1788220800,
+          "value": 2.35,
+          "price": 261000
+        },
+        {
+          "time": 1788307200,
+          "value": -1.76,
+          "price": 250500
+        },
+        {
+          "time": 1788393600,
+          "value": -1.96,
+          "price": 250000
+        },
+        {
+          "time": 1788480000,
+          "value": 0.2,
+          "price": 255500
+        },
+        {
+          "time": 1788739200,
+          "value": 5.88,
+          "price": 270000
+        },
+        {
+          "time": 1788825600,
+          "value": 5.69,
+          "price": 269500
+        },
+        {
+          "time": 1788912000,
+          "value": 5.69,
+          "price": 269500
+        },
+        {
+          "time": 1788998400,
+          "value": 5.49,
+          "price": 269000
+        },
+        {
+          "time": 1789084800,
+          "value": 1.76,
+          "price": 259500
+        },
+        {
+          "time": 1789344000,
+          "value": -2.35,
+          "price": 249000
+        },
+        {
+          "time": 1789430400,
+          "value": -2.55,
+          "price": 248500
+        },
+        {
+          "time": 1789516800,
+          "value": -0.59,
+          "price": 253500
+        },
+        {
+          "time": 1789603200,
+          "value": -0.98,
+          "price": 252500
+        },
+        {
+          "time": 1789689600,
+          "value": 2.35,
+          "price": 261000
+        },
+        {
+          "time": 1789948800,
+          "value": 7.45,
+          "price": 274000
+        },
+        {
+          "time": 1790035200,
+          "value": 8.43,
+          "price": 276500
+        },
+        {
+          "time": 1790121600,
+          "value": 11.96,
+          "price": 285500
+        },
+        {
+          "time": 1790553600,
+          "value": 5.88,
+          "price": 270000
+        },
+        {
+          "time": 1790640000,
+          "value": 6.86,
+          "price": 272500
+        },
+        {
+          "time": 1790726400,
+          "value": 5.29,
+          "price": 268500
+        },
+        {
+          "time": 1790812800,
+          "value": 8.24,
+          "price": 276000
+        },
+        {
+          "time": 1790899200,
+          "value": 8.24,
+          "price": 276000
+        },
+        {
+          "time": 1791244800,
+          "value": 6.67,
+          "price": 272000
+        },
+        {
+          "time": 1791331200,
+          "value": 5.29,
+          "price": 268500
+        },
+        {
+          "time": 1791417600,
+          "value": 2.75,
+          "price": 262000
+        },
+        {
+          "time": 1791763200,
+          "value": -1.76,
+          "price": 250500
+        },
+        {
+          "time": 1791849600,
+          "value": -9.02,
+          "price": 232000
+        },
+        {
+          "time": 1791936000,
+          "value": -9.02,
+          "price": 232000
+        },
+        {
+          "time": 1792022400,
+          "value": -17.65,
+          "price": 210000
+        },
+        {
+          "time": 1792108800,
+          "value": -13.14,
+          "price": 221500
+        }
+      ],
+      "currency": "KRW",
+      "source": "Yahoo Chart",
+      "priceBasis": "adjusted_close",
+      "quoteSource": "Yahoo Chart",
+      "quoteAsOf": "2026-10-16T05:04:10+00:00",
+      "requestedPeriod": "3mo",
+      "startDate": "2026-07-16",
+      "endDate": "2026-10-16",
+      "requestedRange": null,
+      "exchangeTimezone": "Asia/Seoul",
+      "observations": 61
+    }
+  ],
+  "errors": [],
+  "timestamp": "2026-10-16 05:28:18",
+  "fetchedAt": "2026-10-16T05:28:18.225027+00:00",
+  "source": "Yahoo Finance Chart",
+  "cacheHits": 1,
+  "providerFetches": 0,
+  "comparisonBasis": {
+    "returnFormula": "(last_adjusted_or_close - first_adjusted_or_close) / first * 100",
+    "priceBasis": "provider adjusted close when available; otherwise close",
+    "currencyMode": "local currency per symbol; no FX conversion",
+    "calendarMode": "per-symbol available trading observations",
+    "startPolicy": "each symbol uses its first available observation in the requested period",
+    "missingObservationPolicy": "missing observations are omitted; no interpolation",
+    "totalReturnVerified": false
+  }
+}

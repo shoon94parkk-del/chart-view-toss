@@ -1,0 +1,9 @@
+{
+  "sourceSha": "95d6b8361e22958f9cea6773afcf6ca446c2447a",
+  "file": "chartview.ait",
+  "bytes": 10477313,
+  "sha256": "6767090614159c61d172479c1817648e4bd6166376dbd642eb7885d2d696aafb",
+  "generatedBy": "npm run build:ait",
+  "nativeSandbox": "not_verified",
+  "consoleUpload": false
+}
