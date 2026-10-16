@@ -1,0 +1,111 @@
+{
+  "baseline": "95d6b8361e22958f9cea6773afcf6ca446c2447a",
+  "design": "AB then BA; seven new-context samples per route/build/order, one discarded warmup per route/build/order",
+  "conditions": {
+    "viewport": "390x844",
+    "browser": "140.0.7339.16",
+    "deviceScaleFactor": 1,
+    "touch": true,
+    "CPUThrottling": "none",
+    "cache": "new context, no service workers, no-store static assets",
+    "API": "same captured/contract fixtures, 80 ms artificial API latency per request",
+    "externalNetwork": "blocked",
+    "clock": "2026-10-16T03:00:00Z",
+    "iterationsPerRoute": 7,
+    "discardedWarmupsPerRoute": 1,
+    "statisticLimit": "median/max of small local sample; not a production SLA or robust p95"
+  },
+  "limit": "14 per build/route: descriptive median/max only, no production p95 or quote-provider speed claim",
+  "inputs": [
+    {
+      "file": "before.json",
+      "sha256": "32c25e029b9e42ffc8bb2c707ab40ee1c887d0754f419700cef283452b92674a"
+    },
+    {
+      "file": "after.json",
+      "sha256": "f8def6d042d7c0cd25b6c1e3328921172e8305ddc41adb23ebd684e22ba72332"
+    },
+    {
+      "file": "reverse/after.json",
+      "sha256": "ffaad0b190e21d4710e8bde1ef0573b29eba6fd905d8fec8f600d462d2d0526b"
+    },
+    {
+      "file": "reverse/before.json",
+      "sha256": "6de07bd7cabf3daa0af7909e2f2f077ed54826d4c7bb93c3bf59a09c0a1232c5"
+    }
+  ],
+  "routes": [
+    {
+      "route": "home",
+      "before": {
+        "samples": 14,
+        "medianMs": 137,
+        "maxMs": 220,
+        "inflationMedianMs": null,
+        "requestCounts": [
+          9
+        ],
+        "overflowPx": 0
+      },
+      "after": {
+        "samples": 14,
+        "medianMs": 152,
+        "maxMs": 221,
+        "inflationMedianMs": null,
+        "requestCounts": [
+          9
+        ],
+        "overflowPx": 0
+      },
+      "medianChangeMs": 15
+    },
+    {
+      "route": "detail/005930.KS",
+      "before": {
+        "samples": 14,
+        "medianMs": 331,
+        "maxMs": 461,
+        "inflationMedianMs": null,
+        "requestCounts": [
+          10
+        ],
+        "overflowPx": 0
+      },
+      "after": {
+        "samples": 14,
+        "medianMs": 342.5,
+        "maxMs": 418,
+        "inflationMedianMs": null,
+        "requestCounts": [
+          10
+        ],
+        "overflowPx": 0
+      },
+      "medianChangeMs": 11.5
+    },
+    {
+      "route": "macro",
+      "before": {
+        "samples": 14,
+        "medianMs": 246,
+        "maxMs": 327,
+        "inflationMedianMs": 330,
+        "requestCounts": [
+          2
+        ],
+        "overflowPx": 0
+      },
+      "after": {
+        "samples": 14,
+        "medianMs": 262.5,
+        "maxMs": 394,
+        "inflationMedianMs": 367,
+        "requestCounts": [
+          2
+        ],
+        "overflowPx": 0
+      },
+      "medianChangeMs": 16.5
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+.chart-evidence{margin-top:14px;padding-top:14px;border-top:1px solid #edf0f2;color:#333d4b}
+.chart-evidence-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.chart-evidence h3{margin:0;font-size:14px;font-weight:750}
+.chart-evidence-toggle{min-height:44px;min-width:44px;padding:9px 12px;border:1px solid #cbd2de;border-radius:12px;background:#fff;color:#4b5677;font:inherit;font-size:12px;font-weight:700;cursor:pointer}
+.chart-evidence-toggle[aria-pressed=true]{background:#edf0ff;border-color:#8491cd;color:#3c4b91}
+.chart-evidence-toggle:disabled{cursor:default;color:#626d7c;background:#f2f4f6;border-color:#d7dce2}
+.chart-evidence button:focus-visible{outline:3px solid #3182f6;outline-offset:3px}
+.chart-evidence-note,.chart-evidence-status{margin:8px 0;color:#586576;font-size:12px;line-height:1.6;overflow-wrap:anywhere}
+.chart-evidence-list,.chart-evidence-events{margin:0;padding:0;list-style:none}
+.chart-evidence-group{margin-top:12px}
+.chart-evidence-group h4{margin:0 0 4px;font-size:12px;color:#4b5677;font-weight:700}
+.chart-evidence-event{display:flex;flex-direction:column;align-items:flex-start;gap:5px;width:100%;min-height:44px;margin:0;padding:10px 2px;text-align:left;border:0;border-bottom:1px solid #edf0f2;border-radius:0;background:transparent;color:#333d4b;font:inherit;cursor:pointer;overflow-wrap:anywhere}
+.chart-evidence-event strong{font-size:13px;line-height:1.5;font-weight:650}
+.chart-evidence-meta,.chart-evidence-placement{font-size:12px;line-height:1.5;color:#586576}
+.chart-evidence-event:disabled{opacity:1;cursor:default}

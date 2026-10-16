@@ -27,10 +27,10 @@ import packageInfo from '../package.json';
 import { finiteNumber } from './analysisData.js';
 import { marketNowLive } from './api.js';
 import { loadChartRuntime } from './chartRuntime.js';
-import { API_BASE, HOME_DATA_TIMEOUT_MS, quoteSnapshots, quoteSnapshotsLive, compareStocks, marketNow, homeSnapshot, searchStocks, valuationStocks, macroData, homeInsights, personalizedNews, screenerData, companyContextData, businessReportData, financialHistoryData, relationshipEvidenceData } from './api.js';
+import { API_BASE, HOME_DATA_TIMEOUT_MS, quoteSnapshots, quoteSnapshotsLive, compareStocks, marketNow, homeSnapshot, searchStocks, valuationStocks, macroData, homeInsights, personalizedNews, newsSummaryData, screenerData, companyContextData, businessReportData, financialHistoryData, relationshipEvidenceData } from './api.js';
 import { applyRuntimeClass, haptic, openExternal, syncNativeBackHandler, closeMiniApp, isAppsInTossRuntime } from './tossBridge.js';
 import { openStockSelector, closeStockSelector, formatSelectedStockLabel } from './stockSelector.js';
-import { initializeStorage, readStored, writeStored, clearStored, getActivityVisitorId, HOME_JOURNEY_KEY } from './storage.js';
+import { initializeStorage, readStored, writeStored, clearStored, getActivityVisitorId, getStorageContext, HOME_JOURNEY_KEY } from './storage.js';
 import { parseStoredList } from './storedLists.js';
 import { rememberRecentStock, readWatchSort, saveWatchSort } from './revisitPreferences.js';
 import { startHomeLiveSync, setLiveSurface } from './liveHomeSync.js';
@@ -47,6 +47,7 @@ import './accessibility.css';
 import './watchlist.css';
 import { bindHorizontalTabs } from './accessibleTabs.js';
 import { loadDetailModule } from './detailModuleRecovery.js';
+import { newsResponseState, newsResponseRows } from './newsResponse.js';
 
 const ANALYSIS_ROUTES=new Set(['discover','heatmap','consensus','bands','tools']);
 const WATCHLIST_KEY='chartview-toss-watchlist-v1';
@@ -111,6 +112,9 @@ let detailJumpCleanup=null;
 const detailModuleCleanups=new Set();
 let analysisCleanup=null;
 let macroCleanup=null;
+let newsReaderCleanup=null;
+const newsReaderPreferences=new Map();
+let detailEvidenceState=null;
 const lazyAnalysisRetryAssets=new Map();
 let searchSeq=0;
 let chartLoadSeq=0;
@@ -382,6 +386,10 @@ function bindNav(){
    if(!opened)showToast('외부 링크를 열지 못했어요. 잠시 후 다시 시도해주세요.');
  });
 }
+async function openEvidenceLink(url){
+ haptic('tickWeak');
+ if(!await openExternal(url))showToast('외부 링크를 열지 못했어요. 잠시 후 다시 시도해주세요.');
+}
 window.__chartviewBindNav=bindNav;
 function openHomeSearch(){
  openStockSelector({
@@ -394,7 +402,7 @@ function openHomeSearch(){
    restoreBack:restoreNativeBack,
  });
 }
-function cleanupChart(){for(const cleanup of detailModuleCleanups)cleanup();detailModuleCleanups.clear();detailJumpCleanup?.();detailJumpCleanup=null;analysisCleanup?.();analysisCleanup=null;macroCleanup?.();macroCleanup=null;viewEpoch++;chartLoadSeq++;chartResizeObserver?.disconnect();chartResizeObserver=null;if(detailLiveTimer){clearTimeout(detailLiveTimer);detailLiveTimer=null;}if(chartInstance){try{chartInstance.remove()}catch{}chartInstance=null}}
+function cleanupChart(){for(const cleanup of detailModuleCleanups)cleanup();detailModuleCleanups.clear();detailJumpCleanup?.();detailJumpCleanup=null;analysisCleanup?.();analysisCleanup=null;macroCleanup?.();macroCleanup=null;newsReaderCleanup?.();newsReaderCleanup=null;detailEvidenceState?.controller?.();detailEvidenceState=null;viewEpoch++;chartLoadSeq++;chartResizeObserver?.disconnect();chartResizeObserver=null;if(detailLiveTimer){clearTimeout(detailLiveTimer);detailLiveTimer=null;}if(chartInstance){try{chartInstance.remove()}catch{}chartInstance=null}}
 
 function previousFromPct(price,changePct){
  const p=finiteNumber(price),c=finiteNumber(changePct);
@@ -1159,6 +1167,13 @@ function persistLiveQuoteToHomeSnapshot(quote){
  if(changed)writeHomeFast('snapshot',{...cached,heatmap:{...(cached.heatmap||{}),results:nextRows,generatedAt:canonical.asOf||cached?.heatmap?.generatedAt}});
 }
 
+function updateDetailEvidence(patch){
+ const evidence=detailEvidenceState;
+ if(!evidence||evidence.epoch!==viewEpoch||state.tab!=='detail'||state.detailSymbol!==evidence.symbol)return;
+ Object.assign(evidence,patch);
+ evidence.controller?.update({symbol:evidence.symbol,series:evidence.series,points:evidence.points,rows:evidence.rows,newsState:evidence.newsState});
+}
+
 async function refreshDetailChart({symbol,epoch,period,force=false}){
  state.detailPeriod=period;
  const seq=++detailChartLoadSeq;
@@ -1191,6 +1206,7 @@ async function refreshDetailChart({symbol,epoch,period,force=false}){
    chartInstance=createChart(canvas,{localization:{locale:'ko-KR',dateFormat:'yyyy.MM.dd'},handleScale:{pinch:false},width:canvas.clientWidth||320,height:220,layout:{background:{type:ColorType.Solid,color:'#ffffff'},textColor:'#8b95a1',fontFamily:'Pretendard, -apple-system, sans-serif'},grid:{vertLines:{color:'#f7f8fa'},horzLines:{color:'#f2f4f6'}},rightPriceScale:{borderVisible:false},timeScale:{borderVisible:false},crosshair:{vertLine:{color:'#d1d6db'},horzLine:{color:'#d1d6db'}}});
    const line=chartInstance.addAreaSeries({lineColor:'#3182f6',topColor:'rgba(49,130,246,.18)',bottomColor:'rgba(49,130,246,.01)',lineWidth:2,priceLineVisible:false,lastValueVisible:false});
    line.setData(points);chartInstance.timeScale().fitContent();
+   updateDetailEvidence({series:line,points});
    if(symbol.startsWith('^'))chartInstance.applyOptions({localization:{priceFormatter:value=>value.toLocaleString('ko-KR',{maximumFractionDigits:2})+' pt'}});
    chartResizeObserver=new ResizeObserver(()=>{if(chartInstance&&canvas.clientWidth)chartInstance.applyOptions({width:canvas.clientWidth})});chartResizeObserver.observe(canvas);
    detailDisplayedPeriod=period;
@@ -1242,7 +1258,7 @@ async function renderDetail(){
    ${state.detailInvestigation?.symbol===symbol&&state.detailInvestigation.kind!=='saved'?investigationHtml(state.detailInvestigation):''}
    ${!isIndex?'<p id="detail-identity-note" class="detail-identity-note" role="status"></p><div id="detail-cap">시가총액 확인 중</div>':''}
    <div class="segmented detail-period-tabs">${[['1mo','1개월'],['3mo','3개월'],['6mo','6개월'],['1y','1년']].map(([p,l])=>`<button data-detail-period="${p}" aria-pressed="${state.detailPeriod===p}" class="${state.detailPeriod===p?'active':''}">${l}</button>`).join('')}</div>
-   <section class="detail-chart-card" id="detail-chart-section"><div class="detail-section-head"><div><span>기간 수익률</span><strong id="detail-period-label">선택 기간 흐름</strong></div><small id="detail-chart-status" role="status">불러오는 중</small></div><div class="detail-chart-wrap"><div id="detail-chart" class="detail-chart"></div><div id="detail-chart-loading" class="chart-loading">${chartLoadingPreview('종목 차트를 불러오고 있어요')}</div></div><div id="detail-return-note" class="detail-return-note"></div></section>
+   <section class="detail-chart-card" id="detail-chart-section"><div class="detail-section-head"><div><span>기간 수익률</span><strong id="detail-period-label">선택 기간 흐름</strong></div><small id="detail-chart-status" role="status">불러오는 중</small></div><div class="detail-chart-wrap"><div id="detail-chart" class="detail-chart"></div><div id="detail-chart-loading" class="chart-loading">${chartLoadingPreview('종목 차트를 불러오고 있어요')}</div></div><div id="detail-return-note" class="detail-return-note"></div>${!isIndex?'<div id="detail-chart-evidence"></div>':''}</section>
    ${!isIndex?'<details class="detail-block detail-review" id="detail-review"><summary>선정 기록 · 기술 지표 확인</summary><div id="detail-review-body">펼치면 기존 선정 기록의 신호등·성과와 수집된 기술 지표를 확인해요.</div></details>':''}
    ${!isIndex&&!koreanDetail?'<p class="detail-support-note">DART 공시 비교와 KRX 산업 맥락은 국내 종목에서 제공해요. 미국 종목은 시세·차트·핵심 지표·관련 뉴스를 제공해요.</p>':''}
 
@@ -1253,6 +1269,13 @@ async function renderDetail(){
    <section class="detail-block" id="detail-news-section"><div class="section-head"><h2>관련 뉴스</h2><button class="text-button" data-stock-news="${esc(symbol)}" data-stock-name="${esc(knownName)}">이 종목 뉴스 더 보기</button></div><div id="detail-news" class="detail-news">${loadingIndicator('관련 뉴스를 불러오고 있어요')}<div class="skeleton news"></div><div class="skeleton news"></div></div></section>
  `,headingName);
  bindNav();
+ if(!isIndex){
+   const evidence=detailEvidenceState={symbol,epoch,series:null,points:[],rows:undefined,newsState:'loading',controller:null};
+   const host=document.querySelector('#detail-chart-evidence');
+   detailModuleCleanups.add(loadDetailModule({host,key:'chart-evidence',isCurrent:()=>detailEvidenceState===evidence&&epoch===viewEpoch,load:()=>Promise.all([import('./chartEvidence.js'),import('./chartEvidence.css')]).then(([view])=>view),mount:({mountChartEvidence})=>{
+     evidence.controller=mountChartEvidence(host,{symbol,series:evidence.series,points:evidence.points,rows:evidence.rows,newsState:evidence.newsState,onExternal:openEvidenceLink});
+   }}));
+ }
  const review=document.querySelector('#detail-review');
  let reviewLoaded=false;
  review?.addEventListener('toggle',()=>{
@@ -1291,7 +1314,7 @@ async function renderDetail(){
  window.addEventListener('scroll',updateSection,{passive:true});detailJumpCleanup=()=>window.removeEventListener('scroll',updateSection);updateSection();
 
  if(koreanDetail)detailModuleCleanups.add(loadDetailModule({host:document.querySelector('#research-card-body'),key:'research',isCurrent:()=>epoch===viewEpoch,load:()=>import('./researchCard.js'),mount:({mountResearchCard})=>{
-   mountResearchCard(document.querySelector('#research-card-body'),{symbol,name:knownName||symbol,onJump:jumpToDetail,onNotice:showToast,candidates:[...state.watchlist,...Object.entries(DISPLAY_NAMES).map(([symbol,name])=>({symbol,name}))],favorites:state.watchlist,draft:researchDrafts.get(symbol),initialPeer:state.sharedDetailSymbol===symbol?state.researchPeer:null,onDraftChange:draft=>{researchDrafts.set(symbol,draft);state.researchPeer=draft.resultPeer||draft.peer||null;},onCompare:async companies=>{if(!await persistList('selected',()=>companies.map(row=>row.symbol)))return;companies.forEach(row=>resolvedNames.set(row.symbol,row.name));if(epoch===viewEpoch)navigate('chart');},onChoosePeer:callback=>openStockSelector({title:'공시를 비교할 회사',description:'현재 종목과 다른 국내 회사 하나를 선택하세요.',favorites:state.watchlist,nameFor:comparisonStockName,pickLabel:'비교 선택',restoreBack:restoreNativeBack,onPick:(symbol,name)=>callback({symbol,name})})});
+   mountResearchCard(document.querySelector('#research-card-body'),{symbol,name:knownName||symbol,getQuoteSnapshot:()=>getLiveQuote(symbol),onJump:jumpToDetail,onNotice:showToast,candidates:[...state.watchlist,...Object.entries(DISPLAY_NAMES).map(([symbol,name])=>({symbol,name}))],favorites:state.watchlist,draft:researchDrafts.get(symbol),initialPeer:state.sharedDetailSymbol===symbol?state.researchPeer:null,onDraftChange:draft=>{researchDrafts.set(symbol,draft);state.researchPeer=draft.resultPeer||draft.peer||null;},onCompare:async companies=>{if(!await persistList('selected',()=>companies.map(row=>row.symbol)))return;companies.forEach(row=>resolvedNames.set(row.symbol,row.name));if(epoch===viewEpoch)navigate('chart');},onChoosePeer:callback=>openStockSelector({title:'공시를 비교할 회사',description:'현재 종목과 다른 국내 회사 하나를 선택하세요.',favorites:state.watchlist,nameFor:comparisonStockName,pickLabel:'비교 선택',restoreBack:restoreNativeBack,onPick:(symbol,name)=>callback({symbol,name})})});
    restoreInvestigationJump();
  }}));
  const paintWatchState=()=>{
@@ -1595,18 +1618,24 @@ async function renderDetail(){
  document.querySelector('#detail-metric-meta').innerHTML=valuation?`재무 데이터 조회 ${esc(formatKst(valuation.generatedAt))}<p>예상 PER은 제공처의 예상 이익, 실적 PER은 최근 12개월 이익을 사용해요. ROE는 제공처의 기간·회계 기준이며 DART 누적 실적·현금 비율과 직접 같은 값으로 비교하지 않아요. 배당수익률은 제공처 표시·보고 기준으로 미래 배당을 보장하지 않아요.</p>`:'재무 데이터를 불러오지 못했어요. <button class="retry" data-retry-detail>다시 시도</button>';
 
  }));
- const loadDetailNews=()=>{
+ const loadDetailNews=({force=false}={})=>{
    const host=document.querySelector('#detail-news');
    if(!host||epoch!==viewEpoch)return Promise.resolve();
    host.innerHTML=loadingIndicator('관련 뉴스를 불러오고 있어요');
-   return settle(resolvedName.catch(()=>knownName||symbol).then(name=>personalizedNews([symbol],[name])),newsRes=>{
-     if(newsRes.status!=='fulfilled'){
+   updateDetailEvidence({newsState:'loading'});
+   return settle(resolvedName.catch(()=>knownName||symbol).then(name=>personalizedNews([symbol],[name],{force})),newsRes=>{
+     if(newsRes.status!=='fulfilled'||newsResponseState(newsRes.value)==='error'){
+       updateDetailEvidence({newsState:'error'});
        host.innerHTML='<div class="empty compact"><strong>관련 뉴스를 불러오지 못했어요</strong><span>연결을 확인한 뒤 다시 시도해주세요.</span><button class="retry" type="button" id="retry-detail-news">다시 시도</button></div>';
-       host.querySelector('button').onclick=()=>loadDetailNews();
+       host.querySelector('button').onclick=()=>loadDetailNews({force:true});
        return;
      }
-     const news=(newsRes.value?.items||[]).slice(0,4);
-     host.innerHTML=news.length?news.map(row=>newsCard(row)).join(''):'<div class="empty compact"><strong>표시할 관련 뉴스가 없어요</strong><span>직접 또는 업종 관련 근거가 확인된 기사를 표시해요.</span></div>';
+     const rows=newsResponseRows(newsRes.value,symbol);
+     const news=rows.slice(0,4);
+     const newsState=newsResponseState(newsRes.value);
+     updateDetailEvidence({rows,newsState});
+     host.innerHTML=(newsState==='partial'?'<p role="status">일부 뉴스를 확인하지 못했어요. 확인된 기사만 표시해요. <button type="button" class="retry" data-retry-partial-news>다시 시도</button></p>':'')+(news.length?news.map(row=>newsCard(row)).join(''):'<div class="empty compact"><strong>표시할 관련 뉴스가 없어요</strong><span>직접 또는 업종 관련 근거가 확인된 기사를 표시해요.</span></div>');
+     host.querySelector('[data-retry-partial-news]')?.addEventListener('click',()=>loadDetailNews({force:true}));
    });
  };
  jobs.push(loadDetailNews());
@@ -1620,15 +1649,15 @@ function newsCard(row){
  return `<button class="news-card" data-external-url="${esc(row.url||'')}"><div class="news-meta"><span class="relation-badge ${relation.className}">${relation.label}</span><span>${esc(displayName(row.symbol,row.name))}</span><small>${esc(row.source||'뉴스')} · ${esc(timeAgo(row.publishedAt))}</small></div><strong>${esc(row.title||'')}</strong><div class="news-context"><span>${esc(language)}</span>${row.relationBasis?`<span>${esc(relationBasisLabel(row.relationBasis))}</span>`:''}</div>${tags.length?`<div class="news-tags">${tags.map(t=>`<span>${esc(t)}</span>`).join('')}</div>`:''}<span class="news-arrow">${iconSvg('arrow',18)}</span></button>`;
 }
 
-async function renderNews(){
+async function renderNews({force=false}={}){
  cleanupChart();
  const epoch=viewEpoch;
  const tickers=state.newsSymbol?[state.newsSymbol]:state.watchlist.slice(0,20).map(x=>x.symbol);
  const names=state.newsSymbol?[displayName(state.newsSymbol,resolvedNames.get(state.newsSymbol))]:state.watchlist.slice(0,20).map(x=>displayName(x.symbol,x.name));
  document.querySelector('#app').innerHTML=shell(`
-   <section class="task-head"><div><h2>${state.newsSymbol?esc(names[0])+' 뉴스':'관심종목 뉴스'}</h2><p>기사의 관련 근거와 정렬 기준을 함께 표시해요.</p></div>${state.newsSymbol?'<button class="text-button" data-tab="news">관심종목 뉴스</button>':''}</section>
+   <section class="task-head"><div><h2>${state.newsSymbol?esc(names[0])+' 뉴스':'관심종목 뉴스'}</h2><p>기사 출처와 종목 연결 근거를 확인하고, 필요할 때 요약을 펼쳐보세요.</p></div>${state.newsSymbol?'<button class="text-button" data-tab="news">관심종목 뉴스</button>':''}</section>
    <div class="news-toolbar"><div class="news-filter-strip" role="group" aria-label="종목별 뉴스">${(state.newsSymbol?[{symbol:state.newsSymbol,name:names[0]}]:state.watchlist.slice(0,8)).map((x,i)=>`<button type="button" data-news-symbol="${esc(x.symbol)}" class="tone-bg-${i%3}" aria-label="${esc(displayName(x.symbol,x.name))} 뉴스"${state.newsSymbol?' aria-pressed="true"':''}>${esc(displayName(x.symbol,x.name))}</button>`).join('')}${!state.newsSymbol&&tickers.length>8?`<button type="button" data-tab="watch">+${tickers.length-8}종목 · 관심 목록</button>`:''}</div><div class="sort-toggle">${[['major','주요순'],['latest','최신순']].map(([k,l])=>`<button data-news-sort="${k}" class="${state.newsSort===k?'active':''}" aria-pressed="${state.newsSort===k}">${l}</button>`).join('')}</div></div>
-   ${!state.newsSymbol&&state.watchlist.length?`<p class="sort-explain">관심 ${state.watchlist.length}종목 중 저장순서 앞 ${tickers.length}종목 조회 · 기사 최대 12개. 종목 버튼으로 해당 종목 뉴스를 확인하세요.</p>`:''}
+   ${!state.newsSymbol&&state.watchlist.length?`<p class="sort-explain">관심 ${state.watchlist.length}종목 중 저장순서 앞 ${tickers.length}종목 조회 · 필터 적용 후 최대 12개를 표시해요. 종목 버튼으로 해당 종목 뉴스를 확인하세요.</p>`:''}
    <p class="sort-explain" id="news-sort-explain">${state.newsSort==='major'?'주요순은 제공된 관련성·최신성 점수를 함께 사용해요.':'최신순은 기사 게시시각 기준이에요.'}</p>
    <div id="news-list" class="news-list">${loadingIndicator('관심종목 뉴스를 불러오고 있어요')}<div class="skeleton news-large"></div><div class="skeleton news-large"></div></div>
  `,state.newsSymbol?names[0]+' 뉴스':'관심종목 뉴스');
@@ -1636,16 +1665,34 @@ async function renderNews(){
  document.querySelectorAll('[data-news-sort]').forEach(b=>b.onclick=()=>{state.newsSort=b.dataset.newsSort;renderNews()});
  document.querySelectorAll('[data-news-symbol]').forEach(button=>button.onclick=()=>navigate('news',button.dataset.newsSymbol));
  if(!tickers.length){document.querySelector('#news-list').innerHTML='<div class="empty"><strong>관심종목을 먼저 추가해주세요</strong><span>관심종목 관리에서 종목을 저장하면 여기에 관련 뉴스가 표시돼요.</span><button class="retry" data-tab="watch">관심종목 추가</button></div>';bindNav();return}
- try{
-   const d=await personalizedNews(tickers,names);
-   if(epoch!==viewEpoch)return;
-   let rows=[...(d?.items||[])];
-   if(state.newsSort==='latest')rows.sort((a,b)=>Number(b.publishedTs||0)-Number(a.publishedTs||0));
-   else rows.sort((a,b)=>Number(b.score||0)-Number(a.score||0));
-   rows=rows.slice(0,12);
-   document.querySelector('#news-list').innerHTML=rows.length?rows.map(newsCard).join(''):`<div class="empty"><strong>현재 표시할 관련 뉴스가 없어요</strong><span>직접 관련 또는 업종 관련 근거가 확인된 기사만 표시해요.</span></div>`;
-   bindNav();
- }catch(e){if(epoch!==viewEpoch)return;document.querySelector('#news-list').innerHTML=`<div class="empty"><strong>뉴스를 불러오지 못했어요</strong><span>${esc(e.message)}</span><button class="retry" id="retry-news">다시 시도</button></div>`;document.querySelector('#retry-news')?.addEventListener('click',renderNews)}
+ const contextKey=`${getStorageContext()}:${state.newsSymbol||'watchlist'}`;
+ if(!newsReaderPreferences.has(contextKey)){
+   if(newsReaderPreferences.size>=30)newsReaderPreferences.delete(newsReaderPreferences.keys().next().value);
+   newsReaderPreferences.set(contextKey,{});
+ }
+ const preferences=newsReaderPreferences.get(contextKey);
+ const [dataResult,viewResult]=await Promise.allSettled([
+   personalizedNews(tickers,names,{force}),
+   Promise.all([import('./newsReaderView.js'),import('./newsReaderView.css')]).then(([view])=>view),
+ ]);
+ if(epoch!==viewEpoch)return;
+ const host=document.querySelector('#news-list');
+ if(viewResult.status!=='fulfilled'){
+   host.innerHTML='<div class="empty" role="alert"><strong>뉴스 화면을 불러오지 못했어요</strong><span>저장된 관심종목은 유지돼요. 화면을 새로 불러와주세요.</span><button type="button" class="retry" id="retry-news-view">화면 새로고침</button></div>';
+   host.querySelector('button').onclick=()=>location.reload();return;
+ }
+ if(dataResult.status!=='fulfilled'){
+   host.innerHTML='<div class="empty" role="alert"><strong>뉴스를 불러오지 못했어요</strong><span>연결을 확인한 뒤 다시 시도해주세요.</span><button type="button" class="retry" id="retry-news">다시 시도</button></div>';
+   host.querySelector('button').onclick=()=>renderNews({force:true});return;
+ }
+ newsReaderCleanup=viewResult.value.mountNewsReader(host,dataResult.value,{
+   sort:state.newsSort,preferences,usLookbackDays:tickers.some(symbol=>!/^\d{6}\.(KS|KQ)$/.test(symbol))?4:null,
+   loadSummary:(row,options)=>newsSummaryData(row,options),
+   onExternal:openEvidenceLink,
+   onStock:(symbol,name)=>navigate('detail',symbol,name),
+   isCurrent:()=>epoch===viewEpoch&&state.tab==='news',
+   onRetry:()=>renderNews({force:true}),
+ });
 }
 
 function renderInfo(){
@@ -1683,7 +1730,7 @@ function renderInfo(){
      resetHomeJourneySession();
      homeJourneyStorageReady=true;
      clearDiagnostics();
-     state.watchlist=[];researchDrafts.clear();state.screener={filters:{},count:30,activePreset:''};state.researchPeer=null;state.watchSort='manual';
+     state.watchlist=[];researchDrafts.clear();newsReaderPreferences.clear();state.screener={filters:{},count:30,activePreset:''};state.researchPeer=null;state.watchSort='manual';
      state.selected=DEFAULTS.map(x=>x.symbol);
      if(['chart','valuation'].includes(state.tab))refreshListSurface('selected');
      else refreshListSurface('watchlist');

@@ -534,3 +534,14 @@ The first gesture guard also deferred the explicit observation-toggle click, vio
 - Keep one publicationJournal confirmation queue across Home mounts. Freeze each mount baseline behind prior confirmed writes; stale/account/reset work cannot repopulate receipts. Same source/period/value is not a new update. Older observations cannot replace newer topics.
 - Keep optional macro/issuer modules independent, lazy and generation guarded. No Home provider call or graph payload additions. NSA YoY/SA MoM and null calendar gaps must survive API→UI.
 - Conference-call time, fiscal period end, collection/check time and actual official publication are different. Unknown stays unknown. Never derive historical surprise from current analyst estimates.
+
+### 2026-10-16 — Moneytoring 적용 경계
+
+- 뉴스 `items`와 `groups`의 확인된 관계만 합친다. 출처/관계 필터는 받은 목록에만 적용하고 HTTP200 오류를 빈 결과로 표시하지 않는다. 실패/부분 응답은 브라우저 성공 캐시에 보관하지 않는다.
+- 명시적 뉴스 재시도의 `force=true`는 서버 오류만 재조회하며 성공/no_news 그룹은 기존 TTL을 유지한다. 기존 내부 force 전체 새로고침 의미를 바꾸지 않는다.
+- 요약은 펼침 후에만 요청하고 키는 URL+제목+seed다. 같은 방문 펼침·대기·오류를 유지하되 계정/초기화/이탈 뒤 늦은 응답이 다른 화면을 바꾸지 않는다. 기존 두 태그와 제목 언어 표시를 빼지 않는다.
+- 영속 연구 체크포인트 ID와 세션 analytics ID는 분리한다. 저장→새 실행→다른 질문 저장이 두 기록을 보존해야 한다. 실패 재시도는 같은 ID·관측 가격·시각을 유지하며 개인 질문/메모를 분석에 보내지 않는다.
+- 차트 마커 기본 OFF와 소유권 교체 정리를 보존한다. 실제 게시일과 같은 관측점만 표시하고 휴일/미제공 날짜를 다른 날로 옮기지 않는다. 부분 실패와 미국 최근4일 범위를 명시한다.
+- 검증된 아카이브 예상치는 사후 조회시각을 그대로 표시한다. 미확인 최초 발표·수정 지수·불가능한 날짜·증거 URL/단위/기간 충돌을 성공 비교로 만들지 않는다. 원래 CPI/PPI/PCE 및 PICK/LAB 출력은 별도 보호한다.
+
+- 독립 개인정보 페이지도 실제 axe 대비·구조와 가로 넘침을 검사한다. 로컬 종목별20개 기록의 보관/삭제 안내와 API 요청0을 보존하며 날짜·연락 링크를 낮은 대비 색으로 되돌리지 않는다.

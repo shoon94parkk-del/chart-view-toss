@@ -18,7 +18,8 @@ const dateOnly = value => {
   const parsed = new Date(`${value}T00:00:00Z`);
   return Number.isFinite(parsed.getTime()) && parsed.toISOString().slice(0, 10) === value ? value : null;
 };
-const timestamp = value => /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}.*(?:Z|[+-]\d{2}:\d{2})$/.test(text(value)) && Number.isFinite(Date.parse(value)) ? value : null;
+// Check the written calendar date before Date.parse can roll it into a later month.
+const timestamp = value => /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}.*(?:Z|[+-]\d{2}:\d{2})$/.test(text(value)) && dateOnly(text(value).slice(0, 10)) && Number.isFinite(Date.parse(value)) ? value : null;
 const publication = value => timestamp(value) || dateOnly(value);
 export function inflationSourceUrl(value) {
   try { const url = new URL(text(value)); return url.protocol === 'https:' && !url.username && !url.password ? url.href : ''; } catch { return ''; }
@@ -46,31 +47,60 @@ function normalizeComparisons(rows) {
   return (Array.isArray(rows) ? rows : []).map(row => ({
     month: month(row?.month), rate: text(row?.rate), basis: text(row?.basis), unit: text(row?.unit),
     expected: rateNumber(row?.expected), actual: rateNumber(row?.actual), actualVintage: text(row?.actualVintage),
+    evidenceKind: text(row?.evidenceKind), retrievedAt: timestamp(row?.retrievedAt),
+    archive: { url: inflationSourceUrl(row?.archive?.url), eventId: text(row?.archive?.eventId), contentSha256: text(row?.archive?.contentSha256) },
     publishedAt: timestamp(row?.publishedAt), forecastPublishedAt: timestamp(row?.forecastPublishedAt), forecastCapturedAt: timestamp(row?.forecastCapturedAt),
     source: { forecastName: text(row?.source?.forecastName), forecastUrl: inflationSourceUrl(row?.source?.forecastUrl), actualUrl: inflationSourceUrl(row?.source?.actualUrl) },
   }));
 }
 
+const matchingReceipts = (rows, row, rate) => (Array.isArray(rows) ? rows : []).filter(receipt => receipt.month === row.asOf && receipt.rate === rate);
+const matchingForecastBasis = (receipt, row, rate) => receipt.unit === '%' && row.unit === '%'
+  && ['SA', 'NSA'].includes(receipt.basis) && receipt.basis === row.basis?.[rate]
+  && rateNumber(receipt.expected) !== null && !!receipt.source?.forecastName && !!inflationSourceUrl(receipt.source.forecastUrl);
+const archiveVerified = (receipt, row, rate, now) => receipt?.evidenceKind === 'provider_archive'
+  && matchingForecastBasis(receipt, row, rate) && !!timestamp(receipt.retrievedAt) && Date.parse(receipt.retrievedAt) <= now
+  && !!inflationSourceUrl(receipt.archive?.url) && !!text(receipt.archive?.eventId) && /^[a-fA-F0-9]{64}$/.test(receipt.archive?.contentSha256 || '');
+const sameForecast = (a, b) => rateNumber(a.expected) === rateNumber(b.expected) && a.basis === b.basis
+  && a.source.forecastUrl === b.source.forecastUrl && a.archive.eventId === b.archive.eventId
+  && a.archive.contentSha256 === b.archive.contentSha256;
+
+/** A supplied provider archive is evidence of its forecast, never a fabricated pre-event capture. */
 export function inflationComparison(row, { rate = 'yoy', now = Date.now() } = {}) {
   const selectedRate = rate === 'mom' ? 'mom' : 'yoy';
   const point = row?.points?.find(point => point.month === row.asOf);
   const actual = roundReleaseRate(point?.[selectedRate]);
-  const missing = { status: 'missing', expected: null, actual, actualKind: actual === null ? 'unavailable' : 'index_calculated', source: null };
-  const matches = (Array.isArray(row?.comparisons) ? row.comparisons : []).filter(receipt => receipt.month === row.asOf && receipt.rate === selectedRate);
+  const forecasts = matchingReceipts(row?.forecasts, row, selectedRate);
+  const matches = matchingReceipts(row?.comparisons, row, selectedRate);
+  const archiveForecast = forecasts.length === 1 && archiveVerified(forecasts[0], row, selectedRate, now) ? forecasts[0] : null;
+  const comparisonForecast = !forecasts.length && matches.length === 1 && archiveVerified(matches[0], row, selectedRate, now) ? matches[0] : null;
+  const forecast = archiveForecast || comparisonForecast;
+  const missing = { status: 'missing', expected: forecast ? roundReleaseRate(forecast.expected) : null, actual,
+    actualKind: actual === null ? 'unavailable' : 'index_calculated', source: forecast?.source || null, forecast,
+    reason: forecast ? 'first_release_unverified' : 'forecast_unverified' };
   if (matches.length !== 1) return missing;
   const receipt = matches[0], source = receipt.source;
-  if (receipt.unit !== '%' || row.unit !== '%' || !['SA', 'NSA'].includes(receipt.basis) || receipt.basis !== row.basis?.[selectedRate]
-      || rateNumber(receipt.expected) === null || rateNumber(receipt.actual) === null || receipt.actualVintage !== 'first_release'
-      || !source?.forecastName || !inflationSourceUrl(source.forecastUrl) || !inflationSourceUrl(source.actualUrl)
-      || !timestamp(receipt.publishedAt) || !timestamp(receipt.forecastPublishedAt) || !timestamp(receipt.forecastCapturedAt)) return missing;
-  const published = Date.parse(receipt.publishedAt), captured = Date.parse(receipt.forecastCapturedAt);
+  const archive = receipt.evidenceKind === 'provider_archive';
+  if (!matchingForecastBasis(receipt, row, selectedRate) || rateNumber(receipt.actual) === null || receipt.actualVintage !== 'first_release'
+      || !inflationSourceUrl(source?.actualUrl) || !timestamp(receipt.publishedAt)) return missing;
+  const published = Date.parse(receipt.publishedAt);
   const knownValue = point?.publishedAt || row.publishedAt;
   const knownPublication = timestamp(knownValue), knownDay = dateOnly(knownValue);
-  if (published > now || captured >= published || Date.parse(receipt.forecastPublishedAt) > captured
-      || knownPublication && Date.parse(knownPublication) !== published) return missing;
+  if (published > now || knownPublication && Date.parse(knownPublication) !== published) return missing;
   if (knownDay && dateText(dateParts(published, 'America/New_York')).replaceAll('.', '-') !== knownDay) return missing;
+  if (archive) {
+    if (!archiveVerified(receipt, row, selectedRate, now) || !knownPublication && !knownDay
+        || forecasts.length && (!archiveForecast || !sameForecast(archiveForecast, receipt))) return missing;
+  } else {
+    // Keep the original strict pre-release contract, including absent-kind legacy receipts.
+    if (receipt.evidenceKind && receipt.evidenceKind !== 'pre_release_capture'
+        || !timestamp(receipt.forecastPublishedAt) || !timestamp(receipt.forecastCapturedAt)) return missing;
+    const captured = Date.parse(receipt.forecastCapturedAt);
+    if (captured >= published || Date.parse(receipt.forecastPublishedAt) > captured) return missing;
+  }
   const expected = roundReleaseRate(receipt.expected), released = roundReleaseRate(receipt.actual);
-  return { status: released < expected ? 'lower' : released > expected ? 'higher' : 'equal', expected, actual: released, actualKind: 'first_release', source };
+  return { status: released < expected ? 'lower' : released > expected ? 'higher' : 'equal', expected, actual: released,
+    actualKind: 'first_release', source, forecast: archive ? receipt : null, reason: null };
 }
 
 function normalizePoints(rows) {
@@ -88,6 +118,14 @@ function normalizePoints(rows) {
   }));
 }
 
+function normalizeForecastCoverage(raw, now) {
+  if (!raw || !['not_configured', 'unavailable', 'ok', 'partial'].includes(raw.status)) return null;
+  const checkedAt = timestamp(raw.checkedAt);
+  const count = value => Number.isSafeInteger(value) && value >= 0 ? value : 0;
+  return { status: raw.status, provider: text(raw.provider), checkedAt: checkedAt && Date.parse(checkedAt) <= now ? checkedAt : null,
+    forecastCount: count(raw.forecastCount), comparisonCount: count(raw.comparisonCount) };
+}
+
 function normalizeSeries(raw, identity, now) {
   const points = normalizePoints(raw?.points);
   const available = points.some(point => point.yoy !== null || point.mom !== null);
@@ -97,7 +135,8 @@ function normalizeSeries(raw, identity, now) {
   const source = raw?.source || {};
   return {
     ...identity, name: text(raw?.name) || identity.label, definition: text(raw?.definition),
-    unit: text(raw?.unit) || '%', asOf, points, comparisons: normalizeComparisons(raw?.comparisons),
+    unit: text(raw?.unit) || '%', asOf, points, comparisons: normalizeComparisons(raw?.comparisons), forecasts: normalizeComparisons(raw?.forecasts),
+    forecastCoverage: normalizeForecastCoverage(raw?.forecastCoverage, now),
     status: !available ? 'unavailable' : stale ? 'stale' : raw?.status === 'partial' || points.some(point => point.yoy === null || point.mom === null) ? 'partial' : 'ok',
     basis: { yoy: ['SA', 'NSA'].includes(raw?.basis?.yoy) ? raw.basis.yoy : null, mom: ['SA', 'NSA'].includes(raw?.basis?.mom) ? raw.basis.mom : null },
     publishedAt: publication(raw?.publishedAt), collectedAt: timestamp(raw?.collectedAt), checkedAt: timestamp(raw?.checkedAt),
@@ -135,6 +174,20 @@ function normalizeCalendar(raw, now) {
   return { status: ['ok', 'partial', 'stale'].includes(raw?.status) ? raw.status : 'unavailable', events, checkedAt: timestamp(raw?.checkedAt), sourceUrl: inflationSourceUrl(raw?.sourceUrl) };
 }
 
+function recentPublications(series, now) {
+  const groups = new Map();
+  for (const row of series) for (const point of row.points) {
+    const publishedAt = point.publishedAt || (point.month === row.asOf ? row.publishedAt : null);
+    if (!publishedAt || point.yoy === null && point.mom === null) continue;
+    const day = dateOnly(publishedAt) || dateText(dateParts(publishedAt, 'America/New_York')).replaceAll('.', '-');
+    if (timestamp(publishedAt) ? Date.parse(publishedAt) > now : day > dateText(dateParts(now, 'America/New_York')).replaceAll('.', '-')) continue;
+    const group = groups.get(day) || { day, entries: [] };
+    group.entries.push({ seriesId: row.id, label: row.label, month: point.month, publishedAt });
+    groups.set(day, group);
+  }
+  return [...groups.values()].sort((a, b) => b.day.localeCompare(a.day)).slice(0, 3);
+}
+
 export function normalizeInflationPayload(payload, { now = Date.now() } = {}) {
   const raw = payload?.inflation;
   const rows = raw?.schemaVersion === 1 && Array.isArray(raw.series) ? raw.series : [];
@@ -144,7 +197,7 @@ export function normalizeInflationPayload(payload, { now = Date.now() } = {}) {
   });
   const availableCount = series.filter(row => row.status !== 'unavailable').length;
   const status = !availableCount ? 'unavailable' : raw?.status === 'partial' || availableCount < INFLATION_SERIES.length || series.some(row => ['partial', 'stale'].includes(row.status)) ? 'partial' : 'ok';
-  return { status, availableCount, series, calendar: normalizeCalendar(payload?.releaseCalendar, now) };
+  return { status, availableCount, series, forecastCoverage: normalizeForecastCoverage(raw?.forecastCoverage, now), publications: recentPublications(series, now), calendar: normalizeCalendar(payload?.releaseCalendar, now) };
 }
 
 export function inflationChart(points, { rate = 'yoy', years = 1 } = {}) {

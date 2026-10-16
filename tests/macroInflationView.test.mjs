@@ -155,3 +155,71 @@ test('mount scopes controls to its host, uses callbacks and removes its listener
   cleanup();
   assert.equal(listeners.has('click'), false);
 });
+
+const archiveForecast = () => ({ month: '2026-09', rate: 'yoy', basis: 'NSA', unit: '%', expected: 0,
+  evidenceKind: 'provider_archive', retrievedAt: '2026-10-16T03:00:00Z',
+  archive: { url: 'https://example.com/archive', eventId: 'cpi-2026-09', contentSha256: 'a'.repeat(64) },
+  source: { forecastName: '<공급자>', forecastUrl: 'https://example.com/forecast' } });
+
+test('archive-only forecast shows actual retrieval evidence while calculated result stays gray', () => {
+  const data = fixture(); data.inflation.series[0].forecasts = [archiveForecast()];
+  const html = renderMacroInflation(data, { now: NOW });
+  assert.match(html, /data-comparison-expected>0\.0%/);
+  assert.match(html, /data-comparison-level="gray"/);
+  assert.match(html, /공급자 보관 예상치 · 사후 조회/);
+  assert.match(html, /조회 2026\.10\.16 12:00 KST/);
+  assert.match(html, /최초 발표값과 공식 발표일이 함께 확인되지 않아 비교하지 않아요/);
+  assert.match(html, /data-external-url="https:\/\/example.com\/archive"/);
+  assert.match(html, /&lt;공급자&gt;/);
+  assert.doesNotMatch(html, /data-external-url="undefined"|발표 전 수집/);
+  data.inflation.series[0].forecasts[0].archive.contentSha256 = '';
+  assert.match(renderMacroInflation(data, { now: NOW }), /data-comparison-expected>미제공/);
+});
+
+test('recent publication navigation uses existing points and exposes pending official agenda states', () => {
+  const data = fixture();
+  data.inflation.series[0].points[0].publishedAt = '2026-09-11T12:30:00Z';
+  data.inflation.series[0].points[1].publishedAt = '2026-10-14T12:30:00Z';
+  data.inflation.series[2].publishedAt = '2026-10-15';
+  data.inflation.series[4].publishedAt = '2026-09-30';
+  let html = renderMacroInflation(data, { now: NOW });
+  assert.match(html, /data-testid="inflation-recent-publications"/);
+  assert.match(html, /최근 공식 발표/);
+  assert.equal((html.match(/data-publication-day=/g) || []).length, 3);
+  assert.match(html, /data-inflation-month="2026-09"/);
+  assert.match(html, /data-release-state="pending"/);
+  assert.match(html, /발표 대기 · 결과 미제공/);
+  assert.match(html, /소비자가 구매하는 상품·서비스의 가격 변화/);
+  html = renderMacroInflation(data, { now: NOW, observationMonth: '2026-08' });
+  assert.match(html, /data-inflation-value>2\.5%/);
+  assert.match(html, /2026\.08 지표 · 09\.11 발표/);
+  assert.match(html, /data-inflation-latest/);
+  assert.doesNotMatch(html, /data-inflation-value>2\.6%/);
+});
+
+test('past publication clicks switch the selected reading and latest restores current observation', () => {
+  const data = fixture(); data.inflation.series[0].points[0].publishedAt = '2026-09-11';
+  const listeners = new Map();
+  const host = { innerHTML: '', addEventListener: (name, fn) => listeners.set(name, fn), removeEventListener: name => listeners.delete(name), contains: () => true, querySelector: () => null };
+  const cleanup = mountMacroInflation(host, data, { now: NOW });
+  const click = dataset => listeners.get('click')({ target: { closest: () => ({ dataset }) } });
+  click({ inflationPublication: 'cpi', inflationMonth: '2026-08' });
+  assert.match(host.innerHTML, /data-inflation-value>2\.5%/);
+  click({ inflationLatest: '' });
+  assert.match(host.innerHTML, /data-inflation-value>2\.6%/);
+  click({ inflationPublication: 'cpi', inflationMonth: '1999-01' });
+  assert.match(host.innerHTML, /data-inflation-value>2\.6%/);
+  cleanup();
+});
+
+test('forecast coverage explains pending supply without turning metadata into forecast values', () => {
+  const data = fixture();
+  data.inflation.series[0].forecastCoverage = { status: 'not_configured', provider: 'Trading Economics', checkedAt: '2026-10-16T03:00:00Z', forecastCount: 0, comparisonCount: 0 };
+  const html = renderMacroInflation(data, { now: NOW });
+  assert.match(html, /data-testid="inflation-forecast-coverage" data-forecast-coverage="not_configured"/);
+  assert.match(html, /예상치 제공 준비 중/);
+  assert.match(html, /확인 2026\.10\.16 12:00 KST/);
+  assert.match(html, /data-comparison-expected>미제공/);
+  assert.match(html, /data-comparison-level="gray"/);
+  assert.doesNotMatch(html, /API 키|forecastCount|comparisonCount|not_configured<\//);
+});

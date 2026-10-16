@@ -12,8 +12,9 @@ const results=[];
 try{for(const width of [320,390,1440]){
  const context=await browser.newContext({viewport:{width,height:844},permissions:['clipboard-read','clipboard-write']});
  await context.addInitScript(()=>Object.defineProperty(navigator,'share',{value:undefined,configurable:true}));
- const page=await context.newPage(),errors=[];
+ const page=await context.newPage(),errors=[],unsafeRequests=[];
  page.on('pageerror',e=>errors.push(e.message));
+ context.on('request',request=>{if(new URL(request.url()).hostname==='unknown.test')unsafeRequests.push(request.url());});
  const mock=async route=>{
   const u=new URL(route.request().url()),path=u.pathname.replace(/^\/backend/,'');let body={};
   if(u.hostname==='www.yonhapnewstv.co.kr')return route.fulfill({contentType:'text/html',body:'<h1>Verified article destination</h1>'});
@@ -75,7 +76,13 @@ try{for(const width of [320,390,1440]){
  await nav('picks');await page.locator('.pick-ledger-status-scope').waitFor();assert.match(await page.locator('.pick-ledger-status-scope').innerText(),/전체 2건.*종료 1건/);
  await nav('news');await page.getByRole('button',{name:/HTTPS 전환 기사/}).waitFor();
  const opened=context.waitForEvent('page');await page.getByRole('button',{name:/HTTPS 전환 기사/}).click();const article=await opened;await article.waitForURL('https://www.yonhapnewstv.co.kr/news/test');await article.close();
- await page.getByRole('button',{name:/주소 미지원 기사/}).click();assert.match(await page.locator('.app-toast').innerText(),/HTTPS 원문 주소/);
+ const unsupported=page.locator('[data-news-reader-card]').filter({has:page.getByRole('heading',{name:'주소 미지원 기사',exact:true})});
+ await unsupported.waitFor();
+ assert.match(await unsupported.innerText(),/안전한 HTTPS 원문 링크를 확인하지 못했어요/);
+ assert.equal(await unsupported.getByRole('button',{name:'주소 미지원 기사',exact:true}).count(),0);
+ assert.equal(await unsupported.locator('[data-news-external]').count(),0);
+ assert.equal(await unsupported.getByRole('button',{name:'요약 펼침',exact:true}).isDisabled(),true);
+ assert.deepEqual(unsafeRequests,[]);assert.equal(context.pages().length,1);
  await page.screenshot({path:`${output}/${width}-news.png`});
  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));assert.deepEqual(errors,[]);
  results.push({width,positions,checks:'range recovery, quote basis, market/member/back, filing jumps, filter restoration, IDEA expansion restoration, status scope, news opening and rejection'});
