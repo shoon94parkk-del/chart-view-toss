@@ -5,6 +5,8 @@ export const INFLATION_SERIES = Object.freeze([
   { id: 'core_cpi', label: '근원 CPI' },
   { id: 'ppi', label: 'PPI' },
   { id: 'core_ppi', label: '근원 PPI' },
+  { id: 'pce', label: 'PCE' },
+  { id: 'core_pce', label: '근원 PCE' },
 ]);
 
 const text = value => typeof value === 'string' ? value.trim() : '';
@@ -25,6 +27,50 @@ export function inflationSourceUrl(value) {
 export function formatInflationRate(value) {
   const number = rateNumber(value);
   return number === null ? '미제공' : `${number.toLocaleString('ko-KR', { minimumFractionDigits: 1, maximumFractionDigits: 2 })}%`;
+}
+
+const releaseRounder = new Intl.NumberFormat('en-US', { useGrouping: false, minimumFractionDigits: 1, maximumFractionDigits: 1, roundingMode: 'halfExpand' });
+const roundReleaseRate = value => {
+  const number = rateNumber(value);
+  if (number === null) return null;
+  const rounded = Number(releaseRounder.format(number));
+  return rounded === 0 ? 0 : rounded;
+};
+
+export function formatInflationReleaseRate(value) {
+  const number = roundReleaseRate(value);
+  return number === null ? '미제공' : `${number.toLocaleString('ko-KR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%`;
+}
+
+function normalizeComparisons(rows) {
+  return (Array.isArray(rows) ? rows : []).map(row => ({
+    month: month(row?.month), rate: text(row?.rate), basis: text(row?.basis), unit: text(row?.unit),
+    expected: rateNumber(row?.expected), actual: rateNumber(row?.actual), actualVintage: text(row?.actualVintage),
+    publishedAt: timestamp(row?.publishedAt), forecastPublishedAt: timestamp(row?.forecastPublishedAt), forecastCapturedAt: timestamp(row?.forecastCapturedAt),
+    source: { forecastName: text(row?.source?.forecastName), forecastUrl: inflationSourceUrl(row?.source?.forecastUrl), actualUrl: inflationSourceUrl(row?.source?.actualUrl) },
+  }));
+}
+
+export function inflationComparison(row, { rate = 'yoy', now = Date.now() } = {}) {
+  const selectedRate = rate === 'mom' ? 'mom' : 'yoy';
+  const point = row?.points?.find(point => point.month === row.asOf);
+  const actual = roundReleaseRate(point?.[selectedRate]);
+  const missing = { status: 'missing', expected: null, actual, actualKind: actual === null ? 'unavailable' : 'index_calculated', source: null };
+  const matches = (Array.isArray(row?.comparisons) ? row.comparisons : []).filter(receipt => receipt.month === row.asOf && receipt.rate === selectedRate);
+  if (matches.length !== 1) return missing;
+  const receipt = matches[0], source = receipt.source;
+  if (receipt.unit !== '%' || row.unit !== '%' || !['SA', 'NSA'].includes(receipt.basis) || receipt.basis !== row.basis?.[selectedRate]
+      || rateNumber(receipt.expected) === null || rateNumber(receipt.actual) === null || receipt.actualVintage !== 'first_release'
+      || !source?.forecastName || !inflationSourceUrl(source.forecastUrl) || !inflationSourceUrl(source.actualUrl)
+      || !timestamp(receipt.publishedAt) || !timestamp(receipt.forecastPublishedAt) || !timestamp(receipt.forecastCapturedAt)) return missing;
+  const published = Date.parse(receipt.publishedAt), captured = Date.parse(receipt.forecastCapturedAt);
+  const knownValue = point?.publishedAt || row.publishedAt;
+  const knownPublication = timestamp(knownValue), knownDay = dateOnly(knownValue);
+  if (published > now || captured >= published || Date.parse(receipt.forecastPublishedAt) > captured
+      || knownPublication && Date.parse(knownPublication) !== published) return missing;
+  if (knownDay && dateText(dateParts(published, 'America/New_York')).replaceAll('.', '-') !== knownDay) return missing;
+  const expected = roundReleaseRate(receipt.expected), released = roundReleaseRate(receipt.actual);
+  return { status: released < expected ? 'lower' : released > expected ? 'higher' : 'equal', expected, actual: released, actualKind: 'first_release', source };
 }
 
 function normalizePoints(rows) {
@@ -51,7 +97,7 @@ function normalizeSeries(raw, identity, now) {
   const source = raw?.source || {};
   return {
     ...identity, name: text(raw?.name) || identity.label, definition: text(raw?.definition),
-    unit: text(raw?.unit) || '%', asOf, points,
+    unit: text(raw?.unit) || '%', asOf, points, comparisons: normalizeComparisons(raw?.comparisons),
     status: !available ? 'unavailable' : stale ? 'stale' : raw?.status === 'partial' || points.some(point => point.yoy === null || point.mom === null) ? 'partial' : 'ok',
     basis: { yoy: ['SA', 'NSA'].includes(raw?.basis?.yoy) ? raw.basis.yoy : null, mom: ['SA', 'NSA'].includes(raw?.basis?.mom) ? raw.basis.mom : null },
     publishedAt: publication(raw?.publishedAt), collectedAt: timestamp(raw?.collectedAt), checkedAt: timestamp(raw?.checkedAt),
@@ -97,7 +143,7 @@ export function normalizeInflationPayload(payload, { now = Date.now() } = {}) {
     return normalizeSeries(matches.length === 1 ? matches[0] : null, identity, now);
   });
   const availableCount = series.filter(row => row.status !== 'unavailable').length;
-  const status = !availableCount ? 'unavailable' : raw?.status === 'partial' || availableCount < 4 || series.some(row => ['partial', 'stale'].includes(row.status)) ? 'partial' : 'ok';
+  const status = !availableCount ? 'unavailable' : raw?.status === 'partial' || availableCount < INFLATION_SERIES.length || series.some(row => ['partial', 'stale'].includes(row.status)) ? 'partial' : 'ok';
   return { status, availableCount, series, calendar: normalizeCalendar(payload?.releaseCalendar, now) };
 }
 

@@ -48,6 +48,38 @@ export const inflationMacro = {
     ],
   },
 };
+// PCE uses the same SA index for both rates. These are deterministic QA values.
+export const pceInflationMacro = structuredClone(inflationMacro);
+pceInflationMacro.inflation.series.push(...[
+  ['pce', '미국 PCE', '개인소비지출 물가지수', 'DPCERG', 3.419032, .310280],
+  ['core_pce', '미국 근원 PCE', '식품·에너지 제외 개인소비지출 물가지수', 'DPCCRG', 3.007596, .247439],
+].map(([id, name, definition, saSeriesId, yoy, mom]) => ({
+  id, name, definition, unit: '%', basis: { yoy: 'SA', mom: 'SA' }, asOf: '2026-08',
+  publishedAt: '2026-09-30T12:30:00Z', collectedAt: checkedAt, checkedAt, revisionStatus: 'unknown',
+  source: { name: 'U.S. Bureau of Economic Analysis', url: 'https://www.bea.gov/data/personal-consumption-expenditures-price-index',
+    saSeriesId, saUrl: 'https://apps.bea.gov/national/Release/XLS/Underlying/Section2All_xls.xlsx' },
+  points: [
+    { month: '2026-06', yoy: yoy - .2, mom: mom - .1 },
+    { month: '2026-07', yoy: yoy - .1, mom: mom - .05 },
+    { month: '2026-08', yoy, mom, publishedAt: '2026-09-30T12:30:00Z' },
+  ],
+})));
+pceInflationMacro.releaseCalendar.events.unshift({
+  id: 'pce:2026-10-29T12:30:00Z', indicator: 'pce', name: '미국 PCE·근원 PCE', observationMonth: null,
+  scheduledAt: '2026-10-29T12:30:00Z', localDate: '2026-10-29', localTime: '08:30',
+  timeZone: 'America/New_York', status: 'confirmed', checkedAt,
+  sourceUrl: 'https://apps.bea.gov/API/signup/release_dates.json',
+});
+// Synthetic pre-release receipts exercise colors only; never used by production.
+export const comparisonInflationMacro = structuredClone(pceInflationMacro);
+for (const [id, expected, actual] of [['cpi', 3.8, 3.7], ['core_cpi', 2.61, 2.64], ['ppi', 6.2, 6.3]]) {
+  const row = comparisonInflationMacro.inflation.series.find(row => row.id === id);
+  row.comparisons = [{ month: '2026-09', rate: 'yoy', basis: 'NSA', unit: '%', expected, actual,
+    actualVintage: 'first_release', publishedAt: '2026-10-14T12:30:00Z',
+    forecastPublishedAt: '2026-10-14T10:00:00Z', forecastCapturedAt: '2026-10-14T12:00:00Z',
+    source: { forecastName: 'QA 시장 예상', forecastUrl: 'https://example.com/forecast', actualUrl: 'https://example.com/actual' },
+  }];
+}
 export const earningsCalls = {
   schemaVersion: 'earnings-events-v1', generatedAt: checkedAt, checkedAt, status: 'partial', cacheMode: 'static',
   events: [
