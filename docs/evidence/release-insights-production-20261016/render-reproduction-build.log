@@ -1,0 +1,63 @@
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 179 modules transformed.
+
+(!) outDir /workspace/research/release-insights-20261016/render-reproduction-dist is not inside project root and will not be emptied.
+Use --emptyOutDir to override.
+
+rendering chunks...
+[plugin vite:reporter] 
+(!) /workspace/chartview-audit-20261015/src/industryContext.js is dynamically imported by /workspace/chartview-audit-20261015/src/main.js but also statically imported by /workspace/chartview-audit-20261015/src/ideaEngine.js, /workspace/chartview-audit-20261015/src/insightModel.js, /workspace/chartview-audit-20261015/src/researchCard.js, /workspace/chartview-audit-20261015/src/sectorHeatmap.js, dynamic import will not move module into another chunk.
+
+[plugin vite:reporter] 
+(!) /workspace/chart-view-toss/node_modules/@apps-in-toss/web-framework/dist/index.js is dynamically imported by /workspace/chartview-audit-20261015/src/reviewPrompt.js, /workspace/chartview-audit-20261015/src/usageMetrics.js but also statically imported by /workspace/chartview-audit-20261015/src/storage.js, /workspace/chartview-audit-20261015/src/tossBridge.js, dynamic import will not move module into another chunk.
+
+[plugin vite:reporter] 
+(!) /workspace/chartview-audit-20261015/src/api.js is dynamically imported by /workspace/chartview-audit-20261015/src/homeExtras.js but also statically imported by /workspace/chartview-audit-20261015/src/analysisViews.js, /workspace/chartview-audit-20261015/src/detailReviewSummary.js, /workspace/chartview-audit-20261015/src/earningsEventView.js, /workspace/chartview-audit-20261015/src/exportMomentumData.js, /workspace/chartview-audit-20261015/src/guruInvestingView.js, /workspace/chartview-audit-20261015/src/homeChangesView.js, /workspace/chartview-audit-20261015/src/homeExtras.js, /workspace/chartview-audit-20261015/src/ideaView.js, /workspace/chartview-audit-20261015/src/liveHomeSync.js, /workspace/chartview-audit-20261015/src/main.js, /workspace/chartview-audit-20261015/src/pickLedger.js, /workspace/chartview-audit-20261015/src/quarterView.js, /workspace/chartview-audit-20261015/src/reportReviewView.js, /workspace/chartview-audit-20261015/src/researchCard.js, /workspace/chartview-audit-20261015/src/revisitRefresh.js, /workspace/chartview-audit-20261015/src/stockSelector.js, /workspace/chartview-audit-20261015/src/top10HistoryView.js, dynamic import will not move module into another chunk.
+
+computing gzip size...
+../research/release-insights-20261016/render-reproduction-dist/index.html                                          5.30 kB │ gzip:   1.98 kB
+../research/release-insights-20261016/render-reproduction-dist/assets/homeBriefingBootstrap-Bhd3mbHB.css           0.60 kB │ gzip:   0.29 kB
+../research/release-insights-20261016/render-reproduction-dist/assets/analysisViews-BM0ySziZ.css                   0.74 kB │ gzip:   0.36 kB
+../research/release-insights-20261016/render-reproduction-dist/assets/financialHistoryView-C6pzh8Yo.css            1.74 kB │ gzip:   0.61 kB
+../research/release-insights-20261016/render-reproduction-dist/assets/financialQualityView-CpbI4CS1.css            1.96 kB │ gzip:   0.70 kB
+../research/release-insights-20261016/render-reproduction-dist/assets/investmentReview-gLMHc1ie.css                3.84 kB │ gzip:   1.16 kB
+../research/release-insights-20261016/render-reproduction-dist/assets/marketMap-K_dLf464.css                       4.48 kB │ gzip:   1.32 kB
+../research/release-insights-20261016/render-reproduction-dist/assets/top10HistoryView-CJlD3flJ.css                5.42 kB │ gzip:   1.50 kB
+../research/release-insights-20261016/render-reproduction-dist/assets/guruInvestingView-BzLAuFMQ.css               5.63 kB │ gzip:   1.49 kB
+../research/release-insights-20261016/render-reproduction-dist/assets/macroInflationView-C5kFa1kc.css              7.00 kB │ gzip:   1.83 kB
+../research/release-insights-20261016/render-reproduction-dist/assets/researchCard-BZfmWDM1.css                    7.29 kB │ gzip:   1.80 kB
+../research/release-insights-20261016/render-reproduction-dist/assets/industryContextView-CTbXbUND.css             9.42 kB │ gzip:   2.37 kB
+../research/release-insights-20261016/render-reproduction-dist/assets/ideaView--asePfxF.css                       11.10 kB │ gzip:   2.53 kB
+../research/release-insights-20261016/render-reproduction-dist/assets/pickLedger-BYNTcGLT.css                     12.22 kB │ gzip:   2.62 kB
+../research/release-insights-20261016/render-reproduction-dist/assets/exportMomentum-D5P28fmQ.css                 70.79 kB │ gzip:  11.00 kB
+../research/release-insights-20261016/render-reproduction-dist/assets/index-ctCIFiGY.css                         176.17 kB │ gzip:  31.12 kB
+../research/release-insights-20261016/render-reproduction-dist/assets/reviewRevisit-CqgO2sST.js                    0.30 kB │ gzip:   0.25 kB
+../research/release-insights-20261016/render-reproduction-dist/assets/revisitRefresh-DdR-J_Wa.js                   0.79 kB │ gzip:   0.52 kB
+../research/release-insights-20261016/render-reproduction-dist/assets/earningsEventView-JGpE9EFX.js                0.80 kB │ gzip:   0.56 kB
+../research/release-insights-20261016/render-reproduction-dist/assets/investmentReview-PJsqz1EJ.js                 2.73 kB │ gzip:   1.34 kB
+../research/release-insights-20261016/render-reproduction-dist/assets/detailReviewSummary-WEGmJCIk.js              3.11 kB │ gzip:   1.69 kB
+../research/release-insights-20261016/render-reproduction-dist/assets/financialHistoryView-CyBMfGIC.js             3.69 kB │ gzip:   1.66 kB
+../research/release-insights-20261016/render-reproduction-dist/assets/financialQualityView-CgiQgoty.js             3.75 kB │ gzip:   2.00 kB
+../research/release-insights-20261016/render-reproduction-dist/assets/exportResearchView-m5Zwn8OP.js               3.90 kB │ gzip:   2.11 kB
+../research/release-insights-20261016/render-reproduction-dist/assets/releaseReading-BgA4Fk55.js                   4.07 kB │ gzip:   2.08 kB
+../research/release-insights-20261016/render-reproduction-dist/assets/financialQuality-CtZE4PYc.js                 5.27 kB │ gzip:   2.30 kB
+../research/release-insights-20261016/render-reproduction-dist/assets/homeBriefingBootstrap-D10h0c5h.js            6.18 kB │ gzip:   2.96 kB
+../research/release-insights-20261016/render-reproduction-dist/assets/marketMapView-BDEOmn4D.js                    6.21 kB │ gzip:   3.10 kB
+../research/release-insights-20261016/render-reproduction-dist/assets/researchAnalysis-DHsF-5l8.js                 6.42 kB │ gzip:   3.09 kB
+../research/release-insights-20261016/render-reproduction-dist/assets/memoryPriceView-C_ruEUJr.js                  7.24 kB │ gzip:   3.17 kB
+../research/release-insights-20261016/render-reproduction-dist/assets/quarterView-eT1KIFhd.js                      7.68 kB │ gzip:   3.62 kB
+../research/release-insights-20261016/render-reproduction-dist/assets/reportReviewView-C9aEuQxa.js                 7.73 kB │ gzip:   3.39 kB
+../research/release-insights-20261016/render-reproduction-dist/assets/top10HistoryView-B10S5ZqJ.js                10.80 kB │ gzip:   4.62 kB
+../research/release-insights-20261016/render-reproduction-dist/assets/industryContextView-BmwYguok.js             11.03 kB │ gzip:   4.15 kB
+../research/release-insights-20261016/render-reproduction-dist/assets/ideaView-DC287CCq.js                        15.91 kB │ gzip:   6.21 kB
+../research/release-insights-20261016/render-reproduction-dist/assets/macroInflationView-BC1Yfms5.js              16.40 kB │ gzip:   6.36 kB
+../research/release-insights-20261016/render-reproduction-dist/assets/exportMomentumData-J6WQAP_H.js              17.84 kB │ gzip:   4.64 kB
+../research/release-insights-20261016/render-reproduction-dist/assets/pickLedger-D4QEBEp2.js                      20.91 kB │ gzip:   7.42 kB
+../research/release-insights-20261016/render-reproduction-dist/assets/researchCard-B2kx-IH1.js                    22.31 kB │ gzip:   7.65 kB
+../research/release-insights-20261016/render-reproduction-dist/assets/guruInvestingView-O37PRroO.js               22.88 kB │ gzip:   8.83 kB
+../research/release-insights-20261016/render-reproduction-dist/assets/analysisViews-8UIbfN6p.js                   31.59 kB │ gzip:  11.92 kB
+../research/release-insights-20261016/render-reproduction-dist/assets/exportMomentumView-D3jo33lV.js              76.16 kB │ gzip:  19.63 kB
+../research/release-insights-20261016/render-reproduction-dist/assets/lightweight-charts.production-d2CSQ3C3.js  162.84 kB │ gzip:  51.89 kB
+../research/release-insights-20261016/render-reproduction-dist/assets/index-Ct_2HPAt.js                          327.11 kB │ gzip: 108.98 kB
+✓ built in 3.39s

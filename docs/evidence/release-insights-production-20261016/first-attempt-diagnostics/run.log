@@ -1,0 +1,11 @@
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+{"device":"chromium-320","checks":[{"name":"deployed-revisions","status":"failed"},{"name":"home-watch-detail","status":"passed"},{"name":"official-inflation","status":"passed"},{"name":"official-company-calls","status":"passed"},{"name":"dram-monthly-consistency","status":"failed"}],"failures":[{"name":"deployed-revisions","message":"Live frontend entry differs from the tested production build\n+ actual - expected\n\n+ '/assets/index-Ct_2HPAt.js'\n- '/assets/index-D9fZBdX5.js'\n                 ^\n","stack":"AssertionError [ERR_ASSERTION]: Live frontend entry differs from the tested production build\n+ actual - expected\n\n+ '/assets/index-Ct_2HPAt.js'\n- '/assets/index-D9fZBdX5.js'\n                 ^\n\n    at file:///workspace/research/release-insights-20261016/production-smoke.mjs:134:11\n    at async step (file:///workspace/research/release-insights-20261016/production-smoke.mjs:97:21)\n    at async file:///workspace/research/release-insights-20261016/production-smoke.mjs:128:3"},{"name":"dram-monthly-consistency","message":"page.waitForResponse: Timeout 45000ms exceeded while waiting for event \"response\"","stack":"page.waitForResponse: Timeout 45000ms exceeded while waiting for event \"response\"\n    at pendingResponse (/workspace/research/release-insights-20261016/production-smoke.mjs:122:22)\n    at /workspace/research/release-insights-20261016/production-smoke.mjs:266:18\n    at step (/workspace/research/release-insights-20261016/production-smoke.mjs:97:27)\n    at /workspace/research/release-insights-20261016/production-smoke.mjs:265:9"}],"pageErrors":[]}
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+page.unrouteAll: Target page, context or browser has been closed
+    at async file:///workspace/research/release-insights-20261016/production-smoke.mjs:295:3
+
+Node.js v24.21.0

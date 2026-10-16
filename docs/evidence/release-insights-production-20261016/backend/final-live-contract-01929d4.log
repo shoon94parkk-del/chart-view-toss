@@ -1,0 +1,12 @@
+file:///workspace/chartview-audit-20261015/tests/live_api_contract.mjs:14
+    throw new Error(`${path} failed after ${Math.round(performance.now() - started)}ms (budget ${timeoutMs}ms): ${error.name}: ${error.message}`, { cause: error });
+          ^
+
+Error: /api/export-momentum failed after 45012ms (budget 45000ms): AbortError: This operation was aborted
+    at get (file:///workspace/chartview-audit-20261015/tests/live_api_contract.mjs:14:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async file:///workspace/chartview-audit-20261015/tests/live_api_contract.mjs:46:25 {
+  [cause]: [DOMException [AbortError]: This operation was aborted]
+}
+
+Node.js v24.21.0

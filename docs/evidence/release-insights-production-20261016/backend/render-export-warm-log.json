@@ -1,0 +1,30 @@
+{
+  "hasMore": false,
+  "logs": [
+    {
+      "id": "9468a868-6a71-4472-8ea9-4622f3be7a43",
+      "labels": [
+        {
+          "name": "resource",
+          "value": "srv-dao4a50473hc73bclej0"
+        },
+        {
+          "name": "instance",
+          "value": "srv-dao4a50473hc73bclej0-mdzwr"
+        },
+        {
+          "name": "level",
+          "value": "info"
+        },
+        {
+          "name": "type",
+          "value": "app"
+        }
+      ],
+      "message": "[EXPORT_MOMENTUM] warm period=2026-09 history=12 items=6@2026-09 regions=5@2026-09 warnings=0 elapsedMs=115449",
+      "timestamp": "2026-10-16T03:25:29.99270113Z"
+    }
+  ],
+  "nextEndTime": "2026-10-16T03:28:00Z",
+  "nextStartTime": "2026-10-16T03:25:29.992701131Z"
+}

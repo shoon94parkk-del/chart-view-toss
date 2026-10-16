@@ -1,0 +1,1537 @@
+{
+  "startedAt": "2026-10-16T03:52:16.668Z",
+  "base": "https://chart-view-toss.onrender.com",
+  "backend": "https://chart-view-pkv8.onrender.com",
+  "expected": {
+    "backendSha": "01929d488a2d3cfbe715bce1a357a9302c6b171f",
+    "frontendSha": "637507cd4a5ab892e25510772a0610756447f8c2",
+    "entry": "/assets/index-Ct_2HPAt.js",
+    "assetSha256": "96ab45ac22102312b9ceb0dd7925c3d23487f293911cc939aa2701ac499ec377"
+  },
+  "method": "Actual production responses with strict TLS, unmodified route.fetch relay, isolated localStorage. Browser mobile emulation only; native Android/iOS Toss Sandbox remains unverified.",
+  "frontendShaEvidence": "SHA supplied by the deployment verifier; this script independently checks the reproduced production module filename, exact SHA256 bytes and backend health revision.",
+  "results": [
+    {
+      "device": "chromium-320",
+      "startedAt": "2026-10-16T03:52:16.673Z",
+      "checks": [
+        {
+          "name": "deployed-revisions",
+          "status": "passed",
+          "durationMs": 633,
+          "backendRevision": "01929d488a2d3cfbe715bce1a357a9302c6b171f",
+          "frontendEntry": "/assets/index-Ct_2HPAt.js",
+          "assetSha256": "96ab45ac22102312b9ceb0dd7925c3d23487f293911cc939aa2701ac499ec377"
+        },
+        {
+          "name": "home-watch-detail",
+          "status": "passed",
+          "durationMs": 4587,
+          "homeGeometry": {
+            "width": 320,
+            "scrollWidth": 320
+          },
+          "watchStored": true,
+          "researchDraftBackPreserved": true,
+          "researchSavedReloadPreserved": true
+        },
+        {
+          "name": "official-inflation",
+          "status": "passed",
+          "durationMs": 2873,
+          "legacyCount": 16,
+          "inflation": [
+            {
+              "id": "cpi",
+              "asOf": "2026-09",
+              "basis": {
+                "yoy": "NSA",
+                "mom": "SA"
+              },
+              "source": {
+                "name": "U.S. Bureau of Labor Statistics Public Data API",
+                "url": "https://api.bls.gov/publicAPI/v2/timeseries/data/",
+                "saSeriesId": "CUSR0000SA0",
+                "nsaSeriesId": "CUUR0000SA0",
+                "saUrl": "https://api.bls.gov/publicAPI/v2/timeseries/data/CUSR0000SA0",
+                "nsaUrl": "https://api.bls.gov/publicAPI/v2/timeseries/data/CUUR0000SA0"
+              },
+              "observationStatus": "unknown",
+              "revisionStatus": "unknown",
+              "nulls": [
+                "2025-10",
+                "2025-11"
+              ]
+            },
+            {
+              "id": "core_cpi",
+              "asOf": "2026-09",
+              "basis": {
+                "yoy": "NSA",
+                "mom": "SA"
+              },
+              "source": {
+                "name": "U.S. Bureau of Labor Statistics Public Data API",
+                "url": "https://api.bls.gov/publicAPI/v2/timeseries/data/",
+                "saSeriesId": "CUSR0000SA0L1E",
+                "nsaSeriesId": "CUUR0000SA0L1E",
+                "saUrl": "https://api.bls.gov/publicAPI/v2/timeseries/data/CUSR0000SA0L1E",
+                "nsaUrl": "https://api.bls.gov/publicAPI/v2/timeseries/data/CUUR0000SA0L1E"
+              },
+              "observationStatus": "unknown",
+              "revisionStatus": "unknown",
+              "nulls": [
+                "2025-10",
+                "2025-11"
+              ]
+            },
+            {
+              "id": "ppi",
+              "asOf": "2026-09",
+              "basis": {
+                "yoy": "NSA",
+                "mom": "SA"
+              },
+              "source": {
+                "name": "U.S. Bureau of Labor Statistics Public Data API",
+                "url": "https://api.bls.gov/publicAPI/v2/timeseries/data/",
+                "saSeriesId": "WPSFD4",
+                "nsaSeriesId": "WPUFD4",
+                "saUrl": "https://api.bls.gov/publicAPI/v2/timeseries/data/WPSFD4",
+                "nsaUrl": "https://api.bls.gov/publicAPI/v2/timeseries/data/WPUFD4"
+              },
+              "observationStatus": "preliminary",
+              "revisionStatus": "unknown",
+              "nulls": []
+            },
+            {
+              "id": "core_ppi",
+              "asOf": "2026-09",
+              "basis": {
+                "yoy": "NSA",
+                "mom": "SA"
+              },
+              "source": {
+                "name": "U.S. Bureau of Labor Statistics Public Data API",
+                "url": "https://api.bls.gov/publicAPI/v2/timeseries/data/",
+                "saSeriesId": "WPSFD49104",
+                "nsaSeriesId": "WPUFD49104",
+                "saUrl": "https://api.bls.gov/publicAPI/v2/timeseries/data/WPSFD49104",
+                "nsaUrl": "https://api.bls.gov/publicAPI/v2/timeseries/data/WPUFD49104"
+              },
+              "observationStatus": "preliminary",
+              "revisionStatus": "unknown",
+              "nulls": []
+            }
+          ],
+          "calendarStatus": "partial",
+          "upcomingCount": 28
+        },
+        {
+          "name": "official-company-calls",
+          "status": "passed",
+          "durationMs": 617,
+          "calls": [
+            {
+              "symbol": "005930.KS",
+              "scheduledAt": "2026-10-29T01:00:00Z",
+              "source": "https://www.samsung.com/global/ir/ir-events-presentations/events/"
+            },
+            {
+              "symbol": "AAPL",
+              "scheduledAt": "2026-11-02T22:00:00Z",
+              "source": "https://investor.apple.com/investor-relations/default.aspx"
+            }
+          ],
+          "comparison": {
+            "status": "unavailable",
+            "reason": "pre_event_estimate_snapshot_not_available",
+            "required": [
+              "immutable_pre_event_estimate",
+              "same_period_and_accounting_basis",
+              "actual_publication_timestamp",
+              "verified_regular_session_closes"
+            ]
+          }
+        },
+        {
+          "name": "dram-monthly-consistency",
+          "status": "passed",
+          "durationMs": 705,
+          "period": "2026-09",
+          "august": 15.7331,
+          "september": 16.777,
+          "overviewMoM": 6.6,
+          "calculatedMoM": 6.6350560283733095,
+          "bars": [
+            {
+              "label": "2026-08 157.3억달러",
+              "height": 93.8
+            },
+            {
+              "label": "2026-09 167.8억달러",
+              "height": 100
+            }
+          ]
+        }
+      ],
+      "failures": [],
+      "pageErrors": [],
+      "networkFailures": [
+        {
+          "url": "https://raw.githubusercontent.com/shoon94parkk-del/chart_View/main/static/data/pick_monitor.json",
+          "error": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://chart-view-pkv8.onrender.com/api/activity",
+          "error": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://raw.githubusercontent.com/shoon94parkk-del/chart_View/main/static/data/screener.json",
+          "error": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://chart-view-pkv8.onrender.com/api/quotes?tickers=005930.KS%2CAAPL%2CNVDA",
+          "error": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://chart-view-pkv8.onrender.com/api/financial-quarters?ticker=005930.KS",
+          "error": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://raw.githubusercontent.com/shoon94parkk-del/chart_View/main/static/data/company_context.json",
+          "relayError": "route.fetch: Target page, context or browser has been closed\nCall log:\n\u001b[2m  - → GET https://raw.githubusercontent.com/shoon94parkk-del/chart_View/main/static/data/company_context.json\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/140.0.7339.16 Safari/537.36\u001b[22m\n\u001b[2m    - accept: application/json\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - accept-language: ko-KR\u001b[22m\n\u001b[2m    - origin: https://chart-view-toss.onrender.com\u001b[22m\n\u001b[2m    - referer: https://chart-view-toss.onrender.com/\u001b[22m\n\u001b[2m    - sec-ch-ua: \"Chromium\";v=\"140\", \"Not=A?Brand\";v=\"24\", \"HeadlessChrome\";v=\"140\"\u001b[22m\n\u001b[2m    - sec-ch-ua-mobile: ?0\u001b[22m\n\u001b[2m    - sec-ch-ua-platform: \"Linux\"\u001b[22m\n"
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/market-now"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/home-snapshot"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/home-bootstrap"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/quotes?tickers=005930.KS%2CAAPL%2CNVDA"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/personalized-news?tickers=005930.KS%2CAAPL%2CNVDA&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90%7C%EC%95%A0%ED%94%8C%7C%EC%97%94%EB%B9%84%EB%94%94%EC%95%84"
+        },
+        {
+          "method": "POST",
+          "url": "https://chart-view-pkv8.onrender.com/api/activity"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/export-momentum?balanceBasis=signed-v1"
+        },
+        {
+          "method": "POST",
+          "url": "https://chart-view-pkv8.onrender.com/api/activity"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/quotes?tickers=005930.KS%2CAAPL%2CNVDA"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/quotes?tickers=005930.KS%2CAAPL%2CNVDA"
+        },
+        {
+          "method": "POST",
+          "url": "https://chart-view-pkv8.onrender.com/api/activity"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/quotes?tickers=005930.KS&fresh=true"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/compare?tickers=005930.KS&period=3mo"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/financial-history?ticker=005930.KS"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/valuation?tickers=005930.KS"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/personalized-news?tickers=005930.KS&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/financial-quarters?ticker=005930.KS"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/business-report?ticker=005930.KS&name=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/relationship-evidence?ticker=005930.KS&name=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90"
+        },
+        {
+          "method": "POST",
+          "url": "https://chart-view-pkv8.onrender.com/api/activity"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/quotes?tickers=005930.KS&fresh=true"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/financial-quarters?ticker=005930.KS"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/quotes?tickers=005930.KS&fresh=true"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/compare?tickers=005930.KS&period=3mo"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/financial-history?ticker=005930.KS"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/valuation?tickers=005930.KS"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/personalized-news?tickers=005930.KS&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90"
+        },
+        {
+          "method": "POST",
+          "url": "https://chart-view-pkv8.onrender.com/api/activity"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/financial-quarters?ticker=005930.KS"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/market-now"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/quotes?tickers=005930.KS%2CAAPL%2CNVDA"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/home-snapshot"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/personalized-news?tickers=005930.KS%2CAAPL%2CNVDA&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90%7C%EC%95%A0%ED%94%8C%7C%EC%97%94%EB%B9%84%EB%94%94%EC%95%84"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/home-bootstrap"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/export-momentum?balanceBasis=signed-v1"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/macro"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/consensus?ticker=005930.KS"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/consensus?ticker=AAPL"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/consensus?ticker=NVDA"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/earnings-events"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/export-momentum/momentum-map"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/export-momentum/provisional"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/export-momentum/semiconductor-countries"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/export-momentum/semiconductor-trends"
+        }
+      ],
+      "screenshots": [
+        "chromium-320-home.png",
+        "chromium-320-watch.png",
+        "chromium-320-research-continuation.png",
+        "chromium-320-return-home.png",
+        "chromium-320-inflation-chart.png",
+        "chromium-320-official-calendar.png",
+        "chromium-320-official-company-calls.png",
+        "chromium-320-dram-corrected-chart.png",
+        "chromium-320-dram-corrected-mom.png"
+      ],
+      "finishedAt": "2026-10-16T03:52:26.536Z"
+    },
+    {
+      "device": "chromium-390",
+      "startedAt": "2026-10-16T03:52:26.579Z",
+      "checks": [
+        {
+          "name": "deployed-revisions",
+          "status": "passed",
+          "durationMs": 239,
+          "backendRevision": "01929d488a2d3cfbe715bce1a357a9302c6b171f",
+          "frontendEntry": "/assets/index-Ct_2HPAt.js",
+          "assetSha256": "96ab45ac22102312b9ceb0dd7925c3d23487f293911cc939aa2701ac499ec377"
+        },
+        {
+          "name": "home-watch-detail",
+          "status": "passed",
+          "durationMs": 3631,
+          "homeGeometry": {
+            "width": 390,
+            "scrollWidth": 390
+          },
+          "watchStored": true,
+          "researchDraftBackPreserved": true,
+          "researchSavedReloadPreserved": true
+        },
+        {
+          "name": "official-inflation",
+          "status": "passed",
+          "durationMs": 2408,
+          "legacyCount": 16,
+          "inflation": [
+            {
+              "id": "cpi",
+              "asOf": "2026-09",
+              "basis": {
+                "yoy": "NSA",
+                "mom": "SA"
+              },
+              "source": {
+                "name": "U.S. Bureau of Labor Statistics Public Data API",
+                "url": "https://api.bls.gov/publicAPI/v2/timeseries/data/",
+                "saSeriesId": "CUSR0000SA0",
+                "nsaSeriesId": "CUUR0000SA0",
+                "saUrl": "https://api.bls.gov/publicAPI/v2/timeseries/data/CUSR0000SA0",
+                "nsaUrl": "https://api.bls.gov/publicAPI/v2/timeseries/data/CUUR0000SA0"
+              },
+              "observationStatus": "unknown",
+              "revisionStatus": "unknown",
+              "nulls": [
+                "2025-10",
+                "2025-11"
+              ]
+            },
+            {
+              "id": "core_cpi",
+              "asOf": "2026-09",
+              "basis": {
+                "yoy": "NSA",
+                "mom": "SA"
+              },
+              "source": {
+                "name": "U.S. Bureau of Labor Statistics Public Data API",
+                "url": "https://api.bls.gov/publicAPI/v2/timeseries/data/",
+                "saSeriesId": "CUSR0000SA0L1E",
+                "nsaSeriesId": "CUUR0000SA0L1E",
+                "saUrl": "https://api.bls.gov/publicAPI/v2/timeseries/data/CUSR0000SA0L1E",
+                "nsaUrl": "https://api.bls.gov/publicAPI/v2/timeseries/data/CUUR0000SA0L1E"
+              },
+              "observationStatus": "unknown",
+              "revisionStatus": "unknown",
+              "nulls": [
+                "2025-10",
+                "2025-11"
+              ]
+            },
+            {
+              "id": "ppi",
+              "asOf": "2026-09",
+              "basis": {
+                "yoy": "NSA",
+                "mom": "SA"
+              },
+              "source": {
+                "name": "U.S. Bureau of Labor Statistics Public Data API",
+                "url": "https://api.bls.gov/publicAPI/v2/timeseries/data/",
+                "saSeriesId": "WPSFD4",
+                "nsaSeriesId": "WPUFD4",
+                "saUrl": "https://api.bls.gov/publicAPI/v2/timeseries/data/WPSFD4",
+                "nsaUrl": "https://api.bls.gov/publicAPI/v2/timeseries/data/WPUFD4"
+              },
+              "observationStatus": "preliminary",
+              "revisionStatus": "unknown",
+              "nulls": []
+            },
+            {
+              "id": "core_ppi",
+              "asOf": "2026-09",
+              "basis": {
+                "yoy": "NSA",
+                "mom": "SA"
+              },
+              "source": {
+                "name": "U.S. Bureau of Labor Statistics Public Data API",
+                "url": "https://api.bls.gov/publicAPI/v2/timeseries/data/",
+                "saSeriesId": "WPSFD49104",
+                "nsaSeriesId": "WPUFD49104",
+                "saUrl": "https://api.bls.gov/publicAPI/v2/timeseries/data/WPSFD49104",
+                "nsaUrl": "https://api.bls.gov/publicAPI/v2/timeseries/data/WPUFD49104"
+              },
+              "observationStatus": "preliminary",
+              "revisionStatus": "unknown",
+              "nulls": []
+            }
+          ],
+          "calendarStatus": "partial",
+          "upcomingCount": 28
+        },
+        {
+          "name": "official-company-calls",
+          "status": "passed",
+          "durationMs": 665,
+          "calls": [
+            {
+              "symbol": "005930.KS",
+              "scheduledAt": "2026-10-29T01:00:00Z",
+              "source": "https://www.samsung.com/global/ir/ir-events-presentations/events/"
+            },
+            {
+              "symbol": "AAPL",
+              "scheduledAt": "2026-11-02T22:00:00Z",
+              "source": "https://investor.apple.com/investor-relations/default.aspx"
+            }
+          ],
+          "comparison": {
+            "status": "unavailable",
+            "reason": "pre_event_estimate_snapshot_not_available",
+            "required": [
+              "immutable_pre_event_estimate",
+              "same_period_and_accounting_basis",
+              "actual_publication_timestamp",
+              "verified_regular_session_closes"
+            ]
+          }
+        },
+        {
+          "name": "dram-monthly-consistency",
+          "status": "passed",
+          "durationMs": 639,
+          "period": "2026-09",
+          "august": 15.7331,
+          "september": 16.777,
+          "overviewMoM": 6.6,
+          "calculatedMoM": 6.6350560283733095,
+          "bars": [
+            {
+              "label": "2026-08 157.3억달러",
+              "height": 93.8
+            },
+            {
+              "label": "2026-09 167.8억달러",
+              "height": 100
+            }
+          ]
+        }
+      ],
+      "failures": [],
+      "pageErrors": [],
+      "networkFailures": [
+        {
+          "url": "https://raw.githubusercontent.com/shoon94parkk-del/chart_View/main/static/data/pick_monitor.json",
+          "error": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://chart-view-pkv8.onrender.com/api/activity",
+          "error": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://raw.githubusercontent.com/shoon94parkk-del/chart_View/main/static/data/screener.json",
+          "error": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://chart-view-pkv8.onrender.com/api/financial-quarters?ticker=005930.KS",
+          "error": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://raw.githubusercontent.com/shoon94parkk-del/chart_View/main/static/data/company_context.json",
+          "relayError": "route.fetch: Target page, context or browser has been closed\nCall log:\n\u001b[2m  - → GET https://raw.githubusercontent.com/shoon94parkk-del/chart_View/main/static/data/company_context.json\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/140.0.7339.16 Safari/537.36\u001b[22m\n\u001b[2m    - accept: application/json\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - accept-language: ko-KR\u001b[22m\n\u001b[2m    - origin: https://chart-view-toss.onrender.com\u001b[22m\n\u001b[2m    - referer: https://chart-view-toss.onrender.com/\u001b[22m\n\u001b[2m    - sec-ch-ua: \"Chromium\";v=\"140\", \"Not=A?Brand\";v=\"24\", \"HeadlessChrome\";v=\"140\"\u001b[22m\n\u001b[2m    - sec-ch-ua-mobile: ?0\u001b[22m\n\u001b[2m    - sec-ch-ua-platform: \"Linux\"\u001b[22m\n\u001b[2m  - ← 200 OK\u001b[22m\n\u001b[2m    - cache-control: max-age=300\u001b[22m\n\u001b[2m    - content-security-policy: default-src 'none'; style-src 'unsafe-inline'; sandbox\u001b[22m\n\u001b[2m    - content-type: text/plain; charset=utf-8\u001b[22m\n\u001b[2m    - etag: W/\"2a2b7638fe247f76c090e7520bfb7b9ab7e3b07cd6f17645b0a6bbe8277a3df7\"\u001b[22m\n\u001b[2m    - strict-transport-security: max-age=31536000\u001b[22m\n\u001b[2m    - x-content-type-options: nosniff\u001b[22m\n\u001b[2m    - x-frame-options: deny\u001b[22m\n\u001b[2m    - x-xss-protection: 1; mode=block\u001b[22m\n\u001b[2m    - x-github-request-id: 5ACE:361023:4D9A:7237:6AD19F7F\u001b[22m\n\u001b[2m    - x-github-edge-region: westus3\u001b[22m\n\u001b[2m    - content-encoding: gzip\u001b[22m\n\u001b[2m    - accept-ranges: bytes\u001b[22m\n\u001b[2m    - date: Fri, 16 Oct 2026 03:52:34 GMT\u001b[22m\n\u001b[2m    - via: 1.1 varnish\u001b[22m\n\u001b[2m    - x-served-by: cache-lax-kwhp1940125-LAX\u001b[22m\n\u001b[2m    - x-cache: MISS\u001b[22m\n\u001b[2m    - x-cache-hits: 0\u001b[22m\n\u001b[2m    - x-timer: S1792122754.956797,VS0,VE237\u001b[22m\n\u001b[2m    - vary: Authorization,Accept-Encoding\u001b[22m\n\u001b[2m    - access-control-allow-origin: *\u001b[22m\n\u001b[2m    - cross-origin-resource-policy: cross-origin\u001b[22m\n\u001b[2m    - x-fastly-request-id: 8b88674b2af83fc79af291fe66667f59e0b56516\u001b[22m\n\u001b[2m    - expires: Fri, 16 Oct 2026 03:57:34 GMT\u001b[22m\n\u001b[2m    - source-age: 0\u001b[22m\n\u001b[2m    - content-length: 106622\u001b[22m\n\u001b[2m    - x-envoy-upstream-service-time: 384\u001b[22m\n\u001b[2m    - server: envoy\u001b[22m\n\u001b[2m    - connection: close\u001b[22m\n"
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/market-now"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/home-snapshot"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/home-bootstrap"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/quotes?tickers=005930.KS%2CAAPL%2CNVDA"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/personalized-news?tickers=005930.KS%2CAAPL%2CNVDA&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90%7C%EC%95%A0%ED%94%8C%7C%EC%97%94%EB%B9%84%EB%94%94%EC%95%84"
+        },
+        {
+          "method": "POST",
+          "url": "https://chart-view-pkv8.onrender.com/api/activity"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/export-momentum?balanceBasis=signed-v1"
+        },
+        {
+          "method": "POST",
+          "url": "https://chart-view-pkv8.onrender.com/api/activity"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/quotes?tickers=005930.KS%2CAAPL%2CNVDA"
+        },
+        {
+          "method": "POST",
+          "url": "https://chart-view-pkv8.onrender.com/api/activity"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/quotes?tickers=005930.KS&fresh=true"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/compare?tickers=005930.KS&period=3mo"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/financial-history?ticker=005930.KS"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/valuation?tickers=005930.KS"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/personalized-news?tickers=005930.KS&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/financial-quarters?ticker=005930.KS"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/business-report?ticker=005930.KS&name=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/relationship-evidence?ticker=005930.KS&name=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90"
+        },
+        {
+          "method": "POST",
+          "url": "https://chart-view-pkv8.onrender.com/api/activity"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/quotes?tickers=005930.KS&fresh=true"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/financial-quarters?ticker=005930.KS"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/quotes?tickers=005930.KS&fresh=true"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/compare?tickers=005930.KS&period=3mo"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/financial-history?ticker=005930.KS"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/valuation?tickers=005930.KS"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/personalized-news?tickers=005930.KS&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90"
+        },
+        {
+          "method": "POST",
+          "url": "https://chart-view-pkv8.onrender.com/api/activity"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/financial-quarters?ticker=005930.KS"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/market-now"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/quotes?tickers=005930.KS%2CAAPL%2CNVDA"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/home-snapshot"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/personalized-news?tickers=005930.KS%2CAAPL%2CNVDA&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90%7C%EC%95%A0%ED%94%8C%7C%EC%97%94%EB%B9%84%EB%94%94%EC%95%84"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/home-bootstrap"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/export-momentum?balanceBasis=signed-v1"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/macro"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/consensus?ticker=005930.KS"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/consensus?ticker=AAPL"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/consensus?ticker=NVDA"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/earnings-events"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/export-momentum/momentum-map"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/export-momentum/provisional"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/export-momentum/semiconductor-countries"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/export-momentum/semiconductor-trends"
+        }
+      ],
+      "screenshots": [
+        "chromium-390-home.png",
+        "chromium-390-watch.png",
+        "chromium-390-research-continuation.png",
+        "chromium-390-return-home.png",
+        "chromium-390-inflation-chart.png",
+        "chromium-390-official-calendar.png",
+        "chromium-390-official-company-calls.png",
+        "chromium-390-dram-corrected-chart.png",
+        "chromium-390-dram-corrected-mom.png"
+      ],
+      "finishedAt": "2026-10-16T03:52:34.270Z"
+    },
+    {
+      "device": "chromium-430",
+      "startedAt": "2026-10-16T03:52:34.312Z",
+      "checks": [
+        {
+          "name": "deployed-revisions",
+          "status": "passed",
+          "durationMs": 270,
+          "backendRevision": "01929d488a2d3cfbe715bce1a357a9302c6b171f",
+          "frontendEntry": "/assets/index-Ct_2HPAt.js",
+          "assetSha256": "96ab45ac22102312b9ceb0dd7925c3d23487f293911cc939aa2701ac499ec377"
+        },
+        {
+          "name": "home-watch-detail",
+          "status": "passed",
+          "durationMs": 4097,
+          "homeGeometry": {
+            "width": 430,
+            "scrollWidth": 430
+          },
+          "watchStored": true,
+          "researchDraftBackPreserved": true,
+          "researchSavedReloadPreserved": true
+        },
+        {
+          "name": "official-inflation",
+          "status": "passed",
+          "durationMs": 2686,
+          "legacyCount": 16,
+          "inflation": [
+            {
+              "id": "cpi",
+              "asOf": "2026-09",
+              "basis": {
+                "yoy": "NSA",
+                "mom": "SA"
+              },
+              "source": {
+                "name": "U.S. Bureau of Labor Statistics Public Data API",
+                "url": "https://api.bls.gov/publicAPI/v2/timeseries/data/",
+                "saSeriesId": "CUSR0000SA0",
+                "nsaSeriesId": "CUUR0000SA0",
+                "saUrl": "https://api.bls.gov/publicAPI/v2/timeseries/data/CUSR0000SA0",
+                "nsaUrl": "https://api.bls.gov/publicAPI/v2/timeseries/data/CUUR0000SA0"
+              },
+              "observationStatus": "unknown",
+              "revisionStatus": "unknown",
+              "nulls": [
+                "2025-10",
+                "2025-11"
+              ]
+            },
+            {
+              "id": "core_cpi",
+              "asOf": "2026-09",
+              "basis": {
+                "yoy": "NSA",
+                "mom": "SA"
+              },
+              "source": {
+                "name": "U.S. Bureau of Labor Statistics Public Data API",
+                "url": "https://api.bls.gov/publicAPI/v2/timeseries/data/",
+                "saSeriesId": "CUSR0000SA0L1E",
+                "nsaSeriesId": "CUUR0000SA0L1E",
+                "saUrl": "https://api.bls.gov/publicAPI/v2/timeseries/data/CUSR0000SA0L1E",
+                "nsaUrl": "https://api.bls.gov/publicAPI/v2/timeseries/data/CUUR0000SA0L1E"
+              },
+              "observationStatus": "unknown",
+              "revisionStatus": "unknown",
+              "nulls": [
+                "2025-10",
+                "2025-11"
+              ]
+            },
+            {
+              "id": "ppi",
+              "asOf": "2026-09",
+              "basis": {
+                "yoy": "NSA",
+                "mom": "SA"
+              },
+              "source": {
+                "name": "U.S. Bureau of Labor Statistics Public Data API",
+                "url": "https://api.bls.gov/publicAPI/v2/timeseries/data/",
+                "saSeriesId": "WPSFD4",
+                "nsaSeriesId": "WPUFD4",
+                "saUrl": "https://api.bls.gov/publicAPI/v2/timeseries/data/WPSFD4",
+                "nsaUrl": "https://api.bls.gov/publicAPI/v2/timeseries/data/WPUFD4"
+              },
+              "observationStatus": "preliminary",
+              "revisionStatus": "unknown",
+              "nulls": []
+            },
+            {
+              "id": "core_ppi",
+              "asOf": "2026-09",
+              "basis": {
+                "yoy": "NSA",
+                "mom": "SA"
+              },
+              "source": {
+                "name": "U.S. Bureau of Labor Statistics Public Data API",
+                "url": "https://api.bls.gov/publicAPI/v2/timeseries/data/",
+                "saSeriesId": "WPSFD49104",
+                "nsaSeriesId": "WPUFD49104",
+                "saUrl": "https://api.bls.gov/publicAPI/v2/timeseries/data/WPSFD49104",
+                "nsaUrl": "https://api.bls.gov/publicAPI/v2/timeseries/data/WPUFD49104"
+              },
+              "observationStatus": "preliminary",
+              "revisionStatus": "unknown",
+              "nulls": []
+            }
+          ],
+          "calendarStatus": "partial",
+          "upcomingCount": 28
+        },
+        {
+          "name": "official-company-calls",
+          "status": "passed",
+          "durationMs": 655,
+          "calls": [
+            {
+              "symbol": "005930.KS",
+              "scheduledAt": "2026-10-29T01:00:00Z",
+              "source": "https://www.samsung.com/global/ir/ir-events-presentations/events/"
+            },
+            {
+              "symbol": "AAPL",
+              "scheduledAt": "2026-11-02T22:00:00Z",
+              "source": "https://investor.apple.com/investor-relations/default.aspx"
+            }
+          ],
+          "comparison": {
+            "status": "unavailable",
+            "reason": "pre_event_estimate_snapshot_not_available",
+            "required": [
+              "immutable_pre_event_estimate",
+              "same_period_and_accounting_basis",
+              "actual_publication_timestamp",
+              "verified_regular_session_closes"
+            ]
+          }
+        },
+        {
+          "name": "dram-monthly-consistency",
+          "status": "passed",
+          "durationMs": 780,
+          "period": "2026-09",
+          "august": 15.7331,
+          "september": 16.777,
+          "overviewMoM": 6.6,
+          "calculatedMoM": 6.6350560283733095,
+          "bars": [
+            {
+              "label": "2026-08 157.3억달러",
+              "height": 93.8
+            },
+            {
+              "label": "2026-09 167.8억달러",
+              "height": 100
+            }
+          ]
+        }
+      ],
+      "failures": [],
+      "pageErrors": [],
+      "networkFailures": [
+        {
+          "url": "https://raw.githubusercontent.com/shoon94parkk-del/chart_View/main/static/data/screener.json",
+          "error": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://chart-view-pkv8.onrender.com/api/activity",
+          "error": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://chart-view-pkv8.onrender.com/api/quotes?tickers=005930.KS&fresh=true",
+          "error": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://chart-view-pkv8.onrender.com/api/financial-quarters?ticker=005930.KS",
+          "error": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://raw.githubusercontent.com/shoon94parkk-del/chart_View/main/static/data/company_context.json",
+          "relayError": "route.fetch: Target page, context or browser has been closed\nCall log:\n\u001b[2m  - → GET https://raw.githubusercontent.com/shoon94parkk-del/chart_View/main/static/data/company_context.json\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/140.0.7339.16 Safari/537.36\u001b[22m\n\u001b[2m    - accept: application/json\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - accept-language: ko-KR\u001b[22m\n\u001b[2m    - origin: https://chart-view-toss.onrender.com\u001b[22m\n\u001b[2m    - referer: https://chart-view-toss.onrender.com/\u001b[22m\n\u001b[2m    - sec-ch-ua: \"Chromium\";v=\"140\", \"Not=A?Brand\";v=\"24\", \"HeadlessChrome\";v=\"140\"\u001b[22m\n\u001b[2m    - sec-ch-ua-mobile: ?0\u001b[22m\n\u001b[2m    - sec-ch-ua-platform: \"Linux\"\u001b[22m\n\u001b[2m  - ← 200 OK\u001b[22m\n\u001b[2m    - cache-control: max-age=300\u001b[22m\n\u001b[2m    - content-security-policy: default-src 'none'; style-src 'unsafe-inline'; sandbox\u001b[22m\n\u001b[2m    - content-type: text/plain; charset=utf-8\u001b[22m\n\u001b[2m    - etag: W/\"2a2b7638fe247f76c090e7520bfb7b9ab7e3b07cd6f17645b0a6bbe8277a3df7\"\u001b[22m\n\u001b[2m    - strict-transport-security: max-age=31536000\u001b[22m\n\u001b[2m    - x-content-type-options: nosniff\u001b[22m\n\u001b[2m    - x-frame-options: deny\u001b[22m\n\u001b[2m    - x-xss-protection: 1; mode=block\u001b[22m\n\u001b[2m    - x-github-request-id: 5ACE:361023:4D9A:7237:6AD19F7F\u001b[22m\n\u001b[2m    - x-github-edge-region: westus3\u001b[22m\n\u001b[2m    - content-encoding: gzip\u001b[22m\n\u001b[2m    - accept-ranges: bytes\u001b[22m\n\u001b[2m    - date: Fri, 16 Oct 2026 03:52:42 GMT\u001b[22m\n\u001b[2m    - via: 1.1 varnish\u001b[22m\n\u001b[2m    - x-served-by: cache-lax-kwhp1940141-LAX\u001b[22m\n\u001b[2m    - x-cache: HIT\u001b[22m\n\u001b[2m    - x-cache-hits: 1\u001b[22m\n\u001b[2m    - x-timer: S1792122763.563248,VS0,VE2\u001b[22m\n\u001b[2m    - vary: Authorization,Accept-Encoding\u001b[22m\n\u001b[2m    - access-control-allow-origin: *\u001b[22m\n\u001b[2m    - cross-origin-resource-policy: cross-origin\u001b[22m\n\u001b[2m    - x-fastly-request-id: d1e4bfa2da72fc2e7d2e02bf14e0a09890eaa124\u001b[22m\n\u001b[2m    - expires: Fri, 16 Oct 2026 03:57:42 GMT\u001b[22m\n\u001b[2m    - source-age: 8\u001b[22m\n\u001b[2m    - content-length: 106622\u001b[22m\n\u001b[2m    - x-envoy-upstream-service-time: 151\u001b[22m\n\u001b[2m    - server: envoy\u001b[22m\n\u001b[2m    - connection: close\u001b[22m\n"
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/market-now"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/home-snapshot"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/home-bootstrap"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/quotes?tickers=005930.KS%2CAAPL%2CNVDA"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/personalized-news?tickers=005930.KS%2CAAPL%2CNVDA&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90%7C%EC%95%A0%ED%94%8C%7C%EC%97%94%EB%B9%84%EB%94%94%EC%95%84"
+        },
+        {
+          "method": "POST",
+          "url": "https://chart-view-pkv8.onrender.com/api/activity"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/export-momentum?balanceBasis=signed-v1"
+        },
+        {
+          "method": "POST",
+          "url": "https://chart-view-pkv8.onrender.com/api/activity"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/quotes?tickers=005930.KS%2CAAPL%2CNVDA"
+        },
+        {
+          "method": "POST",
+          "url": "https://chart-view-pkv8.onrender.com/api/activity"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/quotes?tickers=005930.KS&fresh=true"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/compare?tickers=005930.KS&period=3mo"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/financial-history?ticker=005930.KS"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/valuation?tickers=005930.KS"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/personalized-news?tickers=005930.KS&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/financial-quarters?ticker=005930.KS"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/business-report?ticker=005930.KS&name=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/relationship-evidence?ticker=005930.KS&name=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90"
+        },
+        {
+          "method": "POST",
+          "url": "https://chart-view-pkv8.onrender.com/api/activity"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/quotes?tickers=005930.KS&fresh=true"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/financial-quarters?ticker=005930.KS"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/quotes?tickers=005930.KS&fresh=true"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/compare?tickers=005930.KS&period=3mo"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/financial-history?ticker=005930.KS"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/valuation?tickers=005930.KS"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/personalized-news?tickers=005930.KS&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90"
+        },
+        {
+          "method": "POST",
+          "url": "https://chart-view-pkv8.onrender.com/api/activity"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/financial-quarters?ticker=005930.KS"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/business-report?ticker=005930.KS&name=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/relationship-evidence?ticker=005930.KS&name=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/market-now"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/quotes?tickers=005930.KS%2CAAPL%2CNVDA"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/home-snapshot"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/personalized-news?tickers=005930.KS%2CAAPL%2CNVDA&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90%7C%EC%95%A0%ED%94%8C%7C%EC%97%94%EB%B9%84%EB%94%94%EC%95%84"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/home-bootstrap"
+        },
+        {
+          "method": "POST",
+          "url": "https://chart-view-pkv8.onrender.com/api/activity"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/export-momentum?balanceBasis=signed-v1"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/macro"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/consensus?ticker=005930.KS"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/consensus?ticker=AAPL"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/consensus?ticker=NVDA"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/earnings-events"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/export-momentum/momentum-map"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/export-momentum/provisional"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/export-momentum/semiconductor-countries"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/export-momentum/semiconductor-trends"
+        }
+      ],
+      "screenshots": [
+        "chromium-430-home.png",
+        "chromium-430-watch.png",
+        "chromium-430-research-continuation.png",
+        "chromium-430-return-home.png",
+        "chromium-430-inflation-chart.png",
+        "chromium-430-official-calendar.png",
+        "chromium-430-official-company-calls.png",
+        "chromium-430-dram-corrected-chart.png",
+        "chromium-430-dram-corrected-mom.png"
+      ],
+      "finishedAt": "2026-10-16T03:52:42.919Z"
+    },
+    {
+      "device": "iphone-webkit",
+      "startedAt": "2026-10-16T03:52:42.971Z",
+      "checks": [
+        {
+          "name": "deployed-revisions",
+          "status": "passed",
+          "durationMs": 248,
+          "backendRevision": "01929d488a2d3cfbe715bce1a357a9302c6b171f",
+          "frontendEntry": "/assets/index-Ct_2HPAt.js",
+          "assetSha256": "96ab45ac22102312b9ceb0dd7925c3d23487f293911cc939aa2701ac499ec377"
+        },
+        {
+          "name": "home-watch-detail",
+          "status": "passed",
+          "durationMs": 11076,
+          "homeGeometry": {
+            "width": 390,
+            "scrollWidth": 390
+          },
+          "watchStored": true,
+          "researchDraftBackPreserved": true,
+          "researchSavedReloadPreserved": true
+        },
+        {
+          "name": "official-inflation",
+          "status": "passed",
+          "durationMs": 6204,
+          "legacyCount": 16,
+          "inflation": [
+            {
+              "id": "cpi",
+              "asOf": "2026-09",
+              "basis": {
+                "yoy": "NSA",
+                "mom": "SA"
+              },
+              "source": {
+                "name": "U.S. Bureau of Labor Statistics Public Data API",
+                "url": "https://api.bls.gov/publicAPI/v2/timeseries/data/",
+                "saSeriesId": "CUSR0000SA0",
+                "nsaSeriesId": "CUUR0000SA0",
+                "saUrl": "https://api.bls.gov/publicAPI/v2/timeseries/data/CUSR0000SA0",
+                "nsaUrl": "https://api.bls.gov/publicAPI/v2/timeseries/data/CUUR0000SA0"
+              },
+              "observationStatus": "unknown",
+              "revisionStatus": "unknown",
+              "nulls": [
+                "2025-10",
+                "2025-11"
+              ]
+            },
+            {
+              "id": "core_cpi",
+              "asOf": "2026-09",
+              "basis": {
+                "yoy": "NSA",
+                "mom": "SA"
+              },
+              "source": {
+                "name": "U.S. Bureau of Labor Statistics Public Data API",
+                "url": "https://api.bls.gov/publicAPI/v2/timeseries/data/",
+                "saSeriesId": "CUSR0000SA0L1E",
+                "nsaSeriesId": "CUUR0000SA0L1E",
+                "saUrl": "https://api.bls.gov/publicAPI/v2/timeseries/data/CUSR0000SA0L1E",
+                "nsaUrl": "https://api.bls.gov/publicAPI/v2/timeseries/data/CUUR0000SA0L1E"
+              },
+              "observationStatus": "unknown",
+              "revisionStatus": "unknown",
+              "nulls": [
+                "2025-10",
+                "2025-11"
+              ]
+            },
+            {
+              "id": "ppi",
+              "asOf": "2026-09",
+              "basis": {
+                "yoy": "NSA",
+                "mom": "SA"
+              },
+              "source": {
+                "name": "U.S. Bureau of Labor Statistics Public Data API",
+                "url": "https://api.bls.gov/publicAPI/v2/timeseries/data/",
+                "saSeriesId": "WPSFD4",
+                "nsaSeriesId": "WPUFD4",
+                "saUrl": "https://api.bls.gov/publicAPI/v2/timeseries/data/WPSFD4",
+                "nsaUrl": "https://api.bls.gov/publicAPI/v2/timeseries/data/WPUFD4"
+              },
+              "observationStatus": "preliminary",
+              "revisionStatus": "unknown",
+              "nulls": []
+            },
+            {
+              "id": "core_ppi",
+              "asOf": "2026-09",
+              "basis": {
+                "yoy": "NSA",
+                "mom": "SA"
+              },
+              "source": {
+                "name": "U.S. Bureau of Labor Statistics Public Data API",
+                "url": "https://api.bls.gov/publicAPI/v2/timeseries/data/",
+                "saSeriesId": "WPSFD49104",
+                "nsaSeriesId": "WPUFD49104",
+                "saUrl": "https://api.bls.gov/publicAPI/v2/timeseries/data/WPSFD49104",
+                "nsaUrl": "https://api.bls.gov/publicAPI/v2/timeseries/data/WPUFD49104"
+              },
+              "observationStatus": "preliminary",
+              "revisionStatus": "unknown",
+              "nulls": []
+            }
+          ],
+          "calendarStatus": "partial",
+          "upcomingCount": 28
+        },
+        {
+          "name": "official-company-calls",
+          "status": "passed",
+          "durationMs": 1871,
+          "calls": [
+            {
+              "symbol": "005930.KS",
+              "scheduledAt": "2026-10-29T01:00:00Z",
+              "source": "https://www.samsung.com/global/ir/ir-events-presentations/events/"
+            },
+            {
+              "symbol": "AAPL",
+              "scheduledAt": "2026-11-02T22:00:00Z",
+              "source": "https://investor.apple.com/investor-relations/default.aspx"
+            }
+          ],
+          "comparison": {
+            "status": "unavailable",
+            "reason": "pre_event_estimate_snapshot_not_available",
+            "required": [
+              "immutable_pre_event_estimate",
+              "same_period_and_accounting_basis",
+              "actual_publication_timestamp",
+              "verified_regular_session_closes"
+            ]
+          }
+        },
+        {
+          "name": "dram-monthly-consistency",
+          "status": "passed",
+          "durationMs": 3343,
+          "period": "2026-09",
+          "august": 15.7331,
+          "september": 16.777,
+          "overviewMoM": 6.6,
+          "calculatedMoM": 6.6350560283733095,
+          "bars": [
+            {
+              "label": "2026-08 157.3억달러",
+              "height": 93.8
+            },
+            {
+              "label": "2026-09 167.8억달러",
+              "height": 100
+            }
+          ]
+        }
+      ],
+      "failures": [],
+      "pageErrors": [],
+      "networkFailures": [
+        {
+          "url": "https://chart-view-pkv8.onrender.com/api/financial-quarters?ticker=005930.KS",
+          "error": "Load request cancelled"
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/market-now"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/home-snapshot"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/home-bootstrap"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/quotes?tickers=005930.KS%2CAAPL%2CNVDA"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/personalized-news?tickers=005930.KS%2CAAPL%2CNVDA&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90%7C%EC%95%A0%ED%94%8C%7C%EC%97%94%EB%B9%84%EB%94%94%EC%95%84"
+        },
+        {
+          "method": "POST",
+          "url": "https://chart-view-pkv8.onrender.com/api/activity"
+        },
+        {
+          "method": "POST",
+          "url": "https://chart-view-pkv8.onrender.com/api/activity"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/quotes?tickers=005930.KS%2CAAPL%2CNVDA"
+        },
+        {
+          "method": "POST",
+          "url": "https://chart-view-pkv8.onrender.com/api/activity"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/quotes?tickers=005930.KS&fresh=true"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/compare?tickers=005930.KS&period=3mo"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/financial-history?ticker=005930.KS"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/valuation?tickers=005930.KS"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/personalized-news?tickers=005930.KS&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90"
+        },
+        {
+          "method": "POST",
+          "url": "https://chart-view-pkv8.onrender.com/api/activity"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/financial-quarters?ticker=005930.KS"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/business-report?ticker=005930.KS&name=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/relationship-evidence?ticker=005930.KS&name=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90"
+        },
+        {
+          "method": "POST",
+          "url": "https://chart-view-pkv8.onrender.com/api/activity"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/quotes?tickers=005930.KS&fresh=true"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/financial-quarters?ticker=005930.KS"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/quotes?tickers=005930.KS&fresh=true"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/compare?tickers=005930.KS&period=3mo"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/financial-history?ticker=005930.KS"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/valuation?tickers=005930.KS"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/personalized-news?tickers=005930.KS&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90"
+        },
+        {
+          "method": "POST",
+          "url": "https://chart-view-pkv8.onrender.com/api/activity"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/financial-quarters?ticker=005930.KS"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/market-now"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/quotes?tickers=005930.KS%2CAAPL%2CNVDA"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/home-snapshot"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/personalized-news?tickers=005930.KS%2CAAPL%2CNVDA&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90%7C%EC%95%A0%ED%94%8C%7C%EC%97%94%EB%B9%84%EB%94%94%EC%95%84"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/home-bootstrap"
+        },
+        {
+          "method": "POST",
+          "url": "https://chart-view-pkv8.onrender.com/api/activity"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/home-live"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/market-now"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/macro"
+        },
+        {
+          "method": "POST",
+          "url": "https://chart-view-pkv8.onrender.com/api/activity"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/consensus?ticker=005930.KS"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/consensus?ticker=AAPL"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/consensus?ticker=NVDA"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/earnings-events"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/export-momentum?balanceBasis=signed-v1"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/export-momentum/momentum-map"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/export-momentum/provisional"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/export-momentum/semiconductor-countries"
+        },
+        {
+          "method": "GET",
+          "url": "https://chart-view-pkv8.onrender.com/api/export-momentum/semiconductor-trends"
+        }
+      ],
+      "screenshots": [
+        "iphone-webkit-home.png",
+        "iphone-webkit-watch.png",
+        "iphone-webkit-research-continuation.png",
+        "iphone-webkit-return-home.png",
+        "iphone-webkit-inflation-chart.png",
+        "iphone-webkit-official-calendar.png",
+        "iphone-webkit-official-company-calls.png",
+        "iphone-webkit-dram-corrected-chart.png",
+        "iphone-webkit-dram-corrected-mom.png"
+      ],
+      "finishedAt": "2026-10-16T03:53:06.192Z"
+    }
+  ],
+  "finishedAt": "2026-10-16T03:53:06.322Z",
+  "status": "passed"
+}

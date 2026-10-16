@@ -1,0 +1,150 @@
+{
+  "README.md": {
+    "bytes": 7331,
+    "sha256": "2ddd1f763458c41faf54ed97e079b47c55d1393420e8ad51adf60997defe94c0"
+  },
+  "backend/api-http.json": {
+    "bytes": 2136,
+    "sha256": "fefd1537ecdff71e426eb11ade2f8eed2bbbc864110bf1fa74bd180e0f66562d"
+  },
+  "backend/assert_backend_final.py": {
+    "bytes": 10345,
+    "sha256": "80c1c325d04a59ea28d1d6c7cca4a5e4ba8e39471d5796ca2a0e262c9605984f"
+  },
+  "backend/assertion-result.json": {
+    "bytes": 16094,
+    "sha256": "ef4947be77548d9de082667e5f7070e54dffcfe02e0e3a127fffd09ee83cd7e5"
+  },
+  "backend/earnings-events.json": {
+    "bytes": 3105,
+    "sha256": "4492f46415103aa2e3b6b4f72cc46122a0e07e06ad5b29524f9c4e0948321d2b"
+  },
+  "backend/export-momentum.json": {
+    "bytes": 14522,
+    "sha256": "d5c28e78eb74698f51f64ecff83d4f4d9adc799207ea6433e912da8e727aaca4"
+  },
+  "backend/final-live-contract-01929d4-recheck.log": {
+    "bytes": 1176,
+    "sha256": "4abdee596b7a4deaac9a78829f49e5fb4f4a83aeb3375887a9056105068b5836"
+  },
+  "backend/final-live-contract-01929d4.log": {
+    "bytes": 710,
+    "sha256": "c57bc9cad65886016abbd024b34c459f51d3e0fc4f56e9c670d7ffbb25901104"
+  },
+  "backend/guru-baseline-screening.json": {
+    "bytes": 176623,
+    "sha256": "d34da0011693df5207c33191e5b5408e780da8751331e568d870e221d2f030c0"
+  },
+  "backend/guru-final-screening.json": {
+    "bytes": 176623,
+    "sha256": "1a8adf41e2cd15eabf6ef0126e2178540028f1fccfe96573e9af4c40bf48d3db"
+  },
+  "backend/health.json": {
+    "bytes": 123,
+    "sha256": "0f916f1181f00080a7af4482383cc5b79baf7b08ba6744159606a8281d2364ae"
+  },
+  "backend/home-snapshot.json": {
+    "bytes": 148361,
+    "sha256": "0b437d56bf96c89e20e4bb18bd0c8280c93f2cad3e6d85916d7ea8ee1107ce19"
+  },
+  "backend/legacy-macro-reference.json": {
+    "bytes": 57316,
+    "sha256": "3829fdf13a8fa7458e0dcf32336cabd5e85a5e85c4ad46130d3830288e41639c"
+  },
+  "backend/macro.json": {
+    "bytes": 291141,
+    "sha256": "0d34fe26f575a585160666a5d660ea7967af77b37389d57e4dbce10ff8f8d452"
+  },
+  "backend/provisional.json": {
+    "bytes": 6019,
+    "sha256": "782553d733ca567f18a7d8dfe5e2511fc3da76d97ab32982504f04226a9fa6d4"
+  },
+  "backend/release-after-browser-final-01929d4.json": {
+    "bytes": 6486,
+    "sha256": "cee8896ea06ea05fd1a21bcdb4d53a4734debba25fe68dac49ff9578bf517223"
+  },
+  "backend/release-final-01929d4.json": {
+    "bytes": 6487,
+    "sha256": "94ecc9a58caee8de844d6bf393bd4d5de71eb59361482585ed2cca3f07c5f3f1"
+  },
+  "backend/render-export-warm-log.json": {
+    "bytes": 751,
+    "sha256": "00c5ab86c0a159a24d558708fb3a39fa873b2ee218f0b73efaaa01fca4230fc0"
+  },
+  "backend/semiconductor-trends.json": {
+    "bytes": 23654,
+    "sha256": "5f9142597c10cb9b57d1a741ba9be3d2e21bd3753017689e5f769dee57624bd0"
+  },
+  "browser/chromium-320-dram-corrected-chart.png": {
+    "bytes": 68598,
+    "sha256": "ef5876d423336b77ebf14e04aee2f4af338c73dcff827c265934de28291ca061"
+  },
+  "browser/chromium-320-home.png": {
+    "bytes": 82311,
+    "sha256": "f9c7e8d0e7e35ad8da38c7730b8ea2fecb53447c862ff9ca3238c7e730477551"
+  },
+  "browser/chromium-320-watch.png": {
+    "bytes": 65588,
+    "sha256": "a490f099e36607c2bd7444b3549ed18cacf44c791624d5c99e229d3890cc6eab"
+  },
+  "browser/chromium-390-dram-corrected-mom.png": {
+    "bytes": 81995,
+    "sha256": "d1babd819e4debeb906fc39615d4d618e6c68094040d696aa43d94c62f2dec5d"
+  },
+  "browser/chromium-390-home.png": {
+    "bytes": 87422,
+    "sha256": "384fd52ac0c47a99b3eee16ef63f5d63a103f098482727b7d4c129a06179e102"
+  },
+  "browser/chromium-430-home.png": {
+    "bytes": 89742,
+    "sha256": "d938f979c7ba0620c4de3cdf6666555caf13dfb1b0b1eb9793aa8ba6aec24201"
+  },
+  "browser/chromium-430-official-calendar.png": {
+    "bytes": 67095,
+    "sha256": "2d021eacace2d6749a94d43881a05f45ad0a3c4a8ccf74d01e6fd7740babf5c1"
+  },
+  "browser/iphone-webkit-inflation-chart.png": {
+    "bytes": 247709,
+    "sha256": "e9f70e54f79dcd08d31ef729daecf1284c665abe9959b98f4634c9bd7158b90f"
+  },
+  "browser/iphone-webkit-official-company-calls.png": {
+    "bytes": 211942,
+    "sha256": "413954446dfad58cb08675569ecea35225aa935ebc71ddfedf58b5541e006693"
+  },
+  "browser/iphone-webkit-research-continuation.png": {
+    "bytes": 195128,
+    "sha256": "2abecdd608e917a25f09c92ff801f73c0bc648ce91ba50ba4feb42b700d392de"
+  },
+  "browser/results.json": {
+    "bytes": 60992,
+    "sha256": "65e62361ec7f26e5e034bd9c893e4c758545c51c27008080753b8182df167ffd"
+  },
+  "browser/run.log": {
+    "bytes": 1737,
+    "sha256": "3a0261f19455e4c0f68740689dd36dd859e5371599ccf2a6ff9a25292cfaac79"
+  },
+  "deployment-proof.json": {
+    "bytes": 1981,
+    "sha256": "fa2a14a82033df3397426e6b8d4eb674ef47f51cc7d3d90bd65ba89b13f88db5"
+  },
+  "first-attempt-diagnostics/original-harness.mjs": {
+    "bytes": 23736,
+    "sha256": "408bbae19ebe6a3c552e7bd29b31be615ea6197af5d23c0afee01caf2bb15b49"
+  },
+  "first-attempt-diagnostics/results.json": {
+    "bytes": 29541,
+    "sha256": "9a04f901bbe73c99655354c094b6a8400888194cc2bdb81239ac6f0f74e543df"
+  },
+  "first-attempt-diagnostics/run.log": {
+    "bytes": 2080,
+    "sha256": "5dc25ccf41d6bd1b2857746961d9b3f29423ffee876ffd97899b0723eae375ee"
+  },
+  "production-smoke.mjs": {
+    "bytes": 24763,
+    "sha256": "a48fd11a256f75e68110203bd954d376b5e2e7da578def4f2b15d78a056d0aea"
+  },
+  "render-reproduction-build.log": {
+    "bytes": 8783,
+    "sha256": "b075436917bda13809ef3d97d43aa1277e61459fd4fd8dbd1998dd748c51c4a6"
+  }
+}

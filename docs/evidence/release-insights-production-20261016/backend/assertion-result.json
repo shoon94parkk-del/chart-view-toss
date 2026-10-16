@@ -1,0 +1,573 @@
+{
+  "expectedRevision": "01929d488a2d3cfbe715bce1a357a9302c6b171f",
+  "verifiedAt": "2026-10-16T03:53:28.056479+00:00",
+  "assertionsPassed": 56,
+  "assertionCount": 56,
+  "allPassed": true,
+  "checks": [
+    {
+      "name": "exact_healthy_revision",
+      "passed": true,
+      "evidence": {
+        "status": "ok",
+        "timestamp": "2026-10-16T03:43:09.737595",
+        "revision": "01929d488a2d3cfbe715bce1a357a9302c6b171f"
+      }
+    },
+    {
+      "name": "macro_actual_http_200",
+      "passed": true,
+      "evidence": {
+        "url": "https://chart-view-pkv8.onrender.com/api/macro",
+        "httpStatus": 200,
+        "elapsedSeconds": 0.623,
+        "retrievedAt": "2026-10-16T03:43:09.936774+00:00",
+        "sha256": "fce00f840cf6868e3ca83a0a3bd75f94e432b8a5a65e4b11d23b08c466b9ba43",
+        "bytes": 140712
+      }
+    },
+    {
+      "name": "home-snapshot_actual_http_200",
+      "passed": true,
+      "evidence": {
+        "url": "https://chart-view-pkv8.onrender.com/api/home-snapshot",
+        "httpStatus": 200,
+        "elapsedSeconds": 0.234,
+        "retrievedAt": "2026-10-16T03:43:10.147854+00:00",
+        "sha256": "d60de96387d6ec0bcd8ce34ca4e3aaf371de1ca86eccece7c4a052b5a0098b2b",
+        "bytes": 68328
+      }
+    },
+    {
+      "name": "earnings-events_actual_http_200",
+      "passed": true,
+      "evidence": {
+        "url": "https://chart-view-pkv8.onrender.com/api/earnings-events",
+        "httpStatus": 200,
+        "elapsedSeconds": 0.597,
+        "retrievedAt": "2026-10-16T03:43:09.911183+00:00",
+        "sha256": "90ea621b0d24afe01b57e453b40d3583162a19e6d1c6c371b8cd7ff1bcccd950",
+        "bytes": 2415
+      }
+    },
+    {
+      "name": "export-momentum_actual_http_200",
+      "passed": true,
+      "evidence": {
+        "url": "https://chart-view-pkv8.onrender.com/api/export-momentum",
+        "httpStatus": 200,
+        "elapsedSeconds": 0.223,
+        "retrievedAt": "2026-10-16T03:43:09.537918+00:00",
+        "sha256": "4640505264154ecf57951040dddb8a2e31036e42cdd20be7c7c78b883c6a9747",
+        "bytes": 10480
+      }
+    },
+    {
+      "name": "semiconductor-trends_actual_http_200",
+      "passed": true,
+      "evidence": {
+        "url": "https://chart-view-pkv8.onrender.com/api/export-momentum/semiconductor-trends",
+        "httpStatus": 200,
+        "elapsedSeconds": 0.393,
+        "retrievedAt": "2026-10-16T03:43:09.932768+00:00",
+        "sha256": "f8768d350ab9cdb16cae6065879f351789fe27a6faeb6bc4c3e0e03bbeb94abc",
+        "bytes": 15086
+      }
+    },
+    {
+      "name": "provisional_actual_http_200",
+      "passed": true,
+      "evidence": {
+        "url": "https://chart-view-pkv8.onrender.com/api/export-momentum/provisional",
+        "httpStatus": 200,
+        "elapsedSeconds": 0.255,
+        "retrievedAt": "2026-10-16T03:43:10.042877+00:00",
+        "sha256": "6640556f26bddff3e3162a229b03fcfdfae9553c89ff21400799fd07109343f3",
+        "bytes": 4519
+      }
+    },
+    {
+      "name": "legacy_16_exact_symbols",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "legacy_16_substantive_charts",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "legacy_values_and_formulas_unchanged_from_shipped_cache",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "home_real_heatmap_and_16_macro_rows",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "home_omits_optional_inflation_and_calendar",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "home_preserves_legacy_macro_summary",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "four_exact_inflation_definitions",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "cpi_correct_sa_nsa_sources",
+      "passed": true,
+      "evidence": {
+        "name": "U.S. Bureau of Labor Statistics Public Data API",
+        "url": "https://api.bls.gov/publicAPI/v2/timeseries/data/",
+        "saSeriesId": "CUSR0000SA0",
+        "nsaSeriesId": "CUUR0000SA0",
+        "saUrl": "https://api.bls.gov/publicAPI/v2/timeseries/data/CUSR0000SA0",
+        "nsaUrl": "https://api.bls.gov/publicAPI/v2/timeseries/data/CUUR0000SA0"
+      }
+    },
+    {
+      "name": "cpi_60_calendar_months",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "cpi_every_point_exact_calendar_formula",
+      "passed": true,
+      "evidence": {
+        "calculatedFields": 120
+      }
+    },
+    {
+      "name": "cpi_publication_is_not_collection_time",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "cpi_actual_official_recheck_preserves_gap_status",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "cpi_official_gap_is_null",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "core_cpi_correct_sa_nsa_sources",
+      "passed": true,
+      "evidence": {
+        "name": "U.S. Bureau of Labor Statistics Public Data API",
+        "url": "https://api.bls.gov/publicAPI/v2/timeseries/data/",
+        "saSeriesId": "CUSR0000SA0L1E",
+        "nsaSeriesId": "CUUR0000SA0L1E",
+        "saUrl": "https://api.bls.gov/publicAPI/v2/timeseries/data/CUSR0000SA0L1E",
+        "nsaUrl": "https://api.bls.gov/publicAPI/v2/timeseries/data/CUUR0000SA0L1E"
+      }
+    },
+    {
+      "name": "core_cpi_60_calendar_months",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "core_cpi_every_point_exact_calendar_formula",
+      "passed": true,
+      "evidence": {
+        "calculatedFields": 120
+      }
+    },
+    {
+      "name": "core_cpi_publication_is_not_collection_time",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "core_cpi_actual_official_recheck_preserves_gap_status",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "core_cpi_official_gap_is_null",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "ppi_correct_sa_nsa_sources",
+      "passed": true,
+      "evidence": {
+        "name": "U.S. Bureau of Labor Statistics Public Data API",
+        "url": "https://api.bls.gov/publicAPI/v2/timeseries/data/",
+        "saSeriesId": "WPSFD4",
+        "nsaSeriesId": "WPUFD4",
+        "saUrl": "https://api.bls.gov/publicAPI/v2/timeseries/data/WPSFD4",
+        "nsaUrl": "https://api.bls.gov/publicAPI/v2/timeseries/data/WPUFD4"
+      }
+    },
+    {
+      "name": "ppi_60_calendar_months",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "ppi_every_point_exact_calendar_formula",
+      "passed": true,
+      "evidence": {
+        "calculatedFields": 120
+      }
+    },
+    {
+      "name": "ppi_publication_is_not_collection_time",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "ppi_actual_official_recheck_preserves_gap_status",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "ppi_complete_change_coverage",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "core_ppi_correct_sa_nsa_sources",
+      "passed": true,
+      "evidence": {
+        "name": "U.S. Bureau of Labor Statistics Public Data API",
+        "url": "https://api.bls.gov/publicAPI/v2/timeseries/data/",
+        "saSeriesId": "WPSFD49104",
+        "nsaSeriesId": "WPUFD49104",
+        "saUrl": "https://api.bls.gov/publicAPI/v2/timeseries/data/WPSFD49104",
+        "nsaUrl": "https://api.bls.gov/publicAPI/v2/timeseries/data/WPUFD49104"
+      }
+    },
+    {
+      "name": "core_ppi_60_calendar_months",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "core_ppi_every_point_exact_calendar_formula",
+      "passed": true,
+      "evidence": {
+        "calculatedFields": 120
+      }
+    },
+    {
+      "name": "core_ppi_publication_is_not_collection_time",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "core_ppi_actual_official_recheck_preserves_gap_status",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "core_ppi_complete_change_coverage",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "calendar_28_nonempty_official_future_events",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "calendar_all_eastern_times_match_dst_utc",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "calendar_next_confirmed_release_times",
+      "passed": true,
+      "evidence": [
+        {
+          "id": "cpi:2026-10",
+          "indicator": "cpi",
+          "name": "미국 CPI·근원 CPI",
+          "observationMonth": "2026-10",
+          "observationMonthSourceUrl": "https://www.bls.gov/schedule/news_release/cpi.htm",
+          "scheduledAt": "2026-11-10T13:30:00Z",
+          "localDate": "2026-11-10",
+          "localTime": "08:30",
+          "timeZone": "America/New_York",
+          "status": "confirmed",
+          "sourceUrl": "https://www.bls.gov/schedule/news_release/bls.ics",
+          "sourceUid": "c26d524f-228b-46e9-b00e-fdbec26d68af",
+          "checkedAt": "2026-10-16T03:14:19Z"
+        },
+        {
+          "id": "ppi:2026-10",
+          "indicator": "ppi",
+          "name": "미국 PPI·근원 PPI",
+          "observationMonth": "2026-10",
+          "observationMonthSourceUrl": "https://www.bls.gov/schedule/news_release/ppi.htm",
+          "scheduledAt": "2026-11-13T13:30:00Z",
+          "localDate": "2026-11-13",
+          "localTime": "08:30",
+          "timeZone": "America/New_York",
+          "status": "confirmed",
+          "sourceUrl": "https://www.bls.gov/schedule/news_release/bls.ics",
+          "sourceUid": "0e068cb5-2188-4bfd-861e-97aac53dadff",
+          "checkedAt": "2026-10-16T03:14:19Z"
+        }
+      ]
+    },
+    {
+      "name": "calendar_mixed_checks_not_falsely_all_fresh",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "actual_apple_samsung_calls_present",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "calls_separate_from_results_and_consensus",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "calls_official_sources",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "calls_exact_verified_schedule_times",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "unverified_issuers_explicitly_missing",
+      "passed": true,
+      "evidence": {
+        "trackedSymbols": [
+          "AAPL",
+          "NVDA",
+          "005930.KS",
+          "000660.KS"
+        ],
+        "scheduledSymbols": [
+          "005930.KS",
+          "AAPL"
+        ],
+        "missing": [
+          {
+            "symbol": "NVDA",
+            "name": "NVIDIA",
+            "sourceUrl": "https://investor.nvidia.com/events-and-presentations/events-and-presentations/default.aspx",
+            "reason": "no_upcoming_verified_call"
+          },
+          {
+            "symbol": "000660.KS",
+            "name": "SK하이닉스",
+            "sourceUrl": null,
+            "reason": "official_schedule_not_collected"
+          }
+        ]
+      }
+    },
+    {
+      "name": "monthly_exports_substantive_official_september",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "dram_actual_monthly_cross_endpoint_matches",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "flash_actual_monthly_cross_endpoint_matches",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "mcp-memory_actual_monthly_cross_endpoint_matches",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "provisional_official_current_month_and_actual_cutoff",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "provisional_actual_values_nonempty",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "provisional_flags_keep_projection_separate_from_actual",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "provisional_official_source_and_basis_explicit",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "all_five_guru_strategy_outputs_exactly_preserved",
+      "passed": true,
+      "evidence": null
+    }
+  ],
+  "inflation": [
+    {
+      "id": "cpi",
+      "status": "partial",
+      "asOf": "2026-09",
+      "publishedAt": "2026-10-14T12:30:00Z",
+      "collectedAt": "2026-10-16T03:14:19Z",
+      "checkedAt": "2026-10-16T03:14:19Z",
+      "coverage": {
+        "startMonth": "2021-10",
+        "endMonth": "2026-09",
+        "months": 60,
+        "yoyCount": 59,
+        "momCount": 58
+      },
+      "latest": {
+        "month": "2026-09",
+        "yoy": 3.737685,
+        "mom": 0.648548,
+        "publishedAt": "2026-10-14T12:30:00Z",
+        "sourceFootnotes": {
+          "yoy": [],
+          "mom": []
+        }
+      }
+    },
+    {
+      "id": "core_cpi",
+      "status": "partial",
+      "asOf": "2026-09",
+      "publishedAt": "2026-10-14T12:30:00Z",
+      "collectedAt": "2026-10-16T03:14:19Z",
+      "checkedAt": "2026-10-16T03:14:19Z",
+      "coverage": {
+        "startMonth": "2021-10",
+        "endMonth": "2026-09",
+        "months": 60,
+        "yoyCount": 59,
+        "momCount": 58
+      },
+      "latest": {
+        "month": "2026-09",
+        "yoy": 2.564358,
+        "mom": 0.334848,
+        "publishedAt": "2026-10-14T12:30:00Z",
+        "sourceFootnotes": {
+          "yoy": [],
+          "mom": []
+        }
+      }
+    },
+    {
+      "id": "ppi",
+      "status": "ok",
+      "asOf": "2026-09",
+      "publishedAt": "2026-10-15T12:30:00Z",
+      "collectedAt": "2026-10-16T03:14:19Z",
+      "checkedAt": "2026-10-16T03:14:19Z",
+      "coverage": {
+        "startMonth": "2021-10",
+        "endMonth": "2026-09",
+        "months": 60,
+        "yoyCount": 60,
+        "momCount": 60
+      },
+      "latest": {
+        "month": "2026-09",
+        "yoy": 6.337775,
+        "mom": 1.34338,
+        "publishedAt": "2026-10-15T12:30:00Z",
+        "sourceFootnotes": {
+          "yoy": [
+            {
+              "code": "P",
+              "text": "Preliminary. All indexes are subject to monthly revisions up to four months after original publication."
+            }
+          ],
+          "mom": [
+            {
+              "code": "P",
+              "text": "Preliminary. All indexes are subject to monthly revisions up to four months after original publication."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "core_ppi",
+      "status": "ok",
+      "asOf": "2026-09",
+      "publishedAt": "2026-10-15T12:30:00Z",
+      "collectedAt": "2026-10-16T03:14:19Z",
+      "checkedAt": "2026-10-16T03:14:19Z",
+      "coverage": {
+        "startMonth": "2021-10",
+        "endMonth": "2026-09",
+        "months": 60,
+        "yoyCount": 60,
+        "momCount": 60
+      },
+      "latest": {
+        "month": "2026-09",
+        "yoy": 4.969638,
+        "mom": 0.68143,
+        "publishedAt": "2026-10-15T12:30:00Z",
+        "sourceFootnotes": {
+          "yoy": [
+            {
+              "code": "P",
+              "text": "Preliminary. All indexes are subject to monthly revisions up to four months after original publication."
+            }
+          ],
+          "mom": [
+            {
+              "code": "P",
+              "text": "Preliminary. All indexes are subject to monthly revisions up to four months after original publication."
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "dram": [
+    {
+      "segment": "dram",
+      "augustUsdBillion": 15.7331,
+      "septemberUsdBillion": 16.777,
+      "calculatedMoMPct": 6.6,
+      "liveExportMoMPct": 6.6
+    },
+    {
+      "segment": "flash",
+      "augustUsdBillion": 2.8622,
+      "septemberUsdBillion": 3.2968,
+      "calculatedMoMPct": 15.2,
+      "liveExportMoMPct": 15.2
+    },
+    {
+      "segment": "mcp-memory",
+      "augustUsdBillion": 12.2253,
+      "septemberUsdBillion": 15.014,
+      "calculatedMoMPct": 22.8,
+      "liveExportMoMPct": 22.8
+    }
+  ],
+  "caveat": "Actual HTTPS responses after caches warmed. Initial export-momentum 45s timeout and successful unchanged contract recheck are preserved separately. Native Toss Sandbox remains unverified."
+}

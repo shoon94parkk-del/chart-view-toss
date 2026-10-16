@@ -1,0 +1,58 @@
+{
+  "health": {
+    "url": "https://chart-view-pkv8.onrender.com/health",
+    "httpStatus": 200,
+    "elapsedSeconds": 0.472,
+    "retrievedAt": "2026-10-16T03:43:09.785142+00:00",
+    "sha256": "8de08c4f03e2400f5bff145014b567fd2bd78fc32f3c30f580916dbc4f7d1830",
+    "bytes": 110
+  },
+  "macro": {
+    "url": "https://chart-view-pkv8.onrender.com/api/macro",
+    "httpStatus": 200,
+    "elapsedSeconds": 0.623,
+    "retrievedAt": "2026-10-16T03:43:09.936774+00:00",
+    "sha256": "fce00f840cf6868e3ca83a0a3bd75f94e432b8a5a65e4b11d23b08c466b9ba43",
+    "bytes": 140712
+  },
+  "earnings-events": {
+    "url": "https://chart-view-pkv8.onrender.com/api/earnings-events",
+    "httpStatus": 200,
+    "elapsedSeconds": 0.597,
+    "retrievedAt": "2026-10-16T03:43:09.911183+00:00",
+    "sha256": "90ea621b0d24afe01b57e453b40d3583162a19e6d1c6c371b8cd7ff1bcccd950",
+    "bytes": 2415
+  },
+  "export-momentum": {
+    "url": "https://chart-view-pkv8.onrender.com/api/export-momentum",
+    "httpStatus": 200,
+    "elapsedSeconds": 0.223,
+    "retrievedAt": "2026-10-16T03:43:09.537918+00:00",
+    "sha256": "4640505264154ecf57951040dddb8a2e31036e42cdd20be7c7c78b883c6a9747",
+    "bytes": 10480
+  },
+  "semiconductor-trends": {
+    "url": "https://chart-view-pkv8.onrender.com/api/export-momentum/semiconductor-trends",
+    "httpStatus": 200,
+    "elapsedSeconds": 0.393,
+    "retrievedAt": "2026-10-16T03:43:09.932768+00:00",
+    "sha256": "f8768d350ab9cdb16cae6065879f351789fe27a6faeb6bc4c3e0e03bbeb94abc",
+    "bytes": 15086
+  },
+  "provisional": {
+    "url": "https://chart-view-pkv8.onrender.com/api/export-momentum/provisional",
+    "httpStatus": 200,
+    "elapsedSeconds": 0.255,
+    "retrievedAt": "2026-10-16T03:43:10.042877+00:00",
+    "sha256": "6640556f26bddff3e3162a229b03fcfdfae9553c89ff21400799fd07109343f3",
+    "bytes": 4519
+  },
+  "home-snapshot": {
+    "url": "https://chart-view-pkv8.onrender.com/api/home-snapshot",
+    "httpStatus": 200,
+    "elapsedSeconds": 0.234,
+    "retrievedAt": "2026-10-16T03:43:10.147854+00:00",
+    "sha256": "d60de96387d6ec0bcd8ce34ca4e3aaf371de1ca86eccece7c4a052b5a0098b2b",
+    "bytes": 68328
+  }
+}
