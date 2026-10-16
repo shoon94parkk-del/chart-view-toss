@@ -188,3 +188,109 @@ test('agenda keeps only upcoming sourced events and exposes an independent failu
   assert.equal(model.calendar.status, 'partial');
   assert.equal(normalizeInflationPayload({ ...payload([series()]), releaseCalendar: { status: 'unavailable', events: [] } }, { now: NOW }).series[0].status, 'ok');
 });
+
+const archived = (extra = {}) => ({ month: '2026-09', rate: 'yoy', basis: 'NSA', unit: '%', expected: 3.6,
+  evidenceKind: 'provider_archive', retrievedAt: '2026-10-16T03:00:00Z',
+  archive: { url: 'https://example.com/archive', eventId: 'cpi-2026-09', contentSha256: 'a'.repeat(64) },
+  source: { forecastName: '공급자 예상', forecastUrl: 'https://example.com/forecast' }, ...extra });
+
+test('verified archive forecast is visible without inventing a first release or a pre-event capture', () => {
+  const result = comparison({ forecasts: [archived({ expected: 0 })] });
+  assert.equal(result.expected, 0);
+  assert.equal(result.status, 'missing');
+  assert.equal(result.actualKind, 'index_calculated');
+  assert.equal(result.forecast.evidenceKind, 'provider_archive');
+  assert.equal(result.forecast.retrievedAt, '2026-10-16T03:00:00Z');
+  assert.equal(result.forecast.forecastCapturedAt, null);
+});
+
+test('archive forecast proof, basis, period, units and uniqueness fail closed', () => {
+  for (const extra of [{ basis: 'SA' }, { unit: 'bp' }, { month: '2026-08' }, { rate: 'mom' }, { expected: null },
+    { evidenceKind: 'unverified' }, { retrievedAt: null }, { retrievedAt: '2026-10-17T03:00:00Z' },
+    { archive: null }, { archive: { url: 'http://example.com/a', eventId: 'x', contentSha256: 'a'.repeat(64) } },
+    { archive: { url: 'https://example.com/a', eventId: '', contentSha256: 'a'.repeat(64) } },
+    { archive: { url: 'https://example.com/a', eventId: 'x', contentSha256: '123' } },
+    { source: { forecastName: 'x', forecastUrl: 'javascript:alert(1)' } }]) {
+    assert.equal(comparison({ forecasts: [archived(extra)] }).expected, null, JSON.stringify(extra));
+  }
+  assert.equal(comparison({ forecasts: [archived(), archived()] }).expected, null);
+});
+
+test('archive comparison needs first-release actual and a matching known official publication', () => {
+  const archiveReceipt = { ...receipt(), ...archived(), forecastPublishedAt: null, forecastCapturedAt: null, source: { ...archived().source, actualUrl: receipt().source.actualUrl } };
+  assert.equal(comparison({ publishedAt: archiveReceipt.publishedAt, comparisons: [archiveReceipt] }).status, 'higher');
+  for (const extra of [{}, { publishedAt: '2026-10-15' }, { publishedAt: archiveReceipt.publishedAt, comparisons: [{ ...archiveReceipt, actualVintage: 'current_vintage' }] }]) {
+    const result = comparison({ comparisons: [archiveReceipt], ...extra });
+    assert.equal(result.status, 'missing');
+    assert.equal(result.expected, 3.6);
+    assert.equal(result.actualKind, 'index_calculated');
+  }
+  assert.equal(comparison({ comparisons: [receipt({ evidenceKind: 'pre_release_capture', forecastCapturedAt: '2026-10-15T12:00:00Z' })] }).expected, null);
+});
+
+test('recent publication groups use explicit publication evidence and retain observation months', () => {
+  const rows = ['cpi', 'core_cpi', 'ppi', 'pce'].map((id, index) => series(id, { publishedAt: ['2026-10-14T12:30:00Z', '2026-10-14T12:30:00Z', '2026-10-15', '2026-09-30'][index] }));
+  const model = normalizeInflationPayload(payload(rows), { now: NOW });
+  assert.equal(model.publications.length, 3);
+  assert.equal(model.publications[0].day, '2026-10-15');
+  assert.deepEqual(model.publications[1].entries.map(entry => entry.seriesId), ['cpi', 'core_cpi']);
+  assert.equal(model.publications[1].entries[0].month, '2026-09');
+  assert.equal(normalizeInflationPayload(payload([series()]), { now: NOW }).publications.length, 0);
+});
+
+test('archive comparison never borrows a future forecast or ignores duplicate and conflicting forecast receipts', () => {
+  const archiveReceipt = { ...receipt(), ...archived(), forecastPublishedAt: null, forecastCapturedAt: null, source: { ...archived().source, actualUrl: receipt().source.actualUrl } };
+  const base = { publishedAt: archiveReceipt.publishedAt, comparisons: [archiveReceipt] };
+  assert.equal(comparison({ ...base, forecasts: [archived()] }).status, 'higher');
+  assert.equal(comparison({ forecasts: [archived({ month: '2026-10' })] }).expected, null);
+  assert.equal(comparison({ ...base, forecasts: [archived(), archived()] }).status, 'missing');
+  assert.equal(comparison({ ...base, forecasts: [archived(), archived()] }).expected, null);
+  const conflict = comparison({ ...base, forecasts: [archived({ expected: 3.8 })] });
+  assert.equal(conflict.status, 'missing');
+  assert.equal(conflict.expected, 3.8);
+  assert.equal(conflict.actualKind, 'index_calculated');
+  const late = archived({ retrievedAt: '2026-10-17T03:00:00Z' });
+  assert.equal(comparison({ ...base, forecasts: [late] }).expected, null);
+});
+
+test('recent publications exclude future and duplicate points, cap at three distinct release days', () => {
+  const points = ['01', '02', '03', '04', '05'].map(value => ({ month: `2026-${value}`, yoy: 2, mom: 0, publishedAt: `2026-${value}-15` }));
+  points.push({ month: '2026-06', yoy: 2, mom: 0, publishedAt: '2026-11-15' });
+  points.push({ month: '2026-07', yoy: 2, mom: 0, publishedAt: '2026-08-15' }, { month: '2026-07', yoy: 9, mom: 1, publishedAt: '2026-08-15' });
+  const model = normalizeInflationPayload(payload([series('cpi', { points })]), { now: NOW });
+  assert.deepEqual(model.publications.map(group => group.day), ['2026-05-15', '2026-04-15', '2026-03-15']);
+});
+
+test('impossible calendar dates cannot authenticate archive retrieval or legacy release timing', () => {
+  for (const retrievedAt of ['2026-02-30T03:00:00Z', '2025-02-29T03:00:00+09:00', '2026-04-31T23:30:00-04:00']) {
+    const result = comparison({ forecasts: [archived({ retrievedAt })] });
+    assert.equal(result.expected, null, retrievedAt);
+    assert.equal(result.forecast, null, retrievedAt);
+  }
+  const result = comparison({ comparisons: [receipt({ publishedAt: '2026-02-30T12:30:00Z', forecastPublishedAt: '2026-02-28T10:00:00Z', forecastCapturedAt: '2026-02-28T12:00:00Z' })] });
+  assert.equal(result.status, 'missing');
+  assert.equal(result.expected, null);
+});
+
+test('timestamp calendar validation preserves real leap dates and timezone day crossings', () => {
+  for (const retrievedAt of ['2024-02-29T23:30:00+09:00', '2026-01-31T23:30:00-05:00']) {
+    const result = comparison({ forecasts: [archived({ retrievedAt })] });
+    assert.equal(result.expected, 3.6, retrievedAt);
+    assert.equal(result.forecast.retrievedAt, retrievedAt);
+  }
+});
+
+test('impossible publication, check and agenda timestamps stay missing instead of rolling into another day', () => {
+  const model = normalizeInflationPayload({ ...payload([series('cpi', {
+    publishedAt: '2026-02-30T12:30:00Z', collectedAt: '2026-02-30T12:30:00Z', checkedAt: '2026-02-30T12:30:00Z',
+    forecastCoverage: { status: 'partial', checkedAt: '2026-02-30T03:00:00Z' },
+    points: [{ month: '2026-09', yoy: 3, mom: 0, publishedAt: '2026-02-30T12:30:00Z' }],
+  })]), releaseCalendar: { status: 'ok', events: [{ name: '미국 CPI', scheduledAt: '2027-02-30T12:30:00Z', sourceUrl: 'https://www.bls.gov/schedule/' }] } }, { now: NOW });
+  assert.equal(model.series[0].publishedAt, null);
+  assert.equal(model.series[0].points[0].publishedAt, null);
+  assert.equal(model.series[0].collectedAt, null);
+  assert.equal(model.series[0].checkedAt, null);
+  assert.equal(model.series[0].forecastCoverage.checkedAt, null);
+  assert.deepEqual(model.publications, []);
+  assert.deepEqual(model.calendar.events, []);
+});

@@ -31,6 +31,42 @@ const validDate=value=>{
 };
 const validPeer=(value,current)=>value&&typeof value.name==='string'&&value.name.trim()&&/^\d{6}\.(KS|KQ)$/.test(value.symbol)&&value.symbol!==current?{symbol:value.symbol,name:text(value.name,80)}:null;
 
+// Quote evidence is a copy of the already displayed canonical row. Save time
+// never fills a missing observation time, currency, price or provider basis.
+function checkpointQuote(value,symbol){
+  if(!value||typeof value!=='object'||typeof value.price!=='number'||!Number.isFinite(value.price)||value.price<=0)return null;
+  if(value.ticker&&String(value.ticker).trim().toUpperCase()!==symbol)return null;
+  if(value.symbol&&String(value.symbol).trim().toUpperCase()!==symbol)return null;
+  const currency=typeof value.currency==='string'?value.currency.trim():'';
+  if(!/^[A-Z]{3}$/.test(currency))return null;
+  const rawAsOf=typeof value.asOf==='string'?value.asOf.trim():'';
+  let asOf=rawAsOf&&Number.isFinite(Date.parse(rawAsOf))?rawAsOf:null;
+  // Date.parse normalizes dates such as February 30. Validate the source
+  // calendar date before treating an offset timestamp as timed evidence.
+  if(asOf&&/^\d{4}-\d{2}-\d{2}(?:T|$)/i.test(asOf)){
+    try{validDate(asOf.slice(0,10));}catch{asOf=null;}
+  }
+  const timed=Boolean(asOf&&/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?(?:Z|[+-]\d{2}:?\d{2})$/i.test(asOf));
+  const quote={price:value.price,currency,asOf,timed,source:text(value.source,160),stale:typeof value.stale==='boolean'?value.stale:null};
+  for(const key of ['priceBasis','quoteBasis','sessionDate','sessionType'])if(typeof value[key]==='string'&&value[key].trim())quote[key]=text(value[key],100);
+  if(typeof value.delayTime==='number'&&Number.isFinite(value.delayTime)&&value.delayTime>=0)quote.delayTime=value.delayTime;
+  return quote;
+}
+
+function readCheckpoints(value,symbol){
+  if(!Array.isArray(value))return [];
+  const seen=new Set(),events=[];
+  for(const event of value){
+    if(!event||typeof event!=='object'||typeof event.id!=='string'||!event.id.trim()||seen.has(event.id)||typeof event.question!=='string'||!event.question.trim()||typeof event.savedAt!=='string'||!Number.isFinite(Date.parse(event.savedAt)))continue;
+    let reviewOn='';try{reviewOn=validDate(event.reviewOn);}catch{}
+    seen.add(event.id);
+    events.push({id:text(event.id,160),savedAt:event.savedAt,question:text(event.question,180),support:text(event.support,800),challenge:text(event.challenge,800),reviewOn,...(validPeer(event.peer,symbol)?{peer:validPeer(event.peer,symbol)}:{}),quote:checkpointQuote(event.quote,symbol)});
+  }
+  return events.slice(-20);
+}
+let checkpointSequence=0;
+export const newResearchCheckpointOperation=()=>globalThis.crypto?.randomUUID?.()||`research-${Date.now()}-${++checkpointSequence}-${Math.random().toString(36).slice(2)}`;
+
 function readCards(){
   const stored=readStored(RESEARCH_KEY);
   try{
@@ -44,6 +80,7 @@ export function readResearchNote(symbol){
   if(!value||typeof value!=='object'||typeof value.question!=='string'||!value.question.trim())return null;
   return {
     ...(validPeer(value.peer,ticker(symbol))?{peer:validPeer(value.peer,ticker(symbol))}:{}),
+    ...(Array.isArray(value.checkpoints)?{checkpoints:readCheckpoints(value.checkpoints,ticker(symbol))}:{}),
     question:text(value.question,180),
     support:text(value.support,800),
     challenge:text(value.challenge,800),
@@ -53,10 +90,13 @@ export function readResearchNote(symbol){
   };
 }
 
-export function saveResearchNote(symbol,input,{now=new Date(),confirmed=false}={}){
+export function saveResearchNote(symbol,input,{now=new Date(),confirmed=false,operationId=newResearchCheckpointOperation(),quoteSnapshot=null}={}){
   const key=ticker(symbol);
   const question=text(input?.question,180);
   if(!question)throw new Error('확인하고 싶은 질문을 적어주세요.');
+  const id=text(operationId,160);
+  if(!id)throw new Error('저장 작업을 확인해주세요.');
+  const quote=checkpointQuote(quoteSnapshot,key);
   const previous=readResearchNote(key);
   const note={
     ...(validPeer(input?.peer,key)?{peer:validPeer(input.peer,key)}:{}),
@@ -72,7 +112,12 @@ export function saveResearchNote(symbol,input,{now=new Date(),confirmed=false}={
     // cannot replace a different company's still-pending card.
     const cards=readCards();
     const latest=readResearchNote(key);
-    const next={...note,createdAt:latest?.createdAt||note.createdAt};
+    const checkpoints=latest?.checkpoints||[];
+    // A retry or duplicate click may arrive after another question was saved.
+    // Replaying an acknowledged operation must not replace that later note.
+    if(checkpoints.some(event=>event.id===id))return confirmWrite?Promise.resolve(latest):latest;
+    const event={id,savedAt:note.updatedAt,question:note.question,support:note.support,challenge:note.challenge,reviewOn:note.reviewOn,...(note.peer?{peer:{...note.peer}}:{}),quote};
+    const next={...note,createdAt:latest?.createdAt||note.createdAt,checkpoints:[...checkpoints,event].slice(-20)};
     cards[key]=next;
     const persisted=writeStored(RESEARCH_KEY,JSON.stringify(cards),{confirmed:confirmWrite});
     return confirmWrite?Promise.resolve(persisted).then(()=>next):next;

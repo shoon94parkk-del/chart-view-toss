@@ -1,0 +1,12 @@
+.research-checkpoints,.research-review-editor{margin-top:16px;border-top:1px solid #e8edf4;color:#4e5968;font-size:13px;line-height:1.65;overflow-wrap:anywhere}
+.research-checkpoints>summary,.research-review-editor>summary{min-height:44px;padding:7px 0;cursor:pointer;font-weight:700;color:#1769c2}
+.research-checkpoints>summary:focus-visible,.research-review-editor>summary:focus-visible,#research-review-on:focus-visible{outline:3px solid #3182f6;outline-offset:2px}
+.research-checkpoints ol{list-style:none;padding:0;margin:0}
+.research-checkpoints li{margin-top:12px;padding:12px;border-radius:12px;background:#f7f9fc}
+.research-checkpoints p{margin:5px 0}
+.research-checkpoints small{display:block;font-size:12px;color:#4e5968}
+.research-checkpoint-question{white-space:pre-wrap;font-weight:700;color:#191f28}
+.research-checkpoint-missing,.research-checkpoint-help{font-size:12px}
+.research-review-editor label{display:block;margin:8px 0;font-weight:700}
+#research-review-on{box-sizing:border-box;max-width:100%;min-height:44px;padding:8px 12px;border:1px solid #d6dce5;border-radius:10px;background:#fff;color:#191f28;font:inherit;font-size:16px}
+.research-review-editor p{margin:8px 0;font-size:12px}

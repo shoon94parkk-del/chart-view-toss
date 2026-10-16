@@ -1,0 +1,3481 @@
+{
+  "phase": "after",
+  "recordedAt": "2026-10-16T07:32:05.571Z",
+  "dist": "/workspace/chartview-audit-20261015/dist",
+  "baselineSourceCommit": "95d6b8361e22958f9cea6773afcf6ca446c2447a",
+  "conditions": {
+    "viewport": "390x844",
+    "browser": "140.0.7339.16",
+    "deviceScaleFactor": 1,
+    "touch": true,
+    "CPUThrottling": "none",
+    "cache": "new context, no service workers, no-store static assets",
+    "API": "same captured/contract fixtures, 80 ms artificial API latency per request",
+    "externalNetwork": "blocked",
+    "clock": "2026-10-16T03:00:00Z",
+    "iterationsPerRoute": 7,
+    "discardedWarmupsPerRoute": 1,
+    "statisticLimit": "median/max of small local sample; not a production SLA or robust p95"
+  },
+  "fixture": {
+    "file": "fixture-macro.json",
+    "bytes": 137384,
+    "sha256": "ca01ea58b593d27e0c926c6e6bf74c95c2c673f790c25362ce3c5f630030990f",
+    "legacyIndicators": 16,
+    "inflationSeries": 6
+  },
+  "main": [
+    {
+      "file": "index-Zw_j3ul4.js",
+      "bytes": 332473,
+      "gzipBytes": 110732,
+      "sha256": "e8e79f87106f630207e7a1485272c418baefca436119dc501648b44a0291d47e"
+    }
+  ],
+  "summaries": [
+    {
+      "route": "home",
+      "samples": 7,
+      "successfulSamples": 7,
+      "medianMs": 137,
+      "maxMs": 216,
+      "inflationMedianMs": null,
+      "inflationMaxMs": null,
+      "briefingDrillMedianMs": 0,
+      "initialRequestCounts": [
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9
+      ],
+      "initialDataPaths": [
+        "/api/market-now",
+        "/api/home-snapshot",
+        "/api/home-bootstrap",
+        "/api/quotes",
+        "/api/personalized-news",
+        "/api/activity",
+        "/api/export-momentum",
+        "/static/data/screener.json",
+        "/static/data/pick_monitor.json"
+      ],
+      "initialDataByteCounts": [
+        16371,
+        16371,
+        16371,
+        16371,
+        16371,
+        16371,
+        16371
+      ],
+      "errors": [],
+      "overflowPx": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "route": "detail/005930.KS",
+      "samples": 7,
+      "successfulSamples": 7,
+      "medianMs": 327,
+      "maxMs": 356,
+      "inflationMedianMs": null,
+      "inflationMaxMs": null,
+      "briefingDrillMedianMs": null,
+      "initialRequestCounts": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "initialDataPaths": [
+        "/static/data/screener.json",
+        "/api/quotes",
+        "/api/compare",
+        "/api/financial-history",
+        "/api/valuation",
+        "/api/personalized-news",
+        "/api/activity",
+        "/api/financial-quarters",
+        "/api/business-report",
+        "/api/relationship-evidence"
+      ],
+      "initialDataByteCounts": [
+        3622,
+        3622,
+        3622,
+        3622,
+        3622,
+        3622,
+        3622
+      ],
+      "errors": [],
+      "overflowPx": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "route": "macro",
+      "samples": 7,
+      "successfulSamples": 7,
+      "medianMs": 258,
+      "maxMs": 394,
+      "inflationMedianMs": 377,
+      "inflationMaxMs": 701,
+      "briefingDrillMedianMs": null,
+      "initialRequestCounts": [
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2
+      ],
+      "initialDataPaths": [
+        "/api/macro",
+        "/api/activity"
+      ],
+      "initialDataByteCounts": [
+        137413,
+        137413,
+        137413,
+        137413,
+        137413,
+        137413,
+        137413
+      ],
+      "errors": [],
+      "overflowPx": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "rows": [
+    {
+      "phase": "after",
+      "route": "home",
+      "iteration": 1,
+      "state": "ready",
+      "ready": {
+        "primary": 169,
+        "briefing": 306
+      },
+      "longTasks": [
+        {
+          "startMs": 67.39999999850988,
+          "ms": 162
+        }
+      ],
+      "overflowPx": 0,
+      "resources": [],
+      "fcpMs": null,
+      "briefingDrill": {
+        "msFromScroll": 0,
+        "cards": 2,
+        "states": [
+          "baseline",
+          "baseline"
+        ]
+      },
+      "primaryMs": 169,
+      "requestsAtInitialReady": [
+        {
+          "path": "/api/market-now",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135911038,
+          "status": 200,
+          "bytes": 1063,
+          "endMs": 1792135911158
+        },
+        {
+          "path": "/api/home-snapshot",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135911041,
+          "status": 200,
+          "bytes": 996,
+          "endMs": 1792135911158
+        },
+        {
+          "path": "/api/home-bootstrap",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135911041,
+          "status": 200,
+          "bytes": 3925,
+          "endMs": 1792135911159
+        },
+        {
+          "path": "/api/quotes",
+          "query": "?tickers=005930.KS%2C000660.KS%2CNVDA",
+          "method": "GET",
+          "startMs": 1792135911088,
+          "status": 200,
+          "bytes": 824,
+          "endMs": 1792135911171
+        },
+        {
+          "path": "/api/personalized-news",
+          "query": "?tickers=005930.KS%2C000660.KS%2CNVDA&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90%7CSK%ED%95%98%EC%9D%B4%EB%8B%89%EC%8A%A4%7C%EC%97%94%EB%B9%84%EB%94%94%EC%95%84",
+          "method": "GET",
+          "startMs": 1792135911089,
+          "status": 200,
+          "bytes": 243,
+          "endMs": 1792135911171
+        },
+        {
+          "path": "/api/activity",
+          "query": "",
+          "method": "POST",
+          "startMs": 1792135911263,
+          "status": 200,
+          "bytes": 29,
+          "endMs": 1792135911347
+        },
+        {
+          "path": "/api/export-momentum",
+          "query": "?balanceBasis=signed-v1",
+          "method": "GET",
+          "startMs": 1792135911341,
+          "status": 200,
+          "bytes": 6547,
+          "endMs": 1792135911427
+        },
+        {
+          "path": "/static/data/screener.json",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135911344,
+          "status": 200,
+          "bytes": 1651,
+          "endMs": 1792135911429
+        },
+        {
+          "path": "/static/data/pick_monitor.json",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135911355,
+          "status": 200,
+          "bytes": 1093,
+          "endMs": 1792135911437
+        }
+      ],
+      "requestsAfterDrill": [
+        {
+          "path": "/api/market-now",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135911038,
+          "status": 200,
+          "bytes": 1063,
+          "endMs": 1792135911158
+        },
+        {
+          "path": "/api/home-snapshot",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135911041,
+          "status": 200,
+          "bytes": 996,
+          "endMs": 1792135911158
+        },
+        {
+          "path": "/api/home-bootstrap",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135911041,
+          "status": 200,
+          "bytes": 3925,
+          "endMs": 1792135911159
+        },
+        {
+          "path": "/api/quotes",
+          "query": "?tickers=005930.KS%2C000660.KS%2CNVDA",
+          "method": "GET",
+          "startMs": 1792135911088,
+          "status": 200,
+          "bytes": 824,
+          "endMs": 1792135911171
+        },
+        {
+          "path": "/api/personalized-news",
+          "query": "?tickers=005930.KS%2C000660.KS%2CNVDA&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90%7CSK%ED%95%98%EC%9D%B4%EB%8B%89%EC%8A%A4%7C%EC%97%94%EB%B9%84%EB%94%94%EC%95%84",
+          "method": "GET",
+          "startMs": 1792135911089,
+          "status": 200,
+          "bytes": 243,
+          "endMs": 1792135911171
+        },
+        {
+          "path": "/api/activity",
+          "query": "",
+          "method": "POST",
+          "startMs": 1792135911263,
+          "status": 200,
+          "bytes": 29,
+          "endMs": 1792135911347
+        },
+        {
+          "path": "/api/export-momentum",
+          "query": "?balanceBasis=signed-v1",
+          "method": "GET",
+          "startMs": 1792135911341,
+          "status": 200,
+          "bytes": 6547,
+          "endMs": 1792135911427
+        },
+        {
+          "path": "/static/data/screener.json",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135911344,
+          "status": 200,
+          "bytes": 1651,
+          "endMs": 1792135911429
+        },
+        {
+          "path": "/static/data/pick_monitor.json",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135911355,
+          "status": 200,
+          "bytes": 1093,
+          "endMs": 1792135911437
+        }
+      ],
+      "errors": [],
+      "unexpected": [],
+      "failed": []
+    },
+    {
+      "phase": "after",
+      "route": "home",
+      "iteration": 2,
+      "state": "ready",
+      "ready": {
+        "primary": 137,
+        "briefing": 340
+      },
+      "longTasks": [
+        {
+          "startMs": 45.69999999925494,
+          "ms": 89
+        }
+      ],
+      "overflowPx": 0,
+      "resources": [],
+      "fcpMs": null,
+      "briefingDrill": {
+        "msFromScroll": 0,
+        "cards": 2,
+        "states": [
+          "baseline",
+          "baseline"
+        ]
+      },
+      "primaryMs": 137,
+      "requestsAtInitialReady": [
+        {
+          "path": "/api/market-now",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135911692,
+          "status": 200,
+          "bytes": 1063,
+          "endMs": 1792135911777
+        },
+        {
+          "path": "/api/home-snapshot",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135911692,
+          "status": 200,
+          "bytes": 996,
+          "endMs": 1792135911777
+        },
+        {
+          "path": "/api/home-bootstrap",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135911692,
+          "status": 200,
+          "bytes": 3925,
+          "endMs": 1792135911777
+        },
+        {
+          "path": "/api/quotes",
+          "query": "?tickers=005930.KS%2C000660.KS%2CNVDA",
+          "method": "GET",
+          "startMs": 1792135911734,
+          "status": 200,
+          "bytes": 824,
+          "endMs": 1792135911821
+        },
+        {
+          "path": "/api/personalized-news",
+          "query": "?tickers=005930.KS%2C000660.KS%2CNVDA&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90%7CSK%ED%95%98%EC%9D%B4%EB%8B%89%EC%8A%A4%7C%EC%97%94%EB%B9%84%EB%94%94%EC%95%84",
+          "method": "GET",
+          "startMs": 1792135911734,
+          "status": 200,
+          "bytes": 243,
+          "endMs": 1792135911821
+        },
+        {
+          "path": "/api/activity",
+          "query": "",
+          "method": "POST",
+          "startMs": 1792135911827,
+          "status": 200,
+          "bytes": 29,
+          "endMs": 1792135911909
+        },
+        {
+          "path": "/api/export-momentum",
+          "query": "?balanceBasis=signed-v1",
+          "method": "GET",
+          "startMs": 1792135911918,
+          "status": 200,
+          "bytes": 6547,
+          "endMs": 1792135912010
+        },
+        {
+          "path": "/static/data/screener.json",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135911918,
+          "status": 200,
+          "bytes": 1651,
+          "endMs": 1792135912011
+        },
+        {
+          "path": "/static/data/pick_monitor.json",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135911921,
+          "status": 200,
+          "bytes": 1093,
+          "endMs": 1792135912012
+        }
+      ],
+      "requestsAfterDrill": [
+        {
+          "path": "/api/market-now",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135911692,
+          "status": 200,
+          "bytes": 1063,
+          "endMs": 1792135911777
+        },
+        {
+          "path": "/api/home-snapshot",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135911692,
+          "status": 200,
+          "bytes": 996,
+          "endMs": 1792135911777
+        },
+        {
+          "path": "/api/home-bootstrap",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135911692,
+          "status": 200,
+          "bytes": 3925,
+          "endMs": 1792135911777
+        },
+        {
+          "path": "/api/quotes",
+          "query": "?tickers=005930.KS%2C000660.KS%2CNVDA",
+          "method": "GET",
+          "startMs": 1792135911734,
+          "status": 200,
+          "bytes": 824,
+          "endMs": 1792135911821
+        },
+        {
+          "path": "/api/personalized-news",
+          "query": "?tickers=005930.KS%2C000660.KS%2CNVDA&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90%7CSK%ED%95%98%EC%9D%B4%EB%8B%89%EC%8A%A4%7C%EC%97%94%EB%B9%84%EB%94%94%EC%95%84",
+          "method": "GET",
+          "startMs": 1792135911734,
+          "status": 200,
+          "bytes": 243,
+          "endMs": 1792135911821
+        },
+        {
+          "path": "/api/activity",
+          "query": "",
+          "method": "POST",
+          "startMs": 1792135911827,
+          "status": 200,
+          "bytes": 29,
+          "endMs": 1792135911909
+        },
+        {
+          "path": "/api/export-momentum",
+          "query": "?balanceBasis=signed-v1",
+          "method": "GET",
+          "startMs": 1792135911918,
+          "status": 200,
+          "bytes": 6547,
+          "endMs": 1792135912010
+        },
+        {
+          "path": "/static/data/screener.json",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135911918,
+          "status": 200,
+          "bytes": 1651,
+          "endMs": 1792135912011
+        },
+        {
+          "path": "/static/data/pick_monitor.json",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135911921,
+          "status": 200,
+          "bytes": 1093,
+          "endMs": 1792135912012
+        }
+      ],
+      "errors": [],
+      "unexpected": [],
+      "failed": []
+    },
+    {
+      "phase": "after",
+      "route": "home",
+      "iteration": 3,
+      "state": "ready",
+      "ready": {
+        "primary": 216,
+        "briefing": 417
+      },
+      "longTasks": [
+        {
+          "startMs": 92.89999999850988,
+          "ms": 109
+        }
+      ],
+      "overflowPx": 0,
+      "resources": [],
+      "fcpMs": null,
+      "briefingDrill": {
+        "msFromScroll": 0,
+        "cards": 2,
+        "states": [
+          "baseline",
+          "baseline"
+        ]
+      },
+      "primaryMs": 216,
+      "requestsAtInitialReady": [
+        {
+          "path": "/api/market-now",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135912331,
+          "status": 200,
+          "bytes": 1063,
+          "endMs": 1792135912417
+        },
+        {
+          "path": "/api/home-snapshot",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135912333,
+          "status": 200,
+          "bytes": 996,
+          "endMs": 1792135912417
+        },
+        {
+          "path": "/api/home-bootstrap",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135912334,
+          "status": 200,
+          "bytes": 3925,
+          "endMs": 1792135912417
+        },
+        {
+          "path": "/api/quotes",
+          "query": "?tickers=005930.KS%2C000660.KS%2CNVDA",
+          "method": "GET",
+          "startMs": 1792135912394,
+          "status": 200,
+          "bytes": 824,
+          "endMs": 1792135912479
+        },
+        {
+          "path": "/api/personalized-news",
+          "query": "?tickers=005930.KS%2C000660.KS%2CNVDA&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90%7CSK%ED%95%98%EC%9D%B4%EB%8B%89%EC%8A%A4%7C%EC%97%94%EB%B9%84%EB%94%94%EC%95%84",
+          "method": "GET",
+          "startMs": 1792135912395,
+          "status": 200,
+          "bytes": 243,
+          "endMs": 1792135912479
+        },
+        {
+          "path": "/api/activity",
+          "query": "",
+          "method": "POST",
+          "startMs": 1792135912496,
+          "status": 200,
+          "bytes": 29,
+          "endMs": 1792135912577
+        },
+        {
+          "path": "/api/export-momentum",
+          "query": "?balanceBasis=signed-v1",
+          "method": "GET",
+          "startMs": 1792135912570,
+          "status": 200,
+          "bytes": 6547,
+          "endMs": 1792135912687
+        },
+        {
+          "path": "/static/data/screener.json",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135912574,
+          "status": 200,
+          "bytes": 1651,
+          "endMs": 1792135912688
+        },
+        {
+          "path": "/static/data/pick_monitor.json",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135912576,
+          "status": 200,
+          "bytes": 1093,
+          "endMs": 1792135912689
+        }
+      ],
+      "requestsAfterDrill": [
+        {
+          "path": "/api/market-now",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135912331,
+          "status": 200,
+          "bytes": 1063,
+          "endMs": 1792135912417
+        },
+        {
+          "path": "/api/home-snapshot",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135912333,
+          "status": 200,
+          "bytes": 996,
+          "endMs": 1792135912417
+        },
+        {
+          "path": "/api/home-bootstrap",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135912334,
+          "status": 200,
+          "bytes": 3925,
+          "endMs": 1792135912417
+        },
+        {
+          "path": "/api/quotes",
+          "query": "?tickers=005930.KS%2C000660.KS%2CNVDA",
+          "method": "GET",
+          "startMs": 1792135912394,
+          "status": 200,
+          "bytes": 824,
+          "endMs": 1792135912479
+        },
+        {
+          "path": "/api/personalized-news",
+          "query": "?tickers=005930.KS%2C000660.KS%2CNVDA&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90%7CSK%ED%95%98%EC%9D%B4%EB%8B%89%EC%8A%A4%7C%EC%97%94%EB%B9%84%EB%94%94%EC%95%84",
+          "method": "GET",
+          "startMs": 1792135912395,
+          "status": 200,
+          "bytes": 243,
+          "endMs": 1792135912479
+        },
+        {
+          "path": "/api/activity",
+          "query": "",
+          "method": "POST",
+          "startMs": 1792135912496,
+          "status": 200,
+          "bytes": 29,
+          "endMs": 1792135912577
+        },
+        {
+          "path": "/api/export-momentum",
+          "query": "?balanceBasis=signed-v1",
+          "method": "GET",
+          "startMs": 1792135912570,
+          "status": 200,
+          "bytes": 6547,
+          "endMs": 1792135912687
+        },
+        {
+          "path": "/static/data/screener.json",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135912574,
+          "status": 200,
+          "bytes": 1651,
+          "endMs": 1792135912688
+        },
+        {
+          "path": "/static/data/pick_monitor.json",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135912576,
+          "status": 200,
+          "bytes": 1093,
+          "endMs": 1792135912689
+        }
+      ],
+      "errors": [],
+      "unexpected": [],
+      "failed": []
+    },
+    {
+      "phase": "after",
+      "route": "home",
+      "iteration": 4,
+      "state": "ready",
+      "ready": {
+        "primary": 127,
+        "briefing": 234
+      },
+      "longTasks": [
+        {
+          "startMs": 45.100000001490116,
+          "ms": 70
+        }
+      ],
+      "overflowPx": 0,
+      "resources": [],
+      "fcpMs": null,
+      "briefingDrill": {
+        "msFromScroll": 0,
+        "cards": 2,
+        "states": [
+          "baseline",
+          "baseline"
+        ]
+      },
+      "primaryMs": 127,
+      "requestsAtInitialReady": [
+        {
+          "path": "/api/market-now",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135912979,
+          "status": 200,
+          "bytes": 1063,
+          "endMs": 1792135913060
+        },
+        {
+          "path": "/api/home-snapshot",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135912979,
+          "status": 200,
+          "bytes": 996,
+          "endMs": 1792135913062
+        },
+        {
+          "path": "/api/home-bootstrap",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135912979,
+          "status": 200,
+          "bytes": 3925,
+          "endMs": 1792135913062
+        },
+        {
+          "path": "/api/quotes",
+          "query": "?tickers=005930.KS%2C000660.KS%2CNVDA",
+          "method": "GET",
+          "startMs": 1792135913015,
+          "status": 200,
+          "bytes": 824,
+          "endMs": 1792135913104
+        },
+        {
+          "path": "/api/personalized-news",
+          "query": "?tickers=005930.KS%2C000660.KS%2CNVDA&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90%7CSK%ED%95%98%EC%9D%B4%EB%8B%89%EC%8A%A4%7C%EC%97%94%EB%B9%84%EB%94%94%EC%95%84",
+          "method": "GET",
+          "startMs": 1792135913015,
+          "status": 200,
+          "bytes": 243,
+          "endMs": 1792135913104
+        },
+        {
+          "path": "/api/activity",
+          "query": "",
+          "method": "POST",
+          "startMs": 1792135913067,
+          "status": 200,
+          "bytes": 29,
+          "endMs": 1792135913150
+        },
+        {
+          "path": "/api/export-momentum",
+          "query": "?balanceBasis=signed-v1",
+          "method": "GET",
+          "startMs": 1792135913134,
+          "status": 200,
+          "bytes": 6547,
+          "endMs": 1792135913217
+        },
+        {
+          "path": "/static/data/screener.json",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135913135,
+          "status": 200,
+          "bytes": 1651,
+          "endMs": 1792135913219
+        },
+        {
+          "path": "/static/data/pick_monitor.json",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135913169,
+          "status": 200,
+          "bytes": 1093,
+          "endMs": 1792135913253
+        }
+      ],
+      "requestsAfterDrill": [
+        {
+          "path": "/api/market-now",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135912979,
+          "status": 200,
+          "bytes": 1063,
+          "endMs": 1792135913060
+        },
+        {
+          "path": "/api/home-snapshot",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135912979,
+          "status": 200,
+          "bytes": 996,
+          "endMs": 1792135913062
+        },
+        {
+          "path": "/api/home-bootstrap",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135912979,
+          "status": 200,
+          "bytes": 3925,
+          "endMs": 1792135913062
+        },
+        {
+          "path": "/api/quotes",
+          "query": "?tickers=005930.KS%2C000660.KS%2CNVDA",
+          "method": "GET",
+          "startMs": 1792135913015,
+          "status": 200,
+          "bytes": 824,
+          "endMs": 1792135913104
+        },
+        {
+          "path": "/api/personalized-news",
+          "query": "?tickers=005930.KS%2C000660.KS%2CNVDA&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90%7CSK%ED%95%98%EC%9D%B4%EB%8B%89%EC%8A%A4%7C%EC%97%94%EB%B9%84%EB%94%94%EC%95%84",
+          "method": "GET",
+          "startMs": 1792135913015,
+          "status": 200,
+          "bytes": 243,
+          "endMs": 1792135913104
+        },
+        {
+          "path": "/api/activity",
+          "query": "",
+          "method": "POST",
+          "startMs": 1792135913067,
+          "status": 200,
+          "bytes": 29,
+          "endMs": 1792135913150
+        },
+        {
+          "path": "/api/export-momentum",
+          "query": "?balanceBasis=signed-v1",
+          "method": "GET",
+          "startMs": 1792135913134,
+          "status": 200,
+          "bytes": 6547,
+          "endMs": 1792135913217
+        },
+        {
+          "path": "/static/data/screener.json",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135913135,
+          "status": 200,
+          "bytes": 1651,
+          "endMs": 1792135913219
+        },
+        {
+          "path": "/static/data/pick_monitor.json",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135913169,
+          "status": 200,
+          "bytes": 1093,
+          "endMs": 1792135913253
+        }
+      ],
+      "errors": [],
+      "unexpected": [],
+      "failed": []
+    },
+    {
+      "phase": "after",
+      "route": "home",
+      "iteration": 5,
+      "state": "ready",
+      "ready": {
+        "primary": 137,
+        "briefing": 305
+      },
+      "longTasks": [
+        {
+          "startMs": 48.19999999925494,
+          "ms": 89
+        }
+      ],
+      "overflowPx": 0,
+      "resources": [],
+      "fcpMs": null,
+      "briefingDrill": {
+        "msFromScroll": 0,
+        "cards": 2,
+        "states": [
+          "baseline",
+          "baseline"
+        ]
+      },
+      "primaryMs": 137,
+      "requestsAtInitialReady": [
+        {
+          "path": "/api/market-now",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135913521,
+          "status": 200,
+          "bytes": 1063,
+          "endMs": 1792135913605
+        },
+        {
+          "path": "/api/home-snapshot",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135913522,
+          "status": 200,
+          "bytes": 996,
+          "endMs": 1792135913605
+        },
+        {
+          "path": "/api/home-bootstrap",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135913522,
+          "status": 200,
+          "bytes": 3925,
+          "endMs": 1792135913606
+        },
+        {
+          "path": "/api/quotes",
+          "query": "?tickers=005930.KS%2C000660.KS%2CNVDA",
+          "method": "GET",
+          "startMs": 1792135913567,
+          "status": 200,
+          "bytes": 824,
+          "endMs": 1792135913656
+        },
+        {
+          "path": "/api/personalized-news",
+          "query": "?tickers=005930.KS%2C000660.KS%2CNVDA&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90%7CSK%ED%95%98%EC%9D%B4%EB%8B%89%EC%8A%A4%7C%EC%97%94%EB%B9%84%EB%94%94%EC%95%84",
+          "method": "GET",
+          "startMs": 1792135913568,
+          "status": 200,
+          "bytes": 243,
+          "endMs": 1792135913656
+        },
+        {
+          "path": "/api/activity",
+          "query": "",
+          "method": "POST",
+          "startMs": 1792135913660,
+          "status": 200,
+          "bytes": 29,
+          "endMs": 1792135913741
+        },
+        {
+          "path": "/api/export-momentum",
+          "query": "?balanceBasis=signed-v1",
+          "method": "GET",
+          "startMs": 1792135913734,
+          "status": 200,
+          "bytes": 6547,
+          "endMs": 1792135913819
+        },
+        {
+          "path": "/static/data/screener.json",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135913734,
+          "status": 200,
+          "bytes": 1651,
+          "endMs": 1792135913819
+        },
+        {
+          "path": "/static/data/pick_monitor.json",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135913736,
+          "status": 200,
+          "bytes": 1093,
+          "endMs": 1792135913819
+        }
+      ],
+      "requestsAfterDrill": [
+        {
+          "path": "/api/market-now",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135913521,
+          "status": 200,
+          "bytes": 1063,
+          "endMs": 1792135913605
+        },
+        {
+          "path": "/api/home-snapshot",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135913522,
+          "status": 200,
+          "bytes": 996,
+          "endMs": 1792135913605
+        },
+        {
+          "path": "/api/home-bootstrap",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135913522,
+          "status": 200,
+          "bytes": 3925,
+          "endMs": 1792135913606
+        },
+        {
+          "path": "/api/quotes",
+          "query": "?tickers=005930.KS%2C000660.KS%2CNVDA",
+          "method": "GET",
+          "startMs": 1792135913567,
+          "status": 200,
+          "bytes": 824,
+          "endMs": 1792135913656
+        },
+        {
+          "path": "/api/personalized-news",
+          "query": "?tickers=005930.KS%2C000660.KS%2CNVDA&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90%7CSK%ED%95%98%EC%9D%B4%EB%8B%89%EC%8A%A4%7C%EC%97%94%EB%B9%84%EB%94%94%EC%95%84",
+          "method": "GET",
+          "startMs": 1792135913568,
+          "status": 200,
+          "bytes": 243,
+          "endMs": 1792135913656
+        },
+        {
+          "path": "/api/activity",
+          "query": "",
+          "method": "POST",
+          "startMs": 1792135913660,
+          "status": 200,
+          "bytes": 29,
+          "endMs": 1792135913741
+        },
+        {
+          "path": "/api/export-momentum",
+          "query": "?balanceBasis=signed-v1",
+          "method": "GET",
+          "startMs": 1792135913734,
+          "status": 200,
+          "bytes": 6547,
+          "endMs": 1792135913819
+        },
+        {
+          "path": "/static/data/screener.json",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135913734,
+          "status": 200,
+          "bytes": 1651,
+          "endMs": 1792135913819
+        },
+        {
+          "path": "/static/data/pick_monitor.json",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135913736,
+          "status": 200,
+          "bytes": 1093,
+          "endMs": 1792135913819
+        }
+      ],
+      "errors": [],
+      "unexpected": [],
+      "failed": []
+    },
+    {
+      "phase": "after",
+      "route": "home",
+      "iteration": 6,
+      "state": "ready",
+      "ready": {
+        "primary": 136,
+        "briefing": 272
+      },
+      "longTasks": [
+        {
+          "startMs": 49.399999998509884,
+          "ms": 66
+        }
+      ],
+      "overflowPx": 0,
+      "resources": [],
+      "fcpMs": null,
+      "briefingDrill": {
+        "msFromScroll": 0,
+        "cards": 2,
+        "states": [
+          "baseline",
+          "baseline"
+        ]
+      },
+      "primaryMs": 136,
+      "requestsAtInitialReady": [
+        {
+          "path": "/api/market-now",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135914111,
+          "status": 200,
+          "bytes": 1063,
+          "endMs": 1792135914201
+        },
+        {
+          "path": "/api/home-snapshot",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135914112,
+          "status": 200,
+          "bytes": 996,
+          "endMs": 1792135914204
+        },
+        {
+          "path": "/api/home-bootstrap",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135914112,
+          "status": 200,
+          "bytes": 3925,
+          "endMs": 1792135914209
+        },
+        {
+          "path": "/api/quotes",
+          "query": "?tickers=005930.KS%2C000660.KS%2CNVDA",
+          "method": "GET",
+          "startMs": 1792135914147,
+          "status": 200,
+          "bytes": 824,
+          "endMs": 1792135914231
+        },
+        {
+          "path": "/api/personalized-news",
+          "query": "?tickers=005930.KS%2C000660.KS%2CNVDA&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90%7CSK%ED%95%98%EC%9D%B4%EB%8B%89%EC%8A%A4%7C%EC%97%94%EB%B9%84%EB%94%94%EC%95%84",
+          "method": "GET",
+          "startMs": 1792135914148,
+          "status": 200,
+          "bytes": 243,
+          "endMs": 1792135914231
+        },
+        {
+          "path": "/api/activity",
+          "query": "",
+          "method": "POST",
+          "startMs": 1792135914216,
+          "status": 200,
+          "bytes": 29,
+          "endMs": 1792135914298
+        },
+        {
+          "path": "/api/export-momentum",
+          "query": "?balanceBasis=signed-v1",
+          "method": "GET",
+          "startMs": 1792135914276,
+          "status": 200,
+          "bytes": 6547,
+          "endMs": 1792135914358
+        },
+        {
+          "path": "/static/data/screener.json",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135914277,
+          "status": 200,
+          "bytes": 1651,
+          "endMs": 1792135914363
+        },
+        {
+          "path": "/static/data/pick_monitor.json",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135914280,
+          "status": 200,
+          "bytes": 1093,
+          "endMs": 1792135914365
+        }
+      ],
+      "requestsAfterDrill": [
+        {
+          "path": "/api/market-now",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135914111,
+          "status": 200,
+          "bytes": 1063,
+          "endMs": 1792135914201
+        },
+        {
+          "path": "/api/home-snapshot",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135914112,
+          "status": 200,
+          "bytes": 996,
+          "endMs": 1792135914204
+        },
+        {
+          "path": "/api/home-bootstrap",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135914112,
+          "status": 200,
+          "bytes": 3925,
+          "endMs": 1792135914209
+        },
+        {
+          "path": "/api/quotes",
+          "query": "?tickers=005930.KS%2C000660.KS%2CNVDA",
+          "method": "GET",
+          "startMs": 1792135914147,
+          "status": 200,
+          "bytes": 824,
+          "endMs": 1792135914231
+        },
+        {
+          "path": "/api/personalized-news",
+          "query": "?tickers=005930.KS%2C000660.KS%2CNVDA&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90%7CSK%ED%95%98%EC%9D%B4%EB%8B%89%EC%8A%A4%7C%EC%97%94%EB%B9%84%EB%94%94%EC%95%84",
+          "method": "GET",
+          "startMs": 1792135914148,
+          "status": 200,
+          "bytes": 243,
+          "endMs": 1792135914231
+        },
+        {
+          "path": "/api/activity",
+          "query": "",
+          "method": "POST",
+          "startMs": 1792135914216,
+          "status": 200,
+          "bytes": 29,
+          "endMs": 1792135914298
+        },
+        {
+          "path": "/api/export-momentum",
+          "query": "?balanceBasis=signed-v1",
+          "method": "GET",
+          "startMs": 1792135914276,
+          "status": 200,
+          "bytes": 6547,
+          "endMs": 1792135914358
+        },
+        {
+          "path": "/static/data/screener.json",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135914277,
+          "status": 200,
+          "bytes": 1651,
+          "endMs": 1792135914363
+        },
+        {
+          "path": "/static/data/pick_monitor.json",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135914280,
+          "status": 200,
+          "bytes": 1093,
+          "endMs": 1792135914365
+        }
+      ],
+      "errors": [],
+      "unexpected": [],
+      "failed": []
+    },
+    {
+      "phase": "after",
+      "route": "home",
+      "iteration": 7,
+      "state": "ready",
+      "ready": {
+        "primary": 132,
+        "briefing": 247
+      },
+      "longTasks": [
+        {
+          "startMs": 48.599999997764826,
+          "ms": 82
+        }
+      ],
+      "overflowPx": 0,
+      "resources": [],
+      "fcpMs": null,
+      "briefingDrill": {
+        "msFromScroll": 0,
+        "cards": 2,
+        "states": [
+          "baseline",
+          "baseline"
+        ]
+      },
+      "primaryMs": 132,
+      "requestsAtInitialReady": [
+        {
+          "path": "/api/market-now",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135914620,
+          "status": 200,
+          "bytes": 1063,
+          "endMs": 1792135914703
+        },
+        {
+          "path": "/api/home-snapshot",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135914621,
+          "status": 200,
+          "bytes": 996,
+          "endMs": 1792135914703
+        },
+        {
+          "path": "/api/home-bootstrap",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135914621,
+          "status": 200,
+          "bytes": 3925,
+          "endMs": 1792135914703
+        },
+        {
+          "path": "/api/quotes",
+          "query": "?tickers=005930.KS%2C000660.KS%2CNVDA",
+          "method": "GET",
+          "startMs": 1792135914663,
+          "status": 200,
+          "bytes": 824,
+          "endMs": 1792135914750
+        },
+        {
+          "path": "/api/personalized-news",
+          "query": "?tickers=005930.KS%2C000660.KS%2CNVDA&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90%7CSK%ED%95%98%EC%9D%B4%EB%8B%89%EC%8A%A4%7C%EC%97%94%EB%B9%84%EB%94%94%EC%95%84",
+          "method": "GET",
+          "startMs": 1792135914663,
+          "status": 200,
+          "bytes": 243,
+          "endMs": 1792135914750
+        },
+        {
+          "path": "/api/activity",
+          "query": "",
+          "method": "POST",
+          "startMs": 1792135914755,
+          "status": 200,
+          "bytes": 29,
+          "endMs": 1792135914837
+        },
+        {
+          "path": "/api/export-momentum",
+          "query": "?balanceBasis=signed-v1",
+          "method": "GET",
+          "startMs": 1792135914776,
+          "status": 200,
+          "bytes": 6547,
+          "endMs": 1792135914858
+        },
+        {
+          "path": "/static/data/screener.json",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135914776,
+          "status": 200,
+          "bytes": 1651,
+          "endMs": 1792135914858
+        },
+        {
+          "path": "/static/data/pick_monitor.json",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135914815,
+          "status": 200,
+          "bytes": 1093,
+          "endMs": 1792135914897
+        }
+      ],
+      "requestsAfterDrill": [
+        {
+          "path": "/api/market-now",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135914620,
+          "status": 200,
+          "bytes": 1063,
+          "endMs": 1792135914703
+        },
+        {
+          "path": "/api/home-snapshot",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135914621,
+          "status": 200,
+          "bytes": 996,
+          "endMs": 1792135914703
+        },
+        {
+          "path": "/api/home-bootstrap",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135914621,
+          "status": 200,
+          "bytes": 3925,
+          "endMs": 1792135914703
+        },
+        {
+          "path": "/api/quotes",
+          "query": "?tickers=005930.KS%2C000660.KS%2CNVDA",
+          "method": "GET",
+          "startMs": 1792135914663,
+          "status": 200,
+          "bytes": 824,
+          "endMs": 1792135914750
+        },
+        {
+          "path": "/api/personalized-news",
+          "query": "?tickers=005930.KS%2C000660.KS%2CNVDA&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90%7CSK%ED%95%98%EC%9D%B4%EB%8B%89%EC%8A%A4%7C%EC%97%94%EB%B9%84%EB%94%94%EC%95%84",
+          "method": "GET",
+          "startMs": 1792135914663,
+          "status": 200,
+          "bytes": 243,
+          "endMs": 1792135914750
+        },
+        {
+          "path": "/api/activity",
+          "query": "",
+          "method": "POST",
+          "startMs": 1792135914755,
+          "status": 200,
+          "bytes": 29,
+          "endMs": 1792135914837
+        },
+        {
+          "path": "/api/export-momentum",
+          "query": "?balanceBasis=signed-v1",
+          "method": "GET",
+          "startMs": 1792135914776,
+          "status": 200,
+          "bytes": 6547,
+          "endMs": 1792135914858
+        },
+        {
+          "path": "/static/data/screener.json",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135914776,
+          "status": 200,
+          "bytes": 1651,
+          "endMs": 1792135914858
+        },
+        {
+          "path": "/static/data/pick_monitor.json",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135914815,
+          "status": 200,
+          "bytes": 1093,
+          "endMs": 1792135914897
+        }
+      ],
+      "errors": [],
+      "unexpected": [],
+      "failed": []
+    },
+    {
+      "phase": "after",
+      "route": "detail/005930.KS",
+      "iteration": 1,
+      "state": "ready",
+      "ready": {
+        "primary": 351
+      },
+      "longTasks": [
+        {
+          "startMs": 48.19999999925494,
+          "ms": 80
+        }
+      ],
+      "overflowPx": 0,
+      "resources": [],
+      "fcpMs": null,
+      "primaryMs": 351,
+      "requestsAtInitialReady": [
+        {
+          "path": "/static/data/screener.json",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135915930,
+          "status": 200,
+          "bytes": 1651,
+          "endMs": 1792135916016
+        },
+        {
+          "path": "/api/quotes",
+          "query": "?tickers=005930.KS&fresh=true",
+          "method": "GET",
+          "startMs": 1792135915930,
+          "status": 200,
+          "bytes": 285,
+          "endMs": 1792135916016
+        },
+        {
+          "path": "/api/compare",
+          "query": "?tickers=005930.KS&period=3mo",
+          "method": "GET",
+          "startMs": 1792135915931,
+          "status": 200,
+          "bytes": 459,
+          "endMs": 1792135916016
+        },
+        {
+          "path": "/api/financial-history",
+          "query": "?ticker=005930.KS",
+          "method": "GET",
+          "startMs": 1792135915935,
+          "status": 200,
+          "bytes": 450,
+          "endMs": 1792135916019
+        },
+        {
+          "path": "/api/valuation",
+          "query": "?tickers=005930.KS",
+          "method": "GET",
+          "startMs": 1792135915945,
+          "status": 200,
+          "bytes": 433,
+          "endMs": 1792135916030
+        },
+        {
+          "path": "/api/personalized-news",
+          "query": "?tickers=005930.KS&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90",
+          "method": "GET",
+          "startMs": 1792135915946,
+          "status": 200,
+          "bytes": 243,
+          "endMs": 1792135916030
+        },
+        {
+          "path": "/api/activity",
+          "query": "",
+          "method": "POST",
+          "startMs": 1792135915953,
+          "status": 200,
+          "bytes": 29,
+          "endMs": 1792135916045
+        },
+        {
+          "path": "/api/financial-quarters",
+          "query": "?ticker=005930.KS",
+          "method": "GET",
+          "startMs": 1792135916031,
+          "status": 200,
+          "bytes": 19,
+          "endMs": 1792135916114
+        },
+        {
+          "path": "/api/business-report",
+          "query": "?ticker=005930.KS&name=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90",
+          "method": "GET",
+          "startMs": 1792135916102,
+          "status": 200,
+          "bytes": 19,
+          "endMs": 1792135916184
+        },
+        {
+          "path": "/api/relationship-evidence",
+          "query": "?ticker=005930.KS&name=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90",
+          "method": "GET",
+          "startMs": 1792135916104,
+          "status": 200,
+          "bytes": 34,
+          "endMs": 1792135916184
+        }
+      ],
+      "requestsAfterDrill": [
+        {
+          "path": "/static/data/screener.json",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135915930,
+          "status": 200,
+          "bytes": 1651,
+          "endMs": 1792135916016
+        },
+        {
+          "path": "/api/quotes",
+          "query": "?tickers=005930.KS&fresh=true",
+          "method": "GET",
+          "startMs": 1792135915930,
+          "status": 200,
+          "bytes": 285,
+          "endMs": 1792135916016
+        },
+        {
+          "path": "/api/compare",
+          "query": "?tickers=005930.KS&period=3mo",
+          "method": "GET",
+          "startMs": 1792135915931,
+          "status": 200,
+          "bytes": 459,
+          "endMs": 1792135916016
+        },
+        {
+          "path": "/api/financial-history",
+          "query": "?ticker=005930.KS",
+          "method": "GET",
+          "startMs": 1792135915935,
+          "status": 200,
+          "bytes": 450,
+          "endMs": 1792135916019
+        },
+        {
+          "path": "/api/valuation",
+          "query": "?tickers=005930.KS",
+          "method": "GET",
+          "startMs": 1792135915945,
+          "status": 200,
+          "bytes": 433,
+          "endMs": 1792135916030
+        },
+        {
+          "path": "/api/personalized-news",
+          "query": "?tickers=005930.KS&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90",
+          "method": "GET",
+          "startMs": 1792135915946,
+          "status": 200,
+          "bytes": 243,
+          "endMs": 1792135916030
+        },
+        {
+          "path": "/api/activity",
+          "query": "",
+          "method": "POST",
+          "startMs": 1792135915953,
+          "status": 200,
+          "bytes": 29,
+          "endMs": 1792135916045
+        },
+        {
+          "path": "/api/financial-quarters",
+          "query": "?ticker=005930.KS",
+          "method": "GET",
+          "startMs": 1792135916031,
+          "status": 200,
+          "bytes": 19,
+          "endMs": 1792135916114
+        },
+        {
+          "path": "/api/business-report",
+          "query": "?ticker=005930.KS&name=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90",
+          "method": "GET",
+          "startMs": 1792135916102,
+          "status": 200,
+          "bytes": 19,
+          "endMs": 1792135916184
+        },
+        {
+          "path": "/api/relationship-evidence",
+          "query": "?ticker=005930.KS&name=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90",
+          "method": "GET",
+          "startMs": 1792135916104,
+          "status": 200,
+          "bytes": 34,
+          "endMs": 1792135916184
+        }
+      ],
+      "errors": [],
+      "unexpected": [],
+      "failed": []
+    },
+    {
+      "phase": "after",
+      "route": "detail/005930.KS",
+      "iteration": 2,
+      "state": "ready",
+      "ready": {
+        "primary": 324
+      },
+      "longTasks": [
+        {
+          "startMs": 36.69999999925494,
+          "ms": 91
+        }
+      ],
+      "overflowPx": 0,
+      "resources": [],
+      "fcpMs": null,
+      "primaryMs": 324,
+      "requestsAtInitialReady": [
+        {
+          "path": "/static/data/screener.json",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135916586,
+          "status": 200,
+          "bytes": 1651,
+          "endMs": 1792135916671
+        },
+        {
+          "path": "/api/quotes",
+          "query": "?tickers=005930.KS&fresh=true",
+          "method": "GET",
+          "startMs": 1792135916587,
+          "status": 200,
+          "bytes": 285,
+          "endMs": 1792135916671
+        },
+        {
+          "path": "/api/compare",
+          "query": "?tickers=005930.KS&period=3mo",
+          "method": "GET",
+          "startMs": 1792135916588,
+          "status": 200,
+          "bytes": 459,
+          "endMs": 1792135916671
+        },
+        {
+          "path": "/api/financial-history",
+          "query": "?ticker=005930.KS",
+          "method": "GET",
+          "startMs": 1792135916591,
+          "status": 200,
+          "bytes": 450,
+          "endMs": 1792135916673
+        },
+        {
+          "path": "/api/valuation",
+          "query": "?tickers=005930.KS",
+          "method": "GET",
+          "startMs": 1792135916592,
+          "status": 200,
+          "bytes": 433,
+          "endMs": 1792135916674
+        },
+        {
+          "path": "/api/personalized-news",
+          "query": "?tickers=005930.KS&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90",
+          "method": "GET",
+          "startMs": 1792135916592,
+          "status": 200,
+          "bytes": 243,
+          "endMs": 1792135916674
+        },
+        {
+          "path": "/api/activity",
+          "query": "",
+          "method": "POST",
+          "startMs": 1792135916616,
+          "status": 200,
+          "bytes": 29,
+          "endMs": 1792135916697
+        },
+        {
+          "path": "/api/financial-quarters",
+          "query": "?ticker=005930.KS",
+          "method": "GET",
+          "startMs": 1792135916671,
+          "status": 200,
+          "bytes": 19,
+          "endMs": 1792135916752
+        },
+        {
+          "path": "/api/business-report",
+          "query": "?ticker=005930.KS&name=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90",
+          "method": "GET",
+          "startMs": 1792135916732,
+          "status": 200,
+          "bytes": 19,
+          "endMs": 1792135916815
+        },
+        {
+          "path": "/api/relationship-evidence",
+          "query": "?ticker=005930.KS&name=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90",
+          "method": "GET",
+          "startMs": 1792135916733,
+          "status": 200,
+          "bytes": 34,
+          "endMs": 1792135916816
+        }
+      ],
+      "requestsAfterDrill": [
+        {
+          "path": "/static/data/screener.json",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135916586,
+          "status": 200,
+          "bytes": 1651,
+          "endMs": 1792135916671
+        },
+        {
+          "path": "/api/quotes",
+          "query": "?tickers=005930.KS&fresh=true",
+          "method": "GET",
+          "startMs": 1792135916587,
+          "status": 200,
+          "bytes": 285,
+          "endMs": 1792135916671
+        },
+        {
+          "path": "/api/compare",
+          "query": "?tickers=005930.KS&period=3mo",
+          "method": "GET",
+          "startMs": 1792135916588,
+          "status": 200,
+          "bytes": 459,
+          "endMs": 1792135916671
+        },
+        {
+          "path": "/api/financial-history",
+          "query": "?ticker=005930.KS",
+          "method": "GET",
+          "startMs": 1792135916591,
+          "status": 200,
+          "bytes": 450,
+          "endMs": 1792135916673
+        },
+        {
+          "path": "/api/valuation",
+          "query": "?tickers=005930.KS",
+          "method": "GET",
+          "startMs": 1792135916592,
+          "status": 200,
+          "bytes": 433,
+          "endMs": 1792135916674
+        },
+        {
+          "path": "/api/personalized-news",
+          "query": "?tickers=005930.KS&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90",
+          "method": "GET",
+          "startMs": 1792135916592,
+          "status": 200,
+          "bytes": 243,
+          "endMs": 1792135916674
+        },
+        {
+          "path": "/api/activity",
+          "query": "",
+          "method": "POST",
+          "startMs": 1792135916616,
+          "status": 200,
+          "bytes": 29,
+          "endMs": 1792135916697
+        },
+        {
+          "path": "/api/financial-quarters",
+          "query": "?ticker=005930.KS",
+          "method": "GET",
+          "startMs": 1792135916671,
+          "status": 200,
+          "bytes": 19,
+          "endMs": 1792135916752
+        },
+        {
+          "path": "/api/business-report",
+          "query": "?ticker=005930.KS&name=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90",
+          "method": "GET",
+          "startMs": 1792135916732,
+          "status": 200,
+          "bytes": 19,
+          "endMs": 1792135916815
+        },
+        {
+          "path": "/api/relationship-evidence",
+          "query": "?ticker=005930.KS&name=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90",
+          "method": "GET",
+          "startMs": 1792135916733,
+          "status": 200,
+          "bytes": 34,
+          "endMs": 1792135916816
+        }
+      ],
+      "errors": [],
+      "unexpected": [],
+      "failed": []
+    },
+    {
+      "phase": "after",
+      "route": "detail/005930.KS",
+      "iteration": 3,
+      "state": "ready",
+      "ready": {
+        "primary": 289
+      },
+      "longTasks": [
+        {
+          "startMs": 44.599999997764826,
+          "ms": 64
+        }
+      ],
+      "overflowPx": 0,
+      "resources": [],
+      "fcpMs": null,
+      "primaryMs": 289,
+      "requestsAtInitialReady": [
+        {
+          "path": "/static/data/screener.json",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135917196,
+          "status": 200,
+          "bytes": 1651,
+          "endMs": 1792135917278
+        },
+        {
+          "path": "/api/quotes",
+          "query": "?tickers=005930.KS&fresh=true",
+          "method": "GET",
+          "startMs": 1792135917196,
+          "status": 200,
+          "bytes": 285,
+          "endMs": 1792135917280
+        },
+        {
+          "path": "/api/compare",
+          "query": "?tickers=005930.KS&period=3mo",
+          "method": "GET",
+          "startMs": 1792135917196,
+          "status": 200,
+          "bytes": 459,
+          "endMs": 1792135917280
+        },
+        {
+          "path": "/api/financial-history",
+          "query": "?ticker=005930.KS",
+          "method": "GET",
+          "startMs": 1792135917198,
+          "status": 200,
+          "bytes": 450,
+          "endMs": 1792135917283
+        },
+        {
+          "path": "/api/valuation",
+          "query": "?tickers=005930.KS",
+          "method": "GET",
+          "startMs": 1792135917202,
+          "status": 200,
+          "bytes": 433,
+          "endMs": 1792135917285
+        },
+        {
+          "path": "/api/personalized-news",
+          "query": "?tickers=005930.KS&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90",
+          "method": "GET",
+          "startMs": 1792135917207,
+          "status": 200,
+          "bytes": 243,
+          "endMs": 1792135917289
+        },
+        {
+          "path": "/api/activity",
+          "query": "",
+          "method": "POST",
+          "startMs": 1792135917227,
+          "status": 200,
+          "bytes": 29,
+          "endMs": 1792135917308
+        },
+        {
+          "path": "/api/financial-quarters",
+          "query": "?ticker=005930.KS",
+          "method": "GET",
+          "startMs": 1792135917305,
+          "status": 200,
+          "bytes": 19,
+          "endMs": 1792135917388
+        },
+        {
+          "path": "/api/business-report",
+          "query": "?ticker=005930.KS&name=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90",
+          "method": "GET",
+          "startMs": 1792135917324,
+          "status": 200,
+          "bytes": 19,
+          "endMs": 1792135917414
+        },
+        {
+          "path": "/api/relationship-evidence",
+          "query": "?ticker=005930.KS&name=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90",
+          "method": "GET",
+          "startMs": 1792135917325,
+          "status": 200,
+          "bytes": 34,
+          "endMs": 1792135917415
+        }
+      ],
+      "requestsAfterDrill": [
+        {
+          "path": "/static/data/screener.json",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135917196,
+          "status": 200,
+          "bytes": 1651,
+          "endMs": 1792135917278
+        },
+        {
+          "path": "/api/quotes",
+          "query": "?tickers=005930.KS&fresh=true",
+          "method": "GET",
+          "startMs": 1792135917196,
+          "status": 200,
+          "bytes": 285,
+          "endMs": 1792135917280
+        },
+        {
+          "path": "/api/compare",
+          "query": "?tickers=005930.KS&period=3mo",
+          "method": "GET",
+          "startMs": 1792135917196,
+          "status": 200,
+          "bytes": 459,
+          "endMs": 1792135917280
+        },
+        {
+          "path": "/api/financial-history",
+          "query": "?ticker=005930.KS",
+          "method": "GET",
+          "startMs": 1792135917198,
+          "status": 200,
+          "bytes": 450,
+          "endMs": 1792135917283
+        },
+        {
+          "path": "/api/valuation",
+          "query": "?tickers=005930.KS",
+          "method": "GET",
+          "startMs": 1792135917202,
+          "status": 200,
+          "bytes": 433,
+          "endMs": 1792135917285
+        },
+        {
+          "path": "/api/personalized-news",
+          "query": "?tickers=005930.KS&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90",
+          "method": "GET",
+          "startMs": 1792135917207,
+          "status": 200,
+          "bytes": 243,
+          "endMs": 1792135917289
+        },
+        {
+          "path": "/api/activity",
+          "query": "",
+          "method": "POST",
+          "startMs": 1792135917227,
+          "status": 200,
+          "bytes": 29,
+          "endMs": 1792135917308
+        },
+        {
+          "path": "/api/financial-quarters",
+          "query": "?ticker=005930.KS",
+          "method": "GET",
+          "startMs": 1792135917305,
+          "status": 200,
+          "bytes": 19,
+          "endMs": 1792135917388
+        },
+        {
+          "path": "/api/business-report",
+          "query": "?ticker=005930.KS&name=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90",
+          "method": "GET",
+          "startMs": 1792135917324,
+          "status": 200,
+          "bytes": 19,
+          "endMs": 1792135917414
+        },
+        {
+          "path": "/api/relationship-evidence",
+          "query": "?ticker=005930.KS&name=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90",
+          "method": "GET",
+          "startMs": 1792135917325,
+          "status": 200,
+          "bytes": 34,
+          "endMs": 1792135917415
+        }
+      ],
+      "errors": [],
+      "unexpected": [],
+      "failed": []
+    },
+    {
+      "phase": "after",
+      "route": "detail/005930.KS",
+      "iteration": 4,
+      "state": "ready",
+      "ready": {
+        "primary": 327
+      },
+      "longTasks": [
+        {
+          "startMs": 47.599999997764826,
+          "ms": 78
+        }
+      ],
+      "overflowPx": 0,
+      "resources": [],
+      "fcpMs": null,
+      "primaryMs": 327,
+      "requestsAtInitialReady": [
+        {
+          "path": "/static/data/screener.json",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135917804,
+          "status": 200,
+          "bytes": 1651,
+          "endMs": 1792135917885
+        },
+        {
+          "path": "/api/quotes",
+          "query": "?tickers=005930.KS&fresh=true",
+          "method": "GET",
+          "startMs": 1792135917804,
+          "status": 200,
+          "bytes": 285,
+          "endMs": 1792135917886
+        },
+        {
+          "path": "/api/compare",
+          "query": "?tickers=005930.KS&period=3mo",
+          "method": "GET",
+          "startMs": 1792135917804,
+          "status": 200,
+          "bytes": 459,
+          "endMs": 1792135917886
+        },
+        {
+          "path": "/api/financial-history",
+          "query": "?ticker=005930.KS",
+          "method": "GET",
+          "startMs": 1792135917805,
+          "status": 200,
+          "bytes": 450,
+          "endMs": 1792135917889
+        },
+        {
+          "path": "/api/valuation",
+          "query": "?tickers=005930.KS",
+          "method": "GET",
+          "startMs": 1792135917810,
+          "status": 200,
+          "bytes": 433,
+          "endMs": 1792135917892
+        },
+        {
+          "path": "/api/personalized-news",
+          "query": "?tickers=005930.KS&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90",
+          "method": "GET",
+          "startMs": 1792135917812,
+          "status": 200,
+          "bytes": 243,
+          "endMs": 1792135917893
+        },
+        {
+          "path": "/api/activity",
+          "query": "",
+          "method": "POST",
+          "startMs": 1792135917825,
+          "status": 200,
+          "bytes": 29,
+          "endMs": 1792135917906
+        },
+        {
+          "path": "/api/financial-quarters",
+          "query": "?ticker=005930.KS",
+          "method": "GET",
+          "startMs": 1792135917904,
+          "status": 200,
+          "bytes": 19,
+          "endMs": 1792135917985
+        },
+        {
+          "path": "/api/business-report",
+          "query": "?ticker=005930.KS&name=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90",
+          "method": "GET",
+          "startMs": 1792135917950,
+          "status": 200,
+          "bytes": 19,
+          "endMs": 1792135918032
+        },
+        {
+          "path": "/api/relationship-evidence",
+          "query": "?ticker=005930.KS&name=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90",
+          "method": "GET",
+          "startMs": 1792135917950,
+          "status": 200,
+          "bytes": 34,
+          "endMs": 1792135918035
+        }
+      ],
+      "requestsAfterDrill": [
+        {
+          "path": "/static/data/screener.json",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135917804,
+          "status": 200,
+          "bytes": 1651,
+          "endMs": 1792135917885
+        },
+        {
+          "path": "/api/quotes",
+          "query": "?tickers=005930.KS&fresh=true",
+          "method": "GET",
+          "startMs": 1792135917804,
+          "status": 200,
+          "bytes": 285,
+          "endMs": 1792135917886
+        },
+        {
+          "path": "/api/compare",
+          "query": "?tickers=005930.KS&period=3mo",
+          "method": "GET",
+          "startMs": 1792135917804,
+          "status": 200,
+          "bytes": 459,
+          "endMs": 1792135917886
+        },
+        {
+          "path": "/api/financial-history",
+          "query": "?ticker=005930.KS",
+          "method": "GET",
+          "startMs": 1792135917805,
+          "status": 200,
+          "bytes": 450,
+          "endMs": 1792135917889
+        },
+        {
+          "path": "/api/valuation",
+          "query": "?tickers=005930.KS",
+          "method": "GET",
+          "startMs": 1792135917810,
+          "status": 200,
+          "bytes": 433,
+          "endMs": 1792135917892
+        },
+        {
+          "path": "/api/personalized-news",
+          "query": "?tickers=005930.KS&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90",
+          "method": "GET",
+          "startMs": 1792135917812,
+          "status": 200,
+          "bytes": 243,
+          "endMs": 1792135917893
+        },
+        {
+          "path": "/api/activity",
+          "query": "",
+          "method": "POST",
+          "startMs": 1792135917825,
+          "status": 200,
+          "bytes": 29,
+          "endMs": 1792135917906
+        },
+        {
+          "path": "/api/financial-quarters",
+          "query": "?ticker=005930.KS",
+          "method": "GET",
+          "startMs": 1792135917904,
+          "status": 200,
+          "bytes": 19,
+          "endMs": 1792135917985
+        },
+        {
+          "path": "/api/business-report",
+          "query": "?ticker=005930.KS&name=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90",
+          "method": "GET",
+          "startMs": 1792135917950,
+          "status": 200,
+          "bytes": 19,
+          "endMs": 1792135918032
+        },
+        {
+          "path": "/api/relationship-evidence",
+          "query": "?ticker=005930.KS&name=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90",
+          "method": "GET",
+          "startMs": 1792135917950,
+          "status": 200,
+          "bytes": 34,
+          "endMs": 1792135918035
+        }
+      ],
+      "errors": [],
+      "unexpected": [],
+      "failed": []
+    },
+    {
+      "phase": "after",
+      "route": "detail/005930.KS",
+      "iteration": 5,
+      "state": "ready",
+      "ready": {
+        "primary": 281
+      },
+      "longTasks": [
+        {
+          "startMs": 43.399999998509884,
+          "ms": 59
+        }
+      ],
+      "overflowPx": 0,
+      "resources": [],
+      "fcpMs": null,
+      "primaryMs": 281,
+      "requestsAtInitialReady": [
+        {
+          "path": "/static/data/screener.json",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135918410,
+          "status": 200,
+          "bytes": 1651,
+          "endMs": 1792135918493
+        },
+        {
+          "path": "/api/quotes",
+          "query": "?tickers=005930.KS&fresh=true",
+          "method": "GET",
+          "startMs": 1792135918419,
+          "status": 200,
+          "bytes": 285,
+          "endMs": 1792135918505
+        },
+        {
+          "path": "/api/compare",
+          "query": "?tickers=005930.KS&period=3mo",
+          "method": "GET",
+          "startMs": 1792135918420,
+          "status": 200,
+          "bytes": 459,
+          "endMs": 1792135918505
+        },
+        {
+          "path": "/api/financial-history",
+          "query": "?ticker=005930.KS",
+          "method": "GET",
+          "startMs": 1792135918424,
+          "status": 200,
+          "bytes": 450,
+          "endMs": 1792135918506
+        },
+        {
+          "path": "/api/valuation",
+          "query": "?tickers=005930.KS",
+          "method": "GET",
+          "startMs": 1792135918426,
+          "status": 200,
+          "bytes": 433,
+          "endMs": 1792135918511
+        },
+        {
+          "path": "/api/personalized-news",
+          "query": "?tickers=005930.KS&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90",
+          "method": "GET",
+          "startMs": 1792135918427,
+          "status": 200,
+          "bytes": 243,
+          "endMs": 1792135918511
+        },
+        {
+          "path": "/api/activity",
+          "query": "",
+          "method": "POST",
+          "startMs": 1792135918440,
+          "status": 200,
+          "bytes": 29,
+          "endMs": 1792135918524
+        },
+        {
+          "path": "/api/financial-quarters",
+          "query": "?ticker=005930.KS",
+          "method": "GET",
+          "startMs": 1792135918511,
+          "status": 200,
+          "bytes": 19,
+          "endMs": 1792135918593
+        },
+        {
+          "path": "/api/business-report",
+          "query": "?ticker=005930.KS&name=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90",
+          "method": "GET",
+          "startMs": 1792135918539,
+          "status": 200,
+          "bytes": 19,
+          "endMs": 1792135918622
+        },
+        {
+          "path": "/api/relationship-evidence",
+          "query": "?ticker=005930.KS&name=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90",
+          "method": "GET",
+          "startMs": 1792135918539,
+          "status": 200,
+          "bytes": 34,
+          "endMs": 1792135918623
+        }
+      ],
+      "requestsAfterDrill": [
+        {
+          "path": "/static/data/screener.json",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135918410,
+          "status": 200,
+          "bytes": 1651,
+          "endMs": 1792135918493
+        },
+        {
+          "path": "/api/quotes",
+          "query": "?tickers=005930.KS&fresh=true",
+          "method": "GET",
+          "startMs": 1792135918419,
+          "status": 200,
+          "bytes": 285,
+          "endMs": 1792135918505
+        },
+        {
+          "path": "/api/compare",
+          "query": "?tickers=005930.KS&period=3mo",
+          "method": "GET",
+          "startMs": 1792135918420,
+          "status": 200,
+          "bytes": 459,
+          "endMs": 1792135918505
+        },
+        {
+          "path": "/api/financial-history",
+          "query": "?ticker=005930.KS",
+          "method": "GET",
+          "startMs": 1792135918424,
+          "status": 200,
+          "bytes": 450,
+          "endMs": 1792135918506
+        },
+        {
+          "path": "/api/valuation",
+          "query": "?tickers=005930.KS",
+          "method": "GET",
+          "startMs": 1792135918426,
+          "status": 200,
+          "bytes": 433,
+          "endMs": 1792135918511
+        },
+        {
+          "path": "/api/personalized-news",
+          "query": "?tickers=005930.KS&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90",
+          "method": "GET",
+          "startMs": 1792135918427,
+          "status": 200,
+          "bytes": 243,
+          "endMs": 1792135918511
+        },
+        {
+          "path": "/api/activity",
+          "query": "",
+          "method": "POST",
+          "startMs": 1792135918440,
+          "status": 200,
+          "bytes": 29,
+          "endMs": 1792135918524
+        },
+        {
+          "path": "/api/financial-quarters",
+          "query": "?ticker=005930.KS",
+          "method": "GET",
+          "startMs": 1792135918511,
+          "status": 200,
+          "bytes": 19,
+          "endMs": 1792135918593
+        },
+        {
+          "path": "/api/business-report",
+          "query": "?ticker=005930.KS&name=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90",
+          "method": "GET",
+          "startMs": 1792135918539,
+          "status": 200,
+          "bytes": 19,
+          "endMs": 1792135918622
+        },
+        {
+          "path": "/api/relationship-evidence",
+          "query": "?ticker=005930.KS&name=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90",
+          "method": "GET",
+          "startMs": 1792135918539,
+          "status": 200,
+          "bytes": 34,
+          "endMs": 1792135918623
+        }
+      ],
+      "errors": [],
+      "unexpected": [],
+      "failed": []
+    },
+    {
+      "phase": "after",
+      "route": "detail/005930.KS",
+      "iteration": 6,
+      "state": "ready",
+      "ready": {
+        "primary": 356
+      },
+      "longTasks": [
+        {
+          "startMs": 47.80000000074506,
+          "ms": 85
+        },
+        {
+          "startMs": 389.80000000074506,
+          "ms": 52
+        }
+      ],
+      "overflowPx": 0,
+      "resources": [],
+      "fcpMs": null,
+      "primaryMs": 356,
+      "requestsAtInitialReady": [
+        {
+          "path": "/static/data/screener.json",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135919063,
+          "status": 200,
+          "bytes": 1651,
+          "endMs": 1792135919152
+        },
+        {
+          "path": "/api/quotes",
+          "query": "?tickers=005930.KS&fresh=true",
+          "method": "GET",
+          "startMs": 1792135919067,
+          "status": 200,
+          "bytes": 285,
+          "endMs": 1792135919154
+        },
+        {
+          "path": "/api/compare",
+          "query": "?tickers=005930.KS&period=3mo",
+          "method": "GET",
+          "startMs": 1792135919067,
+          "status": 200,
+          "bytes": 459,
+          "endMs": 1792135919156
+        },
+        {
+          "path": "/api/financial-history",
+          "query": "?ticker=005930.KS",
+          "method": "GET",
+          "startMs": 1792135919068,
+          "status": 200,
+          "bytes": 450,
+          "endMs": 1792135919156
+        },
+        {
+          "path": "/api/valuation",
+          "query": "?tickers=005930.KS",
+          "method": "GET",
+          "startMs": 1792135919069,
+          "status": 200,
+          "bytes": 433,
+          "endMs": 1792135919156
+        },
+        {
+          "path": "/api/personalized-news",
+          "query": "?tickers=005930.KS&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90",
+          "method": "GET",
+          "startMs": 1792135919070,
+          "status": 200,
+          "bytes": 243,
+          "endMs": 1792135919156
+        },
+        {
+          "path": "/api/activity",
+          "query": "",
+          "method": "POST",
+          "startMs": 1792135919099,
+          "status": 200,
+          "bytes": 29,
+          "endMs": 1792135919184
+        },
+        {
+          "path": "/api/financial-quarters",
+          "query": "?ticker=005930.KS",
+          "method": "GET",
+          "startMs": 1792135919184,
+          "status": 200,
+          "bytes": 19,
+          "endMs": 1792135919266
+        },
+        {
+          "path": "/api/business-report",
+          "query": "?ticker=005930.KS&name=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90",
+          "method": "GET",
+          "startMs": 1792135919212,
+          "status": 200,
+          "bytes": 19,
+          "endMs": 1792135919296
+        },
+        {
+          "path": "/api/relationship-evidence",
+          "query": "?ticker=005930.KS&name=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90",
+          "method": "GET",
+          "startMs": 1792135919213,
+          "status": 200,
+          "bytes": 34,
+          "endMs": 1792135919296
+        }
+      ],
+      "requestsAfterDrill": [
+        {
+          "path": "/static/data/screener.json",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135919063,
+          "status": 200,
+          "bytes": 1651,
+          "endMs": 1792135919152
+        },
+        {
+          "path": "/api/quotes",
+          "query": "?tickers=005930.KS&fresh=true",
+          "method": "GET",
+          "startMs": 1792135919067,
+          "status": 200,
+          "bytes": 285,
+          "endMs": 1792135919154
+        },
+        {
+          "path": "/api/compare",
+          "query": "?tickers=005930.KS&period=3mo",
+          "method": "GET",
+          "startMs": 1792135919067,
+          "status": 200,
+          "bytes": 459,
+          "endMs": 1792135919156
+        },
+        {
+          "path": "/api/financial-history",
+          "query": "?ticker=005930.KS",
+          "method": "GET",
+          "startMs": 1792135919068,
+          "status": 200,
+          "bytes": 450,
+          "endMs": 1792135919156
+        },
+        {
+          "path": "/api/valuation",
+          "query": "?tickers=005930.KS",
+          "method": "GET",
+          "startMs": 1792135919069,
+          "status": 200,
+          "bytes": 433,
+          "endMs": 1792135919156
+        },
+        {
+          "path": "/api/personalized-news",
+          "query": "?tickers=005930.KS&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90",
+          "method": "GET",
+          "startMs": 1792135919070,
+          "status": 200,
+          "bytes": 243,
+          "endMs": 1792135919156
+        },
+        {
+          "path": "/api/activity",
+          "query": "",
+          "method": "POST",
+          "startMs": 1792135919099,
+          "status": 200,
+          "bytes": 29,
+          "endMs": 1792135919184
+        },
+        {
+          "path": "/api/financial-quarters",
+          "query": "?ticker=005930.KS",
+          "method": "GET",
+          "startMs": 1792135919184,
+          "status": 200,
+          "bytes": 19,
+          "endMs": 1792135919266
+        },
+        {
+          "path": "/api/business-report",
+          "query": "?ticker=005930.KS&name=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90",
+          "method": "GET",
+          "startMs": 1792135919212,
+          "status": 200,
+          "bytes": 19,
+          "endMs": 1792135919296
+        },
+        {
+          "path": "/api/relationship-evidence",
+          "query": "?ticker=005930.KS&name=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90",
+          "method": "GET",
+          "startMs": 1792135919213,
+          "status": 200,
+          "bytes": 34,
+          "endMs": 1792135919296
+        }
+      ],
+      "errors": [],
+      "unexpected": [],
+      "failed": []
+    },
+    {
+      "phase": "after",
+      "route": "detail/005930.KS",
+      "iteration": 7,
+      "state": "ready",
+      "ready": {
+        "primary": 334
+      },
+      "longTasks": [
+        {
+          "startMs": 45.80000000074506,
+          "ms": 92
+        }
+      ],
+      "overflowPx": 0,
+      "resources": [],
+      "fcpMs": null,
+      "primaryMs": 334,
+      "requestsAtInitialReady": [
+        {
+          "path": "/static/data/screener.json",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135919794,
+          "status": 200,
+          "bytes": 1651,
+          "endMs": 1792135919877
+        },
+        {
+          "path": "/api/quotes",
+          "query": "?tickers=005930.KS&fresh=true",
+          "method": "GET",
+          "startMs": 1792135919794,
+          "status": 200,
+          "bytes": 285,
+          "endMs": 1792135919877
+        },
+        {
+          "path": "/api/compare",
+          "query": "?tickers=005930.KS&period=3mo",
+          "method": "GET",
+          "startMs": 1792135919795,
+          "status": 200,
+          "bytes": 459,
+          "endMs": 1792135919877
+        },
+        {
+          "path": "/api/financial-history",
+          "query": "?ticker=005930.KS",
+          "method": "GET",
+          "startMs": 1792135919797,
+          "status": 200,
+          "bytes": 450,
+          "endMs": 1792135919880
+        },
+        {
+          "path": "/api/valuation",
+          "query": "?tickers=005930.KS",
+          "method": "GET",
+          "startMs": 1792135919814,
+          "status": 200,
+          "bytes": 433,
+          "endMs": 1792135919896
+        },
+        {
+          "path": "/api/personalized-news",
+          "query": "?tickers=005930.KS&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90",
+          "method": "GET",
+          "startMs": 1792135919819,
+          "status": 200,
+          "bytes": 243,
+          "endMs": 1792135919899
+        },
+        {
+          "path": "/api/activity",
+          "query": "",
+          "method": "POST",
+          "startMs": 1792135919832,
+          "status": 200,
+          "bytes": 29,
+          "endMs": 1792135919915
+        },
+        {
+          "path": "/api/financial-quarters",
+          "query": "?ticker=005930.KS",
+          "method": "GET",
+          "startMs": 1792135919880,
+          "status": 200,
+          "bytes": 19,
+          "endMs": 1792135919962
+        },
+        {
+          "path": "/api/business-report",
+          "query": "?ticker=005930.KS&name=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90",
+          "method": "GET",
+          "startMs": 1792135919937,
+          "status": 200,
+          "bytes": 19,
+          "endMs": 1792135920020
+        },
+        {
+          "path": "/api/relationship-evidence",
+          "query": "?ticker=005930.KS&name=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90",
+          "method": "GET",
+          "startMs": 1792135919938,
+          "status": 200,
+          "bytes": 34,
+          "endMs": 1792135920021
+        }
+      ],
+      "requestsAfterDrill": [
+        {
+          "path": "/static/data/screener.json",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135919794,
+          "status": 200,
+          "bytes": 1651,
+          "endMs": 1792135919877
+        },
+        {
+          "path": "/api/quotes",
+          "query": "?tickers=005930.KS&fresh=true",
+          "method": "GET",
+          "startMs": 1792135919794,
+          "status": 200,
+          "bytes": 285,
+          "endMs": 1792135919877
+        },
+        {
+          "path": "/api/compare",
+          "query": "?tickers=005930.KS&period=3mo",
+          "method": "GET",
+          "startMs": 1792135919795,
+          "status": 200,
+          "bytes": 459,
+          "endMs": 1792135919877
+        },
+        {
+          "path": "/api/financial-history",
+          "query": "?ticker=005930.KS",
+          "method": "GET",
+          "startMs": 1792135919797,
+          "status": 200,
+          "bytes": 450,
+          "endMs": 1792135919880
+        },
+        {
+          "path": "/api/valuation",
+          "query": "?tickers=005930.KS",
+          "method": "GET",
+          "startMs": 1792135919814,
+          "status": 200,
+          "bytes": 433,
+          "endMs": 1792135919896
+        },
+        {
+          "path": "/api/personalized-news",
+          "query": "?tickers=005930.KS&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90",
+          "method": "GET",
+          "startMs": 1792135919819,
+          "status": 200,
+          "bytes": 243,
+          "endMs": 1792135919899
+        },
+        {
+          "path": "/api/activity",
+          "query": "",
+          "method": "POST",
+          "startMs": 1792135919832,
+          "status": 200,
+          "bytes": 29,
+          "endMs": 1792135919915
+        },
+        {
+          "path": "/api/financial-quarters",
+          "query": "?ticker=005930.KS",
+          "method": "GET",
+          "startMs": 1792135919880,
+          "status": 200,
+          "bytes": 19,
+          "endMs": 1792135919962
+        },
+        {
+          "path": "/api/business-report",
+          "query": "?ticker=005930.KS&name=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90",
+          "method": "GET",
+          "startMs": 1792135919937,
+          "status": 200,
+          "bytes": 19,
+          "endMs": 1792135920020
+        },
+        {
+          "path": "/api/relationship-evidence",
+          "query": "?ticker=005930.KS&name=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90",
+          "method": "GET",
+          "startMs": 1792135919938,
+          "status": 200,
+          "bytes": 34,
+          "endMs": 1792135920021
+        }
+      ],
+      "errors": [],
+      "unexpected": [],
+      "failed": []
+    },
+    {
+      "phase": "after",
+      "route": "macro",
+      "iteration": 1,
+      "state": "ready",
+      "ready": {
+        "primary": 247,
+        "inflation": 315
+      },
+      "longTasks": [],
+      "overflowPx": 0,
+      "resources": [],
+      "fcpMs": null,
+      "primaryMs": 247,
+      "requestsAtInitialReady": [
+        {
+          "path": "/api/macro",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135920885,
+          "status": 200,
+          "bytes": 137384,
+          "endMs": 1792135920973
+        },
+        {
+          "path": "/api/activity",
+          "query": "",
+          "method": "POST",
+          "startMs": 1792135920928,
+          "status": 200,
+          "bytes": 29,
+          "endMs": 1792135921010
+        }
+      ],
+      "requestsAfterDrill": [
+        {
+          "path": "/api/macro",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135920885,
+          "status": 200,
+          "bytes": 137384,
+          "endMs": 1792135920973
+        },
+        {
+          "path": "/api/activity",
+          "query": "",
+          "method": "POST",
+          "startMs": 1792135920928,
+          "status": 200,
+          "bytes": 29,
+          "endMs": 1792135921010
+        }
+      ],
+      "errors": [],
+      "unexpected": [],
+      "failed": []
+    },
+    {
+      "phase": "after",
+      "route": "macro",
+      "iteration": 2,
+      "state": "ready",
+      "ready": {
+        "primary": 280,
+        "inflation": 377
+      },
+      "longTasks": [
+        {
+          "startMs": 67.90000000223517,
+          "ms": 57
+        },
+        {
+          "startMs": 220.30000000074506,
+          "ms": 56
+        }
+      ],
+      "overflowPx": 0,
+      "resources": [],
+      "fcpMs": null,
+      "primaryMs": 280,
+      "requestsAtInitialReady": [
+        {
+          "path": "/api/macro",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135921459,
+          "status": 200,
+          "bytes": 137384,
+          "endMs": 1792135921546
+        },
+        {
+          "path": "/api/activity",
+          "query": "",
+          "method": "POST",
+          "startMs": 1792135921510,
+          "status": 200,
+          "bytes": 29,
+          "endMs": 1792135921593
+        }
+      ],
+      "requestsAfterDrill": [
+        {
+          "path": "/api/macro",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135921459,
+          "status": 200,
+          "bytes": 137384,
+          "endMs": 1792135921546
+        },
+        {
+          "path": "/api/activity",
+          "query": "",
+          "method": "POST",
+          "startMs": 1792135921510,
+          "status": 200,
+          "bytes": 29,
+          "endMs": 1792135921593
+        }
+      ],
+      "errors": [],
+      "unexpected": [],
+      "failed": []
+    },
+    {
+      "phase": "after",
+      "route": "macro",
+      "iteration": 3,
+      "state": "ready",
+      "ready": {
+        "primary": 236,
+        "inflation": 399
+      },
+      "longTasks": [
+        {
+          "startMs": 185.30000000074506,
+          "ms": 122
+        }
+      ],
+      "overflowPx": 0,
+      "resources": [],
+      "fcpMs": null,
+      "primaryMs": 236,
+      "requestsAtInitialReady": [
+        {
+          "path": "/api/macro",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135922037,
+          "status": 200,
+          "bytes": 137384,
+          "endMs": 1792135922125
+        },
+        {
+          "path": "/api/activity",
+          "query": "",
+          "method": "POST",
+          "startMs": 1792135922088,
+          "status": 200,
+          "bytes": 29,
+          "endMs": 1792135922229
+        }
+      ],
+      "requestsAfterDrill": [
+        {
+          "path": "/api/macro",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135922037,
+          "status": 200,
+          "bytes": 137384,
+          "endMs": 1792135922125
+        },
+        {
+          "path": "/api/activity",
+          "query": "",
+          "method": "POST",
+          "startMs": 1792135922088,
+          "status": 200,
+          "bytes": 29,
+          "endMs": 1792135922229
+        }
+      ],
+      "errors": [],
+      "unexpected": [],
+      "failed": []
+    },
+    {
+      "phase": "after",
+      "route": "macro",
+      "iteration": 4,
+      "state": "ready",
+      "ready": {
+        "primary": 258,
+        "inflation": 365
+      },
+      "longTasks": [
+        {
+          "startMs": 48.399999998509884,
+          "ms": 51
+        },
+        {
+          "startMs": 247.89999999850988,
+          "ms": 62
+        }
+      ],
+      "overflowPx": 0,
+      "resources": [],
+      "fcpMs": null,
+      "primaryMs": 258,
+      "requestsAtInitialReady": [
+        {
+          "path": "/api/macro",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135922751,
+          "status": 200,
+          "bytes": 137384,
+          "endMs": 1792135922838
+        },
+        {
+          "path": "/api/activity",
+          "query": "",
+          "method": "POST",
+          "startMs": 1792135922795,
+          "status": 200,
+          "bytes": 29,
+          "endMs": 1792135922878
+        }
+      ],
+      "requestsAfterDrill": [
+        {
+          "path": "/api/macro",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135922751,
+          "status": 200,
+          "bytes": 137384,
+          "endMs": 1792135922838
+        },
+        {
+          "path": "/api/activity",
+          "query": "",
+          "method": "POST",
+          "startMs": 1792135922795,
+          "status": 200,
+          "bytes": 29,
+          "endMs": 1792135922878
+        }
+      ],
+      "errors": [],
+      "unexpected": [],
+      "failed": []
+    },
+    {
+      "phase": "after",
+      "route": "macro",
+      "iteration": 5,
+      "state": "ready",
+      "ready": {
+        "primary": 259,
+        "inflation": 402
+      },
+      "longTasks": [
+        {
+          "startMs": 44.899999998509884,
+          "ms": 51
+        },
+        {
+          "startMs": 209.10000000149012,
+          "ms": 52
+        },
+        {
+          "startMs": 272.3999999985099,
+          "ms": 78
+        },
+        {
+          "startMs": 351.5,
+          "ms": 93
+        }
+      ],
+      "overflowPx": 0,
+      "resources": [],
+      "fcpMs": null,
+      "primaryMs": 259,
+      "requestsAtInitialReady": [
+        {
+          "path": "/api/macro",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135923359,
+          "status": 200,
+          "bytes": 137384,
+          "endMs": 1792135923452
+        },
+        {
+          "path": "/api/activity",
+          "query": "",
+          "method": "POST",
+          "startMs": 1792135923400,
+          "status": 200,
+          "bytes": 29,
+          "endMs": 1792135923482
+        }
+      ],
+      "requestsAfterDrill": [
+        {
+          "path": "/api/macro",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135923359,
+          "status": 200,
+          "bytes": 137384,
+          "endMs": 1792135923452
+        },
+        {
+          "path": "/api/activity",
+          "query": "",
+          "method": "POST",
+          "startMs": 1792135923400,
+          "status": 200,
+          "bytes": 29,
+          "endMs": 1792135923482
+        }
+      ],
+      "errors": [],
+      "unexpected": [],
+      "failed": []
+    },
+    {
+      "phase": "after",
+      "route": "macro",
+      "iteration": 6,
+      "state": "ready",
+      "ready": {
+        "primary": 394,
+        "inflation": 701
+      },
+      "longTasks": [
+        {
+          "startMs": 116.69999999925494,
+          "ms": 164
+        },
+        {
+          "startMs": 330.5999999977648,
+          "ms": 72
+        },
+        {
+          "startMs": 404.69999999925494,
+          "ms": 149
+        },
+        {
+          "startMs": 559.1999999992549,
+          "ms": 82
+        },
+        {
+          "startMs": 642.1999999992549,
+          "ms": 53
+        }
+      ],
+      "overflowPx": 0,
+      "resources": [],
+      "fcpMs": null,
+      "primaryMs": 394,
+      "requestsAtInitialReady": [
+        {
+          "path": "/api/macro",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135924265,
+          "status": 200,
+          "bytes": 137384,
+          "endMs": 1792135924356
+        },
+        {
+          "path": "/api/activity",
+          "query": "",
+          "method": "POST",
+          "startMs": 1792135924415,
+          "status": 200,
+          "bytes": 29,
+          "endMs": 1792135924504
+        }
+      ],
+      "requestsAfterDrill": [
+        {
+          "path": "/api/macro",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135924265,
+          "status": 200,
+          "bytes": 137384,
+          "endMs": 1792135924356
+        },
+        {
+          "path": "/api/activity",
+          "query": "",
+          "method": "POST",
+          "startMs": 1792135924415,
+          "status": 200,
+          "bytes": 29,
+          "endMs": 1792135924504
+        }
+      ],
+      "errors": [],
+      "unexpected": [],
+      "failed": []
+    },
+    {
+      "phase": "after",
+      "route": "macro",
+      "iteration": 7,
+      "state": "ready",
+      "ready": {
+        "primary": 245,
+        "inflation": 339
+      },
+      "longTasks": [
+        {
+          "startMs": 46.100000001490116,
+          "ms": 57
+        },
+        {
+          "startMs": 193.60000000149012,
+          "ms": 51
+        }
+      ],
+      "overflowPx": 0,
+      "resources": [],
+      "fcpMs": null,
+      "primaryMs": 245,
+      "requestsAtInitialReady": [
+        {
+          "path": "/api/macro",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135925123,
+          "status": 200,
+          "bytes": 137384,
+          "endMs": 1792135925210
+        },
+        {
+          "path": "/api/activity",
+          "query": "",
+          "method": "POST",
+          "startMs": 1792135925174,
+          "status": 200,
+          "bytes": 29,
+          "endMs": 1792135925255
+        }
+      ],
+      "requestsAfterDrill": [
+        {
+          "path": "/api/macro",
+          "query": "",
+          "method": "GET",
+          "startMs": 1792135925123,
+          "status": 200,
+          "bytes": 137384,
+          "endMs": 1792135925210
+        },
+        {
+          "path": "/api/activity",
+          "query": "",
+          "method": "POST",
+          "startMs": 1792135925174,
+          "status": 200,
+          "bytes": 29,
+          "endMs": 1792135925255
+        }
+      ],
+      "errors": [],
+      "unexpected": [],
+      "failed": []
+    }
+  ]
+}

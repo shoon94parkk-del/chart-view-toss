@@ -1,0 +1,116 @@
+{
+  "developmentHistory": [
+    {
+      "run": "baseline integration RED",
+      "purpose": "new UI behavior absent on exact95d6b83 dist",
+      "notReleaseValidation": true
+    },
+    {
+      "run": "first focused mobile",
+      "passed": 12,
+      "failed": 2,
+      "cause": "test tried to fill closed optional review-date details",
+      "resolution": "open user-visible details before filling; preserve optional UI"
+    },
+    {
+      "run": "correction focused mobile",
+      "passed": 2,
+      "failed": 2,
+      "cause": "real durable checkpoint IDs collided after app reload because analytics usage-N counter reset",
+      "resolution": "separate durable UUID/fallback; add two-session storage regression and real reload E2E"
+    },
+    {
+      "run": "first full prepush",
+      "nodePassed": 672,
+      "browserPassed": 205,
+      "browserFailed": 1,
+      "interrupted": 2,
+      "notRun": 732,
+      "cause": "reader accidentally omitted original translated tags/title-language display; existing accessibility news guard failed twice",
+      "resolution": "restore original first2 tags/lang, retain original guard; fresh32-case focused run passed"
+    },
+    {
+      "run": "local default3worker attempt",
+      "passed": 47,
+      "interrupted": 3,
+      "notRun": 890,
+      "failed": 0,
+      "cause": "2CPU contention; first26mean6.4s versus2worker3.2s",
+      "resolution": "return to existing CI1/2worker/fail-on-flaky configuration; keep interrupted log"
+    }
+  ],
+  "focusedCorrected": {
+    "projects": [
+      "desktop-chromium",
+      "narrow-chromium",
+      "android-chromium",
+      "iphone-small-webkit"
+    ],
+    "passed": 32,
+    "failed": 0,
+    "sourceNote": "before final explicit force-query assertion addition; final full suite and exact-head CI must verify final runtime"
+  },
+  "finalRuntimeDigest": "dbc89fa5ed81597837e73dd9dfe7e81bd2b121ecac47aff6213f24b5d44121a4",
+  "finalFullStatus": {
+    "command": "CI=1 npm run qa:prepush",
+    "nodePassed": 673,
+    "build": "Vite +27 direct-entry routes passed",
+    "browser": {
+      "expected": 940,
+      "passed": 940,
+      "unexpected": 0,
+      "skipped": 0,
+      "flaky": 0,
+      "durationMs": 1880318.002,
+      "projects": [
+        "desktop-chromium",
+        "narrow-chromium",
+        "android-chromium",
+        "iphone-small-webkit"
+      ]
+    },
+    "note": "Runtime src/package digest stable; appended standalone privacy policy covered by fresh post-run build and separate smoke/CI."
+  },
+  "privacyTextScope": "public retention disclosure appended after local full-run build; runtime unchanged. Fresh build/AIT, separate static policy axe/geometry and exact-head CI cover the public file.",
+  "privacyRegression": {
+    "red": "1 narrow case failed on actual contrast; prior standalone4width probe found same issue",
+    "cause": "Existing standalone date13.33px had3.03:1 contrast, contact14px links3.71:1",
+    "fix": "Standalone privacy small #6b7684, links #1b64da; core app and PICK colors unchanged",
+    "green": {
+      "tests": 4,
+      "failed": 0,
+      "projects": [
+        "desktop-chromium",
+        "narrow-chromium",
+        "android-chromium",
+        "iphone-small-webkit"
+      ],
+      "command": "E2E_BASE_URL=http://127.0.0.1:4173 npx playwright test tests/e2e/privacy.spec.mjs --workers=2 --retries=0"
+    },
+    "currentSuiteCount": 944,
+    "policySha256": "f32c9d5b2535ed5b44cc7515c39fb9f2186b04349103466929131faba0944940"
+  },
+  "mobileRelease": {
+    "command": "VITE_CHARTVIEW_API_TIMEOUT_MS=300 npm run build; node tests/mobile_release_qa.mjs",
+    "status": "passed: responsive widths, selector viewport,5xx,timeout,offline"
+  },
+  "relatedMobile": [
+    {
+      "command": "QA_BASE_URL=http://127.0.0.1:4173 node tests/insight_research_qa.mjs",
+      "widths": [
+        320,
+        390
+      ],
+      "status": "passed"
+    },
+    {
+      "command": "QA_BASE_URL=http://127.0.0.1:4173 node tests/reliability_audit_qa.mjs",
+      "widths": [
+        320,
+        390,
+        430
+      ],
+      "status": "passed"
+    }
+  ]
+}

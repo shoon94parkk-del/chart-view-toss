@@ -590,7 +590,7 @@ try{
       await page.waitForFunction(previous=>window.scrollY>previous+200&&document.querySelector('#detail-news-section')?.getBoundingClientRect().top<window.innerHeight-140,beforeJump);
     }
     if(tab==='news'){
-      const relationText=await page.locator('.news-context').first().innerText();
+      const relationText=await page.locator('.news-reader-relations').first().innerText();
       if(relationText.includes('title entity match')) throw new Error(`news relation basis leaked English metadata: ${relationText}`);
     }
     if(tab==='more'){

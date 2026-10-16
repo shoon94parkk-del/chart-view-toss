@@ -4,6 +4,7 @@ import { staticData } from './staticData.js';
 import { readGuruEvidence } from './guruEvidenceSource.js';
 import { adoptEarlyHome } from './homeFastCache.js';
 import { searchAlias, verifiedSearchRows } from './searchIdentity.js';
+import { newsResponseState } from './newsResponse.js';
 export { ApiError } from './requestClient.js';
 export const API_BASE=(import.meta.env?.VITE_CHARTVIEW_API_BASE||'https://chart-view-pkv8.onrender.com').replace(/\/$/,'');
 const DEFAULT_TIMEOUT_MS=Number(import.meta.env?.VITE_CHARTVIEW_API_TIMEOUT_MS||12000);
@@ -68,7 +69,8 @@ export const valuationStocks=(tickers,{force=false}={})=>api(`/api/valuation?tic
 export const macroData=({force=false}={})=>api('/api/macro',{ttlMs:300000,force});
 export const earningsEventsData=({force=false}={})=>api('/api/earnings-events',{ttlMs:300000,timeoutMs:8000,retries:0,force});
 export const homeInsights=(tickers=[])=>api(`/api/home-insights?tickers=${list(tickers)}`,{ttlMs:60000});
-export const personalizedNews=(tickers=[],names=[])=>api(`/api/personalized-news?tickers=${list(tickers)}&names=${encodeURIComponent(names.join('|'))}`,{timeoutMs:10000,retries:0,ttlMs:60000});
+export const personalizedNews=(tickers=[],names=[],{force=false}={})=>api(`/api/personalized-news?tickers=${list(tickers)}&names=${encodeURIComponent(names.join('|'))}${force?'&force=true':''}`,{timeoutMs:10000,retries:0,ttlMs:60000,force,cacheIf:payload=>newsResponseState(payload)==='ready'});
+export const newsSummaryData=(row,{force=false}={})=>api('/api/news-summary?'+new URLSearchParams({url:row.safeUrl||row.url||'',title:row.title||'',snippet:row.summarySeed||row.snippet||''}),{timeoutMs:12000,retries:0,ttlMs:21600000,force});
 export const screenerData=()=>staticData('screener.json',()=>api('/static/data/screener.json',{ttlMs:60000}));
 export const guruScreeningData=({force=false}={})=>force?api('/static/data/guru_screening.json',{ttlMs:60000,force:true}):staticData('guru_screening.json',()=>api('/static/data/guru_screening.json',{ttlMs:60000}));
 export const guruEvidenceData=(ticker,version,{force=false}={})=>readGuruEvidence(ticker,version,{

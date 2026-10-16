@@ -1,0 +1,50 @@
+[
+  {
+    "id": "cpi",
+    "samePoints": true,
+    "beforeMonth": "2026-09",
+    "afterMonth": "2026-09",
+    "beforePointCount": 60,
+    "afterPointCount": 60
+  },
+  {
+    "id": "core_cpi",
+    "samePoints": true,
+    "beforeMonth": "2026-09",
+    "afterMonth": "2026-09",
+    "beforePointCount": 60,
+    "afterPointCount": 60
+  },
+  {
+    "id": "ppi",
+    "samePoints": true,
+    "beforeMonth": "2026-09",
+    "afterMonth": "2026-09",
+    "beforePointCount": 60,
+    "afterPointCount": 60
+  },
+  {
+    "id": "core_ppi",
+    "samePoints": true,
+    "beforeMonth": "2026-09",
+    "afterMonth": "2026-09",
+    "beforePointCount": 60,
+    "afterPointCount": 60
+  },
+  {
+    "id": "pce",
+    "samePoints": true,
+    "beforeMonth": "2026-08",
+    "afterMonth": "2026-08",
+    "beforePointCount": 60,
+    "afterPointCount": 60
+  },
+  {
+    "id": "core_pce",
+    "samePoints": true,
+    "beforeMonth": "2026-08",
+    "afterMonth": "2026-08",
+    "beforePointCount": 60,
+    "afterPointCount": 60
+  }
+]

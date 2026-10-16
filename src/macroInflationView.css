@@ -84,3 +84,14 @@
 .inflation-event-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
 .inflation-action-feedback{margin:0;font-size:12px;color:#855400;overflow-wrap:anywhere}.inflation-action-feedback:empty{display:none}
 @media(max-width:350px){.inflation-panel,.inflation-agenda{padding:10px}.inflation-chart-controls{gap:4px}.inflation-chart-controls button{padding:6px 7px}.inflation-overview-head,.inflation-series-row{grid-template-columns:minmax(0,1.05fr) minmax(62px,.8fr) minmax(62px,.8fr);gap:3px}.inflation-series-row>strong{font-size:14px}.inflation-current small{max-width:120px}.inflation-reading-head{gap:7px}.inflation-provenance dl>div{grid-template-columns:66px minmax(0,1fr)}}
+.inflation-recent{margin-top:12px;border-top:1px solid var(--border,#e2e8ef);padding-top:10px;min-width:0}
+.inflation-recent h3{margin:0;font-size:14px}
+.inflation-recent ol{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.inflation-recent li>b{display:block;font-size:12px;color:#44566a;margin-bottom:3px;font-variant-numeric:tabular-nums}
+.inflation-recent li>div{display:flex;flex-wrap:wrap;gap:5px}
+.inflation-recent button{min-height:44px;max-width:100%;border:1px solid #d3dde5;border-radius:7px;padding:6px 8px;background:#fff;color:#44566a;font:inherit;font-size:12px;text-align:left;cursor:pointer;overflow-wrap:anywhere}
+.inflation-recent button span,.inflation-recent button small{display:block}
+.inflation-recent button small{font-size:12px;color:#586b7f;margin-top:2px}
+.inflation-recent button[aria-pressed=true]{background:#edf6f6;border-color:#72a7a9;color:#125f64}
+.inflation-latest{min-height:44px;border:0;padding:6px 0;background:transparent;color:#125f64;font:inherit;font-size:12px;cursor:pointer}
+.inflation-event-purpose{font-size:12px;color:#586b7f;margin:4px 0;overflow-wrap:anywhere}

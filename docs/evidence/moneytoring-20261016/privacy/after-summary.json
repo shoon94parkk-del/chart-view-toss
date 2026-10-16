@@ -1,0 +1,11 @@
+{
+  "stats": {
+    "startTime": "2026-10-16T08:12:14.995Z",
+    "duration": 12337.539,
+    "expected": 4,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "policySha256": "f32c9d5b2535ed5b44cc7515c39fb9f2186b04349103466929131faba0944940"
+}

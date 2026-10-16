@@ -30,7 +30,7 @@ for (const view of ['news', 'macro', 'info']) {
   test(`comprehensive accessibility ${view}: previously uncovered controls and provenance`, async ({ page, qa }, info) => {
     if (view === 'macro') qa.overrides.set('/api/macro', route => route.fulfill({ json: macro }));
     await page.goto(`/#${view}`);
-    const ready = { news: '#news-list .news-card', macro: '.macro-observations', info: '.local-data-card' }[view];
+    const ready = { news: '#news-list [data-news-reader-card]', macro: '.macro-observations', info: '.local-data-card' }[view];
     await expect(page.locator(ready).first()).toBeVisible();
     if (view === 'macro') {
       await expect(page.locator('.macro-mini-chart')).toHaveAttribute('role', 'img');
@@ -40,7 +40,7 @@ for (const view of ['news', 'macro', 'info']) {
     if (view === 'news') {
       await page.locator('[data-news-sort="latest"]').click();
       await expect(page.locator('[data-news-sort="major"]')).toHaveAttribute('aria-pressed', 'false');
-      await expect(page.locator('#news-list .news-card')).toBeVisible();
+      await expect(page.locator('#news-list [data-news-reader-card]')).toBeVisible();
       await audit(page, info, 'news-latest');
     }
   });

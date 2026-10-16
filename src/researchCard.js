@@ -1,5 +1,7 @@
 import './researchCard.css';
-import { readResearchNote, saveResearchNote, deleteResearchNote } from './researchNotes.js';
+import './researchCheckpoints.css';
+import { researchCheckpointsHtml } from './researchCheckpoints.js';
+import { readResearchNote, saveResearchNote, deleteResearchNote, newResearchCheckpointOperation } from './researchNotes.js';
 import { financialHistoryData, screenerData, valuationStocks } from './api.js';
 import { loadingIndicator } from './loadingView.js';
 import { openExternal } from './tossBridge.js';
@@ -30,7 +32,9 @@ export function mountResearchCard(host,options){
  try{saved=readResearchNote(symbol);}catch{}
  selectedPeer=options.initialPeer||(options.draft?options.draft.peer:saved?.peer)||null;
  const unsavedMessage='작성 중 · 이 화면을 떠나도 이번 방문 동안 유지돼요. 다음 방문에도 보려면 저장하세요.';
- const matchesSaved=(question,peer)=>Boolean(saved)&&String(question||'').trim()===saved.question&&(peer?.symbol||null)===(saved.peer?.symbol||null);
+ const initialReviewOn=options.draft?.reviewOn??saved?.reviewOn??'';
+ const matchesSaved=(question,peer,reviewOn=initialReviewOn)=>Boolean(saved)&&String(question||'').trim()===saved.question&&(peer?.symbol||null)===(saved.peer?.symbol||null)&&reviewOn===(saved.reviewOn||'');
+ let pendingCheckpoint=null;
  const initialQuestion=options.draft?.question??saved?.question??'';
  const korean=/\.(KS|KQ)$/i.test(symbol);
  let examplePeer=null,peerRows=[];
@@ -50,11 +54,15 @@ export function mountResearchCard(host,options){
   <p class="research-form-help" id="research-help">선택한 항목의 공시 수치를 조회·계산해요. 자유로운 전망·원인 해석은 지원하지 않아요. 다른 회사 하나의 이름을 함께 적으면 같은 기간의 실적을 나란히 비교해요.</p>
   ${korean?`<details class="research-peer-picker" ${selectedPeer?'open':''}><summary>비교할 회사 선택 · 선택 사항</summary><div id="research-peer-selection" role="status">${selectedPeer?`${esc(selectedPeer.name)} (${esc(selectedPeer.symbol)}) 선택됨`:'선택하지 않으면 이전 실적과 비교해요.'}</div><div id="research-peer-options"></div>${onChoosePeer?'<button type="button" data-research-choose-peer>관심종목·검색에서 선택</button>':''}<button type="button" data-research-clear-peer ${selectedPeer?'':'hidden'}>회사 선택 해제</button><small>산업 분류가 같아도 사업 구성은 달라요. 회사 전체 공시를 비교해요.</small></details>`:''}
   <button type="submit" class="research-analyze">비교 분석하기</button>
- </form><div id="research-result" aria-live="polite"></div>
+ </form><details class="research-review-editor"><summary>다시 볼 날짜 · 선택 사항</summary><label for="research-review-on">다시 볼 날짜</label><input type="date" id="research-review-on" value="${esc(initialReviewOn)}" aria-describedby="research-review-help"><p id="research-review-help">기기에 날짜만 저장해요. 알림을 보내지 않아요. 변경 후 질문 저장을 눌러주세요.</p></details><div id="research-result" aria-live="polite"></div>
  <div class="research-foot"><span id="research-save-state" role="status">${matchesSaved(initialQuestion,selectedPeer)?'저장한 질문을 불러왔어요.':initialQuestion?unsavedMessage:'질문은 이 기기에서만 처리해요.'}</span><div><button type="button" data-research-save>질문 저장</button><button type="button" data-research-delete ${saved?'':'hidden'}>저장한 질문 삭제</button></div></div>
+ <div id="research-checkpoints-host">${researchCheckpointsHtml(saved?.checkpoints)}</div>
  ${saved&&(saved.support||saved.challenge||saved.reviewOn)?`<details class="research-legacy"><summary>이전에 적은 메모</summary><p>${esc(saved.support)}</p><p>${esc(saved.challenge)}</p>${saved.reviewOn?`<p>다시 볼 날짜 ${esc(saved.reviewOn)}</p>`:''}</details>`:''}`;
  const form=host.querySelector('form'),input=host.querySelector('textarea'),result=host.querySelector('#research-result'),saveState=host.querySelector('#research-save-state');
- const updateDraft=()=>options.onDraftChange?.({question:input.value,peer:selectedPeer});
+ const reviewInput=host.querySelector('#research-review-on');
+ reviewInput.value=initialReviewOn;
+ const updateDraft=()=>options.onDraftChange?.({question:input.value,peer:selectedPeer,reviewOn:reviewInput.value});
+ reviewInput.addEventListener('input',()=>{updateDraft();saveState.textContent=matchesSaved(input.value,selectedPeer,reviewInput.value)?'저장한 질문과 같은 내용이에요.':unsavedMessage;});
  const updateExample=()=>{examplePeer=comparisonExample(symbol,peerRows,selectedPeer);examples[2]={label:examplePeer?`${examplePeer.name}와 비교`:'다른 회사와 비교',question:examplePeer?`${examplePeer.name}와 매출 및 영업이익 증가율을 비교해줘`:''};const button=host.querySelector('[data-research-example="2"]');if(button)button.textContent=examples[2].label;};
  updateDraft();
  input.addEventListener('input',()=>{sequence++;result.innerHTML='';result.setAttribute('aria-busy','false');updateDraft();saveState.textContent='작성 중 · 이 화면을 떠나도 이번 방문 동안 유지돼요. 다음 방문에도 보려면 저장하세요.';});
@@ -72,7 +80,7 @@ export function mountResearchCard(host,options){
   selectedPeer=null;sequence++;result.innerHTML='';result.setAttribute('aria-busy','false');
   host.querySelector('#research-peer-selection').textContent='선택하지 않으면 이전 실적과 비교해요.';
   host.querySelector('[data-research-clear-peer]').hidden=true;
-  saveState.textContent=matchesSaved(input.value,selectedPeer)?'저장한 질문과 같은 내용이에요.':unsavedMessage;
+  saveState.textContent=matchesSaved(input.value,selectedPeer,reviewInput.value)?'저장한 질문과 같은 내용이에요.':unsavedMessage;
   updateDraft();
   updateExample();
  });
@@ -209,19 +217,29 @@ export function mountResearchCard(host,options){
  form.onsubmit=e=>{e.preventDefault();analyze(input.value,selectedPeer);};
  const saveButton=host.querySelector('[data-research-save]');
  const remove=host.querySelector('[data-research-delete]');
- saveButton.onclick=async()=>{
-  if(saveButton.disabled)return;
+ saveButton.onclick=async event=>{
+  if(saveButton.disabled||event?.detail>1)return;
   const operationId=newUsageOperation(),peer=selectedPeer;
   saveButton.disabled=true;
   if(remove)remove.disabled=true;
   saveState.textContent='질문을 이 기기에 저장하고 있어요.';
   void trackUsage('research_save_attempt',{operationId,params:{source:'research',screen:'detail'}});
   try{
-   saved=await saveResearchNote(symbol,{...saved,question:input.value,peer},{confirmed:true});
+   const nextInput={...saved,question:input.value,peer,reviewOn:reviewInput.value};
+   const fingerprint=JSON.stringify([nextInput.question,peer?.symbol||null,nextInput.reviewOn]);
+   if(!pendingCheckpoint||pendingCheckpoint.fingerprint!==fingerprint){
+    let quoteSnapshot=null;try{quoteSnapshot=options.getQuoteSnapshot?.()??null;}catch{}
+    pendingCheckpoint={fingerprint,operationId:newResearchCheckpointOperation(),quoteSnapshot:quoteSnapshot&&typeof quoteSnapshot==='object'?{...quoteSnapshot}:null,now:new Date()};
+   }
+   saved=await saveResearchNote(symbol,nextInput,{confirmed:true,operationId:pendingCheckpoint.operationId,quoteSnapshot:pendingCheckpoint.quoteSnapshot,now:pendingCheckpoint.now});
+   pendingCheckpoint=null;
    void trackUsage('research_save_success',{operationId,params:{source:'research',screen:'detail'}});
    if(!host.isConnected)return;
    host.querySelector('[data-research-delete]').hidden=false;
-   saveState.textContent=matchesSaved(input.value,selectedPeer)?(peer?'질문과 비교 회사를 이 기기에 저장했어요.':'질문을 이 기기에 저장했어요.'):unsavedMessage;
+   const timeline=host.querySelector('#research-checkpoints-host'),wasOpen=timeline.querySelector('[data-research-checkpoints]')?.open;
+   timeline.innerHTML=researchCheckpointsHtml(saved.checkpoints);
+   if(wasOpen)timeline.querySelector('[data-research-checkpoints]').open=true;
+   saveState.textContent=matchesSaved(input.value,selectedPeer,reviewInput.value)?(peer?'질문과 비교 회사를 이 기기에 저장했어요.':'질문을 이 기기에 저장했어요.'):unsavedMessage;
    onNotice?.('질문을 저장했어요.');
    void offerReviewOpportunity(host,{source:'research',operationId});
   }catch{
@@ -234,7 +252,7 @@ export function mountResearchCard(host,options){
   if(remove.dataset.confirm!=='true'){remove.dataset.confirm='true';remove.textContent='한 번 더 누르면 삭제';setTimeout(()=>{if(remove.isConnected){remove.dataset.confirm='false';remove.textContent='저장한 질문 삭제';}},4500);return;}
   remove.disabled=true;saveButton.disabled=true;
   saveState.textContent='저장한 질문을 삭제하고 있어요.';
-  try{await deleteResearchNote(symbol,{confirmed:true});if(!host.isConnected)return;saved=null;remove.hidden=true;remove.dataset.confirm='false';remove.textContent='저장한 질문 삭제';host.querySelector('.research-legacy')?.remove();saveState.textContent='저장한 질문을 삭제했어요. 현재 입력은 남아 있어요.';}
+  try{await deleteResearchNote(symbol,{confirmed:true});if(!host.isConnected)return;saved=null;pendingCheckpoint=null;host.querySelector('#research-checkpoints-host').innerHTML=researchCheckpointsHtml();remove.hidden=true;remove.dataset.confirm='false';remove.textContent='저장한 질문 삭제';host.querySelector('.research-legacy')?.remove();saveState.textContent='저장한 질문을 삭제했어요. 현재 입력은 남아 있어요.';}
   catch{if(host.isConnected)saveState.textContent='저장한 질문을 삭제하지 못했어요.';}
   finally{remove.disabled=false;saveButton.disabled=false;}
  };
