@@ -65,3 +65,5 @@
 개인정보 독립 페이지의 날짜3.03:1·링크3.71:1 대비 오류도 실제 axe 실패로 확인해 두 색상만 보완했다. 신규 `privacy.spec.mjs`가4기기에서 통과하고 앱/시장 데이터 요청0을 확인한다. 기존940개 전체 실행과 독립4개를 분리 기록하며, 최종 PR CI는944개를 실행한다. PICK의 추천형 금융 서비스 허용 범위는 토스 공식 정책 별도 확인 항목으로 유지하며 이번에 이름·노출·선정 로직을 바꾸지 않았다.
 
 수출→연구 저장·비교·LAB·Home의 기존 모바일 QA(320/390px)와 차트/뉴스 실패 복구·상세 이동 QA(320/390/430px)도 통과했다. 아래 PR/게시 대기는 이 문서를 커밋하는 시점의 기록이며, 정확한 커밋 CI·AIT·게시 완료 결과는 릴리스 PR 최종 댓글과 불변 증거 브랜치에서 확정한다.
+
+첫 PR CI에서는944개 E2E·Node·AIT·live contract가 통과했고, 별도 Main 감사와 Mobile QA는 같은 오래된 미지원 기사 클릭 가정으로 실패했다. [실패 상태](evidence/moneytoring-20261016/ci-initial-4d61275.json), [실제 원인](evidence/moneytoring-20261016/mobile-release-38872566031-diagnosis.md), [로컬 RED](evidence/moneytoring-20261016/audit-default-red.log), [수정 후320/390/1440 GREEN](evidence/moneytoring-20261016/audit-default-green.log)을 보존했다. 테스트만 안전한 링크 안내 동선에 맞췄고 정상 HTTPS 열기와 위험 주소 차단을 모두 검사한다. 앱 파일은 변경되지 않았다. 최종 CI·운영 배포 결과는 PR의 릴리스 기록에서 확정한다.
