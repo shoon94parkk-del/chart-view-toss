@@ -1,0 +1,22 @@
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+after home #1: ready 135 ms
+after home #2: ready 138 ms
+after home #3: ready 132 ms
+after home #4: ready 134 ms
+after home #5: ready 123 ms
+after home #6: ready 134 ms
+after home #7: ready 166 ms
+after detail/005930.KS #1: ready 300 ms
+after detail/005930.KS #2: ready 322 ms
+after detail/005930.KS #3: ready 294 ms
+after detail/005930.KS #4: ready 328 ms
+after detail/005930.KS #5: ready 362 ms
+after detail/005930.KS #6: ready 304 ms
+after detail/005930.KS #7: ready 307 ms
+after macro #1: ready 231 ms / inflation 306 ms
+after macro #2: ready 231 ms / inflation 315 ms
+after macro #3: ready 244 ms / inflation 317 ms
+after macro #4: ready 232 ms / inflation 297 ms
+after macro #5: ready 232 ms / inflation 309 ms
+after macro #6: ready 241 ms / inflation 302 ms
+after macro #7: ready 230 ms / inflation 323 ms

@@ -1,0 +1,37 @@
+[
+  {
+    "file": "scripts/apply_pick_monitor_reviews.py",
+    "unchanged": true,
+    "sha256": "6ee86a47ab7387aec701c2fd8ed62c48856384c87bbacb22df1521c1b7a608b1"
+  },
+  {
+    "file": "scripts/build_pick_monitor.py",
+    "unchanged": true,
+    "sha256": "6090a7d9707caddf63ae1fef59e692b63d76b58ac1b90827eb521346a7e0f294"
+  },
+  {
+    "file": "static/data/pick_monitor.json",
+    "unchanged": true,
+    "sha256": "dceb70c0819bfe9311d984058b5f1f828c2ea486256b895e9abe94d2bda6d499"
+  },
+  {
+    "file": "static/data/pick_monitor_history.json",
+    "unchanged": true,
+    "sha256": "6068525febe9422854a76026ecf6f554e153162747bc08eb020d3d1e2083efae"
+  },
+  {
+    "file": "static/data/pick_monitor_reviews.json",
+    "unchanged": true,
+    "sha256": "941e376d23bf4ff16cbb951a00f9d61cb3ccec2ba694a4dcfad5e6a6540c76f0"
+  },
+  {
+    "file": "static/js/ai_pick_ledger_v52.js",
+    "unchanged": true,
+    "sha256": "c8206fa1cf537a37ff79faeafa0795331f02d6463cea7d2ddc46ea07d2f65e30"
+  },
+  {
+    "file": "static/js/pick_monitor_visible_tab_v1.js",
+    "unchanged": true,
+    "sha256": "344ffa2a7dada5cf92575590b1d04bf92c237e37b516917e583f3b65351da603"
+  }
+]

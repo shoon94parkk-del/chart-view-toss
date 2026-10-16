@@ -1,0 +1,14 @@
+Initial prepush attempt: Node/build passed; browser runner did not start because an earlier task-owned preview still held4173. Stopped that server and reran the full unchanged qa:prepush; final912/912 passed with no retries. Original failure excerpt:
+
+dist/assets/exportMomentumView-DT_BsBGl.js              76.16 kB │ gzip:  19.63 kB
+dist/assets/lightweight-charts.production-d2CSQ3C3.js  162.84 kB │ gzip:  51.89 kB
+dist/assets/index-Dp5Hdsyw.js                          327.10 kB │ gzip: 108.95 kB
+✓ built in 3.12s
+Exported 27 direct-entry preview routes
+Direct-entry static route files match the production app bundle
+
+> chart-view-toss@0.16.0 test:e2e
+> playwright test
+
+Error: http://127.0.0.1:4173/ is already used, make sure that nothing is running on the port/url or set reuseExistingServer:true in config.webServer.
+

@@ -1,0 +1,245 @@
+{
+  "comparedAt": "2026-10-16T05:05:24.163Z",
+  "conditions": {
+    "viewport": "390x844",
+    "browser": "140.0.7339.16",
+    "deviceScaleFactor": 1,
+    "touch": true,
+    "CPUThrottling": "none",
+    "cache": "new context, no service workers, no-store static assets",
+    "API": "same captured/contract fixtures, 80 ms artificial API latency per request",
+    "externalNetwork": "blocked",
+    "clock": "2026-10-16T03:00:00Z",
+    "iterationsPerRoute": 7,
+    "discardedWarmupsPerRoute": 1,
+    "statisticLimit": "median/max of small local sample; not a production SLA or robust p95"
+  },
+  "fixtureSha256": "ca01ea58b593d27e0c926c6e6bf74c95c2c673f790c25362ce3c5f630030990f",
+  "scope": "Local browser rendering and request-count comparison against the PR135 source archive. Same API data and fixed 80ms response delay in both versions. This does not measure production provider latency or quote freshness.",
+  "baselineSourceCommit": "637507cd4a5ab892e25510772a0610756447f8c2",
+  "beforeMain": [
+    {
+      "file": "index-D9fZBdX5.js",
+      "bytes": 327103,
+      "gzipBytes": 108950,
+      "sha256": "b50eede2a7639e9f3b62aa40b1b10fb7f5acd6432a17b91cf69828455516e536"
+    }
+  ],
+  "afterMain": [
+    {
+      "file": "index-Dp5Hdsyw.js",
+      "bytes": 327103,
+      "gzipBytes": 108947,
+      "sha256": "ea55cbbd1c016acc29bd28f47c4957a202acd06f342ada77a7e7b5b369d66132"
+    }
+  ],
+  "compared": [
+    {
+      "route": "home",
+      "samples": 7,
+      "beforeMedianMs": 139,
+      "afterMedianMs": 134,
+      "medianChangeMs": -5,
+      "medianChangePercent": -3.6,
+      "beforeMaxMs": 150,
+      "afterMaxMs": 166,
+      "beforeStartupRequestCounts": [
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9
+      ],
+      "afterStartupRequestCounts": [
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9
+      ],
+      "beforeStartupDataPaths": [
+        "/api/market-now",
+        "/api/home-snapshot",
+        "/api/home-bootstrap",
+        "/api/quotes",
+        "/api/personalized-news",
+        "/api/activity",
+        "/api/export-momentum",
+        "/static/data/screener.json",
+        "/static/data/pick_monitor.json"
+      ],
+      "afterStartupDataPaths": [
+        "/api/market-now",
+        "/api/home-snapshot",
+        "/api/home-bootstrap",
+        "/api/quotes",
+        "/api/personalized-news",
+        "/api/activity",
+        "/api/export-momentum",
+        "/static/data/screener.json",
+        "/static/data/pick_monitor.json"
+      ],
+      "beforeStartupBytes": [
+        16371,
+        16371,
+        16371,
+        16371,
+        16371,
+        16371,
+        16371
+      ],
+      "afterStartupBytes": [
+        16371,
+        16371,
+        16371,
+        16371,
+        16371,
+        16371,
+        16371
+      ],
+      "beforeInflationMedianMs": null,
+      "beforeInflationMaxMs": null,
+      "afterInflationMedianMs": null,
+      "afterInflationMaxMs": null,
+      "overflowPx": 0
+    },
+    {
+      "route": "detail/005930.KS",
+      "samples": 7,
+      "beforeMedianMs": 292,
+      "afterMedianMs": 307,
+      "medianChangeMs": 15,
+      "medianChangePercent": 5.1,
+      "beforeMaxMs": 305,
+      "afterMaxMs": 362,
+      "beforeStartupRequestCounts": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "afterStartupRequestCounts": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "beforeStartupDataPaths": [
+        "/static/data/screener.json",
+        "/api/quotes",
+        "/api/compare",
+        "/api/financial-history",
+        "/api/valuation",
+        "/api/personalized-news",
+        "/api/activity",
+        "/api/financial-quarters",
+        "/api/business-report",
+        "/api/relationship-evidence"
+      ],
+      "afterStartupDataPaths": [
+        "/static/data/screener.json",
+        "/api/quotes",
+        "/api/compare",
+        "/api/financial-history",
+        "/api/valuation",
+        "/api/personalized-news",
+        "/api/activity",
+        "/api/financial-quarters",
+        "/api/business-report",
+        "/api/relationship-evidence"
+      ],
+      "beforeStartupBytes": [
+        3622,
+        3622,
+        3622,
+        3622,
+        3622,
+        3622,
+        3622
+      ],
+      "afterStartupBytes": [
+        3622,
+        3622,
+        3622,
+        3622,
+        3622,
+        3622,
+        3622
+      ],
+      "beforeInflationMedianMs": null,
+      "beforeInflationMaxMs": null,
+      "afterInflationMedianMs": null,
+      "afterInflationMaxMs": null,
+      "overflowPx": 0
+    },
+    {
+      "route": "macro",
+      "samples": 7,
+      "beforeMedianMs": 239,
+      "afterMedianMs": 232,
+      "medianChangeMs": -7,
+      "medianChangePercent": -2.9,
+      "beforeMaxMs": 256,
+      "afterMaxMs": 244,
+      "beforeStartupRequestCounts": [
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2
+      ],
+      "afterStartupRequestCounts": [
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2
+      ],
+      "beforeStartupDataPaths": [
+        "/api/macro",
+        "/api/activity"
+      ],
+      "afterStartupDataPaths": [
+        "/api/macro",
+        "/api/activity"
+      ],
+      "beforeStartupBytes": [
+        137413,
+        137413,
+        137413,
+        137413,
+        137413,
+        137413,
+        137413
+      ],
+      "afterStartupBytes": [
+        137413,
+        137413,
+        137413,
+        137413,
+        137413,
+        137413,
+        137413
+      ],
+      "beforeInflationMedianMs": 312,
+      "beforeInflationMaxMs": 335,
+      "afterInflationMedianMs": 309,
+      "afterInflationMaxMs": 323,
+      "overflowPx": 0
+    }
+  ]
+}

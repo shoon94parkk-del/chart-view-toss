@@ -1,0 +1,54 @@
+{
+  "stats": {
+    "startTime": "2026-10-16T04:33:26.953Z",
+    "duration": 1676938.603,
+    "expected": 912,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "projects": [
+    "desktop-chromium",
+    "narrow-chromium",
+    "android-chromium",
+    "iphone-small-webkit"
+  ],
+  "pceAttachments": [
+    {
+      "project": "android-chromium",
+      "name": "pce-320px",
+      "contentType": "image/png",
+      "file": "qa-android-chromium-pce-320px.png"
+    },
+    {
+      "project": "android-chromium",
+      "name": "pce-390px",
+      "contentType": "image/png",
+      "file": "qa-android-chromium-pce-390px.png"
+    },
+    {
+      "project": "android-chromium",
+      "name": "pce-430px",
+      "contentType": "image/png",
+      "file": "qa-android-chromium-pce-430px.png"
+    },
+    {
+      "project": "iphone-small-webkit",
+      "name": "pce-320px",
+      "contentType": "image/png",
+      "file": "qa-iphone-small-webkit-pce-320px.png"
+    },
+    {
+      "project": "iphone-small-webkit",
+      "name": "pce-390px",
+      "contentType": "image/png",
+      "file": "qa-iphone-small-webkit-pce-390px.png"
+    },
+    {
+      "project": "iphone-small-webkit",
+      "name": "pce-430px",
+      "contentType": "image/png",
+      "file": "qa-iphone-small-webkit-pce-430px.png"
+    }
+  ]
+}
