@@ -1,0 +1,15 @@
+{
+  "sourceCommit": "ab3a1b7b854b22e6758c0394322a7050f2e61d8f",
+  "summaryVersion": "22ee5b75693fdaef",
+  "generatedAt": "2026-10-18T22:41:34.569175+00:00",
+  "priceDate": "2026-10-16",
+  "weight": 22.553851592001738,
+  "holdings": 552,
+  "latestFilingCheck": {
+    "attemptedAt": "2026-10-18T22:41:18.481192+00:00",
+    "lastVerifiedAt": "2026-10-18",
+    "reason": "HTTP Error 403: Forbidden",
+    "reportDate": "2026-06-30",
+    "status": "unavailable"
+  }
+}

@@ -1,0 +1,3 @@
+320px: menu/destination identities, card density, readable sources and touch targets passed
+390px: menu/destination identities, card density, readable sources and touch targets passed
+430px: menu/destination identities, card density, readable sources and touch targets passed

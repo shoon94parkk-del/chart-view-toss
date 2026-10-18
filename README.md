@@ -133,3 +133,10 @@ npm run qa:prepush
 클라우드 Codex에서 브라우저 탐색·모바일 성능·코드 영향·데이터 경계값을 진단하는 선택 도구는 [클라우드 Codex 도구 안내](docs/CLOUD_CODEX_TOOLS.md)를 참고하세요. `npm ci --prefix tools/codex --ignore-scripts`로 별도 설치하며 앱 번들과 필수 CI 의존성은 유지합니다.
 
 전문 개발·데이터 QA·모바일 QA·독립 검토와 검증된 장기 기록은 [Codex 에이전트 협업](docs/AGENT_WORKFLOW.md)을 참고하세요. agency-agents에서 선별한 역할과 기존 Playwright/프로젝트 기억을 연결하며 e2e·claude-mem의 실제 Codex 지원 및 추가 연결 조건도 기록합니다.
+
+
+## 국민연금 추정 (0.17.0)
+
+분석 → 국민연금에서 추정 국내주식 비중·목표 차이·내부 조정액을 확인하고, 자산별 근거·13F·출처·시나리오는 눌러서 펼칩니다. 시장 종가 게시물은 공유 저장소에서 한국시간 화~토10:30에 자동 수집하며 앱은 새 게시 여부를 확인합니다. 공식 월별 잔액과 새13F 종목 매핑은 검증 후 반영합니다.
+
+`npm run build:ait`는 Render 환경변수가 없는 SDK 번들에서도 기존 공개 데이터 CDN을 기본 적용합니다. `VITE_CHARTVIEW_STATIC_DATA_BASE`로 명시한 호스트는 유지합니다. 결정론적 `qa:prepush`의 환경은 바꾸지 않으며, 원본 `.ait`의 데이터 경로와 웹 미리보기/실기기 검증 범위를 구분합니다. 자세한 검증·배포 근거는 docs/NPS_ALLOCATION_2026-10-18.md에 기록합니다.

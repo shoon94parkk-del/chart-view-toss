@@ -1,0 +1,26 @@
+
+> chart-view-toss@0.17.0 test:e2e
+> playwright test tests/e2e/core.spec.mjs --project=narrow-chromium --project=android-chromium --grep 08 선정 기록 --reporter=line --output=/tmp/chartview-font-system-qa
+
+
+Running 2 tests using 2 workers
+
+[1A[2K(node:46917) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:46916) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:46916) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:46917) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/2] [narrow-chromium] › tests/e2e/core.spec.mjs:112:1 › 08 선정 기록: 항상 펼쳐진 성과·상태와 모바일 목록
+[1A[2K[2/2] [android-chromium] › tests/e2e/core.spec.mjs:112:1 › 08 선정 기록: 항상 펼쳐진 성과·상태와 모바일 목록
+[1A[2K  2 passed (2.9s)

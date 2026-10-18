@@ -1,6 +1,6 @@
 import { SHOW_SPOTLIGHT } from './releaseScope.js';
 
-const routes = new Set(['home','chart','watch','valuation','macro','exports','memory','discover','gurus','ideas','history','news','detail','info','more','heatmap','consensus','bands','tools','notfound']);
+const routes = new Set(['home','chart','watch','valuation','macro','pension','exports','memory','discover','gurus','ideas','history','news','detail','info','more','heatmap','consensus','bands','tools','notfound']);
 if (SHOW_SPOTLIGHT) routes.add('picks');
 const aliases = {favorites:'watch',chartviewHome:'chart',search:'chart',compare:'chart',stock:'detail'};
 export function resolveRoute({pathname='/',hash=''}) {

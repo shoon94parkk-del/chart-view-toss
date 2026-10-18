@@ -28,6 +28,7 @@ const identities = {
  valuation: ['compare', '재무지표 비교', 'compare'],
  consensus: ['compare', '기간별 실적 추정치', 'compare'],
  bands: ['compare', '과거 밸류에이션', 'compare'],
+ pension: ['market', '국민연금 자산 배분 추정', 'evidence'],
  macro: ['evidence', '경제 지표와 기준', 'evidence'],
  news: ['evidence', '종목 관련 기사', 'evidence'],
  info: ['guide', '데이터와 이용 안내', 'guide'],

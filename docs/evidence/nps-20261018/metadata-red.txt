@@ -1,0 +1,63 @@
+
+> chart-view-toss@0.17.0 test:e2e
+> playwright test tests/e2e/nps-allocation.spec.mjs --project=narrow-chromium --grep same-price
+
+
+Running 1 test using 1 worker
+
+(node:13030) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:13030) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 [narrow-chromium] › tests/e2e/nps-allocation.spec.mjs:233:1 › NPS same-price publication updates filing warnings without reloading holdings (8.9s)
+
+
+  1) [narrow-chromium] › tests/e2e/nps-allocation.spec.mjs:233:1 › NPS same-price publication updates filing warnings without reloading holdings 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoContainText[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator: locator('[data-nps-method]')
+    Expected string: [32m"새 SEC 보고 수량 검증 대기"[39m
+    Received string: [31m"공식 기금 기준2026-07-312026-09-29 발표13F 수량 기준2026-06-302026-08-13 제출시장 가격 기준2026-10-16게시물 생성2026-10-1813F의 보고 수량을 유지하고 주식분할·배당을 반영한 이론적 평가예요. 이후 실제 매매는 확인할 수 없어요. 13F는 미국 상장 보고대상 증권이며 해외주식 전체가 아니에요.직접 평가액은 해외주식 공시 잔액 안에 넣고, 나머지는 ACWI 수익률로 추정해요. ETF는 펀드 단위로 계산하며 구성 종목을 다시 더하지 않아요. 달러 기준 수익률에 환율은 한 번만 적용해요.목표 20.8%에 대응하는 코스피는 약 5,047예요. 다른 자산의 현재 추정액과 가정을 유지할 때의 조건부 계산이며 매수 시점을 뜻하지 않아요.SAA 6%p · TAA 2%p는 보도에 따른 가정이에요. 합산 한도를 실제 매수 여력으로 해석하지 않아요.공시 이후 실제 매매·납입·급여지급은 확인되지 않아 순유입과 순매매를 0으로 가정합니다.13F는 미국 상장 보고대상 증권이며 해외주식 전체가 아닙니다. 미평가·미포함 잔액은 ACWI로 추정합니다.대체투자·환헤지·지수 민감도·SAA와 TAA 한도는 모형 가정이며 실제 집행과 다를 수 있습니다.공식 기금 기준일은 2026-07-31이며 새로운 월별 공시의 수동 검증이 필요합니다.시장 종가 게시물을 화면을 열 때와 5분마다 확인해요. 새 공식 기금 공시와 13F 보유 명세는 검증 후 반영돼요. 확인 시각이 새 가격이나 새 보유수량을 뜻하지는 않아요.국민연금 기금운용 현황2026.07.31 기준 · 09.29 발표 · 잠정치총 1,684.1732조 / 국내주식 418.5577조출처 보기 ↗공시 원문 ↗보건복지부 제5차 기금운용위원회2026.05.28 의결 · 6월 말부터 목표 20.8%SAA 한시 확대의 구체적 범위는 비공개출처 보기 ↗코스피 기준일·최근 종가07.31: 6,595.45 → 10.16: 5,668.05최근 종가: Investing.com · 실시간 연동 없음출처 보기 ↗관련 자료 ↗SAA 6%p · TAA 2%p한국경제 2026.06.01 취재보도상단 26.8%·28.8%는 단순 합산 시나리오출처 보기 ↗국민연금 SEC 13F · 최근 공개 2분기2026.06.30 보유분 · 08.13 제출 · 552개 항목 · $155.0797bn6월 말 수량을 유지한 추정. 미국 상장 보고대상 증권이며 해외주식 전체가 아님출처 보기 ↗SEC 전체 보유 명세 ↗13F 종목별 가격·배당·주식분할7/31 → 10/16 가격 확인 546/552 · 보고금액 99.54%Yahoo 종목별 조정종가 수익률. 미확인 가격·복잡한 기업행동·워런트는 잔여액 지수 추정에 포함. 종목별 원시 API 출처는 13F CSV 참조출처 보기 ↗CUSIP·티커 대응 검증 ↗13F 미평가·미포함 해외주식 · ACWI07.31 $156.43 → 10.16 $157.74 · 기간 분배금 없음잔여액에만 달러 기준 +0.84% 적용. 미국 포함 글로벌 ETF이며 한국 일부 노출은 근사 오차출처 보기 ↗운용사 현재가·분배금 ↗해외채권 · BNDW$67.46 → $66.37 + 분배금 $0.6038 = −0.72%미국 달러 헤지 글로벌채권 ETF. 분배금 현금 보유, 재투자 미반영출처 보기 ↗분배금 내역 ↗10월 16일 가격 ↗운용사 벤치마크 ↗달러/원 환율 · 일별 종가07.31 1,442.5227 → 10.16 1,334.5789 · −7.48%같은 제공자의 글로벌 일별 종가. 서울 15:30 종가와 다르며 모든 외화를 달러로 근사출처 보기 ↗국내채권 · 금리 변화로 추정3년 3.758→3.854% / 10년 4.261→4.182%3년·10년 50:50, 듀레이션 2.8·8.1년 및 77일 이자수익을 가정출처 보기 ↗10월 16일 금리 ↗환헤지 비율 · 기본 15%2026.04.14 기금위 기본 비율 15%, 탄력적 집행공식 기본 비율을 외화자산에 일괄 적용한 근사. 실제 집행·헤지 비용 미확인출처 보기 ↗대체투자·단기자산의 평가 시차대체: 연 6% × 77/365 + 해외주식 수익률 × 0.256%·0.25·단기 연 3%는 분석 가정이며 출처의 수치가 아님. 실제 사모자산 공정가치 평가와 다름출처 보기 ↗해외 대체투자 공시 ↗"[39m
+    Timeout: 8000ms
+
+    Call log:
+    [2m  - Expect "toContainText" with timeout 8000ms[22m
+    [2m  - waiting for locator('[data-nps-method]')[22m
+    [2m    12 × locator resolved to <div data-nps-method="" class="nps-detail-body">…</div>[22m
+    [2m       - unexpected value "공식 기금 기준2026-07-312026-09-29 발표13F 수량 기준2026-06-302026-08-13 제출시장 가격 기준2026-10-16게시물 생성2026-10-1813F의 보고 수량을 유지하고 주식분할·배당을 반영한 이론적 평가예요. 이후 실제 매매는 확인할 수 없어요. 13F는 미국 상장 보고대상 증권이며 해외주식 전체가 아니에요.직접 평가액은 해외주식 공시 잔액 안에 넣고, 나머지는 ACWI 수익률로 추정해요. ETF는 펀드 단위로 계산하며 구성 종목을 다시 더하지 않아요. 달러 기준 수익률에 환율은 한 번만 적용해요.목표 20.8%에 대응하는 코스피는 약 5,047예요. 다른 자산의 현재 추정액과 가정을 유지할 때의 조건부 계산이며 매수 시점을 뜻하지 않아요.SAA 6%p · TAA 2%p는 보도에 따른 가정이에요. 합산 한도를 실제 매수 여력으로 해석하지 않아요.공시 이후 실제 매매·납입·급여지급은 확인되지 않아 순유입과 순매매를 0으로 가정합니다.13F는 미국 상장 보고대상 증권이며 해외주식 전체가 아닙니다. 미평가·미포함 잔액은 ACWI로 추정합니다.대체투자·환헤지·지수 민감도·SAA와 TAA 한도는 모형 가정이며 실제 집행과 다를 수 있습니다.공식 기금 기준일은 2026-07-31이며 새로운 월별 공시의 수동 검증이 필요합니다.시장 종가 게시물을 화면을 열 때와 5분마다 확인해요. 새 공식 기금 공시와 13F 보유 명세는 검증 후 반영돼요. 확인 시각이 새 가격이나 새 보유수량을 뜻하지는 않아요.국민연금 기금운용 현황2026.07.31 기준 · 09.29 발표 · 잠정치총 1,684.1732조 / 국내주식 418.5577조출처 보기 ↗공시 원문 ↗보건복지부 제5차 기금운용위원회2026.05.28 의결 · 6월 말부터 목표 20.8%SAA 한시 확대의 구체적 범위는 비공개출처 보기 ↗코스피 기준일·최근 종가07.31: 6,595.45 → 10.16: 5,668.05최근 종가: Investing.com · 실시간 연동 없음출처 보기 ↗관련 자료 ↗SAA 6%p · TAA 2%p한국경제 2026.06.01 취재보도상단 26.8%·28.8%는 단순 합산 시나리오출처 보기 ↗국민연금 SEC 13F · 최근 공개 2분기2026.06.30 보유분 · 08.13 제출 · 552개 항목 · $155.0797bn6월 말 수량을 유지한 추정. 미국 상장 보고대상 증권이며 해외주식 전체가 아님출처 보기 ↗SEC 전체 보유 명세 ↗13F 종목별 가격·배당·주식분할7/31 → 10/16 가격 확인 546/552 · 보고금액 99.54%Yahoo 종목별 조정종가 수익률. 미확인 가격·복잡한 기업행동·워런트는 잔여액 지수 추정에 포함. 종목별 원시 API 출처는 13F CSV 참조출처 보기 ↗CUSIP·티커 대응 검증 ↗13F 미평가·미포함 해외주식 · ACWI07.31 $156.43 → 10.16 $157.74 · 기간 분배금 없음잔여액에만 달러 기준 +0.84% 적용. 미국 포함 글로벌 ETF이며 한국 일부 노출은 근사 오차출처 보기 ↗운용사 현재가·분배금 ↗해외채권 · BNDW$67.46 → $66.37 + 분배금 $0.6038 = −0.72%미국 달러 헤지 글로벌채권 ETF. 분배금 현금 보유, 재투자 미반영출처 보기 ↗분배금 내역 ↗10월 16일 가격 ↗운용사 벤치마크 ↗달러/원 환율 · 일별 종가07.31 1,442.5227 → 10.16 1,334.5789 · −7.48%같은 제공자의 글로벌 일별 종가. 서울 15:30 종가와 다르며 모든 외화를 달러로 근사출처 보기 ↗국내채권 · 금리 변화로 추정3년 3.758→3.854% / 10년 4.261→4.182%3년·10년 50:50, 듀레이션 2.8·8.1년 및 77일 이자수익을 가정출처 보기 ↗10월 16일 금리 ↗환헤지 비율 · 기본 15%2026.04.14 기금위 기본 비율 15%, 탄력적 집행공식 기본 비율을 외화자산에 일괄 적용한 근사. 실제 집행·헤지 비용 미확인출처 보기 ↗대체투자·단기자산의 평가 시차대체: 연 6% × 77/365 + 해외주식 수익률 × 0.256%·0.25·단기 연 3%는 분석 가정이며 출처의 수치가 아님. 실제 사모자산 공정가치 평가와 다름출처 보기 ↗해외 대체투자 공시 ↗"[22m
+
+
+      56 |  await enter(page,qa);await page.getByText('추정 전제와 출처',{exact:true}).click();await page.getByText('13F 보유 내역',{exact:true}).click();await expect(page.locator('[data-nps-holding-row]').first()).toBeVisible();const before=qa.calls.filter(c=>c.path===detailPath).length;
+      57 |  const revised=structuredClone(summary);revised.generatedAt='2026-10-18T23:40:00Z';revised.warnings.push('새 SEC 보고 수량 검증 대기');revised.market.latestFilingCheck.status='review-required';
+    > 58 |  qa.overrides.set(path,route=>route.fulfill({json:revised}));await page.getByRole('button',{name:'게시 자료 새로 확인'}).click();await expect(page.locator('[data-nps-method]')).toContainText('새 SEC 보고 수량 검증 대기');await expect(page.locator('[data-nps-status]')).toContainText('검증 대기');expect(qa.calls.filter(c=>c.path===detailPath)).toHaveLength(before);
+         |                                                                                                                                                                          ^
+      59 | });
+      60 |
+        at /workspace/chart-view-toss/tests/e2e/nps-allocation.spec.mjs:58:170
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/nps-allocation-NPS-same-pr-d35ad--without-reloading-holdings-narrow-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #4: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/nps-allocation-NPS-same-pr-d35ad--without-reloading-holdings-narrow-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/nps-allocation-NPS-same-pr-d35ad--without-reloading-holdings-narrow-chromium/error-context.md
+
+    attachment #6: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/nps-allocation-NPS-same-pr-d35ad--without-reloading-holdings-narrow-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/nps-allocation-NPS-same-pr-d35ad--without-reloading-holdings-narrow-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [narrow-chromium] › tests/e2e/nps-allocation.spec.mjs:233:1 › NPS same-price publication updates filing warnings without reloading holdings 
+
+To open last HTML report run:
+[36m[39m
+[36m  npx playwright show-report[39m
+[36m[39m

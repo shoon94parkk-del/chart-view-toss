@@ -9,7 +9,7 @@ const main = readFileSync(new URL('../src/main.js', import.meta.url), 'utf8');
 const renderSource = main.slice(main.indexOf('function renderLazyAnalysis('), main.indexOf('function syncFromLocation(')).replaceAll('import(', 'loadModule(');
 const settle = () => new Promise(resolve => setImmediate(resolve));
 const sharedRoutes = ['discover', 'heatmap', 'consensus', 'bands', 'tools'];
-const routes = ['exports', 'memory', 'ideas', 'picks', 'gurus', ...sharedRoutes];
+const routes = ['pension', 'exports', 'memory', 'ideas', 'picks', 'gurus', ...sharedRoutes];
 
 function harness(tab, loadModule) {
   const app = { innerHTML: 'startup-loading' }, retry = {}, mounts = [], cleanups = [], reloads = [], preloads = [], fetched = [];
@@ -37,6 +37,7 @@ function harness(tab, loadModule) {
     return () => cleanups.push(id);
   };
   const modules = {
+    './npsAllocationView.js': { renderNpsAllocation: args => mount('pension', args) },
     './exportMomentumView.js': { renderExportMomentumView: args => mount('exports', args) },
     './memoryPriceView.js': { renderMemoryPriceView: args => mount('memory', args) },
     './ideaView.js': { renderIdeaView: args => mount('ideas', args) },

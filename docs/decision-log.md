@@ -767,3 +767,15 @@ Classification: approved new behavior plus DRAM regression release. Preserve PR1
 ## 2026-10-16 — 뉴스 미지원 링크 감사 동선 보정
 
 첫 PR CI의 944개 E2E는 모두 통과했으나 Main audit-browser와 Mobile release QA가 공통 감사 스크립트의 미지원 HTTP 기사 버튼 클릭에서 실패했다. 실제 로그와 기본 빌드 로컬 재현이 같은 78행 실패를 확인했다. 새 리더는 미지원 주소를 일반 제목·HTTPS 안내·비활성 요약으로 표시하므로, 테스트만 현재 사용 동선에 맞췄다. 정상 매체 HTTP→HTTPS 원문 열기 검사는 유지하며, 미지원 기사의 노출/안내·외부 버튼 부재·요약 비활성·위험 주소 요청0·추가 창0을 검증한다. 수정 후320/390/1440 전체 감사 통과. 앱 소스/패키지/개인정보는 4d61275와 바이트 동일하며 성능·940+4 로컬 및944 CI 증거는 그대로 유효하다. 최종 커밋의 전체 CI/모바일 결과는 별도로 확인한다.
+
+
+## 2026-10-18 — 국민연금 요약·접기 상세와 종가 게시 확인
+
+Classification: new behavior. Add a lazy pension route under analysis evidence. The compact summary opens asset, 13F, method and scenario disclosures on demand. Reuse the app shell, native back, four bottom tabs, external URL bridge and direct-entry export. Home makes no NPS request or holdings download. Fetch matching 13F details only after opening; distinguish 99.54% report-value coverage from about 35% of official overseas equity. Keep the published estimate separate from user scenarios. Validate the denominator, FX and target calculation; older publications cannot replace newer observations.
+
+The shared data collector publishes to chart_View static/data/nps on Tue–Sat at 10:30 KST after the completed UTC day. Five-minute visible refresh checks published closes. Keep official balance, filing and price dates distinct; show new-filing review warnings. Failed prices and newly complex corporate actions preserve the prior publication. Monthly balances and CUSIP mappings require verification. The current consistent Yahoo snapshot is 22.55385%; the old site fixture was 22.7765% because FX and bond proxies differed. Preserve that historical fixture as a regression case.
+
+Independent review found that unchanged price versions could carry new SEC warnings without updating the UI. Repaint metadata for every valid summary while preserving holdings caches and focus; a browser regression covers this trigger. Verification and deployment evidence: NPS_ALLOCATION_2026-10-18.md.
+
+
+Native release packaging also supplies the existing public data CDN when no explicit host is configured. Render-only environment variables cannot establish freshness for a separate .ait artifact. Preserve explicit overrides and normal web fixture builds; retain the existing ait build contract. The build wrapper has two pure environment regressions and is verified by creating a real artifact.
