@@ -1,0 +1,23 @@
+{
+  "project": "github:shoon94parkk-del/chart-view-toss",
+  "baseSha": "ee65113",
+  "summaryFixture": "Historical independently verified 2026-10-16 seed; production uses a consistent Yahoo FX/bond proxy",
+  "sourceProductionSnapshot": "22ee5b75693fdaef",
+  "backendMergedSha": "15ebb5502f25eed5e857ab8e5bde45521638e00e",
+  "automaticRun": "https://github.com/shoon94parkk-del/chart_View/actions/runs/39173304188",
+  "automaticRunResult": "success",
+  "automaticWriterCommit": "ab3a1b7b854b22e6758c0394322a7050f2e61d8f",
+  "mainJsBaselineKB": 332.47,
+  "mainGzipBaselineKB": 110.73,
+  "mainJsAfterKB": 333.25,
+  "mainGzipAfterKB": 110.96,
+  "lazyNpsModuleKB": 19.34,
+  "lazyNpsGzipKB": 7.61,
+  "homeNpsRequests": 0,
+  "initialNpsHoldingsRequests": 0,
+  "unverified": [
+    "Android/iOS Toss Sandbox and QR",
+    "public native release"
+  ],
+  "latestSecAutomaticCheck": "unavailable; dated reviewed filing retained and visible warning"
+}

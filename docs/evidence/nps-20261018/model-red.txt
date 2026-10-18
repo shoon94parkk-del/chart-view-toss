@@ -1,0 +1,158 @@
+✖ NPS scenario revalues other assets and applies currency exactly once (1.385822ms)
+✖ domestic transfer keeps total and threshold inversion reaches target (0.264547ms)
+✖ summary validation rejects impossible, missing, inconsistent and nonfinite data (0.290777ms)
+✖ older publications never replace newer market observations (1.311259ms)
+✖ holdings require same publication and preserve missing versus real zero returns (0.287552ms)
+✖ freshness uses the price date and never calls collection time a price update (0.241402ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 0
+ℹ fail 6
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 69.026734
+
+✖ failing tests:
+
+test at tests/npsAllocation.test.mjs:10:1
+✖ NPS scenario revalues other assets and applies currency exactly once (1.385822ms)
+  AssertionError [ERR_ASSERTION]: calculateNpsScenario must be implemented
+  + actual - expected
+  
+  + 'undefined'
+  - 'function'
+  
+      at invoke (file:///workspace/chart-view-toss/tests/npsAllocation.test.mjs:8:38)
+      at TestContext.<anonymous> (file:///workspace/chart-view-toss/tests/npsAllocation.test.mjs:11:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'undefined',
+    expected: 'function',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/npsAllocation.test.mjs:14:1
+✖ domestic transfer keeps total and threshold inversion reaches target (0.264547ms)
+  AssertionError [ERR_ASSERTION]: calculateNpsScenario must be implemented
+  + actual - expected
+  
+  + 'undefined'
+  - 'function'
+  
+      at invoke (file:///workspace/chart-view-toss/tests/npsAllocation.test.mjs:8:38)
+      at TestContext.<anonymous> (file:///workspace/chart-view-toss/tests/npsAllocation.test.mjs:15:22)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'undefined',
+    expected: 'function',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/npsAllocation.test.mjs:18:1
+✖ summary validation rejects impossible, missing, inconsistent and nonfinite data (0.290777ms)
+  AssertionError [ERR_ASSERTION]: validateNpsSummary must be implemented
+  + actual - expected
+  
+  + 'undefined'
+  - 'function'
+  
+      at invoke (file:///workspace/chart-view-toss/tests/npsAllocation.test.mjs:8:38)
+      at TestContext.<anonymous> (file:///workspace/chart-view-toss/tests/npsAllocation.test.mjs:19:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'undefined',
+    expected: 'function',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/npsAllocation.test.mjs:22:1
+✖ older publications never replace newer market observations (1.311259ms)
+  AssertionError [ERR_ASSERTION]: chooseNpsPublication must be implemented
+  + actual - expected
+  
+  + 'undefined'
+  - 'function'
+  
+      at invoke (file:///workspace/chart-view-toss/tests/npsAllocation.test.mjs:8:38)
+      at TestContext.<anonymous> (file:///workspace/chart-view-toss/tests/npsAllocation.test.mjs:23:79)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'undefined',
+    expected: 'function',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/npsAllocation.test.mjs:26:1
+✖ holdings require same publication and preserve missing versus real zero returns (0.287552ms)
+  AssertionError [ERR_ASSERTION]: validateNpsHoldings must be implemented
+  + actual - expected
+  
+  + 'undefined'
+  - 'function'
+  
+      at invoke (file:///workspace/chart-view-toss/tests/npsAllocation.test.mjs:8:38)
+      at TestContext.<anonymous> (file:///workspace/chart-view-toss/tests/npsAllocation.test.mjs:28:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'undefined',
+    expected: 'function',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/npsAllocation.test.mjs:30:1
+✖ freshness uses the price date and never calls collection time a price update (0.241402ms)
+  AssertionError [ERR_ASSERTION]: npsFreshness must be implemented
+  + actual - expected
+  
+  + 'undefined'
+  - 'function'
+  
+      at invoke (file:///workspace/chart-view-toss/tests/npsAllocation.test.mjs:8:38)
+      at TestContext.<anonymous> (file:///workspace/chart-view-toss/tests/npsAllocation.test.mjs:31:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'undefined',
+    expected: 'function',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

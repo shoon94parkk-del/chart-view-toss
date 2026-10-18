@@ -1,0 +1,58 @@
+✖ native release builds use the independently updated public data path without Render-only environment (23.689112ms)
+✖ native builds preserve an explicitly configured public data host and unrelated SDK environment (0.330996ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 304.776296
+
+✖ failing tests:
+
+test at tests/aitBuildEnvironment.test.mjs:5:1
+✖ native release builds use the independently updated public data path without Render-only environment (23.689112ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'undefined'
+  - 'function'
+  
+      at make (file:///workspace/chart-view-toss/tests/aitBuildEnvironment.test.mjs:4:25)
+      at TestContext.<anonymous> (file:///workspace/chart-view-toss/tests/aitBuildEnvironment.test.mjs:7:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'undefined',
+    expected: 'function',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/aitBuildEnvironment.test.mjs:11:1
+✖ native builds preserve an explicitly configured public data host and unrelated SDK environment (0.330996ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'undefined'
+  - 'function'
+  
+      at make (file:///workspace/chart-view-toss/tests/aitBuildEnvironment.test.mjs:4:25)
+      at TestContext.<anonymous> (file:///workspace/chart-view-toss/tests/aitBuildEnvironment.test.mjs:12:19)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'undefined',
+    expected: 'function',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

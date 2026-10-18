@@ -8,7 +8,7 @@ test('guru strategy deep links and invalid strategy are explicit',()=>{
  assert.equal(resolveRoute({hash:'#gurus/unknown'}).tab,'notfound');
 });
 test('feature paths and hash re-entry resolve to the same page',()=>{
-  for(const tab of ['home','chart','watch','valuation','macro','exports','memory','discover','ideas','picks','news','info','more','heatmap','consensus','bands','tools']) {
+  for(const tab of ['home','chart','watch','valuation','macro','pension','exports','memory','discover','ideas','picks','news','info','more','heatmap','consensus','bands','tools']) {
     for(const location of [{pathname:`/${tab}`},{pathname:`/chartview/${tab}`},{hash:`#${tab}`}]) assert.equal(resolveRoute(location).tab,tab);
   }
   assert.equal(resolveRoute({pathname:'/chartviewHome'}).tab,'chart');

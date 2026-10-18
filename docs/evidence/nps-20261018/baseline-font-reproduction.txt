@@ -1,0 +1,98 @@
+
+> chart-view-toss@0.17.0 test:e2e
+> playwright test tests/e2e/core.spec.mjs --project=narrow-chromium --project=android-chromium --grep 08 선정 기록 --reporter=line --output=/tmp/chartview-baseline-font-qa
+
+
+Running 2 tests using 2 workers
+
+[1A[2K(node:47143) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:47142) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:47142) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:47143) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/2] [narrow-chromium] › tests/e2e/core.spec.mjs:112:1 › 08 선정 기록: 항상 펼쳐진 성과·상태와 모바일 목록
+[1A[2K[2/2] [android-chromium] › tests/e2e/core.spec.mjs:112:1 › 08 선정 기록: 항상 펼쳐진 성과·상태와 모바일 목록
+[1A[2K  1) [narrow-chromium] › tests/e2e/core.spec.mjs:112:1 › 08 선정 기록: 항상 펼쳐진 성과·상태와 모바일 목록 ────────────
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBeLessThanOrEqual[2m([22m[32mexpected[39m[2m)[22m
+
+    Expected: <= [32m64[39m
+    Received:    [31m64.859375[39m
+
+      103 |   for (const row of await rows.all()) {
+      104 |     await contained(row);
+    > 105 |     if (info.project.name !== 'desktop-chromium') expect((await row.boundingBox()).height).toBeLessThanOrEqual(64);
+          |                                                                                            ^
+      106 |   }
+      107 |   await touchable(rows.first());
+      108 |   await rows.first().click();
+        at /workspace/chart-view-toss/tests/e2e/core.spec.mjs:105:92
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../tmp/chartview-baseline-font-qa/core-08-선정-기록-항상-펼쳐진-성과·상태와-모바일-목록-narrow-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #4: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../tmp/chartview-baseline-font-qa/core-08-선정-기록-항상-펼쳐진-성과·상태와-모바일-목록-narrow-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../tmp/chartview-baseline-font-qa/core-08-선정-기록-항상-펼쳐진-성과·상태와-모바일-목록-narrow-chromium/error-context.md
+
+    attachment #6: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../tmp/chartview-baseline-font-qa/core-08-선정-기록-항상-펼쳐진-성과·상태와-모바일-목록-narrow-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../tmp/chartview-baseline-font-qa/core-08-선정-기록-항상-펼쳐진-성과·상태와-모바일-목록-narrow-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K  2) [android-chromium] › tests/e2e/core.spec.mjs:112:1 › 08 선정 기록: 항상 펼쳐진 성과·상태와 모바일 목록 ───────────
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBeLessThanOrEqual[2m([22m[32mexpected[39m[2m)[22m
+
+    Expected: <= [32m64[39m
+    Received:    [31m64.859375[39m
+
+      103 |   for (const row of await rows.all()) {
+      104 |     await contained(row);
+    > 105 |     if (info.project.name !== 'desktop-chromium') expect((await row.boundingBox()).height).toBeLessThanOrEqual(64);
+          |                                                                                            ^
+      106 |   }
+      107 |   await touchable(rows.first());
+      108 |   await rows.first().click();
+        at /workspace/chart-view-toss/tests/e2e/core.spec.mjs:105:92
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../tmp/chartview-baseline-font-qa/core-08-선정-기록-항상-펼쳐진-성과·상태와-모바일-목록-android-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #4: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../tmp/chartview-baseline-font-qa/core-08-선정-기록-항상-펼쳐진-성과·상태와-모바일-목록-android-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../tmp/chartview-baseline-font-qa/core-08-선정-기록-항상-펼쳐진-성과·상태와-모바일-목록-android-chromium/error-context.md
+
+    attachment #6: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../tmp/chartview-baseline-font-qa/core-08-선정-기록-항상-펼쳐진-성과·상태와-모바일-목록-android-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../tmp/chartview-baseline-font-qa/core-08-선정-기록-항상-펼쳐진-성과·상태와-모바일-목록-android-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K  2 failed
+    [narrow-chromium] › tests/e2e/core.spec.mjs:112:1 › 08 선정 기록: 항상 펼쳐진 성과·상태와 모바일 목록 ─────────────
+    [android-chromium] › tests/e2e/core.spec.mjs:112:1 › 08 선정 기록: 항상 펼쳐진 성과·상태와 모바일 목록 ────────────

@@ -1,0 +1,61 @@
+{
+  "fullCommand": "FONTCONFIG_FILE=/tmp/chartview-fonts.conf PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS=1 npm run qa:prepush",
+  "fullRun": {
+    "startTime": "2026-10-18T22:38:27.624Z",
+    "duration": 964363.297,
+    "expected": 978,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  },
+  "nodeInitial": {
+    "passed": 685,
+    "failed": 0
+  },
+  "environmentFailures": [
+    {
+      "test": "core 08 compact pick row height",
+      "projects": [
+        "narrow-chromium",
+        "android-chromium"
+      ],
+      "expectedMaxPx": 64,
+      "actualPx": 64.859375,
+      "unchangedBaseline": "ee65113 reproduces the same two failures under all-Noto font selection",
+      "correctedEnvironment": "Liberation Sans for Latin with installed Noto CJK fallback",
+      "correctedFocusedResult": "2 passed; assertions and application code unchanged"
+    }
+  ],
+  "finalNpsFocused": {
+    "passed": 36,
+    "failed": 0,
+    "projects": [
+      "desktop-chromium",
+      "narrow-chromium",
+      "android-chromium",
+      "iphone-small-webkit"
+    ],
+    "font": "Liberation Sans Latin / Noto CJK fallback"
+  },
+  "mobileContinuity": {
+    "widths": [
+      320,
+      390,
+      430
+    ],
+    "result": "passed"
+  },
+  "nativeBundle": {
+    "result": "built",
+    "file": "chartview.ait",
+    "sha256": "0b90e1ae3adabab0f2448a414b68b6f5e7b8c748c7d664b603533fc6f9b4a368",
+    "buildId": "01a1513c-4c54-7318-bda9-bf49cabd2177",
+    "publicCdn": "https://raw.githubusercontent.com/shoon94parkk-del/chart_View/main/static/data",
+    "nativeRelease": false
+  },
+  "nativeDevices": "not performed",
+  "nodeFinal": {
+    "passed": 687,
+    "failed": 0
+  }
+}
