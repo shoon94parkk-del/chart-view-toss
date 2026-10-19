@@ -52,7 +52,12 @@ export const marketNow=()=>api('/api/market-now',{ttlMs:15000,timeoutMs:HOME_DAT
 export const marketNowLive=({fresh=false}={})=>api(`/api/market-now${fresh?'?fresh=true':''}`,{ttlMs:0,force:true,timeoutMs:HOME_DATA_TIMEOUT_MS,retries:0});
 export const homeSnapshot=({force=false}={})=>api('/api/home-snapshot',{ttlMs:60000,force});
 export const homeBootstrap=({force=false}={})=>api('/api/home-bootstrap',{ttlMs:60000,force});
-export const pickMonitor=({force=false}={})=>force?api('/static/data/pick_monitor.json',{ttlMs:60000,force:true,timeoutMs:5000,retries:0}):staticData('pick_monitor.json',()=>api('/static/data/pick_monitor.json',{ttlMs:60000,timeoutMs:5000,retries:0}));
+// GitHub Actions publishes these files independently of Render deployments.
+// The backend reads the newest validated main-branch snapshot at request time.
+export const publishedData=(filename,{force=false}={})=>
+ api(`/api/published-data/${encodeURIComponent(filename)}`,{ttlMs:30000,force,timeoutMs:9000,retries:0})
+ .catch(()=>api(`/static/data/${encodeURIComponent(filename)}`,{ttlMs:15000,force,timeoutMs:5000,retries:0}));
+export const pickMonitor=({force=false}={})=>publishedData('pick_monitor.json',{force});
 export const visitorActivity=(visitorId,surface='other')=>api('/api/activity',{
  method:'POST',
  headers:{'Content-Type':'application/json'},
@@ -71,7 +76,8 @@ export const earningsEventsData=({force=false}={})=>api('/api/earnings-events',{
 export const homeInsights=(tickers=[])=>api(`/api/home-insights?tickers=${list(tickers)}`,{ttlMs:60000});
 export const personalizedNews=(tickers=[],names=[],{force=false}={})=>api(`/api/personalized-news?tickers=${list(tickers)}&names=${encodeURIComponent(names.join('|'))}${force?'&force=true':''}`,{timeoutMs:10000,retries:0,ttlMs:60000,force,cacheIf:payload=>newsResponseState(payload)==='ready'});
 export const newsSummaryData=(row,{force=false}={})=>api('/api/news-summary?'+new URLSearchParams({url:row.safeUrl||row.url||'',title:row.title||'',snippet:row.summarySeed||row.snippet||''}),{timeoutMs:12000,retries:0,ttlMs:21600000,force});
-export const screenerData=()=>staticData('screener.json',()=>api('/static/data/screener.json',{ttlMs:60000}));
+export const screenerData=()=>publishedData('screener.json');
+export const top10HistoryData=({force=false}={})=>publishedData('top10_history.json',{force});
 export const guruScreeningData=({force=false}={})=>force?api('/static/data/guru_screening.json',{ttlMs:60000,force:true}):staticData('guru_screening.json',()=>api('/static/data/guru_screening.json',{ttlMs:60000}));
 export const guruEvidenceData=(ticker,version,{force=false}={})=>readGuruEvidence(ticker,version,{
  readApi:()=>api(`/api/guru-investing/${encodeURIComponent(ticker)}?version=${encodeURIComponent(version)}`,{ttlMs:300000,force,timeoutMs:8000,retries:0}),
