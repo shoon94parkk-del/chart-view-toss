@@ -284,28 +284,34 @@ export async function renderPickLedger({shell,bindNav,displayName,focusKey=null,
     paint(position);
   }
 
-  async function loadMonitoring(force=false){
+  async function loadMonitoring(force=false,{silent=false}={}){
     if(!alive()||(force&&monitorResult.state==='loading'))return;
     const sequence=++monitorSequence;
-    monitorResult={state:'loading',value:null};
-    paintMonitoring();
+    const previous=monitorResult;
+    if(!silent||previous.state!=='ready'){
+      monitorResult={state:'loading',value:null};
+      paintMonitoring();
+    }
     const result=await (force
       ?pickMonitor({force:true}).then((value)=>({ok:true,value})).catch(()=>({ok:false,value:null}))
       :pickMonitor().then((value)=>({ok:true,value})).catch(()=>({ok:false,value:null})));
     if(!alive()||sequence!==monitorSequence)return;
+    if(silent&&!result.ok&&previous.state==='ready')return;
+    if(silent&&result.ok&&previous.state==='ready'&&previous.value?.generatedAt===result.value?.generatedAt)return;
     monitorResult=result.ok&&Array.isArray(result.value?.picks)?{state:'ready',value:result.value}:{state:'error',value:null};
     paintMonitoring();
   }
 
-  async function loadPrimary(force=false){
+  async function loadPrimary(force=false,{silent=false}={}){
     if(!alive()||primaryLoading)return;
     primaryLoading=true;
     const sequence=++primarySequence;
-    summary.innerHTML=loadingIndicator('선정 기록을 불러오고 있어요');
+    if(!silent)summary.innerHTML=loadingIndicator('선정 기록을 불러오고 있어요');
     try{
       const next=await (force?homeBootstrap({force:true}):homeBootstrap());
       if(!alive()||sequence!==primarySequence)return;
       if(!Array.isArray(next?.recommendations))throw new Error('선정 기록 형식을 확인하지 못했어요.');
+      if(silent&&payload?.version&&payload.version===next.version)return;
       payload=next;
       // An explicit dated record link takes precedence over filters from an
       // unrelated earlier visit. Back from detail retains its current view.
@@ -335,6 +341,7 @@ export async function renderPickLedger({shell,bindNav,displayName,focusKey=null,
       }
     }catch(error){
       if(!alive()||sequence!==primarySequence)return;
+      if(silent&&payload)return;
       summary.innerHTML='<div class="empty compact" role="status"><strong>PICK 성과를 불러오지 못했어요.</strong><span>잠시 후 다시 확인해주세요.</span><button type="button" class="retry" data-pick-primary-retry>선정 기록 다시 시도</button></div>';
       summary.querySelector('[data-pick-primary-retry]').onclick=()=>loadPrimary(true);
       statusStrip.innerHTML='';list.innerHTML='';count.textContent='';toolbar.hidden=true;
@@ -343,5 +350,23 @@ export async function renderPickLedger({shell,bindNav,displayName,focusKey=null,
   for(const [field,event] of [[search,'input'],[period,'change'],[perf,'change'],[status,'change'],[sort,'change']])field.addEventListener(event,()=>paint());
   void loadMonitoring();
   await loadPrimary();
-  return ()=>{disposed=true;primarySequence++;monitorSequence++;};
+  // Published daily closes are checked automatically without a page reload.
+  let lastAutomaticRefresh=Date.now();
+  const refreshPublished=()=>{
+    if(!alive()||document.visibilityState==='hidden')return;
+    lastAutomaticRefresh=Date.now();
+    void loadPrimary(true,{silent:true});
+    void loadMonitoring(true,{silent:true});
+  };
+  const timer=setInterval(refreshPublished,60000);
+  timer?.unref?.(); // Node harness must not retain a timer
+  const onVisible=()=>{
+    if(document.visibilityState!=='hidden'&&Date.now()-lastAutomaticRefresh>=30000)refreshPublished();
+  };
+  document.addEventListener?.('visibilitychange',onVisible);
+  return ()=>{
+    disposed=true;primarySequence++;monitorSequence++;
+    clearInterval(timer);
+    document.removeEventListener?.('visibilitychange',onVisible);
+  };
 }
