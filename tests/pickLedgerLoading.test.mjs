@@ -45,9 +45,10 @@ function harness({ bootstrap = async () => ({ recommendations }), monitoring = a
   const window = { scrollY: 0, scrollTo(value) { this.scrollY = typeof value === 'object' ? value.top : value; }, __chartviewRestoreScroll() {} };
   // Only resolve module imports to the controlled dependencies. All renderer
   // branches/calculations below are the current repository implementation.
-  const render = new Function('document', 'window', 'homeBootstrap', 'pickMonitor', 'selectionKey', 'loadingIndicator', 'requestAnimationFrame', 'PICK_METHOD', 'pickPriceBasis',
+  const render = new Function('document', 'window', 'homeBootstrap', 'pickMonitor', 'selectionKey', 'loadingIndicator', 'requestAnimationFrame', 'PICK_METHOD', 'pickPriceBasis', 'marketIntelEnabled', 'loadMarketIntelligence',
     source.replace(/^import .*;\n/gm, '').replace(/^export /gm, '') + '\nreturn renderPickLedger;'
-  )(document, window, bootstrap, monitoring, selectionKey, loadingIndicator, callback => queueMicrotask(callback), PICK_METHOD, pickPriceBasis);
+  )(document, window, bootstrap, monitoring, selectionKey, loadingIndicator, callback => queueMicrotask(callback), PICK_METHOD, pickPriceBasis,
+    () => false, async () => ({status: 'disabled'}));
   return { node, nodes, window, render: options => render({ shell: html => html, bindNav() {}, displayName: symbol => symbol, ...options }) };
 }
 
