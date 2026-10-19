@@ -3,6 +3,7 @@ import { homeBootstrap, pickMonitor } from './api.js';
 import { loadingIndicator } from './loadingView.js';
 import { PICK_METHOD, pickPriceBasis } from './pickPerformanceBasis.js';
 import { auditedSectionMarkup, dedupAuditedPicks, loadThreeAgentFeed, threeAgentEnabled } from './threeAgentFeed.js';
+import { debateDashboardEnabled } from './debateDashboard.js';
 
 const STATUS={
   SELL_REVIEW:{label:'재점검',icon:'🔴',cls:'sell',order:0},
@@ -128,7 +129,7 @@ export async function renderPickLedger({shell,bindNav,displayName,focusKey=null,
   document.querySelector('#app').innerHTML=shell(`
     <section class="task-head pick-ledger-head"><div><span class="page-kicker">CHARTVIEW</span><h2>선정 기록·성과</h2><p>과거에 선정한 이유와 이후 성과·점검 내용을 확인해요. 실시간 인기 순위가 아니에요.</p></div></section>
     
-    ${import.meta.env?.VITE_DEBATE_DASHBOARD_ENABLED==='1'?'<button type="button" id="debate-dashboard-toggle" class="pick-ledger-detail-link" aria-expanded="false" aria-controls="debate-dashboard-host">3인 AI 토론 기록 보기 ▾</button><section id="debate-dashboard-host" hidden aria-label="3인 토론 대시보드"></section>':''}
+    ${debateDashboardEnabled()?'<button type="button" id="debate-dashboard-toggle" class="pick-ledger-detail-link" aria-expanded="false" aria-controls="debate-dashboard-host">3인 AI 토론 기록 보기 ▾</button><section id="debate-dashboard-host" hidden aria-label="3인 토론 대시보드"></section>':''}
     <section class="pick-ledger-overview" aria-label="성과·상태 요약">
       <section class="pick-ledger-summary" id="pick-ledger-summary">${loadingIndicator('선정 기록을 불러오고 있어요')}<div class="skeleton quote"></div></section>
       <section class="pick-ledger-status-strip" id="pick-ledger-status-strip">${loadingIndicator('점검 상태를 확인하고 있어요')}<div class="skeleton quote"></div></section>
