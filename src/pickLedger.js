@@ -2,6 +2,7 @@ import { selectionKey } from './valueDiscovery.js';
 import { homeBootstrap, pickMonitor } from './api.js';
 import { loadingIndicator } from './loadingView.js';
 import { PICK_METHOD, pickPriceBasis } from './pickPerformanceBasis.js';
+import { auditedSectionMarkup, dedupAuditedPicks, loadThreeAgentFeed, threeAgentEnabled } from './threeAgentFeed.js';
 
 const STATUS={
   SELL_REVIEW:{label:'재점검',icon:'🔴',cls:'sell',order:0},
@@ -132,6 +133,7 @@ export async function renderPickLedger({shell,bindNav,displayName,focusKey=null,
     </section>
     <div class="pick-ledger-notices">
       <details class="pick-ledger-policy" id="pick-ledger-policy"><summary>신호 안내 · 자동 매도 아님</summary><p>매도검토는 자동 매도 확정이 아니며 가격·차트만으로 판정하지 않아요. 단기 기술 경고는 펀더멘털 매도검토와 별도이며 기술 경고만으로 자동 매도 확정하지 않아요.</p></details>
+      <section id="pick-ledger-three-agent" aria-label="3인 감사 PICK" hidden></section>
     </div>
     <p class="pick-ledger-focus-note" role="status"></p>
     <div class="pick-ledger-list-tools">
@@ -156,6 +158,7 @@ export async function renderPickLedger({shell,bindNav,displayName,focusKey=null,
   const toolbar=document.querySelector('#pick-ledger-toolbar');
   const list=document.querySelector('#pick-ledger-list');
   const count=document.querySelector('#pick-ledger-count');
+  const threeAgentHost=document.querySelector('#pick-ledger-three-agent');
 
   const search=document.querySelector('#pick-ledger-search');
   const period=document.querySelector('#pick-ledger-period');
@@ -170,6 +173,37 @@ export async function renderPickLedger({shell,bindNav,displayName,focusKey=null,
   searchOptions.open=Boolean(viewState.searchOpen);
   if(!restoreView)delete viewState.returnScroll;
   let disposed=false,payload=null,rows=[],latestPickDate='',focusApplied=restoreView;
+  // v2 audited picks: kept in a separate array, never merged into `rows` or
+  // the ledger's performance math. Only used for the collapsed section + dupes.
+  let auditedPicks=[],auditedDoc=null,threeAgentSequence=0;
+  // Independent, opt-in v2 load: disabled by default, PICK-ledger route only
+  // (never home loading). Failure can never blank or delay existing PICKs.
+  async function loadThreeAgent(){
+    if(!threeAgentEnabled())return;
+    const sequence=++threeAgentSequence;
+    const outcome=await loadThreeAgentFeed();
+    if(disposed||sequence!==threeAgentSequence||!threeAgentHost.isConnected)return;
+    threeAgentHost.hidden=false;
+    if(outcome.status!=='ready'&&outcome.status!=='stale'){
+      threeAgentHost.innerHTML='<div class="pick-ledger-basis">3인 감사 PICK: '+esc(outcome.error||'연결 대기')+' · 기존 PICK 기록은 정상 제공됩니다.</div>';
+      return;
+    }
+    auditedDoc=outcome.document;auditedPicks=auditedDoc.picks;
+    threeAgentHost.innerHTML=auditedSectionMarkup(auditedDoc,dedupAuditedPicks(rows,auditedPicks))
+      +(outcome.status==='stale'?'<p class="pick-ledger-basis">자료 지연: 7일 이상 된 분석입니다.</p>':'');
+    bindNav();
+  }
+  // Re-badge overlaps once ledger rows arrive; never rewrites `rows`.
+  function refreshThreeAgentDupes(){
+    if(!auditedPicks.length||!threeAgentHost.isConnected)return;
+    const {duplicates}=dedupAuditedPicks(rows,auditedPicks);
+    const set=new Set(duplicates.map(p=>String(p.ticker).toUpperCase().split('.')[0]));
+    threeAgentHost.querySelectorAll('.three-agent-pick').forEach(card=>{
+      const dupe=set.has(card.dataset.ticker);
+      const badge=card.querySelector('.three-agent-dupe');
+      if(badge)badge.hidden=!dupe;
+    });
+  }
   let primarySequence=0,monitorSequence=0,primaryLoading=false;
   let monitorResult={state:'loading',value:null};
   const alive=()=>!disposed&&list.isConnected;
@@ -252,6 +286,7 @@ export async function renderPickLedger({shell,bindNav,displayName,focusKey=null,
         requestAnimationFrame(()=>{if(alive()&&target.isConnected){target.scrollIntoView({block:'start'});button.focus({preventScroll:true});}});
       }else document.querySelector('.pick-ledger-focus-note').textContent='요청한 날짜의 선정 기록을 찾지 못했어요. 다른 기록을 대신 열지 않았어요.';
     }
+    refreshThreeAgentDupes();
   }
 
   function paintMonitoring(){
@@ -342,6 +377,7 @@ export async function renderPickLedger({shell,bindNav,displayName,focusKey=null,
   }
   for(const [field,event] of [[search,'input'],[period,'change'],[perf,'change'],[status,'change'],[sort,'change']])field.addEventListener(event,()=>paint());
   void loadMonitoring();
+  void loadThreeAgent();
   await loadPrimary();
-  return ()=>{disposed=true;primarySequence++;monitorSequence++;};
+  return ()=>{disposed=true;primarySequence++;monitorSequence++;threeAgentSequence++;};
 }

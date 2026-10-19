@@ -145,3 +145,27 @@
   .pick-ledger-tech-alert>summary{min-height:34px;padding:0 8px}
   .pick-ledger-policy{margin-bottom:5px}
 }
+
+/* 3인 감사 PICK (v2) — collapsed section, disjoint from ledger PICK rows. */
+#three-agent-v2-details{margin-top:6px}
+.three-agent-picks{display:flex;flex-direction:column;gap:6px;padding:0 9px 8px}
+.three-agent-pick{border:1px solid #e2e5ea;border-radius:8px;padding:7px 9px;font-size:8px;line-height:1.4;background:#fafbfc}
+.three-agent-pick header{display:flex;align-items:center;gap:5px;flex-wrap:wrap;font-size:8.5px}
+.three-agent-badge{background:#2f6df6;color:#fff;border-radius:4px;padding:1px 5px;font-size:7.5px;font-weight:700}
+.three-agent-market{color:#8b95a1;font-size:7.5px}
+.three-agent-verdict{border-radius:4px;padding:1px 6px;font-weight:700;font-size:8px}
+.three-agent-verdict.up{background:#e5f3e9;color:#14703c}
+.three-agent-verdict.down{background:#fdeceb;color:#b42318}
+.three-agent-verdict.flat{background:#eef1f4;color:#5b6570}
+.three-agent-status{color:#5b6570;font-size:7.5px}
+.three-agent-dupe{background:#fff3d6;color:#8a5a00;border-radius:4px;padding:1px 5px;font-size:7.5px;font-weight:700}
+.three-agent-thesis{margin:4px 0}
+.three-agent-score,.three-agent-perf{margin:4px 0;color:#2c333b}
+.three-agent-note{display:block;color:#8b95a1;font-size:7.5px;font-weight:400}
+.three-agent-claims{margin:4px 0;padding-left:8px;border-left:2px solid #d6dbe2}
+.three-agent-claims p{margin:2px 0}
+.three-agent-pick details{margin:4px 0}
+.three-agent-pick ul{margin:2px 0 2px 14px;padding:0}
+.three-agent-evidence{margin:4px 0}
+.three-agent-link{margin-right:8px;color:#2f6df6}
+.three-agent-pick footer{color:#8b95a1;font-size:7.5px;display:flex;gap:10px;flex-wrap:wrap}

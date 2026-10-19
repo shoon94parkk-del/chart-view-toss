@@ -779,3 +779,8 @@ Independent review found that unchanged price versions could carry new SEC warni
 
 
 Native release packaging also supplies the existing public data CDN when no explicit host is configured. Render-only environment variables cannot establish freshness for a separate .ait artifact. Preserve explicit overrides and normal web fixture builds; retain the existing ait build contract. The build wrapper has two pure environment regressions and is verified by creating a real artifact.
+
+
+## 2026-10-19 — 3인 감사 PICK v2 UI (muse/three-agent-v2-ui-20261019)
+
+intel-os `docs/FEED_V2_CONTRACT.md` (감사 통과 AUDITED_PICKS, schema_version 2)를 소비하는 별도 UI. 새 모듈 `src/threeAgentFeed.js`가 `GET /api/intelligence/feed/v2`를 fail-closed로 검증(audit_status==PASS·해시 존재·https 근거·비공개 키 이름 스캔·빈 picks 거부)하고, PICK 원장 화면에 접기형 "3인 감사 PICK" 영역을 추가. 빌드타임 `VITE_THREE_AGENT_FEED_ENABLED=1` 미설정 시 기본 비활성이며, 홈 로딩·TOP10·히스토리·모바일 내비에는 손대지 않고 추가 LLM 호출도 없다. 점수(조사 우선도 vs 최종 판단)·메르/농구/멍이 핵심 주장·추천 이후 수익률/MDD/벤치마크 대비는 서버가 사전 계산해 넣은 선택 확장 필드만 렌더링하고, 없으면 표시하지 않는다. 기존 PICK 원장과는 `dedupAuditedPicks`로 티커 겹침을 "기존 PICK과 중복" 뱃지로만 표시하고 원장 행·수익률 집계에 절대 합산하지 않는다. 테스트: `tests/threeAgentFeed.test.mjs` (계약·확장·중복방지), `tests/pickLedgerLoading.test.mjs`에 비활성 기본값 테스트 추가.
