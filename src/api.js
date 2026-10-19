@@ -54,9 +54,22 @@ export const homeSnapshot=({force=false}={})=>api('/api/home-snapshot',{ttlMs:60
 export const homeBootstrap=({force=false}={})=>api('/api/home-bootstrap',{ttlMs:60000,force});
 // GitHub Actions publishes these files independently of Render deployments.
 // The backend reads the newest validated main-branch snapshot at request time.
-export const publishedData=(filename,{force=false}={})=>
- api(`/api/published-data/${encodeURIComponent(filename)}`,{ttlMs:30000,force,timeoutMs:9000,retries:0})
- .catch(()=>api(`/static/data/${encodeURIComponent(filename)}`,{ttlMs:15000,force,timeoutMs:5000,retries:0}));
+const publishedSchemas={
+ 'pick_monitor.json':'picks',
+ 'screener.json':'stocks',
+ 'top10_history.json':'days',
+};
+export const publishedData=(filename,{force=false}={})=>{
+ const key=publishedSchemas[filename];
+ const valid=value=>!key||Array.isArray(value?.[key]);
+ const requireValid=value=>{
+   if(!valid(value))throw new Error('Published JSON data has an invalid schema');
+   return value;
+ };
+ return api(`/api/published-data/${encodeURIComponent(filename)}`,{ttlMs:30000,force,timeoutMs:9000,retries:0})
+   .then(requireValid)
+   .catch(()=>api(`/static/data/${encodeURIComponent(filename)}`,{ttlMs:15000,force,timeoutMs:5000,retries:0}).then(requireValid));
+};
 export const pickMonitor=({force=false}={})=>publishedData('pick_monitor.json',{force});
 export const visitorActivity=(visitorId,surface='other')=>api('/api/activity',{
  method:'POST',
