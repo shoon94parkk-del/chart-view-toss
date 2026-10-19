@@ -22,3 +22,11 @@
 .debate-source{padding:8px 12px;font-size:9px;overflow-wrap:anywhere;color:#718096}
 .debate-empty{padding:18px 10px;text-align:center;font-size:12px;color:#8b95a1}
 @media(max-width:380px){.debate-controls{grid-template-columns:1fr}.debate-panel{padding:11px 9px}}
+
+.debate-phase-body{font-family:inherit;white-space:normal}
+.debate-md-heading{font-size:12px;font-weight:850;color:#162d4c;line-height:1.5;margin:13px 0 5px}
+.debate-md-p{font-size:11px;line-height:1.75;white-space:pre-wrap;margin:3px 0}
+.debate-md-list{padding-left:10px;margin:4px 0;font-size:11px;line-height:1.65}
+.debate-md-quote{margin:7px 0;padding:7px 9px;background:#eef4ff;border-left:3px solid #3182f6;border-radius:3px;font-size:11px;line-height:1.55}
+.debate-md-hr{border:0;border-top:1px solid #e1e8f0;margin:10px 0}
+.debate-line-space{height:5px}

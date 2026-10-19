@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {validateDebateArchive,debateDetailMarkup,debateListMarkup} from '../src/debateDashboard.js';
+import {validateDebateArchive,debateDetailMarkup,debateListMarkup,formatDebateMarkdown} from '../src/debateDashboard.js';
 const now=Date.parse('2026-10-19T23:00:00+09:00');
 const valid=()=>({schema_version:1,kind:'debate_archive',publication_status:'EXPLICITLY_APPROVED',
  generated_at:'2026-10-19T22:00:00+09:00',debates:[{id:'apr-20261013',company:'에이피알',ticker:'278470',
@@ -32,4 +32,17 @@ test('untrusted markdown is escaped instead of becoming HTML',()=>{
  const d=valid();d.debates[0].phases[0].text='<script>alert(1)</script>';
  const html=debateDetailMarkup(d.debates[0]);
  assert.doesNotMatch(html,/<script>/);assert.match(html,/&lt;script&gt;/);
+});
+
+test('safe readable Markdown and stage filters',()=>{
+ const html=formatDebateMarkdown('# 투자 분석\n**핵심** 근거\n- 주장\n<script>alert("x")</script>');
+ assert.match(html, /debate-md-heading/);
+ assert.match(html, /<strong>핵심<\/strong>/);
+ assert.match(html, /debate-md-list/);
+ assert.doesNotMatch(html, /<script>/);
+ assert.match(html, /&lt;script&gt;/);
+ const doc=valid();
+ const onlyAttack=debateDetailMarkup(doc.debates[0],'attack');
+ assert.match(onlyAttack, /관측 근거/);
+ assert.doesNotMatch(onlyAttack, /근거 기반 분석/);
 });

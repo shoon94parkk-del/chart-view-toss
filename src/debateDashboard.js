@@ -40,16 +40,32 @@ export async function loadDebateArchive(){
     return validateDebateArchive(doc);
   }catch{return {status:'unavailable'};}
 }
+// Restrained Markdown formatter: escape user-authored text BEFORE applying
+// minimal formatting. No raw HTML, links, images or embedded scripts.
+export function formatDebateMarkdown(source) {
+  const escaped = escapeHtml(source).replace(/\r\n?/g,'\n');
+  const inline = line => line.replace(/\*\*([^*\n]{1,320})\*\*/g,'<strong>$1</strong>');
+  return escaped.split('\n').map(line=>{
+    if(!line.trim()) return '<div class="debate-line-space"></div>';
+    const h=line.match(/^(#{1,5})\s+(.+)$/);
+    if(h)return '<h5 class="debate-md-heading">'+inline(h[2])+'</h5>';
+    if(/^[-*]\s+/.test(line))return '<p class="debate-md-list">• '+inline(line.replace(/^[-*]\s+/,''))+'</p>';
+    if(/^\d+[.)]\s+/.test(line))return '<p class="debate-md-list">'+inline(line)+'</p>';
+    if(/^>\s?/.test(line))return '<blockquote class="debate-md-quote">'+inline(line.replace(/^>\s?/,''))+'</blockquote>';
+    if(/^---+\s*$/.test(line))return '<hr class="debate-md-hr">';
+    return '<p class="debate-md-p">'+inline(line)+'</p>';
+  }).join('');
+}
 function renderPhase(p){
   return '<details class="debate-phase"><summary><span class="debate-actor">'+
     escapeHtml(roleLabel[p.role])+'</span><span>'+escapeHtml(stageLabel[p.stage])+' · '+escapeHtml(p.title)+
     '</span><span class="debate-arrow">⌄</span></summary>'+
-    '<pre class="debate-phase-body">'+escapeHtml(p.text)+'</pre>'+
+    '<div class="debate-phase-body">'+formatDebateMarkdown(p.text)+'</div>'+
     '<div class="debate-source">원본 문서: '+escapeHtml(p.source_path)+'</div></details>';
 }
-export function debateDetailMarkup(d){
+export function debateDetailMarkup(d, stage='all'){
   const sortOrder={context:0,phase1:1,attack:2,rebuttal:3,final:4,audit:5};
-  const phases=[...d.phases].sort((a,b)=>sortOrder[a.stage]-sortOrder[b.stage]);
+  const phases=d.phases.filter(p=>stage==='all'||p.stage===stage).sort((a,b)=>sortOrder[a.stage]-sortOrder[b.stage]);
   const count=new Set(d.phases.filter(p=>p.role!=='other').map(p=>p.role)).size;
   return '<article class="debate-detail">'+
     '<div class="debate-detail-head"><strong>'+escapeHtml(d.company)+'</strong><span>'+escapeHtml(d.ticker)+' · '+escapeHtml(d.date)+'</span></div>'+
@@ -102,7 +118,7 @@ export async function mountDebateDashboard(host){
         const body=card.querySelector('[data-debate-body]');
         if(body&&!body.dataset.loaded){
           const item=byId.get(card.dataset.debateId);
-          if(item){body.innerHTML=debateDetailMarkup(item);body.dataset.loaded='1';}
+          if(item){body.innerHTML=debateDetailMarkup(item,select.value);body.dataset.loaded='1';}
         }
       });
     });
