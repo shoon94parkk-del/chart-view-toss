@@ -1,0 +1,24 @@
+.debate-panel{padding:15px 13px;margin:10px 0 16px;border-radius:16px;border:1px solid #e4eaf3;background:#f9fbff}
+.debate-kicker{font-size:10px;font-weight:900;letter-spacing:.1em;color:#3182f6}
+.debate-panel-head h3{font-size:17px;line-height:1.3;margin:5px 0 6px}
+.debate-panel-head p{font-size:11px;color:#697586;line-height:1.5;margin:0}
+.debate-warning{font-size:10px;line-height:1.55;background:#fff8eb;border:1px solid #f1e2ba;color:#745c29;padding:10px;border-radius:10px;margin:12px 0}
+.debate-controls{display:grid;grid-template-columns:minmax(0,1fr) 120px;gap:7px;margin:12px 0}
+.debate-controls input,.debate-controls select{width:100%;min-height:41px;min-width:0;border:1px solid #d9e2ef;border-radius:10px;background:#fff;color:#333d4b;font-size:11px;padding:0 9px}
+.debate-card{border:1px solid #e2e8f0;border-radius:12px;background:#fff;margin:9px 0;overflow:hidden}
+.debate-card>summary{display:flex;align-items:center;gap:9px;padding:12px 10px;cursor:pointer;list-style:none}
+.debate-card>summary::-webkit-details-marker,.debate-phase>summary::-webkit-details-marker{display:none}
+.debate-company{flex:1;min-width:0}.debate-company strong,.debate-company small{display:block;overflow-wrap:anywhere}
+.debate-company strong{font-size:13px}.debate-company small{color:#8a94a5;font-size:10px;margin-top:4px}
+.debate-verdict{font-size:10px;font-weight:800;padding:5px 7px;border-radius:8px;background:#edf4ff;color:#225fa7}
+.debate-detail{padding:12px;border-top:1px solid #e5eaf2}
+.debate-detail-head{display:flex;flex-wrap:wrap;justify-content:space-between;gap:5px;font-size:12px}
+.debate-detail-head span,.debate-topic{color:#778399;font-size:10px}
+.debate-metrics{display:flex;flex-wrap:wrap;gap:6px}.debate-metrics span{font-size:10px;background:#eef3f9;padding:6px;border-radius:7px}
+.debate-phase{margin:7px 0;border:1px solid #e5eaf2;border-radius:10px;background:#fff;overflow:hidden}
+.debate-phase>summary{display:flex;gap:8px;align-items:center;cursor:pointer;list-style:none;padding:11px;font-size:11px;line-height:1.5}
+.debate-actor{font-size:10px;font-weight:800;color:#315b98;padding:3px 6px;background:#e9f2ff;border-radius:7px;flex:none}
+.debate-arrow{margin-left:auto}.debate-phase-body{white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;font:inherit;font-size:11px;line-height:1.7;color:#354258;background:#fafbfd;padding:12px;margin:0;max-height:420px;overflow-y:auto}
+.debate-source{padding:8px 12px;font-size:9px;overflow-wrap:anywhere;color:#718096}
+.debate-empty{padding:18px 10px;text-align:center;font-size:12px;color:#8b95a1}
+@media(max-width:380px){.debate-controls{grid-template-columns:1fr}.debate-panel{padding:11px 9px}}

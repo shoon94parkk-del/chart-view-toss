@@ -127,6 +127,7 @@ export async function renderPickLedger({shell,bindNav,displayName,focusKey=null,
   viewState.routeFocusKey=focusKey;
   document.querySelector('#app').innerHTML=shell(`
     <section class="task-head pick-ledger-head"><div><span class="page-kicker">CHARTVIEW</span><h2>선정 기록·성과</h2><p>과거에 선정한 이유와 이후 성과·점검 내용을 확인해요. 실시간 인기 순위가 아니에요.</p></div></section>
+    
     <section class="pick-ledger-overview" aria-label="성과·상태 요약">
       <section class="pick-ledger-summary" id="pick-ledger-summary">${loadingIndicator('선정 기록을 불러오고 있어요')}<div class="skeleton quote"></div></section>
       <section class="pick-ledger-status-strip" id="pick-ledger-status-strip">${loadingIndicator('점검 상태를 확인하고 있어요')}<div class="skeleton quote"></div></section>
@@ -152,6 +153,25 @@ export async function renderPickLedger({shell,bindNav,displayName,focusKey=null,
     <section class="pick-ledger-list" id="pick-ledger-list">${loadingIndicator('종목 목록을 불러오고 있어요')}<div class="skeleton watch"></div><div class="skeleton watch"></div></section>
   `,'선정 기록·성과');
   bindNav();
+  const debateToggle=document.querySelector('#debate-dashboard-toggle');
+  const debateHost=document.querySelector('#debate-dashboard-host');
+  if(debateToggle&&debateHost){
+    let loaded=false;
+    debateToggle.addEventListener('click',async()=>{
+      const show=debateHost.hidden;
+      debateHost.hidden=!show;
+      debateToggle.setAttribute('aria-expanded',String(show));
+      if(show&&!loaded){
+        loaded=true;
+        try{
+          const [module]=await Promise.all([import('./debateDashboard.js'),import('./debateDashboard.css')]);
+          if(debateHost.isConnected)await module.mountDebateDashboard(debateHost);
+        }catch{
+          if(debateHost.isConnected)debateHost.textContent='토론 대시보드 모듈을 불러오지 못했어요.';
+        }
+      }
+    });
+  }
 
   const summary=document.querySelector('#pick-ledger-summary');
   const statusStrip=document.querySelector('#pick-ledger-status-strip');
