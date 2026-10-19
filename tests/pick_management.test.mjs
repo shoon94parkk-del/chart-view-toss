@@ -60,8 +60,8 @@ test('PICK technical timing alerts stay advisory and visibly separate from funda
 });
 
 
-test('pick monitor prefers the static data CDN and does not block IDEA LAB first render',()=>{
-  assert.match(api,/pickMonitor=\(\{force=false\}=\{\}\)=>force\?api\([\s\S]*?:staticData\('pick_monitor\.json'/);
+test('pick monitor reads current published data and does not block IDEA LAB first render',()=>{
+  assert.match(api,/pickMonitor=\(\{force=false\}=\{\}\)=>publishedData\('pick_monitor\.json'/);
   assert.ok(ideaView.includes("const monitorPromise=pickMonitor().catch(()=>null);"));
   assert.ok(ideaView.includes("const [data,companyMeta]=await Promise.all(["));
   assert.ok(ideaView.includes("void monitorPromise.then(payload=>applyMonitorStatuses(host,ideas,payload));"));
