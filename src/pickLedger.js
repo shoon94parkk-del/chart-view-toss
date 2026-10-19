@@ -2,6 +2,7 @@ import { selectionKey } from './valueDiscovery.js';
 import { homeBootstrap, pickMonitor } from './api.js';
 import { loadingIndicator } from './loadingView.js';
 import { PICK_METHOD, pickPriceBasis } from './pickPerformanceBasis.js';
+import { loadMarketIntelligence, marketIntelEnabled } from './intelligenceFeed.js';
 
 const STATUS={
   SELL_REVIEW:{label:'재점검',icon:'🔴',cls:'sell',order:0},
@@ -133,6 +134,7 @@ export async function renderPickLedger({shell,bindNav,displayName,focusKey=null,
     <div class="pick-ledger-notices">
       <details class="pick-ledger-policy" id="pick-ledger-policy"><summary>신호 안내 · 자동 매도 아님</summary><p>매도검토는 자동 매도 확정이 아니며 가격·차트만으로 판정하지 않아요. 단기 기술 경고는 펀더멘털 매도검토와 별도이며 기술 경고만으로 자동 매도 확정하지 않아요.</p></details>
     </div>
+    <section id="pick-ledger-ai-feed" aria-label="3인 시장 조사 후보" hidden></section>
     <p class="pick-ledger-focus-note" role="status"></p>
     <div class="pick-ledger-list-tools">
       <p class="pick-ledger-count" id="pick-ledger-count"></p>
@@ -151,6 +153,7 @@ export async function renderPickLedger({shell,bindNav,displayName,focusKey=null,
   `,'선정 기록·성과');
   bindNav();
 
+  const intelHost=document.querySelector('#pick-ledger-ai-feed');
   const summary=document.querySelector('#pick-ledger-summary');
   const statusStrip=document.querySelector('#pick-ledger-status-strip');
   const toolbar=document.querySelector('#pick-ledger-toolbar');
@@ -170,6 +173,30 @@ export async function renderPickLedger({shell,bindNav,displayName,focusKey=null,
   searchOptions.open=Boolean(viewState.searchOpen);
   if(!restoreView)delete viewState.returnScroll;
   let disposed=false,payload=null,rows=[],latestPickDate='',focusApplied=restoreView;
+  // Independent, opt-in load: API absence may never blank or delay PICK history.
+  async function loadIntelligence(){
+    if (!marketIntelEnabled()) return;
+    const outcome=await loadMarketIntelligence();
+    if (disposed || !intelHost.isConnected) return;
+    intelHost.hidden=false;
+    if (outcome.status !== 'ready' && outcome.status !== 'stale') {
+      intelHost.innerHTML='<div class="pick-ledger-basis">AI 시장 조사: 연결 대기 · 기존 PICK 기록은 정상 제공됩니다.</div>';
+      return;
+    }
+    const doc=outcome.document;
+    const coverage=doc.coverage_status==='COMPLETE'?'입력 유니버스 확인됨':'시장 데이터 일부 누락';
+    const rows=doc.candidates.slice(0,3).map(row=>(
+      '<li>'+esc(row.ticker)+' · 조사 우선도 '+Number(row.score).toFixed(1)
+      +'점 · '+esc(row.market)+' · 정식 추천 아님</li>'
+    )).join('');
+    intelHost.innerHTML='<details class="pick-ledger-policy"><summary>3인 에이전트 시장 조사 후보'
+      +(outcome.status==='stale'?' · 자료 지연':'')+'</summary><p>'
+      +esc(coverage)+' · '+esc(doc.as_of)+' 기준 · '
+      +doc.market_events.length+'건 시장 검토 이벤트 · PICK과 별개</p>'
+      +(rows?'<ul>'+rows+'</ul>':'<p>검증된 조사 후보 없음 또는 아직 연결 전</p>')
+      +'<p>100점 만점은 조사 우선순위이며, 메르·농구·멍이 최종 토론이나 매수 판단이 아닙니다.</p></details>';
+  }
+
   let primarySequence=0,monitorSequence=0,primaryLoading=false;
   let monitorResult={state:'loading',value:null};
   const alive=()=>!disposed&&list.isConnected;
@@ -342,6 +369,7 @@ export async function renderPickLedger({shell,bindNav,displayName,focusKey=null,
   }
   for(const [field,event] of [[search,'input'],[period,'change'],[perf,'change'],[status,'change'],[sort,'change']])field.addEventListener(event,()=>paint());
   void loadMonitoring();
+  void loadIntelligence();
   await loadPrimary();
   return ()=>{disposed=true;primarySequence++;monitorSequence++;};
 }

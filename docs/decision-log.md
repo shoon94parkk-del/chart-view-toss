@@ -779,3 +779,8 @@ Independent review found that unchanged price versions could carry new SEC warni
 
 
 Native release packaging also supplies the existing public data CDN when no explicit host is configured. Render-only environment variables cannot establish freshness for a separate .ait artifact. Preserve explicit overrides and normal web fixture builds; retain the existing ait build contract. The build wrapper has two pure environment regressions and is verified by creating a real artifact.
+
+
+## 2026-10-19 — Optional 3-person market-intelligence feed on PICK ledger
+
+A new isolated read-only client `src/intelligenceFeed.js` validates schema v1 from the shared backend's future `GET /api/intelligence/feed`. Enabled only via build-time `VITE_MARKET_INTELLIGENCE_ENABLED=1`; default off. The PICK ledger gets a separate collapsed “3인 에이전트 시장 조사 후보” section, without replacing `/api/home-bootstrap`, `/static/data/pick_monitor.json`, existing route/state/performance calculations, or requesting data on Home. Events remain REVIEW_ONLY and research scores are never BUY/PICK verdicts. Future/old/unverified schemas render unavailable/stale as such; no API currently exists until Muse wires and deploys the read-only backend. Production and AIT remain unchanged unless explicitly enabled and redeployed, then on-device validation is required. Tests `tests/intelligenceFeed.test.mjs` cover blocked auto-BUY, staleness, provenance and schema contracts.
