@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {homeBootstrap,pickMonitor,clearApiCache} from '../src/api.js';
 
-for(const [name,load] of [['bootstrap',homeBootstrap],['monitor',pickMonitor]]) {
+for(const [name,load] of [['bootstrap',homeBootstrap]]) {
   test(`${name}: explicit retry replaces a cached malformed successful response`,async()=>{
     const original=globalThis.fetch;let calls=0;
     globalThis.fetch=async()=>Response.json(++calls===1?{invalid:true}:{recommendations:[],stocks:[]});
@@ -14,6 +14,24 @@ for(const [name,load] of [['bootstrap',homeBootstrap],['monitor',pickMonitor]]) 
     }finally{globalThis.fetch=original;clearApiCache();}
   });
 }
+
+test('monitor: malformed published response falls back to validated dated snapshot',async()=>{
+ const original=globalThis.fetch;let calls=0;
+ globalThis.fetch=async url=>{
+  calls++;
+  const path=new URL(String(url)).pathname;
+  return Response.json(path.startsWith('/api/published-data/')?{invalid:true}:{picks:[],generatedAt:'2026-10-19T16:41:35+09:00'});
+ };
+ clearApiCache();
+ try {
+  const first=await pickMonitor();
+  assert.deepEqual(first,{picks:[],generatedAt:'2026-10-19T16:41:35+09:00'});
+  assert.deepEqual(await pickMonitor(),first);
+  assert.equal(calls,2);
+  assert.deepEqual(await pickMonitor({force:true}),first);
+  assert.equal(calls,4);
+ }finally{globalThis.fetch=original;clearApiCache();}
+});
 
 test('news explicit retry reaches the provider-error retry route without retaining a failed body',async()=>{
  const {personalizedNews}=await import('../src/api.js');
