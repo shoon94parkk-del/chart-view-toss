@@ -189,7 +189,7 @@ export async function renderPickLedger({shell,bindNav,displayName,focusKey=null,
       return;
     }
     auditedDoc=outcome.document;auditedPicks=auditedDoc.picks;
-    threeAgentHost.innerHTML=auditedSectionMarkup(auditedDoc,dedupAuditedPicks(rows,auditedPicks))
+    threeAgentHost.innerHTML=auditedSectionMarkup(auditedDoc,dedupAuditedPicks(rows,auditedPicks),{fetchedAt:outcome.fetched_at})
       +(outcome.status==='stale'?'<p class="pick-ledger-basis">자료 지연: 7일 이상 된 분석입니다.</p>':'');
     bindNav();
   }

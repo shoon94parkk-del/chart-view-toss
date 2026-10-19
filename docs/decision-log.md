@@ -784,3 +784,27 @@ Native release packaging also supplies the existing public data CDN when no expl
 ## 2026-10-19 — 3인 감사 PICK v2 UI (muse/three-agent-v2-ui-20261019)
 
 intel-os `docs/FEED_V2_CONTRACT.md` (감사 통과 AUDITED_PICKS, schema_version 2)를 소비하는 별도 UI. 새 모듈 `src/threeAgentFeed.js`가 `GET /api/intelligence/feed/v2`를 fail-closed로 검증(audit_status==PASS·해시 존재·https 근거·비공개 키 이름 스캔·빈 picks 거부)하고, PICK 원장 화면에 접기형 "3인 감사 PICK" 영역을 추가. 빌드타임 `VITE_THREE_AGENT_FEED_ENABLED=1` 미설정 시 기본 비활성이며, 홈 로딩·TOP10·히스토리·모바일 내비에는 손대지 않고 추가 LLM 호출도 없다. 점수(조사 우선도 vs 최종 판단)·메르/농구/멍이 핵심 주장·추천 이후 수익률/MDD/벤치마크 대비는 서버가 사전 계산해 넣은 선택 확장 필드만 렌더링하고, 없으면 표시하지 않는다. 기존 PICK 원장과는 `dedupAuditedPicks`로 티커 겹침을 "기존 PICK과 중복" 뱃지로만 표시하고 원장 행·수익률 집계에 절대 합산하지 않는다. 테스트: `tests/threeAgentFeed.test.mjs` (계약·확장·중복방지), `tests/pickLedgerLoading.test.mjs`에 비활성 기본값 테스트 추가.
+
+
+## 2026-10-19 — v2 조회시각 표시 + 백엔드→Toss 계약 테스트 (P5) / PR #139/#140 정리 (P6)
+
+`loadThreeAgentFeed`에 `fetched_at`(조회시각)을 추가하고
+`auditedSectionMarkup(doc, dedup, {fetchedAt})`이 분석 기준일(as_of)·
+피드 갱신시각(generated_at)·조회시각을 함께 표시 — 과거 스냅샷을 현재
+분석처럼 위장하지 않는다. `src/pickLedger.js`의 v2 로드가 fetchedAt을 전달.
+
+백엔드→Toss 계약 테스트: chart-view 백엔드의 allowlist projection이
+실제로 생성한 JSON을 `tests/fixtures/feed-v2-extended.json`으로 커밋하고,
+`tests/threeAgentFeedContract.test.mjs` 6개가 전체 클라이언트 파이프라인
+(검증→ext 추출→마크업→중복 뱃지)을 검증. 미생성 규칙(확장 필드 없으면
+표시 없음·불량값은 해당 필드만 제거), 기존 PICK 원장 비합산 보장 포함.
+확장 필드 불량 시 픽 전체가 아니라 해당 필드만 제거하는 것은 기존
+`tests/threeAgentFeed.test.mjs`의 의도적 설계 유지.
+
+PR #139(v1: `src/intelligenceFeed.js`, 조사 후보만) vs #140(v2: 감사 통과
+PICK): 의미적 중복 없음. 파일 겹침은 `src/pickLedger.js`(서로 다른 섹션·
+함수 추가)와 `tests/pickLedgerLoading.test.mjs`,
+`docs/decision-log.md`. 순차 머지 시 두 `load*` 함수와 두 `<section>`
+host를 모두 유지하도록 해소. 순서 무관, 직접 머지하지 않음.
+`npm test` 703개 통과. 운영 플래그 미활성
+(`VITE_THREE_AGENT_FEED_ENABLED` 미설정 시 기본 비활성).

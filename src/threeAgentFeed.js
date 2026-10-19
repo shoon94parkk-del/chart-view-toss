@@ -129,11 +129,12 @@ export function validateThreeAgentFeed(doc, nowMs = Date.now()) {
 
 export async function loadThreeAgentFeed({force = false} = {}) {
   if (!threeAgentEnabled()) return {status:'disabled'};
+  const fetchedAt = new Date().toISOString();
   try {
     const doc = await api('/api/intelligence/feed/v2', {ttlMs:60_000, timeoutMs:6000, retries:0, force});
-    return validateThreeAgentFeed(doc);
+    return {...validateThreeAgentFeed(doc), fetched_at: fetchedAt};
   } catch (error) {
-    return {status:'unavailable', error:'3인 감사 PICK 데이터가 아직 연결되지 않았어요.'};
+    return {status:'unavailable', error:'3인 감사 PICK 데이터가 아직 연결되지 않았어요.', fetched_at: fetchedAt};
   }
 }
 
@@ -193,7 +194,7 @@ export function auditedPickMarkup(pick, {duplicate = false} = {}) {
   </article>`;
 }
 
-export function auditedSectionMarkup(doc, dedup) {
+export function auditedSectionMarkup(doc, dedup, opts = {}) {
   const trust = doc.coverage_status === 'COMPLETE' && doc.quality_status === 'COMPLETE'
     ? '입력 유니버스 확인 · 지표 데이터 정상'
     : '시장 데이터 일부 누락 · 지표 일부 확인';
@@ -202,7 +203,10 @@ export function auditedSectionMarkup(doc, dedup) {
   const dupeNote = dedup && dedup.duplicates.length
     ? ` · 기존 PICK ${dedup.duplicates.length}건 중복`
     : '';
+  // P5: 분석 기준일(as_of)·피드 갱신시각(generated_at)·조회시각을 명시.
+  // 과거 스냅샷을 현재 분석처럼 위장하지 않는다.
+  const fetchedNote = opts.fetchedAt ? ` · 조회 ${esc(opts.fetchedAt)}` : '';
   return `<details class="pick-ledger-policy" id="three-agent-v2-details"><summary>3인 감사 PICK · ${doc.picks.length}건${dupeNote}</summary>
-    <p>${esc(trust)} · 분석 기준 ${esc(doc.as_of)}${doc.generated_at !== doc.as_of ? ` · 갱신 ${esc(doc.generated_at)}` : ''} · 별도 집계로만 표시되며 기존 PICK 성과 계산에 합산되지 않아요.</p>
+    <p>${esc(trust)} · 분석 기준 ${esc(doc.as_of)}${doc.generated_at !== doc.as_of ? ` · 갱신 ${esc(doc.generated_at)}` : ''}${fetchedNote} · 별도 집계로만 표시되며 기존 PICK 성과 계산에 합산되지 않아요.</p>
     <div class="three-agent-picks">${cards}</div></details>`;
 }
