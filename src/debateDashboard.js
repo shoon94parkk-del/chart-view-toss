@@ -67,7 +67,7 @@ export function debateListMarkup(debates, query='',stage='all'){
     '<summary><span class="debate-company"><strong>'+escapeHtml(d.company)+'</strong><small>'+
       escapeHtml(d.ticker)+' · '+escapeHtml(d.date)+'</small></span>'+
     '<span class="debate-verdict">'+escapeHtml(d.verdict==='UNKNOWN'?'판단 미확인':d.verdict)+'</span><span>⌄</span></summary>'+
-    debateDetailMarkup(d)+'</details>').join('');
+    '<div class="debate-lazy" data-debate-body></div></details>').join('');
 }
 export async function mountDebateDashboard(host){
   if(!host || !debateDashboardEnabled())return;
@@ -91,7 +91,22 @@ export async function mountDebateDashboard(host){
   const docs=outcome.document.debates;
   const search=host.querySelector('[data-debate-search]');
   const select=host.querySelector('[data-debate-stage]');
-  const paint=()=>{list.innerHTML=debateListMarkup(docs,search.value,select.value);};
+  const byId=new Map(docs.map(d=>[d.id,d]));
+  const paint=()=>{
+    list.innerHTML=debateListMarkup(docs,search.value,select.value);
+    // Render the full transcript only when the user expands a debate.
+    // Avoid building megabytes of hidden HTML on mobile.
+    list.querySelectorAll('[data-debate-id]').forEach(card=>{
+      card.addEventListener('toggle',()=>{
+        if(!card.open)return;
+        const body=card.querySelector('[data-debate-body]');
+        if(body&&!body.dataset.loaded){
+          const item=byId.get(card.dataset.debateId);
+          if(item){body.innerHTML=debateDetailMarkup(item);body.dataset.loaded='1';}
+        }
+      });
+    });
+  };
   search.addEventListener('input',paint);
   select.addEventListener('change',paint);
   paint();
