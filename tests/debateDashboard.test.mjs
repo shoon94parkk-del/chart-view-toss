@@ -79,7 +79,7 @@ test('a completed smoke does not masquerade as fourteen days of recurring logs',
  const o=validateShadowStatus(archived,Date.parse('2026-10-20T07:10:00+00:00'));
  assert.equal(o.status,'ready');
  const markup=shadowStatusMarkup(o);
- assert.match(markup,/시작 전/);
+ assert.match(markup,/정기 로그 미연결/);
  assert.match(markup,/0\/14일/);
  assert.match(markup,/스모크 테스트 성공 기록/);
 });
