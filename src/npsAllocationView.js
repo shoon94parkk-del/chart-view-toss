@@ -35,11 +35,14 @@ export function renderNpsAllocation({state,shell,bindNav,isCurrent=()=>true}) {
   if(refreshing){status.textContent=data?'게시 자료 확인 중 · 표시된 기준일을 유지해요':'게시 자료 확인 중';return;}
   if(!data){status.textContent='자료를 불러오지 못했어요. 새로 확인해 주세요.';return;}
   const checked=session.checkedAt?new Date(session.checkedAt).toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'}):null;
-  status.textContent=checkingFailed?'새 게시 확인 실패 · 이전 유효 자료를 유지해요':`게시 확인${checked?' '+checked:''}${npsFreshness(data).stale?' · 가격 기준일이 오래됐어요':''}${filingNote}`;
+  status.textContent=checkingFailed?'새 게시 확인 실패 · 이전 유효 자료를 유지해요':`게시 확인${checked?' '+checked:''}${npsFreshness(data).stale?' · 시장 데이터 갱신 지연':''}${filingNote}`;
  }
  function paintSummary() {
   const result=calculateNpsScenario(data),direction=result.adjustment<0?'축소':result.adjustment>0?'확대':'조정 없음';
-  find('[data-nps-summary]').innerHTML=`<div class="nps-weight-row"><div><span class="nps-eyebrow">추정 국내주식 비중</span><strong data-nps-weight>${number(result.weight,2)}<small>%</small></strong></div><span class="nps-estimate-tag">모형 추정</span></div><dl class="nps-metrics"><div><dt>목표 비중</dt><dd>${number(data.inputs.target,1)}%</dd></div><div><dt>목표 대비</dt><dd data-nps-gap>${signed(result.gap,2)}%p</dd></div><div><dt>목표까지 내부 조정</dt><dd data-nps-adjustment>${number(Math.abs(result.adjustment),1)}조 원 <span>${direction}</span></dd></div></dl><p class="nps-summary-note">총자산을 유지한 자산 간 조정액이에요. 실제 매매 예상액과 달라요.</p><p class="nps-price-date">가격 기준 <b data-nps-price-date>${esc(data.marketDate)}</b> 종가</p>`;
+  const low=calculateNpsScenario(data,{target:data.inputs.target-.5}).targetKospi;
+  const high=calculateNpsScenario(data,{target:data.inputs.target+.5}).targetKospi;
+  const targetChange=result.targetKospi/data.inputs.kospi*100-100;
+  find('[data-nps-summary]').innerHTML=`<div class="nps-weight-row"><div><span class="nps-eyebrow">추정 국내주식 비중</span><strong data-nps-weight>${number(result.weight,2)}<small>%</small></strong></div><span class="nps-estimate-tag">모형 추정</span></div><dl class="nps-metrics"><div><dt>목표 비중</dt><dd>${number(data.inputs.target,1)}%</dd></div><div><dt>목표 대비</dt><dd data-nps-gap>${signed(result.gap,2)}%p</dd></div><div><dt>목표까지 내부 조정</dt><dd data-nps-adjustment>${number(Math.abs(result.adjustment),1)}조 원 <span>${direction}</span></dd></div></dl><div class="nps-target-band"><span>목표 ${number(data.inputs.target,1)}% 도달 예상 코스피</span><strong data-nps-target-kospi>${number(result.targetKospi,0)}<small>pt</small></strong><p>현재 ${number(data.inputs.kospi,0)}pt 대비 ${signed(targetChange,1)}% · 근접 범위(±0.5%p): <b data-nps-target-range>${number(low,0)}~${number(high,0)}pt</b></p></div><p class="nps-summary-note">총자산을 유지한 자산 간 조정액이에요. 실제 매매 예상액과 달라요. 목표선은 다른 자산을 고정한 조건부 추정이에요.</p><p class="nps-price-date">가격 기준 <b data-nps-price-date>${esc(data.marketDate)}</b> 종가</p>`;
   find('[data-nps-evidence]').hidden=false;
  }
  function paintAssets() {
@@ -66,7 +69,7 @@ export function renderNpsAllocation({state,shell,bindNav,isCurrent=()=>true}) {
    if(Object.values(scenario).some(value=>value===''||!Number.isFinite(Number(value))))throw new Error();
    const patch=Object.fromEntries(Object.entries(scenario).map(([key,value])=>[key,Number(value)]));
    const result=calculateNpsScenario(data,patch);
-   find('[data-nps-scenario-result]').innerHTML=`<span class="nps-scenario-tag">${modified?'사용자 가정':'게시 가정'}</span><p>국내주식 비중 <strong>${number(result.weight,2)}%</strong><br>목표 대비 ${signed(result.gap,2)}%p · 내부 조정 ${number(Math.abs(result.adjustment),1)}조 원 ${result.adjustment<0?'축소':'확대'}</p><small>환율·수익률은 ${esc(data.baseline.date)} 대비예요. 다른 입력은 게시 가정을 유지해요.</small>`;
+   find('[data-nps-scenario-result]').innerHTML=`<span class="nps-scenario-tag">${modified?'사용자 가정':'게시 가정'}</span><p>국내주식 비중 <strong>${number(result.weight,2)}%</strong><br>목표 대비 ${signed(result.gap,2)}%p · 내부 조정 ${number(Math.abs(result.adjustment),1)}조 원 ${result.adjustment<0?'축소':'확대'}<br>목표 비중 도달 코스피 <strong>${number(result.targetKospi,0)}pt</strong></p><small>환율·수익률은 ${esc(data.baseline.date)} 대비예요. 다른 입력은 게시 가정을 유지해요.</small>`;
   }catch{find('[data-nps-scenario-result]').textContent='입력 범위를 확인해 주세요. 코스피는 0보다 커야 하고 변화율은 −100%보다 커야 해요.';}
  }
  function paintHoldingsIntro() {
