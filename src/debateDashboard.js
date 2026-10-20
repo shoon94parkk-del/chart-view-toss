@@ -6,10 +6,10 @@ const STATUSES = new Set(['COMPLETED','PARTIAL','BLOCKED']);
 const TICKER = /^[A-Z0-9.\-^]{1,18}$/;
 const escapeHtml = x => String(x ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const stamp = x => typeof x==='string' && /(?:Z|[+-]\d\d:\d\d)$/.test(x) && Number.isFinite(Date.parse(x));
-const filename = x => typeof x==='string' && x.startsWith('records/debates/') && x.endsWith('.md') && !x.includes('..') && x.length<260;
+const filename = x => typeof x==='string' && /^records\/(?:debates|shadow)\/[A-Za-z0-9_./-]+\.md$/.test(x) && !x.includes('..') && x.length<260;
 const stageLabel = {phase1:'1차 독립 분석',attack:'공격',rebuttal:'반론·답변',final:'최종 평가',audit:'검증 기록',context:'배경'};
 const roleLabel = {mer:'메르',nonggu:'농구천재',meng:'멍이',other:'기록'};
-export const debateDashboardEnabled=()=>import.meta.env?.VITE_DEBATE_DASHBOARD_ENABLED==='1';
+export const debateDashboardEnabled=()=>import.meta.env?.VITE_DEBATE_DASHBOARD_ENABLED!=='0';
 export function validateDebateArchive(doc, now=Date.now()) {
   if(!doc || doc.schema_version!==1 || doc.kind!=='debate_archive' ||
      doc.publication_status!=='EXPLICITLY_APPROVED' || !stamp(doc.generated_at) ||
@@ -33,12 +33,36 @@ export function validateDebateArchive(doc, now=Date.now()) {
   }
   return {status:'ready',document:doc};
 }
-export async function loadDebateArchive(){
-  if(!debateDashboardEnabled())return {status:'disabled'};
+export async function readPublishedJson(filename, validate){
+  // A curated public snapshot is bundled with the static web preview.
+  // Never fetch private repository files, tokens, or raw portfolio data.
+  const base=import.meta.env?.BASE_URL||'/';
+  const path=base.replace(/\/?$/,'/')+'data/'+filename;
+  const controller=new AbortController();
+  const timeout=setTimeout(()=>controller.abort(),2500);
   try{
-    const doc=await api('/api/intelligence/debates',{ttlMs:60000,timeoutMs:6000,retries:0});
-    return validateDebateArchive(doc);
-  }catch{return {status:'unavailable'};}
+    const response=await fetch(path,{cache:'no-store',signal:controller.signal});
+    if(!response.ok)throw new Error('snapshot is not published');
+    const checked=validate(await response.json());
+    if(checked.status!=='ready')throw new Error('snapshot is invalid/unapproved');
+    return {...checked,source:'published_snapshot'};
+  }finally{clearTimeout(timeout);}
+}
+export async function loadDebateArchive({preferLive=false}={}){
+  if(!debateDashboardEnabled())return {status:'disabled'};
+  const live=async()=>{
+    const doc=await api('/api/intelligence/debates',
+      {ttlMs:60000,timeoutMs:2600,retries:0,force:preferLive});
+    const checked=validateDebateArchive(doc);
+    if(checked.status!=='ready')throw new Error('unapproved archive feed');
+    return {...checked,source:'approved_api'};
+  };
+  if(preferLive){try{return await live();}catch{}}
+  try{return await readPublishedJson('intelligence_debates_public.json',validateDebateArchive);}
+  catch{
+    if(!preferLive){try{return await live();}catch{}}
+    return {status:'unavailable'};
+  }
 }
 // Restrained Markdown formatter: escape user-authored text BEFORE applying
 // minimal formatting. No raw HTML, links, images or embedded scripts.
@@ -76,7 +100,7 @@ export function validateShadowStatus(doc, now=Date.now()) {
 export function shadowStatusMarkup(result, now=Date.now()) {
   if(result.status!=='ready')return '<p class="debate-empty">운영 보고가 연결되지 않았어요. 뮤즈의 실제 14일 Shadow 실행 기록이 게시되면 집계가 표시돼요.</p>';
   const d=result.document;
-  const state=d.state==='NOT_STARTED'?'시작 전':d.state==='RUNNING'?'관찰 진행 중':
+  const state=d.state==='NOT_STARTED'?'정기 로그 미연결':d.state==='RUNNING'?'관찰 진행 중':
     d.state==='PAUSED'?'일시 중단':'종료';
   const effective=result.stale?'최근 보고 지연':state;
   const elapsed=d.period_started_at?
@@ -90,23 +114,32 @@ export function shadowStatusMarkup(result, now=Date.now()) {
      elapsed+'/14일 경과</span></div>'+
     '<div class="debate-shadow-stats">'+cells.map(([k,v])=>'<span>'+escapeHtml(k)+
      ' <b>'+String(v)+'</b></span>').join('')+'</div>'+
-    (d.smoke_runs_total>0&&d.state==='NOT_STARTED'?'<p class="debate-shadow-notice">스모크 테스트 성공 기록은 있지만 정기 실행 로그가 없어 14일 카운트는 시작 전으로 표시돼요.</p>':'')+
+    (d.smoke_runs_total>0&&d.state==='NOT_STARTED'?'<p class="debate-shadow-notice">스모크 성공 기록은 있지만 정기 실행 로그가 아직 연결되지 않았어요. 14일 경과는 실제 실행 로그를 통해 집계합니다.</p>':'')+
     '<p class="debate-shadow-freshness">마지막 실행: '+escapeHtml(d.last_execution_at||'아직 없음')+
       ' · 보고 갱신: '+escapeHtml(d.generated_at)+(result.stale?' · 최신 실행 확인 필요':'')+'</p>';
 }
-export async function loadShadowStatus(){
+export async function loadShadowStatus({preferLive=false}={}){
   if(!debateDashboardEnabled())return {status:'disabled'};
-  try{
-    const doc=await api('/api/intelligence/shadow/status',{ttlMs:60000,timeoutMs:6000,retries:0});
-    return validateShadowStatus(doc);
-  }catch{return {status:'unavailable'};}
+  const live=async()=>{
+    const doc=await api('/api/intelligence/shadow/status',
+      {ttlMs:60000,timeoutMs:2600,retries:0,force:preferLive});
+    const checked=validateShadowStatus(doc);
+    if(checked.status!=='ready')throw new Error('unapproved Shadow feed');
+    return {...checked,source:'approved_api'};
+  };
+  if(preferLive){try{return await live();}catch{}}
+  try{return await readPublishedJson('intelligence_shadow_status.json',validateShadowStatus);}
+  catch{
+    if(!preferLive){try{return await live();}catch{}}
+    return {status:'unavailable'};
+  }
 }
 function renderPhase(p){
   return '<details class="debate-phase"><summary><span class="debate-actor">'+
     escapeHtml(roleLabel[p.role])+'</span><span>'+escapeHtml(stageLabel[p.stage])+' · '+escapeHtml(p.title)+
     '</span><span class="debate-arrow">⌄</span></summary>'+
     '<div class="debate-phase-body">'+formatDebateMarkdown(p.text)+'</div>'+
-    '<div class="debate-source">원본 문서: '+escapeHtml(p.source_path)+'</div></details>';
+    '<div class="debate-source">내부 근거 경로: '+escapeHtml(p.source_path)+'</div></details>';
 }
 export function debateDetailMarkup(d, stage='all'){
   const sortOrder={context:0,phase1:1,attack:2,rebuttal:3,final:4,audit:5};
@@ -133,13 +166,15 @@ export function debateListMarkup(debates, query='',stage='all'){
 export async function mountDebateDashboard(host){
   if(!host || !debateDashboardEnabled())return;
   host.innerHTML='<div class="debate-panel"><div class="debate-panel-head"><div><span class="debate-kicker">RESEARCH ARCHIVE</span>'+
-    '<h3>메르 · 농구천재 · 멍이 토론</h3><p>초안부터 상호 공격·답변·최종평가까지 기록 그대로 확인합니다.</p></div>'+
-    '</div><section class="debate-shadow" aria-label="14일 무인 관찰 현황"><div data-shadow-status>관찰 현황을 불러오고 있어요.</div></section>'+    '<p class="debate-warning">승인된 과거 토론 문서만 표시해요. 실시간 매매 신호나 감사된 PICK과 별개예요.</p>'+
+    '<h3>메르 · 농구천재 · 멍이 토론</h3><p>공개용 요약을 통해 독립 분석·상호 반박·최종 판단을 살펴봅니다.</p></div>'+
+    '</div><section class="debate-shadow" aria-label="14일 무인 관찰 현황"><div data-shadow-status>관찰 현황을 불러오고 있어요.</div></section>'+    '<p class="debate-warning">공개 가능한 과거 연구 요약입니다. 비공개 원문, 실시간 매매 신호, 추천 PICK이 아닙니다.</p>'+
     '<div class="debate-controls"><input type="search" placeholder="종목명·종목코드 검색" aria-label="토론 검색" data-debate-search>'+
     '<select aria-label="토론 단계" data-debate-stage><option value="all">모든 단계</option>'+
     '<option value="phase1">1차 독립 분석</option><option value="attack">공격</option>'+
     '<option value="rebuttal">반론</option><option value="final">최종 평가</option><option value="audit">감사</option></select></div>'+
-    '<div class="debate-controls-footer"><small>화면이 열려 있는 동안 5분마다 갱신</small><button type="button" data-debate-refresh>새로고침</button></div>'+    '<div class="debate-list" aria-live="polite">승인된 토론 기록을 확인하고 있어요.</div></div>';
+    '<div class="debate-controls-footer"><small>공개 요약 · 5분마다 최신 승인 피드 확인</small><button type="button" data-debate-refresh>새로고침</button></div>'+    '<p data-debate-feed-meta class="debate-feed-meta" role="status"></p>'+
+    '<div class="debate-list" aria-live="polite">승인된 토론 기록을 확인하고 있어요.</div></div>';
+  const feedMeta=host.querySelector('[data-debate-feed-meta]');
   const list=host.querySelector('.debate-list');
   const shadow=host.querySelector('[data-shadow-status]');
   const refreshButton=host.querySelector('[data-debate-refresh]');
@@ -170,16 +205,17 @@ export async function mountDebateDashboard(host){
     });
   };
   let loading=false;
-  const refresh=async()=>{
+  const refresh=async(preferLive=false)=>{
     if(loading || !host.isConnected)return;
     loading=true;
     refreshButton.disabled=true;
     try{
-      const [archive,shadowStatus]=await Promise.all([loadDebateArchive(),loadShadowStatus()]);
+      const [archive,shadowStatus]=await Promise.all([loadDebateArchive({preferLive}),loadShadowStatus({preferLive})]);
       if(!host.isConnected)return;
       shadow.innerHTML=shadowStatusMarkup(shadowStatus);
       if(archive.status==='ready'){
         docs=archive.document.debates;
+        feedMeta.textContent='공개 요약 '+docs.length+'건 · '+archive.document.generated_at.slice(0,10)+' 기준 · '+(archive.source==='approved_api'?'승인된 API 피드':'게시된 정적 스냅샷');
         paint();
       }else if(!docs.length){
         list.innerHTML='<p class="debate-empty">'+(archive.status==='unavailable'?
@@ -193,11 +229,12 @@ export async function mountDebateDashboard(host){
   };
   search.addEventListener('input',paint);
   select.addEventListener('change',paint);
-  refreshButton.addEventListener('click',refresh);
-  await refresh();
+  refreshButton.addEventListener('click',()=>void refresh(true));
+  await refresh(false);
   // Poll only while mounted/open; no backend analysis runs on dashboard visits.
   const pollId=setInterval(()=>{
     if(!host.isConnected){clearInterval(pollId);return;}
-    if(!host.hidden)void refresh();
+    if(!host.hidden)void refresh(true);
   },300000);
+  return ()=>clearInterval(pollId);
 }

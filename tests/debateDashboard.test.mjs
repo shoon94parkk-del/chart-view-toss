@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {validateDebateArchive,debateDetailMarkup,debateListMarkup,formatDebateMarkdown,validateShadowStatus,shadowStatusMarkup} from '../src/debateDashboard.js';
+import {validateDebateArchive,debateDetailMarkup,debateListMarkup,formatDebateMarkdown,readPublishedJson,validateShadowStatus,shadowStatusMarkup} from '../src/debateDashboard.js';
 const now=Date.parse('2026-10-19T23:00:00+09:00');
 const valid=()=>({schema_version:1,kind:'debate_archive',publication_status:'EXPLICITLY_APPROVED',
  generated_at:'2026-10-19T22:00:00+09:00',debates:[{id:'apr-20261013',company:'에이피알',ticker:'278470',
@@ -82,4 +82,30 @@ test('a completed smoke does not masquerade as fourteen days of recurring logs',
  assert.match(markup,/시작 전/);
  assert.match(markup,/0\/14일/);
  assert.match(markup,/스모크 테스트 성공 기록/);
+});
+
+test('published public summaries are valid and do not impersonate audited picks',async()=>{
+ const {readFileSync}=await import('node:fs');
+ const archive=JSON.parse(readFileSync(new URL('../public/data/intelligence_debates_public.json',import.meta.url),'utf8'));
+ const parsed=validateDebateArchive(archive,Date.parse('2026-10-20T15:00:00+09:00'));
+ assert.equal(parsed.status,'ready');
+ assert.equal(parsed.document.debates.length,3);
+ assert.ok(parsed.document.debates.some(d=>d.ticker==='272210'));
+ assert.ok(parsed.document.debates.some(d=>d.ticker==='085910'));
+ assert.ok(parsed.document.debates.every(d=>d.audit_verified===false));
+ assert.match(debateListMarkup(parsed.document.debates,'한화시스템'),/한화시스템/);
+ const shadow=JSON.parse(readFileSync(new URL('../public/data/intelligence_shadow_status.json',import.meta.url),'utf8'));
+ const status=validateShadowStatus(shadow,Date.parse('2026-10-20T15:00:00+09:00'));
+ assert.equal(status.status,'ready');
+ assert.equal(status.document.smoke_runs_total,1);
+ assert.equal(status.document.runs_total,0);
+});
+test('readPublishedJson rejects malformed or unapproved network data',async()=>{
+ const old=globalThis.fetch;
+ try{
+   globalThis.fetch=async()=>({ok:true,json:async()=>({publication_status:'DRAFT'})});
+   await assert.rejects(()=>readPublishedJson('intelligence_debates_public.json',validateDebateArchive));
+   globalThis.fetch=async()=>({ok:false});
+   await assert.rejects(()=>readPublishedJson('intelligence_debates_public.json',validateDebateArchive));
+ }finally{globalThis.fetch=old;}
 });
