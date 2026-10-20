@@ -32,6 +32,10 @@ export const test = base.extend({
         try {
           const override = overrides.get(path) || overrides.get('*');
           if (override) return await override(route, url);
+          // The new API-first published-data source is intentionally unavailable
+          // in legacy E2E tests unless explicitly overridden. Exercise its
+          // documented /static/data fallback with deterministic per-test fixtures.
+          if(path.startsWith('/api/published-data/'))return route.fulfill({status:503,json:{detail:'publication not configured in this test'}});
           // An older publication intentionally has no immutable proof. Positive
           // publication tests install the exact same-version response above.
           if(/^\/static\/data\/guru_evidence\/[^/]+\/\d{6}\.(KS|KQ)\.json$/.test(path))return await route.fulfill({status:404,json:{detail:'proof not published'}});
