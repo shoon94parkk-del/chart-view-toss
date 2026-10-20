@@ -545,3 +545,5 @@ The first gesture guard also deferred the explicit observation-toggle click, vio
 - 검증된 아카이브 예상치는 사후 조회시각을 그대로 표시한다. 미확인 최초 발표·수정 지수·불가능한 날짜·증거 URL/단위/기간 충돌을 성공 비교로 만들지 않는다. 원래 CPI/PPI/PCE 및 PICK/LAB 출력은 별도 보호한다.
 
 - 독립 개인정보 페이지도 실제 axe 대비·구조와 가로 넘침을 검사한다. 로컬 종목별20개 기록의 보관/삭제 안내와 API 요청0을 보존하며 날짜·연락 링크를 낮은 대비 색으로 되돌리지 않는다.
+
+- PICK 상세에서 Back할 때 초기 monitor 응답이 늦어도 저장한 복귀 위치를 primary의 일회성 rAF에서 삭제하지 않는다. 초기 monitor의 준비/실패로 layout이 정리된 뒤 기존 root scroll 복원기로 적용하고 실제 사용자 wheel/touch/pointer/key는 대기를 취소한다. 이전 화면 cleanup은 popstate가 이미 지정한 새 화면의 목표나 새로 캡처한 returnScroll을 지우지 않는다. 예약한 복원 frame은 viewEpoch가 바뀌면 적용하지 않는다. 단순 성공1회 대신 monitor를 고정 지연한 회귀와 사용자 취소를 유지한다.

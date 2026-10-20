@@ -471,3 +471,9 @@ Analysis evidence includes the lazy pension route. Main stays concise; assets, 1
 ### 2026-10-20 국민연금 모형2 계약
 
 현금 그룹 전체를 예금으로 취급하지 않는다. 단기자금 이자·금리차 대용 캐리·외부 순유입/이자를 각각 한 번 반영한다. 대체 현지 NAV0은 미관측 가정이며 경제가치 비교를 메인에 합산하지 않는다. 채권 총수익률의 금리 손실·이자를 재가산하지 않는다. AGGG 비교 결측은 같은 날짜의 검증된 비교만 제외하고 중앙 BNDW와 최신 시장일을 유지한다. source push의 같은 날짜 재평가와3회 재시도를 유지한다. 목표 ±0.5%p 대응 코스피 구간은 확률 범위가 아니다. NPS_REALISM_2026-10-20.md 참고.
+
+Public Muse stock research is refreshed independently of frontend deployment on `/debates/`; see [2026-10-20 implementation/handoff](MUSE_RESULTS_2026-10-20.md). Bootstrap is provisional; independently published data verifies it while visible each60sec/resume/manual. Never roll back last-good, carry another revision's verifiedAt, block research behind Shadow, or join personal holdings/account data. Audit PICK v2 remains separate; no LLM calls. Real reports and publish-on-completion are producer responsibilities, not fabricated viewer data.
+
+PICK Back restore must wait for initial monitoring layout to settle without delaying primary performance/rows. The old one-shot primary rAF lost clamped targets (forced-monitor baseline f1 reproduced36px). Reuse main root restore with epoch guard/target/cancel/final clamp; actual user input cancels, and old cleanup never clears a newer popstate target or newly captured returnScroll. Preserve1px geometry/filter/focus tests and deterministic held-monitor/user-cancel coverage.
+
+Muse/PICK final local release check: Node736, direct-entry29, browser1048 on all4 projects with zero unexpected/flaky/skipped; existing mobile320/390/430 passed after the scroll fix, then AIT test bundle built. Native Android/iOS Sandbox is still a separate gate. See MUSE_RESULTS_2026-10-20.md for exact artifact and producer/publication evidence.

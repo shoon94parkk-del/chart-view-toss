@@ -813,3 +813,11 @@ host를 모두 유지하도록 해소. 순서 무관, 직접 머지하지 않음
 ## 2026-10-20 — 국민연금 자산평가 개선과 최신 갱신 보완 통합
 
 Classification: 기존 기능 확장 및 같은 시장일 모델 미반영 버그. 종합채권 총수익률, 단기·기타 분류, 공식 과거 외부 순유입 속도, 추정 환헤지 캐리와 미확인 사모 NAV를 분리한다. 임의 대체 연수익을 제거하고 상장 대용지표 비교·국내 순매매 시나리오를 접은 상세로 제공한다. 최신 main의 목표 코스피/비중 대응 구간·정오KST freshness·갱신 지연과 수집3회 재시도는 보존한다. 비교 전용 AGGG 동일일 결측은 명시적으로 제외하고 BNDW 중앙 추정을 유지하며 과거값/0으로 채우지 않는다. 모델 변경 push는 같은 시장일도 재평가한다. 같은 버전 경고 갱신·사용자 가정/초점·상세 버전 지연 로딩과 이전 모델 호환을 유지한다. 출처·검증·게시 상태는 NPS_REALISM_2026-10-20.md를 따른다.
+
+## 2026-10-20 — Muse 종목 연구의 게시 후 자동 반영
+
+Classification: new behavior. `/debates/`는 기존 bootstrap 뒤 별도로 게시한 검증된 public schema1 projection을 확인한다. 공개 CDN/기존 published-data API를 사용하며 private repo/보유 목록/계좌와 감사 PICK v2는 연결하지 않는다. 요약·상태를 닫힌 행에, 단계별 근거와 Shadow를 펼침에 둔다. 표시 중60초·수동·복귀 재검증, independent Shadow, 최신 정상 자료와 nested 펼침/포커스 보존, 날짜·게시·해당 게시물 확인 시각 구분을 적용한다. [구현·검증·Muse 인수인계](MUSE_RESULTS_2026-10-20.md). 실제 새 결과와 producer 완료 후 게시 호출은 Muse 쪽에 남아 있다.
+
+## 2026-10-20 — PICK Back의 초기 monitor layout 경합
+
+기존 버전에서도 초기 점검 응답이 늦으면 복귀 목표가 짧은 loading 페이지에 clamp되고 잊히는 경합을 재현했다. Primary/monitor를 결합하지 않고 기존 root restore 엔진에 목표/취소/최종 clamp와 epoch guard를 더한다. PICK은 초기 monitor가 정리될 때까지 의도를 유지하되 실제 사용자 조작은 취소하고 cleanup은 다음 화면이 이미 지정한 목표를 보존한다. 원래1px 위치 계약과 retry focus/filter/independent loading을 유지한다. 최초 전체1038/2실패·기존 baseline36px RED·수정후대상12브라우저/34Node GREEN을 [보고서](MUSE_RESULTS_2026-10-20.md)에 구분했다. 최종 전체 검증은 새 소스로 다시 수행하여 Node736개·브라우저1,048개(4기기, unexpected/flaky/skipped0)·모바일320/390/430px·AIT 테스트 빌드가 통과했다.

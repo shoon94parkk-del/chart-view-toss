@@ -4,6 +4,55 @@ import { recommendations, monitor, payloadFor } from './data.mjs';
 const monitoringPath = '/static/data/pick_monitor.json';
 const rowFor = (page, name) => page.locator('.pick-ledger-item').filter({ has: page.locator('.pick-ledger-stock strong', { hasText: name }) }).first();
 
+async function holdMonitoringOnReturn(page,qa){
+ let returning=false,release,requested;
+ const gate=new Promise(resolve=>{release=resolve;});
+ const started=new Promise(resolve=>{requested=resolve;});
+ qa.overrides.set('/api/published-data/pick_monitor.json',async route=>{
+  if(returning){requested();await gate;}
+  await route.fulfill({status:503,json:{detail:'use same-version published fallback'}});
+ });
+ await page.goto('/#picks');await expect(page.getByTestId('pick-status')).toBeVisible();
+ await page.locator('.pick-ledger-search-options > summary').click();
+ await page.locator('#pick-ledger-search').fill('삼성전자');
+ await page.locator('.pick-ledger-search-options > summary').click();
+ const row=rowFor(page,'삼성전자');await row.locator('[data-pick-expand]').click();
+ const detail=row.locator('.pick-ledger-detail-link');await touchable(detail);
+ await page.evaluate(()=>document.addEventListener('click',event=>{if(event.target.closest('.pick-ledger-item [data-stock-detail]'))window.__pickReturnProbe=scrollY;},{capture:true,once:true}));
+ returning=true;await detail.click();await expect(page.locator('#detail-name')).toHaveText('삼성전자');
+ const saved=await page.evaluate(()=>window.__pickReturnProbe);
+ await page.getByRole('button',{name:'뒤로가기',exact:true}).click();await started;
+ await expect(page.locator('#pick-ledger-status-strip')).toHaveAttribute('data-load-state','loading');
+ await expect(row.locator('[data-pick-expand]')).toHaveAttribute('aria-expanded','true');
+ // The saved position is intentionally unreachable until monitoring's taller
+ // ready layout arrives; a one-shot clamped scroll cannot satisfy this case.
+ await expect.poll(()=>page.evaluate(target=>target-(document.documentElement.scrollHeight-innerHeight),saved)).toBeGreaterThan(1);
+ return {saved,release,row};
+}
+
+test('PICK Back restores its intended position after held monitoring makes the layout reachable',async({page,qa})=>{
+ const {saved,release}=await holdMonitoringOnReturn(page,qa);
+ try{
+  release();await expect(page.locator('#pick-ledger-status-strip')).toHaveAttribute('data-load-state','ready');
+  await expect.poll(()=>page.evaluate(target=>Math.abs(scrollY-target),saved)).toBeLessThanOrEqual(1);
+ }finally{release();}
+});
+
+test('PICK Back pending restoration yields to user scroll input before monitoring completes',async({page,qa},info)=>{
+ const {saved,release,row}=await holdMonitoringOnReturn(page,qa);
+ try{
+  const before=await page.evaluate(()=>scrollY);
+  if(info.project.name==='iphone-small-webkit')await page.keyboard.press(before>100?'ArrowUp':'ArrowDown');
+  else await page.mouse.wheel(0,before>100?-180:180);
+  await expect.poll(()=>page.evaluate(previous=>Math.abs(scrollY-previous),before)).toBeGreaterThan(20);
+  await page.evaluate(()=>new Promise(resolve=>{let previous=scrollY,stable=0;const frame=()=>{stable=scrollY===previous?stable+1:0;previous=scrollY;if(stable>=3)resolve();else requestAnimationFrame(frame);};requestAnimationFrame(frame);}));
+  const top=await row.evaluate(el=>el.getBoundingClientRect().top);
+  release();await expect(page.locator('#pick-ledger-status-strip')).toHaveAttribute('data-load-state','ready');
+  await expect.poll(()=>row.evaluate((el,target)=>Math.abs(el.getBoundingClientRect().top-target),top)).toBeLessThanOrEqual(1);
+  expect(await page.evaluate(target=>Math.abs(scrollY-target),saved)).toBeGreaterThan(20);
+ }finally{release();}
+});
+
 test('PICK independent loading: real performance and usable rows precede held optional monitor', async ({ page, qa }, info) => {
   let release, requested, monitoringDelivered=false;
   const gate = new Promise(resolve => { release = resolve; });
