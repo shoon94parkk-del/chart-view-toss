@@ -52,7 +52,8 @@ test('Shadow progress requires approved aggregation and genuine timestamps',()=>
  const value={schema_version:1,kind:'shadow_status',
   publication_status:'EXPLICITLY_APPROVED',generated_at:t,state:'RUNNING',
   period_started_at:t,last_execution_at:t,runs_total:8,
-  screenings_total:3,debates_total:2,audits_approved:1,audits_blocked:1,failures_total:0};
+  screenings_total:3,debates_total:2,audits_approved:1,audits_blocked:1,failures_total:0,
+  smoke_runs_total:1,smoke_audits_approved:1};
  const ready=validateShadowStatus(value,Date.parse('2026-10-20T01:00:00+00:00'));
  assert.equal(ready.status,'ready');
  assert.match(shadowStatusMarkup(ready),/관찰 진행 중/);
@@ -61,7 +62,24 @@ test('Shadow progress requires approved aggregation and genuine timestamps',()=>
  assert.equal(validateShadowStatus({...value,audits_approved:4}).status,'invalid');
  assert.equal(validateShadowStatus({...value,publication_status:'DRAFT'}).status,'invalid');
  assert.equal(validateShadowStatus({...value,failures_total:-1}).status,'invalid');
+ assert.equal(validateShadowStatus({...value,smoke_audits_approved:2}).status,'invalid');
+ assert.match(shadowStatusMarkup(ready),/스모크 실증/);
  const late=validateShadowStatus(value,Date.parse('2026-10-22T01:00:00+00:00'));
  assert.equal(late.stale,true);
  assert.match(shadowStatusMarkup(late),/보고 지연/);
+});
+
+test('a completed smoke does not masquerade as fourteen days of recurring logs',()=>{
+ const generated='2026-10-20T07:00:00+00:00';
+ const archived={schema_version:1,kind:'shadow_status',
+  publication_status:'EXPLICITLY_APPROVED',generated_at:generated,
+  state:'NOT_STARTED',period_started_at:null,last_execution_at:null,
+  runs_total:0,screenings_total:0,debates_total:0,audits_approved:0,
+  audits_blocked:0,failures_total:0,smoke_runs_total:1,smoke_audits_approved:1};
+ const o=validateShadowStatus(archived,Date.parse('2026-10-20T07:10:00+00:00'));
+ assert.equal(o.status,'ready');
+ const markup=shadowStatusMarkup(o);
+ assert.match(markup,/시작 전/);
+ assert.match(markup,/0\/14일/);
+ assert.match(markup,/스모크 테스트 성공 기록/);
 });

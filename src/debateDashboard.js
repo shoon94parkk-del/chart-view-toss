@@ -58,7 +58,7 @@ export function formatDebateMarkdown(source) {
 }
 // Public, aggregate-only monitoring status. Never displays private holdings.
 export function validateShadowStatus(doc, now=Date.now()) {
-  const ints=['runs_total','screenings_total','debates_total','audits_approved','audits_blocked','failures_total'];
+  const ints=['runs_total','screenings_total','debates_total','audits_approved','audits_blocked','failures_total','smoke_runs_total','smoke_audits_approved'];
   if(!doc || doc.schema_version!==1 || doc.kind!=='shadow_status' ||
     doc.publication_status!=='EXPLICITLY_APPROVED' || !stamp(doc.generated_at) ||
     Date.parse(doc.generated_at)>now+60000 ||
@@ -67,7 +67,8 @@ export function validateShadowStatus(doc, now=Date.now()) {
     (doc.last_execution_at!==null && !stamp(doc.last_execution_at)) ||
     (doc.state==='RUNNING' && (!doc.period_started_at || !doc.last_execution_at)) ||
     ints.some(k=>!Number.isInteger(doc[k])||doc[k]<0||doc[k]>1e7) ||
-    doc.audits_approved+doc.audits_blocked>doc.debates_total)
+    doc.audits_approved+doc.audits_blocked>doc.debates_total ||
+    doc.smoke_audits_approved>doc.smoke_runs_total)
     return {status:'invalid'};
   const stale=now-Date.parse(doc.generated_at)>36*60*60*1000;
   return {status:'ready',stale,document:doc};
@@ -82,12 +83,14 @@ export function shadowStatusMarkup(result, now=Date.now()) {
     Math.max(0,Math.min(14,Math.floor((now-Date.parse(d.period_started_at))/(24*60*60*1000)))):0;
   const cells=[
     ['실행',d.runs_total],['스크리닝',d.screenings_total],['토론',d.debates_total],
-    ['감사 통과',d.audits_approved],['감사 차단',d.audits_blocked],['실패',d.failures_total]
+    ['감사 통과',d.audits_approved],['감사 차단',d.audits_blocked],['실패',d.failures_total],
+    ['스모크 실증',d.smoke_runs_total],['스모크 승인',d.smoke_audits_approved]
   ];
   return '<div class="debate-shadow-head"><strong>14일 Shadow · '+escapeHtml(effective)+'</strong><span>'+
      elapsed+'/14일 경과</span></div>'+
     '<div class="debate-shadow-stats">'+cells.map(([k,v])=>'<span>'+escapeHtml(k)+
      ' <b>'+String(v)+'</b></span>').join('')+'</div>'+
+    (d.smoke_runs_total>0&&d.state==='NOT_STARTED'?'<p class="debate-shadow-notice">스모크 테스트 성공 기록은 있지만 정기 실행 로그가 없어 14일 카운트는 시작 전으로 표시돼요.</p>':'')+
     '<p class="debate-shadow-freshness">마지막 실행: '+escapeHtml(d.last_execution_at||'아직 없음')+
       ' · 보고 갱신: '+escapeHtml(d.generated_at)+(result.stale?' · 최신 실행 확인 필요':'')+'</p>';
 }

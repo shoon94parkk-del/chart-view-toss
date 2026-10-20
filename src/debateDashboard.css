@@ -42,3 +42,5 @@
 .debate-controls-footer small{font-size:10px;color:#7b8a9e}
 .debate-controls-footer button{background:#eef5ff;border:1px solid #cfe0fa;border-radius:8px;padding:6px 10px;color:#195fa6;font-size:11px;cursor:pointer}
 .debate-controls-footer button:disabled{opacity:.5}
+
+.debate-shadow-notice{font-size:10px;line-height:1.55;color:#a26017;background:#fff7e8;padding:8px;border-radius:8px;margin:9px 0}
