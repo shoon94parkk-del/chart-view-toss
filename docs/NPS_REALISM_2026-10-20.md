@@ -36,6 +36,9 @@ CI의 Python3.11은 수집 Python3.12의 개선된 sum과 결과 끝자리에3.5
 
 ### 최종 로컬 회귀와 게시 경로
 
-Node724개, production build·28개 직접 진입 경로, 결정적 Playwright **1016/1016통과**(20.4분; 데스크톱·320px·Android·iPhone WebKit), skipped0·flaky0·unexpected0. 신규7개 현실성 동작×4기기=28개와 기존 국민연금36개도 포함한다. 같은 환경의 실제 한글·영문 글꼴 및 WebKit 라이브러리를 먼저 복구했으며 제품/기하/접근성 기준을 낮추지 않았다. 중단된 이전 전체 실행은 성공에 포함하지 않는다.
+Node724개, production build·29개 직접 진입 경로, 결정적 Playwright **1016/1016통과**(20.4분; 데스크톱·320px·Android·iPhone WebKit), skipped0·flaky0·unexpected0. 신규7개 현실성 동작×4기기=28개와 기존 국민연금36개도 포함한다. 같은 환경의 실제 한글·영문 글꼴 및 WebKit 라이브러리를 먼저 복구했으며 제품/기하/접근성 기준을 낮추지 않았다. 중단된 이전 전체 실행은 성공에 포함하지 않는다.
 
 공유 PR163은 main0232ea1로 통합됐고 소스 push 자동 수집39385687459가 성공해 main9a02bf0 / snapshot8bc1ebe99337c855(10월19일)를 발행했다. 공개 summary·동일버전552행 상세와 새 프런트 계산 검증이 통과했다. 이후 정확한9a02bf0에서 Python3.11 전체1116개+18subtests도 통과했다. Render 공유 서버dep-dbbhdjdg1s2s7390hoo0는 해당커밋으로live이며 실제revision/자산검증과 프런트 최종CI·배포·SDK 결과는 PR에 이어 기록한다.
+
+
+SDK `npm run build:ait`도 실제 chartview.ait 생성에 성공했다. 버전0.17.0, SDK build deploymentId01a15833-d853-772e-9e9d-4b274002ef40이며 파일 크기·SHA256·소스 해시는 evidence의ait-build.json에 기록했다. 기본 public CDN이 포함되어 Render 환경과 별도로 종가 게시물을 읽는다. 실제 Android/iOS Toss Sandbox와 native 공개 출시는 수행하지 않았다. 공유 서버는 /health.revision=9a02bf0, 정규 Web 자산3개·거장5개 버전검증과 실제 NPS summary8bc/552detail 일치를 확인했다.

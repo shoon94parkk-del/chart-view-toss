@@ -1,0 +1,14 @@
+{
+  "artifact": "chartview.ait",
+  "bytes": 10528779,
+  "sha256": "a9f2ad6bd972693c97433578baded85c7de65979293476b188e5cb1c5776372b",
+  "version": "0.17.0",
+  "buildDeploymentId": "01a15833-d853-772e-9e9d-4b274002ef40",
+  "sourceSha256": {
+    "src/npsAllocationModel.js": "aaf9ac874446596cf716e3df42378b6c6210df53493724ed51588e36b8732897",
+    "src/npsAllocationView.js": "ace559035eac5d2c418bceee1b8991ba043da113ffaaf70f9aa5357d7d7e2566",
+    "src/npsAllocationView.css": "b1434e5035e241a6776db1330ce181dc248a9f9be8640677205db685c53493a7"
+  },
+  "nativeSandbox": "not performed",
+  "publicNativeRelease": "not submitted"
+}
