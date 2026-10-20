@@ -81,7 +81,7 @@ test('a completed smoke does not masquerade as fourteen days of recurring logs',
  const markup=shadowStatusMarkup(o);
  assert.match(markup,/정기 로그 미연결/);
  assert.match(markup,/0\/14일/);
- assert.match(markup,/스모크 테스트 성공 기록/);
+ assert.match(markup,/스모크 성공 기록/);
 });
 
 test('published public summaries are valid and do not impersonate audited picks',async()=>{
