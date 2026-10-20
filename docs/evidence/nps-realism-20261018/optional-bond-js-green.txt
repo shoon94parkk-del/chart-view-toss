@@ -1,0 +1,25 @@
+✔ NPS scenario revalues other assets and applies currency exactly once (2.020236ms)
+✔ domestic transfer keeps total and threshold inversion reaches target (1.064244ms)
+✔ summary validation rejects impossible, missing, inconsistent and nonfinite data (1.437467ms)
+✔ older publications never replace newer market observations (0.328916ms)
+✔ holdings require same publication and preserve missing versus real zero returns (0.327134ms)
+✔ freshness uses the price date and never calls collection time a price update (0.221414ms)
+✔ freshness flags missed Tuesday scheduled close while preserving Friday on Tuesday morning (0.157788ms)
+✔ target KOSPI responds to offshore asset revaluation while preserving domestic holdings (0.157527ms)
+✔ realism cash separates deposits and nonfinancial/reconciliation balances (2.093358ms)
+✔ cash carry and flow interest recompute when assumptions change (0.230528ms)
+✔ cash detail projected amount includes the same overlay as the cash asset (0.15904ms)
+✔ private NAV market scenario stays separate and does not double-add income (0.830442ms)
+✔ realism rejects missing, impossible or overlapping cash shares (0.402346ms)
+✔ assumption cases are computed from actual patches and cannot mutate publication (0.70294ms)
+✔ published realism values reconcile across the server and frontend calculators (4.173854ms)
+✔ dated flow and NAV descriptions cannot silently disagree with the published model (2.625479ms)
+✔ unavailable optional bond comparison is explicit and cannot imply a measured return (7.952843ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 194.161567

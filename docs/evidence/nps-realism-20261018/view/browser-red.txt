@@ -1,0 +1,54 @@
+
+Running 1 test using 1 worker
+
+(node:52962) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:52962) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+  ✘  1 [desktop-chromium] › tests/e2e/nps-realism.spec.mjs:19:1 › NPS realism shows dated appraisal assumption and cash bridge without inventing NAV (8.8s)
+
+
+  1) [desktop-chromium] › tests/e2e/nps-realism.spec.mjs:19:1 › NPS realism shows dated appraisal assumption and cash bridge without inventing NAV
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoContainText[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator: locator('[data-nps-realism-note]')
+    Expected string: [32m"공시 평가시차"[39m
+    Received: <element(s) not found>
+    Timeout: 8000ms
+
+    Call log:
+    [2m  - Expect "toContainText" with timeout 8000ms[22m
+    [2m  - waiting for locator('[data-nps-realism-note]')[22m
+
+
+       8 | async function enter(page,qa){qa.overrides.set(path,route=>route.fulfill({json:summary}));await page.clock.setFixedTime(new Date('2026-10-19T22:30:00Z'));await page.goto('/#pension');await expect(page.locator('[data-nps-weight]')).toContainText(formatted(calculateNpsScenario(summary).weight));}
+       9 | test('NPS realism shows dated appraisal assumption and cash bridge without inventing NAV',async({page,qa})=>{
+    > 10 |  await enter(page,qa);await expect(page.locator('[data-nps-realism-note]')).toContainText('공시 평가시차');
+         |                                                                             ^
+      11 |  await page.getByText('자산별 평가 근거',{exact:true}).click();const result=calculateNpsScenario(summary),cash=page.locator('[data-nps-cash-breakdown]');
+      12 |  for(const [key,label] of [['shortTermBase','단기자금'],['nonFinancialBase','복지·기타'],['reconciliationBase','금융부문 조정 잔액']])await expect(cash).toContainText(label+' '+formatted(result.cashBreakdown[key],4));
+      13 |  await expect(page.locator('[data-nps-net-flow]')).toContainText(formatted(summary.inputs.netFlow,4));
+        at /workspace/chart-view-toss/tests/e2e/nps-realism.spec.mjs:10:77
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../tmp/nps-realism-view-red-fixture/nps-realism-NPS-realism-sh-b092c-ridge-without-inventing-NAV-desktop-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #4: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../tmp/nps-realism-view-red-fixture/nps-realism-NPS-realism-sh-b092c-ridge-without-inventing-NAV-desktop-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../tmp/nps-realism-view-red-fixture/nps-realism-NPS-realism-sh-b092c-ridge-without-inventing-NAV-desktop-chromium/error-context.md
+
+    attachment #6: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../tmp/nps-realism-view-red-fixture/nps-realism-NPS-realism-sh-b092c-ridge-without-inventing-NAV-desktop-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../tmp/nps-realism-view-red-fixture/nps-realism-NPS-realism-sh-b092c-ridge-without-inventing-NAV-desktop-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [desktop-chromium] › tests/e2e/nps-realism.spec.mjs:19:1 › NPS realism shows dated appraisal assumption and cash bridge without inventing NAV

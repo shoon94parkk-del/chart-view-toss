@@ -1,0 +1,84 @@
+
+Running 24 tests using 3 workers
+
+(node:56672) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:56671) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:56673) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:56671) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:56673) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:56672) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+  ✓   2 [desktop-chromium] › tests/e2e/nps-realism.spec.mjs:19:1 › NPS realism shows dated appraisal assumption and cash bridge without inventing NAV (2.2s)
+  ✓   1 [desktop-chromium] › tests/e2e/nps-realism.spec.mjs:77:1 › NPS conditional assumption cases are recalculated and described without confidence claims (2.7s)
+  ✓   3 [desktop-chromium] › tests/e2e/nps-realism.spec.mjs:41:1 › NPS economic alternative mark and domestic trades change only user scenario and survive refresh (2.7s)
+  ✓   4 [desktop-chromium] › tests/e2e/nps-realism.spec.mjs:100:1 › NPS same-price metadata refresh warns about an unreviewed monthly disclosure (1.5s)
+(node:56943) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:56943) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   6 [desktop-chromium] › tests/e2e/nps-realism.spec.mjs:153:1 › NPS checked economic proxy follows a newer publication while manual scenario inputs keep focus (2.0s)
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+(node:56952) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:56952) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+  ✓   7 [narrow-chromium] › tests/e2e/nps-realism.spec.mjs:19:1 › NPS realism shows dated appraisal assumption and cash bridge without inventing NAV (1.4s)
+  ✓   9 [narrow-chromium] › tests/e2e/nps-realism.spec.mjs:77:1 › NPS conditional assumption cases are recalculated and described without confidence claims (1.8s)
+  ✓   8 [narrow-chromium] › tests/e2e/nps-realism.spec.mjs:41:1 › NPS economic alternative mark and domestic trades change only user scenario and survive refresh (2.7s)
+  ✓  10 [narrow-chromium] › tests/e2e/nps-realism.spec.mjs:100:1 › NPS same-price metadata refresh warns about an unreviewed monthly disclosure (1.3s)
+  ✓   5 [desktop-chromium] › tests/e2e/nps-realism.spec.mjs:119:1 › NPS realism disclosures and optional controls stay accessible at every device size (7.8s)
+(node:57251) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:57251) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  12 [narrow-chromium] › tests/e2e/nps-realism.spec.mjs:153:1 › NPS checked economic proxy follows a newer publication while manual scenario inputs keep focus (1.5s)
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+(node:57260) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:57260) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+  ✓  13 [android-chromium] › tests/e2e/nps-realism.spec.mjs:19:1 › NPS realism shows dated appraisal assumption and cash bridge without inventing NAV (2.0s)
+  ✓  14 [android-chromium] › tests/e2e/nps-realism.spec.mjs:41:1 › NPS economic alternative mark and domestic trades change only user scenario and survive refresh (3.0s)
+  ✓  15 [android-chromium] › tests/e2e/nps-realism.spec.mjs:77:1 › NPS conditional assumption cases are recalculated and described without confidence claims (2.7s)
+  ✓  11 [narrow-chromium] › tests/e2e/nps-realism.spec.mjs:119:1 › NPS realism disclosures and optional controls stay accessible at every device size (7.4s)
+(node:57508) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  16 [android-chromium] › tests/e2e/nps-realism.spec.mjs:100:1 › NPS same-price metadata refresh warns about an unreviewed monthly disclosure (1.5s)
+(node:57508) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:57523) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+(node:57523) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+  ✓  18 [android-chromium] › tests/e2e/nps-realism.spec.mjs:153:1 › NPS checked economic proxy follows a newer publication while manual scenario inputs keep focus (2.2s)
+(node:57678) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:57678) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  19 [iphone-small-webkit] › tests/e2e/nps-realism.spec.mjs:19:1 › NPS realism shows dated appraisal assumption and cash bridge without inventing NAV (2.4s)
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+  ✓  17 [android-chromium] › tests/e2e/nps-realism.spec.mjs:119:1 › NPS realism disclosures and optional controls stay accessible at every device size (9.0s)
+  ✓  20 [iphone-small-webkit] › tests/e2e/nps-realism.spec.mjs:77:1 › NPS conditional assumption cases are recalculated and described without confidence claims (3.9s)
+(node:57877) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  21 [iphone-small-webkit] › tests/e2e/nps-realism.spec.mjs:41:1 › NPS economic alternative mark and domestic trades change only user scenario and survive refresh (3.6s)
+(node:57877) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+  ✓  23 [iphone-small-webkit] › tests/e2e/nps-realism.spec.mjs:153:1 › NPS checked economic proxy follows a newer publication while manual scenario inputs keep focus (2.9s)
+  ✓  24 [iphone-small-webkit] › tests/e2e/nps-realism.spec.mjs:100:1 › NPS same-price metadata refresh warns about an unreviewed monthly disclosure (2.4s)
+  ✓  22 [iphone-small-webkit] › tests/e2e/nps-realism.spec.mjs:119:1 › NPS realism disclosures and optional controls stay accessible at every device size (6.3s)
+
+  24 passed (33.5s)
