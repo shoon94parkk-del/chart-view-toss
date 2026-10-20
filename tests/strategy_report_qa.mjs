@@ -22,7 +22,7 @@ try{
   page.on('pageerror',e=>errors.push(e.message));
   const mock=async route=>{
    const url=new URL(route.request().url()),path=url.pathname.replace(/^\/backend/,'');requests.push(path);
-   const body=path==='/static/data/screener.json'?{tradeDate:'2026-10-02',stocks}:path==='/api/quotes'?{results:stocks.map(s=>({...s,ticker:s.symbol,currency:'KRW',asOf:'2026-10-02T06:30:00Z'}))}:{stocks:[],results:[],items:[],picks:[],recommendations:[],available:false};
+   const body=(path==='/static/data/screener.json'||path==='/api/published-data/screener.json')?{tradeDate:'2026-10-02',stocks}:path==='/api/quotes'?{results:stocks.map(s=>({...s,ticker:s.symbol,currency:'KRW',asOf:'2026-10-02T06:30:00Z'}))}:{stocks:[],results:[],items:[],picks:[],recommendations:[],available:false};
    return route.fulfill({contentType:'application/json',body:JSON.stringify(body)});
   };
   await page.route('**/backend/**',mock);await page.route('https://chart-view-pkv8.onrender.com/**',mock);
