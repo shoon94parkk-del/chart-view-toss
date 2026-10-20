@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {validateDebateArchive,debateDetailMarkup,debateListMarkup,formatDebateMarkdown} from '../src/debateDashboard.js';
+import {validateDebateArchive,debateDetailMarkup,debateListMarkup,formatDebateMarkdown,validateShadowStatus,shadowStatusMarkup} from '../src/debateDashboard.js';
 const now=Date.parse('2026-10-19T23:00:00+09:00');
 const valid=()=>({schema_version:1,kind:'debate_archive',publication_status:'EXPLICITLY_APPROVED',
  generated_at:'2026-10-19T22:00:00+09:00',debates:[{id:'apr-20261013',company:'에이피알',ticker:'278470',
@@ -45,4 +45,23 @@ test('safe readable Markdown and stage filters',()=>{
  const onlyAttack=debateDetailMarkup(doc.debates[0],'attack');
  assert.match(onlyAttack, /관측 근거/);
  assert.doesNotMatch(onlyAttack, /근거 기반 분석/);
+});
+
+test('Shadow progress requires approved aggregation and genuine timestamps',()=>{
+ const t='2026-10-20T00:00:00+00:00';
+ const value={schema_version:1,kind:'shadow_status',
+  publication_status:'EXPLICITLY_APPROVED',generated_at:t,state:'RUNNING',
+  period_started_at:t,last_execution_at:t,runs_total:8,
+  screenings_total:3,debates_total:2,audits_approved:1,audits_blocked:1,failures_total:0};
+ const ready=validateShadowStatus(value,Date.parse('2026-10-20T01:00:00+00:00'));
+ assert.equal(ready.status,'ready');
+ assert.match(shadowStatusMarkup(ready),/관찰 진행 중/);
+ assert.match(shadowStatusMarkup(ready),/8/);
+ assert.equal(validateShadowStatus({...value,last_execution_at:null}).status,'invalid');
+ assert.equal(validateShadowStatus({...value,audits_approved:4}).status,'invalid');
+ assert.equal(validateShadowStatus({...value,publication_status:'DRAFT'}).status,'invalid');
+ assert.equal(validateShadowStatus({...value,failures_total:-1}).status,'invalid');
+ const late=validateShadowStatus(value,Date.parse('2026-10-22T01:00:00+00:00'));
+ assert.equal(late.stale,true);
+ assert.match(shadowStatusMarkup(late),/보고 지연/);
 });
