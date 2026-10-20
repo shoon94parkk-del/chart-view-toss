@@ -50,6 +50,7 @@ import { loadDetailModule } from './detailModuleRecovery.js';
 import { newsResponseState, newsResponseRows } from './newsResponse.js';
 
 const ANALYSIS_ROUTES=new Set(['discover','heatmap','consensus','bands','tools']);
+const DEBATES_VISIBLE=import.meta.env?.VITE_DEBATE_DASHBOARD_ENABLED!=='0';
 const WATCHLIST_KEY='chartview-toss-watchlist-v1';
 const SELECTED_KEY='chartview-toss-selected-v1';
 const WATCHLIST_LIMIT=20;
@@ -127,7 +128,7 @@ let watchOrderEditing=false;
 let toastTimer=null;
 let homeJourneyStorageReady=false;
 let usageRouteKey='',usageOperation=newUsageOperation(),usageStarted=performance.now();
-const usageScreen=tab=>['home','watch','chart','detail','discover','valuation','macro','news','picks','history','gurus','exports','heatmap','ideas','more'].includes(tab)?tab:['memory','tools','bands','consensus','pension'].includes(tab)?'analysis':'other';
+const usageScreen=tab=>['home','watch','chart','detail','discover','valuation','macro','news','picks','history','debates','gurus','exports','heatmap','ideas','more'].includes(tab)?tab:['memory','tools','bands','consensus','pension'].includes(tab)?'analysis':'other';
 function reportUsableScreen(screen,operationId=usageOperation,started=usageStarted){
  void trackUsage('screen_load',{operationId,params:{screen,outcome:'success',duration_ms:performance.now()-started}});
 }
@@ -279,7 +280,7 @@ function dataDisclosure(){
 function shell(content,title='차트뷰'){
  document.title=title==='차트뷰'?'차트뷰':`${title} | 차트뷰`;
  const identity=surfaceIdentity(state.tab);
- const secondary=ANALYSIS_ROUTES.has(state.tab)||['valuation','macro','pension','exports','memory','discover','ideas','picks','history','news','detail','info'].includes(state.tab);
+ const secondary=ANALYSIS_ROUTES.has(state.tab)||['valuation','macro','pension','exports','memory','discover','ideas','picks','history','debates','debates','news','detail','info'].includes(state.tab);
  const navTab=state.tab==='detail'?state.detailOrigin:(secondary?'more':state.tab);
  const leading=secondary?`<button class="icon-button back-button" aria-label="뒤로가기" data-back>${iconSvg('back',22)}</button>`:`<span class="brand-mark">${(state.tab==='home'?iconSvg('spark',18):uiIcon(identity.icon,18))}</span>`;
  const offline=typeof navigator!=='undefined'&&navigator.onLine===false;
@@ -300,7 +301,7 @@ function shareDetails(){
  else if(tab==='gurus')url.hash=`gurus/${state.guruStrategy||'buffett'}`;
  else if(tab==='exports')url.hash=state.exportFocus?`exports/${encodeURIComponent(state.exportFocus)}`:'exports';
  else if(tab!=='home')url.hash=tab;
- const titleByTab={gurus:'거장 투자법 | 차트뷰',home:'차트뷰',chart:'수익률 비교 | 차트뷰',watch:'관심종목 | 차트뷰',valuation:'밸류에이션 | 차트뷰',pension:'국민연금 | 차트뷰',macro:'경제 지표 | 차트뷰',exports:'수출 데이터 | 차트뷰',memory:'반도체 가격 추적 | 차트뷰',discover:'조건별 종목 찾기 | 차트뷰',heatmap:'시장 히트맵 | 차트뷰',consensus:'실적 전망 | 차트뷰',bands:'역사적 밸류에이션 | 차트뷰',ideas:'투자 아이디어 LAB | 차트뷰',picks:'선정 기록·성과 | 차트뷰',history:'TOP10 히스토리 | 차트뷰',news:'관심종목 뉴스 | 차트뷰',more:'차트뷰',info:'데이터 안내 | 차트뷰',tools:'투자 도구 | 차트뷰'};
+ const titleByTab={gurus:'거장 투자법 | 차트뷰',home:'차트뷰',chart:'수익률 비교 | 차트뷰',watch:'관심종목 | 차트뷰',valuation:'밸류에이션 | 차트뷰',pension:'국민연금 | 차트뷰',macro:'경제 지표 | 차트뷰',exports:'수출 데이터 | 차트뷰',memory:'반도체 가격 추적 | 차트뷰',discover:'조건별 종목 찾기 | 차트뷰',heatmap:'시장 히트맵 | 차트뷰',consensus:'실적 전망 | 차트뷰',bands:'역사적 밸류에이션 | 차트뷰',ideas:'투자 아이디어 LAB | 차트뷰',picks:'선정 기록·성과 | 차트뷰',debates:'3인 AI 토론 | 차트뷰',history:'TOP10 히스토리 | 차트뷰',news:'관심종목 뉴스 | 차트뷰',more:'차트뷰',info:'데이터 안내 | 차트뷰',tools:'투자 도구 | 차트뷰'};
  return {url:url.toString(),title:tab==='detail'?`${name} (${symbol}) | 차트뷰`:titleByTab[tab]||'차트뷰',text:tab==='detail'?`${name} 종목의 차트와 기업 정보를 확인해보세요.`:'차트뷰에서 시장 데이터와 종목 정보를 확인해보세요.'};
 }
 async function shareCurrent(){
@@ -1773,6 +1774,7 @@ function renderMore(){
      <button class="feature-row" data-tab="heatmap" data-tool-tone="${surfaceIdentity('heatmap').tone}"><span class="feature-icon coral">${iconSvg('heatmap',22)}</span><span><strong>시장 히트맵</strong><small>업종별 종목 등락 지도</small></span><b>${iconSvg('arrow',19)}</b></button>
    </div></section>
    <section class="menu-group" id="analysis-records"><h3><i class="section-symbol" aria-hidden="true">${uiIcon('ledger',18)}</i>선정 기록 점검</h3><p class="menu-group-copy">그날 제시한 TOP10과 최종 PICK, 선정 이후 성과를 나눠 확인해요.</p><div class="feature-menu">
+     ${DEBATES_VISIBLE?`<button class="feature-row" data-tab="debates" data-tool-tone="records"><span class="feature-icon blue">${uiIcon('ledger',22)}</span><span><strong>3인 AI 토론</strong><small>메르·농구천재·멍이 기록과 Shadow 운영 현황</small></span><b>${iconSvg('arrow',19)}</b></button>`:''}
      <button class="feature-row" data-tab="history" data-tool-tone="calm"><span class="feature-icon blue">${uiIcon('ledger',22)}</span><span><strong>TOP10 히스토리</strong><small>일자별 TOP10 추천과 최종 PICK 원장</small></span><b>${iconSvg('arrow',19)}</b></button>
      ${SHOW_SPOTLIGHT?`<button class="feature-row" data-tab="picks" data-tool-tone="${surfaceIdentity('picks').tone}"><span class="feature-icon coral">${iconSvg('picks',22)}</span><span><strong>선정 기록·성과</strong><small>최종 PICK의 선정 이유·이후 성과·현재 상태</small></span><b>${iconSvg('arrow',19)}</b></button>`:''}
    </div></section>
@@ -1903,6 +1905,16 @@ function render(){
  }
  if(state.tab==='ideas'){
    renderLazyAnalysis({tab:'ideas',title:'투자 아이디어 LAB',load:()=>Promise.all([import('./ideaView.js'),import('./ideaView.css')]),mount:([ideas])=>ideas.renderIdeaView({shell,bindNav})});
+   return;
+ }
+ if(state.tab==='debates'&&DEBATES_VISIBLE){
+   renderLazyAnalysis({tab:'debates',title:'3인 AI 토론',
+     load:()=>Promise.all([import('./debateDashboard.js'),import('./debateDashboard.css')]),
+     mount:([panel])=>{
+       document.querySelector('#app').innerHTML=shell('<section class="task-head"><div><span class="page-kicker">RESEARCH ARCHIVE</span><h2>3인 AI 토론 · 운영 기록</h2><p>과거 연구 요약과 Shadow 관찰 현황을 확인해요.</p></div></section><div id="debates-page-host"></div>','3인 AI 토론');
+       bindNav();
+       return panel.mountDebateDashboard(document.querySelector('#debates-page-host'));
+     }});
    return;
  }
  if(state.tab==='picks'&&SHOW_SPOTLIGHT){

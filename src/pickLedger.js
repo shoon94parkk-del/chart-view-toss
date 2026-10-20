@@ -2,6 +2,8 @@ import { selectionKey } from './valueDiscovery.js';
 import { homeBootstrap, pickMonitor } from './api.js';
 import { loadingIndicator } from './loadingView.js';
 import { PICK_METHOD, pickPriceBasis } from './pickPerformanceBasis.js';
+import { auditedSectionMarkup, dedupAuditedPicks, loadThreeAgentFeed, threeAgentEnabled } from './threeAgentFeed.js';
+import { debateDashboardEnabled } from './debateDashboard.js';
 
 const STATUS={
   SELL_REVIEW:{label:'재점검',icon:'🔴',cls:'sell',order:0},
@@ -126,12 +128,14 @@ export async function renderPickLedger({shell,bindNav,displayName,focusKey=null,
   viewState.routeFocusKey=focusKey;
   document.querySelector('#app').innerHTML=shell(`
     <section class="task-head pick-ledger-head"><div><span class="page-kicker">CHARTVIEW</span><h2>선정 기록·성과</h2><p>과거에 선정한 이유와 이후 성과·점검 내용을 확인해요. 실시간 인기 순위가 아니에요.</p></div></section>
+    ${debateDashboardEnabled()?'<button type="button" id="debate-dashboard-toggle" class="pick-ledger-detail-link" aria-expanded="false" aria-controls="debate-dashboard-host">3인 AI 토론 기록 보기 ▾</button><section id="debate-dashboard-host" hidden aria-label="3인 토론 대시보드"></section>':''}
     <section class="pick-ledger-overview" aria-label="성과·상태 요약">
       <section class="pick-ledger-summary" id="pick-ledger-summary">${loadingIndicator('선정 기록을 불러오고 있어요')}<div class="skeleton quote"></div></section>
       <section class="pick-ledger-status-strip" id="pick-ledger-status-strip">${loadingIndicator('점검 상태를 확인하고 있어요')}<div class="skeleton quote"></div></section>
     </section>
     <div class="pick-ledger-notices">
       <details class="pick-ledger-policy" id="pick-ledger-policy"><summary>신호 안내 · 자동 매도 아님</summary><p>매도검토는 자동 매도 확정이 아니며 가격·차트만으로 판정하지 않아요. 단기 기술 경고는 펀더멘털 매도검토와 별도이며 기술 경고만으로 자동 매도 확정하지 않아요.</p></details>
+      <section id="pick-ledger-three-agent" aria-label="3인 감사 PICK" hidden></section>
     </div>
     <p class="pick-ledger-focus-note" role="status"></p>
     <div class="pick-ledger-list-tools">
@@ -150,12 +154,32 @@ export async function renderPickLedger({shell,bindNav,displayName,focusKey=null,
     <section class="pick-ledger-list" id="pick-ledger-list">${loadingIndicator('종목 목록을 불러오고 있어요')}<div class="skeleton watch"></div><div class="skeleton watch"></div></section>
   `,'선정 기록·성과');
   bindNav();
+  const debateToggle=document.querySelector('#debate-dashboard-toggle');
+  const debateHost=document.querySelector('#debate-dashboard-host');
+  if(debateToggle&&debateHost){
+    let loaded=false;
+    debateToggle.addEventListener('click',async()=>{
+      const show=debateHost.hidden;
+      debateHost.hidden=!show;
+      debateToggle.setAttribute('aria-expanded',String(show));
+      if(show&&!loaded){
+        loaded=true;
+        try{
+          const [module]=await Promise.all([import('./debateDashboard.js'),import('./debateDashboard.css')]);
+          if(debateHost.isConnected)await module.mountDebateDashboard(debateHost);
+        }catch{
+          if(debateHost.isConnected)debateHost.textContent='토론 대시보드 모듈을 불러오지 못했어요.';
+        }
+      }
+    });
+  }
 
   const summary=document.querySelector('#pick-ledger-summary');
   const statusStrip=document.querySelector('#pick-ledger-status-strip');
   const toolbar=document.querySelector('#pick-ledger-toolbar');
   const list=document.querySelector('#pick-ledger-list');
   const count=document.querySelector('#pick-ledger-count');
+  const threeAgentHost=document.querySelector('#pick-ledger-three-agent');
 
   const search=document.querySelector('#pick-ledger-search');
   const period=document.querySelector('#pick-ledger-period');
@@ -170,6 +194,37 @@ export async function renderPickLedger({shell,bindNav,displayName,focusKey=null,
   searchOptions.open=Boolean(viewState.searchOpen);
   if(!restoreView)delete viewState.returnScroll;
   let disposed=false,payload=null,rows=[],latestPickDate='',focusApplied=restoreView;
+  // v2 audited picks: kept in a separate array, never merged into `rows` or
+  // the ledger's performance math. Only used for the collapsed section + dupes.
+  let auditedPicks=[],auditedDoc=null,threeAgentSequence=0;
+  // Independent, opt-in v2 load: disabled by default, PICK-ledger route only
+  // (never home loading). Failure can never blank or delay existing PICKs.
+  async function loadThreeAgent(){
+    if(!threeAgentEnabled())return;
+    const sequence=++threeAgentSequence;
+    const outcome=await loadThreeAgentFeed();
+    if(disposed||sequence!==threeAgentSequence||!threeAgentHost.isConnected)return;
+    threeAgentHost.hidden=false;
+    if(outcome.status!=='ready'&&outcome.status!=='stale'){
+      threeAgentHost.innerHTML='<div class="pick-ledger-basis">3인 감사 PICK: '+esc(outcome.error||'연결 대기')+' · 기존 PICK 기록은 정상 제공됩니다.</div>';
+      return;
+    }
+    auditedDoc=outcome.document;auditedPicks=auditedDoc.picks;
+    threeAgentHost.innerHTML=auditedSectionMarkup(auditedDoc,dedupAuditedPicks(rows,auditedPicks),{fetchedAt:outcome.fetched_at})
+      +(outcome.status==='stale'?'<p class="pick-ledger-basis">자료 지연: 7일 이상 된 분석입니다.</p>':'');
+    bindNav();
+  }
+  // Re-badge overlaps once ledger rows arrive; never rewrites `rows`.
+  function refreshThreeAgentDupes(){
+    if(!auditedPicks.length||!threeAgentHost.isConnected)return;
+    const {duplicates}=dedupAuditedPicks(rows,auditedPicks);
+    const set=new Set(duplicates.map(p=>String(p.ticker).toUpperCase().split('.')[0]));
+    threeAgentHost.querySelectorAll('.three-agent-pick').forEach(card=>{
+      const dupe=set.has(card.dataset.ticker);
+      const badge=card.querySelector('.three-agent-dupe');
+      if(badge)badge.hidden=!dupe;
+    });
+  }
   let primarySequence=0,monitorSequence=0,primaryLoading=false;
   let monitorResult={state:'loading',value:null};
   const alive=()=>!disposed&&list.isConnected;
@@ -252,6 +307,7 @@ export async function renderPickLedger({shell,bindNav,displayName,focusKey=null,
         requestAnimationFrame(()=>{if(alive()&&target.isConnected){target.scrollIntoView({block:'start'});button.focus({preventScroll:true});}});
       }else document.querySelector('.pick-ledger-focus-note').textContent='요청한 날짜의 선정 기록을 찾지 못했어요. 다른 기록을 대신 열지 않았어요.';
     }
+    refreshThreeAgentDupes();
   }
 
   function paintMonitoring(){
@@ -349,8 +405,9 @@ export async function renderPickLedger({shell,bindNav,displayName,focusKey=null,
   }
   for(const [field,event] of [[search,'input'],[period,'change'],[perf,'change'],[status,'change'],[sort,'change']])field.addEventListener(event,()=>paint());
   void loadMonitoring();
+  void loadThreeAgent();
   await loadPrimary();
-  // Published daily closes are checked automatically without a page reload.
+  // Retain latest mainline 60s refresh while preserving audited feed listeners.
   let lastAutomaticRefresh=Date.now();
   const refreshPublished=()=>{
     if(!alive()||document.visibilityState==='hidden')return;
@@ -359,13 +416,13 @@ export async function renderPickLedger({shell,bindNav,displayName,focusKey=null,
     void loadMonitoring(true,{silent:true});
   };
   const timer=setInterval(refreshPublished,60000);
-  timer?.unref?.(); // Node harness must not retain a timer
+  timer?.unref?.();
   const onVisible=()=>{
     if(document.visibilityState!=='hidden'&&Date.now()-lastAutomaticRefresh>=30000)refreshPublished();
   };
   document.addEventListener?.('visibilitychange',onVisible);
   return ()=>{
-    disposed=true;primarySequence++;monitorSequence++;
+    disposed=true;primarySequence++;monitorSequence++;threeAgentSequence++;
     clearInterval(timer);
     document.removeEventListener?.('visibilitychange',onVisible);
   };
