@@ -12,6 +12,8 @@ test('NPS summary matches actual calculation and loads holdings only on demand',
  await enter(page,qa);const result=calculateNpsScenario(summary);
  await expect(page.locator('[data-nps-gap]')).toContainText(Math.abs(result.gap).toFixed(2));await expect(page.locator('[data-nps-adjustment]')).toContainText('31.2');
  await expect(page.locator('[data-nps-price-date]')).toContainText(summary.marketDate);
+ await expect(page.locator('[data-nps-target-kospi]')).toContainText(Math.round(result.targetKospi).toLocaleString('ko-KR'));
+ await expect(page.locator('[data-nps-target-range]')).toContainText('pt');
  expect(qa.calls.filter(c=>c.path===detailPath)).toHaveLength(0);
  await touchable(page.getByText('13F 보유 내역', {exact:true}));await page.getByText('13F 보유 내역',{exact:true}).click();
  await expect(page.locator('[data-nps-holdings]')).toContainText('NVDA');expect(qa.calls.filter(c=>c.path===detailPath)).toHaveLength(1);
@@ -22,6 +24,7 @@ test('NPS details explain allocation and FX and scenario preserves original summ
  await enter(page,qa);await page.getByText('자산별 평가 근거',{exact:true}).click();await expect(page.locator('[data-nps-assets]')).toContainText('해외주식');await expect(page.locator('[data-nps-assets]')).toContainText('환율');
  await page.getByText('시장 가정 바꾸기',{exact:true}).click();await page.getByLabel('시나리오 코스피',{exact:true}).fill('4500');
  const result=calculateNpsScenario(summary,{kospi:4500});await expect(page.locator('[data-nps-scenario-result]')).toContainText(result.weight.toFixed(2));await expect(page.locator('[data-nps-weight]')).toContainText('22.78');
+ await expect(page.locator('[data-nps-scenario-result]')).toContainText(Math.round(result.targetKospi).toLocaleString('ko-KR'));
  await page.getByText('추정 전제와 출처',{exact:true}).click();await expect(page.locator('[data-nps-method]')).toContainText('2026-06-30');await noOverflow(page);
 });
 test('NPS failed revalidation retains dated result and explicit retry recovers',async({page,qa})=>{

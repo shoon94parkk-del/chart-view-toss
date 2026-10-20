@@ -62,7 +62,13 @@ export function validateNpsHoldings(details,summary) {
  if(!near(reported,summary.filing.totalValueUSD)||direct!==summary.filing.directCount)fail();
  return details;
 }
+// Use a 12:00 KST grace period for an expected scheduled publication.
+// Holidays may legitimately postpone the next price date: warn, never invent one.
 export function npsFreshness(summary,now=Date.now()) {
  const ageDays=Math.floor((now-Date.parse(summary.marketDate+'T00:00:00Z'))/86400000);
- return {ageDays,stale:ageDays>4,priceDate:summary.marketDate};
+ const kst=new Date(now+9*60*60*1000);
+ const candidate=new Date(Date.UTC(kst.getUTCFullYear(),kst.getUTCMonth(),kst.getUTCDate()-(kst.getUTCHours()>=12?1:2)));
+ while(candidate.getUTCDay()===0||candidate.getUTCDay()===6)candidate.setUTCDate(candidate.getUTCDate()-1);
+ const expectedDate=candidate.toISOString().slice(0,10);
+ return {ageDays,expectedDate,stale:ageDays>4||summary.marketDate<expectedDate,priceDate:summary.marketDate};
 }

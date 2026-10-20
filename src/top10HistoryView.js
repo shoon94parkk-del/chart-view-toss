@@ -1,4 +1,4 @@
-import { api } from './api.js';
+import { api, top10HistoryData } from './api.js';
 import { evaluateHistoryRow, averageTop10, finiteReturn, positivePrice } from './top10HistoryPerformance.js';
 
 const esc=(value='')=>String(value).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
@@ -87,7 +87,7 @@ export async function renderTop10History({shell,bindNav,isCurrent=()=>true}){
  app.innerHTML=shell('<section class="top10h-intro"><span class="page-kicker">DAILY TOP10 ARCHIVE</span><h2>TOP10 히스토리</h2><p>그날 제시한 추천과 추천일 대비 수익률을 불러오고 있어요.</p></section><div class="top10h-loading">기록을 불러오고 있어요.</div>','TOP10 히스토리');
  bindNav();
  try{
-  const data=await api('/static/data/top10_history.json',{ttlMs:45000,timeoutMs:8000,retries:1});
+  const data=await top10HistoryData();
   if(!isCurrent())return;
   const days=Array.isArray(data?.days)?data.days:[];
   const s=stats(days);

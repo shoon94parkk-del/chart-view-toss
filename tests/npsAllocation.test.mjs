@@ -31,3 +31,20 @@ test('freshness uses the price date and never calls collection time a price upda
  assert.equal(invoke('npsFreshness',seed(),Date.parse('2026-10-18T00:00:00Z')).stale,false);
  assert.equal(invoke('npsFreshness',seed(),Date.parse('2026-10-23T00:00:00Z')).stale,true);
 });
+
+test('freshness flags missed Tuesday scheduled close while preserving Friday on Tuesday morning',()=>{
+ const data=seed();
+ assert.equal(invoke('npsFreshness',data,Date.parse('2026-10-20T00:30:00Z')).stale,false);
+ const overdue=invoke('npsFreshness',data,Date.parse('2026-10-20T05:30:00Z'));
+ assert.equal(overdue.expectedDate,'2026-10-19');
+ assert.equal(overdue.stale,true);
+ const updated={...data,marketDate:'2026-10-19'};
+ assert.equal(invoke('npsFreshness',updated,Date.parse('2026-10-20T05:30:00Z')).stale,false);
+});
+test('target KOSPI responds to offshore asset revaluation while preserving domestic holdings',()=>{
+ const data=seed();
+ const original=invoke('calculateNpsScenario',data);
+ const strongerForeign=invoke('calculateNpsScenario',data,{equityReturn:25});
+ assert.ok(strongerForeign.targetKospi>original.targetKospi);
+ near(invoke('calculateNpsScenario',data,{kospi:strongerForeign.targetKospi,equityReturn:25}).weight,data.inputs.target);
+});
