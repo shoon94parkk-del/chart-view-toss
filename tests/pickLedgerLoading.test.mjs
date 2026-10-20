@@ -41,16 +41,53 @@ function harness({ bootstrap = async () => ({ recommendations }), monitoring = a
     });
     return nodes.get(selector);
   };
-  const document = { querySelector: node, activeElement: null };
-  const window = { scrollY: 0, scrollTo(value) { this.scrollY = typeof value === 'object' ? value.top : value; }, __chartviewRestoreScroll() {} };
+  const listeners=new Map();
+  const document = { querySelector: node, activeElement: null, addEventListener(type,callback){listeners.set(type,callback);},removeEventListener(type,callback){if(listeners.get(type)===callback)listeners.delete(type);} };
+  const window = { scrollY: 0,restoreRequests:[], scrollTo(value) { this.scrollY = typeof value === 'object' ? value.top : value; }, __chartviewRestoreScroll(options={}) {this.restoreRequests.push(options);if(Number.isFinite(options.top)&&!options.cancel)this.scrollTo(options.top);} };
   // Only resolve module imports to the controlled dependencies. All renderer
   // branches/calculations below are the current repository implementation.
   const render = new Function('document', 'window', 'homeBootstrap', 'pickMonitor', 'selectionKey', 'loadingIndicator', 'requestAnimationFrame', 'PICK_METHOD', 'pickPriceBasis', 'threeAgentEnabled', 'loadThreeAgentFeed', 'auditedSectionMarkup', 'dedupAuditedPicks', 'debateDashboardEnabled',
     source.replace(/^import .*;\n/gm, '').replace(/^export /gm, '') + '\nreturn renderPickLedger;'
   )(document, window, bootstrap, monitoring, selectionKey, loadingIndicator, callback => queueMicrotask(callback), PICK_METHOD, pickPriceBasis,
     () => false, async () => ({status: 'disabled'}), () => '', () => ({unique: [], duplicates: []}), () => false);
-  return { node, nodes, window, render: options => render({ shell: html => html, bindNav() {}, displayName: symbol => symbol, ...options }) };
+  return { node, nodes, window, listeners,render: options => render({ shell: html => html, bindNav() {}, displayName: symbol => symbol, ...options }) };
 }
+
+test('PICK Back retains its scroll intent until initial monitoring settles',async()=>{
+ const held=deferred();const app=harness({monitoring:()=>held.promise});
+ const viewState={routeFocusKey:null,returnScroll:300};
+ await app.render({restoreView:true,viewState});await nextTurn();
+ assert.equal(app.window.scrollY,0);
+ assert.equal(viewState.returnScroll,300);
+ held.resolve(monitor);await nextTurn();
+ assert.equal(app.window.scrollY,300);
+ assert.equal(viewState.returnScroll,undefined);
+});
+
+test('PICK user interaction cancels pending Back restoration before a late monitor paints',async()=>{
+ for(const event of ['wheel','touchstart','pointerdown','keydown']){
+  const held=deferred();const app=harness({monitoring:()=>held.promise});
+  const viewState={routeFocusKey:null,returnScroll:300};
+  await app.render({restoreView:true,viewState});await nextTurn();
+  assert.equal(typeof app.listeners.get(event),'function',event);
+  app.listeners.get(event)();app.window.scrollY=75;
+  held.resolve(monitor);await nextTurn();
+  assert.equal(app.window.scrollY,75,event);
+  assert.ok(app.window.restoreRequests.some(request=>request.cancel===true),event);
+  assert.equal(viewState.returnScroll,undefined,event);
+ }
+});
+
+test('PICK disposal preserves a newly captured return position and never cancels another route restore',async()=>{
+ const held=deferred();const app=harness({monitoring:()=>held.promise});
+ const viewState={routeFocusKey:null,returnScroll:300};
+ const cleanup=await app.render({restoreView:true,viewState});await nextTurn();
+ viewState.returnScroll=425;
+ cleanup();held.resolve(monitor);await nextTurn();
+ assert.equal(viewState.returnScroll,425);
+ assert.equal(app.window.restoreRequests.some(request=>request.cancel===true),false);
+ assert.equal(app.window.scrollY,0);
+});
 
 test('PICK bootstrap renders performance and rows while optional monitoring is held', async () => {
   const held = deferred();

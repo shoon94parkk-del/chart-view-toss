@@ -228,6 +228,27 @@ export async function renderPickLedger({shell,bindNav,displayName,focusKey=null,
   let primarySequence=0,monitorSequence=0,primaryLoading=false;
   let monitorResult={state:'loading',value:null};
   const alive=()=>!disposed&&list.isConnected;
+  const ownsReturnScroll=restoreView&&Number.isFinite(viewState.returnScroll);
+  let pendingReturnScroll=ownsReturnScroll?viewState.returnScroll:null,returnScheduled=false;
+  const returnEvents=['wheel','touchstart','pointerdown','keydown'];
+  const clearReturnScroll=(discardSaved=true)=>{
+    if(discardSaved&&pendingReturnScroll!==null&&viewState.returnScroll===pendingReturnScroll)delete viewState.returnScroll;
+    pendingReturnScroll=null;returnScheduled=false;
+    for(const event of returnEvents)document.removeEventListener?.(event,cancelReturnScroll,true);
+  };
+  const cancelReturnScroll=()=>{
+    if(!alive()||pendingReturnScroll===null)return;
+    window.__chartviewRestoreScroll?.({cancel:true});clearReturnScroll();
+  };
+  if(ownsReturnScroll)for(const event of returnEvents)document.addEventListener?.(event,cancelReturnScroll,{capture:true,passive:true});
+  const restoreReturnScroll=()=>{
+    if(!alive()||!payload||pendingReturnScroll===null||returnScheduled||monitorResult.state==='loading')return;
+    returnScheduled=true;
+    // Reuse the route's restore engine only after the initial monitor layout
+    // settles. Retain cancellation until its queued frame has run.
+    window.__chartviewRestoreScroll?.({top:pendingReturnScroll,clamp:true});
+    requestAnimationFrame(()=>{if(alive()&&returnScheduled)clearReturnScroll();});
+  };
   const saveViewState=()=>{
     for(const [key,field] of Object.entries(fields))viewState[key]=field.value;
     viewState.searchOpen=searchOptions.open;
@@ -338,6 +359,7 @@ export async function renderPickLedger({shell,bindNav,displayName,focusKey=null,
     const monitoringBasis=ready?statusStrip.querySelector('.pick-ledger-basis').textContent:monitorResult.state==='loading'?'사후점검 확인 중 · 성과 기록은 제공된 기준일의 수익률이에요.':'사후점검 미확인 · 성과 기록은 제공된 기준일의 수익률이에요.';
     document.querySelector('[data-pick-calculation]').innerHTML=`<p>${esc(summary.querySelector('.pick-ledger-basis').textContent)}</p><p>${esc(PICK_METHOD)}</p><p>상단 성과는 전체 평가 기록 기준이에요. 목록 필터는 아래 기록에만 적용돼요.</p><p>${esc(monitoringBasis)}</p>`;
     paint(position);
+    restoreReturnScroll();
   }
 
   async function loadMonitoring(force=false,{silent=false}={}){
@@ -390,11 +412,7 @@ export async function renderPickLedger({shell,bindNav,displayName,focusKey=null,
       </div><p class="pick-ledger-basis">${esc(pickPriceBasis(payload.recommendations))}</p>`;
       toolbar.hidden=false;
       paintMonitoring();
-      window.__chartviewRestoreScroll?.();
-      if(restoreView&&Number.isFinite(viewState.returnScroll)){
-        const top=viewState.returnScroll;delete viewState.returnScroll;
-        requestAnimationFrame(()=>{if(alive())window.scrollTo({top,behavior:'instant'});});
-      }
+      if(!ownsReturnScroll)window.__chartviewRestoreScroll?.();
     }catch(error){
       if(!alive()||sequence!==primarySequence)return;
       if(silent&&payload)return;
@@ -423,6 +441,9 @@ export async function renderPickLedger({shell,bindNav,displayName,focusKey=null,
   document.addEventListener?.('visibilitychange',onVisible);
   return ()=>{
     disposed=true;primarySequence++;monitorSequence++;threeAgentSequence++;
+    // popstate has already assigned the next route's target before cleanup.
+    // Disposing this view must leave that new global intent alone.
+    clearReturnScroll(false);
     clearInterval(timer);
     document.removeEventListener?.('visibilitychange',onVisible);
   };

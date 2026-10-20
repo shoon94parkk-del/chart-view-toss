@@ -350,7 +350,16 @@ function navigate(tab,detailSymbol=null,detailName='',investigation=null){
 }
 window.__chartviewNavigate=(tab,detailSymbol=null,detailName='')=>navigate(tab,detailSymbol,detailName);
 window.__chartviewInvestigate=(symbol,name,context)=>navigate('detail',symbol,name,context);
-window.__chartviewRestoreScroll=()=>requestAnimationFrame(()=>{const y=state.restoreScroll;if(y==null)return;if(document.documentElement.scrollHeight>=y+innerHeight){window.scrollTo(0,y);state.restoreScroll=null;}});
+window.__chartviewRestoreScroll=({top,cancel=false,clamp=false}={})=>{
+ if(cancel){state.restoreScroll=null;return;}
+ if(Number.isFinite(top))state.restoreScroll=Math.max(0,top);
+ const epoch=viewEpoch;
+ return requestAnimationFrame(()=>{
+   if(epoch!==viewEpoch)return;
+   const y=state.restoreScroll;if(y==null)return;
+   if(clamp||document.documentElement.scrollHeight>=y+innerHeight){window.scrollTo({top:y,behavior:'instant'});state.restoreScroll=null;}
+ });
+};
 function bindNav(){
  document.querySelectorAll('[data-feature-route]').forEach(b=>b.onclick=()=>{
    if(b.dataset.featureRoute==='discover')state.screener.appliedRoutePreset=null;
@@ -1774,7 +1783,7 @@ function renderMore(){
      <button class="feature-row" data-tab="heatmap" data-tool-tone="${surfaceIdentity('heatmap').tone}"><span class="feature-icon coral">${iconSvg('heatmap',22)}</span><span><strong>시장 히트맵</strong><small>업종별 종목 등락 지도</small></span><b>${iconSvg('arrow',19)}</b></button>
    </div></section>
    <section class="menu-group" id="analysis-records"><h3><i class="section-symbol" aria-hidden="true">${uiIcon('ledger',18)}</i>선정 기록 점검</h3><p class="menu-group-copy">그날 제시한 TOP10과 최종 PICK, 선정 이후 성과를 나눠 확인해요.</p><div class="feature-menu">
-     ${DEBATES_VISIBLE?`<button class="feature-row" data-tab="debates" data-tool-tone="records"><span class="feature-icon blue">${uiIcon('ledger',22)}</span><span><strong>3인 AI 토론</strong><small>메르·농구천재·멍이 기록과 Shadow 운영 현황</small></span><b>${iconSvg('arrow',19)}</b></button>`:''}
+     ${DEBATES_VISIBLE?`<button class="feature-row" data-tab="debates" data-tool-tone="records"><span class="feature-icon blue">${uiIcon('ledger',22)}</span><span><strong>3인 AI 토론</strong><small>종목별 핵심 결과와 펼쳐 보는 분석 근거</small></span><b>${iconSvg('arrow',19)}</b></button>`:''}
      <button class="feature-row" data-tab="history" data-tool-tone="calm"><span class="feature-icon blue">${uiIcon('ledger',22)}</span><span><strong>TOP10 히스토리</strong><small>일자별 TOP10 추천과 최종 PICK 원장</small></span><b>${iconSvg('arrow',19)}</b></button>
      ${SHOW_SPOTLIGHT?`<button class="feature-row" data-tab="picks" data-tool-tone="${surfaceIdentity('picks').tone}"><span class="feature-icon coral">${iconSvg('picks',22)}</span><span><strong>선정 기록·성과</strong><small>최종 PICK의 선정 이유·이후 성과·현재 상태</small></span><b>${iconSvg('arrow',19)}</b></button>`:''}
    </div></section>
@@ -1911,7 +1920,7 @@ function render(){
    renderLazyAnalysis({tab:'debates',title:'3인 AI 토론',
      load:()=>Promise.all([import('./debateDashboard.js'),import('./debateDashboard.css')]),
      mount:([panel])=>{
-       document.querySelector('#app').innerHTML=shell('<section class="task-head"><div><span class="page-kicker">RESEARCH ARCHIVE</span><h2>3인 AI 토론 · 운영 기록</h2><p>과거 연구 요약과 Shadow 관찰 현황을 확인해요.</p></div></section><div id="debates-page-host"></div>','3인 AI 토론');
+       document.querySelector('#app').innerHTML=shell('<section class="task-head"><div><span class="page-kicker">PUBLIC RESEARCH</span><h2>3인 AI 토론 · 종목별 결과</h2><p>공개된 최신 연구 요약과 분석 근거를 확인해요.</p></div></section><div id="debates-page-host"></div>','3인 AI 토론');
        bindNav();
        return panel.mountDebateDashboard(document.querySelector('#debates-page-host'));
      }});
