@@ -22,6 +22,7 @@ const identities = {
  gurus: ['guide', '투자 원칙으로 재무 조건 확인', 'find'],
  ideas: ['filter', '거래 패턴 관찰', 'find'],
  picks: ['ledger', '과거 선정 기록 점검', 'records'],
+ debates: ['ledger', '3인 AI 토론 기록', 'records'],
  exports: ['exports', '품목·국가별 수출 분석', 'exports'],
  memory: ['evidence', 'TrendForce 공개 시장가격', 'evidence'],
  heatmap: ['market', '시장 등락 탐색', 'market'],
