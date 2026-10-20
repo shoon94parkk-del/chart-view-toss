@@ -57,3 +57,10 @@ Primary가 임시로 짧은 loading 화면에서 한 번 scrollTo한 뒤 원래 
 ## 최종 로컬 모바일·토스 빌드
 
 전체 브라우저 검사 종료 후 기존 mobile_continuity_qa를 다시 실행하여320/390/430px의 메뉴·행선지·밀도·출처·터치 영역 검사를 통과했다. 이후 `npm run build:ait`가 성공했다. 테스트 번들 chartview.ait는10,531,683bytes, SHA-256 `c6fce16a61e01e3b224855676cfef4687d9fd756f5cc64aad3651eeef0bd7b81`, deploymentId `01a15895-bfd2-726b-a9a9-58185cba2064`다. 실제 Android/iOS Toss Sandbox·QR 확인과 공개 제출은 수행하지 않았으며 웹 배포와 구분한다.
+
+## 공개 연구 HOLD 계약 확장
+
+연구상 HOLD가 기존 allowlist에서 거절되는 것을 회귀 검사로 재현한 뒤 해당 값만 추가했다. HOLD를 WAIT로 바꾸지 않고 원 응답의 판단을 닫힌 행과 상세에 유지한다. PICK 원장과 감사 v2의 계약은 변경하지 않는다. 가상 계약 fixture10건(HOLD3/WAIT7)으로 원값 보존과 PARTIAL 기록의 context 한계 문구를 검사하며, fixture는 실제 게시 자료로 사용하지 않는다. 실제10건의 공개 projection·게시·운영 readback은 별도로 검증한다.
+
+
+HOLD 확장 최종 소스로 `npm run qa:prepush`를 실행하여 Node738개·직접 진입29경로·브라우저1,052개(4기기×263개)를 모두 통과했다. unexpected/flaky/skipped는 각각0이며 실행 전후 소스·검사·설정345개 파일의 SHA-256이 모두 일치한다. 이후 기존 모바일 연속성 검사가320/390/430px 모두 통과했고, 이어 `npm run build:ait`가 성공했다(Node738개 재검증 포함). 테스트 번들 `chartview.ait`는10,531,633bytes, SHA-256 `160e2be23e213b7296f6ce95cf4d137260fc74edf0156003627ac4d2bd10b5b0`, SDK deploymentId `01a159a9-ddf5-792d-8fc7-bf31a4d28f88`다. 이는 AIT 빌드 결과이며 실제 Android/iOS Toss Sandbox·공개 제출과 구분한다. 실제10건의 내용 검토·서버 게시·운영 readback은 별도 release 담당자가 검증한다.
