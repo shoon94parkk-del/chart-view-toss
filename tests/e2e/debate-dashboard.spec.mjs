@@ -16,7 +16,7 @@ test('Analysis menu opens AI debate archive without backend availability',async(
   await expect(page.locator('.debate-card')).toContainText('한화시스템');
   await page.locator('.debate-card summary').click();
   await expect(page.locator('.debate-phase').first()).toBeVisible();
-  await expect(page.locator('.debate-warning')).toContainText('비공개 원문');
+  await expect(page.locator('.debate-panel > .debate-warning')).toContainText('비공개 원문');
   await noOverflow(page);
 });
 
