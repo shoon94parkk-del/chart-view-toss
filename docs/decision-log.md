@@ -821,3 +821,7 @@ Classification: new behavior. `/debates/`는 기존 bootstrap 뒤 별도로 게�
 ## 2026-10-20 — PICK Back의 초기 monitor layout 경합
 
 기존 버전에서도 초기 점검 응답이 늦으면 복귀 목표가 짧은 loading 페이지에 clamp되고 잊히는 경합을 재현했다. Primary/monitor를 결합하지 않고 기존 root restore 엔진에 목표/취소/최종 clamp와 epoch guard를 더한다. PICK은 초기 monitor가 정리될 때까지 의도를 유지하되 실제 사용자 조작은 취소하고 cleanup은 다음 화면이 이미 지정한 목표를 보존한다. 원래1px 위치 계약과 retry focus/filter/independent loading을 유지한다. 최초 전체1038/2실패·기존 baseline36px RED·수정후대상12브라우저/34Node GREEN을 [보고서](MUSE_RESULTS_2026-10-20.md)에 구분했다. 최종 전체 검증은 새 소스로 다시 수행하여 Node736개·브라우저1,048개(4기기, unexpected/flaky/skipped0)·모바일320/390/430px·AIT 테스트 빌드가 통과했다.
+
+## 2026-10-20 — 공개 연구 HOLD 판단 보존
+
+Classification: new contract support. 공개 연구 archive의 verdict에 HOLD를 추가한다. 서버의 HOLD/WAIT를 그대로 표시하며 서로 바꾸거나 기존 PICK 원장·감사 PICK v2에 합산하지 않는다. 계약 검사용 가상10건(HOLD3/WAIT7)에서 값 보존과 PARTIAL/context 한계 표시를 검사한다. 이 fixture를 실제 공개 데이터로 게시하지 않는다. 실제10건 게시와 운영 readback은 별도 producer/release 작업이다. 최종 로컬 검증은 Node738개·직접 진입29경로·브라우저1,052개(4기기, unexpected/flaky/skipped0)·모바일320/390/430px·AIT 빌드가 통과했다. [검증 기록](MUSE_RESULTS_2026-10-20.md).

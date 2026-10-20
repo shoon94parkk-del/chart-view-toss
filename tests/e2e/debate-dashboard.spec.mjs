@@ -1,10 +1,28 @@
 import {test,expect,noOverflow} from './fixtures.mjs';
 import {readFileSync} from 'node:fs';
+import {tenResearchResults,partialLimitation} from '../fixtures/debate-ten-results.mjs';
 
 const bootstrap=JSON.parse(readFileSync(new URL('../../public/data/intelligence_debates_public.json',import.meta.url),'utf8'));
 const publication=()=>({...structuredClone(bootstrap),generated_at:'2026-10-20T06:55:00Z',debates:[...structuredClone(bootstrap.debates),{...structuredClone(bootstrap.debates[0]),id:'fresh-stock-20261020',company:'새 연구 종목',ticker:'123456',summary:'추가 실적 확인이 필요한 공개 연구입니다.',updated_at:'2026-10-20T06:50:00Z'}]});
 const archivePath='/api/published-data/intelligence_debates_public.json';
 const shadowPath='/api/published-data/intelligence_shadow_status.json';
+
+test('ten published research results preserve HOLD3 WAIT7 and show PARTIAL limitations outside the PICK ledger',async({page,qa})=>{
+ await page.clock.setFixedTime(new Date('2026-10-20T07:00:00Z'));
+ const source=tenResearchResults();qa.overrides.set(archivePath,route=>route.fulfill({json:source}));
+ await page.goto('/debates/');await expect(page.locator('.debate-card')).toHaveCount(10);
+ for(const record of source.debates)await expect(page.locator(`[data-debate-id="${record.id}"] .debate-verdict`)).toHaveText(record.verdict);
+ const verdicts=await page.locator('.debate-card .debate-verdict').allTextContents();
+ expect(verdicts.filter(value=>value==='HOLD')).toHaveLength(3);expect(verdicts.filter(value=>value==='WAIT')).toHaveLength(7);
+ await expect(page.locator('#pick-ledger-summary')).toHaveCount(0);
+ expect(qa.calls.filter(call=>call.path==='/api/intelligence/feed/v2')).toHaveLength(0);
+ await page.locator('[data-debate-status]').selectOption('PARTIAL');await expect(page.locator('.debate-card')).toHaveCount(1);
+ await expect(page.locator('.debate-state')).toHaveText('일부 결과');
+ await expect(page.locator('.debate-card-summary')).toContainText(partialLimitation);
+ await page.locator('.debate-card > summary').click();await page.locator('.debate-phase > summary').click();
+ await expect(page.locator('.debate-phase-body')).toBeVisible();await expect(page.locator('.debate-phase-body')).toContainText(partialLimitation);
+ await noOverflow(page);
+});
 
 test('Analysis menu opens AI debate archive without backend availability',async({page,qa})=>{
   await page.clock.setFixedTime(new Date('2026-10-20T07:00:00Z'));

@@ -42,7 +42,7 @@ export function validateDebateArchive(doc, now=Date.now()) {
        seen.has(d.id) || typeof d.company!=='string'||!d.company.trim()||d.company.length>100 ||
        (d.topic!=null&&(typeof d.topic!=='string'||d.topic.length>240)) ||
        !TICKER.test(d.ticker||'') || !validDate(d.date) ||
-       !STATUSES.has(d.status) || !['BUY','WAIT','SELL','UNKNOWN'].includes(d.verdict) ||
+       !STATUSES.has(d.status) || !['BUY','HOLD','WAIT','SELL','UNKNOWN'].includes(d.verdict) ||
        d.audit_verified!==false || !Array.isArray(d.phases) || d.phases.length<1 || d.phases.length>24)
        return {status:'invalid'};
     seen.add(d.id);

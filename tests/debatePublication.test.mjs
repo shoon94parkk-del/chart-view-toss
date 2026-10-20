@@ -1,10 +1,35 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as dashboard from '../src/debateDashboard.js';
+import {tenResearchResults,partialLimitation} from './fixtures/debate-ten-results.mjs';
 
 const now=Date.parse('2026-10-20T07:00:00Z');
 const phase=(role,stage)=>({role,stage,title:'공개 근거',text:'실적과 가격의 차이를 확인합니다.',source_path:`records/debates/20261020/${role}-${stage}.md`});
 const archive=()=>({schema_version:1,kind:'debate_archive',publication_status:'EXPLICITLY_APPROVED',generated_at:'2026-10-20T06:55:00Z',debates:[{id:'new-stock-20261020',company:'새 연구 종목',ticker:'123456',date:'2026-10-20',status:'COMPLETED',verdict:'WAIT',audit_verified:false,summary:'추가 실적 확인이 필요한 공개 연구 결과입니다.',updated_at:'2026-10-20T06:50:00Z',phases:[phase('mer','phase1'),phase('nonggu','phase1'),phase('meng','phase1'),phase('other','attack'),phase('other','rebuttal'),phase('other','final')]}]});
+
+test('public research accepts HOLD and preserves that source verdict in list and details',()=>{
+ const d=archive();d.debates[0].verdict='HOLD';
+ const result=dashboard.validateDebateArchive(d,now);
+ assert.equal(result.status,'ready');
+ assert.equal(result.document.debates[0].verdict,'HOLD');
+ assert.match(dashboard.debateListMarkup(result.document.debates),/>HOLD</);
+ assert.match(dashboard.debateDetailMarkup(result.document.debates[0]),/>HOLD</);
+});
+
+test('ten research results retain three HOLD and seven WAIT verdicts and disclose a partial record',()=>{
+ const source=tenResearchResults(),before=structuredClone(source);
+ const result=dashboard.validateDebateArchive(source,now);assert.equal(result.status,'ready');
+ assert.equal(result.document.debates.length,10);
+ assert.equal(result.document.debates.filter(d=>d.verdict==='HOLD').length,3);
+ assert.equal(result.document.debates.filter(d=>d.verdict==='WAIT').length,7);
+ const html=dashboard.debateListMarkup(result.document.debates);
+ assert.equal((html.match(/>HOLD</g)||[]).length,3);assert.equal((html.match(/>WAIT</g)||[]).length,7);
+ const partial=result.document.debates.find(d=>d.status==='PARTIAL');
+ assert.match(dashboard.debateListMarkup([partial]),/일부 결과/);
+ assert.ok(dashboard.debateDetailMarkup(partial).includes(partialLimitation));
+ assert.deepEqual(source,before);
+ const invalid=tenResearchResults();invalid.debates[0].verdict='HOLDING';assert.equal(dashboard.validateDebateArchive(invalid,now).status,'invalid');
+});
 
 test('completed public research requires paired summary/update and completed three-agent rounds',()=>{
  assert.equal(dashboard.validateDebateArchive(archive(),now).status,'ready');
