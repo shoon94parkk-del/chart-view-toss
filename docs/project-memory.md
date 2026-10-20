@@ -466,3 +466,8 @@ The site-audit branch preserves deployed9bd17db before fixing navigation, draft/
 ## 2026-10-18 — NPS tab
 
 Analysis evidence includes the lazy pension route. Main stays concise; assets, 13F, methods and scenarios use native disclosures. Public summary and holdings must share snapshotVersion. Report date, price date and collection date remain distinct. No new Home request or private storage is added. Metadata for an unchanged price version, including new SEC warnings, still updates without refetching the holdings. Source failures remain visible. Market close collection is automatic; monthly balances and new 13F mappings remain reviewed inputs. See NPS_ALLOCATION_2026-10-18.md for exact tests, CI, deployment and native-device limits.
+
+
+### 2026-10-20 국민연금 모형2 계약
+
+현금 그룹 전체를 예금으로 취급하지 않는다. 단기자금 이자·금리차 대용 캐리·외부 순유입/이자를 각각 한 번 반영한다. 대체 현지 NAV0은 미관측 가정이며 경제가치 비교를 메인에 합산하지 않는다. 채권 총수익률의 금리 손실·이자를 재가산하지 않는다. AGGG 비교 결측은 같은 날짜의 검증된 비교만 제외하고 중앙 BNDW와 최신 시장일을 유지한다. source push의 같은 날짜 재평가와3회 재시도를 유지한다. 목표 ±0.5%p 대응 코스피 구간은 확률 범위가 아니다. NPS_REALISM_2026-10-20.md 참고.

@@ -1,0 +1,386 @@
+{
+  "startedAt": "2026-10-20T07:13:05.312Z",
+  "scope": "Independent latest local published JSON readback against existing localhost:4173 build, not full QA or production deployment",
+  "summary": {
+    "snapshotVersion": "b28f01645e1db7eb",
+    "marketDate": "2026-10-19",
+    "generatedAt": "2026-10-20T07:07:49.008353+00:00",
+    "sha256": "102454687d8c6b39602d66c08788858ceb22f746e2abfdc7972d3112f5f5578b",
+    "detailsFile": "holdings-b28f01645e1db7eb.json",
+    "detailsSha256": "53a902e224cbc04914328975bd4f6619c4e48da4c931cd4ced7abf490f5d9e3b"
+  },
+  "build": {
+    "asset": "index-CLlcMjRd.js",
+    "sha256": "57503de1c3f384f34bd89c2d43daa09fde5128f24147d84179e466cad19e2c13"
+  },
+  "expected": {
+    "weight": 22.914799137600834,
+    "gap": 2.1147991376008335,
+    "adjustment": -33.78235803806814,
+    "targetKospi": 5095.878844663598,
+    "cashBreakdown": {
+      "shortTermBase": 5.138099999999937,
+      "nonFinancialBase": 0.985699999999988,
+      "reconciliationBase": 1.734599999999979,
+      "shortTermIncome": 0.03464187051603355,
+      "hedgePrincipal": 142.30613593326953,
+      "hedgeCarry": -0.1415889718591946,
+      "externalFlowIncome": 0.008957586206766094,
+      "effectiveReturnPercent": -1.2469397731904226,
+      "projected": 7.76041048486351
+    }
+  },
+  "devices": [
+    {
+      "name": "chromium-320",
+      "checks": [
+        "Latest main values match published JSON and current JS recomputation; all five details closed; holdings lazy",
+        "Cash base categories, short-term-only interest, hedge carry, inflow interest, no double principal or bond-price loss, unobserved NAV explained",
+        "Seven recomputed assumption cases; missing same-date AGGG comparison excluded with explanation; main estimate retained",
+        "Same-version real 552-row holdings validate; direct 546/552 and coverage displayed; residual record explicitly excluded from direct pricing",
+        "Mobile scenario edits match current JS, preserve published summary, persist across actual re-fetch, and reset to published assumptions"
+      ],
+      "requests": [
+        {
+          "path": "/static/data/nps/summary.json",
+          "method": "GET"
+        },
+        {
+          "path": "/static/data/nps/holdings-b28f01645e1db7eb.json",
+          "method": "GET"
+        },
+        {
+          "path": "/static/data/nps/summary.json",
+          "method": "GET"
+        }
+      ],
+      "blockedNonNpsExternal": [
+        {
+          "origin": "https://chart-view-pkv8.onrender.com",
+          "path": "/api/activity",
+          "method": "POST"
+        }
+      ],
+      "browserErrors": [],
+      "consoleErrors": [
+        "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector"
+      ],
+      "overflows": {
+        "initial": {
+          "viewport": 320,
+          "scrollWidth": 320,
+          "offenders": []
+        },
+        "assets": {
+          "viewport": 320,
+          "scrollWidth": 320,
+          "offenders": []
+        },
+        "expandedScenario": {
+          "viewport": 320,
+          "scrollWidth": 320,
+          "offenders": []
+        }
+      },
+      "browserVersion": "140.0.7339.16",
+      "initial": {
+        "weight": "22.91%",
+        "gap": "+2.11%p",
+        "adjustment": "33.8조 원 축소",
+        "targetKospi": "5,096pt",
+        "status": "게시 확인 오후 04:13",
+        "details": [
+          {
+            "key": "assets",
+            "open": false,
+            "hidden": false
+          },
+          {
+            "key": "holdings",
+            "open": false,
+            "hidden": false
+          },
+          {
+            "key": "assumptions",
+            "open": false,
+            "hidden": false
+          },
+          {
+            "key": "method",
+            "open": false,
+            "hidden": false
+          },
+          {
+            "key": "scenario",
+            "open": false,
+            "hidden": false
+          }
+        ],
+        "holdingsRequested": false
+      },
+      "cashText": "단기·기타 잔액 나눠 보기\n\n공시 기준 잔액이에요. 조 원 단위, 반올림 전 값으로 합산해요.\n\n단기자금 5.1381\n복지·기타 0.9857\n금융부문 조정 잔액 1.7346\n단기자금 이자 추정 +0.0346\n환헤지 캐리 추정 -0.1416\n순유입 이자 추정 +0.0090\n\n금융부문 조정 잔액 전체를 예금이나 특정 파생상품으로 단정하지 않아요. 이자는 단기자금에만 붙이고, 추정 헤지 캐리와 순유입 이자를 따로 계산해요. 캐리 계산의 가정 헤지 원금은 142.3조 원이며 자산에 다시 더하지 않아요.",
+      "assumptions": {
+        "count": 7,
+        "unavailable": "해외채권 AGGG 비헤지 대용지표: 동일 기준일의 가격을 확인하지 못해 비교를 제공하지 않아요."
+      },
+      "holdings": {
+        "intro": "2026-06-30 보고 수량 · 2026-10-19 가격 추정\n\n직접 평가 546/552개 · 13F 보고금액의 99.54%를 확인했어요.\n\n직접 평가한 부분은 전체 해외주식 공시 잔액의 35.0%예요. 나머지 해외주식은 지수로 추정해요.\n\n보고금액 비중 순 · 평가액은 배당 재투자를 가정한 백만 달러 단위예요. 평가하지 못한 값은 ‘—’로 표시해요.",
+        "renderedRows": 10,
+        "firstTicker": "NVDA",
+        "residualSearch": "SPGI"
+      },
+      "scenario": {
+        "patch": {
+          "kospi": 5000,
+          "domesticFlow": 5,
+          "alternativeReturn": -6.672223274845853
+        },
+        "weight": 21.026505514350696,
+        "resultText": "사용자 가정\n\n국내주식 비중 21.03%\n목표 대비 +0.23%p · 내부 조정 3.5조 원 축소\n목표 비중 도달 코스피 4,931pt\n\n환율·수익률은 2026-07-31 대비예요. 다른 입력은 게시 가정을 유지해요.",
+        "summaryUnchanged": true
+      },
+      "refresh": {
+        "summaryRequestBefore": 1,
+        "summaryRequestAfter": 2,
+        "status": "게시 확인 오후 04:13",
+        "scenarioPreserved": true,
+        "summaryUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "name": "chromium-393",
+      "checks": [
+        "Latest main values match published JSON and current JS recomputation; all five details closed; holdings lazy",
+        "Cash base categories, short-term-only interest, hedge carry, inflow interest, no double principal or bond-price loss, unobserved NAV explained",
+        "Seven recomputed assumption cases; missing same-date AGGG comparison excluded with explanation; main estimate retained",
+        "Same-version real 552-row holdings validate; direct 546/552 and coverage displayed; residual record explicitly excluded from direct pricing",
+        "Mobile scenario edits match current JS, preserve published summary, persist across actual re-fetch, and reset to published assumptions"
+      ],
+      "requests": [
+        {
+          "path": "/static/data/nps/summary.json",
+          "method": "GET"
+        },
+        {
+          "path": "/static/data/nps/holdings-b28f01645e1db7eb.json",
+          "method": "GET"
+        },
+        {
+          "path": "/static/data/nps/summary.json",
+          "method": "GET"
+        }
+      ],
+      "blockedNonNpsExternal": [
+        {
+          "origin": "https://chart-view-pkv8.onrender.com",
+          "path": "/api/activity",
+          "method": "POST"
+        }
+      ],
+      "browserErrors": [],
+      "consoleErrors": [
+        "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector"
+      ],
+      "overflows": {
+        "initial": {
+          "viewport": 393,
+          "scrollWidth": 393,
+          "offenders": []
+        },
+        "assets": {
+          "viewport": 393,
+          "scrollWidth": 393,
+          "offenders": []
+        },
+        "expandedScenario": {
+          "viewport": 393,
+          "scrollWidth": 393,
+          "offenders": []
+        }
+      },
+      "browserVersion": "140.0.7339.16",
+      "initial": {
+        "weight": "22.91%",
+        "gap": "+2.11%p",
+        "adjustment": "33.8조 원 축소",
+        "targetKospi": "5,096pt",
+        "status": "게시 확인 오후 04:13",
+        "details": [
+          {
+            "key": "assets",
+            "open": false,
+            "hidden": false
+          },
+          {
+            "key": "holdings",
+            "open": false,
+            "hidden": false
+          },
+          {
+            "key": "assumptions",
+            "open": false,
+            "hidden": false
+          },
+          {
+            "key": "method",
+            "open": false,
+            "hidden": false
+          },
+          {
+            "key": "scenario",
+            "open": false,
+            "hidden": false
+          }
+        ],
+        "holdingsRequested": false
+      },
+      "cashText": "단기·기타 잔액 나눠 보기\n\n공시 기준 잔액이에요. 조 원 단위, 반올림 전 값으로 합산해요.\n\n단기자금 5.1381\n복지·기타 0.9857\n금융부문 조정 잔액 1.7346\n단기자금 이자 추정 +0.0346\n환헤지 캐리 추정 -0.1416\n순유입 이자 추정 +0.0090\n\n금융부문 조정 잔액 전체를 예금이나 특정 파생상품으로 단정하지 않아요. 이자는 단기자금에만 붙이고, 추정 헤지 캐리와 순유입 이자를 따로 계산해요. 캐리 계산의 가정 헤지 원금은 142.3조 원이며 자산에 다시 더하지 않아요.",
+      "assumptions": {
+        "count": 7,
+        "unavailable": "해외채권 AGGG 비헤지 대용지표: 동일 기준일의 가격을 확인하지 못해 비교를 제공하지 않아요."
+      },
+      "holdings": {
+        "intro": "2026-06-30 보고 수량 · 2026-10-19 가격 추정\n\n직접 평가 546/552개 · 13F 보고금액의 99.54%를 확인했어요.\n\n직접 평가한 부분은 전체 해외주식 공시 잔액의 35.0%예요. 나머지 해외주식은 지수로 추정해요.\n\n보고금액 비중 순 · 평가액은 배당 재투자를 가정한 백만 달러 단위예요. 평가하지 못한 값은 ‘—’로 표시해요.",
+        "renderedRows": 10,
+        "firstTicker": "NVDA",
+        "residualSearch": "SPGI"
+      },
+      "scenario": {
+        "patch": {
+          "kospi": 5000,
+          "domesticFlow": 5,
+          "alternativeReturn": -6.672223274845853
+        },
+        "weight": 21.026505514350696,
+        "resultText": "사용자 가정\n\n국내주식 비중 21.03%\n목표 대비 +0.23%p · 내부 조정 3.5조 원 축소\n목표 비중 도달 코스피 4,931pt\n\n환율·수익률은 2026-07-31 대비예요. 다른 입력은 게시 가정을 유지해요.",
+        "summaryUnchanged": true
+      },
+      "refresh": {
+        "summaryRequestBefore": 1,
+        "summaryRequestAfter": 2,
+        "status": "게시 확인 오후 04:13",
+        "scenarioPreserved": true,
+        "summaryUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "name": "iphone-se-webkit",
+      "checks": [
+        "Latest main values match published JSON and current JS recomputation; all five details closed; holdings lazy",
+        "Cash base categories, short-term-only interest, hedge carry, inflow interest, no double principal or bond-price loss, unobserved NAV explained",
+        "Seven recomputed assumption cases; missing same-date AGGG comparison excluded with explanation; main estimate retained",
+        "Same-version real 552-row holdings validate; direct 546/552 and coverage displayed; residual record explicitly excluded from direct pricing",
+        "Mobile scenario edits match current JS, preserve published summary, persist across actual re-fetch, and reset to published assumptions"
+      ],
+      "requests": [
+        {
+          "path": "/static/data/nps/summary.json",
+          "method": "GET"
+        },
+        {
+          "path": "/static/data/nps/holdings-b28f01645e1db7eb.json",
+          "method": "GET"
+        },
+        {
+          "path": "/static/data/nps/summary.json",
+          "method": "GET"
+        }
+      ],
+      "blockedNonNpsExternal": [
+        {
+          "origin": "https://chart-view-pkv8.onrender.com",
+          "path": "/api/activity",
+          "method": "POST"
+        }
+      ],
+      "browserErrors": [],
+      "consoleErrors": [],
+      "overflows": {
+        "initial": {
+          "viewport": 320,
+          "scrollWidth": 320,
+          "offenders": []
+        },
+        "assets": {
+          "viewport": 320,
+          "scrollWidth": 320,
+          "offenders": []
+        },
+        "expandedScenario": {
+          "viewport": 320,
+          "scrollWidth": 320,
+          "offenders": []
+        }
+      },
+      "browserVersion": "26.0",
+      "initial": {
+        "weight": "22.91%",
+        "gap": "+2.11%p",
+        "adjustment": "33.8조 원 축소",
+        "targetKospi": "5,096pt",
+        "status": "게시 확인 오후 04:13",
+        "details": [
+          {
+            "key": "assets",
+            "open": false,
+            "hidden": false
+          },
+          {
+            "key": "holdings",
+            "open": false,
+            "hidden": false
+          },
+          {
+            "key": "assumptions",
+            "open": false,
+            "hidden": false
+          },
+          {
+            "key": "method",
+            "open": false,
+            "hidden": false
+          },
+          {
+            "key": "scenario",
+            "open": false,
+            "hidden": false
+          }
+        ],
+        "holdingsRequested": false
+      },
+      "cashText": "단기·기타 잔액 나눠 보기\n공시 기준 잔액이에요. 조 원 단위, 반올림 전 값으로 합산해요.\n\n단기자금 5.1381\n복지·기타 0.9857\n금융부문 조정 잔액 1.7346\n단기자금 이자 추정 +0.0346\n환헤지 캐리 추정 -0.1416\n순유입 이자 추정 +0.0090\n금융부문 조정 잔액 전체를 예금이나 특정 파생상품으로 단정하지 않아요. 이자는 단기자금에만 붙이고, 추정 헤지 캐리와 순유입 이자를 따로 계산해요. 캐리 계산의 가정 헤지 원금은 142.3조 원이며 자산에 다시 더하지 않아요.\n\n",
+      "assumptions": {
+        "count": 7,
+        "unavailable": "해외채권 AGGG 비헤지 대용지표: 동일 기준일의 가격을 확인하지 못해 비교를 제공하지 않아요."
+      },
+      "holdings": {
+        "intro": "2026-06-30 보고 수량 · 2026-10-19 가격 추정\n\n직접 평가 546/552개 · 13F 보고금액의 99.54%를 확인했어요.\n\n직접 평가한 부분은 전체 해외주식 공시 잔액의 35.0%예요. 나머지 해외주식은 지수로 추정해요.\n\n보고금액 비중 순 · 평가액은 배당 재투자를 가정한 백만 달러 단위예요. 평가하지 못한 값은 ‘—’로 표시해요.\n\n",
+        "renderedRows": 10,
+        "firstTicker": "NVDA",
+        "residualSearch": "SPGI"
+      },
+      "scenario": {
+        "patch": {
+          "kospi": 5000,
+          "domesticFlow": 5,
+          "alternativeReturn": -6.672223274845853
+        },
+        "weight": 21.026505514350696,
+        "resultText": "사용자 가정\n국내주식 비중 21.03%\n목표 대비 +0.23%p · 내부 조정 3.5조 원 축소\n목표 비중 도달 코스피 4,931pt\n환율·수익률은 2026-07-31 대비예요. 다른 입력은 게시 가정을 유지해요.\n",
+        "summaryUnchanged": true
+      },
+      "refresh": {
+        "summaryRequestBefore": 1,
+        "summaryRequestAfter": 2,
+        "status": "게시 확인 오후 04:13",
+        "scenarioPreserved": true,
+        "summaryUnchanged": true
+      },
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "completedAt": "2026-10-20T07:13:29.010Z"
+}

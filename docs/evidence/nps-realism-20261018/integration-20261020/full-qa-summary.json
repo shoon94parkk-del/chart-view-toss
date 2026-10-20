@@ -1,0 +1,25 @@
+{
+  "command": "VITE_CHARTVIEW_STATIC_DATA_BASE='' FONTCONFIG_FILE=/tmp/chartview-fonts-system.conf PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS=1 npm run qa:prepush",
+  "nodeTests": 724,
+  "stats": {
+    "startTime": "2026-10-20T07:04:36.831Z",
+    "duration": 1224358.54,
+    "expected": 1016,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "projects": [
+    "desktop-chromium",
+    "narrow-chromium",
+    "android-chromium",
+    "iphone-small-webkit"
+  ],
+  "sourceSha256": {
+    "src/npsAllocationModel.js": "aaf9ac874446596cf716e3df42378b6c6210df53493724ed51588e36b8732897",
+    "src/npsAllocationView.js": "ace559035eac5d2c418bceee1b8991ba043da113ffaaf70f9aa5357d7d7e2566",
+    "src/npsAllocationView.css": "b1434e5035e241a6776db1330ce181dc248a9f9be8640677205db685c53493a7",
+    "tests/e2e/nps-realism.spec.mjs": "58d14efd0b8b8c97c89b61881939fe450ce661218b4264fa854d3c7ef21056fd"
+  },
+  "nativeSandbox": "not performed"
+}

@@ -1,0 +1,55 @@
+
+Running 1 test using 1 worker
+
+(node:56509) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:56509) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+  ✘  1 [desktop-chromium] › tests/e2e/nps-realism.spec.mjs:153:1 › NPS checked economic proxy follows a newer publication while manual scenario inputs keep focus (8.8s)
+
+
+  1) [desktop-chromium] › tests/e2e/nps-realism.spec.mjs:153:1 › NPS checked economic proxy follows a newer publication while manual scenario inputs keep focus
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoContainText[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator: locator('[data-nps-scenario-result]')
+    Expected string: [32m"22.92"[39m
+    Received string: [31m"사용자 가정국내주식 비중 23.10%목표 대비 +2.30%p · 내부 조정 36.2조 원 축소환율·수익률은 2026-07-31 대비예요. 다른 입력은 게시 가정을 유지해요."[39m
+    Timeout: 8000ms
+
+    Call log:
+    [2m  - Expect "toContainText" with timeout 8000ms[22m
+    [2m  - waiting for locator('[data-nps-scenario-result]')[22m
+    [2m    12 × locator resolved to <div aria-live="polite" class="nps-scenario-result" data-nps-scenario-result="">…</div>[22m
+    [2m       - unexpected value "사용자 가정국내주식 비중 23.10%목표 대비 +2.30%p · 내부 조정 36.2조 원 축소환율·수익률은 2026-07-31 대비예요. 다른 입력은 게시 가정을 유지해요."[22m
+
+
+      43 |  const changed=structuredClone(summary);changed.generatedAt='2026-10-19T23:50:00Z';changed.realism.alternatives.economicReturnPct=summary.realism.alternatives.economicReturnPct+5;const proxyCase=changed.sensitivity.cases.find(row=>row.id==='alternative-economic-proxy');proxyCase.patch.alternativeReturn=changed.realism.alternatives.economicReturnPct;const recomputed=calculateNpsScenario(changed,proxyCase.patch);for(const key of ['weight','gap','adjustment'])proxyCase[key]=recomputed[key];qa.overrides.set(path,route=>route.fulfill({json:changed}));
+      44 |  await page.evaluate(()=>document.dispatchEvent(new Event('visibilitychange')));const result=calculateNpsScenario(changed,{alternativeReturn:changed.realism.alternatives.economicReturnPct,domesticFlow:5});
+    > 45 |  await expect(page.locator('[data-nps-scenario-result]')).toContainText(formatted(result.weight));await expect(mark).toBeChecked();await expect(flow).toHaveValue('5');await expect(flow).toBeFocused();await expect(page.locator('[data-nps-weight]')).toContainText(formatted(calculateNpsScenario(summary).weight));
+         |                                                           ^
+      46 | });
+      47 |
+        at /workspace/chart-view-toss/tests/e2e/nps-realism.spec.mjs:45:59
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../tmp/nps-realism-view-proxy-red/nps-realism-NPS-checked-ec-55d22--scenario-inputs-keep-focus-desktop-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #4: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../tmp/nps-realism-view-proxy-red/nps-realism-NPS-checked-ec-55d22--scenario-inputs-keep-focus-desktop-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../tmp/nps-realism-view-proxy-red/nps-realism-NPS-checked-ec-55d22--scenario-inputs-keep-focus-desktop-chromium/error-context.md
+
+    attachment #6: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../tmp/nps-realism-view-proxy-red/nps-realism-NPS-checked-ec-55d22--scenario-inputs-keep-focus-desktop-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../tmp/nps-realism-view-proxy-red/nps-realism-NPS-checked-ec-55d22--scenario-inputs-keep-focus-desktop-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [desktop-chromium] › tests/e2e/nps-realism.spec.mjs:153:1 › NPS checked economic proxy follows a newer publication while manual scenario inputs keep focus

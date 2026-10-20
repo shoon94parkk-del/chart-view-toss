@@ -1,0 +1,12 @@
+dist/assets/npsAllocationView-BaWl9nMP.js               31.19 kB │ gzip:  11.38 kB
+dist/assets/analysisViews-DkEGTM1i.js                   31.59 kB │ gzip:  11.92 kB
+dist/assets/exportMomentumView-D67Jnmf9.js              76.16 kB │ gzip:  19.63 kB
+dist/assets/lightweight-charts.production-d2CSQ3C3.js  162.84 kB │ gzip:  51.89 kB
+dist/assets/index-BJrhOyJo.js                          334.84 kB │ gzip: 111.55 kB
+✓ built in 1.68s
+Exported 29 direct-entry preview routes
+Direct-entry static route files match the production app bundle
+│
+◆  앱인토스 빌드가 완료되었습니다. (chartview.ait)
+│
+●  deploymentId: 01a15833-d853-772e-9e9d-4b274002ef40

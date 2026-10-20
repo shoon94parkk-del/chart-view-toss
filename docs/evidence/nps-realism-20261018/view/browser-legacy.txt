@@ -1,0 +1,101 @@
+
+Running 36 tests using 3 workers
+
+(node:54451) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:54450) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:54449) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:54451) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+(node:54449) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:54450) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+  ✓   1 [desktop-chromium] › tests/e2e/nps-allocation.spec.mjs:51:1 › NPS details explain allocation and FX and scenario preserves original summary (2.1s)
+  ✓   3 [desktop-chromium] › tests/e2e/nps-allocation.spec.mjs:78:1 › NPS failed revalidation retains dated result and explicit retry recovers (2.1s)
+  ✓   2 [desktop-chromium] › tests/e2e/nps-allocation.spec.mjs:23:1 › NPS summary matches actual calculation and loads holdings only on demand (3.0s)
+  ✓   4 [desktop-chromium] › tests/e2e/nps-allocation.spec.mjs:102:1 › NPS version-mismatched details remain retryable without changing summary (2.1s)
+  ✓   5 [desktop-chromium] › tests/e2e/nps-allocation.spec.mjs:126:1 › NPS analysis entry, direct path and back use existing app navigation (2.5s)
+  ✓   7 [desktop-chromium] › tests/e2e/nps-allocation.spec.mjs:177:1 › NPS never adds a request to Home and late result cannot overwrite another route (2.2s)
+  ✓   8 [desktop-chromium] › tests/e2e/nps-allocation.spec.mjs:205:1 › NPS refresh uses a newer verified publication and refuses an older response (1.9s)
+(node:54784) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   9 [desktop-chromium] › tests/e2e/nps-allocation.spec.mjs:233:1 › NPS same-price publication updates filing warnings without reloading holdings (1.3s)
+(node:54784) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:54794) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+(node:54794) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+  ✓   6 [desktop-chromium] › tests/e2e/nps-allocation.spec.mjs:144:1 › NPS main and expanded evidence stay accessible on small devices (6.8s)
+  ✓  10 [narrow-chromium] › tests/e2e/nps-allocation.spec.mjs:23:1 › NPS summary matches actual calculation and loads holdings only on demand (2.0s)
+(node:54999) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  11 [narrow-chromium] › tests/e2e/nps-allocation.spec.mjs:51:1 › NPS details explain allocation and FX and scenario preserves original summary (1.8s)
+(node:54999) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+  ✓  12 [narrow-chromium] › tests/e2e/nps-allocation.spec.mjs:102:1 › NPS version-mismatched details remain retryable without changing summary (1.3s)
+  ✓  13 [narrow-chromium] › tests/e2e/nps-allocation.spec.mjs:126:1 › NPS analysis entry, direct path and back use existing app navigation (1.8s)
+  ✓  14 [narrow-chromium] › tests/e2e/nps-allocation.spec.mjs:78:1 › NPS failed revalidation retains dated result and explicit retry recovers (1.9s)
+  ✓  16 [narrow-chromium] › tests/e2e/nps-allocation.spec.mjs:177:1 › NPS never adds a request to Home and late result cannot overwrite another route (1.2s)
+  ✓  17 [narrow-chromium] › tests/e2e/nps-allocation.spec.mjs:205:1 › NPS refresh uses a newer verified publication and refuses an older response (1.3s)
+(node:55180) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  18 [narrow-chromium] › tests/e2e/nps-allocation.spec.mjs:233:1 › NPS same-price publication updates filing warnings without reloading holdings (1.3s)
+(node:55188) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:55180) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+(node:55188) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+  ✓  15 [narrow-chromium] › tests/e2e/nps-allocation.spec.mjs:144:1 › NPS main and expanded evidence stay accessible on small devices (5.5s)
+(node:55394) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:55394) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+  ✓  19 [android-chromium] › tests/e2e/nps-allocation.spec.mjs:23:1 › NPS summary matches actual calculation and loads holdings only on demand (2.7s)
+  ✓  20 [android-chromium] › tests/e2e/nps-allocation.spec.mjs:51:1 › NPS details explain allocation and FX and scenario preserves original summary (2.0s)
+  ✓  22 [android-chromium] › tests/e2e/nps-allocation.spec.mjs:102:1 › NPS version-mismatched details remain retryable without changing summary (1.9s)
+  ✓  21 [android-chromium] › tests/e2e/nps-allocation.spec.mjs:78:1 › NPS failed revalidation retains dated result and explicit retry recovers (2.3s)
+  ✓  23 [android-chromium] › tests/e2e/nps-allocation.spec.mjs:126:1 › NPS analysis entry, direct path and back use existing app navigation (2.5s)
+  ✓  25 [android-chromium] › tests/e2e/nps-allocation.spec.mjs:177:1 › NPS never adds a request to Home and late result cannot overwrite another route (2.1s)
+  ✓  26 [android-chromium] › tests/e2e/nps-allocation.spec.mjs:205:1 › NPS refresh uses a newer verified publication and refuses an older response (1.8s)
+(node:55581) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:55581) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+  ✓  27 [android-chromium] › tests/e2e/nps-allocation.spec.mjs:233:1 › NPS same-price publication updates filing warnings without reloading holdings (1.4s)
+(node:55629) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:55629) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+  ✓  28 [iphone-small-webkit] › tests/e2e/nps-allocation.spec.mjs:23:1 › NPS summary matches actual calculation and loads holdings only on demand (2.9s)
+  ✓  24 [android-chromium] › tests/e2e/nps-allocation.spec.mjs:144:1 › NPS main and expanded evidence stay accessible on small devices (7.2s)
+(node:55850) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:55850) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+  ✓  29 [iphone-small-webkit] › tests/e2e/nps-allocation.spec.mjs:51:1 › NPS details explain allocation and FX and scenario preserves original summary (3.4s)
+  ✓  30 [iphone-small-webkit] › tests/e2e/nps-allocation.spec.mjs:78:1 › NPS failed revalidation retains dated result and explicit retry recovers (2.3s)
+  ✓  31 [iphone-small-webkit] › tests/e2e/nps-allocation.spec.mjs:102:1 › NPS version-mismatched details remain retryable without changing summary (3.4s)
+  ✓  32 [iphone-small-webkit] › tests/e2e/nps-allocation.spec.mjs:126:1 › NPS analysis entry, direct path and back use existing app navigation (3.3s)
+  ✓  34 [iphone-small-webkit] › tests/e2e/nps-allocation.spec.mjs:177:1 › NPS never adds a request to Home and late result cannot overwrite another route (2.5s)
+  ✓  35 [iphone-small-webkit] › tests/e2e/nps-allocation.spec.mjs:205:1 › NPS refresh uses a newer verified publication and refuses an older response (2.5s)
+  ✓  36 [iphone-small-webkit] › tests/e2e/nps-allocation.spec.mjs:233:1 › NPS same-price publication updates filing warnings without reloading holdings (1.8s)
+  ✓  33 [iphone-small-webkit] › tests/e2e/nps-allocation.spec.mjs:144:1 › NPS main and expanded evidence stay accessible on small devices (7.2s)
+
+  36 passed (38.5s)

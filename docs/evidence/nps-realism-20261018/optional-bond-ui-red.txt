@@ -1,0 +1,61 @@
+[2m[WebServer] [22m(node:6790) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:6826) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:6826) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+  ✘  1 [desktop-chromium] › tests/e2e/nps-realism.spec.mjs:191:1 › NPS missing optional same-date bond price keeps the main estimate and explains excluded comparison (9.2s)
+
+
+  1) [desktop-chromium] › tests/e2e/nps-realism.spec.mjs:191:1 › NPS missing optional same-date bond price keeps the main estimate and explains excluded comparison
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoContainText[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator: locator('[data-nps-assumption-unavailable]')
+    Expected string: [32m"AGGG"[39m
+    Received: <element(s) not found>
+    Timeout: 8000ms
+
+    Call log:
+    [2m  - Expect "toContainText" with timeout 8000ms[22m
+    [2m  - waiting for locator('[data-nps-assumption-unavailable]')[22m
+
+
+      54 |  await expect(page.locator('[data-nps-weight]')).toContainText(formatted(calculateNpsScenario(summary).weight));
+      55 |  await page.getByText('가정에 따른 차이',{exact:true}).click();await expect(page.locator('[data-nps-assumption]')).toHaveCount(7);
+    > 56 |  await expect(page.locator('[data-nps-assumption-unavailable]')).toContainText('AGGG');await expect(page.locator('[data-nps-assumption-unavailable]')).toContainText('동일');
+         |                                                                  ^
+      57 |  await page.getByText('추정 전제와 출처',{exact:true}).click();await expect(page.locator('[data-nps-method]')).toContainText('AGGG 동일 기준일 자료 미확인');await noOverflow(page);
+      58 | });
+      59 |
+        at /workspace/chart-view-toss/tests/e2e/nps-realism.spec.mjs:56:66
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/nps-realism-NPS-missing-op-ed194-xplains-excluded-comparison-desktop-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #4: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/nps-realism-NPS-missing-op-ed194-xplains-excluded-comparison-desktop-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/nps-realism-NPS-missing-op-ed194-xplains-excluded-comparison-desktop-chromium/error-context.md
+
+    attachment #6: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/nps-realism-NPS-missing-op-ed194-xplains-excluded-comparison-desktop-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/nps-realism-NPS-missing-op-ed194-xplains-excluded-comparison-desktop-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [desktop-chromium] › tests/e2e/nps-realism.spec.mjs:191:1 › NPS missing optional same-date bond price keeps the main estimate and explains excluded comparison
+
+To open last HTML report run:
+[36m[39m
+[36m  npx playwright show-report[39m
+[36m[39m
