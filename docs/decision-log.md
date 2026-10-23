@@ -833,3 +833,7 @@ Classification: new behavior. `/investment-news/`를 기존 분석 메뉴와 laz
 ## 2026-10-23 — 투자 뉴스의 공개 CDN 경계 보강
 
 Classification: new bugs found before publication. 독립 검토에서 raw CDN이 API보다 약한 성과/3인 완료 검증을 거치는 경로를 재현하여 먼저 실패하는 회귀를 추가했다. canonical 소수 수익률·실제 순서의 시각/출처·3역할 근거, KST 기준일·달력 날짜, Telegram/credential URL 및 개인 문장 검사를 client에서도 유지한다. 숫자0 손실과 무기한 CDN fallback도 RED→GREEN으로 수정했다. Fallback은 기존 request client의2.5초 deadline/route abort를 사용하며 별도 캐시·공급자·LLM 호출을 만들지 않는다. 기존 원장/뉴스/토론은 보존한다.
+
+## 2026-10-23 — 필수 CI의 Ubuntu 패키지 다운로드 지연
+
+Classification: runner infrastructure bug. main `0a1298d`의 promotion run `39889759190`에서 iPhone은 Azure HTTP APT117MB 의존성, narrow는 같은 mirror의 `fonts-noto-cjk`61.2MB 다운로드 중15분 job 제한에 취소됐다. 두 job은 테스트를 시작하지 않았다. narrow의 Playwright CDN 다운로드는9초로 끝났다. [runner-images issue14594](https://github.com/actions/runner-images/issues/14594)와 공식 runner 설정을 따라, 자동 PR 검사인 reusable main-regression의 audit/E2E와 Mobile release QA 준비에서 이미 등록된 공식 HTTPS archive/security가 모두 있을 때만 HTTP Azure 항목을 제거한다. APT suites/components/Signed-By·패키지 검증·글꼴 패키지는 유지한다. `zz-retries`에 retry1·HTTP/HTTPS idle15초, Linux GitHub Actions 외 실행을 거절하며 준비1분·browser/OS5분·font3분의 fatal 제한을 둔다. 기존4기기 전체 검사와 `needs: qa`·정확한 main SHA·Render ancestry gate는 유지한다. 제품 코드/테스트 assertion 변경 없이 shell/YAML·임시 runner 설정 fixture·기존 sync 계약을 검증하며 실제 hosted 다운로드와 정확한 새 main CI는 게시 전 gate로 남긴다.

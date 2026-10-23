@@ -483,3 +483,5 @@ Public research verdict HOLD is accepted and rendered unchanged alongside WAIT; 
 ### 2026-10-21 — 투자 뉴스 공개 projection
 
 `/investment-news/`와 `/api/intelligence/news`는 공식 출처의 공개 사건을 조회하는 독립 동선이다. `schemaVersion: investment-news.v1`, generated_at UTC, as_of_date KST, REVIEW_ONLY를 유지한다. 기존 관심 뉴스·공개 토론·감사 PICK v2·원장 계산에 합치지 않는다. AI/기대자료/독립 교차검증/실제 가격 결과가 없으면 미연결을 표시한다. 가설 공개 요약만 허용하며 개인 가설 원문/보유/계좌/Telegram 입력은 포함하지 않는다. 게시물의 실제 시각으로 최신 자료를 선택하고 실패·이탈·같은 시각의 상충 게시가 기존 정상 화면을 덮어쓰지 않는다. 실제 SK Telecom 회사 URL과 비밀키 패턴을 구분하는 회귀를 유지한다. [화면·검증·운영 경계](INVESTMENT_NEWS_2026-10-21.md).
+
+2026-10-23 CI setup: main promotion `39889759190`의 iPhone/narrow가 Azure HTTP APT 다운로드에서 취소됐으며 두 job은 테스트 미실행이다. `scripts/prepare-qa-apt.sh`는 runner에 이미 있는 공식 HTTPS archive/security fallback을 보존하며 Azure HTTP만 제거하고 upstream의 `zz-retries` retry1/idle15초를 적용한다. Linux GitHub Actions 외 실행은 거절하며 reusable main-regression·자동 Mobile release QA의 browser/OS5분과 font3분 제한은 실패를 그대로 차단한다. 글꼴·테스트·제품/배포 ancestry 계약은 유지하고 새 정확한 main의 전체 CI 통과 후에만 Render를 promotion한다.

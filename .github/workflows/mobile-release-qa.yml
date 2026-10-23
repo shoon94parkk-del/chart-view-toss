@@ -17,7 +17,11 @@ jobs:
           cache: npm
       - name: Install app dependencies
         run: npm ci
+      - name: Prepare bounded official Ubuntu package downloads
+        timeout-minutes: 1
+        run: bash scripts/prepare-qa-apt.sh
       - name: Install pinned QA browser
+        timeout-minutes: 5
         run: npx playwright install --with-deps chromium
       - name: Build preview with short QA timeout
         env:
