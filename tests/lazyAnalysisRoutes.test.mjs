@@ -9,7 +9,7 @@ const main = readFileSync(new URL('../src/main.js', import.meta.url), 'utf8');
 const renderSource = main.slice(main.indexOf('function renderLazyAnalysis('), main.indexOf('function syncFromLocation(')).replaceAll('import(', 'loadModule(');
 const settle = () => new Promise(resolve => setImmediate(resolve));
 const sharedRoutes = ['discover', 'heatmap', 'consensus', 'bands', 'tools'];
-const routes = ['pension', 'exports', 'memory', 'ideas', 'picks', 'gurus', ...sharedRoutes];
+const routes = ['pension', 'exports', 'memory', 'ideas', 'picks', 'gurus', 'investment-news', ...sharedRoutes];
 
 function harness(tab, loadModule) {
   const app = { innerHTML: 'startup-loading' }, retry = {}, mounts = [], cleanups = [], reloads = [], preloads = [], fetched = [];
@@ -20,7 +20,7 @@ function harness(tab, loadModule) {
     newUsageOperation: () => 'route-operation', trackUsage() {}, usageScreen: tab => tab,
     setTimeout, clearTimeout,
     fetch: async (href, options) => { fetched.push({ href, options }); return { ok: true, headers: { get: () => 'text/javascript' }, arrayBuffer: async () => new ArrayBuffer(0) }; },
-    requestAnimationFrame() {}, recordMetric() {}, setLiveSurface() {}, syncNativeBackHandler() {}, goBack() {}, bindNav() {}, navigate() {}, openCompareSheet() {},
+    requestAnimationFrame() {}, recordMetric() {}, setLiveSurface() {}, syncNativeBackHandler() {}, goBack() {}, bindNav() {}, navigate() {}, openCompareSheet() {}, openEvidenceLink() {},
     shell: (content, title) => `<h1>${title}</h1>${content}<nav data-tab="more">분석</nav>`,
     loadingIndicator: text => `<div role="status">${text}</div>`,
     SHOW_SPOTLIGHT: true, ANALYSIS_ROUTES: new Set(sharedRoutes), displayName: name => name, featureLabel: tab => tab,
@@ -43,6 +43,7 @@ function harness(tab, loadModule) {
     './ideaView.js': { renderIdeaView: args => mount('ideas', args) },
     './pickLedger.js': { renderPickLedger: args => mount('picks', args) },
     './guruInvestingView.js': { renderGuruInvesting: args => mount('gurus', args) },
+    './investmentNewsView.js': { mountInvestmentNews: (_host,args) => mount('investment-news', args) },
     './analysisViews.js': { renderAnalysis: args => mount(args.tab, args) },
   };
   vm.createContext(context); vm.runInContext(renderSource, context);
@@ -120,6 +121,14 @@ test('normal lazy mounts preserve route focus/state and memory restoration is co
     h.context.render(); await settle();
     assert.equal(h.fetched.length, 0);
     const args = h.mounts[0].args;
+    if (route === 'investment-news') {
+      assert.equal(args.preferences, h.context.state.investmentNews);
+      assert.equal(args.onExternal, h.context.openEvidenceLink);
+      assert.equal(args.isCurrent(), true);
+      h.context.state.tab = 'home';
+      assert.equal(args.isCurrent(), false);
+      continue;
+    }
     assert.equal(args.shell, h.context.shell);
     assert.equal(args.bindNav, h.context.bindNav);
     if (route === 'exports') { assert.equal(args.focus, 'items'); assert.equal(args.state, h.context.state.exports); }

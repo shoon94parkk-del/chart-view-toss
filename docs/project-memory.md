@@ -479,3 +479,7 @@ PICK Back restore must wait for initial monitoring layout to settle without dela
 Muse/PICK final local release check: Node736, direct-entry29, browser1048 on all4 projects with zero unexpected/flaky/skipped; existing mobile320/390/430 passed after the scroll fix, then AIT test bundle built. Native Android/iOS Sandbox is still a separate gate. See MUSE_RESULTS_2026-10-20.md for exact artifact and producer/publication evidence.
 
 Public research verdict HOLD is accepted and rendered unchanged alongside WAIT; never normalize HOLD to WAIT or change the PICK ledger/audited v2 contract. The synthetic ten-record test fixture (HOLD3/WAIT7) verifies source preservation and PARTIAL/context limitations and must never be published as actual research. HOLD consumer verification: Node738/direct-entry29/browser1052 across4 projects (zero unexpected/flaky/skipped), mobile320/390/430, then AIT build passed;345 source/test/config files remained unchanged throughout. Actual ten-report content/publication/live readback belongs to the release owner; native Sandbox is separate.
+
+### 2026-10-21 — 투자 뉴스 공개 projection
+
+`/investment-news/`와 `/api/intelligence/news`는 공식 출처의 공개 사건을 조회하는 독립 동선이다. `schemaVersion: investment-news.v1`, generated_at UTC, as_of_date KST, REVIEW_ONLY를 유지한다. 기존 관심 뉴스·공개 토론·감사 PICK v2·원장 계산에 합치지 않는다. AI/기대자료/독립 교차검증/실제 가격 결과가 없으면 미연결을 표시한다. 가설 공개 요약만 허용하며 개인 가설 원문/보유/계좌/Telegram 입력은 포함하지 않는다. 게시물의 실제 시각으로 최신 자료를 선택하고 실패·이탈·같은 시각의 상충 게시가 기존 정상 화면을 덮어쓰지 않는다. 실제 SK Telecom 회사 URL과 비밀키 패턴을 구분하는 회귀를 유지한다. [화면·검증·운영 경계](INVESTMENT_NEWS_2026-10-21.md).

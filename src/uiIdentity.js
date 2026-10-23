@@ -32,6 +32,7 @@ const identities = {
  pension: ['market', '국민연금 자산 배분 추정', 'evidence'],
  macro: ['evidence', '경제 지표와 기준', 'evidence'],
  news: ['evidence', '종목 관련 기사', 'evidence'],
+ 'investment-news': ['evidence', '중요 사건과 투자 가설 점검', 'evidence'],
  info: ['guide', '데이터와 이용 안내', 'guide'],
  tools: ['analysis', '외부 분석 도구', 'analysis'],
 };

@@ -4,7 +4,7 @@ const dist=new URL('../dist/',import.meta.url);
 const html=await readFile(new URL('index.html',dist),'utf8');
 const paths=[
   'chartviewHome','chartview/chartviewHome',
-  'home','chart','watch','favorites','valuation','macro','pension','exports','discover','ideas','picks','debates','history','news',
+  'home','chart','watch','favorites','valuation','macro','pension','exports','discover','ideas','picks','debates','history','news','investment-news',
   'heatmap','memory','gurus','gurus/buffett','gurus/lynch','gurus/oneil','gurus/minervini','gurus/greenblatt','consensus','bands','tools','info','more',
 ];
 for(const path of paths){

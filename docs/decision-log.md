@@ -825,3 +825,11 @@ Classification: new behavior. `/debates/`는 기존 bootstrap 뒤 별도로 게�
 ## 2026-10-20 — 공개 연구 HOLD 판단 보존
 
 Classification: new contract support. 공개 연구 archive의 verdict에 HOLD를 추가한다. 서버의 HOLD/WAIT를 그대로 표시하며 서로 바꾸거나 기존 PICK 원장·감사 PICK v2에 합산하지 않는다. 계약 검사용 가상10건(HOLD3/WAIT7)에서 값 보존과 PARTIAL/context 한계 표시를 검사한다. 이 fixture를 실제 공개 데이터로 게시하지 않는다. 실제10건 게시와 운영 readback은 별도 producer/release 작업이다. 최종 로컬 검증은 Node738개·직접 진입29경로·브라우저1,052개(4기기, unexpected/flaky/skipped0)·모바일320/390/430px·AIT 빌드가 통과했다. [검증 기록](MUSE_RESULTS_2026-10-20.md).
+
+## 2026-10-21 — 공식 출처 투자 뉴스의 독립 조회
+
+Classification: new behavior. `/investment-news/`를 기존 분석 메뉴와 lazy coordinator에 추가한다. 공유 서버의 `investment-news.v1` 공개 projection만 조회하며 중요도/섹터/종목/KST 발행일/공개 가설 점검/개정 이력을 보여준다. 사실·조건부 해석·독립 교차검증 여부·실제 AI 실행·실제 성과 결측을 구분한다. REVIEW_ONLY를 유지하고 기존 PICK/감사 v2·BUY/WAIT/SELL·뉴스·토론을 변경하지 않는다. source/summary의 비공개 패턴을 검사하며, 실제 Samsung의 SK Telecom URL을 비밀키로 오인한 scan은 회귀를 추가하고 실제 연속형/현대형 키·credential query는 계속 거절한다. [설계·운영 구분](INVESTMENT_NEWS_2026-10-21.md).
+
+## 2026-10-23 — 투자 뉴스의 공개 CDN 경계 보강
+
+Classification: new bugs found before publication. 독립 검토에서 raw CDN이 API보다 약한 성과/3인 완료 검증을 거치는 경로를 재현하여 먼저 실패하는 회귀를 추가했다. canonical 소수 수익률·실제 순서의 시각/출처·3역할 근거, KST 기준일·달력 날짜, Telegram/credential URL 및 개인 문장 검사를 client에서도 유지한다. 숫자0 손실과 무기한 CDN fallback도 RED→GREEN으로 수정했다. Fallback은 기존 request client의2.5초 deadline/route abort를 사용하며 별도 캐시·공급자·LLM 호출을 만들지 않는다. 기존 원장/뉴스/토론은 보존한다.

@@ -280,7 +280,7 @@ function dataDisclosure(){
 function shell(content,title='차트뷰'){
  document.title=title==='차트뷰'?'차트뷰':`${title} | 차트뷰`;
  const identity=surfaceIdentity(state.tab);
- const secondary=ANALYSIS_ROUTES.has(state.tab)||['valuation','macro','pension','exports','memory','discover','ideas','picks','history','debates','debates','news','detail','info'].includes(state.tab);
+ const secondary=ANALYSIS_ROUTES.has(state.tab)||['valuation','macro','pension','exports','memory','discover','ideas','picks','history','debates','debates','news','investment-news','detail','info'].includes(state.tab);
  const navTab=state.tab==='detail'?state.detailOrigin:(secondary?'more':state.tab);
  const leading=secondary?`<button class="icon-button back-button" aria-label="뒤로가기" data-back>${iconSvg('back',22)}</button>`:`<span class="brand-mark">${(state.tab==='home'?iconSvg('spark',18):uiIcon(identity.icon,18))}</span>`;
  const offline=typeof navigator!=='undefined'&&navigator.onLine===false;
@@ -301,7 +301,7 @@ function shareDetails(){
  else if(tab==='gurus')url.hash=`gurus/${state.guruStrategy||'buffett'}`;
  else if(tab==='exports')url.hash=state.exportFocus?`exports/${encodeURIComponent(state.exportFocus)}`:'exports';
  else if(tab!=='home')url.hash=tab;
- const titleByTab={gurus:'거장 투자법 | 차트뷰',home:'차트뷰',chart:'수익률 비교 | 차트뷰',watch:'관심종목 | 차트뷰',valuation:'밸류에이션 | 차트뷰',pension:'국민연금 | 차트뷰',macro:'경제 지표 | 차트뷰',exports:'수출 데이터 | 차트뷰',memory:'반도체 가격 추적 | 차트뷰',discover:'조건별 종목 찾기 | 차트뷰',heatmap:'시장 히트맵 | 차트뷰',consensus:'실적 전망 | 차트뷰',bands:'역사적 밸류에이션 | 차트뷰',ideas:'투자 아이디어 LAB | 차트뷰',picks:'선정 기록·성과 | 차트뷰',debates:'3인 AI 토론 | 차트뷰',history:'TOP10 히스토리 | 차트뷰',news:'관심종목 뉴스 | 차트뷰',more:'차트뷰',info:'데이터 안내 | 차트뷰',tools:'투자 도구 | 차트뷰'};
+ const titleByTab={gurus:'거장 투자법 | 차트뷰',home:'차트뷰',chart:'수익률 비교 | 차트뷰',watch:'관심종목 | 차트뷰',valuation:'밸류에이션 | 차트뷰',pension:'국민연금 | 차트뷰',macro:'경제 지표 | 차트뷰',exports:'수출 데이터 | 차트뷰',memory:'반도체 가격 추적 | 차트뷰',discover:'조건별 종목 찾기 | 차트뷰',heatmap:'시장 히트맵 | 차트뷰',consensus:'실적 전망 | 차트뷰',bands:'역사적 밸류에이션 | 차트뷰',ideas:'투자 아이디어 LAB | 차트뷰',picks:'선정 기록·성과 | 차트뷰',debates:'3인 AI 토론 | 차트뷰',history:'TOP10 히스토리 | 차트뷰',news:'관심종목 뉴스 | 차트뷰','investment-news':'투자 뉴스 | 차트뷰',more:'차트뷰',info:'데이터 안내 | 차트뷰',tools:'투자 도구 | 차트뷰'};
  return {url:url.toString(),title:tab==='detail'?`${name} (${symbol}) | 차트뷰`:titleByTab[tab]||'차트뷰',text:tab==='detail'?`${name} 종목의 차트와 기업 정보를 확인해보세요.`:'차트뷰에서 시장 데이터와 종목 정보를 확인해보세요.'};
 }
 async function shareCurrent(){
@@ -1794,6 +1794,7 @@ function renderMore(){
      <button class="feature-row" data-tab="bands" data-tool-tone="${surfaceIdentity('bands').tone}"><span class="feature-icon purple">${iconSvg('bands',22)}</span><span><strong>역사적 밸류에이션</strong><small>과거 PER·PBR 분포와 추이 확인</small></span><b>${iconSvg('arrow',19)}</b></button>
    </div></section>
    <section class="menu-group" id="analysis-evidence"><h3><i class="section-symbol" aria-hidden="true">${uiIcon('evidence',18)}</i>근거와 시장 환경 확인</h3><div class="feature-menu">
+     <button class="feature-row" data-tab="investment-news" data-tool-tone="evidence"><span class="feature-icon blue">${uiIcon('evidence',22)}</span><span><strong>투자 뉴스</strong><small>중요 사건·섹터·종목·가설 변화 점검</small></span><b>${iconSvg('arrow',19)}</b></button>
      <button class="feature-row" data-tab="news" data-tool-tone="${surfaceIdentity('news').tone}"><span class="feature-icon coral">${iconSvg('news',22)}</span><span><strong>관심종목 뉴스</strong><small>직접 관련 기사와 업종 기사 구분</small></span><b>${iconSvg('arrow',19)}</b></button>
      <button class="feature-row" data-tab="pension" data-tool-tone="evidence"><span class="feature-icon green">${uiIcon('market',22)}</span><span><strong>국민연금</strong><small>국내주식 비중·목표 차이 추정</small></span><b>${iconSvg('arrow',19)}</b></button>
      <button class="feature-row" data-tab="macro" data-tool-tone="${surfaceIdentity('macro').tone}"><span class="feature-icon green">${iconSvg('macro',22)}</span><span><strong>경제 지표</strong><small>관측일·단위·변화 기준 확인</small></span><b>${iconSvg('arrow',19)}</b></button>
@@ -1914,6 +1915,17 @@ function render(){
  }
  if(state.tab==='ideas'){
    renderLazyAnalysis({tab:'ideas',title:'투자 아이디어 LAB',load:()=>Promise.all([import('./ideaView.js'),import('./ideaView.css')]),mount:([ideas])=>ideas.renderIdeaView({shell,bindNav})});
+   return;
+ }
+ if(state.tab==='investment-news'){
+   renderLazyAnalysis({tab:'investment-news',title:'투자 뉴스',
+     load:()=>Promise.all([import('./investmentNewsView.js'),import('./investmentNewsView.css')]),
+     mount:([view])=>{
+       const epoch=viewEpoch;
+       document.querySelector('#app').innerHTML=shell('<section class="task-head"><div><h2>투자 뉴스</h2><p>중요 사건의 근거·투자 의미·가설 변경을 확인해요.</p></div></section><div id="investment-news-host"></div>','투자 뉴스');
+       bindNav();
+       return view.mountInvestmentNews(document.querySelector('#investment-news-host'),{preferences:state.investmentNews||(state.investmentNews={}),isCurrent:()=>epoch===viewEpoch&&state.tab==='investment-news',onExternal:openEvidenceLink});
+     }});
    return;
  }
  if(state.tab==='debates'&&DEBATES_VISIBLE){
