@@ -117,11 +117,14 @@ export function mountNewsReader(host,payload,options = {}) {
  const preferences = options.preferences && typeof options.preferences === 'object' ? options.preferences : {};
  if (!preferences.source) preferences.source = 'all';
  if (!preferences.relation) preferences.relation = 'all';
+ const sort = options.sort === 'latest' ? 'latest' : 'major';
+ if (preferences.sort !== sort || !Number.isSafeInteger(preferences.visibleCount) || preferences.visibleCount < 12) preferences.visibleCount = 12;
+ preferences.sort = sort;
  if (!preferenceSessions.has(preferences)) preferenceSessions.set(preferences,createSession());
  const session = preferenceSessions.get(preferences);
  const expanded = session.expanded;
  const returned = buildNewsFeed(payload,{symbol:options.symbol,limit:0});
- if (returned.status !== 'error') pruneSession(session,new Set(returned.allRows.map(newsSummaryKey).filter(Boolean)));
+ if (returned.status !== 'error' && returned.status !== 'partial') pruneSession(session,new Set(returned.allRows.map(newsSummaryKey).filter(Boolean)));
  let disposed = false, feed;
  const current = () => !disposed && mounts.get(host) === token && host.isConnected !== false && (options.isCurrent?.() ?? true);
  let controller;
@@ -146,13 +149,13 @@ export function mountNewsReader(host,payload,options = {}) {
   <ul class="news-reader-relations">${row.relations.map(receipt=>`<li><span class="news-reader-relation ${escape(receipt.relationType)}">${escape(relationLabel(receipt.relationType))}</span> ${escape(receipt.name||receipt.symbol||'종목 미제공')} · ${escape(receipt.relationBasis?relationBasisLabel(receipt.relationBasis):'세부 근거 미제공')}</li>`).join('')}</ul>
   ${Array.isArray(row.investmentTags)&&row.investmentTags.length?`<div class="news-tags">${row.investmentTags.slice(0,2).map(tag=>`<span>${escape(translatedTag(tag))}</span>`).join('')}</div>`:''}
   <p class="news-reader-notice">요약 펼침을 누르면 요청해요. 본문을 읽지 못하면 제목·요약문 기반임을 표시해요.</p>
-  <div class="news-reader-actions">${row.safeUrl?button(`data-news-external="${escape(row.safeUrl)}" data-news-control="original:${escape(row.key)}"`,'원문 보기'):'<span class="news-reader-notice">안전한 HTTPS 원문 링크를 확인하지 못했어요.</span>'}${renderSummary(row,index)}</div>
+  <div class="news-reader-actions">${row.safeUrl?button(`data-news-external="${escape(row.safeUrl)}" data-news-control="original:${escape(row.key)}"`,'원문 보기'):'<span class="news-reader-notice">안전한 HTTPS 원문 링크를 확인하지 못했어요.</span>'}${options.onSaveEvidence && newsArticleUrl(row.url) && row.stocks.length ? button(`data-news-save-evidence="${escape(row.key)}"`,'조사 근거 저장') : ''}${renderSummary(row,index)}</div>
  </article>`;
  const render = () => {
   if (!current()) return;
   const focused = host.ownerDocument?.activeElement;
   const focusData = focused && host.contains(focused) ? (focused.dataset?.newsControl ? ['newsControl',focused.dataset.newsControl] : Object.entries(focused.dataset||{}).find(([key])=>/^news/.test(key))) : null;
-  feed = buildNewsFeed(payload,{...options,source:preferences.source,relation:preferences.relation});
+  feed = buildNewsFeed(payload,{...options,source:preferences.source,relation:preferences.relation,limit:preferences.visibleCount});
   const sourceChoices = feed.sources.some(source=>source.value===preferences.source) || preferences.source === 'all' ? feed.sources : [...feed.sources,{value:preferences.source,count:0}];
   const filters = `<div class="news-reader-filters"><div role="group" aria-label="뉴스 출처 필터"><span class="news-reader-filter-label">출처</span>${button('data-news-source="all"',`전체 ${buildNewsFeed(payload,{...options,source:'all',relation:preferences.relation}).filteredCount}`,`aria-pressed="${preferences.source==='all'}"`)}${sourceChoices.map(source=>button(`data-news-source="${escape(source.value)}"`,`${escape(source.value)} ${source.count}`,`aria-pressed="${preferences.source===source.value}"`)).join('')}</div><div role="group" aria-label="뉴스 관련성 필터"><span class="news-reader-filter-label">관련성</span>${button('data-news-relation="all"','전체',`aria-pressed="${preferences.relation==='all'}"`)}${feed.relations.map(relation=>button(`data-news-relation="${relation.value}"`,`${relationLabel(relation.value)} ${relation.count}`,`aria-pressed="${preferences.relation===relation.value}"`)).join('')}${button('data-news-clear','필터 초기화')}</div></div>`;
   const coverage = Number.isInteger(options.usLookbackDays) && options.usLookbackDays > 0 ? `<p class="news-reader-notice" data-news-us-coverage>미국 종목 뉴스는 제공처 조회 범위 최근 ${options.usLookbackDays}일이며 전체 과거 기사가 아니에요.</p>` : '';
@@ -161,10 +164,11 @@ export function mountNewsReader(host,payload,options = {}) {
   else if (feed.status === 'empty') body = '<div class="news-reader-empty" role="status"><strong>현재 표시할 관련 뉴스가 없어요</strong><p>직접 또는 업종 관련 근거가 확인된 기사를 표시해요.</p></div>';
   else if (feed.status === 'filtered-empty') body = `<div class="news-reader-empty" role="status"><strong>조건에 맞는 기사가 없어요</strong><p>조회된 기사 ${feed.total}개 안에서 출처·관련성 조건을 적용했어요.</p>${button('data-news-clear','필터 초기화')}</div>`;
   else body = feed.rows.map(card).join('');
-  host.innerHTML = `<div class="news-reader">${filters}<p class="news-reader-count" role="status">조회된 기사 ${feed.total}개 · 조건 일치 ${feed.filteredCount}개 · ${feed.range.start}–${feed.range.end}개 표시</p>${coverage}${feed.status==='partial'?`<p class="news-reader-notice" role="status">일부 종목의 뉴스를 불러오지 못했어요. 확인된 기사만 표시해요.</p>${options.onRetry?button('data-news-retry','뉴스 다시 시도'):''}`:''}<div class="news-reader-list">${body}</div><p class="news-reader-notice">이미 받은 기사 목록에서 필터링해요. 기사 본문·이미지는 재게시하지 않으며 원문은 해당 매체에서 확인해주세요.</p></div>`;
+  host.innerHTML = `<div class="news-reader">${filters}<p class="news-reader-count" role="status" tabindex="-1">조회된 기사 ${feed.total}개 · 조건 일치 ${feed.filteredCount}개 · ${feed.range.start}–${feed.range.end}개 표시</p>${coverage}${feed.status==='partial'?`<p class="news-reader-notice" role="status">일부 종목의 뉴스를 불러오지 못했어요. 확인된 기사만 표시해요.</p>${options.onRetry?button('data-news-retry','뉴스 다시 시도'):''}`:''}<div class="news-reader-list">${body}</div>${feed.visibleCount < feed.filteredCount ? `<div class="news-reader-more">${button('data-news-more',`기사 더 보기 · ${Math.min(12,feed.filteredCount-feed.visibleCount)}개`)}<span>이미 받은 기사에서 더 표시해요.</span></div>` : ''}<p class="news-reader-notice">이미 받은 기사 목록에서 필터링해요. 기사 본문·이미지는 재게시하지 않으며 원문은 해당 매체에서 확인해주세요.</p></div>`;
   if (focusData) {
    const [key,value] = focusData;
-   for (const element of host.querySelectorAll?.('button') || []) if (element.dataset[key] === value) { element.focus(); break; }
+   if (key === 'newsMore' && feed.visibleCount >= feed.filteredCount) host.querySelector('.news-reader-count')?.focus({preventScroll:true});
+   for (const element of host.querySelectorAll?.('button') || []) if (element.dataset[key] === value) { element.focus({preventScroll:true}); break; }
   }
  };
  controller = createNewsSummaryController({loadSummary:options.loadSummary,isCurrent:current,onChange:render,session});
@@ -173,9 +177,14 @@ export function mountNewsReader(host,payload,options = {}) {
   const target = event.target.closest?.('button');
   if (!target || !host.contains(target) || target.disabled) return;
   const data = target.dataset;
-  if (data.newsSource !== undefined) { preferences.source = data.newsSource;render(); }
-  else if (data.newsRelation !== undefined) { preferences.relation = data.newsRelation;render(); }
-  else if (data.newsClear !== undefined) { preferences.source='all';preferences.relation='all';render(); }
+  if (data.newsSource !== undefined) { preferences.source = data.newsSource;preferences.visibleCount=12;render(); }
+  else if (data.newsRelation !== undefined) { preferences.relation = data.newsRelation;preferences.visibleCount=12;render(); }
+  else if (data.newsClear !== undefined) { preferences.source='all';preferences.relation='all';preferences.visibleCount=12;render(); }
+  else if (data.newsMore !== undefined) { preferences.visibleCount = Math.min(feed.filteredCount,preferences.visibleCount+12);render(); }
+  else if (data.newsSaveEvidence) {
+   const row = feed.rows.find(row=>row.key===data.newsSaveEvidence);
+   if (row && newsArticleUrl(row.url) && row.stocks.length) options.onSaveEvidence?.(row);
+  }
   else if (data.newsExternal) { if (newsArticleUrl(data.newsExternal)) options.onExternal?.(data.newsExternal); }
   else if (data.newsStock) {
    const stock = feed.allRows.flatMap(row=>row.stocks).find(stock=>stock.symbol===data.newsStock);

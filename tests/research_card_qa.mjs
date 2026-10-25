@@ -66,7 +66,9 @@ try{
   assert.match(await page.locator('.research-companies').innerText(),/SK하이닉스 \(000660.KS\)/);
   assert.ok(!requests.some(r=>r.includes('financial-history?ticker=452400')),'substring company must never be requested');
   assert.ok(!(await page.locator('.research-answer').innerText()).includes('질문에 비교할 회사 하나만'));
+  await page.locator('#detail-quality > summary').click();
   assert.match(await page.locator('#detail-financial-history').innerText(),/확장 항목 7\/7개 확인/);
+  await page.locator('#detail-quality > summary').click();
   await page.locator('.research-peer-picker>summary').click();
   await page.locator('[data-research-choose-peer]').click();
   await page.locator('[data-selector-symbol="000660.KS"]').click();

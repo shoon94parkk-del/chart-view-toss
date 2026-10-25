@@ -14,6 +14,7 @@ import {featureLabel} from './uiIdentity.js';
 import './analysisRecovery.css';
 import {sourceTimingHtml} from './releaseReading.js';
 import './releaseReading.css';
+import {mountSavedSets} from './savedSetsView.js';
 
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const number=(v,suffix='')=>finiteNumber(v)===null?'—':Number(v).toLocaleString('ko-KR',{maximumFractionDigits:2})+suffix;
@@ -48,7 +49,7 @@ export function screenerRangeErrors(filters={}){
 }
 export const ANALYSIS_ROUTES=new Set(['discover','heatmap','consensus','bands','tools']);
 export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareSheet}){
- let disposed=false,chart,observer,earningsCleanup;
+ let disposed=false,chart,observer,earningsCleanup,savedSetsCleanup;
  const titles={discover:featureLabel('discover'),heatmap:'시장 히트맵',consensus:'실적 전망 조회',bands:'역사적 밸류에이션',tools:'투자 도구'};
  const descriptions={discover:'내가 고른 조건으로 찾기 · 장마감 자료예요.',heatmap:'업종별로 묶은 주요 종목의 전일 대비 등락 · 종목을 누르면 상세로 이동해요.',consensus:'선택한 종목의 애널리스트 추정치와 변경 내역을 확인해요.',bands:'과거 가격과 재무자료로 재구성한 PER·PBR을 확인해요.',tools:'차트·공시·거시 데이터를 확인할 수 있는 12개 외부 사이트예요.'};
  const selection=['consensus','bands'].includes(tab);
@@ -61,7 +62,7 @@ export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareS
  async function load(){
   const gen=++generation;
   const current=()=>alive()&&gen===generation;
-  chart?.remove();chart=null;observer?.disconnect();earningsCleanup?.();earningsCleanup=null;
+  chart?.remove();chart=null;observer?.disconnect();earningsCleanup?.();earningsCleanup=null;savedSetsCleanup?.();savedSetsCleanup=null;
   host.innerHTML=loadingIndicator(`${titles[tab]} 데이터를 불러오고 있어요`)+'<div class="skeleton quote"></div>';
   try{
    if(tab==='discover'){
@@ -154,6 +155,19 @@ export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareS
       for(const field of form.querySelectorAll('input,select'))field.value=field.name==='sort'?'name':'';
       state.screener.appliedRoutePreset=state.screenerPreset;setPreset(state.screenerPreset);
     }else{syncPresetUi();paint();}
+    const savedSetsHost=document.createElement('section');controls.append(savedSetsHost);
+    savedSetsCleanup=mountSavedSets(savedSetsHost,{kind:'screener',isCurrent:current,
+     getValue:()=>{
+      const filters=Object.fromEntries(new FormData(form));
+      if([...form.querySelectorAll('input[type="number"]')].some(field=>!field.validity.valid)||Object.keys(screenerRangeErrors(filters)).length)throw new Error('검색 조건의 입력값과 범위를 먼저 수정해주세요.');
+      return {filters,activePreset,count};
+     },
+     onApply:value=>{
+      if(!current())return false;
+      for(const field of form.querySelectorAll('input,select'))field.value=value.filters[field.name]??(field.name==='sort'?'name':'');
+      activePreset=value.activePreset;count=value.count;syncPresetUi();paint();return true;
+     },
+    });
    }else if(tab==='heatmap'){
     const [{renderMarketMap}]=await Promise.all([import('./marketMapView.js'),import('./marketMap.css')]);if(!current())return;
     seedWatchQuoteCache(state.watchlist.map(x=>x.symbol));
@@ -314,5 +328,5 @@ export function renderAnalysis({tab,state,shell,bindNav,displayName,openCompareS
    }
   }catch(error){if(current())fail(error,load);}
  }
- void load();return()=>{disposed=true;generation++;earningsCleanup?.();chart?.remove();observer?.disconnect();};
+ void load();return()=>{disposed=true;generation++;earningsCleanup?.();savedSetsCleanup?.();chart?.remove();observer?.disconnect();};
 }

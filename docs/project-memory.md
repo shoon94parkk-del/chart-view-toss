@@ -1,5 +1,11 @@
 # Chart View Toss project memory
 
+### 2026-10-25 — Personal research continuation
+- News reveals already received articles 12 at a time; the same visit retains the count through Detail/Back. Filter/sort changes reset the count. This does not fetch more news or summaries.
+- Watch adds a KST due queue with explicit completion/undo/postpone. Completion is a personal acknowledgement bound to the shown question/filing revision, separate from original research evidence and latest-filing checks.
+- Screener and comparison each support five named local sets. Loading uses current data; comparison does not change interests. News evidence stores source metadata and optional 300-character memos (20 per symbol/100 total), including US stocks, and is reachable from Watch/Detail.
+- All three stores use existing anonymous-account storage, confirmed writes, corruption handling and reset. Personal names/memos/records stay outside share links and analytics. No backend, provider, SDK or dependency change. See [implementation and QA record](RESEARCH_WORKFLOW_2026-10-25.md).
+
 ### 2026-10-13 — Home data wait fixes preserve established owners
 - Initial HTML3 requests are adopted once into existing requestClient; one5s headers/body budget, no failed-preload fallback/new budget, no late cache writes. Other screens retain ordinary12s defaults.
 - Market progress is not completion-cache success. Keep dated previous rows through partial/failed refresh, mark confirmed failures separately, and use canonical market prices/dates in both paint/device save. Explicit retry alone uses existing fresh=true; normal6/12s polling remains.

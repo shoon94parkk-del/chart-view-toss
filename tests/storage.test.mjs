@@ -62,6 +62,26 @@ test('browser reset also removes return baselines and review cooldowns',async()=
  await s.clearStored();
  for(const key of keys)assert.equal(s.readStored(key),null);
 });
+const workflowKeys=['chartview-toss-research-tasks-v1','chartview-toss-saved-sets-v1','chartview-toss-research-evidence-v1'];
+test('research workflow records restore independently for each native account and clear only the current account',async()=>{
+ const s=setup();await s.initializeStorage();
+ for(const key of workflowKeys)await s.writeStored(key,'{"owner":"A"}',{confirmed:true});
+ s.setIdentity({type:'HASH',hash:'user-B'});await s.initializeStorage();
+ for(const key of workflowKeys)assert.equal(s.readStored(key),null,key);
+ for(const key of workflowKeys)await s.writeStored(key,'{"owner":"B"}',{confirmed:true});
+ await s.clearStored();
+ for(const key of workflowKeys)assert.equal(s.disk.has(key+':user-B'),false,key);
+ s.setIdentity({type:'HASH',hash:'user-A'});await s.initializeStorage();
+ for(const key of workflowKeys)assert.equal(s.readStored(key),'{"owner":"A"}',key);
+ await s.clearStored();
+ for(const key of workflowKeys)assert.equal(s.readStored(key),null,key);
+});
+test('browser reset removes saved sets, review completion and article evidence',async()=>{
+ const s=setup({native:false});
+ for(const key of workflowKeys)s.writeStored(key,'{"private":"record"}');
+ await s.clearStored();
+ for(const key of workflowKeys)assert.equal(s.readStored(key),null,key);
+});
 test('a deferred local write context expires as soon as reset or identity reload starts',async()=>{
  const s=setup();await s.initializeStorage();
  const previous=s.getStorageContext();assert.equal(s.isStorageContextCurrent(previous),true);
