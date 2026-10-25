@@ -21,6 +21,7 @@ try{for(const width of [320,390,430]){
   if(path.endsWith('/screener.json')||path==='/api/screener')body={tradeDate:'2026-10-02',stocks:[{symbol:'005110.KS',name:'가격기준확인',market:'KOSPI',date:'2026-10-02',price:112,change1d:-91.07,volumeRatio:20},{symbol:'005930.KS',name:'삼성전자',market:'KOSPI',date:'2026-10-02',price:120000,change1d:2,volumeRatio:4}]};
   if(path==='/api/market-now')body={results:['^KS11','^KQ11','^GSPC','^IXIC'].map(ticker=>({ticker,price:3000,change:1,asOf:'2026-10-02T07:00:00Z'}))};
   if(path==='/api/export-momentum/snapshot')body={period:'2026-09',itemPeriod:'2026-08',summary:{exportsUsdBillion:60,importsUsdBillion:50,balanceUsdBillion:10,exportYoY:12},items:[{key:'semiconductor',name:'반도체',exportsUsdBillion:12,exportWeightYoY:3,unitValueYoY:5}]};
+  if(path==='/api/home-screener-summary')body={schemaVersion:1,tradeDate:'2026-10-02',counts:{volumeSurge:2}};
   if(path==='/api/home-bootstrap')body={recommendations:[],day:{top3:[]},home:{results:[]}};
   if(path==='/api/home-snapshot'||path==='/api/quotes')body={results:[]};
   return r.fulfill({contentType:'application/json',body:JSON.stringify(body)});

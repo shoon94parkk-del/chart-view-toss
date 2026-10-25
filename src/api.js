@@ -19,6 +19,7 @@ export const api=async(path,options={})=>{
  try { const value=await request(path,{timeoutMs:DEFAULT_TIMEOUT_MS,retries:DEFAULT_RETRIES,...options}); recordMetric(label,start); return value; }
  catch(error){recordMetric(label,start,'error');throw error;}
 };
+export const readApiCache=(path,options)=>request.peek(path,options);
 export const clearApiCache=()=>request.clear();
 const list=tickers=>encodeURIComponent([...new Set(tickers)].join(','));
 export const quoteSnapshots=(tickers,{force=false,timeoutMs=DEFAULT_TIMEOUT_MS}={})=>api(`/api/quotes?tickers=${list(tickers)}`,{ttlMs:15000,force,timeoutMs:Math.min(timeoutMs,DEFAULT_TIMEOUT_MS)});

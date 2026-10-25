@@ -1,3 +1,6 @@
+import {loadWatchQuotes} from './watchQuoteLoader.js';
+import {reconcileWatchRows} from './watchQuoteView.js';
+import {loadProgressiveNews} from './progressiveNews.js';
 import './releaseReading.css';
 import {uiIcon, surfaceIdentity,featureLabel} from './uiIdentity.js';
 import { valueEntriesMarkup } from './valueDiscovery.js';
@@ -939,11 +942,11 @@ async function loadChart({retainPrevious=false,force=false}={}){
  }
 }
 
-async function renderWatch(){
+async function renderWatch({retrySymbols=[]}={}){
  cleanupChart();
- const epoch=viewEpoch,renderSeq=++watchRenderSeq;
+ const epoch=viewEpoch,renderSeq=++watchRenderSeq,storageContext=getStorageContext();
  const watchUsageOperation=usageOperation,watchUsageStarted=usageStarted;
- const current=()=>epoch===viewEpoch&&renderSeq===watchRenderSeq&&state.tab==='watch';
+ const current=()=>epoch===viewEpoch&&renderSeq===watchRenderSeq&&state.tab==='watch'&&isStorageContextCurrent(storageContext);
  document.querySelector('#app').innerHTML=shell(`
    <section class="task-head watch-task-head"><div><h2>관심종목 <span>${state.watchlist.length}</span></h2><p>이 목록은 현재 기기에 저장돼요.</p></div>${state.watchlist.length?'<div class="task-actions"><button class="primary-subtle" id="watch-add">종목 추가</button><button class="neutral-action" id="watch-edit">편집</button></div>':''}</section>
    <div class="watch-sort" ${state.watchlist.length?'':'hidden'} role="group" aria-label="관심종목 정렬">${[['manual','저장순서'],['name','이름'],['change','등락률']].map(([k,l])=>`<button data-watch-sort="${k}" class="${state.watchSort===k?'active':''}" aria-pressed="${state.watchSort===k}">${l}</button>`).join('')}<button id="watch-order-edit" aria-pressed="${watchOrderEditing}">${watchOrderEditing?'순서 편집 완료':'순서 편집'}</button></div>
@@ -1007,23 +1010,26 @@ async function renderWatch(){
  const tickers=state.watchlist.slice(0,WATCHLIST_LIMIT).map(x=>x.symbol);
  rememberLiveQuotes(readHomeFast('snapshot',6*60*60*1000)?.heatmap?.results||[],{priority:20});
  seedWatchQuoteCache(tickers);
- const paint=({pending=false,failed=false}={})=>{
+ let watchPendingSymbols=new Set(tickers),failedQuoteSymbols=[];
+ const paintNow=({pending=false,failed=false}={})=>{
    if(!current())return;
    const quotes=tickers.map(symbol=>getLiveQuote(symbol)).filter(Boolean);
    let items=state.watchlist.map((x,index)=>({x,index,q:quotes.find(r=>r.ticker===String(x.symbol).toUpperCase())||{}}));
    document.querySelector('#watch-rich-list').dataset.loadState=pending?'loading':failed?'error':items.some(({q})=>Number(q.price)>0)?'ready':'empty';
    if(state.watchSort==='name')items.sort((a,b)=>displayName(a.x.symbol,a.x.name).localeCompare(displayName(b.x.symbol,b.x.name),'ko'));
    if(state.watchSort==='change')items.sort((a,b)=>(finiteNumber(b.q.change)??-Infinity)-(finiteNumber(a.q.change)??-Infinity));
+   const progress=pending?`<p class="watch-progress" role="status">시세 확인 ${tickers.length-watchPendingSymbols.size} / ${tickers.length}종목</p>`:'';
    const notice=failed?'<div class="watch-refresh-note" role="status">새 시세를 확인하지 못했어요. 표시된 기준시각을 확인해주세요. <button class="retry" id="retry-watch">다시 시도</button></div>':'';
    const active=document.activeElement;
    const focusOrder=active?.dataset.watchMove,focusSymbol=active?.dataset.watchSymbol;
-   document.querySelector('#watch-rich-list').innerHTML=notice+items.map(({x,q,index},i)=>{
+   const markup=progress+notice+items.map(({x,q,index},i)=>{
      const name=displayName(x.symbol,x.name);const ch=finiteNumber(q.change),quoted=index<WATCHLIST_LIMIT;
-     return `<article class="watch-detail-card"><button class="watch-main" data-stock-detail="${esc(x.symbol)}"><span class="stock-logo tone-${i%4}">${esc(name.slice(0,1))}</span><span class="watch-main-copy"><strong>${esc(name)}</strong><small>${esc(x.symbol)} · ${!quoted?'시세 조회 범위 밖':q.asOf?esc(formatKst(q.asOf)):pending?'기준시각 확인 중':'기준시각 미제공'}${quoted&&pending?' · 새 시세 확인 중':''}</small></span><span class="watch-card-price"><strong>${q.price==null?(quoted&&pending?'확인 중':'-'):esc(formatCurrencyPrice(q.price,q.currency))}</strong><em class="${ch>0?'up':ch<0?'down':'flat'}">${Number.isFinite(ch)?esc(fmtChange(ch)):'등락률 -'}</em><i>${iconSvg('arrow',18)}</i></span></button><button class="watch-remove" data-unwatch="${esc(x.symbol)}" aria-label="${esc(name)} 관심 해제">${iconSvg('heart',18)}</button>${watchOrderEditing?`<div class="watch-order-controls"><span>저장순서 ${index+1}</span><button type="button" data-watch-move="-1" data-watch-symbol="${esc(x.symbol)}" aria-label="${esc(name)} 위로" ${index===0?'disabled':''}>↑ 위로</button><button type="button" data-watch-move="1" data-watch-symbol="${esc(x.symbol)}" aria-label="${esc(name)} 아래로" ${index===state.watchlist.length-1?'disabled':''}>↓ 아래로</button></div>`:''}</article>`;
+     return `<article class="watch-detail-card"><button class="watch-main" data-stock-detail="${esc(x.symbol)}"><span class="stock-logo tone-${i%4}">${esc(name.slice(0,1))}</span><span class="watch-main-copy"><strong>${esc(name)}</strong><small>${esc(x.symbol)} · ${!quoted?'시세 조회 범위 밖':q.asOf?esc(formatKst(q.asOf)):watchPendingSymbols.has(x.symbol)?'기준시각 확인 중':'기준시각 미제공'}${quoted&&watchPendingSymbols.has(x.symbol)?' · 새 시세 확인 중':''}</small></span><span class="watch-card-price"><strong>${q.price==null?(quoted&&watchPendingSymbols.has(x.symbol)?'확인 중':'-'):esc(formatCurrencyPrice(q.price,q.currency))}</strong><em class="${ch>0?'up':ch<0?'down':'flat'}">${Number.isFinite(ch)?esc(fmtChange(ch)):'등락률 -'}</em><i>${iconSvg('arrow',18)}</i></span></button><button class="watch-remove" data-unwatch="${esc(x.symbol)}" aria-label="${esc(name)} 관심 해제">${iconSvg('heart',18)}</button>${watchOrderEditing?`<div class="watch-order-controls"><span>저장순서 ${index+1}</span><button type="button" data-watch-move="-1" data-watch-symbol="${esc(x.symbol)}" aria-label="${esc(name)} 위로" ${index===0?'disabled':''}>↑ 위로</button><button type="button" data-watch-move="1" data-watch-symbol="${esc(x.symbol)}" aria-label="${esc(name)} 아래로" ${index===state.watchlist.length-1?'disabled':''}>↓ 아래로</button></div>`:''}</article>`;
    }).join('');
+   reconcileWatchRows(document.querySelector('#watch-rich-list'),markup);
    if(quotes.some(row=>finiteNumber(row?.price)>0))reportUsableScreen('watch',watchUsageOperation,watchUsageStarted);
    bindNav();
-   document.querySelector('#retry-watch')?.addEventListener('click',renderWatch);
+   document.querySelector('#retry-watch')?.addEventListener('click',()=>renderWatch({retrySymbols:failedQuoteSymbols}));
    document.querySelectorAll('[data-watch-move]').forEach(button=>button.onclick=async()=>{
      const symbol=button.dataset.watchSymbol,direction=Number(button.dataset.watchMove);
      button.disabled=true;
@@ -1059,13 +1065,30 @@ async function renderWatch(){
      }else b.disabled=false;
    });
  };
+ const watchHost=document.querySelector('#watch-rich-list'),heldPointers=new Set();
+ let deferredPaint=null,deferredTimer=null;
+ const paint=options=>{if(heldPointers.size){deferredPaint=options;return;}paintNow(options);};
+ const holdPointer=event=>heldPointers.add(event.pointerId);
+ const releasePointer=event=>{
+   heldPointers.delete(event.pointerId);
+   if(heldPointers.size||!deferredPaint)return;
+   clearTimeout(deferredTimer);deferredTimer=setTimeout(()=>{const options=deferredPaint;deferredPaint=null;if(current()&&options)paint(options);},0);
+ };
+ const releaseAll=()=>{heldPointers.clear();releasePointer({pointerId:-1});};
+ watchHost.addEventListener('pointerdown',holdPointer,true);
+ document.addEventListener('pointerup',releasePointer,true);document.addEventListener('pointercancel',releasePointer,true);window.addEventListener('blur',releaseAll);
+ detailModuleCleanups.add(()=>{clearTimeout(deferredTimer);watchHost.removeEventListener('pointerdown',holdPointer,true);document.removeEventListener('pointerup',releasePointer,true);document.removeEventListener('pointercancel',releasePointer,true);window.removeEventListener('blur',releaseAll);heldPointers.clear();deferredPaint=null;});
  paint({pending:true});
  try{
-   const payload=await quoteSnapshots(tickers);
+   const payload=await loadWatchQuotes(tickers,{load:(symbols,options)=>quoteSnapshots(symbols,{...options,force:retrySymbols.includes(symbols[0])}),isCurrent:current,onBatch:batch=>{
+     if(!current())return;watchPendingSymbols=new Set(batch.pendingSymbols);
+     rememberLiveQuotes(batch.results,{priority:40});saveWatchQuoteCache(tickers);paint({pending:batch.pendingSymbols.length>0});
+   }});
    if(!current())return;
    rememberLiveQuotes(payload?.results||[],{priority:40});
    saveWatchQuoteCache(tickers);
-   paint();
+   failedQuoteSymbols=payload.errors.map(row=>row.ticker||row.symbol);
+   watchPendingSymbols.clear();paint({failed:payload.errors.length>0});
  }catch(e){
    if(!current())return;
    reportAppError(['timeout','network','offline'].includes(e?.code)?e.code:'unknown',watchUsageOperation);
@@ -1798,29 +1821,18 @@ async function renderNews({force=false}={}){
    newsReaderPreferences.set(contextKey,{});
  }
  const preferences=newsReaderPreferences.get(contextKey);
- const [dataResult,viewResult]=await Promise.allSettled([
-   personalizedNews(tickers,names,{force}),
-   Promise.all([import('./newsReaderView.js'),import('./newsReaderView.css')]).then(([view])=>view),
- ]);
- if(epoch!==viewEpoch)return;
  const host=document.querySelector('#news-list');
- if(viewResult.status!=='fulfilled'){
-   host.innerHTML='<div class="empty" role="alert"><strong>뉴스 화면을 불러오지 못했어요</strong><span>저장된 관심종목은 유지돼요. 화면을 새로 불러와주세요.</span><button type="button" class="retry" id="retry-news-view">화면 새로고침</button></div>';
-   host.querySelector('button').onclick=()=>location.reload();return;
- }
- if(dataResult.status!=='fulfilled'){
-   host.innerHTML='<div class="empty" role="alert"><strong>뉴스를 불러오지 못했어요</strong><span>연결을 확인한 뒤 다시 시도해주세요.</span><button type="button" class="retry" id="retry-news">다시 시도</button></div>';
-   host.querySelector('button').onclick=()=>renderNews({force:true});return;
- }
+ const newsStorageContext=getStorageContext();
+ const newsCurrent=()=>epoch===viewEpoch&&state.tab==='news'&&isStorageContextCurrent(newsStorageContext);
  let evidenceEditorRun=0;
- newsReaderCleanup=viewResult.value.mountNewsReader(host,dataResult.value,{
+ const readerOptions={
    sort:state.newsSort,preferences,usLookbackDays:tickers.some(symbol=>!/^\d{6}\.(KS|KQ)$/.test(symbol))?4:null,
    loadSummary:(row,options)=>newsSummaryData(row,options),
    onExternal:openEvidenceLink,
    onStock:(symbol,name)=>navigate('detail',symbol,name),
    onSaveEvidence:async row=>{
      const run=++evidenceEditorRun,editorHost=document.querySelector('#news-evidence-editor');
-     const current=()=>epoch===viewEpoch&&run===evidenceEditorRun&&editorHost?.isConnected;
+     const current=()=>newsCurrent()&&run===evidenceEditorRun&&editorHost?.isConnected;
      try{
        const {openNewsEvidenceEditor}=await import('./researchEvidenceView.js');
        if(!current())return;
@@ -1829,11 +1841,28 @@ async function renderNews({force=false}={}){
        editorHost.scrollIntoView({block:'center',behavior:'instant'});
      }catch{if(current())showToast('뉴스 근거 저장 화면을 열지 못했어요. 다시 시도해주세요.');}
    },
-   isCurrent:()=>epoch===viewEpoch&&state.tab==='news',
+   isCurrent:newsCurrent,
    onRetry:()=>renderNews({force:true}),
- });
+ };
+ const viewPromise=Promise.all([import('./newsReaderView.js'),import('./newsReaderView.css')]).then(([view])=>view);
+ const [dataResult,viewResult]=await Promise.allSettled([
+   loadProgressiveNews(tickers,names,{force,isCurrent:newsCurrent,onUpdate:payload=>{
+     void viewPromise.then(view=>{if(!newsCurrent())return;if(newsReaderCleanup?.update)newsReaderCleanup.update(payload);else newsReaderCleanup=view.mountNewsReader(host,payload,readerOptions);}).catch(()=>{});
+   }}),
+   viewPromise,
+ ]);
+ if(!newsCurrent())return;
+ if(viewResult.status!=='fulfilled'){
+   host.innerHTML='<div class="empty" role="alert"><strong>뉴스 화면을 불러오지 못했어요</strong><span>저장된 관심종목은 유지돼요. 화면을 새로 불러와주세요.</span><button type="button" class="retry" id="retry-news-view">화면 새로고침</button></div>';
+   host.querySelector('button').onclick=()=>location.reload();return;
+ }
+ if(dataResult.status!=='fulfilled'){
+   host.innerHTML='<div class="empty" role="alert"><strong>뉴스를 불러오지 못했어요</strong><span>연결을 확인한 뒤 다시 시도해주세요.</span><button type="button" class="retry" id="retry-news">다시 시도</button></div>';
+   host.querySelector('button').onclick=()=>renderNews({force:true});return;
+ }
+ if(newsReaderCleanup?.update)newsReaderCleanup.update(dataResult.value);
+ else newsReaderCleanup=viewResult.value.mountNewsReader(host,dataResult.value,readerOptions);
 }
-
 function renderInfo(){
  cleanupChart();
  const epoch=viewEpoch;

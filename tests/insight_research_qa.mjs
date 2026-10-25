@@ -14,6 +14,7 @@ try{for(const width of [320,390]){
   if(path==='/api/export-momentum')body={period:'2026-09',itemPeriod:'2026-08',summary:{exportsUsdBillion:60,exportYoY:4},items:[{...latest,key:'semiconductor',name:'반도체',note:'HS 8541+8542 합산'}],semiconductorBreakdown:segments};
   if(path==='/api/export-momentum/item-detail')body={key:'semiconductor',name:'반도체',note:'HS 8541+8542',period:'2026-08',history:[latest],countries:[{name:'미국',exportsUsdBillion:3,sharePct:10}]};
   if(path==='/static/data/company_context.json')body={companies:[row,peer],source:'KRX KIND',updated:'2026-10-02'};
+  if(path==='/api/home-screener-summary')body={schemaVersion:1,tradeDate:'2026-10-02',counts:{volumeSurge:2}};
   if(path==='/static/data/screener.json')body={stocks:[row,peer],tradeDate:'2026-10-02'};
   if(path==='/api/quotes')body={results:[{...row,ticker:u.searchParams.get('tickers')||row.symbol,currency:'KRW'}]};
   if(path==='/api/compare')body={stocks:(u.searchParams.get('tickers')||row.symbol).split(',').map(ticker=>({ticker,data:[{time:'2026-09-01',value:0},{time:'2026-10-02',value:3}]}))};

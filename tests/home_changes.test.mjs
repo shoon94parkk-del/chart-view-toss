@@ -7,7 +7,7 @@ import {homeChanges} from '../src/insightModel.js';
 test('Home keeps the third observation optional and preserves expansion on repaint',async()=>{
  const nodes=Object.fromEntries(['data-home-changes','data-home-change-status','data-home-change-retry','data-home-change-toggle'].map(key=>[key,{innerHTML:'',textContent:'',hidden:true,setAttribute(k,v){this[k]=v;}}]));
  const host={isConnected:true,querySelector:key=>nodes[key.slice(1,-1)]};
- const context=vm.createContext({homeChanges,window:{},loadExportMomentumSnapshot:async()=>({period:'2026-09',summary:{exportYoY:4},itemPeriod:'2026-08',items:[{key:'semiconductor',exportWeightYoY:3,unitValueYoY:2}]}),screenerData:async()=>({tradeDate:'2026-10-02',stocks:[{volumeRatio:2.3}]})});
+ const context=vm.createContext({homeChanges,window:{},loadExportMomentumSnapshot:async()=>({period:'2026-09',summary:{exportYoY:4},itemPeriod:'2026-08',items:[{key:'semiconductor',exportWeightYoY:3,unitValueYoY:2}]}),homeScreenerSummary:async()=>({schemaVersion:1,tradeDate:'2026-10-02',counts:{volumeSurge:1}})});
  vm.runInContext(readFileSync(new URL('../src/homeGesturePaint.js',import.meta.url),'utf8').replaceAll('export ','')+'\n'+readFileSync(new URL('../src/homeChangesView.js',import.meta.url),'utf8').replace(/^import .*;\r?\n/gm,'').replaceAll('export ',''),context);
  await context.mountHomeChanges(host);
  assert.equal(nodes['data-home-change-toggle'].hidden,false);
@@ -21,7 +21,7 @@ test('Home observations render independent sources and retain ready cards during
  const nodes=Object.fromEntries(['data-home-changes','data-home-change-status','data-home-change-retry'].map(key=>[key,{innerHTML:'',textContent:'',hidden:true}]));
  const host={isConnected:true,querySelector:key=>nodes[key.slice(1,-1)]};
  const pending=[];let stockCalls=0;
- const context=vm.createContext({homeChanges,window:{},loadExportMomentumSnapshot:options=>new Promise((resolve,reject)=>pending.push({resolve,reject,options})),screenerData:async()=>{stockCalls++;return {tradeDate:'2026-10-02',stocks:[{volumeRatio:2.3}]};}});
+ const context=vm.createContext({homeChanges,window:{},loadExportMomentumSnapshot:options=>new Promise((resolve,reject)=>pending.push({resolve,reject,options})),homeScreenerSummary:async()=>{stockCalls++;return {schemaVersion:1,tradeDate:'2026-10-02',counts:{volumeSurge:1}};}});
  vm.runInContext(readFileSync(new URL('../src/homeGesturePaint.js',import.meta.url),'utf8').replaceAll('export ','')+'\n'+readFileSync(new URL('../src/homeChangesView.js',import.meta.url),'utf8').replace(/^import .*;\r?\n/gm,'').replaceAll('export ',''),context);
  const mounted=context.mountHomeChanges(host);
  await new Promise(resolve=>setImmediate(resolve));
@@ -44,11 +44,31 @@ test('late screener completion preserves a focused export action and scroll posi
  const button={dataset:{featureRoute:'exports',featureTarget:'items'},matches:()=>true,getBoundingClientRect:()=>({top:40}),focus:()=>focusedCalls++};
  const doc={activeElement:null};
  const host={isConnected:true,contains:()=>true,querySelector:key=>nodes[key.slice(1,-1)],querySelectorAll:()=>[button]};
- const context=vm.createContext({document:doc,homeChanges,window:{scrollBy:()=>scrolled++},loadExportMomentumSnapshot:async()=>({period:'2026-09',summary:{exportYoY:4}}),screenerData:()=>new Promise(resolve=>{resolveStocks=resolve;})});
+ const context=vm.createContext({document:doc,homeChanges,window:{scrollBy:()=>scrolled++},loadExportMomentumSnapshot:async()=>({period:'2026-09',summary:{exportYoY:4}}),homeScreenerSummary:()=>new Promise(resolve=>{resolveStocks=resolve;})});
  vm.runInContext(readFileSync(new URL('../src/homeGesturePaint.js',import.meta.url),'utf8').replaceAll('export ','')+'\n'+readFileSync(new URL('../src/homeChangesView.js',import.meta.url),'utf8').replace(/^import .*;\r?\n/gm,'').replaceAll('export ',''),context);
  const mounted=context.mountHomeChanges(host);await new Promise(resolve=>setImmediate(resolve));doc.activeElement=button;
- resolveStocks({tradeDate:'2026-10-02',stocks:[{volumeRatio:3}]});await mounted;
+ resolveStocks({schemaVersion:1,tradeDate:'2026-10-02',counts:{volumeSurge:1}});await mounted;
  assert.equal(focusedCalls,1);assert.equal(scrolled,0);
+});
+
+test('failed Home summary retries only its source with force and keeps dated exports visible',async()=>{
+ const nodes=Object.fromEntries(['data-home-changes','data-home-change-status','data-home-change-retry'].map(key=>[key,{innerHTML:'',textContent:'',hidden:true}]));
+ const host={isConnected:true,querySelector:key=>nodes[key.slice(1,-1)]};
+ const summaryOptions=[];let exportCalls=0;
+ const context=vm.createContext({homeChanges,window:{},loadExportMomentumSnapshot:async()=>{exportCalls++;return {period:'2026-09',summary:{exportYoY:4}};},homeScreenerSummary:async options=>{
+  summaryOptions.push(options);if(summaryOptions.length===1)throw Error('summary unavailable');
+  return {schemaVersion:1,tradeDate:'2026-10-02',counts:{volumeSurge:4}};
+ }});
+ vm.runInContext(readFileSync(new URL('../src/homeGesturePaint.js',import.meta.url),'utf8').replaceAll('export ','')+'\n'+readFileSync(new URL('../src/homeChangesView.js',import.meta.url),'utf8').replace(/^import .*;\r?\n/gm,'').replaceAll('export ',''),context);
+ await context.mountHomeChanges(host);
+ assert.equal(nodes['data-home-change-retry'].hidden,false);
+ assert.match(nodes['data-home-changes'].innerHTML,/전체 수출/);
+ nodes['data-home-change-retry'].onclick();await new Promise(resolve=>setImmediate(resolve));
+ assert.equal(exportCalls,1);
+ assert.equal(summaryOptions.length,2);
+ assert.equal(summaryOptions[1].force,true);
+ assert.match(nodes['data-home-changes'].innerHTML,/전체 수출.*거래량 2배 이상.*4개/s);
+ assert.equal(nodes['data-home-change-retry'].hidden,true);
 });
 
 function pointerHarness({loadView=true}={}){
@@ -68,7 +88,7 @@ function pointerHarness({loadView=true}={}){
  const win={setTimeout:schedule,addEventListener(type,listener){const key=`window:${type}`,registered=listeners.get(key)||[];registered.push(listener);listeners.set(key,registered);}};doc.defaultView=win;
  const context=vm.createContext({document:doc,window:win,setTimeout:schedule,homeChanges,
   loadExportMomentumSnapshot:()=>new Promise((resolve,reject)=>requests.exports.push({resolve,reject})),
-  screenerData:()=>new Promise((resolve,reject)=>requests.stocks.push({resolve,reject})),
+  homeScreenerSummary:()=>new Promise((resolve,reject)=>requests.stocks.push({resolve,reject})),
  });
  vm.runInContext(readFileSync(new URL('../src/homeGesturePaint.js',import.meta.url),'utf8').replaceAll('export ',''),context);
  const evaluateView=()=>vm.runInContext(readFileSync(new URL('../src/homeChangesView.js',import.meta.url),'utf8').replace(/^import .*;\r?\n/gm,'').replaceAll('export ',''),context);
@@ -82,7 +102,7 @@ function pointerHarness({loadView=true}={}){
  return {context,requests,listeners,timers,makeHost,dispatch,flush,snapshot,feed,loadView:evaluateView};
 }
 const exportObservation={period:'2026-09',summary:{exportYoY:4},itemPeriod:'2026-08',items:[{key:'semiconductor',exportWeightYoY:3,unitValueYoY:2}]};
-const stockObservation={tradeDate:'2026-10-02',stocks:[{volumeRatio:3}]};
+const stockObservation={schemaVersion:1,tradeDate:'2026-10-02',counts:{volumeSurge:1}};
 const drain=()=>new Promise(resolve=>setImmediate(resolve));
 
 for(const end of ['pointerup','pointercancel'])test(`Home change data settles independently while ${end} publishes after the held PICK gesture`,async()=>{

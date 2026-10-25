@@ -189,3 +189,37 @@ test('merged article retains supplied translated and escaped tags with the exist
  assert.match(h.host.innerHTML,/<div class="news-tags">\s*<span>실적<\/span><span>&lt;태그&gt;<\/span>\s*<\/div>/);assert.doesNotMatch(h.host.innerHTML,/애널리스트 분석/);assert.match(h.host.innerHTML,/영문 원문/);assert.doesNotMatch(h.host.innerHTML,/<태그>/);cleanup();
  cleanup=mountNewsReader(h.host,{items:[{...row('no-tags'),title:'기업 실적 발표'}]});assert.doesNotMatch(h.host.innerHTML,/class="news-tags"/);assert.match(h.host.innerHTML,/한국어/);cleanup();
 });
+
+test('progressive update retains filters, visible range, focused control and explicitly opened summaries',async()=>{
+ for(const status of ['ready','pending','error']) {
+  const h=harness(),preferences={},job=deferred();let calls=0,focused=0;
+  const articles=Array.from({length:25},(_,i)=>row(`progress-${status}-${i}`));
+  const cleanup=mountNewsReader(h.host,{items:articles,complete:false,pendingSymbols:['B']},{preferences,loadSummary:()=>{calls++;return job.promise;}});
+  assert.equal(typeof cleanup.update,'function');assert.match(h.host.innerHTML,/1개 종목.*확인 중/);
+  h.click({newsSource:'제공 매체'});h.click({newsMore:''});h.click({newsSummary:articles[0].url});await tick();
+  if(status==='ready')job.resolve({summary:'진행 중 보존 요약',basis:'article_body'});if(status==='error')job.resolve(null);await tick();
+  h.host.ownerDocument={activeElement:{inside:true,dataset:{newsControl:'original:'+articles[0].url}}};h.host.querySelectorAll=()=>[{dataset:{newsControl:'original:'+articles[0].url},focus(){focused++;}}];
+  cleanup.update({items:[...articles,row('new')],groups:[],complete:true,pendingSymbols:[]});
+  assert.equal(preferences.source,'제공 매체');assert.equal(preferences.visibleCount,24);assert.match(h.host.innerHTML,/data-news-summary-toggle[^>]*aria-expanded="true"/);assert.equal(focused,1);assert.equal(calls,1);assert.doesNotMatch(h.host.innerHTML,/종목.*확인 중/);
+  if(status==='ready')assert.match(h.host.innerHTML,/진행 중 보존 요약/);if(status==='error')assert.match(h.host.innerHTML,/요약을 불러오지 못했어요/);if(status==='pending'){assert.match(h.host.innerHTML,/요약을 확인하고 있어요/);job.resolve({summary:'업데이트 뒤 완료'});await tick();assert.match(h.host.innerHTML,/업데이트 뒤 완료/);}cleanup();
+ }
+});
+
+test('pending reader keeps first articles visible and shows confirmed empty only after completion',()=>{
+ const h=harness(),cleanup=mountNewsReader(h.host,{items:[],complete:false,pendingSymbols:['A','B']});assert.match(h.host.innerHTML,/2개 종목.*확인 중/);assert.doesNotMatch(h.host.innerHTML,/현재 표시할 관련 뉴스가 없어요/);
+ cleanup.update({items:[row('first')],complete:false,pendingSymbols:['B']});assert.match(h.host.innerHTML,/기사 first/);assert.match(h.host.innerHTML,/1개 종목.*확인 중/);
+ cleanup.update({items:[],complete:true,pendingSymbols:[]});assert.match(h.host.innerHTML,/현재 표시할 관련 뉴스가 없어요/);cleanup();
+});
+
+test('progressive paints wait until the active pointer click resolves and cleanup cancels the queued paint',async()=>{
+ const docListeners=new Map(),doc={addEventListener:(type,fn)=>docListeners.set(type,fn),removeEventListener:(type,fn)=>{if(docListeners.get(type)===fn)docListeners.delete(type);}};
+ const h=harness(),opened=[];h.host.ownerDocument=doc;
+ const cleanup=mountNewsReader(h.host,{items:[row('pressed')]},{onExternal:url=>opened.push(url)});
+ docListeners.get('pointerdown')({pointerId:1,target:{inside:true}});const writes=h.writes;
+ cleanup.update({items:[row('moved'),row('pressed')]});assert.equal(h.writes,writes);
+ docListeners.get('pointerup')({pointerId:1});assert.equal(h.writes,writes);
+ h.click({newsExternal:row('pressed').url});assert.deepEqual(opened,[row('pressed').url]);assert.equal(h.writes,writes);
+ await new Promise(resolve=>setTimeout(resolve,5));assert.match(h.host.innerHTML,/기사 moved/);
+ docListeners.get('pointerdown')({pointerId:2,target:{inside:true}});cleanup.update({items:[row('obsolete')]});docListeners.get('pointerup')({pointerId:2});cleanup();const stopped=h.writes;
+ await new Promise(resolve=>setTimeout(resolve,5));assert.equal(h.writes,stopped);assert.equal(docListeners.size,0);cleanup.update({items:[row('late')]});assert.equal(h.writes,stopped);
+});

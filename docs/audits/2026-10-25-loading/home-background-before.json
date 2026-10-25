@@ -1,0 +1,676 @@
+{
+  "startAt": "2026-10-25T09:06:33.016Z",
+  "source": "0c1017d",
+  "proxyRelay": true,
+  "httpCacheDisabled": true,
+  "results": [
+    {
+      "count": 3,
+      "run": 1,
+      "route": "home",
+      "phase": "cold",
+      "outcome": "ready",
+      "marks": {
+        "shell": 428.30000000074506,
+        "newsReady": 597.8000000007451,
+        "marketFirst": 620.2000000011176,
+        "marketFour": 620.2000000011176,
+        "watchFirst": 620.2000000011176,
+        "watchAll": 620.2000000011176
+      },
+      "longTasks": [
+        {
+          "start": 409.80000000074506,
+          "ms": 64
+        }
+      ],
+      "watchPrices": 0,
+      "newsCards": 0,
+      "homeNewsText": "기업명 언급\n애플\nYahoo · 7시간 전\nHow Investors May Respond To Qualcomm Stock Earnings Outlook Concerns\n영문 원문\n기사 제목·요약에 기업명 확인\n실적\n자본\n기업명 언급\n삼성전자\nsentv.co.kr · 36분 전\n개인, 반도체 레버리지 ETF 3154억원 순매수…두 달 만에 매수 전환\n한국어\n기사 제목·요약에 기업명 확인\n자본\n전략\n기업명 언급\n엔비디아\nYahoo · 1일 전\nNVDA vs. LRCX: Which AI Semiconductor Stock Is the Better Buy?\n영문 원문\n기사 제목·요약에 기업명 확인\n실적\n기술",
+      "loaders": [
+        "최근 선정 종목을 불러오고 있어요",
+        "오늘 등락 히트맵을 불러오고 있어요",
+        "시장 요약을 확인하고 있어요"
+      ],
+      "requests": [
+        {
+          "path": "/",
+          "query": "",
+          "data": false,
+          "phase": "cold",
+          "status": 200,
+          "headersMs": 180.140645,
+          "bodyMs": 190.09373799999997,
+          "bytes": 5298,
+          "state": "complete",
+          "serverTiming": null,
+          "startOffsetMs": 4.365811000000008
+        },
+        {
+          "path": "/assets/index-BWwc7rb3.js",
+          "query": "",
+          "data": false,
+          "phase": "cold",
+          "status": 200,
+          "headersMs": 175.446569,
+          "bodyMs": 184.35051000000004,
+          "bytes": 354178,
+          "state": "complete",
+          "serverTiming": null,
+          "startOffsetMs": 191.06941899999998
+        },
+        {
+          "path": "/assets/index-CNzl7vbh.css",
+          "query": "",
+          "data": false,
+          "phase": "cold",
+          "status": 200,
+          "headersMs": 174.07985799999994,
+          "bodyMs": 238.43558299999995,
+          "bytes": 178525,
+          "state": "complete",
+          "serverTiming": null,
+          "startOffsetMs": 191.771708
+        },
+        {
+          "path": "/api/market-now",
+          "query": "",
+          "data": true,
+          "phase": "cold",
+          "status": 200,
+          "headersMs": 170.69567199999995,
+          "bodyMs": 205.84069,
+          "bytes": 2396,
+          "state": "complete",
+          "serverTiming": "market-ready;dur=0.000, market-handler;dur=0.033",
+          "startOffsetMs": 416.68487700000003
+        },
+        {
+          "path": "/api/home-snapshot",
+          "query": "",
+          "data": true,
+          "phase": "cold",
+          "status": null,
+          "headersMs": null,
+          "bodyMs": null,
+          "bytes": null,
+          "state": "pending",
+          "startOffsetMs": 417.603171
+        },
+        {
+          "path": "/api/home-bootstrap",
+          "query": "",
+          "data": true,
+          "phase": "cold",
+          "status": null,
+          "headersMs": null,
+          "bodyMs": null,
+          "bytes": null,
+          "state": "pending",
+          "startOffsetMs": 417.90103
+        },
+        {
+          "path": "/api/quotes",
+          "query": "?tickers=005930.KS%2CNVDA%2CAAPL",
+          "data": true,
+          "phase": "cold",
+          "status": 200,
+          "headersMs": 154.717937,
+          "bodyMs": 189.96930499999996,
+          "bytes": 1492,
+          "state": "complete",
+          "serverTiming": null,
+          "meta": {
+            "results": 3,
+            "errors": []
+          },
+          "startOffsetMs": 432.542781
+        },
+        {
+          "path": "/api/personalized-news",
+          "query": "?tickers=005930.KS%2CNVDA%2CAAPL&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90%7C%EC%97%94%EB%B9%84%EB%94%94%EC%95%84%7C%EC%95%A0%ED%94%8C",
+          "data": true,
+          "phase": "cold",
+          "status": 200,
+          "headersMs": 154.46585699999991,
+          "bodyMs": 171.6271959999999,
+          "bytes": 28555,
+          "state": "complete",
+          "serverTiming": null,
+          "meta": {
+            "items": 12,
+            "groups": 3,
+            "errors": [],
+            "requestedCount": 3,
+            "providers": {
+              "kr": "NAVER API HUB",
+              "us": "Finnhub Company News"
+            },
+            "providerConcurrency": 4,
+            "displayPolicy": "headline-source-time-link-summary-seed"
+          },
+          "startOffsetMs": 433.00250400000004
+        },
+        {
+          "path": "/api/activity",
+          "query": "",
+          "data": true,
+          "phase": "cold",
+          "status": null,
+          "headersMs": null,
+          "bodyMs": null,
+          "bytes": null,
+          "state": "pending",
+          "startOffsetMs": 482.516121
+        },
+        {
+          "path": "/assets/homeBriefingBootstrap-C_Vlm6wf.js",
+          "query": "",
+          "data": false,
+          "phase": "cold",
+          "status": 200,
+          "headersMs": 76.10695399999997,
+          "bodyMs": 77.42361900000003,
+          "bytes": 6178,
+          "state": "complete",
+          "serverTiming": null,
+          "startOffsetMs": 486.055436
+        },
+        {
+          "path": "/assets/exportMomentumData-BpHltTTw.js",
+          "query": "",
+          "data": false,
+          "phase": "cold",
+          "status": 200,
+          "headersMs": 90.38548199999991,
+          "bodyMs": 100.6050469999999,
+          "bytes": 17845,
+          "state": "complete",
+          "serverTiming": null,
+          "startOffsetMs": 486.57671200000004
+        },
+        {
+          "path": "/assets/homeBriefingBootstrap-Bhd3mbHB.css",
+          "query": "",
+          "data": false,
+          "phase": "cold",
+          "status": 200,
+          "headersMs": 54.26894499999992,
+          "bodyMs": 55.416245,
+          "bytes": 597,
+          "state": "complete",
+          "serverTiming": null,
+          "startOffsetMs": 486.97080600000004
+        },
+        {
+          "path": "/api/export-momentum",
+          "query": "?balanceBasis=signed-v1",
+          "data": true,
+          "phase": "cold",
+          "status": null,
+          "headersMs": null,
+          "bodyMs": null,
+          "bytes": null,
+          "state": "pending",
+          "startOffsetMs": 577.397511
+        },
+        {
+          "path": "/api/published-data/screener.json",
+          "query": "",
+          "data": true,
+          "phase": "cold",
+          "status": null,
+          "headersMs": null,
+          "bodyMs": null,
+          "bytes": null,
+          "state": "pending",
+          "startOffsetMs": 577.820739
+        }
+      ],
+      "errors": []
+    },
+    {
+      "count": 3,
+      "run": 1,
+      "route": "home",
+      "phase": "cold",
+      "outcome": "ready",
+      "marks": {
+        "shell": 428.30000000074506,
+        "newsReady": 597.8000000007451,
+        "marketFirst": 620.2000000011176,
+        "marketFour": 620.2000000011176,
+        "watchFirst": 620.2000000011176,
+        "watchAll": 620.2000000011176
+      },
+      "longTasks": [
+        {
+          "start": 409.80000000074506,
+          "ms": 64
+        }
+      ],
+      "watchPrices": 0,
+      "newsCards": 0,
+      "homeNewsText": "기업명 언급\n애플\nYahoo · 7시간 전\nHow Investors May Respond To Qualcomm Stock Earnings Outlook Concerns\n영문 원문\n기사 제목·요약에 기업명 확인\n실적\n자본\n기업명 언급\n삼성전자\nsentv.co.kr · 36분 전\n개인, 반도체 레버리지 ETF 3154억원 순매수…두 달 만에 매수 전환\n한국어\n기사 제목·요약에 기업명 확인\n자본\n전략\n기업명 언급\n엔비디아\nYahoo · 1일 전\nNVDA vs. LRCX: Which AI Semiconductor Stock Is the Better Buy?\n영문 원문\n기사 제목·요약에 기업명 확인\n실적\n기술",
+      "loaders": [],
+      "requests": [
+        {
+          "path": "/",
+          "query": "",
+          "data": false,
+          "phase": "cold",
+          "status": 200,
+          "headersMs": 180.140645,
+          "bodyMs": 190.09373799999997,
+          "bytes": 5298,
+          "state": "complete",
+          "serverTiming": null,
+          "startOffsetMs": 4.365811000000008
+        },
+        {
+          "path": "/assets/index-BWwc7rb3.js",
+          "query": "",
+          "data": false,
+          "phase": "cold",
+          "status": 200,
+          "headersMs": 175.446569,
+          "bodyMs": 184.35051000000004,
+          "bytes": 354178,
+          "state": "complete",
+          "serverTiming": null,
+          "startOffsetMs": 191.06941899999998
+        },
+        {
+          "path": "/assets/index-CNzl7vbh.css",
+          "query": "",
+          "data": false,
+          "phase": "cold",
+          "status": 200,
+          "headersMs": 174.07985799999994,
+          "bodyMs": 238.43558299999995,
+          "bytes": 178525,
+          "state": "complete",
+          "serverTiming": null,
+          "startOffsetMs": 191.771708
+        },
+        {
+          "path": "/api/market-now",
+          "query": "",
+          "data": true,
+          "phase": "cold",
+          "status": 200,
+          "headersMs": 170.69567199999995,
+          "bodyMs": 205.84069,
+          "bytes": 2396,
+          "state": "complete",
+          "serverTiming": "market-ready;dur=0.000, market-handler;dur=0.033",
+          "startOffsetMs": 416.68487700000003
+        },
+        {
+          "path": "/api/home-snapshot",
+          "query": "",
+          "data": true,
+          "phase": "cold",
+          "status": 200,
+          "headersMs": 223.62516800000003,
+          "bodyMs": 237.49411900000007,
+          "bytes": 68333,
+          "state": "complete",
+          "serverTiming": null,
+          "startOffsetMs": 417.603171
+        },
+        {
+          "path": "/api/home-bootstrap",
+          "query": "",
+          "data": true,
+          "phase": "cold",
+          "status": 200,
+          "headersMs": 723.900439,
+          "bodyMs": 730.2043020000001,
+          "bytes": 31440,
+          "state": "complete",
+          "serverTiming": null,
+          "startOffsetMs": 417.90103
+        },
+        {
+          "path": "/api/quotes",
+          "query": "?tickers=005930.KS%2CNVDA%2CAAPL",
+          "data": true,
+          "phase": "cold",
+          "status": 200,
+          "headersMs": 154.717937,
+          "bodyMs": 189.96930499999996,
+          "bytes": 1492,
+          "state": "complete",
+          "serverTiming": null,
+          "meta": {
+            "results": 3,
+            "errors": []
+          },
+          "startOffsetMs": 432.542781
+        },
+        {
+          "path": "/api/personalized-news",
+          "query": "?tickers=005930.KS%2CNVDA%2CAAPL&names=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90%7C%EC%97%94%EB%B9%84%EB%94%94%EC%95%84%7C%EC%95%A0%ED%94%8C",
+          "data": true,
+          "phase": "cold",
+          "status": 200,
+          "headersMs": 154.46585699999991,
+          "bodyMs": 171.6271959999999,
+          "bytes": 28555,
+          "state": "complete",
+          "serverTiming": null,
+          "meta": {
+            "items": 12,
+            "groups": 3,
+            "errors": [],
+            "requestedCount": 3,
+            "providers": {
+              "kr": "NAVER API HUB",
+              "us": "Finnhub Company News"
+            },
+            "providerConcurrency": 4,
+            "displayPolicy": "headline-source-time-link-summary-seed"
+          },
+          "startOffsetMs": 433.00250400000004
+        },
+        {
+          "path": "/api/activity",
+          "query": "",
+          "data": true,
+          "phase": "cold",
+          "status": 200,
+          "headersMs": 255.99956400000008,
+          "bodyMs": 256.7351930000001,
+          "bytes": 29,
+          "state": "complete",
+          "serverTiming": null,
+          "startOffsetMs": 482.516121
+        },
+        {
+          "path": "/assets/homeBriefingBootstrap-C_Vlm6wf.js",
+          "query": "",
+          "data": false,
+          "phase": "cold",
+          "status": 200,
+          "headersMs": 76.10695399999997,
+          "bodyMs": 77.42361900000003,
+          "bytes": 6178,
+          "state": "complete",
+          "serverTiming": null,
+          "startOffsetMs": 486.055436
+        },
+        {
+          "path": "/assets/exportMomentumData-BpHltTTw.js",
+          "query": "",
+          "data": false,
+          "phase": "cold",
+          "status": 200,
+          "headersMs": 90.38548199999991,
+          "bodyMs": 100.6050469999999,
+          "bytes": 17845,
+          "state": "complete",
+          "serverTiming": null,
+          "startOffsetMs": 486.57671200000004
+        },
+        {
+          "path": "/assets/homeBriefingBootstrap-Bhd3mbHB.css",
+          "query": "",
+          "data": false,
+          "phase": "cold",
+          "status": 200,
+          "headersMs": 54.26894499999992,
+          "bodyMs": 55.416245,
+          "bytes": 597,
+          "state": "complete",
+          "serverTiming": null,
+          "startOffsetMs": 486.97080600000004
+        },
+        {
+          "path": "/api/export-momentum",
+          "query": "?balanceBasis=signed-v1",
+          "data": true,
+          "phase": "cold",
+          "status": 200,
+          "headersMs": 159.17359299999987,
+          "bodyMs": 161.40068000000008,
+          "bytes": 10480,
+          "state": "complete",
+          "serverTiming": null,
+          "startOffsetMs": 577.397511
+        },
+        {
+          "path": "/api/published-data/screener.json",
+          "query": "",
+          "data": true,
+          "phase": "cold",
+          "status": 200,
+          "headersMs": 1542.6860379999998,
+          "bodyMs": 1644.3837170000002,
+          "bytes": 2116020,
+          "state": "complete",
+          "serverTiming": null,
+          "startOffsetMs": 577.820739
+        },
+        {
+          "path": "/assets/pickLedger-DujgdGFO.js",
+          "query": "",
+          "data": false,
+          "phase": "cold",
+          "status": 200,
+          "headersMs": 76.30651399999988,
+          "bodyMs": 79.07001999999989,
+          "bytes": 31464,
+          "state": "complete",
+          "serverTiming": null,
+          "startOffsetMs": 1146.61796
+        },
+        {
+          "path": "/assets/debateDashboard-Pa2W7QQ7.js",
+          "query": "",
+          "data": false,
+          "phase": "cold",
+          "status": 200,
+          "headersMs": 63.88007300000004,
+          "bodyMs": 65.31415500000003,
+          "bytes": 17247,
+          "state": "complete",
+          "serverTiming": null,
+          "startOffsetMs": 1147.210713
+        },
+        {
+          "path": "/api/published-data/pick_monitor.json",
+          "query": "",
+          "data": true,
+          "phase": "cold",
+          "status": 200,
+          "headersMs": 998.3002749999998,
+          "bodyMs": 1001.027405,
+          "bytes": 78824,
+          "state": "complete",
+          "serverTiming": null,
+          "startOffsetMs": 1224.410214
+        },
+        {
+          "path": "/api/home-live",
+          "query": "",
+          "data": true,
+          "phase": "cold",
+          "status": 200,
+          "headersMs": 120.9113669999997,
+          "bodyMs": 129.64859700000034,
+          "bytes": 5526,
+          "state": "complete",
+          "serverTiming": null,
+          "startOffsetMs": 3932.04292
+        },
+        {
+          "path": "/api/market-now",
+          "query": "",
+          "data": true,
+          "phase": "cold",
+          "status": 200,
+          "headersMs": 82.8905050000003,
+          "bodyMs": 86.82429400000001,
+          "bytes": 2396,
+          "state": "complete",
+          "serverTiming": "market-ready;dur=0.000, market-handler;dur=0.830",
+          "startOffsetMs": 6431.8242199999995
+        },
+        {
+          "path": "/api/home-live",
+          "query": "",
+          "data": true,
+          "phase": "cold",
+          "status": 200,
+          "headersMs": 107.1296340000008,
+          "bodyMs": 114.93480900000031,
+          "bytes": 5525,
+          "state": "complete",
+          "serverTiming": null,
+          "startOffsetMs": 9331.828446
+        }
+      ],
+      "errors": []
+    }
+  ],
+  "extra": {
+    "heatmap": 12,
+    "resources": [
+      {
+        "url": "https://chart-view-toss.onrender.com/assets/index-BWwc7rb3.js",
+        "start": 185.60000000149012,
+        "duration": 174.69999999925494,
+        "encoded": 117424,
+        "decoded": 354178
+      },
+      {
+        "url": "https://chart-view-toss.onrender.com/assets/index-CNzl7vbh.css",
+        "start": 186.10000000149012,
+        "duration": 205.69999999925494,
+        "encoded": 33719,
+        "decoded": 178525
+      },
+      {
+        "url": "https://chart-view-pkv8.onrender.com/api/market-now",
+        "start": 406.7000000011176,
+        "duration": 172.59999999962747,
+        "encoded": 0,
+        "decoded": 0
+      },
+      {
+        "url": "https://chart-view-pkv8.onrender.com/api/home-snapshot",
+        "start": 406.90000000037253,
+        "duration": 231.09999999962747,
+        "encoded": 0,
+        "decoded": 0
+      },
+      {
+        "url": "https://chart-view-pkv8.onrender.com/api/home-bootstrap",
+        "start": 407,
+        "duration": 732.2000000011176,
+        "encoded": 0,
+        "decoded": 0
+      },
+      {
+        "url": "https://chart-view-pkv8.onrender.com/api/quotes",
+        "start": 424.80000000074506,
+        "duration": 154.40000000037253,
+        "encoded": 0,
+        "decoded": 0
+      },
+      {
+        "url": "https://chart-view-pkv8.onrender.com/api/personalized-news",
+        "start": 425.2000000011176,
+        "duration": 155.09999999962747,
+        "encoded": 0,
+        "decoded": 0
+      },
+      {
+        "url": "https://chart-view-pkv8.onrender.com/api/activity",
+        "start": 477.40000000037253,
+        "duration": 257.30000000074506,
+        "encoded": 0,
+        "decoded": 0
+      },
+      {
+        "url": "https://chart-view-toss.onrender.com/assets/homeBriefingBootstrap-C_Vlm6wf.js",
+        "start": 478.5,
+        "duration": 80.40000000037253,
+        "encoded": 3008,
+        "decoded": 6178
+      },
+      {
+        "url": "https://chart-view-toss.onrender.com/assets/exportMomentumData-BpHltTTw.js",
+        "start": 478.90000000037253,
+        "duration": 83.70000000111759,
+        "encoded": 4709,
+        "decoded": 17845
+      },
+      {
+        "url": "https://chart-view-toss.onrender.com/assets/homeBriefingBootstrap-Bhd3mbHB.css",
+        "start": 479,
+        "duration": 59,
+        "encoded": 255,
+        "decoded": 597
+      },
+      {
+        "url": "https://chart-view-pkv8.onrender.com/api/export-momentum",
+        "start": 565.5,
+        "duration": 167.30000000074506,
+        "encoded": 0,
+        "decoded": 0
+      },
+      {
+        "url": "https://chart-view-pkv8.onrender.com/api/published-data/screener.json",
+        "start": 565.8000000007451,
+        "duration": 1548.4000000003725,
+        "encoded": 0,
+        "decoded": 0
+      },
+      {
+        "url": "https://chart-view-toss.onrender.com/assets/pickLedger-DujgdGFO.js",
+        "start": 1143.800000000745,
+        "duration": 75.59999999962747,
+        "encoded": 11621,
+        "decoded": 31464
+      },
+      {
+        "url": "https://chart-view-toss.onrender.com/assets/debateDashboard-Pa2W7QQ7.js",
+        "start": 1143.9000000003725,
+        "duration": 62.90000000037253,
+        "encoded": 7358,
+        "decoded": 17247
+      },
+      {
+        "url": "https://chart-view-pkv8.onrender.com/api/published-data/pick_monitor.json",
+        "start": 1221.7000000011176,
+        "duration": 940.1999999992549,
+        "encoded": 0,
+        "decoded": 0
+      },
+      {
+        "url": "https://chart-view-pkv8.onrender.com/api/home-live",
+        "start": 3929.10000000149,
+        "duration": 119.5,
+        "encoded": 0,
+        "decoded": 0
+      },
+      {
+        "url": "https://chart-view-pkv8.onrender.com/api/market-now",
+        "start": 6429.10000000149,
+        "duration": 83,
+        "encoded": 0,
+        "decoded": 0
+      },
+      {
+        "url": "https://chart-view-pkv8.onrender.com/api/home-live",
+        "start": 9329,
+        "duration": 107.20000000111759,
+        "encoded": 0,
+        "decoded": 0
+      }
+    ],
+    "totalDomNodes": 518
+  }
+}

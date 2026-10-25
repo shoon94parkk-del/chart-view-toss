@@ -88,6 +88,11 @@ export function createRequestClient({base,fetchImpl=(...args)=>fetch(...args),no
   work.catch(()=>{}).finally(()=>{if(pending.get(key)===record&&record.state==='fulfilled')pending.delete(key);});
   return true;
  };
+ request.peek=(path,{ttlMs=0,cacheIf=()=>true}={})=>{
+  const hit=cache.get(base+path);
+  if(!hit||now()-hit.time>=ttlMs)return undefined;
+  const value=copy(hit.value);return cacheIf(value)?value:undefined;
+ };
  request.clear=()=>{cache.clear();for(const [key,record] of pending)if(record.initial&&record.state==='rejected')pending.delete(key);};
  return request;
 }

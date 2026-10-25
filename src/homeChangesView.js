@@ -1,6 +1,6 @@
 import {deferHomePaint} from './homeGesturePaint.js';
 import {loadExportMomentumSnapshot} from './exportMomentumData.js';
-import {screenerData} from './api.js';
+import {homeScreenerSummary} from './homeScreenerSource.js';
 import {homeChanges} from './insightModel.js';
 import './homeBriefing.css';
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -48,12 +48,12 @@ export async function mountHomeChanges(host,{journal=null}={}){
    const source=sources[key],seq=++source.run;
    source.status='loading';paint();
    try{
-    const value=await (key==='exports'?loadExportMomentumSnapshot({force}):screenerData());
+    const value=await (key==='exports'?loadExportMomentumSnapshot({force}):homeScreenerSummary({force}));
     if(!host.isConnected||seq!==source.run)return;
     source.value=value;source.status='ready';
     // Only actual dated source observations enter the journal. A collection
     // clock used by an older screener payload is not a public data period.
-    source.observed=!value?.pending&&!value?.refreshing&&!value?.error&&value?.available!==false&&!['pending','error','loading'].includes(value?.status)&&(key!=='stocks'||!!value?.tradeDate);
+    source.observed=!value?.pending&&!value?.refreshing&&!value?.refreshScheduled&&!value?.error&&value?.available!==false&&!['pending','error','loading'].includes(value?.status)&&(key!=='stocks'||!!value?.tradeDate);
     if(publication&&source.observed){
      const observed=homeChanges(key==='exports'?value:{},key==='stocks'?value:{});
      void publication.remember(observed);

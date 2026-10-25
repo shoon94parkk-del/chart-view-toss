@@ -1,0 +1,1 @@
+{"repo": "/workspace/chart-view-backend-speed", "controlled": true, "slowProviderSeconds": 1, "firstResponseSeconds": 0.005780601997685153, "allResponseSeconds": 1.0060506679983519, "firstReadyGroups": 1, "firstPending": ["NVDA"], "finalReadyGroups": 2, "providerCalls": ["NVDA"], "errors": []}

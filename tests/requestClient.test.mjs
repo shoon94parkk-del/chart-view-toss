@@ -139,3 +139,20 @@ test('caller cancellation settles a held transport promptly without waiting for 
  await assert.rejects(waiting,error=>error.name==='AbortError');assert.equal(calls,1);
  finishBody({price:100});await new Promise(done=>setImmediate(done));
 });
+
+test('peek reads only settled unexpired existing cache without network, isolates copies and clears normally',async()=>{
+ let now=0,calls=0,offline=false;
+ const request=createRequestClient({base:'https://data.example',now:()=>now,isOffline:()=>offline,fetchImpl:async()=>{calls++;return Response.json({ready:true,nested:{value:1}});}});
+ assert.equal(request.peek('/news',{ttlMs:60}),undefined);
+ await request('/news',{ttlMs:60});offline=true;
+ const hit=request.peek('/news',{ttlMs:60,cacheIf:value=>value.ready});assert.equal(hit.nested.value,1);hit.nested.value=99;
+ assert.equal(request.peek('/news',{ttlMs:60}).nested.value,1);
+ assert.equal(request.peek('/news',{ttlMs:60,cacheIf:value=>{value.nested.value=77;return false;}}),undefined);
+ assert.equal(request.peek('/news',{ttlMs:60}).nested.value,1);
+ assert.equal(request.peek('/news'),undefined);now=60;assert.equal(request.peek('/news',{ttlMs:60}),undefined);assert.equal(calls,1);
+ now=0;request.clear();assert.equal(request.peek('/news',{ttlMs:60}),undefined);
+});
+test('peek never subscribes to pending work or creates a success from an incomplete response',async()=>{
+ let release,calls=0;const request=createRequestClient({base:'https://data.example',fetchImpl:async()=>{calls++;return new Promise(r=>release=()=>r(Response.json({complete:false})));}});
+ const pending=request('/news',{ttlMs:60,cacheIf:value=>value.complete});try{assert.equal(request.peek('/news',{ttlMs:60}),undefined);assert.equal(calls,1);}finally{release();await pending;}assert.equal(request.peek('/news',{ttlMs:60}),undefined);
+});

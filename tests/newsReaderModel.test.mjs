@@ -61,3 +61,10 @@ test('missing summary content has an explicit empty retry state instead of a bod
  const empty=summaryPresentation({summary:'  ',basis:'article_body',qualityStatus:'ok'});
  assert.equal(empty.retry,true);assert.equal(empty.label,'요약 미제공');assert.match(empty.notice,/요약 내용/);
 });
+
+test('pending collection never becomes confirmed empty and reports the remaining symbol count',()=>{
+ const payload={items:[],groups:[{symbol:'A',status:'no_news'},{symbol:'B',status:'pending'},{symbol:'C',status:'pending'}],complete:false,pendingSymbols:['B','C']};
+ let feed=buildNewsFeed(payload);assert.equal(feed.status,'pending');assert.equal(feed.pendingCount,2);
+ feed=buildNewsFeed({...payload,items:[article(shared)],errors:[{symbol:'A',code:'provider'}]});assert.equal(feed.status,'pending');assert.equal(feed.total,1);assert.equal(feed.failed,true);
+ assert.equal(buildNewsFeed(payload,{symbol:'A'}).status,'empty');assert.equal(buildNewsFeed(payload,{symbol:'B'}).pendingCount,1);
+});

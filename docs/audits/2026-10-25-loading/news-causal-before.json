@@ -1,0 +1,1 @@
+{"repo": "/workspace/chart-view-backend-baseline", "controlled": true, "slowProviderSeconds": 1, "firstResponseSeconds": 1.0077026110011502, "allResponseSeconds": 1.00860242699855, "firstReadyGroups": 2, "firstPending": [], "finalReadyGroups": 2, "providerCalls": ["NVDA"], "errors": []}

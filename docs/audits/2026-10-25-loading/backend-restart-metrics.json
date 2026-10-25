@@ -1,0 +1,424 @@
+{
+  "resourceId": "srv-dao4a50473hc73bclej0",
+  "timeRange": {
+    "start": "2026-10-25T09:55:00Z"
+  },
+  "metrics": [
+    {
+      "type": "memory_usage",
+      "data": [
+        {
+          "labels": [
+            {
+              "field": "service",
+              "value": "srv-dao4a50473hc73bclej0"
+            },
+            {
+              "field": "resource",
+              "value": "srv-dao4a50473hc73bclej0"
+            },
+            {
+              "field": "instance",
+              "value": "srv-dao4a50473hc73bclej0-fr544"
+            }
+          ],
+          "unit": "bytes",
+          "values": [
+            {
+              "timestamp": "2026-10-25T10:04:00Z",
+              "value": 159887360
+            },
+            {
+              "timestamp": "2026-10-25T10:05:00Z",
+              "value": 287543300
+            },
+            {
+              "timestamp": "2026-10-25T10:06:00Z",
+              "value": 307863550
+            },
+            {
+              "timestamp": "2026-10-25T10:07:00Z",
+              "value": 327770100
+            },
+            {
+              "timestamp": "2026-10-25T10:08:00Z",
+              "value": 343924740
+            },
+            {
+              "timestamp": "2026-10-25T10:09:00Z",
+              "value": 354103300
+            },
+            {
+              "timestamp": "2026-10-25T10:10:00Z",
+              "value": 353349630
+            }
+          ]
+        },
+        {
+          "labels": [
+            {
+              "field": "instance",
+              "value": "srv-dao4a50473hc73bclej0-g59tn"
+            },
+            {
+              "field": "service",
+              "value": "srv-dao4a50473hc73bclej0"
+            },
+            {
+              "field": "resource",
+              "value": "srv-dao4a50473hc73bclej0"
+            }
+          ],
+          "unit": "bytes",
+          "values": [
+            {
+              "timestamp": "2026-10-25T09:55:00Z",
+              "value": 536293380
+            },
+            {
+              "timestamp": "2026-10-25T09:56:00Z",
+              "value": 536293380
+            },
+            {
+              "timestamp": "2026-10-25T09:57:00Z",
+              "value": 536293380
+            },
+            {
+              "timestamp": "2026-10-25T09:58:00Z",
+              "value": 536309760
+            },
+            {
+              "timestamp": "2026-10-25T09:59:00Z",
+              "value": 536309760
+            },
+            {
+              "timestamp": "2026-10-25T10:00:00Z",
+              "value": 536305660
+            },
+            {
+              "timestamp": "2026-10-25T10:01:00Z",
+              "value": 536313860
+            },
+            {
+              "timestamp": "2026-10-25T10:02:00Z",
+              "value": 536313860
+            },
+            {
+              "timestamp": "2026-10-25T10:03:00Z",
+              "value": 536313860
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "memory_limit",
+      "data": [
+        {
+          "labels": [
+            {
+              "field": "service",
+              "value": "srv-dao4a50473hc73bclej0"
+            },
+            {
+              "field": "resource",
+              "value": "srv-dao4a50473hc73bclej0"
+            },
+            {
+              "field": "instance",
+              "value": "srv-dao4a50473hc73bclej0-g59tn"
+            }
+          ],
+          "unit": "bytes",
+          "values": [
+            {
+              "timestamp": "2026-10-25T09:55:00Z",
+              "value": 536870900
+            },
+            {
+              "timestamp": "2026-10-25T09:56:00Z",
+              "value": 536870900
+            },
+            {
+              "timestamp": "2026-10-25T09:57:00Z",
+              "value": 536870900
+            },
+            {
+              "timestamp": "2026-10-25T09:58:00Z",
+              "value": 536870900
+            },
+            {
+              "timestamp": "2026-10-25T09:59:00Z",
+              "value": 536870900
+            },
+            {
+              "timestamp": "2026-10-25T10:00:00Z",
+              "value": 536870900
+            },
+            {
+              "timestamp": "2026-10-25T10:01:00Z",
+              "value": 536870900
+            },
+            {
+              "timestamp": "2026-10-25T10:02:00Z",
+              "value": 536870900
+            },
+            {
+              "timestamp": "2026-10-25T10:03:00Z",
+              "value": 536870900
+            }
+          ]
+        },
+        {
+          "labels": [
+            {
+              "field": "instance",
+              "value": "srv-dao4a50473hc73bclej0-fr544"
+            },
+            {
+              "field": "service",
+              "value": "srv-dao4a50473hc73bclej0"
+            },
+            {
+              "field": "resource",
+              "value": "srv-dao4a50473hc73bclej0"
+            }
+          ],
+          "unit": "bytes",
+          "values": [
+            {
+              "timestamp": "2026-10-25T10:05:00Z",
+              "value": 536870900
+            },
+            {
+              "timestamp": "2026-10-25T10:06:00Z",
+              "value": 536870900
+            },
+            {
+              "timestamp": "2026-10-25T10:07:00Z",
+              "value": 536870900
+            },
+            {
+              "timestamp": "2026-10-25T10:08:00Z",
+              "value": 536870900
+            },
+            {
+              "timestamp": "2026-10-25T10:09:00Z",
+              "value": 536870900
+            },
+            {
+              "timestamp": "2026-10-25T10:10:00Z",
+              "value": 536870900
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "cpu_usage",
+      "data": [
+        {
+          "labels": [
+            {
+              "field": "service",
+              "value": "srv-dao4a50473hc73bclej0"
+            },
+            {
+              "field": "resource",
+              "value": "srv-dao4a50473hc73bclej0"
+            },
+            {
+              "field": "instance",
+              "value": "srv-dao4a50473hc73bclej0-g59tn"
+            }
+          ],
+          "unit": "cpu",
+          "values": [
+            {
+              "timestamp": "2026-10-25T09:55:00Z",
+              "value": 0.00167335
+            },
+            {
+              "timestamp": "2026-10-25T09:56:00Z",
+              "value": 0.0015440166
+            },
+            {
+              "timestamp": "2026-10-25T09:57:00Z",
+              "value": 0.0017609167
+            },
+            {
+              "timestamp": "2026-10-25T09:58:00Z",
+              "value": 0.0019258166
+            },
+            {
+              "timestamp": "2026-10-25T09:59:00Z",
+              "value": 0.00198025
+            },
+            {
+              "timestamp": "2026-10-25T10:00:00Z",
+              "value": 0.0023259667
+            },
+            {
+              "timestamp": "2026-10-25T10:01:00Z",
+              "value": 0.0018095
+            },
+            {
+              "timestamp": "2026-10-25T10:02:00Z",
+              "value": 0.0027885332
+            },
+            {
+              "timestamp": "2026-10-25T10:03:00Z",
+              "value": 0.0024392
+            }
+          ]
+        },
+        {
+          "labels": [
+            {
+              "field": "service",
+              "value": "srv-dao4a50473hc73bclej0"
+            },
+            {
+              "field": "resource",
+              "value": "srv-dao4a50473hc73bclej0"
+            },
+            {
+              "field": "instance",
+              "value": "srv-dao4a50473hc73bclej0-fr544"
+            }
+          ],
+          "unit": "cpu",
+          "values": [
+            {
+              "timestamp": "2026-10-25T10:05:00Z",
+              "value": 0.15
+            },
+            {
+              "timestamp": "2026-10-25T10:06:00Z",
+              "value": 0.058902733
+            },
+            {
+              "timestamp": "2026-10-25T10:07:00Z",
+              "value": 0.0228733
+            },
+            {
+              "timestamp": "2026-10-25T10:08:00Z",
+              "value": 0.031180134
+            },
+            {
+              "timestamp": "2026-10-25T10:09:00Z",
+              "value": 0.0398833
+            },
+            {
+              "timestamp": "2026-10-25T10:10:00Z",
+              "value": 0.018251983
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "cpu_limit",
+      "data": [
+        {
+          "labels": [
+            {
+              "field": "instance",
+              "value": "srv-dao4a50473hc73bclej0-g59tn"
+            },
+            {
+              "field": "service",
+              "value": "srv-dao4a50473hc73bclej0"
+            },
+            {
+              "field": "resource",
+              "value": "srv-dao4a50473hc73bclej0"
+            }
+          ],
+          "unit": "cpu",
+          "values": [
+            {
+              "timestamp": "2026-10-25T09:55:00Z",
+              "value": 0.15
+            },
+            {
+              "timestamp": "2026-10-25T09:56:00Z",
+              "value": 0.15
+            },
+            {
+              "timestamp": "2026-10-25T09:57:00Z",
+              "value": 0.15
+            },
+            {
+              "timestamp": "2026-10-25T09:58:00Z",
+              "value": 0.15
+            },
+            {
+              "timestamp": "2026-10-25T09:59:00Z",
+              "value": 0.15
+            },
+            {
+              "timestamp": "2026-10-25T10:00:00Z",
+              "value": 0.15
+            },
+            {
+              "timestamp": "2026-10-25T10:01:00Z",
+              "value": 0.15
+            },
+            {
+              "timestamp": "2026-10-25T10:02:00Z",
+              "value": 0.15
+            },
+            {
+              "timestamp": "2026-10-25T10:03:00Z",
+              "value": 0.15
+            }
+          ]
+        },
+        {
+          "labels": [
+            {
+              "field": "instance",
+              "value": "srv-dao4a50473hc73bclej0-fr544"
+            },
+            {
+              "field": "service",
+              "value": "srv-dao4a50473hc73bclej0"
+            },
+            {
+              "field": "resource",
+              "value": "srv-dao4a50473hc73bclej0"
+            }
+          ],
+          "unit": "cpu",
+          "values": [
+            {
+              "timestamp": "2026-10-25T10:05:00Z",
+              "value": 0.15
+            },
+            {
+              "timestamp": "2026-10-25T10:06:00Z",
+              "value": 0.15
+            },
+            {
+              "timestamp": "2026-10-25T10:07:00Z",
+              "value": 0.15
+            },
+            {
+              "timestamp": "2026-10-25T10:08:00Z",
+              "value": 0.15
+            },
+            {
+              "timestamp": "2026-10-25T10:09:00Z",
+              "value": 0.15
+            },
+            {
+              "timestamp": "2026-10-25T10:10:00Z",
+              "value": 0.15
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

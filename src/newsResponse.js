@@ -2,6 +2,7 @@
 export function newsResponseState(payload) {
  if(!payload||(!Array.isArray(payload.items)&&!Array.isArray(payload.groups)))return 'error';
  const groups=Array.isArray(payload.groups)?payload.groups:[];
+ if(payload.complete===false || payload.pendingSymbols?.length || groups.some(row=>row?.status==='pending'))return 'pending';
  const failed=Boolean(payload.loadError||payload.status==='error'||payload.errors?.length||groups.some(row=>row?.status==='error'));
  if(!failed)return 'ready';
  return (payload.items?.length||groups.some(row=>row?.items?.length))?'partial':'error';

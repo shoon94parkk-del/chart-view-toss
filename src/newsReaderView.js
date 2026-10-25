@@ -124,8 +124,21 @@ export function mountNewsReader(host,payload,options = {}) {
  const session = preferenceSessions.get(preferences);
  const expanded = session.expanded;
  const returned = buildNewsFeed(payload,{symbol:options.symbol,limit:0});
- if (returned.status !== 'error' && returned.status !== 'partial') pruneSession(session,new Set(returned.allRows.map(newsSummaryKey).filter(Boolean)));
- let disposed = false, feed;
+ if (!returned.pendingCount && returned.status !== 'error' && returned.status !== 'partial') pruneSession(session,new Set(returned.allRows.map(newsSummaryKey).filter(Boolean)));
+ let disposed = false, feed, paintTimer = null, needsPaint = false;
+ const pointers = new Set();
+ const doc = host.ownerDocument;
+ // Async data and summary results must not replace a pressed control before click.
+ const pointerDown = event => { if (host.contains(event.target)) pointers.add(event.pointerId); };
+ const pointerEnd = event => {
+  if (!pointers.delete(event.pointerId) || pointers.size || paintTimer !== null) return;
+  paintTimer = setTimeout(()=>{paintTimer=null;if(needsPaint){needsPaint=false;render();}},0);
+ };
+ const blur = () => { pointers.clear();if(needsPaint && paintTimer===null)paintTimer=setTimeout(()=>{paintTimer=null;needsPaint=false;render();},0); };
+ doc?.addEventListener?.('pointerdown',pointerDown,true);
+ doc?.addEventListener?.('pointerup',pointerEnd,true);
+ doc?.addEventListener?.('pointercancel',pointerEnd,true);
+ doc?.defaultView?.addEventListener?.('blur',blur);
  const current = () => !disposed && mounts.get(host) === token && host.isConnected !== false && (options.isCurrent?.() ?? true);
  let controller;
  const button = (attrs,label,extra='') => `<button type="button" ${attrs} ${extra}>${label}</button>`;
@@ -153,6 +166,8 @@ export function mountNewsReader(host,payload,options = {}) {
  </article>`;
  const render = () => {
   if (!current()) return;
+  if(pointers.size || paintTimer!==null){needsPaint=true;return;}
+  needsPaint=false;
   const focused = host.ownerDocument?.activeElement;
   const focusData = focused && host.contains(focused) ? (focused.dataset?.newsControl ? ['newsControl',focused.dataset.newsControl] : Object.entries(focused.dataset||{}).find(([key])=>/^news/.test(key))) : null;
   feed = buildNewsFeed(payload,{...options,source:preferences.source,relation:preferences.relation,limit:preferences.visibleCount});
@@ -161,10 +176,11 @@ export function mountNewsReader(host,payload,options = {}) {
   const coverage = Number.isInteger(options.usLookbackDays) && options.usLookbackDays > 0 ? `<p class="news-reader-notice" data-news-us-coverage>미국 종목 뉴스는 제공처 조회 범위 최근 ${options.usLookbackDays}일이며 전체 과거 기사가 아니에요.</p>` : '';
   let body;
   if (feed.status === 'error') body = `<div class="news-reader-empty" role="status"><strong>뉴스를 불러오지 못했어요</strong><p>연결 또는 제공처 상태를 확인한 뒤 다시 시도해주세요.</p>${options.onRetry?button('data-news-retry','뉴스 다시 시도'):''}</div>`;
+  else if (feed.status === 'pending' && !feed.total) body = '<div class="news-reader-empty" role="status"><strong>관련 뉴스를 확인하고 있어요</strong><p>준비된 기사부터 표시해요.</p></div>';
   else if (feed.status === 'empty') body = '<div class="news-reader-empty" role="status"><strong>현재 표시할 관련 뉴스가 없어요</strong><p>직접 또는 업종 관련 근거가 확인된 기사를 표시해요.</p></div>';
   else if (feed.status === 'filtered-empty') body = `<div class="news-reader-empty" role="status"><strong>조건에 맞는 기사가 없어요</strong><p>조회된 기사 ${feed.total}개 안에서 출처·관련성 조건을 적용했어요.</p>${button('data-news-clear','필터 초기화')}</div>`;
   else body = feed.rows.map(card).join('');
-  host.innerHTML = `<div class="news-reader">${filters}<p class="news-reader-count" role="status" tabindex="-1">조회된 기사 ${feed.total}개 · 조건 일치 ${feed.filteredCount}개 · ${feed.range.start}–${feed.range.end}개 표시</p>${coverage}${feed.status==='partial'?`<p class="news-reader-notice" role="status">일부 종목의 뉴스를 불러오지 못했어요. 확인된 기사만 표시해요.</p>${options.onRetry?button('data-news-retry','뉴스 다시 시도'):''}`:''}<div class="news-reader-list">${body}</div>${feed.visibleCount < feed.filteredCount ? `<div class="news-reader-more">${button('data-news-more',`기사 더 보기 · ${Math.min(12,feed.filteredCount-feed.visibleCount)}개`)}<span>이미 받은 기사에서 더 표시해요.</span></div>` : ''}<p class="news-reader-notice">이미 받은 기사 목록에서 필터링해요. 기사 본문·이미지는 재게시하지 않으며 원문은 해당 매체에서 확인해주세요.</p></div>`;
+  host.innerHTML = `<div class="news-reader">${filters}<p class="news-reader-count" role="status" tabindex="-1">조회된 기사 ${feed.total}개 · 조건 일치 ${feed.filteredCount}개 · ${feed.range.start}–${feed.range.end}개 표시</p>${coverage}${feed.pendingCount?`<p class="news-reader-notice news-reader-pending" role="status" data-news-pending>남은 ${feed.pendingCount}개 종목의 뉴스를 확인 중이에요. 준비된 기사부터 표시해요.</p>`:''}${feed.failed && feed.total?`<p class="news-reader-notice" role="status">일부 종목의 뉴스를 불러오지 못했어요. 확인된 기사만 표시해요.</p>${options.onRetry?button('data-news-retry','뉴스 다시 시도'):''}`:''}<div class="news-reader-list">${body}</div>${feed.visibleCount < feed.filteredCount ? `<div class="news-reader-more">${button('data-news-more',`기사 더 보기 · ${Math.min(12,feed.filteredCount-feed.visibleCount)}개`)}<span>이미 받은 기사에서 더 표시해요.</span></div>` : ''}<p class="news-reader-notice">이미 받은 기사 목록에서 필터링해요. 기사 본문·이미지는 재게시하지 않으며 원문은 해당 매체에서 확인해주세요.</p></div>`;
   if (focusData) {
    const [key,value] = focusData;
    if (key === 'newsMore' && feed.visibleCount >= feed.filteredCount) host.querySelector('.news-reader-count')?.focus({preventScroll:true});
@@ -201,6 +217,21 @@ export function mountNewsReader(host,payload,options = {}) {
   }
  };
  host.addEventListener('click',onClick);
- token.cleanup = () => { disposed=true;controller.dispose();host.removeEventListener('click',onClick);if(mounts.get(host)===token)mounts.delete(host); };
+ token.cleanup = () => {
+  disposed=true;controller.dispose();host.removeEventListener('click',onClick);
+  clearTimeout(paintTimer);pointers.clear();needsPaint=false;
+  doc?.removeEventListener?.('pointerdown',pointerDown,true);
+  doc?.removeEventListener?.('pointerup',pointerEnd,true);
+  doc?.removeEventListener?.('pointercancel',pointerEnd,true);
+  doc?.defaultView?.removeEventListener?.('blur',blur);
+  if(mounts.get(host)===token)mounts.delete(host);
+ };
+ token.cleanup.update = next => {
+  if(!current())return;
+  payload=next;
+  const returned=buildNewsFeed(payload,{symbol:options.symbol,limit:0});
+  if(!returned.pendingCount && returned.status!=='error' && returned.status!=='partial')pruneSession(session,new Set(returned.allRows.map(newsSummaryKey).filter(Boolean)));
+  render();
+ };
  render();return token.cleanup;
 }
