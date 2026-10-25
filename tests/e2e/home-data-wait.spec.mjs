@@ -230,9 +230,9 @@ test('late optional Home observations cannot move a dated PICK action during its
   let release, requested;
   const held = new Promise(resolve => { release = resolve; });
   const started = new Promise(resolve => { requested = resolve; });
-  qa.overrides.set('/static/data/screener.json', async route => {
+  qa.overrides.set('/api/home-screener-summary', async route => {
     requested(); await held;
-    await route.fulfill({ json: payloadFor(new URL('https://data.example/static/data/screener.json')) });
+    await route.fulfill({ json: {schemaVersion:1,tradeDate:'2026-10-07',counts:{volumeSurge:3}} });
   });
   try {
     await page.goto('/#home');
@@ -246,7 +246,7 @@ test('late optional Home observations cannot move a dated PICK action during its
     const rect = await action.boundingBox();
     await page.mouse.move(rect.x + rect.width / 2, rect.y + rect.height / 2);
     await page.mouse.down();
-    const responseReady = page.waitForResponse(response => new URL(response.url()).pathname.endsWith('/static/data/screener.json'));
+    const responseReady = page.waitForResponse(response => new URL(response.url()).pathname.endsWith('/api/home-screener-summary'));
     release();
     await (await responseReady).finished();
     // Give the fulfilled response its normal paint opportunity while the user

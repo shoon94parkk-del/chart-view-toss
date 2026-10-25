@@ -281,6 +281,8 @@ for(const count of [21,40])test.describe(`legacy watch ${count}`,()=>{
     await expect(page.locator('[data-unwatch]')).toHaveCount(count);
     await expect(page.locator('#watch-coverage')).toContainText(`저장순서의 앞 20개`);
     expect(await saved(page)).toEqual(rows);
+    const requested=()=>[...new Set(watchQA.calls.filter(call=>call.path==='/api/quotes').flatMap(call=>new URLSearchParams(call.query).get('tickers').split(',')))].sort();
+    await expect.poll(requested).toEqual(rows.slice(0,20).map(row=>row.symbol).sort());
     await page.getByRole('button',{name:'편집',exact:true}).click();
     await expect(page.locator('[data-selected-remove]')).toHaveCount(count);
     await page.getByRole('button',{name:`${count}개 종목 적용`,exact:true}).click();
@@ -298,12 +300,18 @@ for(const count of [21,40])test.describe(`legacy watch ${count}`,()=>{
     await page.getByRole('button',{name:'실행 취소',exact:true}).click();
     await expect(page.locator('[data-unwatch]')).toHaveCount(count);
     expect(await saved(page)).toEqual(reordered);
+    // Removing STOCK0 legitimately brings STOCK20 into the first20; undo
+    // restores the former scope while retaining its completed per-symbol cache.
+    await expect.poll(requested).toEqual(rows.slice(0,21).map(row=>row.symbol).sort());
     const quoteCalls=watchQA.calls.filter(call=>call.path==='/api/quotes');
     expect(quoteCalls.length).toBeGreaterThan(0);
     for(const call of quoteCalls)expect(new URLSearchParams(call.query).get('tickers').split(',').length).toBeLessThanOrEqual(20);
     const scopes=quoteCalls.map(call=>new URLSearchParams(call.query).get('tickers').split(','));
-    expect(scopes).toContainEqual(rows.slice(0,20).map(row=>row.symbol));
-    expect(scopes).toContainEqual(reordered.slice(0,20).map(row=>row.symbol));
+    // Ordinary singleton requests can reuse completed per-symbol caches after
+    // reordering. No symbol beyond the first20 of each actual list is fetched.
+    for(const scope of scopes)expect(scope).toHaveLength(1);
+    expect([...new Set(scopes.flat())].sort()).toEqual(rows.slice(0,21).map(row=>row.symbol).sort());
+    await expect(page.locator('[data-stock-detail=\"STOCK20\"]')).toContainText('시세 조회 범위 밖');
     await noOverflow(page);
   });
 });

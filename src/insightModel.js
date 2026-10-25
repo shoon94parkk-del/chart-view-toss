@@ -118,9 +118,9 @@ export function homeChanges(snapshot={},screener={}){
    question:'물량과 단위가치의 방향이 같나요? 기업 매출·재고에서도 확인될까요?',limit:'kg당 평균 신고금액은 기업 판매가격이 아니며 제품 구성에도 영향을 받아요.',
    next:'반도체 상세 확인',route:'exports',target:'quadrant'
  });
- const matches=(screener.stocks||[]).filter(row=>finiteNumber(row.volumeRatio)!==null&&row.volumeRatio>=2);
- if((screener.tradeDate||screener.updated)&&matches.length)cards.push({
-   kind:'discovery',title:'거래량 2배 이상',value:`${matches.length}개`,basisDate:screener.tradeDate||screener.updated,
+ const count=screener.schemaVersion===1?(Number.isSafeInteger(screener.counts?.volumeSurge)&&screener.counts.volumeSurge>=0?screener.counts.volumeSurge:0):(screener.stocks||[]).filter(row=>finiteNumber(row.volumeRatio)!==null&&row.volumeRatio>=2).length;
+ if((screener.tradeDate||screener.updated)&&count)cards.push({
+   kind:'discovery',title:'거래량 2배 이상',value:`${count}개`,basisDate:screener.tradeDate||screener.updated,
    observation:'20일 평균 대비 거래량 급증 종목',question:'가격 기준과 기업 공시에서도 달라진 근거를 찾을 수 있을까요?',limit:'거래량 증가는 실적 개선이나 상승 지속을 보장하지 않아요.',next:'해당 종목 보기',route:'discover',target:'volume-surge'
  });
  return cards.slice(0,3);

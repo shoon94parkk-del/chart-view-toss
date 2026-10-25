@@ -108,7 +108,7 @@ test('a rapid remount captures its frozen baseline after preceding confirmed sav
 
 function homeHarness(journal){
  const requests={exports:[],stocks:[]};
- const context=vm.createContext({homeChanges,window:{},loadExportMomentumSnapshot:()=>new Promise((resolve,reject)=>requests.exports.push({resolve,reject})),screenerData:()=>new Promise((resolve,reject)=>requests.stocks.push({resolve,reject}))});
+ const context=vm.createContext({homeChanges,window:{},loadExportMomentumSnapshot:()=>new Promise((resolve,reject)=>requests.exports.push({resolve,reject})),homeScreenerSummary:()=>new Promise((resolve,reject)=>requests.stocks.push({resolve,reject}))});
  vm.runInContext(readFileSync(new URL('../src/homeGesturePaint.js',import.meta.url),'utf8').replaceAll('export ','')+'\n'+readFileSync(new URL('../src/homeChangesView.js',import.meta.url),'utf8').replace(/^import .*;\r?\n/gm,'').replaceAll('export ',''),context);
  const nodes=Object.fromEntries(['data-home-changes','data-home-change-status','data-home-change-retry','data-home-change-toggle'].map(key=>[key,{innerHTML:'',textContent:'',hidden:true,setAttribute(k,v){this[k]=v;}}]));
  const subtitle={textContent:''};
@@ -119,7 +119,7 @@ function homeHarness(journal){
 test('Home shows a stable period change through sibling loading, then identifies an unchanged return',async()=>{
  const {createPublicationJournal}=api();
  const exports={period:'2026-09',summary:{exportYoY:4},itemPeriod:'2026-08',items:[{key:'semiconductor',exportWeightYoY:3,unitValueYoY:2}]};
- const stocks={tradeDate:'2026-10-02',stocks:[{volumeRatio:2.3}]};
+ const stocks={schemaVersion:1,tradeDate:'2026-10-02',counts:{volumeSurge:1}};
  let stored=JSON.stringify(homeChanges({...exports,period:'2026-08'},{})),reads=0;
  const journal=createPublicationJournal({read:()=>{reads++;return stored;},write:async value=>{stored=value;},getContext:()=>1,isCurrent:()=>true});
  const first=homeHarness(journal),mount=first.mount();
@@ -144,9 +144,18 @@ test('Home journals actual dated source observations and ignores failed, pending
  const journal=createPublicationJournal({read:()=>stored,write:async value=>{stored=value;writes++;},getContext:()=>1,isCurrent:()=>true});
  const pending=homeHarness(journal),mount=pending.mount();
  pending.requests.exports[0].resolve({pending:true,period:'2026-09',summary:{exportYoY:4}});
- pending.requests.stocks[0].resolve({updated:'2026-10-02',stocks:[{volumeRatio:3}]});await mount;await drain();
+ pending.requests.stocks[0].resolve({schemaVersion:1,updated:'2026-10-02',counts:{volumeSurge:1}});await mount;await drain();
  assert.equal(writes,0);
  assert.doesNotMatch(pending.nodes['data-home-changes'].innerHTML,/기준기간 갱신|표시값 변경/);
+ for(const flags of [{pending:true},{refreshing:true},{refreshScheduled:true},{error:'unavailable'},{available:false},{status:'pending'}]){
+  const loading=homeHarness(journal),settled=loading.mount();
+  loading.requests.exports[0].resolve({});
+  loading.requests.stocks[0].resolve({schemaVersion:1,tradeDate:'2026-10-02',counts:{volumeSurge:3},...flags});
+  await settled;await drain();
+  assert.equal(writes,0,'an unconfirmed summary cannot become the next comparison baseline');
+  assert.match(loading.nodes['data-home-changes'].innerHTML,/거래량 2배 이상.*3개/s,'the dated aggregate remains visible while revalidation is scheduled');
+  assert.doesNotMatch(loading.nodes['data-home-changes'].innerHTML,/기준기간 갱신|표시값 변경/);
+ }
  const failed=homeHarness(journal),retry=failed.mount();
  failed.requests.exports[0].reject(Error('offline'));failed.requests.stocks[0].reject(Error('offline'));await retry;await drain();
  assert.equal(writes,0);

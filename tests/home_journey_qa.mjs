@@ -19,6 +19,7 @@ try {
     if(scenario==='failed')return route.fulfill({status:503,contentType:'application/json',body:'{}'});
     body={results:['^KS11','^KQ11','^GSPC','^IXIC'].map(ticker=>({...quote,ticker}))};
    }
+   if(path==='/api/home-screener-summary')body={schemaVersion:1,tradeDate:'2026-10-02',counts:{volumeSurge:1}};
    if(path==='/api/home-bootstrap')body={day:{tradeDate:'2026-10-02',top3:[record]},recommendations:[record,{...record,recommendedDate:'2026-09-01',returnPct:null}]};
    if(path==='/static/data/pick_monitor.json')body={picks:[]};
    if(path==='/api/quotes')body={results:[quote]};

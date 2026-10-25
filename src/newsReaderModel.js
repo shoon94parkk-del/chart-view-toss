@@ -57,8 +57,10 @@ export function buildNewsFeed(payload, options = {}) {
  const limit = Number.isFinite(options.limit) ? Math.max(0,Math.floor(options.limit)) : 12;
  const rows = allRows.slice(0,limit);
  const failed = Boolean(payload?.loadError || payload?.error || payload?.status === 'error' || payload?.errors?.length || payload?.groups?.some(group=>group.status==='error'));
- const status = !scoped.length ? failed ? 'error' : 'empty' : !allRows.length ? 'filtered-empty' : failed ? 'partial' : 'ready';
- return {rows,allRows,total:scoped.length,filteredCount:allRows.length,visibleCount:rows.length,sources,relations,status,range:{start:rows.length?1:0,end:rows.length,total:allRows.length}};
+ const pending = [...new Set([...(payload?.pendingSymbols || []),...(payload?.groups || []).filter(group=>group?.status==='pending').map(group=>group.symbol)])].filter(value=>!symbol || value===symbol);
+ const pendingCount = pending.length || (!symbol && payload?.complete===false ? 1 : 0);
+ const status = !scoped.length ? pendingCount ? 'pending' : failed ? 'error' : 'empty' : !allRows.length ? 'filtered-empty' : pendingCount ? 'pending' : failed ? 'partial' : 'ready';
+ return {rows,allRows,total:scoped.length,filteredCount:allRows.length,visibleCount:rows.length,sources,relations,status,failed,pendingCount,range:{start:rows.length?1:0,end:rows.length,total:allRows.length}};
 }
 
 export function summaryPresentation(payload) {

@@ -1,0 +1,443 @@
+{
+  "controlled": true,
+  "slowResponseMs": 900,
+  "otherResponseMs": 40,
+  "viewport": [
+    390,
+    844
+  ],
+  "results": [
+    {
+      "version": "before",
+      "count": 3,
+      "run": 1,
+      "first": 1495.300000000745,
+      "all": 1495.300000000745,
+      "calls": [
+        [
+          "005930.KS",
+          "NVDA",
+          "AAPL"
+        ]
+      ],
+      "maxConcurrentRequests": 1,
+      "errors": [],
+      "asset": "/assets/index-BWwc7rb3.js"
+    },
+    {
+      "version": "before",
+      "count": 3,
+      "run": 2,
+      "first": 1157.7000000029802,
+      "all": 1157.7000000029802,
+      "calls": [
+        [
+          "005930.KS",
+          "NVDA",
+          "AAPL"
+        ]
+      ],
+      "maxConcurrentRequests": 1,
+      "errors": [],
+      "asset": "/assets/index-BWwc7rb3.js"
+    },
+    {
+      "version": "before",
+      "count": 3,
+      "run": 3,
+      "first": 1055.800000000745,
+      "all": 1055.800000000745,
+      "calls": [
+        [
+          "005930.KS",
+          "NVDA",
+          "AAPL"
+        ]
+      ],
+      "maxConcurrentRequests": 1,
+      "errors": [],
+      "asset": "/assets/index-BWwc7rb3.js"
+    },
+    {
+      "version": "before",
+      "count": 20,
+      "run": 1,
+      "first": 1149.300000000745,
+      "all": 1149.3999999985099,
+      "calls": [
+        [
+          "005930.KS",
+          "NVDA",
+          "AAPL",
+          "MSFT",
+          "GOOGL",
+          "AMZN",
+          "META",
+          "TSLA",
+          "AVGO",
+          "AMD",
+          "NFLX",
+          "TSM",
+          "JPM",
+          "V",
+          "WMT",
+          "COST",
+          "005380.KS",
+          "035420.KS",
+          "035720.KS",
+          "000660.KS"
+        ]
+      ],
+      "maxConcurrentRequests": 1,
+      "errors": [],
+      "asset": "/assets/index-BWwc7rb3.js"
+    },
+    {
+      "version": "before",
+      "count": 20,
+      "run": 2,
+      "first": 1034.7000000029802,
+      "all": 1034.800000000745,
+      "calls": [
+        [
+          "005930.KS",
+          "NVDA",
+          "AAPL",
+          "MSFT",
+          "GOOGL",
+          "AMZN",
+          "META",
+          "TSLA",
+          "AVGO",
+          "AMD",
+          "NFLX",
+          "TSM",
+          "JPM",
+          "V",
+          "WMT",
+          "COST",
+          "005380.KS",
+          "035420.KS",
+          "035720.KS",
+          "000660.KS"
+        ]
+      ],
+      "maxConcurrentRequests": 1,
+      "errors": [],
+      "asset": "/assets/index-BWwc7rb3.js"
+    },
+    {
+      "version": "before",
+      "count": 20,
+      "run": 3,
+      "first": 1060.699999999255,
+      "all": 1060.699999999255,
+      "calls": [
+        [
+          "005930.KS",
+          "NVDA",
+          "AAPL",
+          "MSFT",
+          "GOOGL",
+          "AMZN",
+          "META",
+          "TSLA",
+          "AVGO",
+          "AMD",
+          "NFLX",
+          "TSM",
+          "JPM",
+          "V",
+          "WMT",
+          "COST",
+          "005380.KS",
+          "035420.KS",
+          "035720.KS",
+          "000660.KS"
+        ]
+      ],
+      "maxConcurrentRequests": 1,
+      "errors": [],
+      "asset": "/assets/index-BWwc7rb3.js"
+    },
+    {
+      "version": "after",
+      "count": 3,
+      "run": 1,
+      "first": 105.89999999850988,
+      "all": 959.6999999992549,
+      "calls": [
+        [
+          "005930.KS"
+        ],
+        [
+          "NVDA"
+        ],
+        [
+          "AAPL"
+        ]
+      ],
+      "maxConcurrentRequests": 3,
+      "errors": [],
+      "asset": "/assets/index-DCt0D_XM.js"
+    },
+    {
+      "version": "after",
+      "count": 3,
+      "run": 2,
+      "first": 96,
+      "all": 957.5,
+      "calls": [
+        [
+          "005930.KS"
+        ],
+        [
+          "NVDA"
+        ],
+        [
+          "AAPL"
+        ]
+      ],
+      "maxConcurrentRequests": 3,
+      "errors": [],
+      "asset": "/assets/index-DCt0D_XM.js"
+    },
+    {
+      "version": "after",
+      "count": 3,
+      "run": 3,
+      "first": 108.39999999850988,
+      "all": 958.5,
+      "calls": [
+        [
+          "005930.KS"
+        ],
+        [
+          "NVDA"
+        ],
+        [
+          "AAPL"
+        ]
+      ],
+      "maxConcurrentRequests": 3,
+      "errors": [],
+      "asset": "/assets/index-DCt0D_XM.js"
+    },
+    {
+      "version": "after",
+      "count": 20,
+      "run": 1,
+      "first": 119.40000000223517,
+      "all": 960.3000000007451,
+      "calls": [
+        [
+          "005930.KS"
+        ],
+        [
+          "NVDA"
+        ],
+        [
+          "AAPL"
+        ],
+        [
+          "MSFT"
+        ],
+        [
+          "GOOGL"
+        ],
+        [
+          "AMZN"
+        ],
+        [
+          "META"
+        ],
+        [
+          "TSLA"
+        ],
+        [
+          "AVGO"
+        ],
+        [
+          "AMD"
+        ],
+        [
+          "NFLX"
+        ],
+        [
+          "TSM"
+        ],
+        [
+          "JPM"
+        ],
+        [
+          "V"
+        ],
+        [
+          "WMT"
+        ],
+        [
+          "COST"
+        ],
+        [
+          "005380.KS"
+        ],
+        [
+          "035420.KS"
+        ],
+        [
+          "035720.KS"
+        ],
+        [
+          "000660.KS"
+        ]
+      ],
+      "maxConcurrentRequests": 4,
+      "errors": [],
+      "asset": "/assets/index-DCt0D_XM.js"
+    },
+    {
+      "version": "after",
+      "count": 20,
+      "run": 2,
+      "first": 125.30000000074506,
+      "all": 961,
+      "calls": [
+        [
+          "005930.KS"
+        ],
+        [
+          "NVDA"
+        ],
+        [
+          "AAPL"
+        ],
+        [
+          "MSFT"
+        ],
+        [
+          "GOOGL"
+        ],
+        [
+          "AMZN"
+        ],
+        [
+          "META"
+        ],
+        [
+          "TSLA"
+        ],
+        [
+          "AVGO"
+        ],
+        [
+          "AMD"
+        ],
+        [
+          "NFLX"
+        ],
+        [
+          "TSM"
+        ],
+        [
+          "JPM"
+        ],
+        [
+          "V"
+        ],
+        [
+          "WMT"
+        ],
+        [
+          "COST"
+        ],
+        [
+          "005380.KS"
+        ],
+        [
+          "035420.KS"
+        ],
+        [
+          "035720.KS"
+        ],
+        [
+          "000660.KS"
+        ]
+      ],
+      "maxConcurrentRequests": 4,
+      "errors": [],
+      "asset": "/assets/index-DCt0D_XM.js"
+    },
+    {
+      "version": "after",
+      "count": 20,
+      "run": 3,
+      "first": 115.59999999776483,
+      "all": 962.8000000007451,
+      "calls": [
+        [
+          "005930.KS"
+        ],
+        [
+          "NVDA"
+        ],
+        [
+          "AAPL"
+        ],
+        [
+          "MSFT"
+        ],
+        [
+          "GOOGL"
+        ],
+        [
+          "AMZN"
+        ],
+        [
+          "META"
+        ],
+        [
+          "TSLA"
+        ],
+        [
+          "AVGO"
+        ],
+        [
+          "AMD"
+        ],
+        [
+          "NFLX"
+        ],
+        [
+          "TSM"
+        ],
+        [
+          "JPM"
+        ],
+        [
+          "V"
+        ],
+        [
+          "WMT"
+        ],
+        [
+          "COST"
+        ],
+        [
+          "005380.KS"
+        ],
+        [
+          "035420.KS"
+        ],
+        [
+          "035720.KS"
+        ],
+        [
+          "000660.KS"
+        ]
+      ],
+      "maxConcurrentRequests": 4,
+      "errors": [],
+      "asset": "/assets/index-DCt0D_XM.js"
+    }
+  ]
+}

@@ -13,6 +13,7 @@ try{for(const width of [320,390,430]){
  let spotCalls=0,financialCalls=0;
  const mock=async route=>{
   const path=new URL(route.request().url()).pathname.replace(/^\/backend/,'');let body={};
+  if(path==='/api/home-screener-summary')body={schemaVersion:1,tradeDate:'2026-10-02',counts:{volumeSurge:records.length}};
   if(path==='/api/home-bootstrap')body={recommendations:records,day:{tradeDate:'2026-10-02',top3:records.slice(0,3)}};
   if(path.endsWith('/pick_monitor.json'))body={generatedAt:'2026-10-02',picks:records.map((r,i)=>({pickId:r.recommendedDate+':'+r.code,symbol:r.symbol,status:'KEEP',technical:{signal:i%2?'TECH_CAUTION':'TECH_SELL_REVIEW',tradeDate:'2026-10-02',reasons:['거래량 신호 확인']},monitor:{lastReviewedTradeDate:'2026-10-02'}}))};
   if(path==='/api/market-now')body={results:['^KS11','^KQ11','^GSPC','^IXIC'].map(ticker=>({ticker,price:3000,change:1,asOf:'2026-10-02T07:00:00Z'}))};

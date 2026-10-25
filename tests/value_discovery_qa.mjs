@@ -14,7 +14,8 @@ try {
   console.log(`${width}px value discovery QA started`);
   page.on('pageerror',e=>errors.push(e.message));
   await page.route('https://chart-view-pkv8.onrender.com/**',async route=>{
-   const path=new URL(route.request().url()).pathname;calls.push(path);if(path==='/static/data/screener.json')await screenerReady;let body={};
+   const path=new URL(route.request().url()).pathname;calls.push(path);if(path==='/api/home-screener-summary')await screenerReady;let body={};
+   if(path==='/api/home-screener-summary')body={schemaVersion:1,tradeDate:'2026-10-02',counts:{volumeSurge:1}};
    if(path==='/api/home-bootstrap')body={day:{tradeDate:'2026-10-02',top3:[record]},recommendations:[{...record,recommendedDate:'2026-09-01',reason:'과거 다른 근거',returnPct:null},record]};
    if(path==='/static/data/pick_monitor.json')body={picks:[{pickId:'2026-10-02:005930',pickDate:'2026-10-02',code:'005930',symbol:'005930.KS',status:'WATCH',monitor:{reason:'신규 근거 점검'},technical:{signal:'TECH_NORMAL'}}]};
    if(path==='/api/market-now')body={results:['^KS11','^KQ11','^GSPC','^IXIC'].map(ticker=>({...quote,ticker}))};
@@ -27,7 +28,7 @@ try {
   });
   await page.goto(base+'/#home',{waitUntil:'domcontentloaded'});await page.locator('.home-selection-link').waitFor();
   for(const button of await page.locator('.home-value-entries button').all())assert.ok(await button.evaluate(el=>{const r=el.getBoundingClientRect();return r.top>=0&&r.bottom<innerHeight-90;}),'core entry above fixed bottom nav');
-  assert.ok(calls.filter(path=>path==='/static/data/screener.json').length<=1,'visible Home observations reuse one shared request');await page.locator('.home-change-card [data-feature-target=items]').waitFor();await page.locator('.home-change-card [data-feature-target=items]').focus();releaseScreener();await page.waitForFunction(()=>document.querySelectorAll('.home-change-card').length===3);assert.equal(await page.evaluate(()=>document.activeElement?.dataset.featureTarget),'items','late screener preserves export CTA focus');assert.equal(calls.includes('/api/heatmap/full'),false,'Home does not fetch full market');assert.equal(calls.includes('/api/export-momentum/item-detail'),false);
+  assert.equal(calls.filter(path=>path==='/static/data/screener.json'||path==='/api/published-data/screener.json').length,0,'Home observations never download the full screener');await page.locator('.home-change-card [data-feature-target=items]').waitFor();await page.locator('.home-change-card [data-feature-target=items]').focus();releaseScreener();await page.waitForFunction(()=>document.querySelectorAll('.home-change-card').length===3);assert.equal(await page.evaluate(()=>document.activeElement?.dataset.featureTarget),'items','late screener preserves export CTA focus');assert.equal(calls.includes('/api/heatmap/full'),false,'Home does not fetch full market');assert.equal(calls.includes('/api/export-momentum/item-detail'),false);
   assert.match(await page.locator('.home-selection-link').innerText(),/삼성전자/);await page.waitForFunction(()=>document.querySelector('[data-selection-status]')?.textContent==='경계');
   assert.equal(await page.locator('.home-pick-summary').count(),1);
   assert.match(await page.locator('.home-selection-sub small').first().textContent(),new RegExp(record.reason));

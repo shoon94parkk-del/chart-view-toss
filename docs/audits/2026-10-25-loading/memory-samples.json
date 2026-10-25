@@ -1,0 +1,15 @@
+{
+  "metric": "fresh process max RSS KiB after import main",
+  "baselineSha": "a15a4e602f831385e955295ac204dc3d96bd9de3",
+  "before": [
+    123196,
+    125404,
+    122884
+  ],
+  "after": [
+    71604,
+    70456,
+    71680
+  ],
+  "productionSteadyState": false
+}

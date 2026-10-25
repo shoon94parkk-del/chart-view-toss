@@ -88,6 +88,7 @@ export function payloadFor(url) {
     '/api/activity': { ok: true, heartbeatSec: 20 },
     '/api/market-now': { results: ['^KS11', '^KQ11', '^GSPC', '^IXIC'].map((ticker, i) => ({ ...quotes[0], ticker, price: 3500 + i, name: ['코스피', '코스닥', 'S&P 500', '나스닥'][i] })) },
     '/api/home-bootstrap': { day: { tradeDate: '2026-10-07', top3: recommendations.slice(0, 3) }, recommendations },
+    '/api/home-screener-summary': {schemaVersion:1,tradeDate:screener.tradeDate,counts:{volumeSurge:3}},
     '/api/home-snapshot': { generatedAt: asOf, macro, heatmap: { results: quotes } },
     '/api/home-live': { updatedAt: asOf, results: quotes, refreshing: false },
     '/api/home-insights': { items: [] },
