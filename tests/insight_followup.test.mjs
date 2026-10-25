@@ -40,3 +40,11 @@ test('revisit keeps condition changes and unavailable peers separate from satisf
  saved={conditions:[{...condition,peer:{symbol:'000660.KS'}}]};
  assert.equal(reviewRevisit({...saved,observation:reviewObservation(saved,report())}).kind,'unavailable');
 });
+test('failed observations preserve last meaningful filing and peer evidence without claiming current availability',()=>{
+ const condition={id:'revenueGrowth:000660.KS',key:'revenueGrowth',label:'peer growth',peer:{symbol:'000660.KS'}},saved={filing:filingSnapshot(report()),conditions:[condition]};
+ const first=reviewObservation(saved,report(),{peers:{'000660.KS':report(90)}});
+ const newer=reviewObservation({...saved,observation:first},report(140,3,'20261114001146'),{peers:{'000660.KS':report(200,3,'20261114001147')}});
+ const failed=reviewObservation({...saved,observation:newer},{available:false});
+ assert.equal(failed.filing,null);assert.equal(failed.conditions[0].matched,null);assert.equal(reviewRevisit({...saved,observation:failed}).kind,'unavailable');
+ assert.deepEqual(failed.lastKnownFiling,newer.filing);assert.deepEqual(failed.lastKnownConditions,newer.conditions);assert.equal(saved.filing.current.revenue,100);assert.equal(saved.conditions[0].baseline,undefined);
+});

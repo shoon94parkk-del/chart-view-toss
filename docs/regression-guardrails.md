@@ -1,5 +1,12 @@
 # Chart View Toss regression guardrails
 
+### 2026-10-25 — Personal research stores and continuation
+- Keep `RESEARCH_TASKS_KEY`, `SAVED_SETS_KEY`, and `RESEARCH_EVIDENCE_KEY` registered in native hydration/account separation/reset. A queued or in-flight write must not restore data after reset/account change. Failed or corrupt stores must retain the prior data and show an actionable error.
+- Review completion must refer to the revision the user saw. A changed question or newly observed filing reopens the task; a failed refresh does not count as new evidence. Preserve unrelated open controls, date drafts and keyboard focus during concurrent saves.
+- Saved comparison application must keep selected symbols, period and displayed results coherent on failure. Never label old-symbol results with a new selection. Loading a comparison leaves interests unchanged.
+- News More uses loaded data and preserves explicit summary state. Evidence saves require a related stock and safe HTTPS original; retain date-only publication semantics, dedupe by stock/URL, and never silently evict records at the cap. Private records stay out of sharing/analytics.
+- Verify actual section-host binding, expanded forms, 320px touch targets and axe contrast in addition to isolated model tests. The new research workflow E2E files cover these boundaries.
+
 Last updated: 2026-09-22
 
 ## Repository boundaries

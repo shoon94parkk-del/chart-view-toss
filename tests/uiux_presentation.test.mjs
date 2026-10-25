@@ -5,7 +5,11 @@ import {readFileSync} from 'node:fs';
 import * as exportModel from '../src/exportMomentumModel.js';
 import {memoryMovements} from '../src/insightModel.js';
 import { PICK_METHOD, pickPriceBasis } from '../src/pickPerformanceBasis.js';
-const loadView=(file,imports={})=>{const context=vm.createContext(imports);vm.runInContext(readFileSync(new URL('../src/'+file,import.meta.url),'utf8').replace(/^import[\s\S]*?;\r?\n/gm,'').replaceAll('export ',''),context);return context;};
+import {reviewConditionEvidence} from '../src/reviewRevisit.js';
+const loadView=(file,imports={})=>{const context=vm.createContext(imports);if(file==='savedResearchView.js'){
+ Object.assign(context,{RESEARCH_TASKS_KEY:'tasks',readStored:()=>null,reviewConditionEvidence});
+ vm.runInContext('{'+readFileSync(new URL('../src/researchTasks.js',import.meta.url),'utf8').replace(/^import[\s\S]*?;\r?\n/gm,'').replaceAll('export ','')+'\nthis.readResearchTasks=readResearchTasks;this.researchTaskState=researchTaskState;}',context);
+}vm.runInContext(readFileSync(new URL('../src/'+file,import.meta.url),'utf8').replace(/^import[\s\S]*?;\r?\n/gm,'').replaceAll('export ',''),context);return context;};
 test('compact saved research always exposes all records alongside an available filing refresh',()=>{
  const rows=['005930.KS','000660.KS'].map(symbol=>({symbol,filing:{label:'2026 반기'},conditions:[],updatedAt:'2026-10-10',question:''}));
  const view=loadView('savedResearchView.js',{savedResearch:()=>({rows,error:false}),reviewRevisit:()=>({kind:'new',label:'새 공시'})});

@@ -1,0 +1,21 @@
+.research-task-help{font-size:13px;line-height:1.6;color:var(--text-secondary,#6b7684)}
+.research-task-filters{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0}
+.research-task-filters button,.research-task-inline button{min-width:44px;min-height:44px;padding:10px 12px;border:1px solid var(--border,#e5e8eb);border-radius:10px;background:var(--surface,#fff);color:var(--text,#333d4b);font:inherit;font-size:13px;line-height:1.5;cursor:pointer}
+.research-task-filters button[aria-pressed=true]{background:#e8f3ff;color:#164c96;border-color:#b1d2ff;font-weight:700}
+.research-task-state{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;margin-top:10px;font-size:13px;line-height:1.6}
+.research-task-state small{font-size:12px;overflow-wrap:anywhere}
+.research-task-state[data-research-task-state=overdue]>b{color:#b33737}
+.research-task-state[data-research-task-state=completed]>b{color:#157351}
+.research-task-actions{margin-top:8px;min-width:0}
+.research-task-actions summary{min-height:44px;display:flex;align-items:center;cursor:pointer;font-size:13px;font-weight:600;color:var(--text,#333d4b)}
+.research-task-actions summary::before{content:'▸';margin-right:8px}
+.research-task-actions[open] summary::before{content:'▾'}
+.research-task-inline{display:flex;flex-direction:column;align-items:flex-start;gap:10px;padding-bottom:4px;min-width:0}
+.research-task-inline form{display:flex;flex-wrap:wrap;align-items:flex-end;gap:8px;max-width:100%;min-width:0}
+.research-task-inline label{display:flex;flex-direction:column;gap:5px;max-width:100%;min-width:0;font-size:13px}
+.research-task-inline input{box-sizing:border-box;min-height:44px;width:100%;max-width:200px;min-width:0;padding:8px 10px;border:1px solid var(--border,#e5e8eb);border-radius:8px;background:var(--surface,#fff);color:var(--text,#333d4b);font:inherit;font-size:16px}
+.research-task-inline [role=status]{margin:0;font-size:13px;line-height:1.6;overflow-wrap:anywhere}
+.saved-research [hidden]{display:none!important}
+.research-task-actions button:focus-visible,.research-task-actions input:focus-visible,.research-task-actions summary:focus-visible,.research-task-filters button:focus-visible{outline:2px solid #3182f6;outline-offset:3px}
+.research-task-actions button:disabled,.research-task-actions input:disabled{opacity:.6;cursor:wait}
+.research-task-empty{font-size:13px;line-height:1.6}

@@ -9,7 +9,7 @@ function transaction({fail=false}={}){
  const body=source.slice(source.indexOf('function persistList('),source.indexOf('\nfunction showToast('));
  const events=[],state={watchlist:[],selected:[]};
  let release;const held=new Promise(resolve=>release=resolve);
- const context=vm.createContext({state,viewEpoch:1,listSaveQueue:Promise.resolve(),WATCHLIST_LIMIT:20,
+ const context=vm.createContext({state,viewEpoch:1,listSaveQueue:Promise.resolve(),WATCHLIST_LIMIT:20,getStorageContext:()=>1,isStorageContextCurrent:()=>true,
   WATCHLIST_KEY:'watch',SELECTED_KEY:'selected',JSON,Promise,watchLimitNotice(){},refreshListSurface(){},showToast(){},
   newUsageOperation:()=> 'operation',trackUsage:(name,options)=>events.push({name,options}),
   writeStored:async()=>{await held;if(fail)throw Error('full');},
