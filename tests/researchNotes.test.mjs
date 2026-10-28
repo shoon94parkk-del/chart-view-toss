@@ -32,6 +32,24 @@ test('storage failure leaves previous persisted content intact and is surfaced',
   assert.throws(()=>s.saveResearchNote('AAPL',{question:'수정 질문'}),/storage full/);
   assert.equal(s.readResearchNote('AAPL').question,'기존 질문');
 });
+test('saving or deleting rejects corrupt research roots without replacing recoverable bytes',async()=>{
+  for(const raw of ['{"AAPL":{"question":"old"}', 'null', '[]', '"notes"', '42', 'false', '']){
+    for(const confirmed of [false,true]){
+      const s=setup(raw);
+      assert.equal(s.readResearchNote('AAPL'),null);
+      await assert.rejects(async()=>s.saveResearchNote('NVDA',{question:'replacement'},{confirmed}),/저장.*손상/);
+      assert.equal(s.raw(),raw);assert.equal(s.writes(),0);
+      await assert.rejects(async()=>s.deleteResearchNote('AAPL',{confirmed}),/저장.*손상/);
+      assert.equal(s.raw(),raw);assert.equal(s.writes(),0);
+    }
+  }
+});
+test('editing a valid legacy research map retains unrelated records',async()=>{
+  const raw=JSON.stringify({AAPL:{question:'legacy',createdAt:'2020-01-01'},NVDA:{question:'keep',support:'evidence'}}),s=setup(raw);
+  await s.saveResearchNote('AAPL',{question:'edited'},{confirmed:true});
+  assert.equal(s.readResearchNote('AAPL').createdAt,'2020-01-01');
+  assert.deepEqual(JSON.parse(s.raw()).NVDA,{question:'keep',support:'evidence'});
+});
 test('selected domestic comparison company survives save and can be cleared',()=>{
  const s=setup();s.saveResearchNote('005930.KS',{question:'현금흐름 비교',peer:{symbol:'000660.KS',name:'SK하이닉스'}});
  assert.equal(s.readResearchNote('005930.KS').peer.symbol,'000660.KS');

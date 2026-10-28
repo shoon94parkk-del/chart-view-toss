@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import { renderSharedHeatmap } from '../src/heatmapView.js';
+import { marketRows, renderSharedHeatmap, renderHeatmapList } from '../src/heatmapView.js';
+import { clearLiveQuotes, rememberLiveQuotes, mergeRowsWithLive } from '../src/liveQuoteStore.js';
 
 const payload = {
   generatedAt: '2026-09-26T10:00:00Z',
@@ -154,4 +155,52 @@ test('heatmap cell exposes the Korean company name for detail navigation',()=>{
   },{scope:'full'});
   assert.match(html,/data-stock-detail="009150\.KS"/);
   assert.match(html,/data-stock-name="삼성전기"/);
+});
+
+for (const change of [null, undefined, '', '  ', 'unavailable', NaN, Infinity, false]) {
+  test(`shared heatmap and list keep unavailable changes distinct from zero: ${String(change)}`, () => {
+    const data = { results: [{ ticker: '005930.KS', marketCap: 300, price: 100000, change, changePercent: 7, change_pct: 8 }] };
+    assert.equal(marketRows(data, 'KR')[0].change, null);
+    const map = renderSharedHeatmap(data);
+    assert.match(map, /aria-label="[^"]*등락률 미제공/);
+    assert.match(map, /home-heatmap-change">—<\/span>/);
+    assert.doesNotMatch(map, /0\.00%|\+7\.00%|\+8\.00%/);
+    const list = renderHeatmapList(data);
+    assert.match(list, /<b[^>]*title="등락률 미제공"[^>]*>—<\/b>/);
+    assert.doesNotMatch(list, /0\.00%|\+7\.00%|\+8\.00%/);
+  });
+}
+
+test('heatmap change aliases apply only when the canonical change field is absent, including actual zero', () => {
+  for (const [fields, expected] of [[{ change: 0, changePercent: 7 }, '0.00%'], [{ change: '0' }, '0.00%'], [{ changePercent: 2 }, '+2.00%'], [{ change_pct: -1 }, '-1.00%']]) {
+    const data = { results: [{ ticker: '005930.KS', marketCap: 300, ...fields }] };
+    assert.ok(renderSharedHeatmap(data).includes(`home-heatmap-change">${expected}</span>`));
+    assert.ok(renderHeatmapList(data).includes(`>${expected}</b>`));
+  }
+});
+
+test('newer unavailable live change clears the old percentage through the real store and shared renderers without moving tiles', () => {
+  clearLiveQuotes();
+  try {
+    const older = { ticker: '005930.KS', marketCap: 300, price: 100000, change: 3, changePercent: 3, asOf: '2026-10-07T06:30:00Z' };
+    const peer = { ticker: '000660.KS', marketCap: 100, change: 0 };
+    rememberLiveQuotes([older], { priority: 20 });
+    const before = renderSharedHeatmap({ results: [older, peer] });
+    rememberLiveQuotes([{ ticker: older.ticker, change: null, asOf: '2026-10-07T06:31:00Z' }], { priority: 50 });
+    const results = mergeRowsWithLive([older, peer]);
+    assert.equal(results[0].change, null);
+    assert.equal(results[0].marketCap, 300);
+    const data = { results };
+    const map = renderSharedHeatmap(data);
+    assert.deepEqual(geometry(map), geometry(before));
+    assert.match(map, /aria-label="[^"]*삼성전자[^"]*등락률 미제공/);
+    assert.match(map, /home-heatmap-change">0\.00%<\/span>/);
+    assert.doesNotMatch(map, /\+3\.00%/);
+    const list = renderHeatmapList(data);
+    assert.match(list, /등락률 미제공/);
+    assert.match(list, />0\.00%<\/b>/);
+    assert.doesNotMatch(list, /\+3\.00%/);
+  } finally {
+    clearLiveQuotes();
+  }
 });

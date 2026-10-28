@@ -242,9 +242,9 @@ export function mountResearchCard(host,options){
    saveState.textContent=matchesSaved(input.value,selectedPeer,reviewInput.value)?(peer?'질문과 비교 회사를 이 기기에 저장했어요.':'질문을 이 기기에 저장했어요.'):unsavedMessage;
    onNotice?.('질문을 저장했어요.');
    void offerReviewOpportunity(host,{source:'research',operationId});
-  }catch{
+  }catch(error){
    void trackUsage('research_save_failure',{operationId,params:{source:'research',screen:'detail',code:'storage'}});
-   if(host.isConnected)saveState.textContent='질문을 저장하지 못했어요. 입력 내용과 기기 저장 공간을 확인해주세요.';
+   if(host.isConnected)saveState.textContent=error?.code==='corrupt_research'?error.message:'질문을 저장하지 못했어요. 입력 내용과 기기 저장 공간을 확인해주세요.';
   }finally{saveButton.disabled=false;if(remove)remove.disabled=false;}
  };
  if(remove)remove.onclick=async()=>{
@@ -253,7 +253,7 @@ export function mountResearchCard(host,options){
   remove.disabled=true;saveButton.disabled=true;
   saveState.textContent='저장한 질문을 삭제하고 있어요.';
   try{await deleteResearchNote(symbol,{confirmed:true});if(!host.isConnected)return;saved=null;pendingCheckpoint=null;host.querySelector('#research-checkpoints-host').innerHTML=researchCheckpointsHtml();remove.hidden=true;remove.dataset.confirm='false';remove.textContent='저장한 질문 삭제';host.querySelector('.research-legacy')?.remove();saveState.textContent='저장한 질문을 삭제했어요. 현재 입력은 남아 있어요.';}
-  catch{if(host.isConnected)saveState.textContent='저장한 질문을 삭제하지 못했어요.';}
+  catch(error){if(host.isConnected)saveState.textContent=error?.code==='corrupt_research'?error.message:'저장한 질문을 삭제하지 못했어요.';}
   finally{remove.disabled=false;saveButton.disabled=false;}
  };
 }

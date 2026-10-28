@@ -158,7 +158,7 @@ export function mountNewsReader(host,payload,options = {}) {
  const card = (row,index) => `<article class="news-reader-card" data-news-reader-card="${escape(row.key)}" aria-labelledby="news-title-${id}-${index}">
   <div class="news-reader-meta"><span>${escape(row.sources.join(' · '))}</span><span>${escape(titleLanguage(row.title))}</span><time${row.publishedAt?` datetime="${escape(row.publishedAt)}"`:''}>${escape(publication(row))}</time></div>
   <h3 id="news-title-${id}-${index}" class="news-reader-title">${row.safeUrl?button(`data-news-external="${escape(row.safeUrl)}" data-news-control="title:${escape(row.key)}"`,escape(row.title||'제목 미제공')):escape(row.title||'제목 미제공')}</h3>
-  <div class="news-reader-stocks" aria-label="기사 관련 종목">${row.stocks.map(stock=>button(`data-news-stock="${escape(stock.symbol)}" data-news-reader-stock="${escape(stock.symbol)}"`,escape(stock.name||stock.symbol))).join('')}</div>
+  <div class="news-reader-stocks" aria-label="기사 관련 종목">${row.stocks.map(stock=>button(`data-news-stock="${escape(stock.symbol)}" data-news-reader-stock="${escape(stock.symbol)}" data-news-control="stock:${escape(row.key)}:${escape(stock.symbol)}"`,escape(stock.name||stock.symbol))).join('')}</div>
   <ul class="news-reader-relations">${row.relations.map(receipt=>`<li><span class="news-reader-relation ${escape(receipt.relationType)}">${escape(relationLabel(receipt.relationType))}</span> ${escape(receipt.name||receipt.symbol||'종목 미제공')} · ${escape(receipt.relationBasis?relationBasisLabel(receipt.relationBasis):'세부 근거 미제공')}</li>`).join('')}</ul>
   ${Array.isArray(row.investmentTags)&&row.investmentTags.length?`<div class="news-tags">${row.investmentTags.slice(0,2).map(tag=>`<span>${escape(translatedTag(tag))}</span>`).join('')}</div>`:''}
   <p class="news-reader-notice">요약 펼침을 누르면 요청해요. 본문을 읽지 못하면 제목·요약문 기반임을 표시해요.</p>
@@ -186,6 +186,7 @@ export function mountNewsReader(host,payload,options = {}) {
    if (key === 'newsMore' && feed.visibleCount >= feed.filteredCount) host.querySelector('.news-reader-count')?.focus({preventScroll:true});
    for (const element of host.querySelectorAll?.('button') || []) if (element.dataset[key] === value) { element.focus({preventScroll:true}); break; }
   }
+  options.onRender?.(feed);
  };
  controller = createNewsSummaryController({loadSummary:options.loadSummary,isCurrent:current,onChange:render,session});
  const onClick = event => {

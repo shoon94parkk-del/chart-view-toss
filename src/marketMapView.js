@@ -2,7 +2,7 @@ import {marketRows,layoutTreemap} from './heatmapView.js';
 import {sectorForRow} from './sectorHeatmap.js';
 
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const pct=v=>`${v>0?'+':''}${Number(v).toFixed(2)}%`;
+const pct=v=>Number.isFinite(v)?`${v>0?'+':''}${v.toFixed(2)}%`:'—';
 const tone=v=>Math.abs(v)<.25?'flat':(v>0?'up':'down')+'-'+(Math.abs(v)>=3?3:Math.abs(v)>=1?2:1);
 const rowBasis=row=>{
  if(row.sessionDate)return '거래일 '+row.sessionDate;
@@ -33,13 +33,13 @@ export function renderMarketMap(payload,{market='KR',cached=false,selected=null}
  const progress=payload.complete===false?`<p class="muted-copy" role="status" data-heatmap-progress>시세를 순차 확인하고 있어요 · ${coverage?.received??count} / ${market==='KR'?20:40}종목 응답${stored?` · 이전 시세 ${stored}종목 유지`:''}</p>`:stored?`<p class="muted-copy" role="status" data-heatmap-progress>이전 수집 시세 ${stored}종목 · 업종 목록에서 종목별 기준일을 확인해 주세요.</p>`:'';
  return `<div class="market-map-meta" role="status"><strong>${market==='KR'?'한국 주요':'미국 시총 상위'} ${count}종목</strong><span>${cached?'저장 시세 · ':''}수집 ${esc(date)} KST</span></div>
  ${progress}<div class="market-map-sector-list" aria-label="업종별 종목 선택">${groups.map(g=>`<button type="button" data-map-sector="${esc(g.label)}" aria-expanded="${selected===g.label}" aria-controls="market-map-members">${esc(g.label)} 종목 목록</button>`).join('')}</div>
- ${group?`<section class="market-map-members" id="market-map-members" role="region" aria-label="선택한 업종 종목 목록"><div><h3>${esc(group.label)} · ${group.members.length}종목</h3><button class="text-button" data-map-sector="${esc(group.label)}">닫기</button></div>${group.members.map(row=>`<button type="button" data-stock-detail="${esc(row.ticker)}" data-stock-name="${esc(row.name)}"><span><strong>${market==='US'?`<em class="market-map-ticker">${esc(row.ticker)}</em> `:''}${esc(row.name)}</strong><small>${esc(rowBasis(row))} · ${row.price==null?'가격 미제공':Number(row.price).toLocaleString('ko-KR',{maximumFractionDigits:2})+(market==='KR'?'원':' 달러')}</small></span><b class="${row.change>0?'up':row.change<0?'down':''}">${pct(row.change)}</b></button>`).join('')}</section>`:''}
+ ${group?`<section class="market-map-members" id="market-map-members" role="region" aria-label="선택한 업종 종목 목록"><div><h3>${esc(group.label)} · ${group.members.length}종목</h3><button class="text-button" data-map-sector="${esc(group.label)}">닫기</button></div>${group.members.map(row=>`<button type="button" data-stock-detail="${esc(row.ticker)}" data-stock-name="${esc(row.name)}"><span><strong>${market==='US'?`<em class="market-map-ticker">${esc(row.ticker)}</em> `:''}${esc(row.name)}</strong><small>${esc(rowBasis(row))} · ${row.price==null?'가격 미제공':Number(row.price).toLocaleString('ko-KR',{maximumFractionDigits:2})+(market==='KR'?'원':' 달러')}</small></span><b class="${row.change>0?'up':row.change<0?'down':''}"${row.change===null?' title="등락률 미제공"':''}>${pct(row.change)}</b></button>`).join('')}</section>`:''}
  <div class="market-map" style="--map-height:${height}px" aria-label="업종별 종목 등락 지도">${rects.map(({item:g,x,y,width,height:h})=>{
   const cells=layoutTreemap(g.members.map(item=>({item,weight:market==='KR'?Math.pow(item.marketCap,.58):item.marketCap})),0,0,width,Math.max(1,h-25));
   return `<section class="market-map-sector" style="left:${x/340*100}%;top:${y/height*100}%;width:${width/340*100}%;height:${h/height*100}%"><button type="button" class="market-map-sector-head" data-map-sector="${esc(g.label)}" aria-expanded="${selected===g.label}" aria-label="${esc(g.label)} ${g.members.length}종목 자세히"><strong>${esc(g.label)}</strong><span>›</span></button><div class="market-map-sector-body">${cells.map(({item,x:cx,y:cy,width:cw,height:ch})=>{
    const tight=cw<60||ch<44;
    const label=market==='KR'?item.short:item.ticker;
-   return `<button type="button" class="market-map-stock map-${tone(item.change)} ${tight?'is-tight':''}" style="left:${cx/width*100}%;top:${cy/(h-25)*100}%;width:${cw/width*100}%;height:${ch/(h-25)*100}%" data-stock-detail="${esc(item.ticker)}" data-stock-name="${esc(item.name)}" aria-label="${esc(item.name)} ${pct(item.change)}"><strong>${esc(label)}</strong><span>${pct(item.change)}</span></button>`;
+   return `<button type="button" class="market-map-stock map-${tone(item.change)} ${tight?'is-tight':''}" style="left:${cx/width*100}%;top:${cy/(h-25)*100}%;width:${cw/width*100}%;height:${ch/(h-25)*100}%" data-stock-detail="${esc(item.ticker)}" data-stock-name="${esc(item.name)}" aria-label="${esc(item.name)} ${pct(item.change)}${item.change===null?' 등락률 미제공':''}"><strong>${esc(label)}</strong><span>${pct(item.change)}</span></button>`;
   }).join('')}</div></section>`;
  }).join('')}</div>
  <div class="market-map-legend" aria-label="등락 색상 범례"><span>하락</span>${[-3,-2,-1,0,1,2,3].map(v=>`<i class="map-${tone(v)}">${v>0?'+':''}${v}%</i>`).join('')}<span>상승</span></div>

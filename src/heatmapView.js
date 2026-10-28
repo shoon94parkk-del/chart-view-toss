@@ -46,9 +46,11 @@ const esc = (value) => String(value ?? '').replace(/[&<>"]/g, (char) => ({
 }[char]));
 
 const finite = (value, fallback = 0) => Number.isFinite(Number(value)) ? Number(value) : fallback;
+const changeNumber = (value) => value == null || typeof value === 'boolean' || String(value).trim() === '' ? null : finite(value, null);
 
 const signedPct = (value) => {
-  const numeric = finite(value);
+  const numeric = changeNumber(value);
+  if (numeric === null) return '—';
   return `${numeric > 0 ? '+' : ''}${numeric.toFixed(2)}%`;
 };
 
@@ -137,7 +139,7 @@ export const marketRows = (payload, market, scope = 'home') => {
         logo: meta?.logo || '',
         fallback: meta?.fallback || ticker.replace(/\.(KS|KQ)$/, '').slice(0, 3),
         marketCap: finite(row?.marketCap ?? row?.market_cap),
-        change: finite(row?.change ?? row?.changePercent ?? row?.change_pct),
+        change: changeNumber(Object.hasOwn(row || {}, 'change') ? row.change : Object.hasOwn(row || {}, 'changePercent') ? row.changePercent : row?.change_pct),
       };
     })
     .filter((row) => row && row.market === market && row.marketCap > 0)
@@ -190,7 +192,7 @@ const heatmapMarketMarkup = (payload, market, scope = 'home', limit = Infinity) 
     );
     const classes = [toneClass(item.change), size, market === 'KR' ? 'market-kr-cell' : 'market-us-cell', compact ? 'is-compact' : '', hideLabel ? 'is-label-hidden' : '', micro ? 'is-micro' : '', tickerOnly ? 'is-ticker-only' : ''].filter(Boolean).join(' ');
     const visibleText = [showFallback ? item.fallback : '', hideLabel ? '' : label, showChange ? change : ''].filter(Boolean).join(' ');
-    const accessibleName = [visibleText, !hideLabel && label === item.name ? '' : item.name, showChange ? '' : change].filter(Boolean).join(' ');
+    const accessibleName = [visibleText, !hideLabel && label === item.name ? '' : item.name, showChange ? '' : change, item.change === null ? '등락률 미제공' : ''].filter(Boolean).join(' ');
     return `<div class="home-heatmap-cell ${classes}" style="left:${(x * 100).toFixed(3)}%;top:${(y * 100).toFixed(3)}%;width:${(width * 100).toFixed(3)}%;height:${(height * 100).toFixed(3)}%" role="button" tabindex="0" data-stock-detail="${esc(item.ticker)}" data-stock-name="${esc(item.name)}" aria-label="${esc(accessibleName)}">${labelMarkup}${showChange ? `<span class="home-heatmap-change">${esc(change)}</span>` : ''}</div>`;
   }).join('');
 };
@@ -222,6 +224,6 @@ export function renderHeatmapList(payload={}, {market='KR',limit=Infinity,cached
  const rows=marketRows(payload,market,'full').slice(0,limit);
  return `<div class="home-heatmap-meta" role="status">${cached?'이전 저장 시세 · 새 시세 확인 중 · ':''}수집 ${esc(formatKst(payload.generatedAt||payload.updatedAt))} KST</div><p class="heatmap-list-scope">${market==='KR'?'한국 주요':'미국 시총 상위'} ${rows.length}종목 · 지도와 같은 자료 · 전일 기준 대비 등락</p><div class="heatmap-readable-list">${rows.map(row=>{
   const price=row.price==null||String(row.price).trim()===''||!Number.isFinite(Number(row.price))?'가격 미제공':Number(row.price).toLocaleString('ko-KR',{maximumFractionDigits:2})+(market==='KR'?'원':' 달러');
-  return `<button type="button" data-stock-detail="${esc(row.ticker)}" data-stock-name="${esc(row.name)}"><strong>${esc(row.name)}</strong><span>${esc(row.ticker)} · ${esc(price)}</span><b class="${toneClass(row.change)}">${esc(signedPct(row.change))}</b><small>기준 ${esc(row.sessionDate||formatKst(row.asOf)||'미제공')}</small></button>`;
+  return `<button type="button" data-stock-detail="${esc(row.ticker)}" data-stock-name="${esc(row.name)}"><strong>${esc(row.name)}</strong><span>${esc(row.ticker)} · ${esc(price)}</span><b class="${toneClass(row.change)}"${row.change===null?' title="등락률 미제공"':''}>${esc(signedPct(row.change))}</b><small>기준 ${esc(row.sessionDate||formatKst(row.asOf)||'미제공')}</small></button>`;
  }).join('')||'<p>이 시장의 수집 종목이 없어요.</p>'}</div>`;
 }

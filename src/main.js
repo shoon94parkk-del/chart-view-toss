@@ -394,7 +394,7 @@ function bindNav(){
    host.querySelector('.revisit-refresh-status').textContent='확인한 보고서 기준으로 표시했어요. 미제공 자료는 확인 불가로 남겨요.';
   }catch{if(alive()){host.querySelector('.revisit-refresh-status').textContent='일부 근거를 확인하지 못했어요. 저장 기준은 유지했어요. 다시 시도해주세요.';host.querySelector('[data-refresh-saved-research]')?.removeAttribute('disabled');}}
  });
- document.querySelectorAll('[data-retry-detail]').forEach(b=>b.onclick=renderDetail);
+ document.querySelectorAll('[data-retry-detail]:not([data-retry-detail-quote])').forEach(b=>b.onclick=renderDetail);
  document.querySelectorAll('[data-back]').forEach(b=>b.onclick=goBack);
  document.querySelectorAll('[data-external-url]').forEach(b=>b.onclick=async()=>{
    haptic('tickWeak');
@@ -1574,7 +1574,8 @@ async function renderDetail(){
 
  const settle=(task,paint)=>task.then(value=>({status:'fulfilled',value}),reason=>({status:'rejected',reason})).then(result=>{if(epoch===viewEpoch){paint(result);bindNav();}});
  const jobs=[];
- const paintDetailQuote=(quote,{failed=false,priority=50}={})=>{
+ let detailQuoteFailed=false,detailQuotePending=false;
+ const paintDetailQuote=(quote,{failed=detailQuoteFailed,priority=50}={})=>{
    if(epoch!==viewEpoch||state.tab!=='detail'||state.detailSymbol!==symbol)return;
    if(quote)rememberLiveQuotes([quote],{priority});
    paintWatchState();
@@ -1586,7 +1587,8 @@ async function renderDetail(){
    const provenanceFocused=priceBox.querySelector('.quote-provenance summary')===document.activeElement;
    priceBox.classList.remove('skeleton','detail-price-skeleton');
    priceBox.classList.add('quote-compact');
-   priceBox.innerHTML=quoteHtml(current,closingQuote?{...closingQuote,priceLabel:formatCurrencyPrice(closingQuote.price,'KRW')}:null,{basis:quoteBasisLabel(current),price:current?.price!=null?(isIndex?Number(current.price).toLocaleString('ko-KR',{maximumFractionDigits:2})+' pt':formatCurrencyPrice(current.price,current.currency)):'확인 불가',change:dayChange===null?'확인 불가':fmtChange(dayChange),asOf:current?.asOf?formatKst(current.asOf):'',queriedAt:formatKst(new Date().toISOString())})+(failed?'<button class="retry" data-retry-detail>시세 다시 시도</button>':'');
+   priceBox.innerHTML=quoteHtml(current,closingQuote?{...closingQuote,priceLabel:formatCurrencyPrice(closingQuote.price,'KRW')}:null,{basis:quoteBasisLabel(current),price:current?.price!=null?(isIndex?Number(current.price).toLocaleString('ko-KR',{maximumFractionDigits:2})+' pt':formatCurrencyPrice(current.price,current.currency)):'확인 불가',change:dayChange===null?'확인 불가':fmtChange(dayChange),asOf:current?.asOf?formatKst(current.asOf):'',queriedAt:formatKst(new Date().toISOString())})+(failed?`<button class="retry" type="button" data-retry-detail data-retry-detail-quote ${detailQuotePending?'disabled':''}>시세 다시 시도</button>`:'');
+   priceBox.querySelector('[data-retry-detail-quote]')?.addEventListener('click',()=>void pullDetailLive());
    if(Number.isFinite(Number(current?.price))&&Number(current.price)>0){
      if(!isIndex)void rememberRecentStock({symbol,name:knownName||current.name});
      void trackUsage('stock_detail_view',{operationId:detailUsageOperation,params:{screen:'detail'}});
@@ -1617,26 +1619,34 @@ async function renderDetail(){
    }).catch(()=>{});
  }
  const pullDetailLive=async()=>{
-   if(epoch!==viewEpoch||state.tab!=='detail'||state.detailSymbol!==symbol)return;
+   if(epoch!==viewEpoch||state.tab!=='detail'||state.detailSymbol!==symbol||detailQuotePending)return;
+   detailQuotePending=true;
+   if(detailLiveTimer){clearTimeout(detailLiveTimer);detailLiveTimer=null;}
+   const retry=document.querySelector('[data-retry-detail-quote]');if(retry)retry.disabled=true;
+   let koreanClosed=false;
    try{
      const payload=await quoteSnapshotsLive([symbol]);
-     const quote=payload?.results?.[0];
+     if(epoch!==viewEpoch||state.tab!=='detail'||state.detailSymbol!==symbol)return;
+     const quote=Array.isArray(payload?.results)?payload.results.find(row=>String(row?.ticker||'').toUpperCase()===symbol.toUpperCase()&&['number','string'].includes(typeof row?.price)&&finiteNumber(row.price)>0):null;
      if(quote){
        if(!knownName&&quote.name)applyDetailName(quote.name);
-       rememberLiveQuotes([quote],{priority:50});
+       const accepted=rememberLiveQuotes([quote],{priority:50});
        const canonical=getLiveQuote(symbol)||quote;
+       koreanClosed=koreanDetail&&accepted.length>0&&String(quote.marketStatus||'').toUpperCase()==='CLOSE';
+       detailQuoteFailed=false;
        persistLiveQuoteToHomeSnapshot(canonical);
        paintDetailQuote(canonical);
      }
-     else if(!getLiveQuote(symbol))paintDetailQuote(null,{failed:true});
+     else{detailQuoteFailed=true;paintDetailQuote(null);}
    }catch(error){
-     if(epoch===viewEpoch)reportAppError(['timeout','network','offline'].includes(error?.code)?error.code:'unknown',detailUsageOperation);
-     if(!getLiveQuote(symbol))paintDetailQuote(null,{failed:true});
+     if(epoch!==viewEpoch||state.tab!=='detail'||state.detailSymbol!==symbol)return;
+     reportAppError(['timeout','network','offline'].includes(error?.code)?error.code:'unknown',detailUsageOperation);
+     detailQuoteFailed=true;paintDetailQuote(null);
    }finally{
-     const canonical=getLiveQuote(symbol);
-     const koreanClosed=koreanDetail&&String(canonical?.marketStatus||'').toUpperCase()==='CLOSE';
-     if(epoch===viewEpoch&&state.tab==='detail'&&state.detailSymbol===symbol&&!koreanClosed){
-       detailLiveTimer=setTimeout(pullDetailLive,5_000);
+     detailQuotePending=false;
+     if(epoch===viewEpoch&&state.tab==='detail'&&state.detailSymbol===symbol){
+       const retry=document.querySelector('[data-retry-detail-quote]');if(retry)retry.disabled=false;
+       if(!koreanClosed)detailLiveTimer=setTimeout(pullDetailLive,5_000);
      }
    }
  };
@@ -1814,16 +1824,44 @@ async function renderNews({force=false}={}){
  bindNav();
  document.querySelectorAll('[data-news-sort]').forEach(b=>b.onclick=()=>{state.newsSort=b.dataset.newsSort;renderNews()});
  document.querySelectorAll('[data-news-symbol]').forEach(button=>button.onclick=()=>navigate('news',button.dataset.newsSymbol));
- if(!tickers.length){document.querySelector('#news-list').innerHTML='<div class="empty"><strong>관심종목을 먼저 추가해주세요</strong><span>관심종목 관리에서 종목을 저장하면 여기에 관련 뉴스가 표시돼요.</span><button class="retry" data-tab="watch">관심종목 추가</button></div>';bindNav();return}
+ const host=document.querySelector('#news-list');
+ const newsStorageContext=getStorageContext();
+ const newsCurrent=()=>epoch===viewEpoch&&state.tab==='news'&&isStorageContextCurrent(newsStorageContext);
+ // Own Back restoration before either the lazy reader or its data can arrive.
+ // Old route cleanup removes its listeners without clearing a newer target.
+ let newsDataSettled=false,pendingNewsRestore=state.restoreScroll!=null,newsRestoreFrame=null;
+ const restoreEvents=['wheel','touchstart','pointerdown','keydown'];
+ const disposeNewsRestore=()=>{
+   pendingNewsRestore=false;cancelAnimationFrame(newsRestoreFrame);newsRestoreFrame=null;
+   for(const type of restoreEvents)document.removeEventListener(type,cancelNewsRestore,true);
+   detailModuleCleanups.delete(disposeNewsRestore);
+ };
+ const cancelNewsRestore=()=>{
+   if(!newsCurrent()||!pendingNewsRestore)return;
+   window.__chartviewRestoreScroll?.({cancel:true});disposeNewsRestore();
+ };
+ const restoreNewsScroll=()=>{
+   if(!newsCurrent()||!pendingNewsRestore)return;
+   // Pending progressive layouts may still grow. Only the terminal layout may
+   // clamp an unreachable target, including empty and failed responses.
+   window.__chartviewRestoreScroll?.({clamp:newsDataSettled});
+   cancelAnimationFrame(newsRestoreFrame);
+   newsRestoreFrame=requestAnimationFrame(()=>{
+     newsRestoreFrame=null;
+     if(newsCurrent()&&state.restoreScroll==null)disposeNewsRestore();
+   });
+ };
+ if(pendingNewsRestore){
+   for(const type of restoreEvents)document.addEventListener(type,cancelNewsRestore,{capture:true,passive:true});
+   detailModuleCleanups.add(disposeNewsRestore);
+ }
+ if(!tickers.length){host.innerHTML='<div class="empty"><strong>관심종목을 먼저 추가해주세요</strong><span>관심종목 관리에서 종목을 저장하면 여기에 관련 뉴스가 표시돼요.</span><button class="retry" data-tab="watch">관심종목 추가</button></div>';bindNav();newsDataSettled=true;restoreNewsScroll();return}
  const contextKey=`${getStorageContext()}:${state.newsSymbol||'watchlist'}`;
  if(!newsReaderPreferences.has(contextKey)){
    if(newsReaderPreferences.size>=30)newsReaderPreferences.delete(newsReaderPreferences.keys().next().value);
    newsReaderPreferences.set(contextKey,{});
  }
  const preferences=newsReaderPreferences.get(contextKey);
- const host=document.querySelector('#news-list');
- const newsStorageContext=getStorageContext();
- const newsCurrent=()=>epoch===viewEpoch&&state.tab==='news'&&isStorageContextCurrent(newsStorageContext);
  let evidenceEditorRun=0;
  const readerOptions={
    sort:state.newsSort,preferences,usLookbackDays:tickers.some(symbol=>!/^\d{6}\.(KS|KQ)$/.test(symbol))?4:null,
@@ -1842,6 +1880,7 @@ async function renderNews({force=false}={}){
      }catch{if(current())showToast('뉴스 근거 저장 화면을 열지 못했어요. 다시 시도해주세요.');}
    },
    isCurrent:newsCurrent,
+   onRender:restoreNewsScroll,
    onRetry:()=>renderNews({force:true}),
  };
  const viewPromise=Promise.all([import('./newsReaderView.js'),import('./newsReaderView.css')]).then(([view])=>view);
@@ -1852,13 +1891,14 @@ async function renderNews({force=false}={}){
    viewPromise,
  ]);
  if(!newsCurrent())return;
+ newsDataSettled=true;
  if(viewResult.status!=='fulfilled'){
    host.innerHTML='<div class="empty" role="alert"><strong>뉴스 화면을 불러오지 못했어요</strong><span>저장된 관심종목은 유지돼요. 화면을 새로 불러와주세요.</span><button type="button" class="retry" id="retry-news-view">화면 새로고침</button></div>';
-   host.querySelector('button').onclick=()=>location.reload();return;
+   host.querySelector('button').onclick=()=>location.reload();restoreNewsScroll();return;
  }
  if(dataResult.status!=='fulfilled'){
    host.innerHTML='<div class="empty" role="alert"><strong>뉴스를 불러오지 못했어요</strong><span>연결을 확인한 뒤 다시 시도해주세요.</span><button type="button" class="retry" id="retry-news">다시 시도</button></div>';
-   host.querySelector('button').onclick=()=>renderNews({force:true});return;
+   host.querySelector('button').onclick=()=>renderNews({force:true});restoreNewsScroll();return;
  }
  if(newsReaderCleanup?.update)newsReaderCleanup.update(dataResult.value);
  else newsReaderCleanup=viewResult.value.mountNewsReader(host,dataResult.value,readerOptions);

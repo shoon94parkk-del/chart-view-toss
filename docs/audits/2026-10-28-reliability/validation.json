@@ -1,0 +1,98 @@
+{
+  "project_id": "github:shoon94parkk-del/chart-view-toss",
+  "base_sha": "03fede3a5a844d96be4570ff64ed65f80f9ffef8",
+  "branch": "codex/thorough-improvements-20261028",
+  "node": "24.19.0",
+  "npm": "11.9.0",
+  "node_tests": {
+    "passed": 894,
+    "failed": 0
+  },
+  "browser_stats": {
+    "startTime": "2026-10-28T13:32:18.958Z",
+    "duration": 1851895.7219999998,
+    "expected": 1276,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "direct_entry_routes": 30,
+  "mobile_continuity": {
+    "widths": [
+      320,
+      390,
+      430
+    ],
+    "result": "pass with Liberation Sans / Noto CJK native font fallback",
+    "noto_baseline_and_modified_height": 380.78125,
+    "supplemental_height_limit": 380,
+    "liberation_baseline_and_modified_height": 377.78125
+  },
+  "legacy_quote_recovery": [
+    "empty passed",
+    "http passed",
+    "timeout passed"
+  ],
+  "ait": {
+    "filename": "chartview.ait",
+    "sha256": "aca602df475bf66876dd3a9cc83c512142e06844decb73d3ff640953b70c70f6",
+    "built": true,
+    "deployed": false
+  },
+  "live_reads": {
+    "/health": {
+      "http": 200,
+      "elapsed_seconds": 0.312,
+      "result": {
+        "status": "ok",
+        "revision": "3e4906edd0980113ad7209a65264a6fe9472c6a7"
+      }
+    },
+    "/api/quotes?tickers=005930.KS": {
+      "http": 200,
+      "elapsed_seconds": 1.464,
+      "result": {
+        "rows": [
+          {
+            "ticker": "005930.KS",
+            "price": 245000.0,
+            "change": 10.36,
+            "asOf": "2026-10-28T20:20:23+09:00",
+            "marketStatus": "CLOSE",
+            "priceBasis": "provider_latest",
+            "currency": "KRW"
+          }
+        ],
+        "price_types": [
+          "float"
+        ]
+      }
+    }
+  },
+  "tested_source_sha256": {
+    "src/heatmapView.js": "34a1842adfae159fa11887b06d9084150ea42e06a8def78629c4c7851b436e97",
+    "src/liveQuoteStore.js": "d6817724f353639588e7ba88db554b8f4d74a588b45a6a440045432a6f41205b",
+    "src/main.js": "df0130b205b4f0c7e9cb7a6cf8d7430ae53f7cc0af7706ec08ae8324e28abd95",
+    "src/marketMapView.js": "3cb284ddfc6f10190818da01c96d9d465e4e73086d2f9d94adb03e899fe5706a",
+    "src/newsReaderView.js": "8f6e9f63edd1c4dbcd3c3f012c269dbacac4348ce7d512618f56b773829c2fe4",
+    "src/researchCard.js": "5c5a123d07e94127927be1c2635445b82564301717b11b197a1fe2f602e5dca9",
+    "src/researchNotes.js": "25b47565685ecaf613c9a3b48ade5ec23ecc2abb0a1369254c3610e782527414",
+    "src/reviewStorage.js": "f20d4705b6a24af77ecac11616c0d198df5e5df676160ed51509fda86876c995",
+    "src/storage.js": "fefeb05fb93ddb176c02959f74ee48da31f1d44d050f2bbb644c44aaa4704cdf",
+    "tests/e2e/detail-quote-recovery.spec.mjs": "b863517ba5578ba2e759276e6afbb959dc5f05a09db23bec48a73d860ecd6e06",
+    "tests/e2e/heatmap-missing-change.spec.mjs": "b33d25e0218841bc6cb561532f4884eab57df3dabdb51a677663d2a56ebdfbdf",
+    "tests/e2e/news-back-recovery.spec.mjs": "98d0f59b9f9eb81daebca7d69eeb1fd1461b15ba9dcc698540f0ce24d7b9b8ca",
+    "tests/e2e/research-corruption.spec.mjs": "9254b7da45ee0415792a6eb771345023a5aef424ace7a7d0575013f5c18cd698",
+    "tests/heatmap_shared.test.mjs": "57b29a1331dfbe9d35734977520ccd72b2fcb2dc214977a002b72b8b4c1f9fbd",
+    "tests/live_quote_parity.test.mjs": "9bb4898aa2257678b3f806d62e012d39598b309526de3e1eb67980e749edc090",
+    "tests/market_map.test.mjs": "ac256cfda17e39b272d00c2b6493f6f7880415d07cee758a32663add3e6767b1",
+    "tests/researchNotes.test.mjs": "4e2294392909dedfdd5ae4b6f283fc6c96b05267d03bb1d1187a29f2e9050870",
+    "tests/reviewStorageCorruption.test.mjs": "0e6e399d98bd6a1c51c3379f3c264c67cd53416db999e12d42ceb8901eba981c",
+    "tests/storage.test.mjs": "9e045ac2666177f2b664d184a7f475d866ba627ab06e08ec72d3d6750386b591"
+  },
+  "limitations": [
+    "TOP10 protected price-basis finding deferred; see audit",
+    "Native Android/iOS Toss Sandbox not run",
+    "No main merge or production deployment"
+  ]
+}

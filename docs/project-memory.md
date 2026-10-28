@@ -1,5 +1,12 @@
 # Chart View Toss project memory
 
+### 2026-10-28 — Reliability audit
+- Native data reset now blocks mutations until all native removals actually settle, including after caller timeout. Screens opened during deletion cannot resurrect the old personal maps.
+- Corrupt question/review store roots are preserved when save/delete fails; valid legacy data and question drafts survive.
+- New explicit missing quote fields clear old observations. Home/full-map/list keep missing change distinct from 0; structural company identity stays intact.
+- Detail errors/empty/invalid replies retain cached price with quote-only retry and ongoing fresh polling. Only an accepted explicit fresh Korean CLOSE stops the timer; route-exited responses cannot write snapshots.
+- News Back waits for painted content, respects intervening user input and consumes shorter/error/empty targets; article-specific focus survives summary completion. [Full evidence and scope](RELIABILITY_AUDIT_2026-10-28.md).
+
 ### 2026-10-25 — Personal research continuation
 - News reveals already received articles 12 at a time; the same visit retains the count through Detail/Back. Filter/sort changes reset the count. This does not fetch more news or summaries.
 - Watch adds a KST due queue with explicit completion/undo/postpone. Completion is a personal acknowledgement bound to the shown question/filing revision, separate from original research evidence and latest-filing checks.

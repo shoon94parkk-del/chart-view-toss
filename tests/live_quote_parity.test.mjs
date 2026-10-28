@@ -14,6 +14,63 @@ test('canonical live quote store keeps the newest provider timestamp',()=>{
   assert.equal(row.source,'new');
 });
 
+test('newer explicit missing quote values do not inherit old observation fields',()=>{
+  clearLiveQuotes();
+  rememberLiveQuotes([{
+    ticker:'005930.KS',name:'삼성전자',marketCap:500,price:70000,change:3,
+    previousClose:67961,sessionDate:'2026-10-27',marketStatus:'CLOSE',
+    asOf:'2026-10-27T06:30:00Z',source:'old',currency:'KRW',
+  }],{priority:50});
+  const next={
+    ticker:'005930.KS',name:null,marketCap:null,price:71000,change:null,
+    previousClose:null,sessionDate:'2026-10-28',marketStatus:null,
+    asOf:'2026-10-28T01:00:00Z',source:'new',
+  };
+  rememberLiveQuotes([next],{priority:50});
+  const quote=getLiveQuote(next.ticker);
+  assert.equal(quote.price,71000);
+  assert.equal(quote.change,null);
+  assert.equal(quote.previousClose,null);
+  assert.equal(quote.marketStatus,null);
+  assert.equal(quote.asOf,next.asOf);
+  assert.equal(quote.name,'삼성전자');
+  assert.equal(quote.marketCap,500);
+  // An omitted field remains a partial patch; only explicit null clears it.
+  assert.equal(quote.currency,'KRW');
+});
+
+test('live overlays clear explicitly missing observations without losing heatmap structure',()=>{
+  clearLiveQuotes();
+  rememberLiveQuotes([{
+    ticker:'005930.KS',name:null,marketCap:null,price:71000,change:null,
+    previousClose:null,marketStatus:null,asOf:'2026-10-28T01:00:00Z',source:'new',
+  }],{priority:50});
+  const [row]=mergeRowsWithLive([{
+    ticker:'005930.KS',name:'삼성전자',marketCap:500,price:70000,change:3,
+    previousClose:67961,marketStatus:'CLOSE',asOf:'2026-10-27T06:30:00Z',
+  }]);
+  assert.equal(row.price,71000);
+  assert.equal(row.change,null);
+  assert.equal(row.previousClose,null);
+  assert.equal(row.marketStatus,null);
+  assert.equal(row.asOf,'2026-10-28T01:00:00Z');
+  assert.equal(row.name,'삼성전자');
+  assert.equal(row.marketCap,500);
+});
+
+test('zero quote values remain observations and rejected older nulls cannot clear them',()=>{
+  clearLiveQuotes();
+  const quote={ticker:'005930.KS',price:71000,change:0,dayChange:0,delayTime:0,asOf:'2026-10-28T01:00:00Z',source:'new'};
+  rememberLiveQuotes([quote],{priority:50});
+  rememberLiveQuotes([{...quote,change:null,dayChange:null,delayTime:null}],{priority:10});
+  rememberLiveQuotes([{...quote,change:null,dayChange:null,delayTime:null,asOf:'2026-10-27T06:30:00Z'}],{priority:50});
+  const [row]=mergeRowsWithLive([{ticker:quote.ticker,change:3,dayChange:100,delayTime:15}]);
+  assert.equal(getLiveQuote(quote.ticker).change,0);
+  assert.equal(row.change,0);
+  assert.equal(row.dayChange,0);
+  assert.equal(row.delayTime,0);
+});
+
 test('an undated or source-free snapshot cannot replace a timed direct quote',()=>{
   clearLiveQuotes();
   rememberLiveQuotes([{ticker:'000660.KS',price:1761000,change:-5.42,asOf:'2026-09-28T11:20:23Z',source:'Naver Finance'}]);
@@ -160,9 +217,5 @@ test('regular-close provenance survives live overlay across surfaces',()=>{
   assert.equal(row.priceBasis,'regular_close');
 });
 
-test('Korean detail stops 5-second refresh after provider reports regular market close',async()=>{
-  const fs=await import('node:fs/promises');
-  const main=await fs.readFile(new URL('../src/main.js',import.meta.url),'utf8');
-  assert.ok(main.includes("const koreanClosed=koreanDetail&&String(canonical?.marketStatus||'').toUpperCase()==='CLOSE'"));
-  assert.ok(main.includes("&&!koreanClosed"));
-});
+// Actual Detail CLOSE/polling behavior is covered with the browser clock in
+// e2e/detail-quote-recovery.spec.mjs, including failed and stale CLOSE replies.

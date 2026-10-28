@@ -23,6 +23,7 @@ const writeVersions = new Map();
 let queue = Promise.resolve();
 let nativeReady = false;
 let nativeWriteBlocked = false;
+let nativeResetting = false;
 let namespace = '';
 let storageGeneration = 0;
 const scoped = key => namespace ? `${key}:${namespace}` : key;
@@ -30,7 +31,7 @@ const scoped = key => namespace ? `${key}:${namespace}` : key;
 // Deferred local transactions must belong to the account/reset that created them.
 export function getStorageContext() { return storageGeneration; }
 export function isStorageContextCurrent(context) {
-  return context === storageGeneration && (!isAppsInTossRuntime() || nativeReady);
+  return context === storageGeneration && (!isAppsInTossRuntime() || (nativeReady && !nativeResetting));
 }
 
 async function bridgeCall(operation) {
@@ -100,7 +101,7 @@ export function readStored(key) {
 
 export function writeStored(key, value, { confirmed = false } = {}) {
   if (!isAppsInTossRuntime()) { localStorage.setItem(key, value); return; }
-  if (!nativeReady) throw new Error('Storage not ready');
+  if (!nativeReady || nativeResetting) throw new Error('Storage not ready');
   const target = scoped(key);
   const version = (writeVersions.get(key) || 0) + 1;
   writeVersions.set(key, version);
@@ -148,7 +149,8 @@ export function writeStored(key, value, { confirmed = false } = {}) {
 export async function clearStored() {
   storageGeneration++;
   if (!isAppsInTossRuntime()) { [...keys, WEB_VISITOR_KEY].forEach(key => localStorage.removeItem(key)); return; }
-  if (!nativeReady) throw new Error('Storage not ready');
+  if (!nativeReady || nativeResetting) throw new Error('Storage not ready');
+  nativeResetting = true;
   let expired = false;
   const versions = new Map(keys.map(key => [key, writeVersions.get(key)]));
   queue = queue.catch(() => {}).then(async () => {
@@ -165,6 +167,11 @@ export async function clearStored() {
     });
     const failure = results.find(result => result.status === 'rejected');
     if (failure) throw failure.reason;
+  }).finally(() => {
+    // The caller's timeout cannot release this barrier while native removals
+    // still run. Views opened during reset must also remain invalid afterward.
+    nativeResetting = false;
+    storageGeneration++;
   });
   try { await bridgeCall(() => queue); }
   catch (error) { expired = true; throw error; }
