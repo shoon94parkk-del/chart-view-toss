@@ -67,12 +67,19 @@ function readCheckpoints(value,symbol){
 let checkpointSequence=0;
 export const newResearchCheckpointOperation=()=>globalThis.crypto?.randomUUID?.()||`research-${Date.now()}-${++checkpointSequence}-${Math.random().toString(36).slice(2)}`;
 
-function readCards(){
+function readCards({strict=false}={}){
   const stored=readStored(RESEARCH_KEY);
+  if(stored==null)return {};
   try{
-    const value=JSON.parse(stored||'{}');
-    return value&&typeof value==='object'&&!Array.isArray(value)?value:{};
-  }catch{return {};}
+    const value=JSON.parse(stored);
+    if(value&&typeof value==='object'&&!Array.isArray(value))return value;
+  }catch{}
+  if(strict){
+    const error=new Error('저장된 질문 자료가 손상되어 변경하지 않았어요. 입력 내용을 복사해 보관해주세요.');
+    error.code='corrupt_research';
+    throw error;
+  }
+  return {};
 }
 
 export function readResearchNote(symbol){
@@ -110,7 +117,7 @@ export function saveResearchNote(symbol,input,{now=new Date(),confirmed=false,op
   const persist=(confirmWrite=confirmed)=>{
     // Read after the preceding confirmed write so a save from another screen
     // cannot replace a different company's still-pending card.
-    const cards=readCards();
+    const cards=readCards({strict:true});
     const latest=readResearchNote(key);
     const checkpoints=latest?.checkpoints||[];
     // A retry or duplicate click may arrive after another question was saved.
@@ -133,7 +140,7 @@ export function saveResearchNote(symbol,input,{now=new Date(),confirmed=false,op
 export function deleteResearchNote(symbol,{confirmed=false}={}){
   const key=ticker(symbol);
   const persist=(confirmWrite=confirmed)=>{
-    const cards=readCards();
+    const cards=readCards({strict:true});
     delete cards[key];
     return writeStored(RESEARCH_KEY,JSON.stringify(cards),{confirmed:confirmWrite});
   };

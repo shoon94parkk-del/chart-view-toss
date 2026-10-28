@@ -4,10 +4,12 @@ const QUOTE_FIELDS=['price','change','dayChange','asOf','currency','source','sta
 
 const key=value=>String(value||'').trim().toUpperCase();
 
-function nonNullPatch(raw={}){
+function quotePatch(raw={}){
   const patch={};
   for(const [field,value] of Object.entries(raw||{})){
-    if(value!==null&&value!==undefined)patch[field]=value;
+    // Explicitly unavailable observations must not inherit an older quote's
+    // values. Omitted fields remain partial patches; company metadata stays.
+    if(value!==undefined&&(value!==null||QUOTE_FIELDS.includes(field)))patch[field]=value;
   }
   return patch;
 }
@@ -26,7 +28,7 @@ export function rememberLiveQuotes(rows=[],{priority=0}={}){
   for(const raw of Array.isArray(rows)?rows:[]){
     const ticker=key(raw?.ticker);
     if(!ticker)continue;
-    const incoming={...nonNullPatch(raw),ticker};
+    const incoming={...quotePatch(raw),ticker};
     const incomingMs=asOfMs(incoming.asOf);
     const current=quotes.get(ticker);
     const currentMs=asOfMs(current?.asOf);
@@ -56,7 +58,7 @@ export function mergeRowsWithLive(rows=[]){
     const live=getLiveQuote(row?.ticker);
     if(!live)return row;
     const merged={...row};
-    for(const field of QUOTE_FIELDS)if(live[field]!==null&&live[field]!==undefined)merged[field]=live[field];
+    for(const field of QUOTE_FIELDS)if(live[field]!==undefined)merged[field]=live[field];
     if(!merged.name&&live.name)merged.name=live.name;
     return merged;
   });

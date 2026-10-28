@@ -7,7 +7,7 @@ function setup({ native = true, failRead = false, manualTimers = false } = {}) {
   const disk = new Map([['chartview-toss-watchlist-v1', '[{"symbol":"NVDA"}]']]);
   const events = [];
   let identity = {type:'HASH',hash:'user-A'};
-  let writeFails = false, nextWriteFailures = 0, pendingWrite = null, pendingRemoval = null;
+  let writeFails = false, nextWriteFailures = 0, pendingWrite = null, pendingRemoval = null, failedRemovalKey = null;
   const timers = new Map();
   let timerId = 0;
   const context = vm.createContext({
@@ -21,7 +21,7 @@ function setup({ native = true, failRead = false, manualTimers = false } = {}) {
     Storage: {
       getItem: async k => { if (failRead) throw new Error('offline bridge'); return disk.get(k) ?? null; },
       setItem: async (k,v) => { if (pendingWrite) await pendingWrite; if (writeFails) throw new Error('full'); if (nextWriteFailures > 0) { nextWriteFailures--; throw new Error('full'); } disk.set(k,v); },
-      removeItem: async k => { if(pendingRemoval)await pendingRemoval; disk.delete(k); },
+      removeItem: async k => { if(pendingRemoval)await pendingRemoval; if(k===failedRemovalKey)throw new Error('remove failed'); disk.delete(k); },
     },
   });
   const source = readFileSync('src/storage.js','utf8').replace(/^import .*;\r?\n/gm,'').replaceAll('export ', '');
@@ -30,7 +30,7 @@ function setup({ native = true, failRead = false, manualTimers = false } = {}) {
     const module = readFileSync(`src/${file}.js`, 'utf8').replace(/^import .*;\r?\n/gm, '').replaceAll('export ', '');
     vm.runInContext(`{${module}\nObject.assign(this.api,{${api}});}`, context);
   }
-  return { ...context.api, disk, events, setIdentity: value => {identity=value;}, failWrites: (value=true) => {writeFails=value;}, rejectNextWrites: (count=1) => {nextWriteFailures=count;}, expireTimers: () => { const pending=[...timers.values()]; timers.clear(); pending.forEach(callback=>callback()); }, allowFollowingWrites: () => {pendingWrite=null;}, holdRemovals: () => { let release; pendingRemoval=new Promise(resolve=>{release=resolve;}); return () => {pendingRemoval=null;release();}; }, holdWrites: () => { let release; pendingWrite=new Promise(resolve=>{release=resolve;}); return () => {pendingWrite=null;release();}; } };
+  return { ...context.api, disk, events, setIdentity: value => {identity=value;}, failWrites: (value=true) => {writeFails=value;}, failRemoval: key => {failedRemovalKey=key;}, rejectNextWrites: (count=1) => {nextWriteFailures=count;}, expireTimers: () => { const pending=[...timers.values()]; timers.clear(); pending.forEach(callback=>callback()); }, allowFollowingWrites: () => {pendingWrite=null;}, holdRemovals: () => { let release; pendingRemoval=new Promise(resolve=>{release=resolve;}); return () => {pendingRemoval=null;release();}; }, holdWrites: () => { let release; pendingWrite=new Promise(resolve=>{release=resolve;}); return () => {pendingWrite=null;release();}; } };
 }
 test('native storage restores and serializes writes before clear',async()=>{
   const s=setup(); await s.initializeStorage();
@@ -92,6 +92,46 @@ test('a deferred local write context expires as soon as reset or identity reload
  s.setIdentity({type:'HASH',hash:'user-B'});await s.initializeStorage();
  assert.equal(s.isStorageContextCurrent(next),false);
  assert.equal(s.isStorageContextCurrent(s.getStorageContext()),true);
+});
+test('research opened during a native reset cannot recreate previously saved questions',async()=>{
+ const s=setup();await s.initializeStorage();
+ await s.saveResearchNote('AAPL',{question:'delete this question'},{confirmed:true});
+ const release=s.holdRemovals(),clearing=s.clearStored();
+ const duringReset=s.getStorageContext();
+ const save=s.saveResearchNote('NVDA',{question:'new question'},{confirmed:true});
+ const settled=Promise.allSettled([save]);
+ await new Promise(resolve=>setImmediate(resolve));
+ release();await clearing;
+ assert.equal((await settled)[0].status,'rejected');
+ assert.equal(s.readStored(s.RESEARCH_KEY),null);
+ assert.equal(s.disk.has(`${s.RESEARCH_KEY}:user-A`),false);
+ assert.equal(s.isStorageContextCurrent(duringReset),false,'A view opened during reset must stay invalid after it settles');
+ await s.saveResearchNote('NVDA',{question:'explicit retry after reset'},{confirmed:true});
+ assert.deepEqual(Object.keys(JSON.parse(s.disk.get(`${s.RESEARCH_KEY}:user-A`))),['NVDA']);
+});
+test('native reset rejects new raw writes and contexts until every removal settles',async()=>{
+ const s=setup();await s.initializeStorage();
+ const release=s.holdRemovals(),clearing=s.clearStored();
+ try{
+  assert.equal(s.isStorageContextCurrent(s.getStorageContext()),false);
+  assert.throws(()=>s.updateReview('AAPL',{reviewedAt:'2026-10-28'}),/not ready/);
+  assert.throws(()=>s.writeStored(s.WATCHLIST_KEY,'[]',{confirmed:true}),/not ready/);
+ }finally{release();await clearing;}
+ assert.equal(s.isStorageContextCurrent(s.getStorageContext()),true);
+ assert.equal(s.readStored(s.REVIEW_KEY),null);
+});
+test('a partially failed reset retains failed records and allows an explicit retry after settlement',async()=>{
+ const s=setup();await s.initializeStorage();
+ await s.saveResearchNote('AAPL',{question:'retained after failed removal'},{confirmed:true});
+ s.failRemoval(`${s.RESEARCH_KEY}:user-A`);
+ await assert.rejects(s.clearStored(),/remove failed/);
+ assert.equal(s.isStorageContextCurrent(s.getStorageContext()),true);
+ assert.equal(s.readStored(s.WATCHLIST_KEY),null);
+ assert.equal(s.readResearchNote('AAPL').question,'retained after failed removal');
+ await s.saveResearchNote('NVDA',{question:'retry is available'},{confirmed:true});
+ assert.equal(s.readResearchNote('NVDA').question,'retry is available');
+ s.failRemoval(null);await s.clearStored();
+ assert.equal(s.readStored(s.RESEARCH_KEY),null);
 });
 test('reviewed filings and investment conditions are isolated by native account and reset',async()=>{
  const s=setup();await s.initializeStorage();
@@ -273,12 +313,11 @@ test('a started native clear cannot delete a newer saved list after timing out',
   const clear=s.clearStored();
   await new Promise(resolve=>setTimeout(resolve,0));
   s.expireTimers();await assert.rejects(clear,/timeout/);
-  let saved=false;
-  const retry=s.writeStored(s.WATCHLIST_KEY,'[{"symbol":"AAPL"}]',{confirmed:true}).then(()=>{saved=true;});
   try {
-    await new Promise(resolve=>setTimeout(resolve,0));
-    assert.equal(saved,false,'A write must wait for every started native removal to settle');
-  } finally {release();await retry;}
+    assert.equal(s.isStorageContextCurrent(s.getStorageContext()),false);
+    assert.throws(()=>s.writeStored(s.WATCHLIST_KEY,'[{"symbol":"AAPL"}]',{confirmed:true}),/not ready/);
+  } finally {release();await s.flushWrites();}
+  await s.writeStored(s.WATCHLIST_KEY,'[{"symbol":"AAPL"}]',{confirmed:true});
   assert.equal(s.disk.get(`${s.WATCHLIST_KEY}:user-A`),'[{"symbol":"AAPL"}]');
   assert.equal(s.readStored(s.WATCHLIST_KEY),'[{"symbol":"AAPL"}]');
 });

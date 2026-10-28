@@ -1,5 +1,12 @@
 # Chart View Toss regression guardrails
 
+### 2026-10-28 — Reset, missing quotes and delayed News Back
+- Native reset blocks new writes and invalidates transaction contexts through actual native settlement, including after caller timeout. Contexts created during reset remain invalid after completion. Partial failures retain failed records and permit explicit retry after settlement.
+- Damaged personal question/review JSON or wrong root types must never be overwritten by a save/delete. Missing keys may initialize empty maps; valid legacy maps remain editable. Keep input drafts and actionable errors.
+- Explicit null observation fields clear older quote fields; omitted fields stay partial updates. Preserve structural name/marketCap, actual zero and timestamp/source priorities. Missing changes cannot become 0.00% or revive old alias fields in Home/map/list.
+- Detail quote failure with a cached CLOSE must retain dated price, visible working quote-only retry and polling. Only accepted explicit fresh CLOSE ends polling. Late responses after navigation may not update canonical memory/device snapshots or attach timers; overlapping retry clicks share one owner.
+- Delayed News Back retries restoration after real data paint. User wheel/touch/pointer/key input cancels the old target before loading completes. Terminal shorter/error/empty views clamp and consume unreachable targets; old cleanup never cancels a newer route target. Summary completion preserves the exact article's stock control focus.
+
 ### 2026-10-25 — Personal research stores and continuation
 - Keep `RESEARCH_TASKS_KEY`, `SAVED_SETS_KEY`, and `RESEARCH_EVIDENCE_KEY` registered in native hydration/account separation/reset. A queued or in-flight write must not restore data after reset/account change. Failed or corrupt stores must retain the prior data and show an actionable error.
 - Review completion must refer to the revision the user saw. A changed question or newly observed filing reopens the task; a failed refresh does not count as new evidence. Preserve unrelated open controls, date drafts and keyboard focus during concurrent saves.
