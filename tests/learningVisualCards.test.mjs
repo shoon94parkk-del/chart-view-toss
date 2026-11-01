@@ -74,7 +74,7 @@ test('visual evidence sources reuse validated HTTPS URL rules and never fabricat
   assert.doesNotMatch(html,/javascript:alert\(1\)/);
   assert.doesNotMatch(html,/token=secret/);
   const missing=visualLearningMarkup({...lesson,sources:[]});
-  assert.match(missing,/원문 링크가 등록되지 않았어요/);
+  assert.match(missing,/검증된 출처 링크가 등록되지 않았어요/);
   assert.doesNotMatch(missing,/data-learning-source/);
 });
 
