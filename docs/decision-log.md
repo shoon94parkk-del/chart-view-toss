@@ -892,3 +892,5 @@ A separate first-reload WebKit diagnostic occurred in an optional research scree
 - A formative multiple-choice check gives immediate explanation but is intentionally not counted as a server quiz/score; existing immutable scored attempts and cloud notes remain untouched.
 - Preserve authenticated learning route, study drafts, native back/account separation, official source links, and Apps in Toss release gates. Visual assets are self-authored diagrams rather than actual product photos; licensed assets and verified company-specific data are follow-ups.
 - Regression coverage: tests/learningVisualCards.test.mjs. Validate with npm test, npm run build, npm run qa:prepush, and real-device Sandbox before any Apps in Toss submission.
+
+- 2026-11-02 follow-up: the visual summary card now exposes up to three existing lesson-source HTTPS links through the established native safe-link handler; unsafe/tokenized URLs and missing sources are handled explicitly. This does **not** generate or verify new company facts and requires no new API calls. Unit tests cover source filtering and HTML escaping.
