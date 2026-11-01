@@ -18,6 +18,7 @@ const identities = {
  chart: ['compare', '기간 수익률 비교', 'compare'],
  watch: ['watch', '내 종목 관리', 'watch'],
  more: ['analysis', '목적별 분석 도구', 'analysis'],
+ learning: ['guide', '매일 25분, 기업 분석의 기록', 'guide'],
  discover: ['filter', '조건으로 종목 찾기', 'find'],
  gurus: ['guide', '투자 원칙으로 재무 조건 확인', 'find'],
  ideas: ['filter', '거래 패턴 관찰', 'find'],

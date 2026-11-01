@@ -18,6 +18,14 @@ async function holdMonitoringOnReturn(page,qa){
  await page.locator('.pick-ledger-search-options > summary').click();
  const row=rowFor(page,'삼성전자');await row.locator('[data-pick-expand]').click();
  const detail=row.locator('.pick-ledger-detail-link');await touchable(detail);
+ // Keep the clicked control usable while saving a position near the top of
+ // the viewport. Additive sections below the ledger must not make the held
+ // loading layout accidentally tall enough to satisfy the restore target.
+ await detail.evaluate(el=>{
+  const rect=el.getBoundingClientRect(),header=document.querySelector('.topbar').getBoundingClientRect(),nav=document.querySelector('.bottom-nav').getBoundingClientRect();
+  const target=Math.min(Math.max(0,header.bottom)+100,nav.top-rect.height-1);
+  window.scrollBy({top:Math.max(0,rect.top-target),behavior:'instant'});
+ });
  await page.evaluate(()=>document.addEventListener('click',event=>{if(event.target.closest('.pick-ledger-item [data-stock-detail]'))window.__pickReturnProbe=scrollY;},{capture:true,once:true}));
  returning=true;await detail.click();await expect(page.locator('#detail-name')).toHaveText('삼성전자');
  const saved=await page.evaluate(()=>window.__pickReturnProbe);

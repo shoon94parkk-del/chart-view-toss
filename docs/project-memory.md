@@ -1,5 +1,10 @@
 # Chart View Toss project memory
 
+### 2026-11-01 — 기업 공부 / Investment Learning
+- New lazy `learning` route adds daily curriculum, private notes/insights, actual quiz/review attempts, immutable histories, evidence validations, actual-data analytics and backup/manual result import. [Implementation and storage requirements](INVESTMENT_LEARNING_2026-11-01.md).
+- `learningClient` must bind rendered account/token before every private request. Cross-tab account switching cannot move a prior draft into another account. Expiry retains same-account draft; ambiguous creation replays its original receipt before revising the same ID. Keep native learning session in registered account-scoped storage/reset.
+- Existing research stays local; new cloud account/data are separate. Missing PostgreSQL is explicit, not browser fallback. Render free DB expiredOctober21; paid provisioning was not authorized. Session expiry30days is distinct from database lifetime.
+
 ### 2026-10-28 — Reliability audit
 - Native data reset now blocks mutations until all native removals actually settle, including after caller timeout. Screens opened during deletion cannot resurrect the old personal maps.
 - Corrupt question/review store roots are preserved when save/delete fails; valid legacy data and question drafts survive.

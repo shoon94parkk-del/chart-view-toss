@@ -82,6 +82,18 @@ test('browser reset removes saved sets, review completion and article evidence',
  await s.clearStored();
  for(const key of workflowKeys)assert.equal(s.readStored(key),null,key);
 });
+test('cloud learning credentials hydrate per native identity and device reset removes only the active credential',async()=>{
+ const key='chartview-toss-learning-session-v1',s=setup();await s.initializeStorage();
+ await s.writeStored(key,'{"accountId":"cloud-A","token":"session-A"}',{confirmed:true});
+ s.setIdentity({type:'HASH',hash:'user-B'});await s.initializeStorage();
+ assert.equal(s.readStored(key),null);
+ await s.writeStored(key,'{"accountId":"cloud-B","token":"session-B"}',{confirmed:true});
+ await s.clearStored();assert.equal(s.disk.has(key+':user-B'),false);
+ s.setIdentity({type:'HASH',hash:'user-A'});await s.initializeStorage();
+ assert.equal(JSON.parse(s.readStored(key)).accountId,'cloud-A');
+ await s.clearStored();assert.equal(s.readStored(key),null);
+ const web=setup({native:false});web.writeStored(key,'{"token":"web-session"}');await web.clearStored();assert.equal(web.readStored(key),null);
+});
 test('a deferred local write context expires as soon as reset or identity reload starts',async()=>{
  const s=setup();await s.initializeStorage();
  const previous=s.getStorageContext();assert.equal(s.isStorageContextCurrent(previous),true);

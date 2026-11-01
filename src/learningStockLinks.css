@@ -1,0 +1,13 @@
+.learning-stock-links{margin:16px 0;border:1px solid var(--line,#e5e8eb);border-radius:14px;background:#fff;padding:0 14px;color:var(--ink,#191f28)}
+.learning-stock-links>summary{min-height:48px;display:flex;align-items:center;cursor:pointer;font-size:14px;font-weight:700;list-style-position:inside}
+.learning-stock-links>summary:before{content:'＋';margin-right:8px;color:#1b64da}
+.learning-stock-links[open]>summary:before{content:'−'}
+.learning-stock-links [data-learning-stock-body]{padding-bottom:10px}
+.learning-stock-links p{font-size:12px;line-height:1.6;color:#4e5968}
+.learning-stock-rows{display:grid;gap:0}
+.learning-stock-rows button{width:100%;min-height:56px;display:flex;align-items:center;justify-content:space-between;gap:8px;text-align:left;background:#fff;border:0;border-top:1px solid #f2f4f6;padding:9px 0;color:#191f28}
+.learning-stock-rows button>span:first-child{min-width:0}
+.learning-stock-rows strong,.learning-stock-rows small{display:block;overflow-wrap:anywhere}
+.learning-stock-rows strong{font-size:14px}.learning-stock-rows small{font-size:12px;color:#4e5968;margin-top:4px}
+.learning-stock-links .text-button{min-height:44px;padding:8px;font-size:13px}
+.home-learning-entry{margin:12px 0}.home-learning-entry .feature-row{min-height:64px}
