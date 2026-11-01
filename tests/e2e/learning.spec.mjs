@@ -294,3 +294,22 @@ test('an uncertain committed create resolves its original receipt before an edit
   const finalSave=api.calls.filter(row=>row.path==='/sessions').at(-1).body;expect(finalSave.session.id).toBe(original.id);expect(finalSave.expectedVersion).toBe(1);expect(finalSave.requestId).not.toBe(receiptRequests[0].body.requestId);
   await noOverflow(page);
 });
+
+
+test('illustrated primer explains concepts and checks an answer without writing a scored attempt',async({page,context,qa})=>{
+  const api=await signedIn({context,qa});
+  await dashboard(page);await start(page);
+  const visual=page.locator('[data-learning-visual]');
+  await expect(visual.locator('[data-visual-card]')).toHaveCount(5);
+  await expect(visual).toContainText('먼저 그림으로 이해해요');
+  await expect(visual.locator('svg[role="img"]')).toHaveCount(1);
+  const check=visual.locator('[data-visual-correct]');
+  await check.scrollIntoViewIfNeeded();
+  await check.locator('input[value="0"]').check();
+  await expect(check.locator('[data-visual-feedback]')).toContainText('다시 생각해 보세요');
+  await check.locator('input[value="1"]').check();
+  await expect(check.locator('[data-visual-feedback]')).toContainText('정답입니다');
+  expect(api.calls.filter(call=>call.path.endsWith('/quiz')||call.path.endsWith('/reviews'))).toHaveLength(0);
+  expect(api.workspace.attempts).toHaveLength(0);
+  await noOverflow(page);
+});
