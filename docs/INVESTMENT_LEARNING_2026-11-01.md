@@ -61,4 +61,8 @@ DATABASE_URL=postgresql://USER@127.0.0.1:PORT/DISPOSABLE_DB node tests/learning_
 
 ## 게시 기록
 
-백엔드 [chart_View #169](https://github.com/shoon94parkk-del/chart_View/pull/169)는 main `61dcafd2b4a773b120244a5f86504fac206711e6`으로 통합되어 Render `dep-dbjl09qvcj2c73f3ivh0`에 배포됐다. 실제 `/health` revision 일치, 18개 기업/6주/2026-11-02 시작일, 미인증 401/no-store, 저장소 미설정·계정 생성 503, 기존 Home 요약 200을 확인했다. 별도 운영 검증 runner 후속 [#170](https://github.com/shoon94parkk-del/chart_View/pull/170), 최종 전체 프론트엔드 검사·CI·main 통합·실제 정적 자산 확인은 진행 중이다. 운영 DB 연결 전 배포 후 실제 개인 기록 보존 검사는 실행할 수 없으며, 로컬 재시작 보존 검사를 운영 검증으로 바꾸어 보고하지 않는다. Render 웹 확인과 실제 Android/iOS Toss Sandbox·공개 출시는 별도다.
+백엔드 [chart_View #169](https://github.com/shoon94parkk-del/chart_View/pull/169)와 runner 후속 [#170](https://github.com/shoon94parkk-del/chart_View/pull/170)이 통합됐다. 최종 main `c1a1fcd70fe03e525abd6100ae06af1680f69d8a`는 Render `dep-dbjl8dlg1s2s73834l1g`에 배포됐다. 실제 `/health` revision 일치, 18개 기업/6주/2026-11-02 시작일, 미인증 401/no-store, 저장소 미설정·계정 생성 503, 기존 Home 요약 200을 확인했다. main App Regression과 Production Mobile Verification도 통과했다.
+
+프론트엔드 [#151](https://github.com/shoon94parkk-del/chart-view-toss/pull/151)은 Node 929개·브라우저 1,316개와 필수 CI를 통과하고 main `8ea2f5c94918b876748dae99c40608df2161d96e`으로 통합됐다. 이후 main의 독립 배포 전 검사에서 기존 PICK 위치 복원 검사가 첫 시도 66px 오차/재시도 통과를 기록했다. fail-on-flaky 정책이 정적 사이트 승격을 차단했다. 원인은 학습 연결 영역의 동적 모듈이 PICK의 마지막 위치 복원 뒤 도착해 문서 높이를 바꾼 경합이었다. 연결 영역의 작은 표시 모듈을 동기 배치하도록 수정했으며, 인증 조회와 API는 여전히 사용자가 펼친 뒤에만 실행한다. 첫 ready 레이아웃을 감시하고 선택적 모듈 전달을 보류하는 회귀 검사가 수정 전 실패/수정 후 통과했고, 네 환경의 PICK·종목 연결·Home 지연 로딩 관련 48개가 모두 통과했다. 점수·타이밍·재시도·위치 판정 기준은 완화하지 않았다. 이 후속 변경의 전체 CI와 실제 정적 자산 게시 결과는 PR 게시 기록에서 확정한다.
+
+운영 DB 연결 전 배포 후 실제 개인 기록 보존 검사는 실행할 수 없으며, 로컬 재시작 보존 검사를 운영 검증으로 바꾸어 보고하지 않는다. Render 웹 확인과 실제 Android/iOS Toss Sandbox·공개 출시는 별도다.

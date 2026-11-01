@@ -31,3 +31,7 @@ User authorized autonomous implementation and permitted existing GitHub/Render i
 - BackendPR170merged c1a1fcd70fe03e525abd6100ae06af1680f69d8a; appcodeidenticalto61dc, automaticproductionverifier24.04pin.
 
 - Approvedaudit64201passes320/390/1440; build:ait79158exit0generatedchartview.ait (notnativepublicrelease). FinalwebbuildrestoresordinaryfixtureAPI/CDNmodeafterAIT. Required productsource is frozen; onlydocs/CI/PICKtestpreparationchangedafterfullrun.
+
+- Backend main c1a1fcd live on dep-dbjl8dlg1s2s73834l1g; final App Regression and Production Mobile Verification both pass. Production storage remains unconfigured awaiting user choice, never a browser-only substitute.
+- Front PR151 passed Node929/full browsers1316 and all required checks; merged as8ea2f5c. Main promotion run41320401636 correctly blocked on a new desktop PICK first-attempt66px restoration error (retry passed, failOnFlaky failed). No static deployment of this head occurred.
+- Followup fix/learning-pick-layout: first-ready MutationObserver regression with held optional doorway module fails deterministically against old build. Static import of the tiny pure doorway helper and synchronous bindNav mounting reserve collapsed height before terminal restore. Auth client/network stay lazy behind explicit expansion. Rebuilt Node929/build/31routes pass; all48 related PICK/stock-learning/Home-lazy cases across4browsers pass. Existing1px/cancel assertions unchanged. Remaining: independent scoped review, followup PR/full CI/main exact-SHA promotion, final live checks and DB decision.
