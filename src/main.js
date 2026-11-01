@@ -50,6 +50,7 @@ import './auditExperience.css';
 import './accessibility.css';
 import './watchlist.css';
 import './learningStockLinks.css';
+import {syncLearningStockLinks} from './learningStockLinks.js';
 import { bindHorizontalTabs } from './accessibleTabs.js';
 import { loadDetailModule } from './detailModuleRecovery.js';
 import { newsResponseState, newsResponseRows } from './newsResponse.js';
@@ -388,14 +389,13 @@ function bindNav(){
  if(['detail','watch','discover','picks','history'].includes(state.tab)){
    const epoch=viewEpoch,storageContext=getStorageContext(),surface=state.tab,root=document.querySelector('.content');
    const alive=()=>epoch===viewEpoch&&isStorageContextCurrent(storageContext)&&root?.isConnected;
-   void import('./learningStockLinks.js').then(({syncLearningStockLinks})=>{
-     if(!alive())return;
-     const dispose=syncLearningStockLinks({root,surface,symbol:state.detailSymbol,name:document.querySelector('#detail-name')?.textContent||displayName(state.detailSymbol,state.detailName),isCurrent:alive,onOpen:context=>{
-       state.learningContext=context;
-       navigate('learning',context?`company/${context.symbol}`:null);
-     }});
-     if(dispose)learningLinksCleanup=dispose;
-   }).catch(()=>{});
+   // Reserve the collapsed doorway in the same paint as stock rows. PICK's
+   // terminal Back restoration must see the final collapsed document height.
+   const dispose=syncLearningStockLinks({root,surface,symbol:state.detailSymbol,name:document.querySelector('#detail-name')?.textContent||displayName(state.detailSymbol,state.detailName),isCurrent:alive,onOpen:context=>{
+     state.learningContext=context;
+     navigate('learning',context?`company/${context.symbol}`:null);
+   }});
+   if(dispose)learningLinksCleanup=dispose;
  }
  document.querySelectorAll('.saved-research').forEach(host=>bindSavedResearchActions(host,{nameFor:symbol=>displayName(symbol),onNotice:showToast,onUpdated:bindNav}));
  document.querySelectorAll('[data-feature-route]').forEach(b=>b.onclick=()=>{

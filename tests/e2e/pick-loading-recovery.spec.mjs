@@ -4,6 +4,29 @@ import { recommendations, monitor, payloadFor } from './data.mjs';
 const monitoringPath = '/static/data/pick_monitor.json';
 const rowFor = (page, name) => page.locator('.pick-ledger-item').filter({ has: page.locator('.pick-ledger-stock strong', { hasText: name }) }).first();
 
+test('PICK ready layout includes the collapsed learning doorway before optional module delivery',async({page,qa})=>{
+ let release;
+ const gate=new Promise(resolve=>{release=resolve;});
+ await page.route(/\/assets\/learningStockLinks-[^/]+\.js(?:\?|$)/,async route=>{await gate;await route.continue();});
+ await page.addInitScript(()=>{
+  window.__pickFirstReadyLearning=null;
+  new MutationObserver(()=>{
+   if(window.__pickFirstReadyLearning!==null)return;
+   if(document.querySelector('#pick-ledger-status-strip[data-load-state="ready"]')&&document.querySelector('.pick-ledger-item')){
+    window.__pickFirstReadyLearning=Boolean(document.querySelector('[data-learning-stock-links]'));
+   }
+  }).observe(document,{subtree:true,childList:true,attributes:true,attributeFilter:['data-load-state']});
+ });
+ try{
+  await page.goto('/#picks');
+  await expect(page.locator('#pick-ledger-status-strip')).toHaveAttribute('data-load-state','ready');
+  await expect.poll(()=>page.evaluate(()=>window.__pickFirstReadyLearning)).not.toBeNull();
+  expect(await page.evaluate(()=>window.__pickFirstReadyLearning)).toBe(true);
+  await expect(page.locator('[data-learning-stock-links]')).not.toHaveAttribute('open','');
+  expect(qa.calls.filter(row=>row.path.startsWith('/api/learning/'))).toEqual([]);
+ }finally{release();}
+});
+
 async function holdMonitoringOnReturn(page,qa){
  let returning=false,release,requested;
  const gate=new Promise(resolve=>{release=resolve;});
