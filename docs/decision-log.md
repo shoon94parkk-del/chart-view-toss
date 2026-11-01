@@ -894,3 +894,9 @@ A separate first-reload WebKit diagnostic occurred in an optional research scree
 - Regression coverage: tests/learningVisualCards.test.mjs. Validate with npm test, npm run build, npm run qa:prepush, and real-device Sandbox before any Apps in Toss submission.
 
 - 2026-11-02 follow-up: the visual summary card now exposes up to three existing lesson-source HTTPS links through the established native safe-link handler; unsafe/tokenized URLs and missing sources are handled explicitly. This does **not** generate or verify new company facts and requires no new API calls. Unit tests cover source filtering and HTML escaping.
+
+## 2026-11-02 — Card-first lesson rather than introductory cards
+- Product correction: previous five illustrated cards were only an introductory strip, not the agreed card-based whole lesson. Convert every available curriculum lesson section into a distinct swipe card with a deterministic causal diagram, concise excerpt, and reflection prompts. Core product/flow/profit, economy, safe citations, and formative check remain cards; total changes by curriculum and is displayed in navigation.
+- The full source lesson remains available under an explicitly optional disclosure, never dropped or rewritten. Official server-scored quiz question fieldsets receive separate visual-card surfaces, preserving all identifiers/inputs/rubrics and server validation.
+- Source facts must remain from existing curriculum and citations; generic industry diagrams are labeled as illustrative. Neither real product photos nor per-company verified financial charts, data ingestion, or diagnostic review scheduling are implemented by this change.
+- Preserve account storage, formal quiz scores, editor persistence and existing releases. Update unit/E2E assertions for variable card count and prevent a five-card navigation cap.
