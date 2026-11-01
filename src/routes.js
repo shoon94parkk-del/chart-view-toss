@@ -1,6 +1,6 @@
 import { SHOW_SPOTLIGHT } from './releaseScope.js';
 
-const routes = new Set(['home','chart','watch','valuation','macro','pension','exports','memory','discover','gurus','ideas','history','debates','news','investment-news','detail','info','more','heatmap','consensus','bands','tools','notfound']);
+const routes = new Set(['home','chart','watch','valuation','macro','pension','exports','memory','discover','gurus','ideas','history','debates','news','investment-news','detail','info','more','heatmap','consensus','bands','tools','notfound','learning']);
 if (SHOW_SPOTLIGHT) routes.add('picks');
 const aliases = {favorites:'watch',chartviewHome:'chart',search:'chart',compare:'chart',stock:'detail'};
 export function resolveRoute({pathname='/',hash=''}) {
@@ -11,6 +11,12 @@ export function resolveRoute({pathname='/',hash=''}) {
   if (!hash && parts[0]==='chartview') parts.shift();
   const tab=aliases[parts[0]] || parts[0] || 'home';
   if(!routes.has(tab)) return {tab:'notfound',detailSymbol:null};
+  if(tab==='learning'){
+    if(parts.length===1)return {tab,detailSymbol:null,learningRoute:{kind:'dashboard',id:null}};
+    const [kind,id]=parts.slice(1);
+    const valid=parts.length===3&&(kind==='company'?/^[A-Z0-9][A-Z0-9.\-]{0,29}$/.test(id||''):kind==='session'&&/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id||''));
+    return valid?{tab,detailSymbol:null,learningRoute:{kind,id}}:{tab:'notfound',detailSymbol:null};
+  }
   if(tab==='gurus'){const strategy=parts[1]||'buffett';return ['buffett','lynch','oneil','minervini','greenblatt'].includes(strategy)?{tab,detailSymbol:null,guruStrategy:strategy}:{tab:'notfound',detailSymbol:null};}
   if(tab==='detail') {
     const symbol=(parts[1]||'').toUpperCase();

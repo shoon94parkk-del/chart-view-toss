@@ -49,6 +49,7 @@ import {rangeError,requestedRangeNote,financialNavigationHtml} from './auditExpe
 import './auditExperience.css';
 import './accessibility.css';
 import './watchlist.css';
+import './learningStockLinks.css';
 import { bindHorizontalTabs } from './accessibleTabs.js';
 import { loadDetailModule } from './detailModuleRecovery.js';
 import { newsResponseState, newsResponseRows } from './newsResponse.js';
@@ -116,6 +117,7 @@ let viewEpoch=0;
 let detailJumpCleanup=null;
 const detailModuleCleanups=new Set();
 let analysisCleanup=null;
+let learningLinksCleanup=null;
 let macroCleanup=null;
 let newsReaderCleanup=null;
 let newsEvidenceEditorCleanup=null;
@@ -288,7 +290,7 @@ function dataDisclosure(){
 function shell(content,title='차트뷰'){
  document.title=title==='차트뷰'?'차트뷰':`${title} | 차트뷰`;
  const identity=surfaceIdentity(state.tab);
- const secondary=ANALYSIS_ROUTES.has(state.tab)||['valuation','macro','pension','exports','memory','discover','ideas','picks','history','debates','debates','news','investment-news','detail','info'].includes(state.tab);
+ const secondary=ANALYSIS_ROUTES.has(state.tab)||['valuation','macro','pension','exports','memory','discover','ideas','picks','history','debates','debates','news','investment-news','detail','info','learning'].includes(state.tab);
  const navTab=state.tab==='detail'?state.detailOrigin:(secondary?'more':state.tab);
  const leading=secondary?`<button class="icon-button back-button" aria-label="뒤로가기" data-back>${iconSvg('back',22)}</button>`:`<span class="brand-mark">${(state.tab==='home'?iconSvg('spark',18):uiIcon(identity.icon,18))}</span>`;
  const offline=typeof navigator!=='undefined'&&navigator.onLine===false;
@@ -331,8 +333,8 @@ function esc(v=''){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt
 
 function navigate(tab,detailSymbol=null,detailName='',investigation=null){
  if(tab==='picks'&&!SHOW_SPOTLIGHT)tab='home';
- const hash=detailSymbol?`#${tab}/${tab==='exports'?String(detailSymbol).split('/').map(encodeURIComponent).join('/'):encodeURIComponent(detailSymbol)}`:`#${tab}`;
- const featureTab=['discover','picks','exports','memory','gurus'].includes(tab);
+ const hash=detailSymbol?`#${tab}/${['exports','learning'].includes(tab)?String(detailSymbol).split('/').map(encodeURIComponent).join('/'):encodeURIComponent(detailSymbol)}`:`#${tab}`;
+ const featureTab=['discover','picks','exports','memory','gurus'].includes(tab)||tab==='learning';
  if(tab===state.tab&&(!featureTab||location.hash===hash)&&(tab==='detail'?(!detailSymbol||detailSymbol===state.detailSymbol):tab==='news'?(detailSymbol||null)===state.newsSymbol:true)){
    if(detailSymbol&&detailName)state.detailName=detailName;
    window.scrollTo(0,0);
@@ -369,6 +371,32 @@ window.__chartviewRestoreScroll=({top,cancel=false,clamp=false}={})=>{
  });
 };
 function bindNav(){
+ const learningNavigationHost=document.querySelector('.content');
+ if(learningNavigationHost&&!learningNavigationHost.dataset.learningNavigationBound){
+   learningNavigationHost.dataset.learningNavigationBound='true';
+   learningNavigationHost.addEventListener('click',event=>{
+     if(event.defaultPrevented||event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;
+     const link=event.target.closest('a[href^="#learning"]');
+     if(!link||!learningNavigationHost.contains(link))return;
+     const route=resolveRoute({hash:link.getAttribute('href')});
+     if(route.tab!=='learning')return;
+     event.preventDefault();
+     const target=route.learningRoute.kind==='dashboard'?null:`${route.learningRoute.kind}/${route.learningRoute.id}`;
+     navigate('learning',target);
+   });
+ }
+ if(['detail','watch','discover','picks','history'].includes(state.tab)){
+   const epoch=viewEpoch,storageContext=getStorageContext(),surface=state.tab,root=document.querySelector('.content');
+   const alive=()=>epoch===viewEpoch&&isStorageContextCurrent(storageContext)&&root?.isConnected;
+   void import('./learningStockLinks.js').then(({syncLearningStockLinks})=>{
+     if(!alive())return;
+     const dispose=syncLearningStockLinks({root,surface,symbol:state.detailSymbol,name:document.querySelector('#detail-name')?.textContent||displayName(state.detailSymbol,state.detailName),isCurrent:alive,onOpen:context=>{
+       state.learningContext=context;
+       navigate('learning',context?`company/${context.symbol}`:null);
+     }});
+     if(dispose)learningLinksCleanup=dispose;
+   }).catch(()=>{});
+ }
  document.querySelectorAll('.saved-research').forEach(host=>bindSavedResearchActions(host,{nameFor:symbol=>displayName(symbol),onNotice:showToast,onUpdated:bindNav}));
  document.querySelectorAll('[data-feature-route]').forEach(b=>b.onclick=()=>{
    if(b.dataset.featureRoute==='discover')state.screener.appliedRoutePreset=null;
@@ -420,7 +448,7 @@ function openHomeSearch(){
    restoreBack:restoreNativeBack,
  });
 }
-function cleanupChart(){for(const cleanup of detailModuleCleanups)cleanup();detailModuleCleanups.clear();detailJumpCleanup?.();detailJumpCleanup=null;analysisCleanup?.();analysisCleanup=null;macroCleanup?.();macroCleanup=null;newsReaderCleanup?.();newsReaderCleanup=null;newsEvidenceEditorCleanup?.();newsEvidenceEditorCleanup=null;detailEvidenceState?.controller?.();detailEvidenceState=null;viewEpoch++;chartLoadSeq++;chartResizeObserver?.disconnect();chartResizeObserver=null;if(detailLiveTimer){clearTimeout(detailLiveTimer);detailLiveTimer=null;}if(chartInstance){try{chartInstance.remove()}catch{}chartInstance=null}}
+function cleanupChart(){learningLinksCleanup?.();learningLinksCleanup=null;for(const cleanup of detailModuleCleanups)cleanup();detailModuleCleanups.clear();detailJumpCleanup?.();detailJumpCleanup=null;analysisCleanup?.();analysisCleanup=null;macroCleanup?.();macroCleanup=null;newsReaderCleanup?.();newsReaderCleanup=null;newsEvidenceEditorCleanup?.();newsEvidenceEditorCleanup=null;detailEvidenceState?.controller?.();detailEvidenceState=null;viewEpoch++;chartLoadSeq++;chartResizeObserver?.disconnect();chartResizeObserver=null;if(detailLiveTimer){clearTimeout(detailLiveTimer);detailLiveTimer=null;}if(chartInstance){try{chartInstance.remove()}catch{}chartInstance=null}}
 
 function previousFromPct(price,changePct){
  const p=finiteNumber(price),c=finiteNumber(changePct);
@@ -666,6 +694,7 @@ async function renderHome(){
    <section class="market-section home-primary"><div class="section-head market-head"><h2><i class="section-symbol" aria-hidden="true">${uiIcon('market',16)}</i>주요 시장</h2><div class="market-head-actions"><span id="market-time">기준 시각 확인 중</span><button type="button" id="market-expand" class="market-expand" aria-expanded="false" hidden>지표 더 보기 <span>⌄</span></button></div></div><div id="market-card">${loadingIndicator('주요 시장을 확인하고 있어요')}<div class="market-grid"><div class="skeleton quote"></div><div class="skeleton quote"></div><div class="skeleton quote"></div><div class="skeleton quote"></div></div></div></section>
    <div class="home-analysis-heading"><h2><i class="section-symbol" aria-hidden="true">${uiIcon('analysis',16)}</i>근거를 찾는 분석</h2><span>목적에 맞게 바로 열어요</span></div>
    ${valueEntriesMarkup(SHOW_SPOTLIGHT)}
+   <section class="home-learning-entry"><button type="button" class="feature-row" data-tab="learning"><span class="feature-icon blue">${uiIcon('guide',22)}</span><span><strong>기업 공부</strong><small>매일 25분 · 지식과 투자 판단 쌓기</small></span><b>${iconSvg('arrow',18)}</b></button></section>
    <div id="home-discovery-feed"></div>
    ${hasWatch?'':watchSection}
    ${savedResearchHtml(symbol=>displayName(symbol),{compact:true})}
@@ -1920,6 +1949,7 @@ function renderInfo(){
    <div class="policy-links"><button data-external-url="${esc(PUBLIC_SITE_BASE+'/privacy.html')}"><span>개인정보 처리 안내</span>${iconSvg('arrow',18)}</button><button data-external-url="${esc(PUBLIC_SITE_BASE+'/terms.html')}"><span>서비스 이용 안내</span>${iconSvg('arrow',18)}</button><button data-external-url="${esc(PUBLIC_SITE_BASE+'/data-guide.html')}"><span>데이터 기준 전체 보기</span>${iconSvg('arrow',18)}</button></div>
    <div class="analysis-card"><strong>고객문의 · 박상훈</strong><p>kimtang89@naver.com</p></div>
    <section class="local-data-card"><div><strong>기기 저장 데이터</strong><p>관심종목, 비교 종목, 조사 카드, 재점검 기록, 저장 세트와 뉴스 근거는 현재 이 기기에 저장돼요. 토스 익명 식별키로 사용자별 목록을 구분하며, 초기화하면 현재 사용자의 저장 데이터와 이용 기록을 삭제합니다.</p></div><button id="clear-local-data" type="button">기기 데이터 초기화</button></section>
+   <section class="analysis-card"><strong>기업 공부 · 서버에 쌓이는 학습 기록</strong><p>기업 공부에서 직접 저장한 학습·퀴즈·투자 인사이트와 수정 이력은 별도 학습 계정의 서버 저장소에 보관해요. 복구키로 다른 기기에서 이어갈 수 있어요. 기존 조사 카드는 자동 업로드하지 않아요.</p><p>기기 초기화는 학습 로그인만 지우며 서버 기록은 남아요. JSON 백업과 서버 학습 계정 삭제는 기업 공부 설정에서 할 수 있어요. 복구키를 잃으면 이메일로 복구할 수 없으니 안전하게 보관해주세요.</p><button type="button" class="text-button" data-tab="learning">기업 공부 열기</button></section>
  `,'데이터 안내');
  bindNav();
  const clearButton=document.querySelector('#clear-local-data');
@@ -1938,7 +1968,7 @@ function renderInfo(){
      resetHomeJourneySession();
      homeJourneyStorageReady=true;
      clearDiagnostics();
-     state.watchlist=[];researchDrafts.clear();newsReaderPreferences.clear();state.screener={filters:{},count:30,activePreset:''};state.researchPeer=null;state.watchSort='manual';
+     state.watchlist=[];researchDrafts.clear();newsReaderPreferences.clear();state.screener={filters:{},count:30,activePreset:''};state.researchPeer=null;state.watchSort='manual';state.learningUI=null;state.learningContext=null;
      state.selected=DEFAULTS.map(x=>x.symbol);
      if(['chart','valuation'].includes(state.tab))refreshListSurface('selected');
      else refreshListSurface('watchlist');
@@ -1975,6 +2005,7 @@ function renderMore(){
    <nav class="analysis-category-nav" aria-label="분석 목적 바로가기"><a href="#analysis-find" data-menu-jump="analysis-find">${uiIcon('filter',15)}종목 찾기</a><a href="#analysis-records" data-menu-jump="analysis-records">${uiIcon('ledger',15)}선정 기록</a><a href="#analysis-compare" data-menu-jump="analysis-compare">${uiIcon('compare',15)}종목 비교</a><a href="#analysis-evidence" data-menu-jump="analysis-evidence">${uiIcon('evidence',15)}시장 근거</a></nav>
    <details class="calculation-guide tab-usage-guide"><summary>각 탭에서는 무엇을 볼 수 있나요?</summary><dl><div><dt>홈</dt><dd>주요 시장과 내 관심종목, 분석 요약</dd></div><div><dt>수익률</dt><dd>최대 6개 종목의 기간 수익률 비교</dd></div><div><dt>관심</dt><dd>기기에 저장한 내 종목 관리</dd></div><div><dt>분석</dt><dd>조건 검색, 선정 기록, 재무·수출·경제 데이터</dd></div></dl></details>
    <section class="menu-group" id="analysis-find"><h3><i class="section-symbol" aria-hidden="true">${uiIcon('filter',18)}</i>종목 찾기</h3><div class="feature-menu">
+     <button class="feature-row" data-tab="learning" data-tool-tone="guide"><span class="feature-icon blue">${uiIcon('guide',22)}</span><span><strong>기업 공부</strong><small>25분 학습 · 퀴즈 · 투자 인사이트와 복습</small></span><b>${iconSvg('arrow',19)}</b></button>
      <button class="feature-row" data-tab="discover" data-tool-tone="${surfaceIdentity('discover').tone}"><span class="feature-icon yellow">${iconSvg('discover',22)}</span><span><strong>${featureLabel('discover')}</strong><small>조건으로 종목 찾기</small></span><b>${iconSvg('arrow',19)}</b></button>
      <button class="feature-row" data-tab="gurus" data-tool-tone="${surfaceIdentity('gurus').tone}"><span class="feature-icon blue">${uiIcon('guide',22)}</span><span><strong>거장 투자법</strong><small>5가지 원칙으로 수익성·성장·추세 확인</small></span><b>${iconSvg('arrow',19)}</b></button>
      <button class="feature-row" data-tab="ideas" data-tool-tone="${surfaceIdentity('ideas').tone}"><span class="feature-icon yellow">${iconSvg('ideas',22)}</span><span><strong>투자 아이디어 LAB</strong><small>관찰 패턴과 다음 확인 질문 보기</small></span><b>${iconSvg('arrow',19)}</b></button>
@@ -2086,6 +2117,10 @@ function render(){
  if(state.tab==='watch')return renderWatch();
  if(state.tab==='valuation')return renderValuation();
  if(state.tab==='macro')return renderMacro();
+ if(state.tab==='learning')return renderLazyAnalysis({tab:'learning',title:'기업 공부',load:()=>Promise.all([import('./learningView.js'),import('./learningView.css')]),mount:([view])=>{
+   const epoch=viewEpoch,storageContext=getStorageContext();
+   return view.renderLearning({state,shell,bindNav,isCurrent:()=>state.tab==='learning'&&epoch===viewEpoch&&isStorageContextCurrent(storageContext),openStockSelector:options=>openStockSelector({...options,favorites:state.watchlist,restoreBack:restoreNativeBack})});
+ }});
  if(state.tab==='pension')return renderLazyAnalysis({tab:'pension',title:'국민연금',load:()=>Promise.all([import('./npsAllocationView.js'),import('./npsAllocationView.css')]),mount:([view])=>{const epoch=viewEpoch;return view.renderNpsAllocation({state,shell,bindNav,isCurrent:()=>state.tab==='pension'&&epoch===viewEpoch});}});
  if(state.tab==='exports'){
    renderLazyAnalysis({tab:'exports',title:'수출 데이터',load:()=>Promise.all([import('./exportMomentumView.js'),import('./exportMomentum.css')]),mount:([exportsView])=>{
