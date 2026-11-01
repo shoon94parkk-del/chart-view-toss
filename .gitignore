@@ -9,3 +9,4 @@ output/playwright/
 
 playwright-report/
 test-results/
+.neon
