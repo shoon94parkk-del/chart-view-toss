@@ -1,5 +1,6 @@
 // Deterministic educational cards; never infer company-specific financial values.
 // Formal lesson, official sources, account storage and scored quizzes are unchanged.
+import {safeLearningUrl} from './learningModel.js';
 const esc = value => String(value ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const arr = value => Array.isArray(value) ? value : [];
 const PACKS = {
@@ -44,13 +45,15 @@ export function visualLearningMarkup(lesson={}) {
   const flow=t.flow.map((n,i)=>'<div class="learning-visual-node"><span>0'+(i+1)+'</span><strong>'+esc(n)+'</strong></div>'+(i<2?'<span aria-hidden="true" class="learning-visual-arrow">↓</span>':'')).join('');
   const effects=t.effects.map(x=>'<p>• '+esc(x)+'</p>').join('');
   const answers=t.options.map((o,i)=>'<label><input type="radio" name="visual-learning-check" value="'+i+'"><span>'+esc(o)+'</span></label>').join('');
+  const references=arr(lesson.sources).filter(x=>x&&typeof x==='object').map(x=>({url:safeLearningUrl(x.url),title:String(x.title||'공식 자료')})).filter(x=>x.url).slice(0,3);
+  const evidence=references.length?'<div class="learning-visual-sources"><strong>수업에 연결된 원문 자료</strong>'+references.map(x=>'<button type="button" data-learning-source data-external-url="'+esc(x.url)+'">'+esc(x.title)+' ↗</button>').join('')+'</div>':'<p class="learning-visual-note">이 수업에는 아직 원문 링크가 등록되지 않았어요.</p>';
   return '<section class="learning-visual" data-learning-visual aria-label="그림으로 이해하는 기업">'
     +'<div class="learning-visual-heading"><span>VISUAL LEARNING · LLM 호출 0회</span><h3>먼저 그림으로 이해해요</h3><p>'+esc(t.company)+' · '+esc(t.industry)+' · 5장의 개념 카드</p></div>'
     +'<div class="learning-visual-track" data-learning-visual-track tabindex="0" aria-label="좌우로 넘기는 다섯 장의 학습 카드">'
     +card(1,'무엇을 만드는 산업인가?','<div class="learning-visual-art">'+picture(t.kind)+'</div><span class="learning-visual-chip">'+esc(t.label)+'</span><h4>'+esc(t.product)+'</h4><p>이 기업의 실제 제품, 고객, 매출 비중을 공시에서 직접 확인해 보세요.</p><p class="learning-visual-note">직접 제작한 산업 개념도로 실제 기업 제품 사진이 아닙니다.</p>')
     +card(2,'돈이 흘러가는 구조','<div class="learning-visual-flow">'+flow+'</div><p class="learning-visual-note">산업의 일반적인 예시입니다. 실제 공급망·거래처는 공시로 확인해야 합니다.</p>')
     +card(3,'매출과 이익은 다릅니다','<div class="learning-visual-equation"><div><small>매출</small><strong>판매량 × 판매단가</strong></div><span>−</span><div><small>영업비용</small><strong>매출원가 + 판매관리비</strong></div><span>=</span><div><small>영업이익</small><strong>매출 − 영업비용</strong></div></div><p>매출이 늘어도 비용이 더 빠르게 늘면 영업이익은 줄어들 수 있어요.</p>')
-    +card(4,'이번 수업의 핵심','<ol class="learning-visual-topics">'+topicHtml+'</ol><div class="learning-visual-effects"><strong>'+esc(t.factor)+' 변화 시</strong>'+effects+'</div><p class="learning-visual-note">확인된 사실과 경제적 가설을 구분하세요.</p>')
+    +card(4,'이번 수업의 핵심','<ol class="learning-visual-topics">'+topicHtml+'</ol><div class="learning-visual-effects"><strong>'+esc(t.factor)+' 변화 시</strong>'+effects+'</div>'+evidence+'<p class="learning-visual-note">산업 일반론이며 기업별 실제 수치와 확정된 원인으로 해석하면 안 됩니다.</p>')
     +card(5,'내가 이해했는지 확인','<fieldset class="learning-visual-check" data-visual-correct="'+t.answer+'"><legend>'+esc(t.question)+'</legend>'+answers+'<p class="learning-visual-feedback" data-visual-feedback role="status" aria-live="polite" hidden></p><p class="learning-visual-explanation" data-visual-explanation hidden>'+esc(t.why)+'</p></fieldset><p class="learning-visual-note">연습용 문제로 점수가 저장되지 않습니다. 정식 퀴즈는 아래에서 별도 제출하세요.</p>')
     +'</div><nav class="learning-visual-controls" aria-label="학습 카드 이동"><button type="button" data-visual-step="-1" aria-label="이전 학습 카드">‹ 이전</button><span>좌우로 넘겨 보기</span><button type="button" data-visual-step="1" aria-label="다음 학습 카드">다음 ›</button></nav></section>';
 }
