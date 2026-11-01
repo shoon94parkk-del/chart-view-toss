@@ -1,6 +1,5 @@
 import {learningRequest,getLearningSession,setLearningSession,authenticateLearning,logoutLearning,clearLearningSession,getLearningStorageContext} from './learningClient.js';
 import {visualLearningMarkup,bindVisualLearningInteractions} from './learningVisualCards.js';
-import './learningVisualCards.css';
 import {NOTE_FIELDS,INSIGHT_FIELDS,STATUS_LABELS,kstDate,learningStatus,learningDashboard,selectLearningRoute,makeLearningDraft,validateLearningDraft,previewLearningImport,compareLearningRevision,safeLearningUrl,safeLearningContext,validateLearningCurriculum,LEARNING_IMPORT_MAX_BYTES,learningEditorKey,rememberLearningEditor,restoreLearningEditor,learningMutationDecision} from './learningModel.js';
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const list=value=>Array.isArray(value)?value:[];
