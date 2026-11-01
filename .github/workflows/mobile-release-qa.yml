@@ -43,9 +43,6 @@ jobs:
       - name: Verify core value entries and exact selection records
         if: ${{ !cancelled() && steps.start-preview.outcome == 'success' }}
         run: node tests/value_discovery_qa.mjs
-      - name: Verify market-first Home, selection results and purpose navigation
-        if: ${{ !cancelled() && steps.start-preview.outcome == 'success' }}
-        run: node tests/home_journey_qa.mjs
       - name: Verify full sector exploration and refresh failure retention
         if: ${{ !cancelled() && steps.start-preview.outcome == 'success' }}
         run: node tests/sector_heatmap_qa.mjs
@@ -55,6 +52,11 @@ jobs:
       - name: Build with production request timeout
         if: ${{ !cancelled() && steps.start-preview.outcome == 'success' }}
         run: npm run build
+      # Keep the special 300ms build for fail-fast mobile checks; verify Home
+      # layout and data ordering with the actual production request budget.
+      - name: Verify market-first Home, selection results and purpose navigation
+        if: ${{ !cancelled() && steps.start-preview.outcome == 'success' }}
+        run: node tests/home_journey_qa.mjs
       - name: Verify progressive rendering and navigation races
         if: ${{ !cancelled() && steps.start-preview.outcome == 'success' }}
         run: node tests/progressive_qa.mjs

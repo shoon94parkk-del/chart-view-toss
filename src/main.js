@@ -361,14 +361,20 @@ function navigate(tab,detailSymbol=null,detailName='',investigation=null){
 }
 window.__chartviewNavigate=(tab,detailSymbol=null,detailName='')=>navigate(tab,detailSymbol,detailName);
 window.__chartviewInvestigate=(symbol,name,context)=>navigate('detail',symbol,name,context);
+let scrollRestoreGeneration=0;
 window.__chartviewRestoreScroll=({top,cancel=false,clamp=false}={})=>{
- if(cancel){state.restoreScroll=null;return;}
- if(Number.isFinite(top))state.restoreScroll=Math.max(0,top);
- const epoch=viewEpoch;
+ if(cancel){scrollRestoreGeneration++;state.restoreScroll=null;return;}
+ if(Number.isFinite(top)){scrollRestoreGeneration++;state.restoreScroll=Math.max(0,top);}
+ const epoch=viewEpoch,generation=scrollRestoreGeneration;
+ // A terminal layout consumes its intent before another render can inherit
+ // it. Later content growth must not change this already decided clamp.
+ const terminalY=clamp&&state.restoreScroll!=null?Math.min(state.restoreScroll,Math.max(0,document.documentElement.scrollHeight-innerHeight)):null;
+ if(clamp)state.restoreScroll=null;
  return requestAnimationFrame(()=>{
-   if(epoch!==viewEpoch)return;
+   if(epoch!==viewEpoch||generation!==scrollRestoreGeneration)return;
+   if(clamp){if(terminalY!==null)window.scrollTo({top:terminalY,behavior:'instant'});return;}
    const y=state.restoreScroll;if(y==null)return;
-   if(clamp||document.documentElement.scrollHeight>=y+innerHeight){window.scrollTo({top:y,behavior:'instant'});state.restoreScroll=null;}
+   if(document.documentElement.scrollHeight>=y+innerHeight){window.scrollTo({top:y,behavior:'instant'});state.restoreScroll=null;}
  });
 };
 function bindNav(){
