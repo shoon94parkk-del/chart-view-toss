@@ -2123,7 +2123,7 @@ function render(){
  if(state.tab==='watch')return renderWatch();
  if(state.tab==='valuation')return renderValuation();
  if(state.tab==='macro')return renderMacro();
- if(state.tab==='learning')return renderLazyAnalysis({tab:'learning',title:'기업 공부',load:()=>Promise.all([import('./learningView.js'),import('./learningView.css')]),mount:([view])=>{
+ if(state.tab==='learning')return renderLazyAnalysis({tab:'learning',title:'기업 공부',load:()=>Promise.all([import('./learningView.js'),import('./learningView.css'),import('./learningVisualCards.css')]),mount:([view])=>{
    const epoch=viewEpoch,storageContext=getStorageContext();
    return view.renderLearning({state,shell,bindNav,isCurrent:()=>state.tab==='learning'&&epoch===viewEpoch&&isStorageContextCurrent(storageContext),openStockSelector:options=>openStockSelector({...options,favorites:state.watchlist,restoreBack:restoreNativeBack})});
  }});
