@@ -145,3 +145,5 @@ npm run qa:prepush
 ## 기업 공부
 
 홈·분석의 기업 공부에서 매일25분 커리큘럼, 날짜별 노트·투자 인사이트, 퀴즈·복습과 과거 가정 검증을 사용할 수 있습니다. 별도 학습 계정과 운영 PostgreSQL이 필요합니다. ChatGPT 결과는 직접 확인한 JSON으로 가져오며 대화/예약 작업을 자동 조회하지 않습니다. [구현·사용·저장·검증 안내](docs/INVESTMENT_LEARNING_2026-11-01.md).
+
+운영 학습 저장소는 Neon의 무료 PostgreSQL을 사용하고, 화면과 공유 API는 기존 Render에서 운영합니다. DB 접속정보는 백엔드의 `LEARNING_DATABASE_URL`에만 연결합니다. [Neon 설정·인증·운영 검증](docs/NEON_SETUP.md).

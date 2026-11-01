@@ -156,3 +156,47 @@ test('peek never subscribes to pending work or creates a success from an incompl
  let release,calls=0;const request=createRequestClient({base:'https://data.example',fetchImpl:async()=>{calls++;return new Promise(r=>release=()=>r(Response.json({complete:false})));}});
  const pending=request('/news',{ttlMs:60,cacheIf:value=>value.complete});try{assert.equal(request.peek('/news',{ttlMs:60}),undefined);assert.equal(calls,1);}finally{release();await pending;}assert.equal(request.peek('/news',{ttlMs:60}),undefined);
 });
+
+test('document closing prevents a 503 retry and leaves the failed request uncached',async()=>{
+ let closing=false,calls=0,release;
+ const request=createRequestClient({base:'https://data.example',isDocumentClosing:()=>closing,fetchImpl:async()=>{
+  calls++;return calls===1?new Promise(resolve=>{release=()=>resolve(new Response('',{status:503}));}):Response.json({value:0});
+ }});
+ const pending=request('/prices',{ttlMs:1000,retries:1});closing=true;release();
+ await assert.rejects(pending,error=>error.name==='AbortError');assert.equal(calls,1);
+ assert.equal(request.peek('/prices',{ttlMs:1000}),undefined);
+ closing=false;assert.deepEqual(await request('/prices',{ttlMs:1000,retries:0}),{value:0});assert.equal(calls,2);
+});
+
+test('document closing blocks new transports and network retries without affecting caller cancellation',async()=>{
+ let closing=true,calls=0;
+ const request=createRequestClient({base:'https://data.example',isDocumentClosing:()=>closing,fetchImpl:async()=>{calls++;closing=true;throw new TypeError('connection closed');}});
+ await assert.rejects(request('/prices'),error=>error.name==='AbortError');
+ await assert.rejects(request('/notes',{method:'POST'}),error=>error.name==='AbortError');assert.equal(calls,0);
+ closing=false;await assert.rejects(request('/prices',{retries:1}),error=>error.name==='AbortError');assert.equal(calls,1);
+ const controller=new AbortController();controller.abort();closing=false;
+ await assert.rejects(request('/prices',{signal:controller.signal}),error=>error.name==='AbortError');assert.equal(calls,1);
+});
+
+test('a closing document preserves existing shared work and settled success cache',async()=>{
+ let closing=false,calls=0,release;
+ const request=createRequestClient({base:'https://data.example',isDocumentClosing:()=>closing,fetchImpl:async()=>{calls++;return new Promise(resolve=>{release=()=>resolve(Response.json({value:0}));});}});
+ const first=request('/prices',{ttlMs:1000});closing=true;
+ const shared=request('/prices',{ttlMs:1000});release();
+ assert.deepEqual(await Promise.all([first,shared]),[{value:0},{value:0}]);
+ assert.deepEqual(await request('/prices',{ttlMs:1000}),{value:0});assert.equal(calls,1);
+});
+
+test('default document lifecycle blocks after pagehide and resumes on persisted pageshow',async()=>{
+ const previousWindow=globalThis.window,lifecycle=new EventTarget();globalThis.window=lifecycle;
+ try{
+  const {createRequestClient:browserClient}=await import('../src/requestClient.js?document-lifecycle-regression');
+  let calls=0;const request=browserClient({base:'https://data.example',fetchImpl:async()=>{calls++;return Response.json({value:0});}});
+  const hidden=new Event('pagehide');Object.defineProperty(hidden,'persisted',{value:true});lifecycle.dispatchEvent(hidden);
+  await assert.rejects(request('/prices'),error=>error.name==='AbortError');assert.equal(calls,0);
+  const shown=new Event('pageshow');Object.defineProperty(shown,'persisted',{value:true});lifecycle.dispatchEvent(shown);
+  assert.deepEqual(await request('/prices'),{value:0});assert.equal(calls,1);
+ }finally{
+  if(previousWindow===undefined)delete globalThis.window;else globalThis.window=previousWindow;
+ }
+});

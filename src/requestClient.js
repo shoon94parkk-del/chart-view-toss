@@ -1,6 +1,11 @@
 export class ApiError extends Error {
  constructor(message,{code='unknown',status=null,cause=null}={}){super(message,{cause});this.name='ApiError';this.code=code;this.status=status;}
 }
+let documentClosing=false;
+if(typeof window!=='undefined'){
+ window.addEventListener('pagehide',()=>{documentClosing=true;});
+ window.addEventListener('pageshow',()=>{documentClosing=false;});
+}
 const copy=value=>structuredClone(value);
 const adoptedError=error=>{
  if(error instanceof ApiError)return error;
@@ -9,7 +14,7 @@ const adoptedError=error=>{
  const message=code==='timeout'?'데이터 연결이 지연되고 있어요. 다시 시도해주세요.':code==='invalid_json'?'데이터 형식을 확인하지 못했어요.':code==='rate_limited'?'요청이 많아요. 잠시 후 다시 시도해주세요.':code==='http'?(status>=500?'데이터 서버 연결이 불안정해요. 잠시 후 다시 시도해주세요.':`데이터 요청을 완료하지 못했어요. (${status})`):'데이터를 불러오지 못했어요. 다시 시도해주세요.';
  return new ApiError(message,{code,status,cause:error});
 };
-export function createRequestClient({base,fetchImpl=(...args)=>fetch(...args),now=()=>Date.now(),isOffline=()=>typeof navigator!=='undefined'&&navigator.onLine===false,maxEntries=60}={}){
+export function createRequestClient({base,fetchImpl=(...args)=>fetch(...args),now=()=>Date.now(),isOffline=()=>typeof navigator!=='undefined'&&navigator.onLine===false,isDocumentClosing=()=>documentClosing,maxEntries=60}={}){
  const cache=new Map(),pending=new Map();
  const remember=(key,value,time)=>{cache.delete(key);cache.set(key,{time,value:copy(value)});while(cache.size>maxEntries)cache.delete(cache.keys().next().value);};
  const request=async(path,options={})=>{
@@ -38,6 +43,7 @@ export function createRequestClient({base,fetchImpl=(...args)=>fetch(...args),no
    const cancel=()=>{controller.abort();rejectDeadline(new DOMException('Aborted','AbortError'));};signal?.addEventListener('abort',cancel,{once:true});
    const transport=async()=>{
     for(let attempt=0;attempt<=retries;attempt++){
+     if(isDocumentClosing())throw new DOMException('Aborted','AbortError');
      let response;
      try{response=await fetchImpl(key,{...init,method,signal:controller.signal,headers:{Accept:'application/json',...init.headers}});}
      catch(error){
