@@ -54,3 +54,22 @@ test('navigation and immediate check operate within the current card host only',
   assert.equal(feedback.dataset.result,'correct');
   assert.equal(explanation.hidden,false);
 });
+
+
+test('visual evidence sources reuse validated HTTPS URL rules and never fabricate links',()=>{
+  const html=visualLearningMarkup({
+    ...lesson,
+    sources:[
+      {title:'공식 보고서',url:'https://dart.fss.or.kr/example?year=2025'},
+      {title:'악성 경로',url:'javascript:alert(1)'},
+      {title:'비밀값',url:'https://example.com/?token=secret'}
+    ]
+  });
+  assert.match(html,/data-learning-source/);
+  assert.match(html,/data-external-url="https:\/\/dart.fss.or.kr\/example\?year=2025"/);
+  assert.doesNotMatch(html,/javascript:alert\(1\)/);
+  assert.doesNotMatch(html,/token=secret/);
+  const missing=visualLearningMarkup({...lesson,sources:[]});
+  assert.match(missing,/원문 링크가 등록되지 않았어요/);
+  assert.doesNotMatch(missing,/data-learning-source/);
+});
