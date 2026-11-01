@@ -45,3 +45,7 @@
 .learning-visual-controls span{font-size:11px;color:#6b7684;text-align:center}
 @media(max-width:360px){.learning-visual-card{padding:14px;min-height:390px}.learning-visual-controls span{font-size:10px}.learning-visual-controls button{padding:8px 9px}}
 @media(prefers-reduced-motion:reduce){.learning-visual-track{scroll-behavior:auto}}
+
+.learning-visual-sources{display:grid;gap:6px;margin-top:5px;padding:10px 0 0;border-top:1px solid #e8edf4}
+.learning-visual-sources strong{font-size:12px;color:#4e5968}
+.learning-page .learning-visual-sources button{min-height:44px;padding:8px 10px;text-align:left;border-radius:10px;background:#f5f9ff;color:#1768db;font-weight:650;font-size:12px;overflow-wrap:anywhere}
