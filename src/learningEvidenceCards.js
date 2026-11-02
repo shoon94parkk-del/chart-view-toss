@@ -32,7 +32,7 @@ export function companyPhotoHtml(row,name) {
  let safe=null;
  try{const u=new URL(src);if(u.protocol==='https:'&&!u.username&&!u.password&&/^(licensed|owned|public.domain|cc.by)/.test(license))safe=u.href;}catch{}
  const products=String(row?.mainProducts||'').trim();
- return (safe?'<img class="learning-evidence-photo" src="'+esc(safe)+'" alt="'+esc(name)+' 등록 제품 이미지" loading="lazy" referrerpolicy="no-referrer" onerror="this.hidden=true"/>':
+ return (safe?'<img class="learning-evidence-photo" src="'+esc(safe)+'" alt="'+esc(name)+' 등록 제품 이미지" loading="lazy" referrerpolicy="no-referrer"/>':
  '<p class="learning-evidence-unavailable">확인된 이용권의 실물 사진이 등록되지 않아 기존 산업 그림을 사용합니다.</p>')+
  (products?'<p><strong>차트뷰 기업 DB 등록 주요 제품</strong></p><p class="learning-evidence-caption">'+esc(products.slice(0,350))+'</p>':unavailable('기업 DB에서 주요 제품 항목을 확인하지 못했어요.'))+
  '<p class="learning-visual-note">업데이트된 기업 DB 설명과 실제 사업보고서의 최신 제품 구성을 비교하세요.</p>';
@@ -77,6 +77,7 @@ export async function mountLearningEvidence(host,lesson,catalog,workspace,sessio
  const metaRows=context.status==='fulfilled'?arr(context.value?.companies):[];
  const row=metaRows.find(r=>r.symbol===symbol)||{};
  set(host,'photo',companyPhotoHtml(row,selected.name||symbol));
+ const photo=host.querySelector('[data-learning-evidence="photo"] img');if(photo)photo.addEventListener('error',()=>{photo.hidden=true;});
  set(host,'mix',revenueEvidenceHtml(reportData));
  set(host,'financial',financialEvidenceHtml(financialData));
  const selector=host.querySelector('[data-learning-peer-select]');
