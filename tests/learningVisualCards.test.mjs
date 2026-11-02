@@ -10,9 +10,9 @@ const lesson = {
 
 test('all source lesson chapters render as visual cards with a formative check and no AI call',()=>{
   const html=visualLearningMarkup(lesson);
-  assert.equal((html.match(/data-visual-card(?= )/g)||[]).length,8);
-  assert.match(html,/data-total-cards="8"/);
-  assert.match(html,/1 \/ 8장/);
+  assert.equal((html.match(/data-visual-card(?= )/g)||[]).length,13);
+  assert.match(html,/data-total-cards="13"/);
+  assert.match(html,/1 \/ 13장/);
   assert.match(html,/수업 내용 일부 발췌/);
   assert.match(html,/이 기업의 실제 제품/);
   assert.match(html,/data-learning-visual-track/);
@@ -87,15 +87,15 @@ test('lesson curriculum sections become individual learning cards without invent
      {title:'경제 변수',minutes:10,body:'환율과 원재료를 연결한다.',prompts:['환율 변화는 양쪽에 어떤 영향인가?']}
    ]
  });
- assert.equal((html.match(/data-visual-card(?= )/g)||[]).length,9);
- assert.match(html,/9장의 학습 카드/);
+ assert.equal((html.match(/data-visual-card(?= )/g)||[]).length,14);
+ assert.match(html,/14장의 학습 카드/);
  assert.match(html,/약 5분 학습/);
  assert.match(html,/누가 돈을 지불하는가/);
  assert.match(html,/재무 읽기/);
  assert.match(html,/경제 변수/);
- assert.match(html,/1 \/ 9장/);
+ assert.match(html,/1 \/ 14장/);
  const unknown=visualLearningMarkup({title:'학습 자료 없음',sections:[],sources:[]});
- assert.equal((unknown.match(/data-visual-card(?= )/g)||[]).length,6);
+ assert.equal((unknown.match(/data-visual-card(?= )/g)||[]).length,11);
  assert.match(unknown,/검증된 출처 링크가 등록되지 않았어요/);
 });
 test('navigation reads the current curriculum card count instead of stopping at five',()=>{
