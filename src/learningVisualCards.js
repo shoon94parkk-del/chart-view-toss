@@ -1,6 +1,7 @@
 // Deterministic educational cards; never infer company-specific financial values.
 // Formal lesson, official sources, account storage and scored quizzes are unchanged.
 import {safeLearningUrl} from './learningModel.js';
+import {curatedProductPhoto} from './learningProductPhotos.js';
 const esc = value => String(value ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const arr = value => Array.isArray(value) ? value : [];
 const PACKS = {
@@ -49,6 +50,9 @@ function sectionDiagram(title='') {
 }
 export function visualLearningMarkup(lesson={}) {
  const t=visualLearningTemplate(lesson);
+ const selected=arr(lesson.companies)[0]||lesson.company||{};
+ const photo=curatedProductPhoto(selected.symbol);
+ const hero=photo?'<div class="learning-visual-photo-hero"><img src="'+esc(photo.imageUrl)+'" alt="'+esc(photo.description)+'" loading="lazy" referrerpolicy="no-referrer" data-learning-hero-photo><div data-learning-photo-illustration hidden>'+picture(t.kind)+'</div><small>'+esc(photo.type==='industry-example'?'산업 대표 사진 · 해당 기업 제품 아님':'해당 기업의 실제 제품 사진')+' · '+esc(photo.creator)+' · '+esc(photo.license)+'</small><button type="button" data-learning-source data-external-url="'+esc(photo.sourceUrl)+'">사진 원본·출처 ↗</button></div>':picture(t.kind);
  const sections=arr(lesson.sections).filter(s=>s&&typeof s==='object').slice(0,10);
  // 3 intro cards + curriculum + 5 evidence/diagnostic cards + macro, citations and quiz.
  const total=11+sections.length;
@@ -68,7 +72,7 @@ export function visualLearningMarkup(lesson={}) {
  return '<section class="learning-visual" data-learning-visual aria-label="카드형 기업 공부">'
   +'<div class="learning-visual-heading"><span>VISUAL LEARNING · LLM 호출 0회</span><h3>카드를 넘기며 기업을 배워요</h3><p>'+esc(t.company)+' · '+esc(t.industry)+' · 총 '+total+'장 · 수업·확인 문제 통합</p></div>'
   +'<div class="learning-visual-track" data-learning-visual-track data-total-cards="'+total+'" tabindex="0" aria-label="좌우로 넘기는 '+total+'장의 학습 카드">'
-  +card(1,total,'무엇을 만드는 산업인가?','<div class="learning-visual-art">'+picture(t.kind)+'</div><span class="learning-visual-chip">'+esc(t.label)+'</span><h4>'+esc(t.product)+'</h4><p>이 기업의 실제 제품, 고객, 매출 비중은 공시에서 확인해 보세요.</p><p class="learning-visual-note">직접 제작한 산업 개념도로 실제 기업 제품 사진이 아닙니다.</p>')
+  +card(1,total,'무엇을 만드는 산업인가?','<div class="learning-visual-art">'+hero+'</div><span class="learning-visual-chip">'+esc(t.label)+'</span><h4>'+esc(t.product)+'</h4><p>이 기업의 실제 제품, 고객, 매출 비중은 공시에서 확인해 보세요.</p><p class="learning-visual-note">사진이 있는 기업은 실제 촬영 이미지를 표시하고, 나머지는 산업 개념도를 사용합니다.</p>')
   +card(2,total,'돈이 흘러가는 구조','<div class="learning-visual-flow">'+flow+'</div><p class="learning-visual-note">산업 일반 구조입니다. 실제 공급망·거래처는 공시로 확인해야 합니다.</p>')
   +card(3,total,'매출과 이익은 다릅니다','<div class="learning-visual-equation"><div><small>매출</small><strong>판매량 × 판매단가</strong></div><span>−</span><div><small>영업비용</small><strong>매출원가 + 판매관리비</strong></div><span>=</span><div><small>영업이익</small><strong>매출 − 영업비용</strong></div></div><p>비용이 매출보다 더 빠르게 늘면 영업이익은 줄어들 수 있어요.</p>')
   +lessonCards
@@ -105,6 +109,13 @@ export function bindVisualLearningInteractions(root) {
     const index=Math.max(0,Math.min(max,Math.round(track.scrollLeft/(first.getBoundingClientRect().width+12))));
     const progress=track.closest('[data-learning-visual]')?.querySelector('[data-learning-visual-progress]');
     if(progress)progress.textContent=(index+1)+' / '+(max+1)+'장';
+  },true);
+  root.addEventListener('error',event=>{
+   const image=event.target;
+   if(!image.matches?.('[data-learning-hero-photo]'))return;
+   image.hidden=true;
+   const fallback=image.parentElement?.querySelector('[data-learning-photo-illustration]');
+   if(fallback)fallback.hidden=false;
   },true);
   root.addEventListener('change',event=>{
     const input=event.target;

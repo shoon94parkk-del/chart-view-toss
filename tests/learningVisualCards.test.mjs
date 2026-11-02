@@ -19,10 +19,13 @@ test('all source lesson chapters render as visual cards with a formative check a
   assert.match(html,/식품과 브랜드/);
   assert.match(html,/삼양식품/);
   assert.match(html,/어떤 제품과 고객/);
-  assert.match(html,/실제 기업 제품 사진이 아닙니다/);
+  assert.match(html,/사진이 있는 기업은 실제 촬영 이미지를 표시하고/);
+  assert.match(html,/data-learning-hero-photo/);
+  assert.match(html,/data-learning-photo-illustration/);
   assert.match(html,/data-visual-correct="1"/);
   assert.match(html,/점수가 저장되지 않습니다/);
-  assert.doesNotMatch(html,/fetch\(|<img.*https?:\/\//);
+  assert.doesNotMatch(html,/fetch\(/);
+  assert.match(html,/<img src="https:\/\/thumb.wikimedia.org/);
 });
 test('industry selection uses an industry template, not fabricated company financial data',()=>{
   assert.equal(visualLearningTemplate({industry:'반도체',companies:[{symbol:'000660',name:'SK하이닉스'}]}).kind,'chip');
@@ -75,7 +78,7 @@ test('visual evidence sources reuse validated HTTPS URL rules and never fabricat
   assert.doesNotMatch(html,/token=secret/);
   const missing=visualLearningMarkup({...lesson,sources:[]});
   assert.match(missing,/검증된 출처 링크가 등록되지 않았어요/);
-  assert.doesNotMatch(missing,/data-learning-source/);
+  assert.doesNotMatch(missing,/기존 수업에 등록된 공식 출처/);
 });
 
 

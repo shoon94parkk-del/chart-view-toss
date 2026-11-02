@@ -29,7 +29,7 @@ test('peer comparison requires same fiscal year, basis and currency',()=>{
 test('only explicit approved image rights allow a real company picture',()=>{
  const no=companyPhotoHtml({imageUrl:'https://example.com/photo.png',mainProducts:'공식 자료 확인'},'기업');
  assert.doesNotMatch(no,/<img/);
- assert.match(no,/실물 사진이 등록되지 않아/);
+ assert.match(no,/재사용 권한이 확인된 자산이 없습니다/);
  const yes=companyPhotoHtml({imageUrl:'https://example.com/photo.png',imageLicense:'licensed',mainProducts:'라면 & 식품'},'기업');
  assert.match(yes,/<img/);assert.match(yes,/라면 &amp; 식품/);
  const attack=companyPhotoHtml({imageUrl:'javascript:alert(1)',imageLicense:'licensed'},'기업');
