@@ -70,27 +70,30 @@ export async function mountLearningEvidence(host,lesson,catalog,workspace,sessio
  const candidates=catalogRows.filter(c=>c.symbol!==selected.symbol&&c.industry&&c.industry===(selected.industry||lesson.industry)&&ticker(c.symbol)).slice(0,12);
  const compare=host.querySelector('[data-learning-evidence="compare"]');
  if(compare)compare.innerHTML=candidates.length?'<label class="learning-evidence-picker">같은 산업의 비교 기업<select data-learning-peer-select><option value="">선택해 비교하기</option>'+candidates.map(c=>'<option value="'+esc(c.symbol)+'">'+esc(c.name)+'</option>').join('')+'</select></label><div data-learning-peer-result><p>기업을 선택하면 기존 OpenDART 연간 자료로 같은 기준의 실적을 비교합니다.</p></div>':unavailable('학습 카탈로그에서 동일 산업 비교 기업을 찾지 못했어요.');
- const [report,financial,context]=await Promise.allSettled([loadBusiness(symbol,selected.name||''),loadFinancial(symbol),loadContext()]);
- if(!current())return;
- const reportData=report.status==='fulfilled'?report.value:null;
- const financialData=financial.status==='fulfilled'?financial.value:null;
- const metaRows=context.status==='fulfilled'?arr(context.value?.companies):[];
- const row=metaRows.find(r=>r.symbol===symbol)||{};
- set(host,'photo',companyPhotoHtml(row,selected.name||symbol));
- const photo=host.querySelector('[data-learning-evidence="photo"] img');if(photo)photo.addEventListener('error',()=>{photo.hidden=true;});
- set(host,'mix',revenueEvidenceHtml(reportData));
- set(host,'financial',financialEvidenceHtml(financialData));
+ const reportPromise=Promise.resolve().then(()=>loadBusiness(symbol,selected.name||''));
+ const financialPromise=Promise.resolve().then(()=>loadFinancial(symbol));
+ const contextPromise=Promise.resolve().then(()=>loadContext());
+ const tasks=[
+   reportPromise.then(data=>{if(current())set(host,'mix',revenueEvidenceHtml(data));}).catch(()=>{if(current())set(host,'mix',unavailable('DART 매출 구성 조회에 실패했습니다.'));}),
+   financialPromise.then(data=>{if(current())set(host,'financial',financialEvidenceHtml(data));}).catch(()=>{if(current())set(host,'financial',unavailable('DART 연간 재무제표 조회에 실패했습니다.'));}),
+   contextPromise.then(data=>{
+     if(!current())return;
+     const row=arr(data?.companies).find(r=>String(r.symbol).toUpperCase()===symbol)||{};
+     set(host,'photo',companyPhotoHtml(row,selected.name||symbol));
+     const photo=host.querySelector('[data-learning-evidence="photo"] img');
+     if(photo)photo.addEventListener('error',()=>{photo.hidden=true;});
+   }).catch(()=>{if(current())set(host,'photo',unavailable('기업 제품 정보 조회에 실패했습니다.'));})
+ ];
  const selector=host.querySelector('[data-learning-peer-select]');
  if(selector)selector.onchange=async()=>{
    const symbol2=ticker(selector.value),match=candidates.find(c=>c.symbol===symbol2),target=host.querySelector('[data-learning-peer-result]');
    if(!match||!target)return;
-   target.innerHTML='<p>동일한 연도·재무 기준을 확인하고 있어요.</p>';
+   target.innerHTML='<p>동일 연도·재무 기준을 확인하고 있어요.</p>';
    try{
-     const peer=await loadFinancial(match.symbol);
+     const [first,peer]=await Promise.all([financialPromise,loadFinancial(match.symbol)]);
      if(!current()||selector.value!==match.symbol)return;
-     target.innerHTML=peerEvidenceHtml({current:financialData,other:peer,currentName:selected.name||symbol,otherName:match.name});
-   }catch{
-     if(current()&&selector.value===match.symbol)target.innerHTML=unavailable('비교 기업 DART 조회에 실패했습니다. 다시 선택해 주세요.');
-   }
+     target.innerHTML=peerEvidenceHtml({current:first,other:peer,currentName:selected.name||symbol,otherName:match.name});
+   }catch{if(current()&&selector.value===match.symbol)target.innerHTML=unavailable('비교 기업 DART 조회에 실패했습니다. 다시 선택해 주세요.');}
  };
+ await Promise.allSettled(tasks);
 }
