@@ -40,8 +40,8 @@ export function companyPhotoHtml(row,name) {
 export function peerEvidenceHtml({current,other,currentName,otherName}) {
  const left=arr(current?.annual).slice().sort((a,b)=>Number(b.year)-Number(a.year));
  const right=arr(other?.annual).slice().sort((a,b)=>Number(b.year)-Number(a.year));
- const l=left.find(x=>num(x.revenue)!==null&&num(x.operatingProfit)!==null);
- const r=right.find(x=>x.year===l?.year&&num(x.revenue)!==null&&num(x.operatingProfit)!==null);
+ const l=left.find(x=>num(x.revenue)!==null&&num(x.operatingProfit)!==null&&right.some(y=>String(y.year)===String(x.year)&&num(y.revenue)!==null&&num(y.operatingProfit)!==null));
+ const r=right.find(x=>String(x.year)===String(l?.year)&&num(x.revenue)!==null&&num(x.operatingProfit)!==null);
  if(!l||!r||current?.currency!==other?.currency||current?.basis!==other?.basis)return unavailable('동일한 연도·재무 기준·통화의 검증된 실적이 부족해 수치 비교를 표시하지 않습니다.');
  const margin=x=>num(x.revenue)>0?(num(x.operatingProfit)/num(x.revenue)*100).toFixed(1)+'%':'계산 불가';
  return '<div class="learning-evidence-kicker">'+esc(l.year)+'년 · '+esc(current.basis)+' · '+esc(current.currency)+'</div><div class="learning-evidence-peer"><div><strong>'+esc(currentName)+'</strong><p>매출 '+money(l.revenue,current.currency)+'</p><p>영업이익률 '+margin(l)+'</p></div><div><strong>'+esc(otherName)+'</strong><p>매출 '+money(r.revenue,other.currency)+'</p><p>영업이익률 '+margin(r)+'</p></div></div><p class="learning-visual-note">기업 규모와 이익률을 구분해서 비교하세요. 우열이나 매수 판단을 자동 도출하지 않습니다.</p>'+evidenceLink(current.annualSourceUrl,'첫 번째 회사 DART')+evidenceLink(other.annualSourceUrl,'비교 회사 DART');
@@ -78,7 +78,7 @@ export async function mountLearningEvidence(host,lesson,catalog,workspace,sessio
    financialPromise.then(data=>{if(current())set(host,'financial',financialEvidenceHtml(data));}).catch(()=>{if(current())set(host,'financial',unavailable('DART 연간 재무제표 조회에 실패했습니다.'));}),
    contextPromise.then(data=>{
      if(!current())return;
-     const row=arr(data?.companies).find(r=>String(r.symbol).toUpperCase()===symbol)||{};
+     const row=arr(data?.companies).find(r=>ticker(r.symbol)?.slice(0,6)===symbol.slice(0,6))||{};
      set(host,'photo',companyPhotoHtml(row,selected.name||symbol));
      const photo=host.querySelector('[data-learning-evidence="photo"] img');
      if(photo)photo.addEventListener('error',()=>{photo.hidden=true;});
