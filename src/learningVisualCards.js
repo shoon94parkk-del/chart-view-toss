@@ -50,8 +50,8 @@ function sectionDiagram(title='') {
 export function visualLearningMarkup(lesson={}) {
  const t=visualLearningTemplate(lesson);
  const sections=arr(lesson.sections).filter(s=>s&&typeof s==='object').slice(0,10);
- // 3 introduction cards + each real curriculum section + macro + evidence + check
- const total=6+sections.length;
+ // 3 intro cards + curriculum + 5 evidence/diagnostic cards + macro, citations and quiz.
+ const total=11+sections.length;
  const flow=t.flow.map((n,i)=>'<div class="learning-visual-node"><span>0'+(i+1)+'</span><strong>'+esc(n)+'</strong></div>'+(i<2?'<span aria-hidden="true" class="learning-visual-arrow">↓</span>':'')).join('');
  const effects=t.effects.map(x=>'<p>• '+esc(x)+'</p>').join('');
  const answers=t.options.map((o,i)=>'<label><input type="radio" name="visual-learning-check" value="'+i+'"><span>'+esc(o)+'</span></label>').join('');
@@ -63,7 +63,8 @@ export function visualLearningMarkup(lesson={}) {
    const minute=Number.isFinite(section.minutes)&&section.minutes>0?'<span class="learning-visual-chip">약 '+Math.round(section.minutes)+'분 학습</span>':'';
    return card(index+4,total,section.title||'이번 수업의 핵심',minute+sectionDiagram(section.title)+'<p class="learning-visual-excerpt">'+summary(section)+'</p>'+promptHtml+'<p class="learning-visual-note">수업 내용 일부 발췌 · 전체 본문은 카드 아래 자료에서 볼 수 있어요.</p>');
  }).join('');
- const macroIndex=sections.length+4, evidenceIndex=sections.length+5, quizIndex=sections.length+6;
+ const productIndex=sections.length+4, mixIndex=sections.length+5, financeIndex=sections.length+6, peerIndex=sections.length+7, reviewIndex=sections.length+8;
+ const macroIndex=sections.length+9, evidenceIndex=sections.length+10, quizIndex=sections.length+11;
  return '<section class="learning-visual" data-learning-visual aria-label="카드형 기업 공부">'
   +'<div class="learning-visual-heading"><span>VISUAL LEARNING · LLM 호출 0회</span><h3>카드를 넘기며 기업을 배워요</h3><p>'+esc(t.company)+' · '+esc(t.industry)+' · 총 '+total+'장 · 수업·확인 문제 통합</p></div>'
   +'<div class="learning-visual-track" data-learning-visual-track data-total-cards="'+total+'" tabindex="0" aria-label="좌우로 넘기는 '+total+'장의 학습 카드">'
@@ -71,6 +72,11 @@ export function visualLearningMarkup(lesson={}) {
   +card(2,total,'돈이 흘러가는 구조','<div class="learning-visual-flow">'+flow+'</div><p class="learning-visual-note">산업 일반 구조입니다. 실제 공급망·거래처는 공시로 확인해야 합니다.</p>')
   +card(3,total,'매출과 이익은 다릅니다','<div class="learning-visual-equation"><div><small>매출</small><strong>판매량 × 판매단가</strong></div><span>−</span><div><small>영업비용</small><strong>매출원가 + 판매관리비</strong></div><span>=</span><div><small>영업이익</small><strong>매출 − 영업비용</strong></div></div><p>비용이 매출보다 더 빠르게 늘면 영업이익은 줄어들 수 있어요.</p>')
   +lessonCards
+  +card(productIndex,total,'실제 기업의 주요 제품','<div class="learning-evidence-slot" data-learning-evidence="photo" role="status">차트뷰 기업 DB를 조회하고 있어요.</div>')
+  +card(mixIndex,total,'DART 제품·사업별 매출 구성','<div class="learning-evidence-slot" data-learning-evidence="mix" role="status">사업보고서 매출 구성을 불러오는 중입니다.</div>')
+  +card(financeIndex,total,'DART 재무 실적을 숫자로 봐요','<div class="learning-evidence-slot" data-learning-evidence="financial" role="status">실적을 불러오는 중입니다.</div>')
+  +card(peerIndex,total,'같은 산업 기업과 비교','<div class="learning-evidence-slot" data-learning-evidence="compare">비교 기업을 확인하는 중입니다.</div>')
+  +card(reviewIndex,total,'내 오답에 맞춰 복습','<div class="learning-evidence-slot" data-learning-evidence="review">저장된 정식 퀴즈 기록을 확인하는 중입니다.</div>')
   +card(macroIndex,total,'경제 변수와 이익을 연결해요','<div class="learning-visual-effects"><strong>'+esc(t.factor)+' 변화 시</strong>'+effects+'</div><div class="learning-visual-section-diagram"><div class="learning-visual-section-node"><strong>경제 환경</strong></div><span aria-hidden="true">→</span><div class="learning-visual-section-node"><strong>매출·원가</strong></div><span aria-hidden="true">→</span><div class="learning-visual-section-node"><strong>실적</strong></div></div><p class="learning-visual-note">기업별 실제 수치와 확정된 원인으로 해석하지 마세요.</p>')
   +card(evidenceIndex,total,'사실과 가설을 구분해요','<div class="learning-visual-proof"><div><strong>사실</strong><span>원문에서 확인한 수치와 사업 구조</span></div><div><strong>가설</strong><span>왜 성장하거나 이익률이 바뀔지에 대한 설명</span></div><div><strong>검증</strong><span>기준일·기간·반증 지표 확인</span></div></div>'+evidence+'<p class="learning-visual-note">출처는 수업에 등록된 링크이며 최신성은 별도로 확인하세요.</p>')
   +card(quizIndex,total,'내가 이해했는지 확인','<fieldset class="learning-visual-check" data-visual-correct="'+t.answer+'"><legend>'+esc(t.question)+'</legend>'+answers+'<p class="learning-visual-feedback" data-visual-feedback role="status" aria-live="polite" hidden></p><p class="learning-visual-explanation" data-visual-explanation hidden>'+esc(t.why)+'</p></fieldset><p class="learning-visual-note">연습 문제는 점수가 저장되지 않습니다. 학습 완료 뒤 정식 퀴즈에 답하세요.</p>')

@@ -82,6 +82,10 @@ export function renderLearning({state,shell,bindNav,isCurrent=()=>true,openStock
   }else content=learningDashboardMarkup(workspace,catalog);
   if(lesson&&ui.draft)content+=learningEditorMarkup({lesson,draft:ui.draft,session:activeSession,workspace,quizDraft:ui.quizDraft});
   body.innerHTML=content+settingsMarkup(workspace,ui);
+  // Optional public evidence reads are isolated from signed-in notes and scored quiz mutations.
+  if(lesson&&ui.draft&&body.querySelector('[data-learning-evidence="financial"]'))void import('./learningEvidenceCards.js').then(mod=>{
+   if(current())return mod.mountLearningEvidence(body,lesson,catalog,workspace,activeSession);
+  }).catch(()=>{if(current())body.querySelectorAll('[data-learning-evidence]').forEach(el=>{el.textContent='자료 로드에 실패했습니다. 학습 기록·정식 퀴즈는 정상 이용할 수 있어요.';});});
   if(ui.validationDraft){const form=body.querySelector('[data-learning-validation-form]');if(form)for(const [key,value]of Object.entries(ui.validationDraft)){const input=form.elements.namedItem(key);if(input)input.value=value;}}
   saveEditor();setBusy(busy);
  };
