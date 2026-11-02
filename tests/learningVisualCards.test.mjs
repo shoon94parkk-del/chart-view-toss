@@ -8,9 +8,13 @@ const lesson = {
   sections:[{title:'기업 사업 구조',body:'어떤 제품과 고객으로 돈을 버는지 확인합니다.'},{title:'환율과 비용',body:'원재료비와 해외 판매를 함께 확인합니다.'}]
 };
 
-test('five illustrated cards and an interactive formative check are produced without an AI call',()=>{
+test('all source lesson chapters render as visual cards with a formative check and no AI call',()=>{
   const html=visualLearningMarkup(lesson);
-  assert.equal((html.match(/data-visual-card/g)||[]).length,5);
+  assert.equal((html.match(/data-visual-card(?= )/g)||[]).length,8);
+  assert.match(html,/data-total-cards="8"/);
+  assert.match(html,/1 \/ 8장/);
+  assert.match(html,/수업 내용 일부 발췌/);
+  assert.match(html,/이 기업의 실제 제품/);
   assert.match(html,/data-learning-visual-track/);
   assert.match(html,/식품과 브랜드/);
   assert.match(html,/삼양식품/);
@@ -70,6 +74,39 @@ test('visual evidence sources reuse validated HTTPS URL rules and never fabricat
   assert.doesNotMatch(html,/javascript:alert\(1\)/);
   assert.doesNotMatch(html,/token=secret/);
   const missing=visualLearningMarkup({...lesson,sources:[]});
-  assert.match(missing,/원문 링크가 등록되지 않았어요/);
+  assert.match(missing,/검증된 출처 링크가 등록되지 않았어요/);
   assert.doesNotMatch(missing,/data-learning-source/);
+});
+
+
+test('lesson curriculum sections become individual learning cards without inventing unavailable information',()=>{
+ const html=visualLearningMarkup({
+   ...lesson,sections:[
+     {title:'고객 파악',minutes:5,body:'기업 고객을 확인한다.',prompts:['누가 돈을 지불하는가?']},
+     {title:'재무 읽기',minutes:10,body:'매출과 비용을 본다.',prompts:['마진이 개선되는 이유는?']},
+     {title:'경제 변수',minutes:10,body:'환율과 원재료를 연결한다.',prompts:['환율 변화는 양쪽에 어떤 영향인가?']}
+   ]
+ });
+ assert.equal((html.match(/data-visual-card(?= )/g)||[]).length,9);
+ assert.match(html,/9장의 학습 카드/);
+ assert.match(html,/약 5분 학습/);
+ assert.match(html,/누가 돈을 지불하는가/);
+ assert.match(html,/재무 읽기/);
+ assert.match(html,/경제 변수/);
+ assert.match(html,/1 \/ 9장/);
+ const unknown=visualLearningMarkup({title:'학습 자료 없음',sections:[],sources:[]});
+ assert.equal((unknown.match(/data-visual-card(?= )/g)||[]).length,6);
+ assert.match(unknown,/검증된 출처 링크가 등록되지 않았어요/);
+});
+test('navigation reads the current curriculum card count instead of stopping at five',()=>{
+ const callbacks={};
+ const track={dataset:{totalCards:'9'},scrollLeft:0,scrollTo:({left})=>{track.scrollLeft=left;},querySelector:()=>({getBoundingClientRect:()=>({width:280})})};
+ const progress={textContent:''};
+ const visual={querySelector:selector=>selector==='[data-learning-visual-progress]'?progress:track};
+ const button={dataset:{visualStep:'1'},closest:()=>visual};
+ const root={addEventListener:(name,fn)=>{callbacks[name]=fn;},contains:()=>true};
+ bindVisualLearningInteractions(root);
+ for(let i=0;i<10;i++)callbacks.click({target:{closest:()=>button}});
+ assert.equal(track.scrollLeft,8*292);
+ assert.equal(progress.textContent,'9 / 9장');
 });

@@ -300,8 +300,11 @@ test('illustrated primer explains concepts and checks an answer without writing 
   const api=await signedIn({context,qa});
   await dashboard(page);await start(page);
   const visual=page.locator('[data-learning-visual]');
-  await expect(visual.locator('[data-visual-card]')).toHaveCount(5);
-  await expect(visual).toContainText('먼저 그림으로 이해해요');
+  const cardCount=await visual.locator('[data-visual-card]').count();
+  expect(cardCount).toBeGreaterThanOrEqual(8);
+  await expect(visual.locator('[data-learning-visual-track]')).toHaveAttribute('data-total-cards',String(cardCount));
+  await expect(visual).toContainText('카드를 넘기며 기업을 배워요');
+  await expect(visual.locator('.learning-visual-section-diagram')).not.toHaveCount(0);
   await expect(visual.locator('svg[role="img"]')).toHaveCount(1);
   const check=visual.locator('[data-visual-correct]');
   await check.scrollIntoViewIfNeeded();

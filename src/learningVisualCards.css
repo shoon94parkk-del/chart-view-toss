@@ -49,3 +49,24 @@
 .learning-visual-sources{display:grid;gap:6px;margin-top:5px;padding:10px 0 0;border-top:1px solid #e8edf4}
 .learning-visual-sources strong{font-size:12px;color:#4e5968}
 .learning-page .learning-visual-sources button{min-height:44px;padding:8px 10px;text-align:left;border-radius:10px;background:#f5f9ff;color:#1768db;font-weight:650;font-size:12px;overflow-wrap:anywhere}
+
+
+/* Company-learning sections are now proper swipe cards, not an introductory strip. */
+.learning-visual-section-diagram{display:flex;align-items:stretch;gap:4px;margin:5px 0;padding:8px 4px;background:#f4f8fe;border-radius:14px;min-height:105px}
+.learning-visual-section-diagram>span{align-self:center;font-size:17px;color:#6488b7;flex:none}
+.learning-visual-section-node{display:flex;flex:1;min-width:0;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:4px;padding:7px 5px;border:1px solid #dce8fb;background:white;border-radius:10px;overflow-wrap:anywhere}
+.learning-visual-section-node small{font-size:10px;font-weight:800;color:#3182f6}
+.learning-visual-section-node strong{font-size:11px;line-height:1.35;color:#324963}
+.learning-visual-card p.learning-visual-excerpt{font-size:13px;line-height:1.7;white-space:normal;color:#374c63}
+.learning-visual-section-prompts{display:grid;gap:7px;padding:11px 12px;background:#eaf3ff;border-radius:12px}
+.learning-visual-section-prompts strong{font-size:12px;color:#175ca5}
+.learning-visual-section-prompts p{font-size:12px;color:#3c526a;line-height:1.55}
+.learning-visual-proof{display:grid;gap:8px}
+.learning-visual-proof>div{display:flex;flex-direction:column;gap:3px;background:#f5f8fd;border:1px solid #e6eef8;border-radius:12px;padding:10px 12px}
+.learning-visual-proof strong{font-size:13px;color:#2566a9}
+.learning-visual-proof span{font-size:12px;color:#52687f;line-height:1.5}
+.learning-visual-card .learning-visual-sources{max-height:190px;overflow-y:auto}
+.learning-page .learning-quiz-cards .learning-formal-question-card{display:grid;gap:8px;border:1px solid #dfebfa;border-radius:17px;padding:16px 14px;margin:14px 0;background:#fbfdff}
+.learning-page .learning-quiz-cards .learning-formal-question-card legend{font-size:14px;font-weight:750;color:#243c5a;padding:0 2px;line-height:1.5}
+.learning-page .learning-quiz-cards .learning-formal-question-card .learning-radio{border:1px solid #e7edf5;border-radius:11px;background:#fff;padding:9px;min-height:50px}
+.learning-page .learning-quiz-cards .learning-formal-question-card .learning-radio:has(input:checked){border-color:#3182f6;background:#edf5ff}
