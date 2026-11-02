@@ -2,6 +2,7 @@
 // No AI, speculative company metrics, unlicensed photos, or writes to server scored attempts.
 import {businessReportData,financialHistoryData,companyContextData} from './api.js';
 import {safeLearningUrl} from './learningModel.js';
+import {curatedProductPhoto,officialProductCatalog} from './learningProductPhotos.js';
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const arr=v=>Array.isArray(v)?v:[];
 const num=v=>v!==null&&v!==undefined&&v!==''&&Number.isFinite(Number(v))?Number(v):null;
@@ -25,17 +26,30 @@ export function financialEvidenceHtml(data) {
  const max=Math.max(...rows.map(r=>Math.abs(num(r.revenue))),1);
  return '<div class="learning-evidence-kicker">OpenDART 연간 실적 · '+esc(basis)+'</div><div class="learning-evidence-annual">'+rows.map(r=>'<div><strong>'+esc(r.year)+'년</strong><span>매출 '+money(r.revenue,currency)+'</span><span class="learning-evidence-bar"><i style="width:'+Math.min(100,Math.abs(num(r.revenue))/max*100)+'%"></i></span><span>영업이익 '+money(r.operatingProfit,currency)+'</span></div>').join('')+'</div><p class="learning-visual-note">연간 실적이며 분기 누적·TTM과 혼합하지 않습니다. 공시 정정 시 수치가 달라질 수 있습니다.</p>'+evidenceLink(data.annualSourceUrl,'연간 재무제표 원문');
 }
-export function companyPhotoHtml(row,name) {
- // Images may be provided by the *existing* company context, but are never synthesized.
- const src=row?.productImageUrl||row?.imageUrl||row?.photoUrl;
- const license=String(row?.imageLicense||row?.photoLicense||'').toLowerCase();
- let safe=null;
- try{const u=new URL(src);if(u.protocol==='https:'&&!u.username&&!u.password&&/^(licensed|owned|public.domain|cc.by)/.test(license))safe=u.href;}catch{}
+export function companyPhotoHtml(row,name,symbol=row?.symbol) {
+ const curated=curatedProductPhoto(symbol);
+ const catalog=officialProductCatalog(symbol);
+ const legacyUrl=row?.productImageUrl||row?.imageUrl||row?.photoUrl;
+ const legacyLicense=String(row?.imageLicense||row?.photoLicense||'').toLowerCase();
+ let legacySafe=null;
+ try{
+   const u=new URL(legacyUrl);
+   if(u.protocol==='https:'&&!u.username&&!u.password&&/^(licensed|owned|public.domain|cc.by)/.test(legacyLicense))legacySafe=u.href;
+ }catch{}
+ const image=curated?.imageUrl||legacySafe;
  const products=String(row?.mainProducts||'').trim();
- return (safe?'<img class="learning-evidence-photo" src="'+esc(safe)+'" alt="'+esc(name)+' 등록 제품 이미지" loading="lazy" referrerpolicy="no-referrer"/>':
- '<p class="learning-evidence-unavailable">확인된 이용권의 실물 사진이 등록되지 않아 기존 산업 그림을 사용합니다.</p>')+
- (products?'<p><strong>차트뷰 기업 DB 등록 주요 제품</strong></p><p class="learning-evidence-caption">'+esc(products.slice(0,350))+'</p>':unavailable('기업 DB에서 주요 제품 항목을 확인하지 못했어요.'))+
- '<p class="learning-visual-note">업데이트된 기업 DB 설명과 실제 사업보고서의 최신 제품 구성을 비교하세요.</p>';
+ let media='';
+ if(curated){
+   const typeLabel=curated.type==='industry-example'?'산업 대표 사진 · 해당 기업 제품 아님':'실제 해당 기업 제품 사진';
+   media='<figure class="learning-product-photo"><img class="learning-evidence-photo" src="'+esc(image)+'" alt="'+esc(curated.description)+'" loading="lazy" referrerpolicy="no-referrer" data-learning-company-photo><figcaption><strong>'+esc(curated.title)+'</strong><span class="learning-product-type">'+esc(typeLabel)+'</span><small>사진 '+esc(curated.creator)+' · '+esc(curated.license)+' · '+esc(curated.modification)+'</small><div class="learning-photo-credit"><button type="button" data-learning-source data-external-url="'+esc(curated.sourceUrl)+'">사진 원본·저작자 확인 ↗</button><button type="button" data-learning-source data-external-url="'+esc(curated.licenseUrl)+'">라이선스 조건 ↗</button></div></figcaption></figure>';
+ }else if(legacySafe){
+   media='<img class="learning-evidence-photo" src="'+esc(image)+'" alt="'+esc(name)+' 등록 제품 이미지" loading="lazy" referrerpolicy="no-referrer" data-learning-company-photo/>';
+ }else {
+   media=unavailable('현재 이 기업의 제품 사진 중 재사용 권한이 확인된 자산이 없습니다. 기존 산업 개념도를 유지합니다.');
+ }
+ const official=catalog?'<div class="learning-product-catalog"><p>'+esc(catalog.message)+'</p><button type="button" data-learning-source data-external-url="'+esc(catalog.url)+'">'+esc(catalog.label)+' ↗</button></div>':'';
+ return media+official+(products?'<p><strong>차트뷰 기업 DB 등록 주요 제품</strong></p><p class="learning-evidence-caption">'+esc(products.slice(0,350))+'</p>':unavailable('기업 DB에서 주요 제품 항목을 확인하지 못했어요.'))+
+ '<p class="learning-visual-note">사진은 촬영 당시의 제품·설비이며 현재 판매 제품 전체를 의미하지 않습니다. 공식 사업보고서의 제품 정보와 비교하세요.</p>';
 }
 export function peerEvidenceHtml({current,other,currentName,otherName}) {
  const left=arr(current?.annual).slice().sort((a,b)=>Number(b.year)-Number(a.year));
@@ -79,9 +93,9 @@ export async function mountLearningEvidence(host,lesson,catalog,workspace,sessio
    contextPromise.then(data=>{
      if(!current())return;
      const row=arr(data?.companies).find(r=>ticker(r.symbol)?.slice(0,6)===symbol.slice(0,6))||{};
-     set(host,'photo',companyPhotoHtml(row,selected.name||symbol));
+     set(host,'photo',companyPhotoHtml(row,selected.name||symbol,symbol));
      const photo=host.querySelector('[data-learning-evidence="photo"] img');
-     if(photo)photo.addEventListener('error',()=>{photo.hidden=true;});
+     if(photo)photo.addEventListener('error',()=>{photo.hidden=true;const notice=document.createElement('p');notice.className='learning-evidence-unavailable';notice.textContent='사진 서비스에 연결할 수 없어요. 원본 출처 링크에서 확인하세요.';photo.after(notice);},{once:true});
    }).catch(()=>{if(current())set(host,'photo',unavailable('기업 제품 정보 조회에 실패했습니다.'));})
  ];
  const selector=host.querySelector('[data-learning-peer-select]');
