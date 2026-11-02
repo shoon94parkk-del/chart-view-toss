@@ -1,5 +1,8 @@
 import { test as base, expect } from '@playwright/test';
 import { payloadFor, quotes } from './data.mjs';
+import {allCuratedPhotos} from '../../src/learningProductPhotos.js';
+const approvedPhotoUrls=new Set(allCuratedPhotos().map(photo=>photo.imageUrl));
+const offlinePhoto=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScLttAAAAABJRU5ErkJggg==','base64');
 
 export { expect };
 export const test = base.extend({
@@ -44,6 +47,11 @@ export const test = base.extend({
           unexpected.push(error.message);
           return route.fulfill({ status: 500, json: { detail: error.message } });
         }
+      }
+      // Approved learning photos have an exact-url offline fixture. Never allow
+      // the browser to call Wikimedia (or arbitrary external providers) in CI.
+      if(route.request().resourceType()==='image'&&approvedPhotoUrls.has(route.request().url())){
+        return route.fulfill({status:200,contentType:'image/png',body:offlinePhoto});
       }
       // CI must never silently make provider/LLM requests through a missing mock.
       if (!['127.0.0.1', 'localhost'].includes(url.hostname) && url.origin !== new URL(testInfo.project.use.baseURL || process.env.E2E_BASE_URL || 'http://127.0.0.1:4173').origin) {
