@@ -70,3 +70,32 @@
 .learning-page .learning-quiz-cards .learning-formal-question-card legend{font-size:14px;font-weight:750;color:#243c5a;padding:0 2px;line-height:1.5}
 .learning-page .learning-quiz-cards .learning-formal-question-card .learning-radio{border:1px solid #e7edf5;border-radius:11px;background:#fff;padding:9px;min-height:50px}
 .learning-page .learning-quiz-cards .learning-formal-question-card .learning-radio:has(input:checked){border-color:#3182f6;background:#edf5ff}
+
+
+/* Live evidenced teaching cards: data is drawn exclusively from existing verified Chart View APIs. */
+.learning-evidence-slot{display:grid;gap:10px;min-width:0;overflow-wrap:anywhere}
+.learning-evidence-kicker{font-size:11px;font-weight:800;color:#1768db;background:#e8f3ff;display:inline-flex;justify-self:start;padding:5px 9px;border-radius:20px}
+.learning-evidence-caption{font-size:13px;line-height:1.55;color:#465b70;white-space:pre-wrap;overflow-wrap:anywhere}
+.learning-evidence-unavailable{padding:15px;background:#f5f8fc;border:1px dashed #c7d8ed;border-radius:12px;font-size:13px;color:#596d81;line-height:1.6}
+.learning-evidence-photo{width:100%;max-height:190px;object-fit:contain;border-radius:14px;background:#fff}
+.learning-evidence-bar{display:grid;gap:4px}
+.learning-evidence-bar>div{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.learning-evidence-bar strong,.learning-evidence-bar b{font-size:12px;color:#324961}
+.learning-evidence-bar>span{height:11px;background:#e7eef8;display:block;border-radius:20px;overflow:hidden}
+.learning-evidence-bar>span i,.learning-evidence-annual .learning-evidence-bar i{height:100%;display:block;background:#3182f6;border-radius:20px}
+.learning-evidence-annual{display:grid;gap:10px}
+.learning-evidence-annual>div{display:grid;grid-template-columns:65px 1fr;gap:4px 8px;font-size:12px;padding:8px;border:1px solid #e5eef8;border-radius:11px}
+.learning-evidence-annual>div strong{grid-row:span 3}
+.learning-evidence-annual .learning-evidence-bar{height:9px;background:#edf2fb;display:block;border-radius:20px;overflow:hidden}
+.learning-evidence-peer{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.learning-evidence-peer>div{min-width:0;border:1px solid #e0ebf8;background:#f6faff;border-radius:12px;padding:10px}
+.learning-evidence-peer strong{font-size:13px;overflow-wrap:anywhere}
+.learning-evidence-peer p{font-size:12px;margin:8px 0 0}
+.learning-evidence-picker{display:grid;gap:7px;font-size:13px;font-weight:750}
+.learning-evidence-picker select{width:100%;font-size:14px;border:1px solid #b9cde6;background:#fff;border-radius:12px;min-height:45px;padding:7px 12px}
+.learning-evidence-review{border-radius:12px;padding:10px;border:1px solid #dce8f9;background:#f5f9ff;display:grid;gap:7px}
+.learning-evidence-review strong{font-size:13px;color:#155bb4}
+.learning-evidence-review p{font-size:12px;line-height:1.55}
+.learning-evidence-review small{color:#586b80;font-size:11px}
+.learning-evidence-slot [data-learning-source]{min-height:44px;background:#edf5ff;border:1px solid #d6e5f7;color:#1768db;border-radius:10px;padding:7px 12px;font-weight:700;font-size:12px;text-align:left}
+.learning-visual-card:has(.learning-evidence-slot){min-height:400px}
