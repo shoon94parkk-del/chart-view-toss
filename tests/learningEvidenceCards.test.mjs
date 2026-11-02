@@ -21,6 +21,9 @@ test('peer comparison requires same fiscal year, basis and currency',()=>{
  const second={basis:'연결재무제표',currency:'KRW',annual:[{year:2025,revenue:12000000000,operatingProfit:1000000000}]};
  assert.match(peerEvidenceHtml({current:first,other:second,currentName:'A',otherName:'B'}),/12.0%/);
  assert.match(peerEvidenceHtml({current:first,other:{...second,basis:'별도재무제표'},currentName:'A',otherName:'B'}),/비교를 표시하지 않습니다/);
+ const older={...first,annual:[{year:2024,revenue:9000000000,operatingProfit:900000000},{year:2025,revenue:10000000000,operatingProfit:1200000000}]};
+ const onlyOld={...second,annual:[{year:2024,revenue:8000000000,operatingProfit:800000000}]};
+ assert.match(peerEvidenceHtml({current:older,other:onlyOld,currentName:'A',otherName:'B'}),/2024년/);
  assert.match(peerEvidenceHtml({current:first,other:{...second,annual:[{year:2024,revenue:10000000000,operatingProfit:100000000}]},currentName:'A',otherName:'B'}),/비교를 표시하지 않습니다/);
 });
 test('only explicit approved image rights allow a real company picture',()=>{
