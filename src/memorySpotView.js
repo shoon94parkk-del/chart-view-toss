@@ -2,6 +2,9 @@ import { loadMemorySpot } from './exportMomentumData.js';
 import { yoyTone } from './exportMomentumModel.js';
 import { bindHorizontalTabs, focusSelectedTab } from './accessibleTabs.js';
 import { finiteNumber } from './analysisData.js';
+import { memoryPriceSeries } from './memoryPriceModel.js';
+import { memoryDetailMarkup, bindMemoryDetail } from './memoryPriceDetail.js';
+import './memoryPriceDetail.css';
 
 const esc=(value='')=>String(value).replace(/[&<>"']/g,char=>({
   '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
@@ -24,6 +27,8 @@ const spotPrice=(value)=>{
 };
 
 const GROUP_ORDER=['dram-chip','nand-chip','nand-wafer','dram-module','gddr'];
+// View preferences survive the route remount when changing a price family.
+const detailStates=new Map();
 
 export function memorySpotPlaceholder(){
   return [
@@ -37,11 +42,8 @@ export function memorySpotPlaceholder(){
   ].join('');
 }
 
-function spotChart(history,key,name){
-  const points=(Array.isArray(history)?history:[])
-    .map(row=>({date:String(row?.date||''),value:finite(row?.values?.[key])}))
-    .filter(row=>row.date&&row.value!==null)
-    .sort((a,b)=>a.date.localeCompare(b.date));
+function spotChart(history,key,name,sourceDate){
+  const points=memoryPriceSeries(history,key,{sourceDate});
 
   if(!points.length){
     return '<div class="dram-spot-chart-empty">차트뷰 누적 데이터가 아직 없어요.</div>';
@@ -79,7 +81,7 @@ function spotChart(history,key,name){
   ].join('');
 }
 
-function itemCard(row,history){
+function itemCard(row,history,group,state){
   const change=finite(row?.changePct);
   const changeText=change!==null?(change>0?'+':'')+change.toFixed(2)+'%':'변동률 미제공';
   const low=finite(row?.dailyLow),high=finite(row?.dailyHigh);
@@ -91,20 +93,23 @@ function itemCard(row,history){
         '<em class="'+(change!==null?yoyTone(change):'')+'">'+esc(changeText)+'</em>',
       '</div>',
       '<div class="dram-spot-price">'+esc(spotPrice(row.average))+'</div>',
-      '<div class="dram-spot-range"><span>고저가</span><strong>'+esc(range)+'</strong></div>',
-      spotChart(history,row.key,row.name||row.key),
+      '<div class="dram-spot-range"><span>공개 고저가</span><strong>'+esc(range)+'</strong></div>',
+      spotChart(history,row.key,row.name||row.key,row.sourceDate||group.sourceDate),
+      '<button type="button" class="memory-card-detail" data-memory-card="'+esc(row.key)+'" aria-pressed="'+String(row.key===(state.itemKey||group.items?.[0]?.key))+'">'+esc(row.name||row.key)+' 상세 보기</button>',
     '</article>',
   ].join('');
 }
 
-function groupView(group,history){
+function groupView(group,history,state={}){
   if(!group)return '<div class="dram-spot-chart-empty">표시할 가격 그룹이 없어요.</div>';
   return [
     '<div class="memory-price-group-head">',
       '<div><strong>'+esc(group.name)+'</strong><span>'+esc(group.sourceDate?dateLabel(group.sourceDate):'기준일 확인 필요')+'</span></div>',
       '<em>'+(group.stale?'마지막 확인값':'공개 최신값')+'</em>',
     '</div>',
-    '<div class="dram-spot-grid">'+(group.items||[]).map(row=>itemCard(row,history)).join('')+'</div>',
+    memoryDetailMarkup(group,history,state),
+    '<h4 class="memory-catalog-heading">품목별 가격 한눈에 보기 · '+(group.items||[]).length+'개</h4>',
+    '<div class="dram-spot-grid">'+(group.items||[]).map(row=>itemCard(row,history,group,state)).join('')+'</div>',
     '<button type="button" class="memory-price-source" data-external-url="'+esc(group.sourceUrl||'https://www.trendforce.com/price')+'">TrendForce 원문 보기</button>',
   ].join('');
 }
@@ -121,15 +126,15 @@ function unavailableView(rows){
   ].join('');
 }
 
-function renderShell(data,activeKey){
-  const groups=(Array.isArray(data?.groups)?data.groups:[])
+function renderShell(data,activeKey,state){
+  const groups=[...(Array.isArray(data?.groups)?data.groups:[])]
     .sort((a,b)=>GROUP_ORDER.indexOf(a.key)-GROUP_ORDER.indexOf(b.key));
   const active=groups.find(group=>group.key===activeKey)||groups[0]||null;
   const history=Array.isArray(data?.history)?data.history:[];
   return [
     '<div class="export-section-head">',
       '<div><span>메모리 시장가격</span><h3>DRAM · NAND 가격</h3></div>',
-      '<small>TrendForce 공개 최신값</small>',
+      '<small>가격군별 공개 기준일</small>',
     '</div>',
     '<div class="dram-spot-intro">',
       '<strong>TrendForce의 공개 시장가격을 추적합니다.</strong>',
@@ -138,7 +143,7 @@ function renderShell(data,activeKey){
     '<div class="memory-price-tabs" role="tablist" aria-label="메모리 가격 종류">',
       groups.map(group=>'<button id="memory-tab-'+esc(group.key)+'" type="button" role="tab" aria-controls="memory-price-panel" data-memory-price-group="'+esc(group.key)+'" aria-selected="'+String(group.key===active?.key)+'">'+esc(group.name.replace(' 현물',''))+'</button>').join(''),
     '</div>',
-    '<div id="memory-price-panel" class="memory-price-active" role="tabpanel" aria-labelledby="memory-tab-'+esc(active?.key||'')+'" data-memory-price-active>'+groupView(active,history)+'</div>',
+    '<div id="memory-price-panel" class="memory-price-active" role="tabpanel" aria-labelledby="memory-tab-'+esc(active?.key||'')+'" data-memory-price-active>'+groupView(active,history,state)+'</div>',
     unavailableView(data?.unavailablePriceSeries),
     '<div class="dram-spot-basis"><span>유료 과거 이력은 가져오지 않으며, 공개 최신값을 확인한 공급자 기준일부터 차트뷰가 자체 누적합니다.</span></div>',
   ].join('');
@@ -161,14 +166,32 @@ export function mountMemorySpot(host,{bindNav,activeGroup='dram-chip',onGroupCha
   let data=null;
   let activeKey=GROUP_ORDER.includes(activeGroup)?activeGroup:'dram-chip';
 
+  const paint=(focusSelector)=>{
+    const group=data?.groups?.find(row=>row.key===activeKey)||data?.groups?.[0];
+    if(group)activeKey=group.key;
+    if(!detailStates.has(activeKey))detailStates.set(activeKey,{period:'all',mode:'price'});
+    const state=detailStates.get(activeKey);
+    host.innerHTML=renderShell(data,activeKey,state);
+    bindGroupTabs();
+    bindMemoryDetail(host,group,data?.history||[],state,(patch,focus)=>{
+      Object.assign(state,patch);paint(focus);
+    });
+    host.querySelectorAll('[data-memory-card]').forEach(button=>button.addEventListener('click',()=>{
+      Object.assign(state,{itemKey:button.dataset.memoryCard,selectedDate:null});
+      paint();
+      host.querySelector('[data-memory-detail]')?.scrollIntoView({block:'start',behavior:'instant'});
+      host.querySelector('[data-memory-item]')?.focus({preventScroll:true});
+    }));
+    bindNav?.();
+    if(focusSelector)host.querySelector(focusSelector)?.focus({preventScroll:true});
+  };
+
   const bindGroupTabs=()=>{
     host.querySelectorAll('[data-memory-price-group]').forEach(button=>{
       button.addEventListener('click',event=>{
         const restoreFocus=event.detail===0;
         activeKey=button.dataset.memoryPriceGroup;
-        host.innerHTML=renderShell(data,activeKey);
-        bindGroupTabs();
-        bindNav?.();
+        paint();
         if(restoreFocus)focusSelectedTab(host.querySelector('.memory-price-tabs'));
         onGroupChange?.(activeKey,{restoreFocus});
       });
@@ -187,9 +210,7 @@ export function mountMemorySpot(host,{bindNav,activeGroup='dram-chip',onGroupCha
       data=await loadMemorySpot({force});
       if(token!==seq||!host.isConnected)return;
       host.removeAttribute('aria-busy');
-      host.innerHTML=renderShell(data,activeKey);
-      bindGroupTabs();
-      bindNav?.();
+      paint();
       if(restoreTabFocus){focusSelectedTab(host.querySelector('.memory-price-tabs'));restoreTabFocus=false;}
     }catch(error){
       if(token!==seq||!host.isConnected)return;

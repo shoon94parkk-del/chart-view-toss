@@ -1,5 +1,9 @@
 # Chart View Toss project memory
 
+### 2026-11-09 — 반도체 가격 상세
+- `memoryPriceModel.js` normalizes actual dated observations; `memoryPriceDetail.js/.css` adds selected-product30/90day/full charts, USD/index100, date exploration, statistics and date-by-date history. Existing family deep links, compact cards, cache/retry/native navigation remain intact.
+- Use per-group sourceDate, generic public high/low and provider-change labels. Missing and0, zero denominators, single observations and stale GDDR remain explicit. Never fabricate historical ranges/missing dates. [Implementation and verification](MEMORY_PRICE_DETAIL_2026-11-09.md).
+
 ### 2026-11-01 — 기업 공부 / Investment Learning
 - New lazy `learning` route adds daily curriculum, private notes/insights, actual quiz/review attempts, immutable histories, evidence validations, actual-data analytics and backup/manual result import. [Implementation and storage requirements](INVESTMENT_LEARNING_2026-11-01.md).
 - `learningClient` must bind rendered account/token before every private request. Cross-tab account switching cannot move a prior draft into another account. Expiry retains same-account draft; ambiguous creation replays its original receipt before revising the same ID. Keep native learning session in registered account-scoped storage/reset.
