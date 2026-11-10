@@ -1,5 +1,9 @@
 # Chart View Toss decision log
 
+## 2026-11-10 — 반도체 가격 개선 배포를 위한 기존 모바일 QA 빌드 순서 수정
+
+Classification: existing QA harness bug, reproduced on baseline ae26ffe and feature7e0538e. The user explicitly requested production deployment. Under identical native-font/CPU8/320px fixtures, both300ms builds reject the early Home bootstrap and hit the original PICK selector timeout; both production builds show3rows and pass the retained Home checks. Move only the unchanged whole `mobile_release_qa.mjs` workflow step behind the existing production rebuild. Preserve earlier300ms checks, all test assertions/timeouts/fixtures and product settings. The original9s slow fixture still tests the explicit8s compare timeout and passes its10s wait/error assertion. A workflow-order regression fails before and passes after the move. Details: docs/MEMORY_PRICE_DEPLOY_2026-11-10.md. Use existing exact-SHA main QA→Render branch promotion; confirm live assets/UI before claiming deployment.
+
 ## 2026-11-09 — 반도체 가격의 품목별 상세와 누적 이력
 
 Classification: new behavior requested by the user. Keep the independent memory route, five price families, existing API/cache/retry owner and native navigation. Add one selected-product detail using actual collected averages: 30/90-day or full history, USD/index100 chart, calendar-spaced SVG observations, pointer/touch and keyboard date selection, period statistics and expandable date-by-date price/delta table. Keep compact catalog cards and source links. View preferences survive family-route remounts without additional transport.

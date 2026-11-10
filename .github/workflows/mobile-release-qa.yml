@@ -37,9 +37,6 @@ jobs:
           done
           cat /tmp/chart-view-toss-vite.log
           exit 1
-      - name: Run mobile release QA
-        if: ${{ !cancelled() && steps.start-preview.outcome == 'success' }}
-        run: node tests/mobile_release_qa.mjs
       - name: Verify core value entries and exact selection records
         if: ${{ !cancelled() && steps.start-preview.outcome == 'success' }}
         run: node tests/value_discovery_qa.mjs
@@ -52,8 +49,12 @@ jobs:
       - name: Build with production request timeout
         if: ${{ !cancelled() && steps.start-preview.outcome == 'success' }}
         run: npm run build
-      # Keep the special 300ms build for fail-fast mobile checks; verify Home
-      # layout and data ordering with the actual production request budget.
+      # Keep the special 300ms build for the earlier fail-fast checks. The full
+      # mobile journey and Home layout use production budgets; mobile_release_qa
+      # retains its explicit 8s compare timeout and unchanged 9s slow fixture.
+      - name: Run mobile release QA
+        if: ${{ !cancelled() && steps.start-preview.outcome == 'success' }}
+        run: node tests/mobile_release_qa.mjs
       - name: Verify market-first Home, selection results and purpose navigation
         if: ${{ !cancelled() && steps.start-preview.outcome == 'success' }}
         run: node tests/home_journey_qa.mjs
